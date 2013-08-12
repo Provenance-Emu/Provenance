@@ -714,7 +714,7 @@
 					"-fPIC",
 					"-DLSB_FIRST",
 					"-DHAVE_ZLIB",
-					"-DUSE_15BPP_RENDERING",
+					"-DUSE_16BPP_RENDERING",
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);

@@ -105,7 +105,7 @@ static bool environment_callback(unsigned cmd, void *data)
 {
 	if ((self = [super init]))
 	{
-		_videoBuffer = malloc(720 * 576 * 2);
+		_videoBuffer = malloc(720 * 576 * 4);
 	}
 	
 	_current = self;
