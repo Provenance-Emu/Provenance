@@ -10,21 +10,16 @@
 #import "PVGenesisEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
-const float width = 320 * 4;
-const float height = 224 * 4;
-const float texWidth = 1;
-const float texHeight = 1;
-const GLfloat box[] = {0.0f, height, 1.0f, width, height, 1.0f, 0.0f, 0.0f, 1.0f, width, 0.0f, 1.0f};
-const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidth, 0.0f};
-
+static GLKVector3 vertices[8];
+static GLKVector2 textureCoordinates[8];
+static GLKVector3 triangleVertices[6];
+static GLKVector2 triangleTexCoords[6];
+static GLKBaseEffect *effect;
 
 @interface PVEmulatorViewController ()
 {
-	BOOL initialized;
 	uint16_t *videoBuffer;
-	
-	GLint iOSFrameBuffer;
-    GLuint GBTexture;
+	GLuint texture;
 }
 
 @property (nonatomic, retain) PVGenesisEmulatorCore *genesis;
@@ -34,11 +29,38 @@ const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidt
 
 @implementation PVEmulatorViewController
 
++ (void)initialize
+{
+	vertices[0] = GLKVector3Make(-0.5, -0.5,  0.5); // Left  bottom
+	textureCoordinates[0] = GLKVector2Make(0.0f, 1.0f);
+	
+	vertices[1] = GLKVector3Make( 0.5, -0.5,  0.5); // Right bottom
+	textureCoordinates[1] = GLKVector2Make(1.0f, 1.0f);
+	
+	vertices[2] = GLKVector3Make( 0.5,  0.5,  0.5); // Right top
+	textureCoordinates[2] = GLKVector2Make(1.0f, 0.0f);
+	
+	vertices[3] = GLKVector3Make(-0.5,  0.5,  0.5); // Left  top
+	textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f);
+	
+	int vertexIndices[6] = {
+		// Front
+		0, 1, 2,
+		0, 2, 3,
+	};
+	
+	for (int i = 0; i < 6; i++) {
+		triangleVertices[i]  = vertices[vertexIndices[i]];
+		triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
+	}
+	
+	effect = [[GLKBaseEffect alloc] init];
+}
+
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
-	initialized = NO;
 	
 	[self setPreferredFramesPerSecond:60];
 	
@@ -48,17 +70,24 @@ const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidt
 	
 	videoBuffer = [self.genesis videoBuffer];
 	
+	while (!videoBuffer)
+	{
+		[self.genesis executeFrame];
+	}
+	
 	[NSTimer scheduledTimerWithTimeInterval:1/[self.genesis frameInterval]
 									 target:self
 								   selector:@selector(runEmulator:)
 								   userInfo:nil
 									repeats:YES];
 	
-	self.glContext = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1] autorelease];
+	self.glContext = [[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2] autorelease];
 	[EAGLContext setCurrentContext:self.glContext];
 	
 	GLKView *view = (GLKView *)self.view;
     view.context = self.glContext;
+	
+	[self setupTexture];
 }
 
 - (void)runEmulator:(NSTimer *)timer
@@ -66,72 +95,64 @@ const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidt
 	[self.genesis executeFrame];
 }
 
--(void)draw
+- (void)setupTexture
 {
-    if (!initialized)
-    {
-        initialized = YES;
-        [self initGL];
-    }
-    
-	[self renderFrame];
-}
-
--(void)initGL
-{
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &iOSFrameBuffer);
-    
-    glGenTextures(1, &GBTexture);
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	
-    glVertexPointer(3, GL_FLOAT, 0, box);
-    glTexCoordPointer(2, GL_FLOAT, 0, tex);
-    
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, GBTexture);
-    [self setupTextureWithData:videoBuffer];
-}
-
--(void)renderFrame
-{
-	CGFloat scale = [[UIScreen mainScreen] scale];
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-    glBindFramebuffer(GL_FRAMEBUFFER, iOSFrameBuffer);
-    glBindTexture(GL_TEXTURE_2D, GBTexture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, [self.genesis bufferSize].width, [self.genesis bufferSize].height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
-    [self renderQuadWithViewportWidth:[self.view bounds].size.width * scale height:[self.view bounds].size.height * scale];
-}
-
--(void)setupTextureWithData: (GLvoid*) data
-{
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, [self.genesis bufferSize].width, [self.genesis bufferSize].height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, [self.genesis bufferSize].width, [self.genesis bufferSize].height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-}
-
--(void)renderQuadWithViewportWidth:(int)viewportWidth height:(int)viewportHeight
-{
-//	CGFloat scale = [[UIScreen mainScreen] scale];
-	
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(0.0f, viewportWidth, viewportHeight, 0.0f, -1.0f, 1.0f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glViewport(0, 0, viewportWidth, viewportHeight);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-	[self draw];
+	glClearColor(0.5, 0.5, 0.5, 0.5);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, [self.genesis bufferSize].width, [self.genesis bufferSize].height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
+	
+	CGRect screenBound = [[UIScreen mainScreen] bounds];
+    CGSize screenSize = screenBound.size;
+    CGFloat screenWidth = screenSize.width;
+    CGFloat screenHeight = screenSize.height;
+	
+    effect.transform.modelviewMatrix =  GLKMatrix4MakeScale(screenWidth, 224, 1);
+    effect.transform.projectionMatrix = GLKMatrix4MakeOrtho(-1 * screenWidth/2, screenWidth/2, -screenHeight/2, screenHeight/2, -1, 1);
+	
+	if (texture)
+	{
+		effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+		effect.texture2d0.target = GLKTextureTarget2D;
+		effect.texture2d0.name = texture;
+		effect.texture2d0.enabled = YES;
+		effect.useConstantColor = YES;
+	}
+	
+    [effect prepareToDraw];
+    
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    
+    glEnableVertexAttribArray(GLKVertexAttribPosition);
+    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
+    
+	if (texture)
+	{
+        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
+    }
+	
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+	
+	if (texture)
+	{
+        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+	}
+	
+    glDisableVertexAttribArray(GLKVertexAttribPosition);
 }
 
 @end
