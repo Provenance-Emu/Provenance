@@ -27,8 +27,8 @@
 	self.window.backgroundColor = [UIColor whiteColor];
 	[self.window makeKeyAndVisible];
 	
-	PVEmulatorViewController *glViewController = [[[PVEmulatorViewController alloc] init] autorelease];
-	[self.window setRootViewController:glViewController];
+	PVEmulatorViewController *viewController = [[[PVEmulatorViewController alloc] init] autorelease];
+	[self.window setRootViewController:viewController];
 	
 	return YES;
 }

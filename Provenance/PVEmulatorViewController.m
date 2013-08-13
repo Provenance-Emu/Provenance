@@ -10,8 +10,8 @@
 #import "PVGenesisEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
-const float width = 320;
-const float height = 224;
+const float width = 320 * 4;
+const float height = 224 * 4;
 const float texWidth = 1;
 const float texHeight = 1;
 const GLfloat box[] = {0.0f, height, 1.0f, width, height, 1.0f, 0.0f, 0.0f, 1.0f, width, 0.0f, 1.0f};
@@ -98,12 +98,13 @@ const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidt
 
 -(void)renderFrame
 {
+	CGFloat scale = [[UIScreen mainScreen] scale];
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
     glBindFramebuffer(GL_FRAMEBUFFER, iOSFrameBuffer);
     glBindTexture(GL_TEXTURE_2D, GBTexture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, [self.genesis bufferSize].width, [self.genesis bufferSize].height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
-    [self renderQuadWithViewportWidth:320 * 2 height:224 * 2];
+    [self renderQuadWithViewportWidth:[self.view bounds].size.width * scale height:[self.view bounds].size.height * scale];
 }
 
 -(void)setupTextureWithData: (GLvoid*) data
@@ -117,13 +118,15 @@ const GLfloat tex[] = {0.0f, texHeight, texWidth, texHeight, 0.0f, 0.0f, texWidt
 
 -(void)renderQuadWithViewportWidth:(int)viewportWidth height:(int)viewportHeight
 {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-	glOrthof(0.0f, [self.genesis screenRect].size.width / 2, [self.genesis screenRect].size.height / 2, 0.0f, -1.0f, 1.0f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glViewport(0, 0, viewportWidth, viewportHeight);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+//	CGFloat scale = [[UIScreen mainScreen] scale];
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrthof(0.0f, viewportWidth, viewportHeight, 0.0f, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glViewport(0, 0, viewportWidth, viewportHeight);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
