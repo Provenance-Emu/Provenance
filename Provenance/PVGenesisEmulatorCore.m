@@ -49,7 +49,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = _current->_videoBuffer + y * 720;
+        uint16_t *dst = _current->_videoBuffer + y * 320;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
@@ -105,7 +105,7 @@ static bool environment_callback(unsigned cmd, void *data)
 {
 	if ((self = [super init]))
 	{
-		_videoBuffer = malloc(720 * 576 * 4);
+		_videoBuffer = malloc(320 * 224 * 2);
 	}
 	
 	_current = self;
@@ -203,7 +203,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (CGSize)bufferSize
 {
-	return CGSizeMake(720, 576);
+	return CGSizeMake(320, 224);
 }
 
 - (void)setupEmulation

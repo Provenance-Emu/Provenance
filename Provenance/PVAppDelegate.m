@@ -29,6 +29,7 @@
 	
 	PVEmulatorViewController *viewController = [[[PVEmulatorViewController alloc] init] autorelease];
 	[self.window setRootViewController:viewController];
+	[[viewController view] setFrame:CGRectMake(0, 0, 320, 224)];
 	
 	return YES;
 }

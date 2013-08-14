@@ -114,13 +114,13 @@ static GLKBaseEffect *effect;
 	glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, [self.genesis bufferSize].width, [self.genesis bufferSize].height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, videoBuffer);
 	
-	CGRect screenBound = [[UIScreen mainScreen] bounds];
-    CGSize screenSize = screenBound.size;
-    CGFloat screenWidth = screenSize.width;
-    CGFloat screenHeight = screenSize.height;
+	CGRect viewBound = [self.view bounds];
+    CGSize viewSize = viewBound.size;
+    CGFloat viewWidth = viewSize.width;
+    CGFloat viewHeight = viewSize.height;
 	
-    effect.transform.modelviewMatrix =  GLKMatrix4MakeScale(screenWidth, 224, 1);
-    effect.transform.projectionMatrix = GLKMatrix4MakeOrtho(-1 * screenWidth/2, screenWidth/2, -screenHeight/2, screenHeight/2, -1, 1);
+    effect.transform.modelviewMatrix =  GLKMatrix4MakeScale(viewWidth, viewHeight, 1);
+    effect.transform.projectionMatrix = GLKMatrix4MakeOrtho(-1 * viewWidth/2, viewWidth/2, -viewHeight/2, viewHeight/2, -1, 1);
 	
 	if (texture)
 	{
