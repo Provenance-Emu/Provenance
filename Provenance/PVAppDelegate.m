@@ -15,21 +15,15 @@
 
 @implementation PVAppDelegate
 
-- (void)dealloc
-{
-	[_window release];
-	[super dealloc];
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.window.backgroundColor = [UIColor whiteColor];
 	[self.window makeKeyAndVisible];
 	
-	PVEmulatorViewController *viewController = [[[PVEmulatorViewController alloc] init] autorelease];
+	PVEmulatorViewController *viewController = [[PVEmulatorViewController alloc] init];
 	[self.window setRootViewController:viewController];
-	[[viewController view] setFrame:CGRectMake(0, 0, 320, 224)];
 	
 	return YES;
 }

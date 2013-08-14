@@ -2,12 +2,12 @@
 //  PVEmulatorViewController.h
 //  Provenance
 //
-//  Created by James Addyman on 08/08/2013.
+//  Created by James Addyman on 14/08/2013.
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-#import <GLKit/GLKit.h>
+#import <UIKit/UIKit.h>
 
-@interface PVEmulatorViewController : GLKViewController
+@interface PVEmulatorViewController : UIViewController
 
 @end

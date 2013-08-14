@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class OERingBuffer;
+
 @interface PVGenesisEmulatorCore : NSObject
 
 - (void)executeFrame;
@@ -24,5 +26,12 @@
 - (double)audioSampleRate;
 - (NSTimeInterval)frameInterval;
 - (NSUInteger)channelCount;
+- (NSUInteger)audioBufferCount;
+- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
+- (NSUInteger)audioBitDepth;
+- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
+- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
+- (double)audioSampleRateForBuffer:(NSUInteger)buffer;
+- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
 
 @end

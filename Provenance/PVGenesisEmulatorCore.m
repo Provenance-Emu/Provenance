@@ -8,6 +8,7 @@
 
 #import "PVGenesisEmulatorCore.h"
 #import "libretro.h"
+#import "OERingBuffer.h"
 #import <OpenGLES/EAGL.h>
 
 @interface PVGenesisEmulatorCore ()
@@ -16,8 +17,10 @@
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
 	NSString *_romName;
-	double _sampleRate;
 	NSTimeInterval _frameInterval;
+	
+	OERingBuffer __strong **ringBuffers;
+	double _sampleRate;
 }
 
 @end
@@ -29,15 +32,14 @@ PVGenesisEmulatorCore *_current;
 
 static void audio_callback(int16_t left, int16_t right)
 {
-//	[[current ringBufferAtIndex:0] write:&left maxLength:2];
-//	[[current ringBufferAtIndex:0] write:&right maxLength:2];
+	[[_current ringBufferAtIndex:0] write:&left maxLength:2];
+	[[_current ringBufferAtIndex:0] write:&right maxLength:2];
 }
 
 static size_t audio_batch_callback(const int16_t *data, size_t frames)
 {
-//	[[current ringBufferAtIndex:0] write:data maxLength:frames << 2];
-//	return frames;
-	return 0;
+	[[_current ringBufferAtIndex:0] write:data maxLength:frames << 2];
+	return frames;
 }
 
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
@@ -106,6 +108,8 @@ static bool environment_callback(unsigned cmd, void *data)
 	if ((self = [super init]))
 	{
 		_videoBuffer = malloc(320 * 224 * 2);
+		NSUInteger count = [self audioBufferCount];
+        ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
 	}
 	
 	_current = self;
@@ -116,7 +120,38 @@ static bool environment_callback(unsigned cmd, void *data)
 - (void)dealloc
 {
 	free(_videoBuffer);
-	[super dealloc];
+}
+
+- (void)setupEmulation
+{
+}
+
+- (void)resetEmulation
+{
+	retro_reset();
+}
+
+- (void)stopEmulation
+{
+	//    NSString *path = _romName;
+	//    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
+    
+	//    NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
+	//
+	//    if([batterySavesDirectory length] != 0)
+	//    {
+	//
+	//        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
+	//
+	//        NSLog(@"Trying to save SRAM");
+	//
+	//        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+	//
+	//        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
+	//    }
+	
+	retro_unload_game();
+	retro_deinit();
 }
 
 - (void)executeFrame
@@ -190,7 +225,8 @@ static bool environment_callback(unsigned cmd, void *data)
     return NO;
 }
 
-#pragma mark Video
+#pragma mark - Video
+
 - (uint16_t *)videoBuffer
 {
 	return _videoBuffer;
@@ -204,38 +240,6 @@ static bool environment_callback(unsigned cmd, void *data)
 - (CGSize)bufferSize
 {
 	return CGSizeMake(320, 224);
-}
-
-- (void)setupEmulation
-{
-}
-
-- (void)resetEmulation
-{
-	retro_reset();
-}
-
-- (void)stopEmulation
-{
-//    NSString *path = _romName;
-//    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
-//    NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
-//    
-//    if([batterySavesDirectory length] != 0)
-//    {
-//        
-//        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-//        
-//        NSLog(@"Trying to save SRAM");
-//        
-//        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-//        
-//        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-//    }
-	
-	retro_unload_game();
-	retro_deinit();
 }
 
 - (GLenum)pixelFormat
@@ -253,19 +257,64 @@ static bool environment_callback(unsigned cmd, void *data)
     return GL_RGB565;
 }
 
-- (double)audioSampleRate
-{
-    return _sampleRate ? _sampleRate : 48000;
-}
-
 - (NSTimeInterval)frameInterval
 {
     return _frameInterval ? _frameInterval : 59.92;
 }
 
+#pragma mark - Audio
+
+- (double)audioSampleRate
+{
+    return _sampleRate ? _sampleRate : 48000;
+}
+
 - (NSUInteger)channelCount
 {
     return 2;
+}
+
+- (NSUInteger)audioBufferCount
+{
+    return 1;
+}
+
+- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index
+{
+    [[self ringBufferAtIndex:index] read:buffer maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
+}
+
+- (NSUInteger)audioBitDepth
+{
+    return 16;
+}
+
+- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer
+{
+	return [self channelCount];
+}
+
+- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer
+{
+    // 4 frames is a complete guess
+    double frameSampleCount = [self audioSampleRateForBuffer:buffer] / [self frameInterval];
+    NSUInteger channelCount = [self channelCountForBuffer:buffer];
+    NSUInteger bytesPerSample = [self audioBitDepth] / 8;
+    NSAssert(frameSampleCount, @"frameSampleCount is 0");
+    return channelCount*bytesPerSample * frameSampleCount;
+}
+
+- (double)audioSampleRateForBuffer:(NSUInteger)buffer
+{
+    return [self audioSampleRate];
+}
+
+- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index
+{
+    if(ringBuffers[index] == nil)
+        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
+	
+    return ringBuffers[index];
 }
 
 @end
