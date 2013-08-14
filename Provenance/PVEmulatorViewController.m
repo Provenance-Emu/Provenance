@@ -10,12 +10,21 @@
 #import "PVGLViewController.h"
 #import "PVGenesisEmulatorCore.h"
 #import "OEGameAudio.h"
+#import "JSButton.h"
+#import "JSDPad.h"
 
 @interface PVEmulatorViewController ()
 
 @property (nonatomic, strong) PVGenesisEmulatorCore *genesisCore;
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
+
+@property (nonatomic, strong) JSDPad *dPad;
+@property (nonatomic, strong) JSButton *aButton;
+@property (nonatomic, strong) JSButton *bButton;
+@property (nonatomic, strong) JSButton *cButton;
+@property (nonatomic, strong) JSButton *startButton;
+
 
 @end
 
@@ -36,7 +45,16 @@
 	[super viewDidLoad];
 	
 	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
-	NSString *gamePath = [[NSBundle mainBundle] pathForResource:@"Sonic2" ofType:@"smd"];
+	NSString *gamePath = nil;
+	if (arc4random() % 2 == 0)
+	{
+		gamePath = [[NSBundle mainBundle] pathForResource:@"Sonic2" ofType:@"smd"];
+	}
+	else
+	{
+		gamePath = [[NSBundle mainBundle] pathForResource:@"Sonic3" ofType:@"smd"];
+	}
+	
 	[self.genesisCore loadFileAtPath:gamePath];
 	[NSTimer scheduledTimerWithTimeInterval:1/[self.genesisCore frameInterval]
 									 target:self
@@ -57,6 +75,17 @@
 	[[self.glViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 	
 	[self.view addSubview:[self.glViewController view]];
+	
+	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(10, [[self view] bounds].size.height - 160, 150, 150)];
+	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+	[self.view addSubview:self.dPad];
+	
+	self.aButton = [[JSButton alloc] initWithFrame:CGRectMake([[self view] bounds].size.width - 70, [[self view] bounds].size.height - 70, 60, 60)];
+	[self.aButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
+	[[self.aButton titleLabel] setText:@"A"];
+	[self.aButton setBackgroundImage:[UIImage imageNamed:@"button"]];
+	[self.aButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
+	[self.view addSubview:self.aButton];
 }
 
 - (void)runEmulator:(NSTimer *)timer

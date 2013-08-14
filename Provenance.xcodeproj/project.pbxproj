@@ -75,6 +75,31 @@
 		1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C93E17BC193B00C27644 /* OEGameAudio.m */; };
 		1A47C94117BC1BBE00C27644 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94017BC1BBE00C27644 /* CoreAudio.framework */; };
 		1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
+		1A47C94917BC2EA800C27644 /* Sonic3.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94817BC2EA800C27644 /* Sonic3.smd */; };
+		1A47C96517BC310700C27644 /* button-pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94B17BC310700C27644 /* button-pressed.png */; };
+		1A47C96617BC310700C27644 /* button-pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94C17BC310700C27644 /* button-pressed@2x.png */; };
+		1A47C96717BC310700C27644 /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94D17BC310700C27644 /* button.png */; };
+		1A47C96817BC310700C27644 /* button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94E17BC310700C27644 /* button@2x.png */; };
+		1A47C96917BC310700C27644 /* dPad-Down.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94F17BC310700C27644 /* dPad-Down.png */; };
+		1A47C96A17BC310700C27644 /* dPad-Down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95017BC310700C27644 /* dPad-Down@2x.png */; };
+		1A47C96B17BC310700C27644 /* dPad-DownLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95117BC310700C27644 /* dPad-DownLeft.png */; };
+		1A47C96C17BC310700C27644 /* dPad-DownLeft@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95217BC310700C27644 /* dPad-DownLeft@2x.png */; };
+		1A47C96D17BC310700C27644 /* dPad-DownRight.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95317BC310700C27644 /* dPad-DownRight.png */; };
+		1A47C96E17BC310700C27644 /* dPad-DownRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95417BC310700C27644 /* dPad-DownRight@2x.png */; };
+		1A47C96F17BC310700C27644 /* dPad-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95517BC310700C27644 /* dPad-Left.png */; };
+		1A47C97017BC310700C27644 /* dPad-Left@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95617BC310700C27644 /* dPad-Left@2x.png */; };
+		1A47C97117BC310700C27644 /* dPad-None.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95717BC310700C27644 /* dPad-None.png */; };
+		1A47C97217BC310700C27644 /* dPad-None@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95817BC310700C27644 /* dPad-None@2x.png */; };
+		1A47C97317BC310700C27644 /* dPad-Right.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95917BC310700C27644 /* dPad-Right.png */; };
+		1A47C97417BC310700C27644 /* dPad-Right@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95A17BC310700C27644 /* dPad-Right@2x.png */; };
+		1A47C97517BC310700C27644 /* dPad-Up.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95B17BC310700C27644 /* dPad-Up.png */; };
+		1A47C97617BC310700C27644 /* dPad-Up@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95C17BC310700C27644 /* dPad-Up@2x.png */; };
+		1A47C97717BC310700C27644 /* dPad-UpLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95D17BC310700C27644 /* dPad-UpLeft.png */; };
+		1A47C97817BC310700C27644 /* dPad-UpLeft@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95E17BC310700C27644 /* dPad-UpLeft@2x.png */; };
+		1A47C97917BC310700C27644 /* dPad-UpRight.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C95F17BC310700C27644 /* dPad-UpRight.png */; };
+		1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */; };
+		1A47C97B17BC310700C27644 /* JSButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96217BC310700C27644 /* JSButton.m */; };
+		1A47C97C17BC310700C27644 /* JSDPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96417BC310700C27644 /* JSDPad.m */; };
 		1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
@@ -234,6 +259,33 @@
 		1A47C93E17BC193B00C27644 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
 		1A47C94017BC1BBE00C27644 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1A47C94217BC1BC400C27644 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		1A47C94817BC2EA800C27644 /* Sonic3.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic3.smd; sourceTree = "<group>"; };
+		1A47C94B17BC310700C27644 /* button-pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-pressed.png"; sourceTree = "<group>"; };
+		1A47C94C17BC310700C27644 /* button-pressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-pressed@2x.png"; sourceTree = "<group>"; };
+		1A47C94D17BC310700C27644 /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
+		1A47C94E17BC310700C27644 /* button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button@2x.png"; sourceTree = "<group>"; };
+		1A47C94F17BC310700C27644 /* dPad-Down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Down.png"; sourceTree = "<group>"; };
+		1A47C95017BC310700C27644 /* dPad-Down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Down@2x.png"; sourceTree = "<group>"; };
+		1A47C95117BC310700C27644 /* dPad-DownLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-DownLeft.png"; sourceTree = "<group>"; };
+		1A47C95217BC310700C27644 /* dPad-DownLeft@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-DownLeft@2x.png"; sourceTree = "<group>"; };
+		1A47C95317BC310700C27644 /* dPad-DownRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-DownRight.png"; sourceTree = "<group>"; };
+		1A47C95417BC310700C27644 /* dPad-DownRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-DownRight@2x.png"; sourceTree = "<group>"; };
+		1A47C95517BC310700C27644 /* dPad-Left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Left.png"; sourceTree = "<group>"; };
+		1A47C95617BC310700C27644 /* dPad-Left@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Left@2x.png"; sourceTree = "<group>"; };
+		1A47C95717BC310700C27644 /* dPad-None.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-None.png"; sourceTree = "<group>"; };
+		1A47C95817BC310700C27644 /* dPad-None@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-None@2x.png"; sourceTree = "<group>"; };
+		1A47C95917BC310700C27644 /* dPad-Right.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Right.png"; sourceTree = "<group>"; };
+		1A47C95A17BC310700C27644 /* dPad-Right@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Right@2x.png"; sourceTree = "<group>"; };
+		1A47C95B17BC310700C27644 /* dPad-Up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Up.png"; sourceTree = "<group>"; };
+		1A47C95C17BC310700C27644 /* dPad-Up@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-Up@2x.png"; sourceTree = "<group>"; };
+		1A47C95D17BC310700C27644 /* dPad-UpLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-UpLeft.png"; sourceTree = "<group>"; };
+		1A47C95E17BC310700C27644 /* dPad-UpLeft@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-UpLeft@2x.png"; sourceTree = "<group>"; };
+		1A47C95F17BC310700C27644 /* dPad-UpRight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-UpRight.png"; sourceTree = "<group>"; };
+		1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dPad-UpRight@2x.png"; sourceTree = "<group>"; };
+		1A47C96117BC310700C27644 /* JSButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSButton.h; sourceTree = "<group>"; };
+		1A47C96217BC310700C27644 /* JSButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSButton.m; sourceTree = "<group>"; };
+		1A47C96317BC310700C27644 /* JSDPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDPad.h; sourceTree = "<group>"; };
+		1A47C96417BC310700C27644 /* JSDPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDPad.m; sourceTree = "<group>"; };
 		1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -313,6 +365,7 @@
 				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
+				1A47C94A17BC310700C27644 /* Controller */,
 				1A164EB617BC124A00FAC391 /* Audio */,
 				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
@@ -324,6 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */,
+				1A47C94817BC2EA800C27644 /* Sonic3.smd */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A317B2DCE4004DFFFC /* main.m */,
@@ -548,6 +602,39 @@
 			path = Provenance/GenesisCore/other;
 			sourceTree = SOURCE_ROOT;
 		};
+		1A47C94A17BC310700C27644 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1A47C96117BC310700C27644 /* JSButton.h */,
+				1A47C96217BC310700C27644 /* JSButton.m */,
+				1A47C96317BC310700C27644 /* JSDPad.h */,
+				1A47C96417BC310700C27644 /* JSDPad.m */,
+				1A47C94B17BC310700C27644 /* button-pressed.png */,
+				1A47C94C17BC310700C27644 /* button-pressed@2x.png */,
+				1A47C94D17BC310700C27644 /* button.png */,
+				1A47C94E17BC310700C27644 /* button@2x.png */,
+				1A47C94F17BC310700C27644 /* dPad-Down.png */,
+				1A47C95017BC310700C27644 /* dPad-Down@2x.png */,
+				1A47C95117BC310700C27644 /* dPad-DownLeft.png */,
+				1A47C95217BC310700C27644 /* dPad-DownLeft@2x.png */,
+				1A47C95317BC310700C27644 /* dPad-DownRight.png */,
+				1A47C95417BC310700C27644 /* dPad-DownRight@2x.png */,
+				1A47C95517BC310700C27644 /* dPad-Left.png */,
+				1A47C95617BC310700C27644 /* dPad-Left@2x.png */,
+				1A47C95717BC310700C27644 /* dPad-None.png */,
+				1A47C95817BC310700C27644 /* dPad-None@2x.png */,
+				1A47C95917BC310700C27644 /* dPad-Right.png */,
+				1A47C95A17BC310700C27644 /* dPad-Right@2x.png */,
+				1A47C95B17BC310700C27644 /* dPad-Up.png */,
+				1A47C95C17BC310700C27644 /* dPad-Up@2x.png */,
+				1A47C95D17BC310700C27644 /* dPad-UpLeft.png */,
+				1A47C95E17BC310700C27644 /* dPad-UpLeft@2x.png */,
+				1A47C95F17BC310700C27644 /* dPad-UpRight.png */,
+				1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -606,6 +693,29 @@
 				1A3D40AE17B2DCE4004DFFFC /* Default-568h@2x.png in Resources */,
 				1A3D432D17B2FE20004DFFFC /* readme.txt in Resources */,
 				1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */,
+				1A47C94917BC2EA800C27644 /* Sonic3.smd in Resources */,
+				1A47C96517BC310700C27644 /* button-pressed.png in Resources */,
+				1A47C96617BC310700C27644 /* button-pressed@2x.png in Resources */,
+				1A47C96717BC310700C27644 /* button.png in Resources */,
+				1A47C96817BC310700C27644 /* button@2x.png in Resources */,
+				1A47C96917BC310700C27644 /* dPad-Down.png in Resources */,
+				1A47C96A17BC310700C27644 /* dPad-Down@2x.png in Resources */,
+				1A47C96B17BC310700C27644 /* dPad-DownLeft.png in Resources */,
+				1A47C96C17BC310700C27644 /* dPad-DownLeft@2x.png in Resources */,
+				1A47C96D17BC310700C27644 /* dPad-DownRight.png in Resources */,
+				1A47C96E17BC310700C27644 /* dPad-DownRight@2x.png in Resources */,
+				1A47C96F17BC310700C27644 /* dPad-Left.png in Resources */,
+				1A47C97017BC310700C27644 /* dPad-Left@2x.png in Resources */,
+				1A47C97117BC310700C27644 /* dPad-None.png in Resources */,
+				1A47C97217BC310700C27644 /* dPad-None@2x.png in Resources */,
+				1A47C97317BC310700C27644 /* dPad-Right.png in Resources */,
+				1A47C97417BC310700C27644 /* dPad-Right@2x.png in Resources */,
+				1A47C97517BC310700C27644 /* dPad-Up.png in Resources */,
+				1A47C97617BC310700C27644 /* dPad-Up@2x.png in Resources */,
+				1A47C97717BC310700C27644 /* dPad-UpLeft.png in Resources */,
+				1A47C97817BC310700C27644 /* dPad-UpLeft@2x.png in Resources */,
+				1A47C97917BC310700C27644 /* dPad-UpRight.png in Resources */,
+				1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,6 +782,8 @@
 				1A164EBB17BC125900FAC391 /* OERingBuffer.m in Sources */,
 				1A164EBC17BC125900FAC391 /* TPCircularBuffer.c in Sources */,
 				1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */,
+				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
+				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
