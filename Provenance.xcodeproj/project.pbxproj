@@ -100,6 +100,12 @@
 		1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */; };
 		1A47C97B17BC310700C27644 /* JSButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96217BC310700C27644 /* JSButton.m */; };
 		1A47C97C17BC310700C27644 /* JSDPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96417BC310700C27644 /* JSDPad.m */; };
+		1AADCDA517BD69E700F53CFE /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDA417BD69E700F53CFE /* OETimingUtils.m */; };
+		1AADCDAA17BD861000F53CFE /* button-thin-pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA617BD861000F53CFE /* button-thin-pressed.png */; };
+		1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA717BD861000F53CFE /* button-thin-pressed@2x.png */; };
+		1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA817BD861000F53CFE /* button-thin.png */; };
+		1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA917BD861000F53CFE /* button-thin@2x.png */; };
+		1AADCDB017BD8F3500F53CFE /* PVGameListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDAF17BD8F3400F53CFE /* PVGameListViewController.m */; };
 		1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
@@ -286,6 +292,14 @@
 		1A47C96217BC310700C27644 /* JSButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSButton.m; sourceTree = "<group>"; };
 		1A47C96317BC310700C27644 /* JSDPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDPad.h; sourceTree = "<group>"; };
 		1A47C96417BC310700C27644 /* JSDPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDPad.m; sourceTree = "<group>"; };
+		1AADCDA317BD69E700F53CFE /* OETimingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OETimingUtils.h; sourceTree = "<group>"; };
+		1AADCDA417BD69E700F53CFE /* OETimingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OETimingUtils.m; sourceTree = "<group>"; };
+		1AADCDA617BD861000F53CFE /* button-thin-pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin-pressed.png"; sourceTree = "<group>"; };
+		1AADCDA717BD861000F53CFE /* button-thin-pressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin-pressed@2x.png"; sourceTree = "<group>"; };
+		1AADCDA817BD861000F53CFE /* button-thin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin.png"; sourceTree = "<group>"; };
+		1AADCDA917BD861000F53CFE /* button-thin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin@2x.png"; sourceTree = "<group>"; };
+		1AADCDAE17BD8F3400F53CFE /* PVGameListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameListViewController.h; sourceTree = "<group>"; };
+		1AADCDAF17BD8F3400F53CFE /* PVGameListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameListViewController.m; sourceTree = "<group>"; };
 		1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -359,12 +373,16 @@
 			children = (
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
+				1AADCDAE17BD8F3400F53CFE /* PVGameListViewController.h */,
+				1AADCDAF17BD8F3400F53CFE /* PVGameListViewController.m */,
 				1A3D431A17B2E0BC004DFFFC /* PVGenesisEmulatorCore.h */,
 				1A3D431B17B2E0BC004DFFFC /* PVGenesisEmulatorCore.m */,
 				1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */,
 				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
+				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
+				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A164EB617BC124A00FAC391 /* Audio */,
 				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
@@ -609,10 +627,14 @@
 				1A47C96217BC310700C27644 /* JSButton.m */,
 				1A47C96317BC310700C27644 /* JSDPad.h */,
 				1A47C96417BC310700C27644 /* JSDPad.m */,
-				1A47C94B17BC310700C27644 /* button-pressed.png */,
-				1A47C94C17BC310700C27644 /* button-pressed@2x.png */,
 				1A47C94D17BC310700C27644 /* button.png */,
 				1A47C94E17BC310700C27644 /* button@2x.png */,
+				1A47C94B17BC310700C27644 /* button-pressed.png */,
+				1A47C94C17BC310700C27644 /* button-pressed@2x.png */,
+				1AADCDA817BD861000F53CFE /* button-thin.png */,
+				1AADCDA917BD861000F53CFE /* button-thin@2x.png */,
+				1AADCDA617BD861000F53CFE /* button-thin-pressed.png */,
+				1AADCDA717BD861000F53CFE /* button-thin-pressed@2x.png */,
 				1A47C94F17BC310700C27644 /* dPad-Down.png */,
 				1A47C95017BC310700C27644 /* dPad-Down@2x.png */,
 				1A47C95117BC310700C27644 /* dPad-DownLeft.png */,
@@ -716,6 +738,10 @@
 				1A47C97817BC310700C27644 /* dPad-UpLeft@2x.png in Resources */,
 				1A47C97917BC310700C27644 /* dPad-UpRight.png in Resources */,
 				1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */,
+				1AADCDAA17BD861000F53CFE /* button-thin-pressed.png in Resources */,
+				1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */,
+				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
+				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +810,8 @@
 				1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
+				1AADCDA517BD69E700F53CFE /* OETimingUtils.m in Sources */,
+				1AADCDB017BD8F3500F53CFE /* PVGameListViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,7 +918,6 @@
 					"-DLSB_FIRST",
 					"-DHAVE_ZLIB",
 					"-DUSE_16BPP_RENDERING",
-					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";

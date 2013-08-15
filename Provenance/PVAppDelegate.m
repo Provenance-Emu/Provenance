@@ -7,7 +7,7 @@
 //
 
 #import "PVAppDelegate.h"
-#import "PVEmulatorViewController.h"
+#import "PVGameListViewController.h"
 
 @interface PVAppDelegate ()
 
@@ -22,8 +22,10 @@
 	self.window.backgroundColor = [UIColor whiteColor];
 	[self.window makeKeyAndVisible];
 	
-	PVEmulatorViewController *viewController = [[PVEmulatorViewController alloc] init];
-	[self.window setRootViewController:viewController];
+	PVGameListViewController *gamesListViewController = [[PVGameListViewController alloc] initWithStyle:UITableViewStylePlain];
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:gamesListViewController];
+	
+	[self.window setRootViewController:navController];
 	
 	return YES;
 }

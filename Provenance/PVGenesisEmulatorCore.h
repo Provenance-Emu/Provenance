@@ -8,23 +8,43 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, PVGenesisButton)
+{
+    PVGenesisButtonUp,
+    PVGenesisButtonDown,
+    PVGenesisButtonLeft,
+    PVGenesisButtonRight,
+    PVGenesisButtonA,
+    PVGenesisButtonB,
+    PVGenesisButtonC,
+    PVGenesisButtonX,
+    PVGenesisButtonY,
+    PVGenesisButtonZ,
+    PVGenesisButtonStart,
+    PVGenesisButtonMode,
+    PVGenesisButtonCount,
+};
+
 @class OERingBuffer;
 
 @interface PVGenesisEmulatorCore : NSObject
 
+- (void)startEmulation;
+- (void)resetEmulation;
+- (void)setPauseEmulation:(BOOL)flag;
+- (void)stopEmulation;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
+
 - (uint16_t *)videoBuffer;
 - (CGRect)screenRect;
 - (CGSize)bufferSize;
-- (void)setupEmulation;
-- (void)resetEmulation;
-- (void)stopEmulation;
 - (GLenum)pixelFormat;
 - (GLenum)pixelType;
 - (GLenum)internalPixelFormat;
-- (double)audioSampleRate;
 - (NSTimeInterval)frameInterval;
+
+- (double)audioSampleRate;
 - (NSUInteger)channelCount;
 - (NSUInteger)audioBufferCount;
 - (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
@@ -33,5 +53,8 @@
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
+
+- (void)pushGenesisButton:(PVGenesisButton)button;
+- (void)releaseGenesisButton:(PVGenesisButton)button;
 
 @end

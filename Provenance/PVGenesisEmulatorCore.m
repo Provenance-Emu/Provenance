@@ -9,6 +9,7 @@
 #import "PVGenesisEmulatorCore.h"
 #import "libretro.h"
 #import "OERingBuffer.h"
+#import "OETimingUtils.h"
 #import <OpenGLES/EAGL.h>
 
 @interface PVGenesisEmulatorCore ()
@@ -17,10 +18,24 @@
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
 	NSString *_romName;
-	NSTimeInterval _frameInterval;
 	
 	OERingBuffer __strong **ringBuffers;
 	double _sampleRate;
+	
+	NSThread *emulationThread;
+	NSTimeInterval gameInterval;
+	NSTimeInterval _frameInterval;
+	
+	NSUInteger frameSkip;
+    NSUInteger frameCounter;
+    NSUInteger autoFrameSkipLastTime;
+    NSUInteger frameskipadjust;
+	
+	BOOL frameFinished;
+    BOOL willSkipFrame;
+	
+    BOOL isRunning;
+    BOOL shouldStop;
 }
 
 @end
@@ -122,13 +137,42 @@ static bool environment_callback(unsigned cmd, void *data)
 	free(_videoBuffer);
 }
 
-- (void)setupEmulation
+#pragma mark - Execution
+
+- (void)startEmulation
 {
+	if(!isRunning)
+	{
+		isRunning  = YES;
+		shouldStop = NO;
+		
+		//[self executeFrame];
+		// The selector is performed after a delay to let the application loop finish,
+		// afterwards, the GameCore's runloop takes over and only stops when the whole helper stops.
+		
+		emulationThread = [[NSThread alloc] initWithTarget:self
+												  selector:@selector(frameRefreshThread:)
+													object:nil];
+		[emulationThread start];
+		
+		NSLog(@"Starting thread");
+	}
 }
 
 - (void)resetEmulation
 {
 	retro_reset();
+}
+
+- (void)setPauseEmulation:(BOOL)flag
+{
+    if(flag) isRunning = NO;
+    else     isRunning = YES;
+}
+
+- (BOOL)isEmulationPaused
+{
+    return !isRunning;
 }
 
 - (void)stopEmulation
@@ -152,6 +196,42 @@ static bool environment_callback(unsigned cmd, void *data)
 	
 	retro_unload_game();
 	retro_deinit();
+	
+	shouldStop = YES;
+    isRunning  = NO;
+}
+
+- (void)frameRefreshThread:(id)anArgument
+{
+    gameInterval = 1./[self frameInterval];
+    NSTimeInterval gameTime = OEMonotonicTime();
+	
+    frameFinished = YES;
+    willSkipFrame = NO;
+    frameSkip = 0;
+		
+    NSLog(@"main thread: %@", ([NSThread isMainThread]) ? @"YES" : @"NO");
+	
+    OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
+	
+    while(!shouldStop)
+    {
+        gameTime += gameInterval;
+        @autoreleasepool
+        {			
+            willSkipFrame = (frameCounter != frameSkip);
+			
+            if(isRunning)
+            {
+				[self executeFrame];
+            }
+			
+            if(frameCounter >= frameSkip) frameCounter = 0;
+            else                          frameCounter++;
+        }
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+        OEWaitUntil(gameTime);
+    }
 }
 
 - (void)executeFrame
@@ -315,6 +395,18 @@ static bool environment_callback(unsigned cmd, void *data)
         ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
 	
     return ringBuffers[index];
+}
+
+#pragma mark - Input
+
+- (void)pushGenesisButton:(PVGenesisButton)button
+{
+	_pad[0][_GenesisEmulatorValues[button]] = 1;
+}
+
+- (void)releaseGenesisButton:(PVGenesisButton)button
+{
+	_pad[0][_GenesisEmulatorValues[button]] = 0;
 }
 
 @end

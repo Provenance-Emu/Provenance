@@ -7,6 +7,7 @@
 //
 
 #import "PVGLViewController.h"
+#import "PVGenesisEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()
@@ -34,6 +35,15 @@
 	glDeleteTextures(1, &texture);
 }
 
+- (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore
+{
+	if ((self = [super init]))
+	{
+		self.genesisCore = genesisCore;
+	}
+	
+	return self;
+}
 
 - (void)viewDidLoad
 {
@@ -77,7 +87,7 @@
 	
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.bufferSize.width, self.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.videoBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.genesisCore.bufferSize.width, self.genesisCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.genesisCore.videoBuffer);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -90,7 +100,7 @@
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.bufferSize.width, self.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.videoBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.genesisCore.bufferSize.width, self.genesisCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.genesisCore.videoBuffer);
 	
 	CGRect viewBound = [self.view bounds];
     CGSize viewSize = viewBound.size;

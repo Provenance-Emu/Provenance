@@ -8,10 +8,12 @@
 
 #import <GLKit/GLKit.h>
 
+@class PVGenesisEmulatorCore;
+
 @interface PVGLViewController : GLKViewController
 
-@property (nonatomic, assign) uint16_t *videoBuffer;
-@property (nonatomic, assign) NSTimeInterval frameInterval;
-@property (nonatomic, assign) CGSize bufferSize;
+@property (nonatomic, strong) PVGenesisEmulatorCore *genesisCore;
+
+- (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore;
 
 @end

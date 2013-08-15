@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JSDPad.h"
+#import "JSButton.h"
 
-@interface PVEmulatorViewController : UIViewController
+@interface PVEmulatorViewController : UIViewController <JSDPadDelegate, JSButtonDelegate>
+
+- (instancetype)initWithROMPath:(NSString *)path;
 
 @end
