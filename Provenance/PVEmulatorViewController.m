@@ -12,6 +12,8 @@
 #import "OEGameAudio.h"
 #import "JSButton.h"
 #import "JSDPad.h"
+#import "UIActionSheet+BlockAdditions.h"
+#import "PVButtonGroupOverlayView.h"
 
 @interface PVEmulatorViewController ()
 
@@ -26,6 +28,8 @@
 @property (nonatomic, strong) JSButton *cButton;
 @property (nonatomic, strong) JSButton *startButton;
 
+@property (nonatomic, strong) JSButton *menuButton;
+
 @end
 
 @implementation PVEmulatorViewController
@@ -38,6 +42,17 @@
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+	self.genesisCore = nil;
+	self.gameAudio = nil;
+	self.glViewController = nil;
+	self.dPad = nil;
+	self.aButton = nil;
+	self.startButton = nil;
+	self.menuButton = nil;
 }
 
 - (void)viewDidLoad
@@ -67,14 +82,37 @@
 	[self.dPad setAlpha:0.3];
 	[self.view addSubview:self.dPad];
 	
-	self.aButton = [[JSButton alloc] initWithFrame:CGRectMake([[self view] bounds].size.width - 90, [[self view] bounds].size.height - 90, 80, 80)];
-	[self.aButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin];
+	UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(([self.view bounds].size.width - 212) - 20, ([self.view bounds].size.height - 92) - 20, 212, 92)];
+	[buttonContainer setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
+	[self.view addSubview:buttonContainer];
+	
+	self.aButton = [[JSButton alloc] initWithFrame:CGRectMake(8, 24, 60, 60)];
 	[[self.aButton titleLabel] setText:@"A"];
 	[self.aButton setBackgroundImage:[UIImage imageNamed:@"button"]];
 	[self.aButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.aButton setDelegate:self];
 	[self.aButton setAlpha:0.3];
-	[self.view addSubview:self.aButton];
+	[buttonContainer addSubview:self.aButton];
+	
+	self.bButton = [[JSButton alloc] initWithFrame:CGRectMake(76, 16, 60, 60)];
+	[[self.bButton titleLabel] setText:@"B"];
+	[self.bButton setBackgroundImage:[UIImage imageNamed:@"button"]];
+	[self.bButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
+	[self.bButton setDelegate:self];
+	[self.bButton setAlpha:0.3];
+	[buttonContainer addSubview:self.bButton];
+	
+	self.cButton = [[JSButton alloc] initWithFrame:CGRectMake(144, 8, 60, 60)];
+	[[self.cButton titleLabel] setText:@"C"];
+	[self.cButton setBackgroundImage:[UIImage imageNamed:@"button"]];
+	[self.cButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
+	[self.cButton setDelegate:self];
+	[self.cButton setAlpha:0.3];
+	[buttonContainer addSubview:self.cButton];
+	
+	PVButtonGroupOverlayView *buttonGroup = [[PVButtonGroupOverlayView alloc] initWithButtons:@[self.aButton, self.bButton, self.cButton]];
+	[buttonGroup setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+	[buttonContainer addSubview:buttonGroup];
 	
 	self.startButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.view bounds].size.height - 32, 62, 22)];
 	[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
@@ -86,6 +124,24 @@
 	[self.startButton setDelegate:self];
 	[self.startButton setAlpha:0.3];
 	[self.view addSubview:self.startButton];
+	
+	self.menuButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
+	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+	[self.menuButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+	[[self.menuButton titleLabel] setText:@"Menu"];
+	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
+	[self.menuButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+	[self.menuButton setDelegate:self];
+	[self.menuButton setAlpha:0.3];
+	[self.view addSubview:self.menuButton];
+	
+	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+	{
+		[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
+		[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+		[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+	}
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -103,6 +159,8 @@
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
 							 [[self.glViewController view] setFrame:CGRectMake([self.view bounds].size.width - 320, 0, 320, 224)];
+							 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
+							 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 						 }
 						 completion:^(BOOL finished) {
 						 }];
@@ -114,15 +172,25 @@
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
 							 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
+							 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+							 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 						 }
 						 completion:^(BOOL finished) {
 						 }];
 	}
 }
 
-- (void)didReceiveMemoryWarning
+- (void)showMenu
 {
-	[super didReceiveMemoryWarning];
+	__block PVEmulatorViewController *weakSelf = self;
+	
+	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	[actionsheet PV_addDestructiveButtonWithTitle:@"Quit" action:^{
+		[weakSelf.gameAudio stopAudio];
+		[weakSelf.genesisCore stopEmulation];
+		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
+	}];
+	[actionsheet showInView:self.view];
 }
 
 #pragma mark - JSDPadDelegate
@@ -188,6 +256,14 @@
 	{
 		[self.genesisCore pushGenesisButton:PVGenesisButtonA];
 	}
+	else if ([button isEqual:self.bButton])
+	{
+		[self.genesisCore pushGenesisButton:PVGenesisButtonB];
+	}
+	else if ([button isEqual:self.cButton])
+	{
+		[self.genesisCore pushGenesisButton:PVGenesisButtonC];
+	}
 }
 
 - (void)buttonReleased:(JSButton *)button
@@ -199,6 +275,18 @@
 	else if ([button isEqual:self.aButton])
 	{
 		[self.genesisCore releaseGenesisButton:PVGenesisButtonA];
+	}
+	else if ([button isEqual:self.bButton])
+	{
+		[self.genesisCore releaseGenesisButton:PVGenesisButtonB];
+	}
+	else if ([button isEqual:self.cButton])
+	{
+		[self.genesisCore releaseGenesisButton:PVGenesisButtonC];
+	}
+	else if ([button isEqual:self.menuButton])
+	{
+		[self showMenu];
 	}
 }
 

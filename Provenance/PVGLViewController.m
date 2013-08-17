@@ -33,6 +33,9 @@
 - (void)dealloc
 {
 	glDeleteTextures(1, &texture);
+	self.effect = nil;
+	self.glContext = nil;
+	self.genesisCore = nil;
 }
 
 - (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore

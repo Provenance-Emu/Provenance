@@ -106,7 +106,11 @@
 		1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA817BD861000F53CFE /* button-thin.png */; };
 		1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA917BD861000F53CFE /* button-thin@2x.png */; };
 		1AADCDB017BD8F3500F53CFE /* PVGameListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDAF17BD8F3400F53CFE /* PVGameListViewController.m */; };
+		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
+		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
+		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
 		1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */; };
+		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -300,7 +304,15 @@
 		1AADCDA917BD861000F53CFE /* button-thin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin@2x.png"; sourceTree = "<group>"; };
 		1AADCDAE17BD8F3400F53CFE /* PVGameListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameListViewController.h; sourceTree = "<group>"; };
 		1AADCDAF17BD8F3400F53CFE /* PVGameListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameListViewController.m; sourceTree = "<group>"; };
+		1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+BlockAdditions.h"; sourceTree = "<group>"; };
+		1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+BlockAdditions.m"; sourceTree = "<group>"; };
+		1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameAdditions.h"; sourceTree = "<group>"; };
+		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
+		1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+BlockAdditions.h"; sourceTree = "<group>"; };
+		1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+BlockAdditions.m"; sourceTree = "<group>"; };
 		1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
+		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
+		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -383,6 +395,7 @@
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
 				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
+				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A164EB617BC124A00FAC391 /* Audio */,
 				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
@@ -623,6 +636,8 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
+				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
 				1A47C96117BC310700C27644 /* JSButton.h */,
 				1A47C96217BC310700C27644 /* JSButton.m */,
 				1A47C96317BC310700C27644 /* JSDPad.h */,
@@ -655,6 +670,19 @@
 				1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		1AADCDB117BD997500F53CFE /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */,
+				1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */,
+				1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */,
+				1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */,
+				1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */,
+				1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */,
+			);
+			path = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -812,6 +840,10 @@
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
 				1AADCDA517BD69E700F53CFE /* OETimingUtils.m in Sources */,
 				1AADCDB017BD8F3500F53CFE /* PVGameListViewController.m in Sources */,
+				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
+				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
+				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
+				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

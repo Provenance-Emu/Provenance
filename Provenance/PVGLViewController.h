@@ -12,7 +12,7 @@
 
 @interface PVGLViewController : GLKViewController
 
-@property (nonatomic, strong) PVGenesisEmulatorCore *genesisCore;
+@property (nonatomic, weak) PVGenesisEmulatorCore *genesisCore;
 
 - (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore;
 

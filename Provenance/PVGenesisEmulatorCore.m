@@ -41,35 +41,48 @@
 @end
 
 NSUInteger _GenesisEmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVICE_ID_JOYPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_Y, RETRO_DEVICE_ID_JOYPAD_B, RETRO_DEVICE_ID_JOYPAD_A, RETRO_DEVICE_ID_JOYPAD_L, RETRO_DEVICE_ID_JOYPAD_X, RETRO_DEVICE_ID_JOYPAD_R, RETRO_DEVICE_ID_JOYPAD_START, RETRO_DEVICE_ID_JOYPAD_SELECT };
-PVGenesisEmulatorCore *_current;
+__weak PVGenesisEmulatorCore *_current;
 
 @implementation PVGenesisEmulatorCore
 
 static void audio_callback(int16_t left, int16_t right)
 {
-	[[_current ringBufferAtIndex:0] write:&left maxLength:2];
-	[[_current ringBufferAtIndex:0] write:&right maxLength:2];
+	__strong PVGenesisEmulatorCore *strongCurrent = _current;
+	
+	[[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
+	[[strongCurrent ringBufferAtIndex:0] write:&right maxLength:2];
+	
+	strongCurrent = nil;
 }
 
 static size_t audio_batch_callback(const int16_t *data, size_t frames)
 {
-	[[_current ringBufferAtIndex:0] write:data maxLength:frames << 2];
+	__strong PVGenesisEmulatorCore *strongCurrent = _current;
+	
+	[[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
+	
+	strongCurrent = nil;
+	
 	return frames;
 }
 
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
-    _current->_videoWidth  = width;
-    _current->_videoHeight = height;
+	__strong PVGenesisEmulatorCore *strongCurrent = _current;
+	
+    strongCurrent->_videoWidth  = width;
+    strongCurrent->_videoHeight = height;
     
     dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     dispatch_apply(height, the_queue, ^(size_t y){
         const uint16_t *src = (uint16_t*)data + y * (pitch >> 1); //pitch is in bytes not pixels
-        uint16_t *dst = _current->_videoBuffer + y * 320;
+        uint16_t *dst = strongCurrent->_videoBuffer + y * 320;
         
         memcpy(dst, src, sizeof(uint16_t)*width);
     });
+	
+	strongCurrent = nil;
 }
 
 static void input_poll_callback(void)
@@ -81,12 +94,16 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 {
 	//NSLog(@"polled input: port: %d device: %d id: %d", port, device, id);
 	
+	__strong PVGenesisEmulatorCore *strongCurrent = _current;
+	
 	if (port == 0 & device == RETRO_DEVICE_JOYPAD) {
-		return _current->_pad[0][_id];
+		return strongCurrent->_pad[0][_id];
 	}
 	else if(port == 1 & device == RETRO_DEVICE_JOYPAD) {
-		return _current->_pad[1][_id];
+		return strongCurrent->_pad[1][_id];
 	}
+	
+	strongCurrent = nil;
 	
 	return 0;
 }
@@ -134,6 +151,10 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)dealloc
 {
+	for(NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
+        ringBuffers[i] = nil;
+	
+    free(ringBuffers);
 	free(_videoBuffer);
 }
 
@@ -150,10 +171,11 @@ static bool environment_callback(unsigned cmd, void *data)
 		// The selector is performed after a delay to let the application loop finish,
 		// afterwards, the GameCore's runloop takes over and only stops when the whole helper stops.
 		
-		emulationThread = [[NSThread alloc] initWithTarget:self
-												  selector:@selector(frameRefreshThread:)
-													object:nil];
-		[emulationThread start];
+//		[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
+//		emulationThread = [[NSThread alloc] initWithTarget:self
+//												  selector:@selector(frameRefreshThread:)
+//													object:nil];
+//		[emulationThread start];
 		
 		NSLog(@"Starting thread");
 	}
@@ -177,28 +199,15 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)stopEmulation
 {
-	//    NSString *path = _romName;
-	//    NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-    
-	//    NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
-	//
-	//    if([batterySavesDirectory length] != 0)
-	//    {
-	//
-	//        [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-	//
-	//        NSLog(@"Trying to save SRAM");
-	//
-	//        NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-	//
-	//        writeSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-	//    }
-	
-	retro_unload_game();
-	retro_deinit();
-	
 	shouldStop = YES;
     isRunning  = NO;
+	
+	double delayInSeconds = 0.1;
+	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+		retro_unload_game();
+		retro_deinit();
+	});
 }
 
 - (void)frameRefreshThread:(id)anArgument
@@ -213,7 +222,6 @@ static bool environment_callback(unsigned cmd, void *data)
     NSLog(@"main thread: %@", ([NSThread isMainThread]) ? @"YES" : @"NO");
 	
     OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
-	
     while(!shouldStop)
     {
         gameTime += gameInterval;
@@ -229,7 +237,7 @@ static bool environment_callback(unsigned cmd, void *data)
             if(frameCounter >= frameSkip) frameCounter = 0;
             else                          frameCounter++;
         }
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+        //CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
         OEWaitUntil(gameTime);
     }
 }
@@ -290,8 +298,8 @@ static bool environment_callback(unsigned cmd, void *data)
         struct retro_system_av_info info;
         retro_get_system_av_info(&info);
         
-        _current->_frameInterval = info.timing.fps;
-        _current->_sampleRate = info.timing.sample_rate;
+        _frameInterval = info.timing.fps;
+        _sampleRate = info.timing.sample_rate;
         
         //retro_set_controller_port_device(SNES_PORT_1, RETRO_DEVICE_JOYPAD);
         
@@ -314,7 +322,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (CGRect)screenRect
 {
-	return CGRectMake(0, 0, _current->_videoWidth, _current->_videoHeight);
+	return CGRectMake(0, 0, _videoWidth, _videoHeight);
 }
 
 - (CGSize)bufferSize
