@@ -72,6 +72,7 @@
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D432D17B2FE20004DFFFC /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D419817B2DD8C004DFFFC /* readme.txt */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
+		1A43F86E17BF1D4900DB133D /* Sonic.bin in Resources */ = {isa = PBXBuildFile; fileRef = 1A43F86D17BF1D4900DB133D /* Sonic.bin */; };
 		1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C93E17BC193B00C27644 /* OEGameAudio.m */; };
 		1A47C94117BC1BBE00C27644 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94017BC1BBE00C27644 /* CoreAudio.framework */; };
 		1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
@@ -265,6 +266,7 @@
 		1A3D432B17B2FDFE004DFFFC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1A3D433917B30BA2004DFFFC /* PVGLViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGLViewController.h; sourceTree = "<group>"; };
 		1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGLViewController.m; sourceTree = "<group>"; };
+		1A43F86D17BF1D4900DB133D /* Sonic.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = Sonic.bin; sourceTree = "<group>"; };
 		1A47C93D17BC193B00C27644 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
 		1A47C93E17BC193B00C27644 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
 		1A47C94017BC1BBE00C27644 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
@@ -407,6 +409,7 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1A43F86D17BF1D4900DB133D /* Sonic.bin */,
 				1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */,
 				1A47C94817BC2EA800C27644 /* Sonic3.smd */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
@@ -770,6 +773,7 @@
 				1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */,
 				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
 				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
+				1A43F86E17BF1D4900DB133D /* Sonic.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

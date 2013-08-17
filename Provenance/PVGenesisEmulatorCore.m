@@ -167,17 +167,7 @@ static bool environment_callback(unsigned cmd, void *data)
 		isRunning  = YES;
 		shouldStop = NO;
 		
-		//[self executeFrame];
-		// The selector is performed after a delay to let the application loop finish,
-		// afterwards, the GameCore's runloop takes over and only stops when the whole helper stops.
-		
-//		[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
-//		emulationThread = [[NSThread alloc] initWithTarget:self
-//												  selector:@selector(frameRefreshThread:)
-//													object:nil];
-//		[emulationThread start];
-		
-		NSLog(@"Starting thread");
+		[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 	}
 }
 
@@ -218,8 +208,6 @@ static bool environment_callback(unsigned cmd, void *data)
     frameFinished = YES;
     willSkipFrame = NO;
     frameSkip = 0;
-		
-    NSLog(@"main thread: %@", ([NSThread isMainThread]) ? @"YES" : @"NO");
 	
     OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
     while(!shouldStop)
@@ -237,7 +225,7 @@ static bool environment_callback(unsigned cmd, void *data)
             if(frameCounter >= frameSkip) frameCounter = 0;
             else                          frameCounter++;
         }
-        //CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+		
         OEWaitUntil(gameTime);
     }
 }

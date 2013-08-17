@@ -41,7 +41,8 @@
 	NSArray *bundleContents = [fileManager contentsOfDirectoryAtPath:bundlePath error:NULL];
 	for (NSString *filePath in bundleContents)
 	{
-		if ([filePath hasSuffix:@".smd"])
+		if ([filePath hasSuffix:@".smd"] ||
+			[filePath hasSuffix:@".bin"])
 		{
 			[tempGames addObject:[bundlePath stringByAppendingPathComponent:filePath]];
 		}
