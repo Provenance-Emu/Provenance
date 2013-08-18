@@ -61,6 +61,15 @@
 	
 	self.title = [self.romPath lastPathComponent];
 	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(appDidBecomeActive:)
+												 name:UIApplicationDidBecomeActiveNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(appWillResignActive:)
+												 name:UIApplicationWillResignActiveNotification
+											   object:nil];
+	
 	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
 	
 	[self.genesisCore loadFileAtPath:self.romPath];
@@ -76,13 +85,13 @@
 	
 	[self.view addSubview:[self.glViewController view]];
 	
-	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(10, [[self view] bounds].size.height - 160, 150, 150)];
+	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(5, [[self view] bounds].size.height - 185, 180, 180)];
 	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 	[self.dPad setDelegate:self];
 	[self.dPad setAlpha:0.3];
 	[self.view addSubview:self.dPad];
 	
-	UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(([self.view bounds].size.width - 212) - 20, ([self.view bounds].size.height - 92) - 20, 212, 92)];
+	UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(([self.view bounds].size.width - 212) - 5, ([self.view bounds].size.height - 92) - 5, 212, 92)];
 	[buttonContainer setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
 	[self.view addSubview:buttonContainer];
 	
@@ -180,15 +189,35 @@
 	}
 }
 
+- (void)appDidBecomeActive:(NSNotification *)note
+{
+	[self.genesisCore setPauseEmulation:NO];
+}
+
+- (void)appWillResignActive:(NSNotification *)note
+{
+	[self.genesisCore setPauseEmulation:YES];
+}
+
 - (void)showMenu
 {
 	__block PVEmulatorViewController *weakSelf = self;
 	
+	[self.genesisCore setPauseEmulation:YES];
+	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
-	[actionsheet PV_addDestructiveButtonWithTitle:@"Quit" action:^{
+	
+	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
+		[self.genesisCore setPauseEmulation:NO];
+		[self.genesisCore resetEmulation];
+	}];
+	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
 		[weakSelf.gameAudio stopAudio];
 		[weakSelf.genesisCore stopEmulation];
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
+	}];
+	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
+		[self.genesisCore setPauseEmulation:NO];
 	}];
 	[actionsheet showInView:self.view];
 }

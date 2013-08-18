@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
 - (void)startEmulation;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag;
+- (BOOL)isEmulationPaused;
 - (void)stopEmulation;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
