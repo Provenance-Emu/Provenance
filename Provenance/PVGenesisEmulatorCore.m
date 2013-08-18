@@ -405,4 +405,46 @@ static bool environment_callback(unsigned cmd, void *data)
 	_pad[0][_GenesisEmulatorValues[button]] = 0;
 }
 
+#pragma mark - State Saving
+
+- (BOOL)saveStateToFileAtPath:(NSString *)path
+{
+	int serial_size = retro_serialize_size();
+    uint8_t *serial_data = (uint8_t *) malloc(serial_size);
+    
+    retro_serialize(serial_data, serial_size);
+	
+	NSError *error = nil;
+	NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
+	free(serial_data);
+	[saveStateData writeToFile:path
+					   options:NSDataWritingAtomic
+						 error:&error];
+	if (error)
+	{
+		NSLog(@"Error saving state: %@", [error localizedDescription]);
+		return NO;
+	}
+	
+	return YES;
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)path
+{
+	NSData *saveStateData = [NSData dataWithContentsOfFile:path];
+	if (!saveStateData)
+	{
+		NSLog(@"Unable to load save state from path: %@", path);
+		return NO;
+	}
+	
+	if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
+	{
+		NSLog(@"Unable to load save state");
+		return NO;
+	}
+	
+	return YES;
+}
+
 @end
