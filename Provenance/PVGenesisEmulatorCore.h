@@ -29,6 +29,8 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
 
 @interface PVGenesisEmulatorCore : NSObject
 
+@property (nonatomic, copy) NSString *batterySavesPath;
+
 - (void)startEmulation;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag;
@@ -57,5 +59,8 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
 
 - (void)pushGenesisButton:(PVGenesisButton)button;
 - (void)releaseGenesisButton:(PVGenesisButton)button;
+
+- (BOOL)saveStateToFileAtPath:(NSString *)path;
+- (BOOL)loadStateFromFileAtPath:(NSString *)path;
 
 @end

@@ -13,7 +13,11 @@
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
+#import "UIAlertView+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
+
+NSString * const PVAutoLoadSaveStateKey = @"PVAutoLoadSaveStateKey";
+NSString * const PVAskToLoadSaveStateKey = @"PVAskToLoadSaveStateKey";
 
 @interface PVEmulatorViewController ()
 
@@ -32,12 +36,27 @@
 
 @end
 
+static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewController;
+
 @implementation PVEmulatorViewController
+
+void uncaughtExceptionHandler(NSException *exception)
+{
+	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
+	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+	[_staticEmulatorViewController.genesisCore saveStateToFileAtPath:autoSavePath];
+}
+
++ (void)initialize
+{
+	NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+}
 
 - (instancetype)initWithROMPath:(NSString *)path
 {
 	if ((self = [super init]))
 	{
+		_staticEmulatorViewController = self;
 		self.romPath = path;
 	}
 	
@@ -46,6 +65,9 @@
 
 - (void)dealloc
 {
+	NSSetUncaughtExceptionHandler(NULL);
+	_staticEmulatorViewController = nil;
+	
 	self.genesisCore = nil;
 	self.gameAudio = nil;
 	self.glViewController = nil;
@@ -60,6 +82,8 @@
 	[super viewDidLoad];
 	
 	self.title = [self.romPath lastPathComponent];
+	
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{PVAskToLoadSaveStateKey : @(YES), PVAutoLoadSaveStateKey : @(NO)}];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appDidBecomeActive:)
@@ -151,6 +175,57 @@
 		[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
 		[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 	}
+	
+	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
+	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
+	{
+		BOOL shouldAskToLoadSaveState = [[NSUserDefaults standardUserDefaults] boolForKey:PVAskToLoadSaveStateKey];
+		BOOL shouldAutoLoadSaveState = [[NSUserDefaults standardUserDefaults] boolForKey:PVAutoLoadSaveStateKey];
+		
+		__weak PVEmulatorViewController *weakSelf = self;
+		
+		if (shouldAutoLoadSaveState)
+		{
+			[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+		}
+		else if (shouldAskToLoadSaveState)
+		{
+			[self.genesisCore setPauseEmulation:YES];
+			
+			UIAlertView *alert = [[UIAlertView alloc] init];
+			[alert setTitle:@"Autosave file detected"];
+			[alert setMessage:@"Would you like to load it?"];\
+			[alert addButtonWithTitle:@"Yes"];
+			[alert addButtonWithTitle:@"Yes, and stop asking"];
+			[alert addButtonWithTitle:@"No"];
+			[alert addButtonWithTitle:@"No, and stop asking"];
+			[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+				if (buttonIndex == 0)
+				{
+					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+				}
+				else if (buttonIndex == 1)
+				{
+					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+					[[NSUserDefaults standardUserDefaults] setBool:YES forKey:PVAutoLoadSaveStateKey];
+					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAskToLoadSaveStateKey];
+				}
+				else if (buttonIndex == 2)
+				{
+					// just do nothing if they say no...
+				}
+				else if (buttonIndex == 3)
+				{
+					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAutoLoadSaveStateKey];
+					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAskToLoadSaveStateKey];
+				}
+			}];
+			[alert show];
+		}
+	}
+	
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -207,19 +282,153 @@
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	
+	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
+		[weakSelf performSelector:@selector(showSaveStateMenu)
+					   withObject:nil
+					   afterDelay:0.1];
+	}];
+	[actionsheet PV_addButtonWithTitle:@"Load State" action:^{
+		[weakSelf performSelector:@selector(showLoadStateMenu)
+					   withObject:nil
+					   afterDelay:0.1];
+	}];
 	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
-		[self.genesisCore setPauseEmulation:NO];
-		[self.genesisCore resetEmulation];
+		NSString *saveStatePath = [self saveStatePath];
+		NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+		[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		
+		[weakSelf.genesisCore setPauseEmulation:NO];
+		[weakSelf.genesisCore resetEmulation];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
+		NSString *saveStatePath = [self saveStatePath];
+		NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+		[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		
 		[weakSelf.gameAudio stopAudio];
 		[weakSelf.genesisCore stopEmulation];
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
-		[self.genesisCore setPauseEmulation:NO];
+		[weakSelf.genesisCore setPauseEmulation:NO];
 	}];
 	[actionsheet showInView:self.view];
+}
+
+- (void)showSaveStateMenu
+{
+	__block PVEmulatorViewController *weakSelf = self;
+	
+	NSString *saveStatePath = [self saveStatePath];
+	NSString *infoPath = [saveStatePath stringByAppendingPathComponent:@"info.plist"];
+	
+	NSMutableArray *info = [NSMutableArray arrayWithContentsOfFile:infoPath];
+	if (!info)
+	{
+		info = [NSMutableArray array];
+		[info addObjectsFromArray:@[@"Slot 1 (empty)",
+									@"Slot 2 (empty)",
+									@"Slot 3 (empty)",
+									@"Slot 4 (empty)",
+									@"Slot 5 (empty)"]];
+	}
+	
+	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	
+	for (NSUInteger i = 0; i < 5; i++)
+	{
+		[actionsheet PV_addButtonWithTitle:info[i] action:^{
+			NSDate *now = [NSDate date];
+			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+			[formatter setDateStyle:NSDateFormatterShortStyle];
+			[formatter setTimeStyle:NSDateFormatterShortStyle];
+			
+			info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
+			[info writeToFile:infoPath atomically:YES];
+			
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			
+			[weakSelf.genesisCore saveStateToFileAtPath:savePath];
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		}];
+	}
+	
+	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
+		[weakSelf.genesisCore setPauseEmulation:NO];
+	}];
+	
+	[actionsheet showInView:self.view];
+}
+
+- (void)showLoadStateMenu
+{
+	__block PVEmulatorViewController *weakSelf = self;
+	
+	NSString *saveStatePath = [self saveStatePath];
+	NSString *infoPath = [saveStatePath stringByAppendingPathComponent:@"info.plist"];
+	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+	
+	NSMutableArray *info = [NSMutableArray arrayWithContentsOfFile:infoPath];
+	if (!info)
+	{
+		info = [NSMutableArray array];
+		[info addObjectsFromArray:@[@"Slot 1 (empty)",
+									 @"Slot 2 (empty)",
+									 @"Slot 3 (empty)",
+									 @"Slot 4 (empty)",
+									 @"Slot 5 (empty)"]];
+	}
+	
+	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	
+	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
+	{
+		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
+			[self.genesisCore loadStateFromFileAtPath:autoSavePath];
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		}];
+	}
+	
+	for (NSUInteger i = 0; i < 5; i++)
+	{
+		[actionsheet PV_addButtonWithTitle:info[i] action:^{
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
+			{
+				[self.genesisCore loadStateFromFileAtPath:savePath];
+			}
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		}];
+	}
+	
+	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
+		[weakSelf.genesisCore setPauseEmulation:NO];
+	}];
+	
+	[actionsheet showInView:self.view];
+}
+
+- (NSString *)saveStatePath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
+	
+	NSString *romName = [[[self.romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
+	
+	NSError *error = nil;
+	
+	[[NSFileManager defaultManager] createDirectoryAtPath:saveStateDirectory
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:&error];
+	if (error)
+	{
+		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+	}
+	
+	return saveStateDirectory;
 }
 
 #pragma mark - JSDPadDelegate

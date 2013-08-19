@@ -72,11 +72,9 @@
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D432D17B2FE20004DFFFC /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D419817B2DD8C004DFFFC /* readme.txt */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
-		1A43F86E17BF1D4900DB133D /* Sonic.bin in Resources */ = {isa = PBXBuildFile; fileRef = 1A43F86D17BF1D4900DB133D /* Sonic.bin */; };
 		1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C93E17BC193B00C27644 /* OEGameAudio.m */; };
 		1A47C94117BC1BBE00C27644 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94017BC1BBE00C27644 /* CoreAudio.framework */; };
 		1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
-		1A47C94917BC2EA800C27644 /* Sonic3.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94817BC2EA800C27644 /* Sonic3.smd */; };
 		1A47C96517BC310700C27644 /* button-pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94B17BC310700C27644 /* button-pressed.png */; };
 		1A47C96617BC310700C27644 /* button-pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94C17BC310700C27644 /* button-pressed@2x.png */; };
 		1A47C96717BC310700C27644 /* button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C94D17BC310700C27644 /* button.png */; };
@@ -110,7 +108,6 @@
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
-		1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
@@ -266,12 +263,10 @@
 		1A3D432B17B2FDFE004DFFFC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1A3D433917B30BA2004DFFFC /* PVGLViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGLViewController.h; sourceTree = "<group>"; };
 		1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGLViewController.m; sourceTree = "<group>"; };
-		1A43F86D17BF1D4900DB133D /* Sonic.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = Sonic.bin; sourceTree = "<group>"; };
 		1A47C93D17BC193B00C27644 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
 		1A47C93E17BC193B00C27644 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
 		1A47C94017BC1BBE00C27644 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1A47C94217BC1BC400C27644 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		1A47C94817BC2EA800C27644 /* Sonic3.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic3.smd; sourceTree = "<group>"; };
 		1A47C94B17BC310700C27644 /* button-pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-pressed.png"; sourceTree = "<group>"; };
 		1A47C94C17BC310700C27644 /* button-pressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-pressed@2x.png"; sourceTree = "<group>"; };
 		1A47C94D17BC310700C27644 /* button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button.png; sourceTree = "<group>"; };
@@ -312,7 +307,6 @@
 		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
 		1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+BlockAdditions.m"; sourceTree = "<group>"; };
-		1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
@@ -409,9 +403,6 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1A43F86D17BF1D4900DB133D /* Sonic.bin */,
-				1AB4BD9C17B5551300C6DB11 /* Sonic2.smd */,
-				1A47C94817BC2EA800C27644 /* Sonic3.smd */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A317B2DCE4004DFFFC /* main.m */,
@@ -745,8 +736,6 @@
 				1A3D40AC17B2DCE4004DFFFC /* Default@2x.png in Resources */,
 				1A3D40AE17B2DCE4004DFFFC /* Default-568h@2x.png in Resources */,
 				1A3D432D17B2FE20004DFFFC /* readme.txt in Resources */,
-				1AB4BD9D17B5551300C6DB11 /* Sonic2.smd in Resources */,
-				1A47C94917BC2EA800C27644 /* Sonic3.smd in Resources */,
 				1A47C96517BC310700C27644 /* button-pressed.png in Resources */,
 				1A47C96617BC310700C27644 /* button-pressed@2x.png in Resources */,
 				1A47C96717BC310700C27644 /* button.png in Resources */,
@@ -773,7 +762,6 @@
 				1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */,
 				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
 				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
-				1A43F86E17BF1D4900DB133D /* Sonic.bin in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
