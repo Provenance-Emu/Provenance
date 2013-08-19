@@ -109,6 +109,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	[self.view addSubview:[self.glViewController view]];
 	
+	[self.genesisCore startEmulation];
+	
 	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(5, [[self view] bounds].size.height - 185, 180, 180)];
 	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 	[self.dPad setDelegate:self];
@@ -204,6 +206,7 @@ void uncaughtExceptionHandler(NSException *exception)
 				if (buttonIndex == 0)
 				{
 					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+					[weakSelf.genesisCore setPauseEmulation:NO];
 				}
 				else if (buttonIndex == 1)
 				{
@@ -213,25 +216,25 @@ void uncaughtExceptionHandler(NSException *exception)
 				}
 				else if (buttonIndex == 2)
 				{
-					// just do nothing if they say no...
+					[weakSelf.genesisCore setPauseEmulation:NO];
 				}
 				else if (buttonIndex == 3)
 				{
 					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAutoLoadSaveStateKey];
 					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAskToLoadSaveStateKey];
+					[weakSelf.genesisCore setPauseEmulation:NO];
 				}
+				
+				[[NSUserDefaults standardUserDefaults] synchronize];
 			}];
 			[alert show];
 		}
 	}
-	
-	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	[self.genesisCore startEmulation];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
