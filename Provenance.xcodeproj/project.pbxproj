@@ -99,6 +99,9 @@
 		1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */; };
 		1A47C97B17BC310700C27644 /* JSButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96217BC310700C27644 /* JSButton.m */; };
 		1A47C97C17BC310700C27644 /* JSDPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96417BC310700C27644 /* JSDPad.m */; };
+		1A7A4B5017C2D7530014841E /* Sonic.bin in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4D17C2D7530014841E /* Sonic.bin */; };
+		1A7A4B5117C2D7530014841E /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4E17C2D7530014841E /* Sonic2.smd */; };
+		1A7A4B5217C2D7530014841E /* Sonic3.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4F17C2D7530014841E /* Sonic3.smd */; };
 		1AADCDA517BD69E700F53CFE /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDA417BD69E700F53CFE /* OETimingUtils.m */; };
 		1AADCDAA17BD861000F53CFE /* button-thin-pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA617BD861000F53CFE /* button-thin-pressed.png */; };
 		1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA717BD861000F53CFE /* button-thin-pressed@2x.png */; };
@@ -293,6 +296,9 @@
 		1A47C96217BC310700C27644 /* JSButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSButton.m; sourceTree = "<group>"; };
 		1A47C96317BC310700C27644 /* JSDPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDPad.h; sourceTree = "<group>"; };
 		1A47C96417BC310700C27644 /* JSDPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDPad.m; sourceTree = "<group>"; };
+		1A7A4B4D17C2D7530014841E /* Sonic.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = Sonic.bin; sourceTree = "<group>"; };
+		1A7A4B4E17C2D7530014841E /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
+		1A7A4B4F17C2D7530014841E /* Sonic3.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic3.smd; sourceTree = "<group>"; };
 		1AADCDA317BD69E700F53CFE /* OETimingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OETimingUtils.h; sourceTree = "<group>"; };
 		1AADCDA417BD69E700F53CFE /* OETimingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OETimingUtils.m; sourceTree = "<group>"; };
 		1AADCDA617BD861000F53CFE /* button-thin-pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin-pressed.png"; sourceTree = "<group>"; };
@@ -403,6 +409,9 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1A7A4B4D17C2D7530014841E /* Sonic.bin */,
+				1A7A4B4E17C2D7530014841E /* Sonic2.smd */,
+				1A7A4B4F17C2D7530014841E /* Sonic3.smd */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A317B2DCE4004DFFFC /* main.m */,
@@ -762,6 +771,9 @@
 				1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */,
 				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
 				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
+				1A7A4B5017C2D7530014841E /* Sonic.bin in Resources */,
+				1A7A4B5117C2D7530014841E /* Sonic2.smd in Resources */,
+				1A7A4B5217C2D7530014841E /* Sonic3.smd in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

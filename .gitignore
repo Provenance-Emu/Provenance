@@ -6,3 +6,7 @@ build
 *.xcworkspace
 xcuserdata
 *.mode1v3
+
+/Provenance/Sonic.bin
+/Provenance/Sonic2.smd
+/Provenance/Sonic3.smd
