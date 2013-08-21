@@ -96,10 +96,12 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 	
 	__strong PVGenesisEmulatorCore *strongCurrent = _current;
 	
-	if (port == 0 & device == RETRO_DEVICE_JOYPAD) {
+	if (port == 0 & device == RETRO_DEVICE_JOYPAD)
+	{
 		return strongCurrent->_pad[0][_id];
 	}
-	else if(port == 1 & device == RETRO_DEVICE_JOYPAD) {
+	else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
+	{
 		return strongCurrent->_pad[1][_id];
 	}
 	
@@ -151,8 +153,10 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)dealloc
 {
-	for(NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
-        ringBuffers[i] = nil;
+	for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
+	{
+		ringBuffers[i] = nil;
+	}
 	
     free(ringBuffers);
 	free(_videoBuffer);
@@ -162,7 +166,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)startEmulation
 {
-	if(!isRunning)
+	if (!isRunning)
 	{
 		isRunning  = YES;
 		shouldStop = NO;
@@ -178,8 +182,14 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)setPauseEmulation:(BOOL)flag
 {
-    if(flag) isRunning = NO;
-    else     isRunning = YES;
+    if (flag)
+	{
+		isRunning = NO;
+	}
+    else
+	{
+		isRunning = YES;
+	}
 }
 
 - (BOOL)isEmulationPaused
@@ -219,20 +229,26 @@ static bool environment_callback(unsigned cmd, void *data)
     frameSkip = 0;
 	
     OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
-    while(!shouldStop)
+    while (!shouldStop)
     {
         gameTime += gameInterval;
         @autoreleasepool
         {			
             willSkipFrame = (frameCounter != frameSkip);
 			
-            if(isRunning)
+            if (isRunning)
             {
 				[self executeFrame];
             }
 			
-            if(frameCounter >= frameSkip) frameCounter = 0;
-            else                          frameCounter++;
+            if (frameCounter >= frameSkip)
+			{
+				frameCounter = 0;
+			}
+            else
+			{
+				frameCounter++;
+			}
         }
 		
         OEWaitUntil(gameTime);
@@ -254,7 +270,10 @@ static bool environment_callback(unsigned cmd, void *data)
     
     //load cart, read bytes, get length
     NSData* dataObj = [NSData dataWithContentsOfFile:[_romName stringByStandardizingPath]];
-    if(dataObj == nil) return false;
+    if (dataObj == nil)
+	{
+		return false;
+	}
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
@@ -276,9 +295,9 @@ static bool environment_callback(unsigned cmd, void *data)
     info.size = size;
     info.meta = meta;
     
-    if(retro_load_game(&info))
+    if (retro_load_game(&info))
     {
-        if([self.batterySavesPath length])
+        if ([self.batterySavesPath length])
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             
@@ -425,8 +444,10 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index
 {
-    if(ringBuffers[index] == nil)
+    if (ringBuffers[index] == nil)
+	{
         ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
+	}
 	
     return ringBuffers[index];
 }
