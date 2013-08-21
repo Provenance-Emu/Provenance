@@ -189,6 +189,15 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)stopEmulation
 {
+	if ([self.batterySavesPath length])
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
+		
+		NSString *extensionlessFilename = [[[_romName lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+		NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+		[self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
+    }
+
 	shouldStop = YES;
     isRunning  = NO;
 	
@@ -269,19 +278,15 @@ static bool environment_callback(unsigned cmd, void *data)
     
     if(retro_load_game(&info))
     {
-//        NSString *path = _romName;
-//        NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-//        
-//        NSString *batterySavesDirectory = nil;//[self batterySavesDirectoryPath];
-//        
-//        if([batterySavesDirectory length] != 0)
-//        {
-//            [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-//            
-//            NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-//            
-//            loadSaveFile([filePath UTF8String], RETRO_MEMORY_SAVE_RAM);
-//        }
+        if([self.batterySavesPath length])
+        {
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
+            
+			NSString *extensionlessFilename = [[[_romName lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+            NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+            
+            [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
+        }
         
         struct retro_system_av_info info;
         retro_get_system_av_info(&info);
@@ -289,16 +294,49 @@ static bool environment_callback(unsigned cmd, void *data)
         _frameInterval = info.timing.fps;
         _sampleRate = info.timing.sample_rate;
         
-        //retro_set_controller_port_device(SNES_PORT_1, RETRO_DEVICE_JOYPAD);
-        
         retro_get_region();
-        
         retro_run();
         
         return YES;
     }
     
     return NO;
+}
+
+- (void)loadSaveFile:(NSString *)path forType:(int)type
+{
+	size_t size = retro_get_memory_size(type);
+	void *ramData = retro_get_memory_data(type);
+	
+	if (size == 0 || !ramData)
+	{
+		return;
+	}
+	
+	NSData *data = [NSData dataWithContentsOfFile:path];
+	if (!data || ![data length])
+	{
+		NSLog(@"Couldn't load save file.");
+	}
+	
+	[data getBytes:ramData length:size];
+}
+
+- (void)writeSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (ramData && (size > 0))
+    {
+		retro_serialize(ramData, size);
+		NSData *data = [NSData dataWithBytes:ramData length:size];
+		BOOL success = [data writeToFile:path atomically:YES];
+		if (!success)
+		{
+			NSLog(@"Error writing save file");
+		}
+    }
 }
 
 #pragma mark - Video

@@ -81,6 +81,8 @@ void uncaughtExceptionHandler(NSException *exception)
 {
 	[super viewDidLoad];
 	
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+    
 	self.title = [self.romPath lastPathComponent];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:@{PVAskToLoadSaveStateKey : @(YES), PVAutoLoadSaveStateKey : @(NO)}];
@@ -95,6 +97,7 @@ void uncaughtExceptionHandler(NSException *exception)
 											   object:nil];
 	
 	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
+	[self.genesisCore setBatterySavesPath:[self batterySavesPath]];
 	
 	[self.genesisCore loadFileAtPath:self.romPath];
 	
@@ -409,6 +412,29 @@ void uncaughtExceptionHandler(NSException *exception)
 	}];
 	
 	[actionsheet showInView:self.view];
+}
+
+- (NSString *)batterySavesPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+	NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
+	
+	NSString *romName = [[[self.romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+	batterySavesDirectory = [batterySavesDirectory stringByAppendingPathComponent:romName];
+	
+	NSError *error = nil;
+	
+	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:&error];
+	if (error)
+	{
+		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+	}
+	
+	return batterySavesDirectory;
 }
 
 - (NSString *)saveStatePath
