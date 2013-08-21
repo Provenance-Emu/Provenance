@@ -15,9 +15,7 @@
 #import "UIActionSheet+BlockAdditions.h"
 #import "UIAlertView+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
-
-NSString * const PVAutoLoadSaveStateKey = @"PVAutoLoadSaveStateKey";
-NSString * const PVAskToLoadSaveStateKey = @"PVAskToLoadSaveStateKey";
+#import "PVSettingsModel.h"
 
 @interface PVEmulatorViewController ()
 
@@ -49,7 +47,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
 + (void)initialize
 {
-	NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+	if ([[PVSettingsModel sharedInstance] autoSave])
+	{
+		NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+	}
 }
 
 - (instancetype)initWithROMPath:(NSString *)path
@@ -85,7 +86,7 @@ void uncaughtExceptionHandler(NSException *exception)
     
 	self.title = [self.romPath lastPathComponent];
 	
-	[[NSUserDefaults standardUserDefaults] registerDefaults:@{PVAskToLoadSaveStateKey : @(YES), PVAutoLoadSaveStateKey : @(NO)}];
+	[self.view setBackgroundColor:[UIColor blackColor]];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appDidBecomeActive:)
@@ -114,10 +115,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	[self.genesisCore startEmulation];
 	
+	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
+	
 	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(5, [[self view] bounds].size.height - 185, 180, 180)];
 	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 	[self.dPad setDelegate:self];
-	[self.dPad setAlpha:0.3];
+	[self.dPad setAlpha:alpha];
 	[self.view addSubview:self.dPad];
 	
 	UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(([self.view bounds].size.width - 212) - 5, ([self.view bounds].size.height - 92) - 5, 212, 92)];
@@ -129,7 +132,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.aButton setBackgroundImage:[UIImage imageNamed:@"button"]];
 	[self.aButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.aButton setDelegate:self];
-	[self.aButton setAlpha:0.3];
+	[self.aButton setAlpha:alpha];
 	[buttonContainer addSubview:self.aButton];
 	
 	self.bButton = [[JSButton alloc] initWithFrame:CGRectMake(76, 16, 60, 60)];
@@ -137,7 +140,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.bButton setBackgroundImage:[UIImage imageNamed:@"button"]];
 	[self.bButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.bButton setDelegate:self];
-	[self.bButton setAlpha:0.3];
+	[self.bButton setAlpha:alpha];
 	[buttonContainer addSubview:self.bButton];
 	
 	self.cButton = [[JSButton alloc] initWithFrame:CGRectMake(144, 8, 60, 60)];
@@ -145,7 +148,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.cButton setBackgroundImage:[UIImage imageNamed:@"button"]];
 	[self.cButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.cButton setDelegate:self];
-	[self.cButton setAlpha:0.3];
+	[self.cButton setAlpha:alpha];
 	[buttonContainer addSubview:self.cButton];
 	
 	PVButtonGroupOverlayView *buttonGroup = [[PVButtonGroupOverlayView alloc] initWithButtons:@[self.aButton, self.bButton, self.cButton]];
@@ -160,7 +163,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[self.startButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
 	[self.startButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
 	[self.startButton setDelegate:self];
-	[self.startButton setAlpha:0.3];
+	[self.startButton setAlpha:alpha];
 	[self.view addSubview:self.startButton];
 	
 	self.menuButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
@@ -171,7 +174,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
 	[self.menuButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
 	[self.menuButton setDelegate:self];
-	[self.menuButton setAlpha:0.3];
+	[self.menuButton setAlpha:alpha];
 	[self.view addSubview:self.menuButton];
 	
 	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
@@ -185,8 +188,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
-		BOOL shouldAskToLoadSaveState = [[NSUserDefaults standardUserDefaults] boolForKey:PVAskToLoadSaveStateKey];
-		BOOL shouldAutoLoadSaveState = [[NSUserDefaults standardUserDefaults] boolForKey:PVAutoLoadSaveStateKey];
+		BOOL shouldAskToLoadSaveState = [[PVSettingsModel sharedInstance] askToAutoLoad];
+		BOOL shouldAutoLoadSaveState = [[PVSettingsModel sharedInstance] autoLoadAutoSaves];
 		
 		__weak PVEmulatorViewController *weakSelf = self;
 		
@@ -214,8 +217,8 @@ void uncaughtExceptionHandler(NSException *exception)
 				else if (buttonIndex == 1)
 				{
 					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
-					[[NSUserDefaults standardUserDefaults] setBool:YES forKey:PVAutoLoadSaveStateKey];
-					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAskToLoadSaveStateKey];
+					[[PVSettingsModel sharedInstance] setAutoSave:YES];
+					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
 				}
 				else if (buttonIndex == 2)
 				{
@@ -223,12 +226,10 @@ void uncaughtExceptionHandler(NSException *exception)
 				}
 				else if (buttonIndex == 3)
 				{
-					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAutoLoadSaveStateKey];
-					[[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVAskToLoadSaveStateKey];
 					[weakSelf.genesisCore setPauseEmulation:NO];
+					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
+					[[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
 				}
-				
-				[[NSUserDefaults standardUserDefaults] synchronize];
 			}];
 			[alert show];
 		}
@@ -299,17 +300,23 @@ void uncaughtExceptionHandler(NSException *exception)
 					   afterDelay:0.1];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
-		NSString *saveStatePath = [self saveStatePath];
-		NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-		[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		if ([[PVSettingsModel sharedInstance] autoSave])
+		{
+			NSString *saveStatePath = [self saveStatePath];
+			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		}
 		
 		[weakSelf.genesisCore setPauseEmulation:NO];
 		[weakSelf.genesisCore resetEmulation];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
-		NSString *saveStatePath = [self saveStatePath];
-		NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-		[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		if ([[PVSettingsModel sharedInstance] autoSave])
+		{
+			NSString *saveStatePath = [self saveStatePath];
+			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		}
 		
 		[weakSelf.gameAudio stopAudio];
 		[weakSelf.genesisCore stopEmulation];

@@ -111,6 +111,9 @@
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
+		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */; };
+		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
+		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
@@ -313,6 +316,11 @@
 		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
 		1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+BlockAdditions.m"; sourceTree = "<group>"; };
+		1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsViewController.h; sourceTree = "<group>"; };
+		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsViewController.m; sourceTree = "<group>"; };
+		1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Provenance.storyboard; sourceTree = "<group>"; };
+		1AB9600117C572B400D3E392 /* PVSettingsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsModel.h; sourceTree = "<group>"; };
+		1AB9600217C572B400D3E392 /* PVSettingsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsModel.m; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
@@ -397,6 +405,11 @@
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
 				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
+				1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */,
+				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */,
+				1AB9600117C572B400D3E392 /* PVSettingsModel.h */,
+				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
+				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A164EB617BC124A00FAC391 /* Audio */,
@@ -774,6 +787,7 @@
 				1A7A4B5017C2D7530014841E /* Sonic.bin in Resources */,
 				1A7A4B5117C2D7530014841E /* Sonic2.smd in Resources */,
 				1A7A4B5217C2D7530014841E /* Sonic3.smd in Resources */,
+				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,6 +862,8 @@
 				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
+				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
+				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

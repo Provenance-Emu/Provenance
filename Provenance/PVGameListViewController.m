@@ -8,6 +8,7 @@
 
 #import "PVGameListViewController.h"
 #import "PVEmulatorViewController.h"
+#import "PVSettingsViewController.h"
 
 @interface PVGameListViewController ()
 
@@ -32,6 +33,12 @@
 	[super viewDidLoad];
 	
 	self.title = @"Games";
+	
+	UIBarButtonItem *settingsButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings"
+																		   style:UIBarButtonItemStyleBordered
+																		  target:self
+																		  action:@selector(settings:)];
+	[self.navigationItem setLeftBarButtonItem:settingsButtonItem];
 	
 	NSString *bundlePath = [[NSBundle mainBundle] resourcePath];
 	NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -86,8 +93,15 @@
 	NSString *path = [self.games objectAtIndex:[indexPath row]];
 	
 	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithROMPath:path];
-//	[self.navigationController pushViewController:emulatorViewController animated:YES];
 	[self presentViewController:emulatorViewController animated:YES completion:NULL];
+}
+
+- (void)settings:(id)sender
+{
+	UIStoryboard *storyBoard = [UIStoryboard storyboardWithName:@"Provenance" bundle:nil];
+	PVSettingsViewController *settingsViewController = [storyBoard instantiateViewControllerWithIdentifier:@"PVSettingsViewController"];
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsViewController];
+	[self presentViewController:navController animated:YES completion:NULL];
 }
 
 @end
