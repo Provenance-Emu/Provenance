@@ -99,6 +99,7 @@
 		1A47C97A17BC310700C27644 /* dPad-UpRight@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A47C96017BC310700C27644 /* dPad-UpRight@2x.png */; };
 		1A47C97B17BC310700C27644 /* JSButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96217BC310700C27644 /* JSButton.m */; };
 		1A47C97C17BC310700C27644 /* JSDPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96417BC310700C27644 /* JSDPad.m */; };
+		1A522DBA17C80DCD0026E2BA /* S&K.bin in Resources */ = {isa = PBXBuildFile; fileRef = 1A522DB917C80DCD0026E2BA /* S&K.bin */; };
 		1A7A4B5017C2D7530014841E /* Sonic.bin in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4D17C2D7530014841E /* Sonic.bin */; };
 		1A7A4B5117C2D7530014841E /* Sonic2.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4E17C2D7530014841E /* Sonic2.smd */; };
 		1A7A4B5217C2D7530014841E /* Sonic3.smd in Resources */ = {isa = PBXBuildFile; fileRef = 1A7A4B4F17C2D7530014841E /* Sonic3.smd */; };
@@ -299,6 +300,7 @@
 		1A47C96217BC310700C27644 /* JSButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSButton.m; sourceTree = "<group>"; };
 		1A47C96317BC310700C27644 /* JSDPad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDPad.h; sourceTree = "<group>"; };
 		1A47C96417BC310700C27644 /* JSDPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDPad.m; sourceTree = "<group>"; };
+		1A522DB917C80DCD0026E2BA /* S&K.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "S&K.bin"; sourceTree = "<group>"; };
 		1A7A4B4D17C2D7530014841E /* Sonic.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = Sonic.bin; sourceTree = "<group>"; };
 		1A7A4B4E17C2D7530014841E /* Sonic2.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic2.smd; sourceTree = "<group>"; };
 		1A7A4B4F17C2D7530014841E /* Sonic3.smd */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sonic3.smd; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				1A7A4B4D17C2D7530014841E /* Sonic.bin */,
 				1A7A4B4E17C2D7530014841E /* Sonic2.smd */,
 				1A7A4B4F17C2D7530014841E /* Sonic3.smd */,
+				1A522DB917C80DCD0026E2BA /* S&K.bin */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A317B2DCE4004DFFFC /* main.m */,
@@ -771,6 +774,7 @@
 				1A47C96F17BC310700C27644 /* dPad-Left.png in Resources */,
 				1A47C97017BC310700C27644 /* dPad-Left@2x.png in Resources */,
 				1A47C97117BC310700C27644 /* dPad-None.png in Resources */,
+				1A522DBA17C80DCD0026E2BA /* S&K.bin in Resources */,
 				1A47C97217BC310700C27644 /* dPad-None@2x.png in Resources */,
 				1A47C97317BC310700C27644 /* dPad-Right.png in Resources */,
 				1A47C97417BC310700C27644 /* dPad-Right@2x.png in Resources */,
