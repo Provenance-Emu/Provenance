@@ -42,6 +42,11 @@
     [super didReceiveMemoryWarning];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+}
+
 - (IBAction)done:(id)sender
 {
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];

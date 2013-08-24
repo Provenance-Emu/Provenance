@@ -81,8 +81,6 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
 	self.title = [self.romPath lastPathComponent];
 	
@@ -236,9 +234,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewWillAppear:(BOOL)animated
 {
-	[super viewDidAppear:animated];
+	[super viewWillAppear:animated];
+	
+	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -320,6 +320,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		
 		[weakSelf.gameAudio stopAudio];
 		[weakSelf.genesisCore stopEmulation];
+		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{

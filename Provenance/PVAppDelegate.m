@@ -7,7 +7,6 @@
 //
 
 #import "PVAppDelegate.h"
-#import "PVGameListViewController.h"
 
 @interface PVAppDelegate ()
 
@@ -18,14 +17,29 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	self.window.backgroundColor = [UIColor whiteColor];
-	[self.window makeKeyAndVisible];
-	
-	PVGameListViewController *gamesListViewController = [[PVGameListViewController alloc] initWithStyle:UITableViewStylePlain];
-	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:gamesListViewController];
-	
-	[self.window setRootViewController:navController];
+	return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+	if (url && [url isFileURL])
+	{
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
+		documentsDirectory = [documentsDirectory stringByAppendingPathComponent:@"roms"];
+		
+		NSString *sourcePath = [url path];
+		NSString *filename = [sourcePath lastPathComponent];
+		NSString *destinationPath = [documentsDirectory stringByAppendingPathComponent:filename];
+		
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		NSError *error = nil;
+		BOOL success = [fileManager moveItemAtPath:sourcePath toPath:destinationPath error:&error];
+		if (!success || error)
+		{
+			NSLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
+		}
+	}
 	
 	return YES;
 }
