@@ -15,8 +15,6 @@ extern NSString * const PVUIActionSheetDefaultActionKey;
 
 @interface UIActionSheet (PVBlockAdditions)
 
-// actions are called on a global queue with default priority, clients should dispatch to the main queue in their actions should they need to
-
 - (void)PV_addButtonWithTitle:(NSString *)title action:(PVUIActionSheetAction)action;
 - (void)PV_addCancelButtonWithTitle:(NSString *)title action:(PVUIActionSheetAction)action;
 - (void)PV_addDestructiveButtonWithTitle:(NSString *)title action:(PVUIActionSheetAction)action;

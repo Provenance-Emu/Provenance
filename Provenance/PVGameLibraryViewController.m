@@ -458,15 +458,24 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		
 		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
 		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
-			dispatch_sync(dispatch_get_main_queue(), ^{
-			});
+			
 		}];
 		[actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
-				PVGame *game = weakSelf.games[[indexPath item]];
-				[weakSelf deleteGame:game];
-			});
+			NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
+			PVGame *game = weakSelf.games[[indexPath item]];
+			
+			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
+															message:@"Any save states and battery saves will also be deleted, are you sure?"
+														   delegate:nil
+												  cancelButtonTitle:@"No"
+												  otherButtonTitles:@"Yes", nil];
+			[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+				if (buttonIndex != [alert cancelButtonIndex])
+				{
+					[weakSelf deleteGame:game];
+				}
+			}];
+			[alert show];
 		}];
 		[actionSheet showInView:self.view];
 	}

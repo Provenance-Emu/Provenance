@@ -290,51 +290,41 @@ void uncaughtExceptionHandler(NSException *exception)
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			[weakSelf performSelector:@selector(showSaveStateMenu)
-						   withObject:nil
-						   afterDelay:0.1];
-		});
+		[weakSelf performSelector:@selector(showSaveStateMenu)
+					   withObject:nil
+					   afterDelay:0.1];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Load State" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			[weakSelf performSelector:@selector(showLoadStateMenu)
-						   withObject:nil
-						   afterDelay:0.1];
-		});
+		[weakSelf performSelector:@selector(showLoadStateMenu)
+					   withObject:nil
+					   afterDelay:0.1];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			if ([[PVSettingsModel sharedInstance] autoSave])
-			{
-				NSString *saveStatePath = [self saveStatePath];
-				NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-				[self.genesisCore saveStateToFileAtPath:autoSavePath];
-			}
-			
-			[weakSelf.genesisCore setPauseEmulation:NO];
-			[weakSelf.genesisCore resetEmulation];
-		});
+		if ([[PVSettingsModel sharedInstance] autoSave])
+		{
+			NSString *saveStatePath = [self saveStatePath];
+			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		}
+		
+		[weakSelf.genesisCore setPauseEmulation:NO];
+		[weakSelf.genesisCore resetEmulation];
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			if ([[PVSettingsModel sharedInstance] autoSave])
-			{
-				NSString *saveStatePath = [self saveStatePath];
-				NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-				[self.genesisCore saveStateToFileAtPath:autoSavePath];
-			}
-			
-			[weakSelf.gameAudio stopAudio];
-			[weakSelf.genesisCore stopEmulation];
-			[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-			[weakSelf dismissViewControllerAnimated:YES completion:NULL];
-		});
+		if ([[PVSettingsModel sharedInstance] autoSave])
+		{
+			NSString *saveStatePath = [self saveStatePath];
+			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+		}
+		
+		[weakSelf.gameAudio stopAudio];
+		[weakSelf.genesisCore stopEmulation];
+		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			[weakSelf.genesisCore setPauseEmulation:NO];
-		});
+		[weakSelf.genesisCore setPauseEmulation:NO];
 	}];
 	[actionsheet showInView:self.view];
 }
@@ -351,10 +341,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		info = [NSMutableArray array];
 		[info addObjectsFromArray:@[@"Slot 1 (empty)",
-									@"Slot 2 (empty)",
-									@"Slot 3 (empty)",
-									@"Slot 4 (empty)",
-									@"Slot 5 (empty)"]];
+		 @"Slot 2 (empty)",
+		 @"Slot 3 (empty)",
+		 @"Slot 4 (empty)",
+		 @"Slot 5 (empty)"]];
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
@@ -362,27 +352,23 @@ void uncaughtExceptionHandler(NSException *exception)
 	for (NSUInteger i = 0; i < 5; i++)
 	{
 		[actionsheet PV_addButtonWithTitle:info[i] action:^{
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				NSDate *now = [NSDate date];
-				NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-				[formatter setDateStyle:NSDateFormatterShortStyle];
-				[formatter setTimeStyle:NSDateFormatterShortStyle];
-				
-				info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
-				[info writeToFile:infoPath atomically:YES];
-				
-				NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
-				
-				[weakSelf.genesisCore saveStateToFileAtPath:savePath];
-				[weakSelf.genesisCore setPauseEmulation:NO];
-			});
+			NSDate *now = [NSDate date];
+			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+			[formatter setDateStyle:NSDateFormatterShortStyle];
+			[formatter setTimeStyle:NSDateFormatterShortStyle];
+			
+			info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
+			[info writeToFile:infoPath atomically:YES];
+			
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			
+			[weakSelf.genesisCore saveStateToFileAtPath:savePath];
+			[weakSelf.genesisCore setPauseEmulation:NO];
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			[weakSelf.genesisCore setPauseEmulation:NO];
-		});
+		[weakSelf.genesisCore setPauseEmulation:NO];
 	}];
 	
 	[actionsheet showInView:self.view];
@@ -401,10 +387,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		info = [NSMutableArray array];
 		[info addObjectsFromArray:@[@"Slot 1 (empty)",
-									 @"Slot 2 (empty)",
-									 @"Slot 3 (empty)",
-									 @"Slot 4 (empty)",
-									 @"Slot 5 (empty)"]];
+		 @"Slot 2 (empty)",
+		 @"Slot 3 (empty)",
+		 @"Slot 4 (empty)",
+		 @"Slot 5 (empty)"]];
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
@@ -412,31 +398,25 @@ void uncaughtExceptionHandler(NSException *exception)
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
 		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				[self.genesisCore loadStateFromFileAtPath:autoSavePath];
-				[weakSelf.genesisCore setPauseEmulation:NO];
-			});
+			[self.genesisCore loadStateFromFileAtPath:autoSavePath];
+			[weakSelf.genesisCore setPauseEmulation:NO];
 		}];
 	}
 	
 	for (NSUInteger i = 0; i < 5; i++)
 	{
 		[actionsheet PV_addButtonWithTitle:info[i] action:^{
-			dispatch_sync(dispatch_get_main_queue(), ^{
-				NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
-				if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
-				{
-					[self.genesisCore loadStateFromFileAtPath:savePath];
-				}
-				[weakSelf.genesisCore setPauseEmulation:NO];
-			});
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
+			{
+				[self.genesisCore loadStateFromFileAtPath:savePath];
+			}
+			[weakSelf.genesisCore setPauseEmulation:NO];
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		dispatch_sync(dispatch_get_main_queue(), ^{
-			[weakSelf.genesisCore setPauseEmulation:NO];
-		});
+		[weakSelf.genesisCore setPauseEmulation:NO];
 	}];
 	
 	[actionsheet showInView:self.view];
