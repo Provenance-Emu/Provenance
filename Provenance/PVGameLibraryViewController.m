@@ -18,6 +18,7 @@
 #import "PVGame.h"
 #import "PVMediaCache.h"
 #import "UIAlertView+BlockAdditions.h"
+#import "UIActionSheet+BlockAdditions.h"
 
 @interface PVGameLibraryViewController () {
 	
@@ -69,11 +70,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	[self setTitle:@"Library"];
 	
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	documentsDirectoryPath = [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+	NSString *romsPath = [self romsPath];
 	
-	_watcher = [[PVDirectoryWatcher alloc] initWithPath:documentsDirectoryPath directoryChangedHandler:^{
+	_watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
 		[self reloadData];
 	}];
 	[_watcher startMonitoring];
@@ -91,7 +90,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[barShadow setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 	[[self view] addSubview:barShadow];
 	
-	
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
 	[_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
@@ -101,6 +99,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_collectionView setAlwaysBounceVertical:YES];
 	
 	[[self view] addSubview:_collectionView];
+	
+	UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressRecognized:)];
+	[_collectionView addGestureRecognizer:longPressRecognizer];
 	
 	[_collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[_collectionView setBackgroundColor:[UIColor clearColor]];
@@ -127,6 +128,61 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return NO;
 }
 
+- (NSString *)romsPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+	NSString *romsDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+	
+	return romsDirectory;
+}
+
+- (NSString *)batterySavesPathForROM:(NSString *)romPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+	NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
+	
+	NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+	batterySavesDirectory = [batterySavesDirectory stringByAppendingPathComponent:romName];
+	
+	NSError *error = nil;
+	
+	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:&error];
+	if (error)
+	{
+		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+	}
+	
+	return batterySavesDirectory;
+}
+
+- (NSString *)saveStatePathForROM:(NSString *)romPath
+{
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
+	
+	NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
+	
+	NSError *error = nil;
+	
+	[[NSFileManager defaultManager] createDirectoryAtPath:saveStateDirectory
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:&error];
+	if (error)
+	{
+		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+	}
+	
+	return saveStateDirectory;
+}
+
 - (void)reloadData
 {
 	[self refreshLibrary];
@@ -145,12 +201,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)refreshLibrary
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	documentsDirectoryPath = [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+	NSString *romsPath = [self romsPath];
 	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
-	NSArray *contents = [fileManager contentsOfDirectoryAtPath:documentsDirectoryPath error:NULL];
+	NSArray *contents = [fileManager contentsOfDirectoryAtPath:romsPath error:NULL];
 	
 	for (NSString *filePath in contents)
 	{
@@ -159,7 +213,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			[filePath hasSuffix:@".bin"] ||
 			[filePath hasSuffix:@".BIN"])
 		{
-			NSString *path = [documentsDirectoryPath stringByAppendingPathComponent:filePath];
+			NSString *path = [romsPath stringByAppendingPathComponent:filePath];
 			NSString *title = [[path lastPathComponent] stringByDeletingPathExtension];
 			
 			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", path];
@@ -389,7 +443,62 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	PVGame *game = self.games[[indexPath item]];
 	
 	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithROMPath:[game romPath]];
+	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[game romPath]]];
+	[emulatorViewController setSaveStatePath:[self saveStatePathForROM:[game romPath]]];
+	
 	[self presentViewController:emulatorViewController animated:YES completion:NULL];
+}
+
+- (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
+{
+	if ([recognizer state] == UIGestureRecognizerStateBegan)
+	{
+		__weak PVGameLibraryViewController *weakSelf = self;
+		CGPoint point = [recognizer locationInView:_collectionView];
+		
+		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
+		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
+			dispatch_sync(dispatch_get_main_queue(), ^{
+			});
+		}];
+		[actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
+				PVGame *game = weakSelf.games[[indexPath item]];
+				[weakSelf deleteGame:game];
+			});
+		}];
+		[actionSheet showInView:self.view];
+	}
+}
+
+- (void)deleteGame:(PVGame *)game
+{
+	NSError *error = nil;
+	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[game romPath] error:&error];
+	if (!success)
+	{
+		NSLog(@"Unable to delete rom at path: %@ because: %@", [game romPath], [error localizedDescription]);
+	}
+	
+	success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:[game romPath]] error:&error];
+	if (!success)
+	{
+		NSLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:[game romPath]], [error localizedDescription]);
+	}
+	
+	success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:[game romPath]] error:&error];
+	if (!success)
+	{
+		NSLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:[game romPath]], [error localizedDescription]);
+	}
+	
+	success = [PVMediaCache deleteImageForKey:[game artworkURL]];
+	
+	[[self managedObjectContext] deleteObject:game];
+	[self save:NULL];
+
+	[self reloadData];
 }
 
 #pragma mark -

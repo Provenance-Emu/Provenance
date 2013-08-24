@@ -12,6 +12,9 @@
 
 @interface PVEmulatorViewController : UIViewController <UIActionSheetDelegate, JSDPadDelegate, JSButtonDelegate>
 
+@property (nonatomic, copy) NSString *batterySavesPath;
+@property (nonatomic, copy) NSString *saveStatePath;
+
 - (instancetype)initWithROMPath:(NSString *)path;
 
 @end

@@ -89,7 +89,7 @@ NSString * const PVUIActionSheetDefaultActionKey = @"PVUIActionSheetDefaultActio
 		PVUIActionSheetAction action = [[self PV_actions] objectAtIndex:buttonIndex];
 		if ([action isKindOfClass:[NSNull class]] == NO)
 		{
-			dispatch_async(dispatch_get_main_queue(), action);
+			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), action);
 		}
 		
 		objc_setAssociatedObject(self, (__bridge const void *)(PVUIActionSheetActionsArrayKey), nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -99,7 +99,7 @@ NSString * const PVUIActionSheetDefaultActionKey = @"PVUIActionSheetDefaultActio
 		PVUIActionSheetAction action = [self PV_defaultAction];
 		if (action)
 		{
-			dispatch_async(dispatch_get_main_queue(), action);
+			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), action);
 		}
 	}
 }

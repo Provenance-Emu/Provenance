@@ -15,6 +15,7 @@ extern NSString * const kPVCachePath;
 + (NSString *)filePathForKey:(NSString *)key;
 + (NSString *)writeImageToDisk:(UIImage *)image withKey:(NSString *)key;
 + (NSString *)writeDataToDisk:(NSData *)data withKey:(NSString *)key;
++ (BOOL)deleteImageForKey:(NSString *)key;
 + (void)emptyCache;
 
 @end

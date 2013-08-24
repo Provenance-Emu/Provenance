@@ -84,6 +84,22 @@ NSString * const kPVCachePath = @"PVCache";
 	return (success) ? cachePath : nil;
 }
 
++ (BOOL)deleteImageForKey:(NSString *)key
+{
+	NSString *cachePath = [self cachePath];
+	NSString *keyHash = [key MD5Hash];
+	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
+	NSError *error = nil;
+	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:cachePath error:&error];
+	if (!success)
+	{
+		NSLog(@"Unable to delete cache item: %@ because: %@", cachePath, [error localizedDescription]);
+		return NO;
+	}
+	
+	return YES;
+}
+
 + (void)emptyCache
 {
 	NSLog(@"Emptying Cache");

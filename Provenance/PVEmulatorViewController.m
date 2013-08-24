@@ -290,41 +290,51 @@ void uncaughtExceptionHandler(NSException *exception)
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
-		[weakSelf performSelector:@selector(showSaveStateMenu)
-					   withObject:nil
-					   afterDelay:0.1];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[weakSelf performSelector:@selector(showSaveStateMenu)
+						   withObject:nil
+						   afterDelay:0.1];
+		});
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Load State" action:^{
-		[weakSelf performSelector:@selector(showLoadStateMenu)
-					   withObject:nil
-					   afterDelay:0.1];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[weakSelf performSelector:@selector(showLoadStateMenu)
+						   withObject:nil
+						   afterDelay:0.1];
+		});
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
-		if ([[PVSettingsModel sharedInstance] autoSave])
-		{
-			NSString *saveStatePath = [self saveStatePath];
-			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[self.genesisCore saveStateToFileAtPath:autoSavePath];
-		}
-		
-		[weakSelf.genesisCore setPauseEmulation:NO];
-		[weakSelf.genesisCore resetEmulation];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			if ([[PVSettingsModel sharedInstance] autoSave])
+			{
+				NSString *saveStatePath = [self saveStatePath];
+				NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+				[self.genesisCore saveStateToFileAtPath:autoSavePath];
+			}
+			
+			[weakSelf.genesisCore setPauseEmulation:NO];
+			[weakSelf.genesisCore resetEmulation];
+		});
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
-		if ([[PVSettingsModel sharedInstance] autoSave])
-		{
-			NSString *saveStatePath = [self saveStatePath];
-			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[self.genesisCore saveStateToFileAtPath:autoSavePath];
-		}
-		
-		[weakSelf.gameAudio stopAudio];
-		[weakSelf.genesisCore stopEmulation];
-		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			if ([[PVSettingsModel sharedInstance] autoSave])
+			{
+				NSString *saveStatePath = [self saveStatePath];
+				NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+				[self.genesisCore saveStateToFileAtPath:autoSavePath];
+			}
+			
+			[weakSelf.gameAudio stopAudio];
+			[weakSelf.genesisCore stopEmulation];
+			[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+			[weakSelf dismissViewControllerAnimated:YES completion:NULL];
+		});
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		});
 	}];
 	[actionsheet showInView:self.view];
 }
@@ -352,23 +362,27 @@ void uncaughtExceptionHandler(NSException *exception)
 	for (NSUInteger i = 0; i < 5; i++)
 	{
 		[actionsheet PV_addButtonWithTitle:info[i] action:^{
-			NSDate *now = [NSDate date];
-			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-			[formatter setDateStyle:NSDateFormatterShortStyle];
-			[formatter setTimeStyle:NSDateFormatterShortStyle];
-			
-			info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
-			[info writeToFile:infoPath atomically:YES];
-			
-			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
-			
-			[weakSelf.genesisCore saveStateToFileAtPath:savePath];
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				NSDate *now = [NSDate date];
+				NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+				[formatter setDateStyle:NSDateFormatterShortStyle];
+				[formatter setTimeStyle:NSDateFormatterShortStyle];
+				
+				info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
+				[info writeToFile:infoPath atomically:YES];
+				
+				NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+				
+				[weakSelf.genesisCore saveStateToFileAtPath:savePath];
+				[weakSelf.genesisCore setPauseEmulation:NO];
+			});
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		});
 	}];
 	
 	[actionsheet showInView:self.view];
@@ -398,74 +412,34 @@ void uncaughtExceptionHandler(NSException *exception)
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
 		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
-			[self.genesisCore loadStateFromFileAtPath:autoSavePath];
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				[self.genesisCore loadStateFromFileAtPath:autoSavePath];
+				[weakSelf.genesisCore setPauseEmulation:NO];
+			});
 		}];
 	}
 	
 	for (NSUInteger i = 0; i < 5; i++)
 	{
 		[actionsheet PV_addButtonWithTitle:info[i] action:^{
-			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
-			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
-			{
-				[self.genesisCore loadStateFromFileAtPath:savePath];
-			}
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			dispatch_sync(dispatch_get_main_queue(), ^{
+				NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+				if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
+				{
+					[self.genesisCore loadStateFromFileAtPath:savePath];
+				}
+				[weakSelf.genesisCore setPauseEmulation:NO];
+			});
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		dispatch_sync(dispatch_get_main_queue(), ^{
+			[weakSelf.genesisCore setPauseEmulation:NO];
+		});
 	}];
 	
 	[actionsheet showInView:self.view];
-}
-
-- (NSString *)batterySavesPath
-{
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
-	
-	NSString *romName = [[[self.romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-	batterySavesDirectory = [batterySavesDirectory stringByAppendingPathComponent:romName];
-	
-	NSError *error = nil;
-	
-	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:&error];
-	if (error)
-	{
-		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
-	}
-	
-	return batterySavesDirectory;
-}
-
-- (NSString *)saveStatePath
-{
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
-	
-	NSString *romName = [[[self.romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
-	
-	NSError *error = nil;
-	
-	[[NSFileManager defaultManager] createDirectoryAtPath:saveStateDirectory
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:&error];
-	if (error)
-	{
-		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
-	}
-	
-	return saveStateDirectory;
 }
 
 #pragma mark - JSDPadDelegate
