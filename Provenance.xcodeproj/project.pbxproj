@@ -451,6 +451,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A1237F217CA279900CEC788 /* User Interface */ = {
+			isa = PBXGroup;
+			children = (
+				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
+			);
+			name = "User Interface";
+			sourceTree = "<group>";
+		};
+		1A1237F317CA27AD00CEC788 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */,
+				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */,
+				1AB9600117C572B400D3E392 /* PVSettingsModel.h */,
+				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		1A1237F417CA27B700CEC788 /* Emulator */ = {
+			isa = PBXGroup;
+			children = (
+				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
+				1A164EB617BC124A00FAC391 /* Audio */,
+				1A3D431A17B2E0BC004DFFFC /* PVGenesisEmulatorCore.h */,
+				1A3D431B17B2E0BC004DFFFC /* PVGenesisEmulatorCore.m */,
+				1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */,
+				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
+				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
+				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
+				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
+				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
+			);
+			name = Emulator;
+			sourceTree = "<group>";
+		};
 		1A164EB617BC124A00FAC391 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -507,27 +543,15 @@
 			children = (
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
-				1A3D431A17B2E0BC004DFFFC /* PVGenesisEmulatorCore.h */,
-				1A3D431B17B2E0BC004DFFFC /* PVGenesisEmulatorCore.m */,
-				1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */,
-				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
-				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
-				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
-				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
-				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
-				1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */,
-				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */,
-				1AB9600117C572B400D3E392 /* PVSettingsModel.h */,
-				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
-				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
+				1A1237F417CA27B700CEC788 /* Emulator */,
+				1A1237F317CA27AD00CEC788 /* Settings */,
+				1A1237F217CA279900CEC788 /* User Interface */,
 				1A48698417C8C1400019F6D2 /* KissXML */,
 				1A48699117C8C1400019F6D2 /* zipkit */,
 				1A4869AA17C8C1640019F6D2 /* ArchiveVG */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
-				1A164EB617BC124A00FAC391 /* Audio */,
-				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 			);
