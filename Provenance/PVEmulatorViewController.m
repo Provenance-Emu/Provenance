@@ -106,7 +106,14 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.gameAudio startAudio];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithGenesisCore:self.genesisCore];
-	[[self.glViewController view] setFrame:CGRectMake([self.view bounds].size.width - 320, 0, 320, 224)];
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		[[self.glViewController view] setFrame:CGRectMake(0, 0, 768, 538)];
+	}
+	else
+	{
+		[[self.glViewController view] setFrame:CGRectMake(0, 0, 320, 224)];
+	}
 	[[self.glViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 	
 	[self.view addSubview:[self.glViewController view]];
@@ -177,10 +184,20 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
 	{
-		[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
-		[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-		[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		{
+			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
+			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
+		else
+		{
+			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
+			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
 	}
+
 	
 	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
@@ -243,31 +260,63 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
-		[UIView animateWithDuration:duration
-							  delay:0.0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [[self.glViewController view] setFrame:CGRectMake([self.view bounds].size.width - 320, 0, 320, 224)];
-							 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
-							 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-						 }
-						 completion:^(BOOL finished) {
-						 }];
+		if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
+		{
+			[UIView animateWithDuration:duration
+								  delay:0.0
+								options:UIViewAnimationOptionBeginFromCurrentState
+							 animations:^{
+								 [[self.glViewController view] setFrame:CGRectMake(0, 0, 768, 538)];
+								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
+								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+							 }
+							 completion:^(BOOL finished) {
+							 }];
+		}
+		else
+		{
+			[UIView animateWithDuration:duration
+								  delay:0.0
+								options:UIViewAnimationOptionBeginFromCurrentState
+							 animations:^{
+								 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
+								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+							 }
+							 completion:^(BOOL finished) {
+							 }];
+		}
 	}
 	else
-	{
-		[UIView animateWithDuration:duration
-							  delay:0.0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
-							 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-							 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-						 }
-						 completion:^(BOOL finished) {
-						 }];
+	{		
+		if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
+		{
+			[UIView animateWithDuration:duration
+								  delay:0.0
+								options:UIViewAnimationOptionBeginFromCurrentState
+							 animations:^{
+								 [[self.glViewController view] setFrame:CGRectMake([self.view bounds].size.width - 320, 0, 320, 224)];
+								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
+								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+							 }
+							 completion:^(BOOL finished) {
+							 }];
+		}
+		else
+		{
+			[UIView animateWithDuration:duration
+								  delay:0.0
+								options:UIViewAnimationOptionBeginFromCurrentState
+							 animations:^{
+								 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
+								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+							 }
+							 completion:^(BOOL finished) {
+							 }];
+		}
 	}
 }
 
