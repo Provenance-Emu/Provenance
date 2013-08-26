@@ -27,4 +27,6 @@
 
 @property (nonatomic, weak) IBOutlet id <JSButtonDelegate> delegate;
 
+- (void)setEnabled:(BOOL)enabled;
+
 @end

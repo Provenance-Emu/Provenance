@@ -34,6 +34,7 @@ typedef NS_ENUM(NSUInteger, JSDPadDirection)
 
 @property (nonatomic, weak) IBOutlet id <JSDPadDelegate> delegate;
 
+- (void)setEnabled:(BOOL)enabled;
 - (JSDPadDirection)currentDirection;
 
 @end

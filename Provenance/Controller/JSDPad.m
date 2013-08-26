@@ -54,6 +54,11 @@
 	self.delegate = nil;
 }
 
+- (void)setEnabled:(BOOL)enabled
+{
+	[self setUserInteractionEnabled:enabled];
+}
+
 - (JSDPadDirection)currentDirection
 {
 	return _currentDirection;

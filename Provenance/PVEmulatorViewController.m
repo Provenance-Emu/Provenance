@@ -16,6 +16,11 @@
 #import "UIAlertView+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
 #import "PVSettingsModel.h"
+#import "UIView+FrameAdditions.h"
+#import <QuartzCore/QuartzCore.h>
+
+NSString * const PVSavedDPadOriginKey = @"PVSavedDPadOriginKey";
+NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 @interface PVEmulatorViewController ()
 
@@ -29,8 +34,13 @@
 @property (nonatomic, strong) JSButton *bButton;
 @property (nonatomic, strong) JSButton *cButton;
 @property (nonatomic, strong) JSButton *startButton;
-
 @property (nonatomic, strong) JSButton *menuButton;
+@property (nonatomic, strong) UIView *buttonContainer;
+
+@property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
+@property (nonatomic, strong) UIPanGestureRecognizer *buttonPanRecognizer;
+@property (nonatomic, strong) UIButton *saveControlsButton;
+@property (nonatomic, strong) UIButton *resetControlsButton;
 
 @end
 
@@ -122,15 +132,32 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	
-	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(5, [[self view] bounds].size.height - 185, 180, 180)];
+	CGPoint dPadOrigin = CGPointMake(5, [[self view] bounds].size.height - 185);
+	CGPoint buttonsOrigin = CGPointMake([self.view bounds].size.width - 217, [self.view bounds].size.height - 97);
+	
+	NSString *savedDPadOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedDPadOriginKey];
+	if ([savedDPadOrigin length])
+	{
+		CGPoint dPadDelta = CGPointFromString(savedDPadOrigin);
+		dPadOrigin = CGPointMake(dPadDelta.x, self.view.bounds.size.height - dPadDelta.y);
+	}
+	
+	NSString *savedButtonOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedButtonOriginKey];
+	if ([savedButtonOrigin length])
+	{
+		CGPoint buttonsDelta = CGPointFromString(savedButtonOrigin);
+		buttonsOrigin = CGPointMake(self.view.bounds.size.width - buttonsDelta.x, self.view.bounds.size.height - buttonsDelta.y);
+	}
+	
+	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(dPadOrigin.x, dPadOrigin.y, 180, 180)];
 	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 	[self.dPad setDelegate:self];
 	[self.dPad setAlpha:alpha];
 	[self.view addSubview:self.dPad];
 	
-	UIView *buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(([self.view bounds].size.width - 212) - 5, ([self.view bounds].size.height - 92) - 5, 212, 92)];
-	[buttonContainer setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
-	[self.view addSubview:buttonContainer];
+	self.buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(buttonsOrigin.x, buttonsOrigin.y, 212, 92)];
+	[self.buttonContainer setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
+	[self.view addSubview:self.buttonContainer];
 	
 	self.aButton = [[JSButton alloc] initWithFrame:CGRectMake(8, 24, 60, 60)];
 	[[self.aButton titleLabel] setText:@"A"];
@@ -138,7 +165,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.aButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.aButton setDelegate:self];
 	[self.aButton setAlpha:alpha];
-	[buttonContainer addSubview:self.aButton];
+	[self.buttonContainer addSubview:self.aButton];
 	
 	self.bButton = [[JSButton alloc] initWithFrame:CGRectMake(76, 16, 60, 60)];
 	[[self.bButton titleLabel] setText:@"B"];
@@ -146,7 +173,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.bButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.bButton setDelegate:self];
 	[self.bButton setAlpha:alpha];
-	[buttonContainer addSubview:self.bButton];
+	[self.buttonContainer addSubview:self.bButton];
 	
 	self.cButton = [[JSButton alloc] initWithFrame:CGRectMake(144, 8, 60, 60)];
 	[[self.cButton titleLabel] setText:@"C"];
@@ -154,11 +181,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.cButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 	[self.cButton setDelegate:self];
 	[self.cButton setAlpha:alpha];
-	[buttonContainer addSubview:self.cButton];
+	[self.buttonContainer addSubview:self.cButton];
 	
 	PVButtonGroupOverlayView *buttonGroup = [[PVButtonGroupOverlayView alloc] initWithButtons:@[self.aButton, self.bButton, self.cButton]];
 	[buttonGroup setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[buttonContainer addSubview:buttonGroup];
+	[self.buttonContainer addSubview:buttonGroup];
 	
 	self.startButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.view bounds].size.height - 32, 62, 22)];
 	[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
@@ -258,6 +285,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+	return UIInterfaceOrientationLandscapeRight;
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -337,6 +369,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.genesisCore setPauseEmulation:YES];
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	
+	[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
+		[weakSelf editControls];
+	}];
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
 		[weakSelf performSelector:@selector(showSaveStateMenu)
@@ -471,7 +507,120 @@ void uncaughtExceptionHandler(NSException *exception)
 	[actionsheet showInView:self.view];
 }
 
-#pragma mark - JSDPadDelegate
+#pragma mark - Controls
+
+- (void)editControls
+{
+	[self.menuButton setEnabled:NO];
+	
+	[self.glViewController.view setAlpha:0.5];
+	[self.dPad setAlpha:1.0];
+	[self.aButton setAlpha:1.0];
+	[self.bButton setAlpha:1.0];
+	[self.cButton setAlpha:1.0];
+	
+	self.saveControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+	[self.saveControlsButton setTitle:@"Save Controls" forState:UIControlStateNormal];
+	[self.saveControlsButton sizeToFit];
+	[self.saveControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.saveControlsButton bounds].size.width) / 2,
+									   ([self.view bounds].size.height / 2) - [self.saveControlsButton bounds].size.height)];
+	[self.saveControlsButton addTarget:self action:@selector(saveControls:) forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:self.saveControlsButton];
+	
+	self.resetControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+	[self.resetControlsButton setTitle:@"Reset Controls" forState:UIControlStateNormal];
+	[self.resetControlsButton sizeToFit];
+	[self.resetControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.resetControlsButton bounds].size.width) / 2,
+									   ([self.view bounds].size.height / 2) + [self.resetControlsButton bounds].size.height)];
+	[self.resetControlsButton addTarget:self action:@selector(resetControls:) forControlEvents:UIControlEventTouchUpInside];
+	[self.view addSubview:self.resetControlsButton];
+	
+	self.dPadPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+																	 action:@selector(panRecognized:)];
+	self.buttonPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
+																	   action:@selector(panRecognized:)];
+	
+	[self.dPad addGestureRecognizer:self.dPadPanRecognizer];
+	[self.buttonContainer addGestureRecognizer:self.buttonPanRecognizer];
+}
+
+- (void)adjustAnchorPointForRecognizer:(UIGestureRecognizer *)recognizer
+{
+	if ([recognizer state] == UIGestureRecognizerStateBegan)
+	{
+		UIView *view = [recognizer view];
+		UIView *superview = [view superview];
+		
+        CGPoint locationInView = [recognizer locationInView:view];
+        CGPoint locationInSuperview = [recognizer locationInView:superview];
+		
+		view.layer.anchorPoint = CGPointMake(locationInView.x / view.bounds.size.width, locationInView.y / view.bounds.size.height);
+		view.center = locationInSuperview;
+    }
+}
+
+- (void)panRecognized:(UIPanGestureRecognizer *)recognizer
+{
+	[self adjustAnchorPointForRecognizer:recognizer];
+	
+	if ([recognizer state] == UIGestureRecognizerStateBegan || [recognizer state] == UIGestureRecognizerStateChanged)
+	{
+		UIView *view = [recognizer view];
+		UIView *superview = [view superview];
+		
+		CGPoint translation = [recognizer translationInView:superview];
+		CGFloat newX = roundf([view center].x + translation.x);
+		CGFloat newY = roundf([view center].y + translation.y);
+		[view setCenter:CGPointMake(newX, newY)];
+		[recognizer setTranslation:CGPointZero inView:superview];
+	}
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+	return YES;
+}
+
+- (void)resetControls:(id)sender
+{
+	CGPoint dPadOrigin = CGPointMake(5, [[self view] bounds].size.height - 185);
+	CGPoint buttonsOrigin = CGPointMake([self.view bounds].size.width - 217, [self.view bounds].size.height - 97);
+
+	[self.dPad setOrigin:dPadOrigin];
+	[self.buttonContainer setOrigin:buttonsOrigin];
+}
+
+- (void)saveControls:(id)sender
+{
+	CGPoint dPadDelta = CGPointMake(self.dPad.frame.origin.x, self.view.bounds.size.height - self.dPad.frame.origin.y);
+	CGPoint buttonsDelta = CGPointMake(self.view.bounds.size.width - self.buttonContainer.frame.origin.x, self.view.bounds.size.height - self.buttonContainer.frame.origin.y);
+	
+	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(dPadDelta) forKey:PVSavedDPadOriginKey];
+	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(buttonsDelta) forKey:PVSavedButtonOriginKey];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	[self.menuButton setEnabled:YES];
+	
+	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
+	
+	[self.glViewController.view setAlpha:1.0];
+	[self.dPad setAlpha:alpha];
+	[self.aButton setAlpha:alpha];
+	[self.bButton setAlpha:alpha];
+	[self.cButton setAlpha:alpha];
+	
+	[self.dPad removeGestureRecognizer:self.dPadPanRecognizer];
+	[self.buttonContainer removeGestureRecognizer:self.buttonPanRecognizer];
+	self.dPadPanRecognizer = nil;
+	self.buttonPanRecognizer = nil;
+	
+	[self.saveControlsButton removeFromSuperview];
+	[self.resetControlsButton removeFromSuperview];
+	self.saveControlsButton = nil;
+	self.resetControlsButton = nil;
+	
+	[self.genesisCore setPauseEmulation:NO];
+}
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {

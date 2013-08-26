@@ -39,7 +39,7 @@
 }
 
 - (void)commonInit
-{
+{	
 	_backgroundImageView = [[UIImageView alloc] initWithImage:self.backgroundImage];
 	[_backgroundImageView setFrame:[self bounds]];
 	[_backgroundImageView setContentMode:UIViewContentModeCenter];
@@ -81,6 +81,11 @@
 	[self removeObserver:self forKeyPath:@"backgroundImage"];
 	[self removeObserver:self forKeyPath:@"backgroundImagePressed"];
 	self.delegate = nil;
+}
+
+- (void)setEnabled:(BOOL)enabled
+{
+	[self setUserInteractionEnabled:enabled];
 }
 
 - (void)setTitleEdgeInsets:(UIEdgeInsets)titleEdgeInsets

@@ -10,6 +10,10 @@
 #import "JSDPad.h"
 #import "JSButton.h"
 
+extern NSString * const PVSavedDPadOriginKey;
+extern NSString * const PVSavedButtonOriginKey;
+
+
 @interface PVEmulatorViewController : UIViewController <UIActionSheetDelegate, JSDPadDelegate, JSButtonDelegate>
 
 @property (nonatomic, copy) NSString *batterySavesPath;
