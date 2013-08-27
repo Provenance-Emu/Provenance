@@ -31,7 +31,13 @@
 	NSPersistentStoreCoordinator *_persistentStoreCoordinator;
 	
 	NSOperationQueue *_artworkDownloadQueue;
+	
 }
+
+@property (nonatomic, strong) UIToolbar *renameToolbar;
+@property (nonatomic, strong) UIView *renameOverlay;
+@property (nonatomic, strong) UITextField *renameTextField;
+@property (nonatomic, strong) PVGame *gameToRename;
 
 @property (nonatomic, strong) NSArray *games;
 
@@ -455,15 +461,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	{
 		__weak PVGameLibraryViewController *weakSelf = self;
 		CGPoint point = [recognizer locationInView:_collectionView];
+		NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
+		PVGame *game = weakSelf.games[[indexPath item]];
 		
 		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
 		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
-			
+			[self renameGame:game];
 		}];
 		[actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
-			NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
-			PVGame *game = weakSelf.games[[indexPath item]];
-			
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
 															message:@"Any save states and battery saves will also be deleted, are you sure?"
 														   delegate:nil
@@ -479,6 +484,136 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		}];
 		[actionSheet showInView:self.view];
 	}
+}
+
+- (void)renameGame:(PVGame *)game
+{
+	self.gameToRename = game;
+	
+	self.renameOverlay = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+	[self.renameOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+	[self.renameOverlay setBackgroundColor:[UIColor colorWithWhite:0.0 alpha:0.3]];
+	[self.renameOverlay setAlpha:0.0];
+	[self.view addSubview:self.renameOverlay];
+	
+	[UIView animateWithDuration:0.3
+						  delay:0.0
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 [self.renameOverlay setAlpha:1.0];
+					 }
+					 completion:NULL];
+	
+	
+	self.renameToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+	[self.renameToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
+	[self.renameToolbar setBarStyle:UIBarStyleBlack];
+	
+	self.renameTextField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width - 24, 30)];
+	[self.renameTextField setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+	[self.renameTextField setBorderStyle:UITextBorderStyleRoundedRect];
+	[self.renameTextField setPlaceholder:[game title]];
+	[self.renameTextField setKeyboardAppearance:UIKeyboardAppearanceAlert];
+	[self.renameTextField setReturnKeyType:UIReturnKeyDone];
+	[self.renameTextField setDelegate:self];
+	UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:self.renameTextField];
+	
+	[self.renameToolbar setItems:@[textFieldItem]];
+	
+	[self.renameToolbar setOriginY:self.view.bounds.size.height];
+	[self.renameOverlay addSubview:self.renameToolbar];
+	
+	[self.navigationController.view addSubview:self.renameOverlay];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(keyboardWillShow:)
+												 name:UIKeyboardWillShowNotification
+											   object:nil];
+	
+	[self.renameTextField becomeFirstResponder];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+	[self doneRenaming:self];
+	return YES;
+}
+
+- (void)keyboardWillShow:(NSNotification *)note
+{
+	NSDictionary *userInfo = [note userInfo];
+	
+	CGRect keyboardEndFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
+	keyboardEndFrame = [self.view.window convertRect:keyboardEndFrame toView:self.navigationController.view];
+	CGFloat animationDuration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	NSUInteger animationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
+	
+	[UIView animateWithDuration:animationDuration
+						  delay:0.0
+						options:UIViewAnimationOptionBeginFromCurrentState | animationCurve
+					 animations:^{
+						 [self.renameToolbar setOriginY:keyboardEndFrame.origin.y - self.renameToolbar.frame.size.height];
+					 }
+					 completion:^(BOOL finished) {
+					 }];
+}
+
+- (void)doneRenaming:(id)sender
+{
+	NSString *newTitle = [self.renameTextField text];
+	
+	if ([newTitle length])
+	{
+		[self.gameToRename setTitle:newTitle];
+		self.gameToRename = nil;
+		
+		[self save:NULL];
+		[self reloadData];
+	}
+	
+	[UIView animateWithDuration:0.3
+						  delay:0.0
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 [self.renameOverlay setAlpha:0.0];
+					 }
+					 completion:^(BOOL finished) {
+						 [self.renameOverlay removeFromSuperview];
+						 self.renameOverlay = nil;
+					 }];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(keyboardWillHide:)
+												 name:UIKeyboardWillHideNotification
+											   object:nil];
+	[self.renameTextField resignFirstResponder];
+}
+
+- (void)keyboardWillHide:(NSNotification *)note
+{
+	NSDictionary *userInfo = [note userInfo];
+	
+	CGFloat animationDuration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+	NSUInteger animationCurve = [[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] unsignedIntegerValue];
+	
+	[UIView animateWithDuration:animationDuration
+						  delay:0.0
+						options:UIViewAnimationOptionBeginFromCurrentState | animationCurve
+					 animations:^{
+						 [self.renameToolbar setOriginY:[[UIScreen mainScreen] bounds].size.height];
+					 }
+					 completion:^(BOOL finished) {
+						 [self.renameToolbar removeFromSuperview];
+						 self.renameToolbar = nil;
+						 self.renameTextField = nil;
+					 }];
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:UIKeyboardWillShowNotification
+												  object:nil];
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:UIKeyboardWillHideNotification
+												  object:nil];
 }
 
 - (void)deleteGame:(PVGame *)game
