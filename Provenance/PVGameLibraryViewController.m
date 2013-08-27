@@ -129,11 +129,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return UIInterfaceOrientationMaskAll;
 }
 
-- (BOOL)shouldAutorotate
-{
-	return NO;
-}
-
 - (NSString *)romsPath
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
