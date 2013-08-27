@@ -24,7 +24,7 @@ iOS Specific features:
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
-- Integration with [ArchiveVG](http://archive.vg)
+- Integration with [ArchiveVG](http://archive.vg) (uses the API library code from OpenEmu)
     - If possible, game artwork will be downloaded for display in the library
 
 ##Things Yet To Be Done
