@@ -37,7 +37,7 @@ iOS Specific features:
 - Integration with [ArchiveVG](http://archive.vg) (uses the API library code from OpenEmu)
     - If possible, game artwork will be downloaded for display in the library
 
-Feel free to suggest/request features suing the Issues page.
+Feel free to suggest/request features using the Issues page.
 
 ##Things Yet To Be Done
 
