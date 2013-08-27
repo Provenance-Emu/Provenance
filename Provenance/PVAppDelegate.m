@@ -26,7 +26,6 @@
 	{
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentsDirectory = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
-		documentsDirectory = [documentsDirectory stringByAppendingPathComponent:@"roms"];
 		
 		NSString *sourcePath = [url path];
 		NSString *filename = [sourcePath lastPathComponent];

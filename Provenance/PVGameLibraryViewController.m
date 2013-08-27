@@ -138,9 +138,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	NSString *romsDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
 	
-	return romsDirectory;
+	return documentsDirectoryPath;
 }
 
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
@@ -483,6 +482,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			}];
 			[alert show];
 		}];
+		[actionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
 		[actionSheet showInView:self.view];
 	}
 }

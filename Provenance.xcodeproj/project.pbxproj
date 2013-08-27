@@ -147,6 +147,7 @@
 		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
+		1AEF388D17CD1F5800C2C0D6 /* README.mdown in Resources */ = {isa = PBXBuildFile; fileRef = 1AEF388C17CD1F5800C2C0D6 /* README.mdown */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -423,6 +424,7 @@
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		1AEF388C17CD1F5800C2C0D6 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -568,6 +570,7 @@
 				1A3D40A917B2DCE4004DFFFC /* Default.png */,
 				1A3D40AB17B2DCE4004DFFFC /* Default@2x.png */,
 				1A3D40AD17B2DCE4004DFFFC /* Default-568h@2x.png */,
+				1AEF388C17CD1F5800C2C0D6 /* README.mdown */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1057,6 +1060,7 @@
 				1A4869D217C8CA920019F6D2 /* Gear@2x.png in Resources */,
 				1A4869D317C8CA920019F6D2 /* GearLandscape.png in Resources */,
 				1A4869D417C8CA920019F6D2 /* GearLandscape@2x.png in Resources */,
+				1AEF388D17CD1F5800C2C0D6 /* README.mdown in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,0 +1,35 @@
+# Provenance
+### An iOS Frontend for Sega Genesis emulation
+
+Genesis emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu).
+
+##Features
+
+Since Provenances uses Genesis Plus GX, it theoretically supports evetything stated on its [features](http://code.google.com/p/genplus-gx/wiki/Features) page, however, much of it is not implemented in this frontend.
+
+- Very accurate & full speed Sega 16-bit emulation
+- Stereo sound
+- OpenGL based rendering, never drops below 60fps
+- Save States
+- Battery saves (native game saves, i.e. Sonic 3)
+
+iOS Specific features:
+
+- iPhone 4S, 5, iPad Support
+	- iOS 6 supported currently, but 7 support will follow very shortly.
+- Configurable on-screen controls
+    - Position them how you like, and adjust their opacity so they don't get in your way
+	- Support for physical game controllers will come with iOS 7 support
+- "Open In..." support
+    - Download a ROM using Mobile Safari and import it into Provenance
+- iTunes File Sharing
+    - Just drop ROMs into the app from iTunes on your Mac or PC
+- Integration with [ArchiveVG](http://archive.vg)
+    - If possible, game artwork will be downloaded for display in the library
+
+##Things Yet To Be Done
+
+- 6 button controller support
+    - more of a UI problem than technical. The emulator already supports multiple types of controllers, it's just a case of making room on an iOS screen for things like 6 buttons
+- Cheat codes
+- Custom game artwork for the library
