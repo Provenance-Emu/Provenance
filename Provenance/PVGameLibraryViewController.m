@@ -465,6 +465,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		PVGame *game = weakSelf.games[[indexPath item]];
 		
 		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
+		[actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
 			[self renameGame:game];
 		}];

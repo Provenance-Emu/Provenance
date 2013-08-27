@@ -369,6 +369,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.genesisCore setPauseEmulation:YES];
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
 		[weakSelf editControls];
@@ -433,6 +434,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	for (NSUInteger i = 0; i < 5; i++)
 	{
@@ -479,6 +481,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{

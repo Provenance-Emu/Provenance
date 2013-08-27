@@ -34,7 +34,7 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 {
 	if ((self = [super init]))
 	{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES), kAutoLoadAutoSavesKey : @(NO), kControllerOpacityKey : @(0.3)}];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES), kAutoLoadAutoSavesKey : @(NO), kControllerOpacityKey : @(0.2)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];

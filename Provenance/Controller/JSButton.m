@@ -48,8 +48,8 @@
 	
 	_titleLabel = [[UILabel alloc] init];
 	[_titleLabel setBackgroundColor:[UIColor clearColor]];
-	[_titleLabel setTextColor:[UIColor darkGrayColor]];
-	[_titleLabel setShadowColor:[UIColor whiteColor]];
+	[_titleLabel setTextColor:[UIColor whiteColor]];
+	[_titleLabel setShadowColor:[UIColor darkGrayColor]];
 	[_titleLabel setShadowOffset:CGSizeMake(0, 1)];
 	[_titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
 	[_titleLabel setFrame:[self bounds]];
