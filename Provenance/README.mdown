@@ -3,6 +3,16 @@
 
 Genesis emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu).
 
+###Why 'Provenance'?
+
+I was looking for a word with a similar meaning to Genesis and came across Provenance:
+
+> prov·e·nance  
+> */ˈprävənəns/*  
+> **Noun**  
+> > 1. The place of origin or earliest known history of something: "a rug of Iranian provenance".  
+> > 2. The beginning of something's existence; something's origin.
+
 ##Features
 
 Since Provenances uses Genesis Plus GX, it theoretically supports evetything stated on its [features](http://code.google.com/p/genplus-gx/wiki/Features) page, however, much of it is not implemented in this frontend.
