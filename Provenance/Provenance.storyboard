@@ -121,8 +121,34 @@
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" indentationWidth="10" id="h9b-CX-D5X">
+                                        <rect key="frame" x="0.0" y="129" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="9MJ-nj-MVv">
+                                                    <rect key="frame" x="223" y="8" width="79" height="27"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="toggleAutoLock:" destination="bcR-zD-bPX" eventType="valueChanged" id="Nqn-Jc-twu"/>
+                                                        <action selector="toggleAutoSave:" destination="bcR-zD-bPX" eventType="valueChanged" id="2m0-Cs-jfl"/>
+                                                    </connections>
+                                                </switch>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Disable Auto Lock" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VGK-uf-0BZ">
+                                                    <rect key="frame" x="20" y="8" width="187" height="27"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="69" id="e1a-PZ-eJ1">
-                                        <rect key="frame" x="0.0" y="129" width="320" height="69"/>
+                                        <rect key="frame" x="0.0" y="173" width="320" height="69"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="68"/>
@@ -164,6 +190,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="autoLoadSwitch" destination="PUr-Ht-uuQ" id="rK4-bP-MZs"/>
+                        <outlet property="autoLockSwitch" destination="9MJ-nj-MVv" id="yrI-Dw-wfR"/>
                         <outlet property="autoSaveSwitch" destination="9rq-wt-g02" id="2UV-gc-dYc"/>
                         <outlet property="opacitySlider" destination="9Lg-Ty-Jz3" id="pyA-jR-KzQ"/>
                     </connections>
@@ -183,8 +210,13 @@
         <class className="PVSettingsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/PVSettingsViewController.h"/>
             <relationships>
+                <relationship kind="action" name="controllerOpacityChanged:"/>
                 <relationship kind="action" name="done:"/>
+                <relationship kind="action" name="toggleAutoLoadAutoSaves:"/>
+                <relationship kind="action" name="toggleAutoLock:"/>
+                <relationship kind="action" name="toggleAutoSave:"/>
                 <relationship kind="outlet" name="autoLoadSwitch" candidateClass="UISwitch"/>
+                <relationship kind="outlet" name="autoLockSwitch" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="autoSaveSwitch" candidateClass="UISwitch"/>
                 <relationship kind="outlet" name="opacitySlider" candidateClass="UISlider"/>
             </relationships>

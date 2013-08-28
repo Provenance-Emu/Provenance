@@ -7,6 +7,7 @@
 //
 
 #import "PVAppDelegate.h"
+#import "PVSettingsModel.h"
 
 @interface PVAppDelegate ()
 
@@ -17,6 +18,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	[[UIApplication sharedApplication] setIdleTimerDisabled:[[PVSettingsModel sharedInstance] disableAutoLock]];
+	
 	return YES;
 }
 

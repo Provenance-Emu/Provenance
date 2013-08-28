@@ -12,6 +12,7 @@ NSString * const kAutoSaveKey = @"kAutoSaveKey";
 NSString * const kAutoLoadAutoSavesKey = @"kAutoLoadAutoSavesKey";
 NSString * const kControllerOpacityKey = @"kControllerOpacityKey";
 NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
+NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 
 @implementation PVSettingsModel
 
@@ -34,12 +35,13 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 {
 	if ((self = [super init]))
 	{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES), kAutoLoadAutoSavesKey : @(NO), kControllerOpacityKey : @(0.2)}];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES), kAutoLoadAutoSavesKey : @(NO), kControllerOpacityKey : @(0.2), kDisableAutoLockKey : @(NO)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
 		_autoLoadAutoSaves = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoLoadAutoSavesKey];
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
+		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
 	}
 	
 	return self;
@@ -72,6 +74,15 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 	_controllerOpacity = controllerOpacity;
 	[[NSUserDefaults standardUserDefaults] setFloat:_controllerOpacity forKey:kControllerOpacityKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setDisableAutoLock:(BOOL)disableAutoLock
+{
+	_disableAutoLock = disableAutoLock;
+	[[NSUserDefaults standardUserDefaults] setBool:_disableAutoLock forKey:kDisableAutoLockKey];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	[[UIApplication sharedApplication] setIdleTimerDisabled:_disableAutoLock];
 }
 
 @end

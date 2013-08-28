@@ -35,6 +35,7 @@
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
+	[self.autoLockSwitch setOn:[settings disableAutoLock]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -65,6 +66,11 @@
 - (IBAction)controllerOpacityChanged:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setControllerOpacity:[self.opacitySlider value]];
+}
+
+- (IBAction)toggleAutoLock:(id)sender
+{
+	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
 }
 
 @end

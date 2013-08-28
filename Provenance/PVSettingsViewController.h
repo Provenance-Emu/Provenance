@@ -13,6 +13,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;
 @property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
+@property (weak, nonatomic) IBOutlet UISwitch *autoLockSwitch;
 
 - (IBAction)done:(id)sender;
 
