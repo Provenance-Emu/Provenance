@@ -41,11 +41,7 @@ Feel free to suggest/request features using the Issues page.
 
 ##Things Yet To Be Done
 
-- 6 button controller support
-    - more of a UI problem than technical. The emulator already supports multiple types of controllers, it's just a case of making room on an iOS screen for things like 6 buttons
-- Cheat codes
-- Custom game artwork for the library
-- ???
+See the issues page.
 
 #Screen Shots
 
