@@ -42,6 +42,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
 
+@property (nonatomic, assign) BOOL isShowingMenu;
+
 @end
 
 static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewController;
@@ -97,12 +99,20 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.view setBackgroundColor:[UIColor blackColor]];
 	
 	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(appDidBecomeActive:)
-												 name:UIApplicationDidBecomeActiveNotification
+											 selector:@selector(appWillEnterForeground:)
+												 name:UIApplicationWillEnterForegroundNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(appDidEnterBackground:)
+												 name:UIApplicationDidEnterBackgroundNotification
 											   object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appWillResignActive:)
 												 name:UIApplicationWillResignActiveNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(appDidBecomeActive:)
+												 name:UIApplicationDidBecomeActiveNotification
 											   object:nil];
 	
 	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
@@ -352,9 +362,17 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 }
 
-- (void)appDidBecomeActive:(NSNotification *)note
+- (void)appWillEnterForeground:(NSNotification *)note
 {
-	[self.genesisCore setPauseEmulation:NO];
+	if (!self.isShowingMenu)
+	{
+		[self.genesisCore setPauseEmulation:NO];
+	}
+}
+
+- (void)appDidEnterBackground:(NSNotification *)note
+{
+	[self.genesisCore setPauseEmulation:YES];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
@@ -362,11 +380,21 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.genesisCore setPauseEmulation:YES];
 }
 
+- (void)appDidBecomeActive:(NSNotification *)note
+{
+	if (!self.isShowingMenu)
+	{
+		[self.genesisCore setShouldResyncTime:YES];
+		[self.genesisCore setPauseEmulation:NO];
+	}
+}
+
 - (void)showMenu
 {
 	__block PVEmulatorViewController *weakSelf = self;
 	
 	[self.genesisCore setPauseEmulation:YES];
+	self.isShowingMenu = YES;
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
@@ -390,18 +418,19 @@ void uncaughtExceptionHandler(NSException *exception)
 		{
 			NSString *saveStatePath = [self saveStatePath];
 			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+			[weakSelf.genesisCore saveStateToFileAtPath:autoSavePath];
 		}
 		
 		[weakSelf.genesisCore setPauseEmulation:NO];
 		[weakSelf.genesisCore resetEmulation];
+		weakSelf.isShowingMenu = NO;
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
-			NSString *saveStatePath = [self saveStatePath];
+			NSString *saveStatePath = [weakSelf saveStatePath];
 			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[self.genesisCore saveStateToFileAtPath:autoSavePath];
+			[weakSelf.genesisCore saveStateToFileAtPath:autoSavePath];
 		}
 		
 		[weakSelf.gameAudio stopAudio];
@@ -411,6 +440,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
 		[weakSelf.genesisCore setPauseEmulation:NO];
+		weakSelf.isShowingMenu = NO;
 	}];
 	[actionsheet showInView:self.view];
 }
@@ -451,11 +481,13 @@ void uncaughtExceptionHandler(NSException *exception)
 			
 			[weakSelf.genesisCore saveStateToFileAtPath:savePath];
 			[weakSelf.genesisCore setPauseEmulation:NO];
+			weakSelf.isShowingMenu = NO;
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
 		[weakSelf.genesisCore setPauseEmulation:NO];
+		weakSelf.isShowingMenu = NO;
 	}];
 	
 	[actionsheet showInView:self.view];
@@ -486,8 +518,9 @@ void uncaughtExceptionHandler(NSException *exception)
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
 		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
-			[self.genesisCore loadStateFromFileAtPath:autoSavePath];
+			[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
 			[weakSelf.genesisCore setPauseEmulation:NO];
+			weakSelf.isShowingMenu = NO;
 		}];
 	}
 	
@@ -497,14 +530,16 @@ void uncaughtExceptionHandler(NSException *exception)
 			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
 			{
-				[self.genesisCore loadStateFromFileAtPath:savePath];
+				[weakSelf.genesisCore loadStateFromFileAtPath:savePath];
 			}
 			[weakSelf.genesisCore setPauseEmulation:NO];
+			weakSelf.isShowingMenu = NO;
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
 		[weakSelf.genesisCore setPauseEmulation:NO];
+		weakSelf.isShowingMenu = NO;
 	}];
 	
 	[actionsheet showInView:self.view];
@@ -623,6 +658,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.resetControlsButton = nil;
 	
 	[self.genesisCore setPauseEmulation:NO];
+	self.isShowingMenu = NO;
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction

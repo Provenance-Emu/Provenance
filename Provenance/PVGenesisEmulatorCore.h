@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
 @interface PVGenesisEmulatorCore : NSObject
 
 @property (nonatomic, copy) NSString *batterySavesPath;
+@property (atomic, assign) BOOL shouldResyncTime;
 
 - (void)startEmulation;
 - (void)resetEmulation;

@@ -231,6 +231,12 @@ static bool environment_callback(unsigned cmd, void *data)
     OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
     while (!shouldStop)
     {
+		if (self.shouldResyncTime)
+		{
+			self.shouldResyncTime = NO;
+			gameTime = OEMonotonicTime();
+		}
+		
         gameTime += gameInterval;
         @autoreleasepool
         {			

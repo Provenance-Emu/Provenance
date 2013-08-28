@@ -1331,6 +1331,8 @@
 					"-DHAVE_ZLIB",
 					"-DUSE_16BPP_RENDERING",
 					"-D__LIBRETRO__",
+					"-Wno-implicit-function-declaration",
+					"-Wno-shift-count-overflow",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
