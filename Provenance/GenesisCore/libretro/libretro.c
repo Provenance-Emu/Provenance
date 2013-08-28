@@ -631,7 +631,7 @@ bool retro_load_game(const struct retro_game_info *info)
    fprintf(stderr, "Sega CD JP BRAM is located at: %s\n", CD_BRAM_JP);
    fprintf(stderr, "Sega CD RAM CART is located at: %s\n", CART_BRAM);
 
-   snprintf(DEFAULT_PATH, sizeof(DEFAULT_PATH), g_rom_dir);
+   snprintf(DEFAULT_PATH, sizeof(DEFAULT_PATH), "%s", g_rom_dir);
 
    config_default();
    init_bitmap();
@@ -704,7 +704,7 @@ size_t retro_get_memory_size(unsigned id)
 
 void retro_init(void)
 {
-   unsigned level, rgb565;
+	unsigned level;//, rgb565;
 #if defined(USE_NTSC)
    sms_ntsc = calloc(1, sizeof(sms_ntsc_t));
    md_ntsc  = calloc(1, sizeof(md_ntsc_t));

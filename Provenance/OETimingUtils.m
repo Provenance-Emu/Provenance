@@ -100,7 +100,7 @@ static void OEPerfMonitorRecordEvent(OEPerfMonitorObservation *observation, NSTi
         NSTimeInterval stddev = sqrt(variance / observation.numTimesRun);
 
         NSLog(@"%@: avg %fs (%f fps), std.dev %fs (%f fps), worst %fs / over %ld/%ld = %f%%", observation->name,
-              avg, 1 / avg, stddev, 1 / stddev, worst, observation.numTimesOver, observation.numTimesRun,
+              avg, 1 / avg, stddev, 1 / stddev, worst, (long)observation.numTimesOver, (long)observation.numTimesRun,
               100. * (observation.numTimesOver / (float)observation.numTimesRun));
         observation->n = 0;
     }
