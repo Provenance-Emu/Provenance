@@ -57,6 +57,25 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return self;
 }
 
+- (void)dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
+	self.renameOverlay = nil;
+	self.renameTextField = nil;
+	self.renameToolbar = nil;
+	self.gameToRename = nil;
+	self.games = nil;
+	
+	_watcher = nil;
+	_collectionView = nil;
+	_managedObjectContext = nil;
+	_managedObjectModel = nil;
+	_persistentStoreCoordinator = nil;
+
+	_artworkDownloadQueue = nil;
+}
+
 - (void)didReceiveMemoryWarning
 {
 	[super didReceiveMemoryWarning];

@@ -44,6 +44,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 @property (nonatomic, assign) BOOL isShowingMenu;
 
+@property (nonatomic, strong) UIWindow *externalWindow;
+
 @end
 
 static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewController;
@@ -79,8 +81,10 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)dealloc
 {
 	NSSetUncaughtExceptionHandler(NULL);
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	_staticEmulatorViewController = nil;
 	
+	self.externalWindow = nil;
 	self.genesisCore = nil;
 	self.gameAudio = nil;
 	self.glViewController = nil;
@@ -113,6 +117,15 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appDidBecomeActive:)
 												 name:UIApplicationDidBecomeActiveNotification
+											   object:nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(screenDidConnect:)
+												 name:UIScreenDidConnectNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(screenDidDisconnect:)
+												 name:UIScreenDidDisconnectNotification
 											   object:nil];
 	
 	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
@@ -286,6 +299,19 @@ void uncaughtExceptionHandler(NSException *exception)
 			[alert show];
 		}
 	}
+	
+	if ([[UIScreen screens] count] > 1)
+	{
+		UIScreen *externalScreen = [[UIScreen screens] objectAtIndex:1];
+		self.externalWindow = [[UIWindow alloc] initWithFrame:[externalScreen bounds]];
+		[self.externalWindow setScreen:externalScreen];
+		
+		[[self.glViewController view] removeFromSuperview];
+		[self.externalWindow addSubview:[self.glViewController view]];
+		[[self.glViewController view] setFrame:[self.externalWindow bounds]];
+		
+		[self.externalWindow setHidden:NO];
+	}
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -302,6 +328,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
+	if (self.externalWindow)
+	{
+		return;
+	}
+	
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
 	{
 		if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
@@ -754,6 +785,46 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		[self showMenu];
 	}
+}
+
+#pragma mark - Multi Screen
+
+- (void)screenDidConnect:(NSNotification *)note
+{
+	UIScreen *externalScreen = [note object];
+	self.externalWindow = [[UIWindow alloc] initWithFrame:[externalScreen bounds]];
+	[self.externalWindow setScreen:externalScreen];
+	
+	[[self.glViewController view] removeFromSuperview];
+	[self.externalWindow addSubview:[self.glViewController view]];
+	[[self.glViewController view] setFrame:[self.externalWindow bounds]];
+	
+	[self.externalWindow setHidden:NO];
+}
+
+- (void)screenDidDisconnect:(NSNotification *)note
+{
+	[[self.glViewController view] removeFromSuperview];
+	[self.view addSubview:[self.glViewController view]];
+	[self.view sendSubviewToBack:[self.glViewController view]];
+	
+	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+	{
+		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+		{
+			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
+			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
+		else
+		{
+			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
+			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+		}
+	}
+	
+	self.externalWindow = nil;
 }
 
 @end
