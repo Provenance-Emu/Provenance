@@ -21,6 +21,7 @@
 {
 	if ((self = [super initWithFrame:CGRectZero]))
 	{
+		[self setMultipleTouchEnabled:YES];
 		[self setBackgroundColor:[UIColor clearColor]];
 		self.buttons = buttons;
 	}
