@@ -17,25 +17,6 @@
 	uint16_t *_videoBuffer;
 	int _videoWidth, _videoHeight;
 	int16_t _pad[2][12];
-	NSString *_romName;
-	
-	OERingBuffer __strong **ringBuffers;
-	double _sampleRate;
-	
-	NSThread *emulationThread;
-	NSTimeInterval gameInterval;
-	NSTimeInterval _frameInterval;
-	
-	NSUInteger frameSkip;
-    NSUInteger frameCounter;
-    NSUInteger autoFrameSkipLastTime;
-    NSUInteger frameskipadjust;
-	
-	BOOL frameFinished;
-    BOOL willSkipFrame;
-	
-    BOOL isRunning;
-    BOOL shouldStop;
 }
 
 @end
@@ -137,13 +118,11 @@ static bool environment_callback(unsigned cmd, void *data)
 	return true;
 }
 
-- (instancetype)init
+- (id)init
 {
 	if ((self = [super init]))
 	{
 		_videoBuffer = malloc(320 * 224 * 2);
-		NSUInteger count = [self audioBufferCount];
-        ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
 	}
 	
 	_current = self;
@@ -153,48 +132,14 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)dealloc
 {
-	for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
-	{
-		ringBuffers[i] = nil;
-	}
-	
-    free(ringBuffers);
 	free(_videoBuffer);
 }
 
 #pragma mark - Execution
 
-- (void)startEmulation
-{
-	if (!isRunning)
-	{
-		isRunning  = YES;
-		shouldStop = NO;
-		
-		[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
-	}
-}
-
 - (void)resetEmulation
 {
 	retro_reset();
-}
-
-- (void)setPauseEmulation:(BOOL)flag
-{
-    if (flag)
-	{
-		isRunning = NO;
-	}
-    else
-	{
-		isRunning = YES;
-	}
-}
-
-- (BOOL)isEmulationPaused
-{
-    return !isRunning;
 }
 
 - (void)stopEmulation
@@ -202,14 +147,11 @@ static bool environment_callback(unsigned cmd, void *data)
 	if ([self.batterySavesPath length])
 	{
 		[[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
-		
-		NSString *extensionlessFilename = [[[_romName lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-		NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+		NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
 		[self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
     }
 
-	shouldStop = YES;
-    isRunning  = NO;
+	[super stopEmulation];
 	
 	double delayInSeconds = 0.1;
 	dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -217,48 +159,6 @@ static bool environment_callback(unsigned cmd, void *data)
 		retro_unload_game();
 		retro_deinit();
 	});
-}
-
-- (void)frameRefreshThread:(id)anArgument
-{
-    gameInterval = 1./[self frameInterval];
-    NSTimeInterval gameTime = OEMonotonicTime();
-	
-    frameFinished = YES;
-    willSkipFrame = NO;
-    frameSkip = 0;
-	
-    OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
-    while (!shouldStop)
-    {
-		if (self.shouldResyncTime)
-		{
-			self.shouldResyncTime = NO;
-			gameTime = OEMonotonicTime();
-		}
-		
-        gameTime += gameInterval;
-        @autoreleasepool
-        {			
-            willSkipFrame = (frameCounter != frameSkip);
-			
-            if (isRunning)
-            {
-				[self executeFrame];
-            }
-			
-            if (frameCounter >= frameSkip)
-			{
-				frameCounter = 0;
-			}
-            else
-			{
-				frameCounter++;
-			}
-        }
-		
-        OEWaitUntil(gameTime);
-    }
 }
 
 - (void)executeFrame
@@ -272,10 +172,10 @@ static bool environment_callback(unsigned cmd, void *data)
     
     const void *data;
     size_t size;
-    _romName = [path copy];
+    self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];;
     
     //load cart, read bytes, get length
-    NSData* dataObj = [NSData dataWithContentsOfFile:[_romName stringByStandardizingPath]];
+    NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
     if (dataObj == nil)
 	{
 		return false;
@@ -307,8 +207,7 @@ static bool environment_callback(unsigned cmd, void *data)
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             
-			NSString *extensionlessFilename = [[[_romName lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-            NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
+            NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
             
             [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
         }
@@ -398,14 +297,14 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (NSTimeInterval)frameInterval
 {
-    return _frameInterval ? _frameInterval : 59.92;
+    return 59.92;
 }
 
 #pragma mark - Audio
 
 - (double)audioSampleRate
 {
-    return _sampleRate ? _sampleRate : 48000;
+    return 48000;
 }
 
 - (NSUInteger)channelCount
@@ -416,46 +315,6 @@ static bool environment_callback(unsigned cmd, void *data)
 - (NSUInteger)audioBufferCount
 {
     return 1;
-}
-
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index
-{
-    [[self ringBufferAtIndex:index] read:buffer maxLength:frameCount * [self channelCountForBuffer:index] * sizeof(UInt16)];
-}
-
-- (NSUInteger)audioBitDepth
-{
-    return 16;
-}
-
-- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer
-{
-	return [self channelCount];
-}
-
-- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer
-{
-    // 4 frames is a complete guess
-    double frameSampleCount = [self audioSampleRateForBuffer:buffer] / [self frameInterval];
-    NSUInteger channelCount = [self channelCountForBuffer:buffer];
-    NSUInteger bytesPerSample = [self audioBitDepth] / 8;
-    NSAssert(frameSampleCount, @"frameSampleCount is 0");
-    return channelCount*bytesPerSample * frameSampleCount;
-}
-
-- (double)audioSampleRateForBuffer:(NSUInteger)buffer
-{
-    return [self audioSampleRate];
-}
-
-- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index
-{
-    if (ringBuffers[index] == nil)
-	{
-        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:[self audioBufferSizeForBuffer:index] * 16];
-	}
-	
-    return ringBuffers[index];
 }
 
 #pragma mark - Input

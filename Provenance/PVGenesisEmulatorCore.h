@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PVEmulatorCore.h"
 
 typedef NS_ENUM(NSUInteger, PVGenesisButton)
 {
@@ -25,43 +26,9 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
     PVGenesisButtonCount,
 };
 
-@class OERingBuffer;
-
-@interface PVGenesisEmulatorCore : NSObject
-
-@property (nonatomic, copy) NSString *batterySavesPath;
-@property (atomic, assign) BOOL shouldResyncTime;
-
-- (void)startEmulation;
-- (void)resetEmulation;
-- (void)setPauseEmulation:(BOOL)flag;
-- (BOOL)isEmulationPaused;
-- (void)stopEmulation;
-- (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString*)path;
-
-- (uint16_t *)videoBuffer;
-- (CGRect)screenRect;
-- (CGSize)bufferSize;
-- (GLenum)pixelFormat;
-- (GLenum)pixelType;
-- (GLenum)internalPixelFormat;
-- (NSTimeInterval)frameInterval;
-
-- (double)audioSampleRate;
-- (NSUInteger)channelCount;
-- (NSUInteger)audioBufferCount;
-- (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index;
-- (NSUInteger)audioBitDepth;
-- (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
-- (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
-- (double)audioSampleRateForBuffer:(NSUInteger)buffer;
-- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
+@interface PVGenesisEmulatorCore : PVEmulatorCore
 
 - (void)pushGenesisButton:(PVGenesisButton)button;
 - (void)releaseGenesisButton:(PVGenesisButton)button;
-
-- (BOOL)saveStateToFileAtPath:(NSString *)path;
-- (BOOL)loadStateFromFileAtPath:(NSString *)path;
 
 @end
