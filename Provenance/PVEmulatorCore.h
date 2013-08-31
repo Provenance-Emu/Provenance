@@ -16,8 +16,6 @@
 	
 	NSTimeInterval gameInterval;
 	NSTimeInterval _frameInterval;
-	
-	BOOL frameFinished;
 
     BOOL isRunning;
     BOOL shouldStop;

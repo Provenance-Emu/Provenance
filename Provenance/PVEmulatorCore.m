@@ -89,31 +89,49 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    gameInterval = 1./[self frameInterval];
-    NSTimeInterval gameTime = OEMonotonicTime();
-    
-    frameFinished = YES;
-    
-    OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
-    while (!shouldStop)
-    {
-        if (self.shouldResyncTime)
-        {
-            self.shouldResyncTime = NO;
-            gameTime = OEMonotonicTime();
-        }
-        
-        gameTime += gameInterval;
-        
-        @autoreleasepool
-        {
-            if (isRunning)
-            {
-                [self executeFrame];
-            }
-        }
-        
-        OEWaitUntil(gameTime);
+	gameInterval = 1.0 / [self frameInterval];
+//	NSTimeInterval gameTime = OEMonotonicTime(); //uncomment this if the below issue is ever solved...
+	
+	/*
+		Calling OEMonotonicTime() from this base class implementation
+		causes it to return a garbage value similar to 1.52746e+9
+		which, in turn, causes OEWaitUntil to wait forever.
+		Calculating the absolute time without using OETimingUtils
+		yields an expected value.
+		
+		Calling OEMonotonicTime() from any subclass implementation of
+		this method also yields the expected value.
+		
+		I am unable to understand or explain why this occurs.
+		Perhaps someone more intelligent than myself can explain and/or fix this.
+	 */
+	
+	struct mach_timebase_info timebase;
+	mach_timebase_info(&timebase);
+	double toSec = 1e-09 * (timebase.numer / timebase.denom);
+	NSTimeInterval gameTime = mach_absolute_time() * toSec;
+	
+	OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
+	while (!shouldStop)
+	{
+		if (self.shouldResyncTime)
+		{
+			self.shouldResyncTime = NO;
+			gameTime = OEMonotonicTime();
+		}
+		
+		gameTime += gameInterval;
+		
+		@autoreleasepool
+		{
+			if (isRunning)
+			{
+				[self executeFrame];
+			}
+		}
+		
+		OEWaitUntil(gameTime);
+//		mach_wait_until(gameTime / toSec);
     }
 }
 
