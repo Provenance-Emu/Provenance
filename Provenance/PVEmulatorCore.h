@@ -14,18 +14,11 @@
 	OERingBuffer __strong **ringBuffers;
 	double _sampleRate;
 	
-	NSThread *emulationThread;
 	NSTimeInterval gameInterval;
 	NSTimeInterval _frameInterval;
 	
-	NSUInteger frameSkip;
-    NSUInteger frameCounter;
-    NSUInteger autoFrameSkipLastTime;
-    NSUInteger frameskipadjust;
-	
 	BOOL frameFinished;
-    BOOL willSkipFrame;
-	
+
     BOOL isRunning;
     BOOL shouldStop;
 	

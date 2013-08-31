@@ -8,7 +8,7 @@
 
 #import "PVEmulatorCore.h"
 #import "NSObject+PVAbstractAdditions.h"
-
+#import <mach/mach_time.h>
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
@@ -89,47 +89,30 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-	gameInterval = 1./[self frameInterval];
+    gameInterval = 1./[self frameInterval];
     NSTimeInterval gameTime = OEMonotonicTime();
-	
-	NSLog(@"gameTime = %g", gameTime);
-	
+    
     frameFinished = YES;
-    willSkipFrame = NO;
-    frameSkip = 0;
-	
+    
     OESetThreadRealtime(gameInterval, .007, .03); // guessed from bsnes
     while (!shouldStop)
     {
-		if (self.shouldResyncTime)
-		{
-			self.shouldResyncTime = NO;
-			gameTime = OEMonotonicTime();
-		}
-		
+        if (self.shouldResyncTime)
+        {
+            self.shouldResyncTime = NO;
+            gameTime = OEMonotonicTime();
+        }
+        
         gameTime += gameInterval;
-		
+        
         @autoreleasepool
         {
-            willSkipFrame = (frameCounter != frameSkip);
-			
             if (isRunning)
             {
-				[self executeFrame];
+                [self executeFrame];
             }
-			
-            if (frameCounter >= frameSkip)
-			{
-				frameCounter = 0;
-			}
-            else
-			{
-				frameCounter++;
-			}
         }
-		
-		NSLog(@"gameTime = %g", gameTime);
-		
+        
         OEWaitUntil(gameTime);
     }
 }
