@@ -27,7 +27,7 @@
 #import "OEGameAudio.h"
 #import "TPCircularBuffer.h"
 #import "OERingBuffer.h"
-#import "PVGenesisEmulatorCore.h"
+#import "PVEmulatorCore.h"
 
 typedef struct
 {
@@ -119,7 +119,7 @@ OSStatus RenderCallback(void                       *in,
 }
 
 // Designated Initializer
-- (id)initWithCore:(PVGenesisEmulatorCore *)core
+- (id)initWithCore:(PVEmulatorCore *)core
 {
     self = [super init];
     if(self != nil)

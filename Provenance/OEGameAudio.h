@@ -30,11 +30,11 @@
 
 #define AudioDeviceID unsigned
 
-@class PVGenesisEmulatorCore;
+@class PVEmulatorCore;
 
 @interface OEGameAudio : NSObject
 {
-    PVGenesisEmulatorCore *gameCore;
+    PVEmulatorCore *gameCore;
     AUGraph     mGraph;
     AUNode      mConverterNode, mMixerNode, mOutputNode;
     AudioUnit   mConverterUnit, mMixerUnit, mOutputUnit;
@@ -45,7 +45,7 @@
 @property float volume;
 @property AudioDeviceID outputDeviceID;
 
-- (id)initWithCore:(PVGenesisEmulatorCore *)core;
+- (id)initWithCore:(PVEmulatorCore *)core;
 
 - (void)createGraph;
 - (void)startAudio;
