@@ -297,14 +297,14 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (NSTimeInterval)frameInterval
 {
-    return 59.92;
+	return _frameInterval ? _frameInterval : 59.92;
 }
 
 #pragma mark - Audio
 
 - (double)audioSampleRate
 {
-    return 48000;
+	return _sampleRate ? _sampleRate : 48000;
 }
 
 - (NSUInteger)channelCount
