@@ -164,7 +164,7 @@ static bool environment_callback(unsigned cmd, void *data)
 - (void)frameRefreshThread:(id)anArgument
 {
 	gameInterval = 1.0 / [self frameInterval];
-	NSTimeInterval gameTime = OEMonotonicTime(); //uncomment this if the below issue is ever solved...
+	NSTimeInterval gameTime = OEMonotonicTime();
 	
 	/*
 	 Calling OEMonotonicTime() from the base class implementation
@@ -189,10 +189,10 @@ static bool environment_callback(unsigned cmd, void *data)
 	 Perhaps someone more knowledgable than myself can explain and/or fix this.
 	 */
 	
-//	struct mach_timebase_info timebase;
-//	mach_timebase_info(&timebase);
-//	double toSec = 1e-09 * (timebase.numer / timebase.denom);
-//	NSTimeInterval gameTime = mach_absolute_time() * toSec;
+////	struct mach_timebase_info timebase;
+////	mach_timebase_info(&timebase);
+////	double toSec = 1e-09 * (timebase.numer / timebase.denom);
+////	NSTimeInterval gameTime = mach_absolute_time() * toSec;
 	
 	OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 	while (!shouldStop)
