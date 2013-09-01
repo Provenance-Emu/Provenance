@@ -167,23 +167,26 @@ static bool environment_callback(unsigned cmd, void *data)
 	NSTimeInterval gameTime = OEMonotonicTime(); //uncomment this if the below issue is ever solved...
 	
 	/*
-	 Calling OEMonotonicTime() from this base class implementation
-	 causes it to return a garbage value similar to 1.52746e+9
-	 which, in turn, causes OEWaitUntil to wait forever.
+	 Calling OEMonotonicTime() from the base class implementation
+	 of this method causes it to return a garbage value similar
+	 to 1.52746e+9 which, in turn, causes OEWaitUntil to wait forever.
 	 
 	 Calculating the absolute time in the base class implementation
 	 without using OETimingUtils yields an expected value.
 	 
 	 However, calculating the absolute time while in the base class
 	 implementation seems to have a performance hit effect as 
-	 emulation is not as fast as it should be, causing audio and
-	 video glitches.
+	 emulation is not as fast as it should be when running on a device,
+	 causing audio and video glitches, but appears fine in the simulator
+	 (no doubt because it's on a faster CPU).
 	 
 	 Calling OEMonotonicTime() from any subclass implementation of
-	 this method also yields the expected value.
+	 this method also yields the expected value, and results in
+	 expected emulation speed.
 	 
-	 I am unable to understand or explain why this occurs.
-	 Perhaps someone more intelligent than myself can explain and/or fix this.
+	 I am unable to understand or explain why this occurs. I am obviously
+	 missing some vital information relating to this issue.
+	 Perhaps someone more knowledgable than myself can explain and/or fix this.
 	 */
 	
 //	struct mach_timebase_info timebase;
