@@ -120,12 +120,12 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 				[button setBackgroundImage:[UIImage imageNamed:@"button"]];
 				[button setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
 				[button setDelegate:self];
-				[button setAlpha:alpha];
 				[self.buttonGroup addSubview:button];
 			}
 			
 			PVButtonGroupOverlayView *buttonOverlay = [[PVButtonGroupOverlayView alloc] initWithButtons:[self.buttonGroup subviews]];
 			[self.buttonGroup addSubview:buttonOverlay];
+			[self.buttonGroup setAlpha:alpha];
 			[self.view addSubview:self.buttonGroup];
 		}
 		else if ([controlType isEqualToString:PVStartButton])
