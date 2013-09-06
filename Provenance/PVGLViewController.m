@@ -7,7 +7,7 @@
 //
 
 #import "PVGLViewController.h"
-#import "PVGenesisEmulatorCore.h"
+#import "PVEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()
@@ -35,14 +35,14 @@
 	glDeleteTextures(1, &texture);
 	self.effect = nil;
 	self.glContext = nil;
-	self.genesisCore = nil;
+	self.emulatorCore = nil;
 }
 
-- (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore
+- (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
 {
 	if ((self = [super init]))
 	{
-		self.genesisCore = genesisCore;
+		self.emulatorCore = emulatorCore;
 	}
 	
 	return self;
@@ -51,6 +51,17 @@
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		[self.view setFrame:CGRectMake(0, 0, 768, 538)];
+	}
+	else
+	{
+		[self.view setFrame:CGRectMake(0, 0, 320, 224)];
+	}
+	
+	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 	
 	[self setPreferredFramesPerSecond:60];
 	
@@ -63,6 +74,32 @@
 	self.effect = [[GLKBaseEffect alloc] init];
 	
 	[self setupTexture];
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		[UIView animateWithDuration:duration
+							  delay:0.0
+							options:UIViewAnimationOptionBeginFromCurrentState
+						 animations:^{
+							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 717)];
+						 }
+						 completion:^(BOOL finished) {
+						 }];
+	}
+	else
+	{
+		[UIView animateWithDuration:duration
+							  delay:0.0
+							options:UIViewAnimationOptionBeginFromCurrentState
+						 animations:^{
+							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 472) / 2, 0, 457, 320)];
+						 }
+						 completion:^(BOOL finished) {
+						 }];
+	}
 }
 
 - (void)setupTexture
@@ -90,7 +127,7 @@
 	
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.genesisCore.bufferSize.width, self.genesisCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.genesisCore.videoBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -103,7 +140,7 @@
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.genesisCore.bufferSize.width, self.genesisCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.genesisCore.videoBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
 	
 	CGRect viewBound = [self.view bounds];
     CGSize viewSize = viewBound.size;

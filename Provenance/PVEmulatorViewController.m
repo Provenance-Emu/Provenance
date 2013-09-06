@@ -8,7 +8,8 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import "PVGenesisEmulatorCore.h"
+#import "PVEmulatorCore.h"
+#import "PVGame.h"
 #import "OEGameAudio.h"
 #import "JSButton.h"
 #import "JSDPad.h"
@@ -18,24 +19,15 @@
 #import "PVSettingsModel.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
-
-NSString * const PVSavedDPadOriginKey = @"PVSavedDPadOriginKey";
-NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
+#import "PVEmulatorConfiguration.h"
 
 @interface PVEmulatorViewController ()
 
-@property (nonatomic, strong) PVGenesisEmulatorCore *genesisCore;
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
-@property (nonatomic, strong) NSString *romPath;
+@property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
-@property (nonatomic, strong) JSDPad *dPad;
-@property (nonatomic, strong) JSButton *aButton;
-@property (nonatomic, strong) JSButton *bButton;
-@property (nonatomic, strong) JSButton *cButton;
-@property (nonatomic, strong) JSButton *startButton;
-@property (nonatomic, strong) JSButton *menuButton;
-@property (nonatomic, strong) UIView *buttonContainer;
+@property (nonatomic, strong) UIButton *menuButton;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
 @property (nonatomic, strong) UIPanGestureRecognizer *buttonPanRecognizer;
@@ -43,8 +35,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 @property (nonatomic, strong) UIButton *resetControlsButton;
 
 @property (nonatomic, assign) BOOL isShowingMenu;
-
-@property (nonatomic, strong) UIWindow *externalWindow;
 
 @end
 
@@ -56,7 +46,7 @@ void uncaughtExceptionHandler(NSException *exception)
 {
 	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-	[_staticEmulatorViewController.genesisCore saveStateToFileAtPath:autoSavePath];
+	[_staticEmulatorViewController.emulatorCore saveStateToFileAtPath:autoSavePath];
 }
 
 + (void)initialize
@@ -67,12 +57,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 }
 
-- (instancetype)initWithROMPath:(NSString *)path
+- (instancetype)initWithGame:(PVGame *)game;
 {
 	if ((self = [super init]))
 	{
 		_staticEmulatorViewController = self;
-		self.romPath = path;
+		self.game = game;
 	}
 	
 	return self;
@@ -84,13 +74,18 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	_staticEmulatorViewController = nil;
 	
-	self.externalWindow = nil;
-	self.genesisCore = nil;
+	[self.controllerViewController willMoveToParentViewController:nil];
+	[[self.controllerViewController view] removeFromSuperview];
+	[self.controllerViewController removeFromParentViewController];
+	
+	[self.glViewController willMoveToParentViewController:nil];
+	[[self.glViewController view] removeFromSuperview];
+	[self.glViewController removeFromParentViewController];
+	
+	self.emulatorCore = nil;
 	self.gameAudio = nil;
 	self.glViewController = nil;
-	self.dPad = nil;
-	self.aButton = nil;
-	self.startButton = nil;
+	self.controllerViewController = nil;
 	self.menuButton = nil;
 }
 
@@ -98,7 +93,7 @@ void uncaughtExceptionHandler(NSException *exception)
 {
 	[super viewDidLoad];
     
-	self.title = [self.romPath lastPathComponent];
+	self.title = [self.game title];
 	
 	[self.view setBackgroundColor:[UIColor blackColor]];
 	
@@ -119,135 +114,43 @@ void uncaughtExceptionHandler(NSException *exception)
 												 name:UIApplicationDidBecomeActiveNotification
 											   object:nil];
 	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(screenDidConnect:)
-												 name:UIScreenDidConnectNotification
-											   object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(screenDidDisconnect:)
-												 name:UIScreenDidDisconnectNotification
-											   object:nil];
+	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
+	[self.emulatorCore loadFileAtPath:[self.game romPath]];
+	[self.emulatorCore startEmulation];
 	
-	self.genesisCore = [[PVGenesisEmulatorCore alloc] init];
-	[self.genesisCore setBatterySavesPath:[self batterySavesPath]];
-	
-	[self.genesisCore loadFileAtPath:self.romPath];
-	
-	self.gameAudio = [[OEGameAudio alloc] initWithCore:self.genesisCore];
+	self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
 	[self.gameAudio setVolume:1.0];
 	[self.gameAudio setOutputDeviceID:0];
 	[self.gameAudio startAudio];
 	
-	self.glViewController = [[PVGLViewController alloc] initWithGenesisCore:self.genesisCore];
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-	{
-		[[self.glViewController view] setFrame:CGRectMake(0, 0, 768, 538)];
-	}
-	else
-	{
-		[[self.glViewController view] setFrame:CGRectMake(0, 0, 320, 224)];
-	}
-	[[self.glViewController view] setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-	
+	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
+	[self addChildViewController:self.glViewController];
 	[self.view addSubview:[self.glViewController view]];
+	[self.glViewController didMoveToParentViewController:self];
 	
-	[self.genesisCore startEmulation];
+	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
+	[self.controllerViewController setEmulatorCore:self.emulatorCore];
+	[self.controllerViewController setDelegate:self];
+	[self addChildViewController:self.controllerViewController];
+	[self.view addSubview:[self.controllerViewController view]];
+	[self.controllerViewController didMoveToParentViewController:self];
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	
-	CGPoint dPadOrigin = CGPointMake(5, [[self view] bounds].size.height - 185);
-	CGPoint buttonsOrigin = CGPointMake([self.view bounds].size.width - 217, [self.view bounds].size.height - 97);
-	
-	NSString *savedDPadOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedDPadOriginKey];
-	if ([savedDPadOrigin length])
-	{
-		CGPoint dPadDelta = CGPointFromString(savedDPadOrigin);
-		dPadOrigin = CGPointMake(dPadDelta.x, self.view.bounds.size.height - dPadDelta.y);
-	}
-	
-	NSString *savedButtonOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedButtonOriginKey];
-	if ([savedButtonOrigin length])
-	{
-		CGPoint buttonsDelta = CGPointFromString(savedButtonOrigin);
-		buttonsOrigin = CGPointMake(self.view.bounds.size.width - buttonsDelta.x, self.view.bounds.size.height - buttonsDelta.y);
-	}
-	
-	self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(dPadOrigin.x, dPadOrigin.y, 180, 180)];
-	[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-	[self.dPad setDelegate:self];
-	[self.dPad setAlpha:alpha];
-	[self.view addSubview:self.dPad];
-	
-	self.buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(buttonsOrigin.x, buttonsOrigin.y, 212, 92)];
-	[self.buttonContainer setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
-	[self.view addSubview:self.buttonContainer];
-	
-	self.aButton = [[JSButton alloc] initWithFrame:CGRectMake(8, 24, 60, 60)];
-	[[self.aButton titleLabel] setText:@"A"];
-	[self.aButton setBackgroundImage:[UIImage imageNamed:@"button"]];
-	[self.aButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
-	[self.aButton setDelegate:self];
-	[self.aButton setAlpha:alpha];
-	[self.buttonContainer addSubview:self.aButton];
-	
-	self.bButton = [[JSButton alloc] initWithFrame:CGRectMake(76, 16, 60, 60)];
-	[[self.bButton titleLabel] setText:@"B"];
-	[self.bButton setBackgroundImage:[UIImage imageNamed:@"button"]];
-	[self.bButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
-	[self.bButton setDelegate:self];
-	[self.bButton setAlpha:alpha];
-	[self.buttonContainer addSubview:self.bButton];
-	
-	self.cButton = [[JSButton alloc] initWithFrame:CGRectMake(144, 8, 60, 60)];
-	[[self.cButton titleLabel] setText:@"C"];
-	[self.cButton setBackgroundImage:[UIImage imageNamed:@"button"]];
-	[self.cButton setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
-	[self.cButton setDelegate:self];
-	[self.cButton setAlpha:alpha];
-	[self.buttonContainer addSubview:self.cButton];
-	
-	PVButtonGroupOverlayView *buttonGroup = [[PVButtonGroupOverlayView alloc] initWithButtons:@[self.aButton, self.bButton, self.cButton]];
-	[buttonGroup setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[self.buttonContainer addSubview:buttonGroup];
-	
-	self.startButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.view bounds].size.height - 32, 62, 22)];
-	[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-	[self.startButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-	[self.startButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-	[[self.startButton titleLabel] setText:@"Start"];
-	[[self.startButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
-	[self.startButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-	[self.startButton setDelegate:self];
-	[self.startButton setAlpha:alpha];
-	[self.view addSubview:self.startButton];
-	
-	self.menuButton = [[JSButton alloc] initWithFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
+	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
+	[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-	[self.menuButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-	[[self.menuButton titleLabel] setText:@"Menu"];
-	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
-	[self.menuButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-	[self.menuButton setDelegate:self];
+	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
+	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];
+	[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
+	[[self.menuButton titleLabel] setShadowColor:[UIColor darkGrayColor]];
+	[[self.menuButton titleLabel] setShadowOffset:CGSizeMake(0, 1)];
+	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:15]];
+	[self.menuButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[self.menuButton setAlpha:alpha];
+	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.menuButton];
-	
-	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-	{
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-		{
-			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
-			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-		}
-		else
-		{
-			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
-			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-		}
-	}
-
 	
 	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
@@ -260,11 +163,11 @@ void uncaughtExceptionHandler(NSException *exception)
 		
 		if (shouldAutoLoadSaveState)
 		{
-			[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+			[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
 		}
 		else if (shouldAskToLoadSaveState)
 		{
-			[self.genesisCore setPauseEmulation:YES];
+			[self.emulatorCore setPauseEmulation:YES];
 			
 			UIAlertView *alert = [[UIAlertView alloc] init];
 			[alert setTitle:@"Autosave file detected"];
@@ -276,41 +179,28 @@ void uncaughtExceptionHandler(NSException *exception)
 			[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
 				if (buttonIndex == 0)
 				{
-					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
-					[weakSelf.genesisCore setPauseEmulation:NO];
+					[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
+					[weakSelf.emulatorCore setPauseEmulation:NO];
 				}
 				else if (buttonIndex == 1)
 				{
-					[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
+					[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
 					[[PVSettingsModel sharedInstance] setAutoSave:YES];
 					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
 				}
 				else if (buttonIndex == 2)
 				{
-					[weakSelf.genesisCore setPauseEmulation:NO];
+					[weakSelf.emulatorCore setPauseEmulation:NO];
 				}
 				else if (buttonIndex == 3)
 				{
-					[weakSelf.genesisCore setPauseEmulation:NO];
+					[weakSelf.emulatorCore setPauseEmulation:NO];
 					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
 					[[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
 				}
 			}];
 			[alert show];
 		}
-	}
-	
-	if ([[UIScreen screens] count] > 1)
-	{
-		UIScreen *externalScreen = [[UIScreen screens] objectAtIndex:1];
-		self.externalWindow = [[UIWindow alloc] initWithFrame:[externalScreen bounds]];
-		[self.externalWindow setScreen:externalScreen];
-		
-		[[self.glViewController view] removeFromSuperview];
-		[self.externalWindow addSubview:[self.glViewController view]];
-		[[self.glViewController view] setFrame:[self.externalWindow bounds]];
-		
-		[self.externalWindow setHidden:NO];
 	}
 }
 
@@ -326,112 +216,51 @@ void uncaughtExceptionHandler(NSException *exception)
 	return UIInterfaceOrientationLandscapeRight;
 }
 
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+- (NSUInteger)supportedInterfaceOrientations
 {
-	if (self.externalWindow)
-	{
-		return;
-	}
-	
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-	{
-		if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
-		{
-			[UIView animateWithDuration:duration
-								  delay:0.0
-								options:UIViewAnimationOptionBeginFromCurrentState
-							 animations:^{
-								 [[self.glViewController view] setFrame:CGRectMake(0, 0, 768, 538)];
-								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
-								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-							 }
-							 completion:^(BOOL finished) {
-							 }];
-		}
-		else
-		{
-			[UIView animateWithDuration:duration
-								  delay:0.0
-								options:UIViewAnimationOptionBeginFromCurrentState
-							 animations:^{
-								 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
-								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-							 }
-							 completion:^(BOOL finished) {
-							 }];
-		}
-	}
-	else
-	{		
-		if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
-		{
-			[UIView animateWithDuration:duration
-								  delay:0.0
-								options:UIViewAnimationOptionBeginFromCurrentState
-							 animations:^{
-								 [[self.glViewController view] setFrame:CGRectMake([self.view bounds].size.width - 320, 0, 320, 224)];
-								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, [self.glViewController view].bounds.size.height + 10, 62, 22)];
-								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-							 }
-							 completion:^(BOOL finished) {
-							 }];
-		}
-		else
-		{
-			[UIView animateWithDuration:duration
-								  delay:0.0
-								options:UIViewAnimationOptionBeginFromCurrentState
-							 animations:^{
-								 [[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
-								 [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-								 [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-							 }
-							 completion:^(BOOL finished) {
-							 }];
-		}
-	}
+	return UIInterfaceOrientationMaskLandscape;
 }
+
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
 	if (!self.isShowingMenu)
 	{
-		[self.genesisCore setPauseEmulation:NO];
+		[self.emulatorCore setPauseEmulation:NO];
 	}
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-	[self.genesisCore setPauseEmulation:YES];
+	[self.emulatorCore setPauseEmulation:YES];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
 {
-	[self.genesisCore setPauseEmulation:YES];
+	[self.emulatorCore setPauseEmulation:YES];
 }
 
 - (void)appDidBecomeActive:(NSNotification *)note
 {
 	if (!self.isShowingMenu)
 	{
-		[self.genesisCore setShouldResyncTime:YES];
-		[self.genesisCore setPauseEmulation:NO];
+		[self.emulatorCore setShouldResyncTime:YES];
+		[self.emulatorCore setPauseEmulation:NO];
 	}
 }
 
-- (void)showMenu
+- (void)showMenu:(id)sender
 {
 	__block PVEmulatorViewController *weakSelf = self;
 	
-	[self.genesisCore setPauseEmulation:YES];
+	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
-		[weakSelf editControls];
+		[weakSelf.controllerViewController editControls];
 	}];
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
@@ -449,11 +278,11 @@ void uncaughtExceptionHandler(NSException *exception)
 		{
 			NSString *saveStatePath = [self saveStatePath];
 			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[weakSelf.genesisCore saveStateToFileAtPath:autoSavePath];
+			[weakSelf.emulatorCore saveStateToFileAtPath:autoSavePath];
 		}
 		
-		[weakSelf.genesisCore setPauseEmulation:NO];
-		[weakSelf.genesisCore resetEmulation];
+		[weakSelf.emulatorCore setPauseEmulation:NO];
+		[weakSelf.emulatorCore resetEmulation];
 		weakSelf.isShowingMenu = NO;
 	}];
 	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
@@ -461,16 +290,16 @@ void uncaughtExceptionHandler(NSException *exception)
 		{
 			NSString *saveStatePath = [weakSelf saveStatePath];
 			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[weakSelf.genesisCore saveStateToFileAtPath:autoSavePath];
+			[weakSelf.emulatorCore saveStateToFileAtPath:autoSavePath];
 		}
 		
 		[weakSelf.gameAudio stopAudio];
-		[weakSelf.genesisCore stopEmulation];
+		[weakSelf.emulatorCore stopEmulation];
 		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
 	}];
 	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 	}];
 	[actionsheet showInView:self.view];
@@ -510,14 +339,14 @@ void uncaughtExceptionHandler(NSException *exception)
 			
 			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
 			
-			[weakSelf.genesisCore saveStateToFileAtPath:savePath];
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			[weakSelf.emulatorCore saveStateToFileAtPath:savePath];
+			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 	}];
 	
@@ -549,8 +378,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
 		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
-			[weakSelf.genesisCore loadStateFromFileAtPath:autoSavePath];
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
+			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
 		}];
 	}
@@ -561,270 +390,33 @@ void uncaughtExceptionHandler(NSException *exception)
 			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
 			{
-				[weakSelf.genesisCore loadStateFromFileAtPath:savePath];
+				[weakSelf.emulatorCore loadStateFromFileAtPath:savePath];
 			}
-			[weakSelf.genesisCore setPauseEmulation:NO];
+			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
 		}];
 	}
 	
 	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
-		[weakSelf.genesisCore setPauseEmulation:NO];
+		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 	}];
 	
 	[actionsheet showInView:self.view];
 }
 
-#pragma mark - Controls
+#pragma mark - PVControllerViewControllerDelegate
 
-- (void)editControls
+- (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController
 {
 	[self.menuButton setEnabled:NO];
-	
-	[self.glViewController.view setAlpha:0.5];
-	[self.dPad setAlpha:1.0];
-	[self.aButton setAlpha:1.0];
-	[self.bButton setAlpha:1.0];
-	[self.cButton setAlpha:1.0];
-	
-	self.saveControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	[self.saveControlsButton setTitle:@"Save Controls" forState:UIControlStateNormal];
-	[self.saveControlsButton sizeToFit];
-	[self.saveControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.saveControlsButton bounds].size.width) / 2,
-									   ([self.view bounds].size.height / 2) - [self.saveControlsButton bounds].size.height)];
-	[self.saveControlsButton addTarget:self action:@selector(saveControls:) forControlEvents:UIControlEventTouchUpInside];
-	[self.view addSubview:self.saveControlsButton];
-	
-	self.resetControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	[self.resetControlsButton setTitle:@"Reset Controls" forState:UIControlStateNormal];
-	[self.resetControlsButton sizeToFit];
-	[self.resetControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.resetControlsButton bounds].size.width) / 2,
-									   ([self.view bounds].size.height / 2) + [self.resetControlsButton bounds].size.height)];
-	[self.resetControlsButton addTarget:self action:@selector(resetControls:) forControlEvents:UIControlEventTouchUpInside];
-	[self.view addSubview:self.resetControlsButton];
-	
-	self.dPadPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-																	 action:@selector(panRecognized:)];
-	self.buttonPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-																	   action:@selector(panRecognized:)];
-	
-	[self.dPad addGestureRecognizer:self.dPadPanRecognizer];
-	[self.buttonContainer addGestureRecognizer:self.buttonPanRecognizer];
 }
 
-- (void)adjustAnchorPointForRecognizer:(UIGestureRecognizer *)recognizer
+- (void)controllerViewControllerDidEndEditing:(PVControllerViewController *)controllerViewController
 {
-	if ([recognizer state] == UIGestureRecognizerStateBegan)
-	{
-		UIView *view = [recognizer view];
-		UIView *superview = [view superview];
-		
-        CGPoint locationInView = [recognizer locationInView:view];
-        CGPoint locationInSuperview = [recognizer locationInView:superview];
-		
-		view.layer.anchorPoint = CGPointMake(locationInView.x / view.bounds.size.width, locationInView.y / view.bounds.size.height);
-		view.center = locationInSuperview;
-    }
-}
-
-- (void)panRecognized:(UIPanGestureRecognizer *)recognizer
-{
-	[self adjustAnchorPointForRecognizer:recognizer];
-	
-	if ([recognizer state] == UIGestureRecognizerStateBegan || [recognizer state] == UIGestureRecognizerStateChanged)
-	{
-		UIView *view = [recognizer view];
-		UIView *superview = [view superview];
-		
-		CGPoint translation = [recognizer translationInView:superview];
-		CGFloat newX = roundf([view center].x + translation.x);
-		CGFloat newY = roundf([view center].y + translation.y);
-		[view setCenter:CGPointMake(newX, newY)];
-		[recognizer setTranslation:CGPointZero inView:superview];
-	}
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-	return YES;
-}
-
-- (void)resetControls:(id)sender
-{
-	CGPoint dPadOrigin = CGPointMake(5, [[self view] bounds].size.height - 185);
-	CGPoint buttonsOrigin = CGPointMake([self.view bounds].size.width - 217, [self.view bounds].size.height - 97);
-
-	[self.dPad setOrigin:dPadOrigin];
-	[self.buttonContainer setOrigin:buttonsOrigin];
-}
-
-- (void)saveControls:(id)sender
-{
-	CGPoint dPadDelta = CGPointMake(self.dPad.frame.origin.x, self.view.bounds.size.height - self.dPad.frame.origin.y);
-	CGPoint buttonsDelta = CGPointMake(self.view.bounds.size.width - self.buttonContainer.frame.origin.x, self.view.bounds.size.height - self.buttonContainer.frame.origin.y);
-	
-	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(dPadDelta) forKey:PVSavedDPadOriginKey];
-	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(buttonsDelta) forKey:PVSavedButtonOriginKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-	
 	[self.menuButton setEnabled:YES];
-	
-	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
-	
-	[self.glViewController.view setAlpha:1.0];
-	[self.dPad setAlpha:alpha];
-	[self.aButton setAlpha:alpha];
-	[self.bButton setAlpha:alpha];
-	[self.cButton setAlpha:alpha];
-	
-	[self.dPad removeGestureRecognizer:self.dPadPanRecognizer];
-	[self.buttonContainer removeGestureRecognizer:self.buttonPanRecognizer];
-	self.dPadPanRecognizer = nil;
-	self.buttonPanRecognizer = nil;
-	
-	[self.saveControlsButton removeFromSuperview];
-	[self.resetControlsButton removeFromSuperview];
-	self.saveControlsButton = nil;
-	self.resetControlsButton = nil;
-	
-	[self.genesisCore setPauseEmulation:NO];
+	[self.emulatorCore setPauseEmulation:NO];
 	self.isShowingMenu = NO;
-}
-
-- (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
-{
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonRight];
-	
-	switch (direction)
-	{
-		case JSDPadDirectionUpLeft:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonUp];
-			[self.genesisCore pushGenesisButton:PVGenesisButtonLeft];
-			break;
-		case JSDPadDirectionUp:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonUp];
-			break;
-		case JSDPadDirectionUpRight:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonUp];
-			[self.genesisCore pushGenesisButton:PVGenesisButtonRight];
-			break;
-		case JSDPadDirectionLeft:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonLeft];
-			break;
-		case JSDPadDirectionRight:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonRight];
-			break;
-		case JSDPadDirectionDownLeft:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonDown];
-			[self.genesisCore pushGenesisButton:PVGenesisButtonLeft];
-			break;
-		case JSDPadDirectionDown:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonDown];
-			break;
-		case JSDPadDirectionDownRight:
-			[self.genesisCore pushGenesisButton:PVGenesisButtonDown];
-			[self.genesisCore pushGenesisButton:PVGenesisButtonRight];
-			break;
-			
-		default:
-			break;
-	}
-}
-
-- (void)dPadDidReleaseDirection:(JSDPad *)dPad
-{
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[self.genesisCore releaseGenesisButton:PVGenesisButtonRight];
-}
-
-- (void)buttonPressed:(JSButton *)button
-{
-	if ([button isEqual:self.startButton])
-	{
-		[self.genesisCore pushGenesisButton:PVGenesisButtonStart];
-	}
-	else if ([button isEqual:self.aButton])
-	{
-		[self.genesisCore pushGenesisButton:PVGenesisButtonA];
-	}
-	else if ([button isEqual:self.bButton])
-	{
-		[self.genesisCore pushGenesisButton:PVGenesisButtonB];
-	}
-	else if ([button isEqual:self.cButton])
-	{
-		[self.genesisCore pushGenesisButton:PVGenesisButtonC];
-	}
-}
-
-- (void)buttonReleased:(JSButton *)button
-{
-	if ([button isEqual:self.startButton])
-	{
-		[self.genesisCore releaseGenesisButton:PVGenesisButtonStart];
-	}
-	else if ([button isEqual:self.aButton])
-	{
-		[self.genesisCore releaseGenesisButton:PVGenesisButtonA];
-	}
-	else if ([button isEqual:self.bButton])
-	{
-		[self.genesisCore releaseGenesisButton:PVGenesisButtonB];
-	}
-	else if ([button isEqual:self.cButton])
-	{
-		[self.genesisCore releaseGenesisButton:PVGenesisButtonC];
-	}
-	else if ([button isEqual:self.menuButton])
-	{
-		[self showMenu];
-	}
-}
-
-#pragma mark - Multi Screen
-
-- (void)screenDidConnect:(NSNotification *)note
-{
-	UIScreen *externalScreen = [note object];
-	self.externalWindow = [[UIWindow alloc] initWithFrame:[externalScreen bounds]];
-	[self.externalWindow setScreen:externalScreen];
-	
-	[[self.glViewController view] removeFromSuperview];
-	[self.externalWindow addSubview:[self.glViewController view]];
-	[[self.glViewController view] setFrame:[self.externalWindow bounds]];
-	
-	[self.externalWindow setHidden:NO];
-}
-
-- (void)screenDidDisconnect:(NSNotification *)note
-{
-	[[self.glViewController view] removeFromSuperview];
-	[self.view addSubview:[self.glViewController view]];
-	[self.view sendSubviewToBack:[self.glViewController view]];
-	
-	if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-	{
-		if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-		{
-			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 1024) / 2, 0, 1024, 717)];
-			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-		}
-		else
-		{
-			[[self.glViewController view] setFrame:CGRectMake(([self.view bounds].size.width - 472) / 2, 0, 457, 320)];
-			[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-			[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-		}
-	}
-	
-	self.externalWindow = nil;
 }
 
 @end

@@ -17,6 +17,7 @@
 @dynamic crc32;
 @dynamic md5;
 @dynamic requiresSync;
+@dynamic systemIdentifier;
 @synthesize isSyncing;
 
 @end

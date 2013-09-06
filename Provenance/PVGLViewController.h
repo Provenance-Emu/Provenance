@@ -8,12 +8,12 @@
 
 #import <GLKit/GLKit.h>
 
-@class PVGenesisEmulatorCore;
+@class PVEmulatorCore;
 
 @interface PVGLViewController : GLKViewController
 
-@property (nonatomic, weak) PVGenesisEmulatorCore *genesisCore;
+@property (nonatomic, weak) PVEmulatorCore *emulatorCore;
 
-- (instancetype)initWithGenesisCore:(PVGenesisEmulatorCore *)genesisCore;
+- (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore;
 
 @end

@@ -18,6 +18,7 @@
 @property (nonatomic, strong) NSString *crc32;
 @property (nonatomic, strong) NSString *md5;
 @property (nonatomic, strong) NSNumber *requiresSync;
+@property (nonatomic, strong) NSString *systemIdentifier;
 @property (nonatomic, strong) NSNumber *isSyncing;
 
 @end

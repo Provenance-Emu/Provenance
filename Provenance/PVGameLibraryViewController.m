@@ -19,6 +19,7 @@
 #import "PVMediaCache.h"
 #import "UIAlertView+BlockAdditions.h"
 #import "UIActionSheet+BlockAdditions.h"
+#import "PVEmulatorConfiguration.h"
 
 @interface PVGameLibraryViewController () {
 	
@@ -84,6 +85,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+	
+	[PVEmulatorConfiguration sharedInstance]; //load the config file
 	
 	_artworkDownloadQueue = [[NSOperationQueue alloc] init];
 	[_artworkDownloadQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
@@ -225,15 +228,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	NSArray *contents = [fileManager contentsOfDirectoryAtPath:romsPath error:NULL];
 	
+	NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
+	
 	for (NSString *filePath in contents)
 	{
-		if ([filePath hasSuffix:@".smd"] ||
-			[filePath hasSuffix:@".SMD"] ||
-			[filePath hasSuffix:@".bin"] ||
-			[filePath hasSuffix:@".BIN"])
+		NSString *fileExtension = [filePath pathExtension];
+		
+		if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
 		{
 			NSString *path = [romsPath stringByAppendingPathComponent:filePath];
 			NSString *title = [[path lastPathComponent] stringByDeletingPathExtension];
+			NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
 			
 			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", path];
 			NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([PVGame class])];
@@ -246,6 +251,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			if ([results count])
 			{
 				game = results[0];
+				[game setSystemIdentifier:systemID];
 			}
 			else
 			{
@@ -260,6 +266,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 					game = hashResults[0];
 					[game setRomPath:path];
 					[game setTitle:title];
+					[game setSystemIdentifier:systemID];
 				}
 			}
 
@@ -270,6 +277,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 																inManagedObjectContext:_managedObjectContext];
 				[game setRomPath:path];
 				[game setTitle:title];
+				[game setSystemIdentifier:systemID];
 			}
 			
 			if (![[game md5] length] && ![[game crc32] length])
@@ -461,7 +469,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 	PVGame *game = self.games[[indexPath item]];
 	
-	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithROMPath:[game romPath]];
+	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
 	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[game romPath]]];
 	[emulatorViewController setSaveStatePath:[self saveStatePathForROM:[game romPath]]];
 	

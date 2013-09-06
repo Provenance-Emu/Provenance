@@ -9,16 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "JSDPad.h"
 #import "JSButton.h"
+#import "PVControllerViewController.h"
 
-extern NSString * const PVSavedDPadOriginKey;
-extern NSString * const PVSavedButtonOriginKey;
+@class PVEmulatorCore, PVGame;
 
+@interface PVEmulatorViewController : UIViewController <UIActionSheetDelegate, PVControllerViewControllerDelegate>
 
-@interface PVEmulatorViewController : UIViewController <UIActionSheetDelegate, JSDPadDelegate, JSButtonDelegate>
-
+@property (nonatomic, strong) PVEmulatorCore *emulatorCore;
+@property (nonatomic, strong) PVGame *game;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *saveStatePath;
 
-- (instancetype)initWithROMPath:(NSString *)path;
+- (instancetype)initWithGame:(PVGame *)game;
 
 @end

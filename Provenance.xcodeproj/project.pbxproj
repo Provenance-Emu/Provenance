@@ -22,6 +22,8 @@
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A164EBB17BC125900FAC391 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB817BC125900FAC391 /* OERingBuffer.m */; };
 		1A164EBC17BC125900FAC391 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB917BC125900FAC391 /* TPCircularBuffer.c */; };
+		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
+		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
@@ -148,6 +150,7 @@
 		1A935E6617CD3C2F0012E0C4 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6517CD3C2E0012E0C4 /* Default.png */; };
 		1A935E6817CD3C340012E0C4 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6717CD3C340012E0C4 /* Default@2x.png */; };
 		1A935E6A17CD3C3C0012E0C4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6917CD3C3C0012E0C4 /* Default-568h@2x.png */; };
+		1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9647B017D6864300A55612 /* PVControllerViewController.m */; };
 		1AADCDA517BD69E700F53CFE /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDA417BD69E700F53CFE /* OETimingUtils.m */; };
 		1AADCDAA17BD861000F53CFE /* button-thin-pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA617BD861000F53CFE /* button-thin-pressed.png */; };
 		1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AADCDA717BD861000F53CFE /* button-thin-pressed@2x.png */; };
@@ -160,6 +163,7 @@
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
 		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
+		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -184,6 +188,9 @@
 		1A164EB817BC125900FAC391 /* OERingBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OERingBuffer.m; sourceTree = "<group>"; };
 		1A164EB917BC125900FAC391 /* TPCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TPCircularBuffer.c; sourceTree = "<group>"; };
 		1A164EBA17BC125900FAC391 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
+		1A34C58517D517760058E7D1 /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
+		1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConfiguration.h; sourceTree = "<group>"; };
+		1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConfiguration.m; sourceTree = "<group>"; };
 		1A3D409417B2DCE4004DFFFC /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A3D409717B2DCE4004DFFFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A3D409917B2DCE4004DFFFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -433,6 +440,9 @@
 		1A935E6517CD3C2E0012E0C4 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../../Default.png; sourceTree = "<group>"; };
 		1A935E6717CD3C340012E0C4 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../../Default@2x.png"; sourceTree = "<group>"; };
 		1A935E6917CD3C3C0012E0C4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../../Default-568h@2x.png"; sourceTree = "<group>"; };
+		1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PVGame 2.xcdatamodel"; sourceTree = "<group>"; };
+		1A9647AF17D6864300A55612 /* PVControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerViewController.h; sourceTree = "<group>"; };
+		1A9647B017D6864300A55612 /* PVControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerViewController.m; sourceTree = "<group>"; };
 		1AADCDA317BD69E700F53CFE /* OETimingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OETimingUtils.h; sourceTree = "<group>"; };
 		1AADCDA417BD69E700F53CFE /* OETimingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OETimingUtils.m; sourceTree = "<group>"; };
 		1AADCDA617BD861000F53CFE /* button-thin-pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button-thin-pressed.png"; sourceTree = "<group>"; };
@@ -452,6 +462,8 @@
 		1AB9600217C572B400D3E392 /* PVSettingsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsModel.m; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
+		1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGenesisControllerViewController.h; sourceTree = "<group>"; };
+		1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGenesisControllerViewController.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -503,18 +515,18 @@
 		1A1237F417CA27B700CEC788 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
+				1ADD003017D3D65200054D07 /* Genesis */,
 				1A164EB617BC124A00FAC391 /* Audio */,
 				1A0DDB3C17D225EC00B35645 /* PVEmulatorCore.h */,
 				1A0DDB3D17D225EC00B35645 /* PVEmulatorCore.m */,
-				1A3D431A17B2E0BC004DFFFC /* PVGenesisEmulatorCore.h */,
-				1A3D431B17B2E0BC004DFFFC /* PVGenesisEmulatorCore.m */,
 				1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */,
 				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1AADCDA317BD69E700F53CFE /* OETimingUtils.h */,
 				1AADCDA417BD69E700F53CFE /* OETimingUtils.m */,
+				1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */,
+				1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */,
 			);
 			name = Emulator;
 			sourceTree = "<group>";
@@ -818,6 +830,10 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
+				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
+				1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */,
+				1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */,
 				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
 				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
 				1A47C96117BC310700C27644 /* JSButton.h */,
@@ -967,6 +983,7 @@
 				1A0938BD17CD45EC00029021 /* Icon-Small-50@2x.png */,
 				1A0938BE17CD45EC00029021 /* Icon-Small.png */,
 				1A4869BC17C8CA2C0019F6D2 /* Images */,
+				1A34C58517D517760058E7D1 /* systems.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1007,6 +1024,16 @@
 				1A0DDB4117D228B900B35645 /* NSObject+PVAbstractAdditions.m */,
 			);
 			path = Categories;
+			sourceTree = "<group>";
+		};
+		1ADD003017D3D65200054D07 /* Genesis */ = {
+			isa = PBXGroup;
+			children = (
+				1A3D40B417B2DD78004DFFFC /* GenesisCore */,
+				1A3D431A17B2E0BC004DFFFC /* PVGenesisEmulatorCore.h */,
+				1A3D431B17B2E0BC004DFFFC /* PVGenesisEmulatorCore.m */,
+			);
+			name = Genesis;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1115,6 +1142,7 @@
 				1A0938C017CD45ED00029021 /* Icon-Small-50.png in Resources */,
 				1A0938C117CD45ED00029021 /* Icon-Small-50@2x.png in Resources */,
 				1A0938C217CD45ED00029021 /* Icon-Small.png in Resources */,
+				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1210,6 +1238,9 @@
 				1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */,
 				1A0DDB3E17D225EC00B35645 /* PVEmulatorCore.m in Sources */,
 				1A0DDB4217D228B900B35645 /* NSObject+PVAbstractAdditions.m in Sources */,
+				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
+				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
+				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1378,9 +1409,10 @@
 		1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */,
 				1A486A1D17C8D98C0019F6D2 /* PVGame.xcdatamodel */,
 			);
-			currentVersion = 1A486A1D17C8D98C0019F6D2 /* PVGame.xcdatamodel */;
+			currentVersion = 1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */;
 			path = PVGame.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
