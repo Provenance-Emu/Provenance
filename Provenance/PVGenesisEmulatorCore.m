@@ -122,7 +122,7 @@ static bool environment_callback(unsigned cmd, void *data)
 {
 	if ((self = [super init]))
 	{
-		_videoBuffer = malloc(320 * 224 * 2);
+		_videoBuffer = malloc(320 * 480 * 2);
 	}
 	
 	_current = self;
@@ -334,7 +334,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (CGSize)bufferSize
 {
-	return CGSizeMake(320, 224);
+	return CGSizeMake(320, 480);
 }
 
 - (GLenum)pixelFormat

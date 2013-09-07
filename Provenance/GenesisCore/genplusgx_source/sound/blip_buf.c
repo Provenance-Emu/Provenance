@@ -1,3 +1,4 @@
+
 /* blip_buf $vers. http://www.slack.net/~ant/                         */
 
 /*  Modified for Genesis Plus GX by EkeEke (01/09/12)                 */

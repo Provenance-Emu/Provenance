@@ -52,15 +52,6 @@
 {
 	[super viewDidLoad];
 	
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-	{
-		[self.view setFrame:CGRectMake(0, 0, 768, 538)];
-	}
-	else
-	{
-		[self.view setFrame:CGRectMake(0, 0, 320, 224)];
-	}
-	
 	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 	
 	[self setPreferredFramesPerSecond:60];
@@ -76,6 +67,34 @@
 	[self setupTexture];
 }
 
+- (void)didMoveToParentViewController:(UIViewController *)parent
+{
+	[super didMoveToParentViewController:parent];
+	
+	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	{
+		if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
+		{
+			[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 768)];
+		}
+		else
+		{
+			[self.view setFrame:CGRectMake(0, 0, 768, 576)];
+		}
+	}
+	else
+	{
+		if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
+		{
+			[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 427) / 2, 0, 427, 320)];
+		}
+		else
+		{
+			[self.view setFrame:CGRectMake(0, 0, 320, 240)];
+		}
+	}
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -84,7 +103,7 @@
 							  delay:0.0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 717)];
+							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 768)];
 						 }
 						 completion:^(BOOL finished) {
 						 }];
@@ -95,7 +114,7 @@
 							  delay:0.0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 472) / 2, 0, 457, 320)];
+							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 427) / 2, 0, 427, 320)];
 						 }
 						 completion:^(BOOL finished) {
 						 }];
@@ -104,27 +123,6 @@
 
 - (void)setupTexture
 {
-	vertices[0] = GLKVector3Make(-0.5, -0.5,  0.5); // Left  bottom
-	vertices[1] = GLKVector3Make( 0.5, -0.5,  0.5); // Right bottom
-	vertices[2] = GLKVector3Make( 0.5,  0.5,  0.5); // Right top
-	vertices[3] = GLKVector3Make(-0.5,  0.5,  0.5); // Left  top
-	
-	textureCoordinates[0] = GLKVector2Make(0.0f, 1.0f); // Left bottom
-	textureCoordinates[1] = GLKVector2Make(1.0f, 1.0f); // Right bottom
-	textureCoordinates[2] = GLKVector2Make(1.0f, 0.0f); // Right top
-	textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
-	
-	int vertexIndices[6] = {
-		// Front
-		0, 1, 2,
-		0, 2, 3,
-	};
-	
-	for (int i = 0; i < 6; i++) {
-		triangleVertices[i]  = vertices[vertexIndices[i]];
-		triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
-	}
-	
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
@@ -139,17 +137,36 @@
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
+	CGSize screenSize = [self.emulatorCore screenRect].size;
+	CGSize bufferSize = [self.emulatorCore bufferSize];
+	
+	CGFloat texWidth = (screenSize.width / bufferSize.width);
+	CGFloat texHeight = (screenSize.height / bufferSize.height);
+	
+	vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+	vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+	vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+	vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+
+	textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+	textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
+	textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+	textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+	
+	int vertexIndices[6] = {
+		// Front
+		0, 1, 2,
+		0, 2, 3,
+	};
+	
+	for (int i = 0; i < 6; i++) {
+		triangleVertices[i]  = vertices[vertexIndices[i]];
+		triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
+	}
+	
 	glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
-	
-	CGRect viewBound = [self.view bounds];
-    CGSize viewSize = viewBound.size;
-    CGFloat viewWidth = viewSize.width;
-    CGFloat viewHeight = viewSize.height;
-	
-    self.effect.transform.modelviewMatrix =  GLKMatrix4MakeScale(viewWidth, viewHeight, 1);
-    self.effect.transform.projectionMatrix = GLKMatrix4MakeOrtho(-1 * viewWidth/2, viewWidth/2, -viewHeight/2, viewHeight/2, -1, 1);
-	
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, screenSize.width, screenSize.height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
+		
 	if (texture)
 	{
 		self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
