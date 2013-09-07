@@ -12,7 +12,6 @@
 
 @interface PVGameLibraryCollectionViewCell () {
 
-//	CALayer *_selectionLayer;
 	UIImageView *_selectionImage;
 }
 
@@ -27,15 +26,20 @@
 		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(([self bounds].size.width - 72) / 2, 3, 72, frame.size.height - 50)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-				
+		
 		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height + 3, frame.size.width, 44)];
 		[_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
-		[_titleLabel setTextColor:[UIColor whiteColor]];
-		[_titleLabel setShadowColor:[UIColor blackColor]];
-		[_titleLabel setShadowOffset:CGSizeMake(0, 1)];
-		[_titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+		[_titleLabel setTextColor:[UIColor darkTextColor]];
+		if ([UIFont respondsToSelector:NSSelectorFromString(@"preferredFontForTextStyle:")])
+		{
+			[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
+		}
+		else
+		{
+			[_titleLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
+		}
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 		[_titleLabel setNumberOfLines:0];
 		
@@ -59,7 +63,7 @@
 	if (!_selectionImage)
 	{
 		_selectionImage = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"selection"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)]];
-		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 76) / 2, 0, 76, 104)];
+		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 74) / 2, 0, 74, 104)];
 		[_selectionImage setAlpha:0];
 		[[self contentView] addSubview:_selectionImage];
 	}

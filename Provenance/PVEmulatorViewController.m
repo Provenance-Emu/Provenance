@@ -211,6 +211,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
 {
 	return UIInterfaceOrientationLandscapeRight;

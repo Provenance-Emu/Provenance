@@ -116,7 +116,6 @@
 		1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697117C8C0DE0019F6D2 /* PVGame.m */; };
 		1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
 		1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */; };
-		1A48698217C8C1170019F6D2 /* KGNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697E17C8C1170019F6D2 /* KGNoise.m */; };
 		1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
 		1A4869A517C8C1400019F6D2 /* NSString+DDXML.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698717C8C1400019F6D2 /* NSString+DDXML.m */; };
 		1A4869A617C8C1400019F6D2 /* DDXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698A17C8C1400019F6D2 /* DDXMLDocument.m */; };
@@ -374,8 +373,6 @@
 		1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMediaCache.m; sourceTree = "<group>"; };
 		1A48697B17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
 		1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
-		1A48697D17C8C1170019F6D2 /* KGNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGNoise.h; sourceTree = "<group>"; };
-		1A48697E17C8C1170019F6D2 /* KGNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGNoise.m; sourceTree = "<group>"; };
 		1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		1A48698017C8C1170019F6D2 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
 		1A48698617C8C1400019F6D2 /* NSString+DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DDXML.h"; sourceTree = "<group>"; };
@@ -1016,8 +1013,6 @@
 				1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */,
 				1A48697B17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.h */,
 				1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */,
-				1A48697D17C8C1170019F6D2 /* KGNoise.h */,
-				1A48697E17C8C1170019F6D2 /* KGNoise.m */,
 				1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */,
 				1A48698017C8C1170019F6D2 /* NSString+Hashing.m */,
 				1A0DDB4017D228B900B35645 /* NSObject+PVAbstractAdditions.h */,
@@ -1224,7 +1219,6 @@
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */,
-				1A48698217C8C1170019F6D2 /* KGNoise.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
 				1A4869A517C8C1400019F6D2 /* NSString+DDXML.m in Sources */,
 				1A4869A617C8C1400019F6D2 /* DDXMLDocument.m in Sources */,

@@ -9,7 +9,6 @@
 #import "PVGameLibraryViewController.h"
 #import "PVGameLibraryCollectionViewCell.h"
 #import "PVEmulatorViewController.h"
-#import "KGNoise.h"
 #import "UIView+FrameAdditions.h"
 #import "PVDirectoryWatcher.h"
 #import "ArchiveVG.h"
@@ -104,19 +103,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		[self reloadData];
 	}];
 	[_watcher startMonitoring];
-	
-	KGNoiseRadialGradientView *backgroundView = [[KGNoiseRadialGradientView alloc] initWithFrame:[[self view] bounds]];
-	[backgroundView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[backgroundView setBackgroundColor:[UIColor colorWithWhite:0.05 alpha:0.7]];
-	[backgroundView setAlternateBackgroundColor:[UIColor colorWithWhite:0.3 alpha:0.7]];
-	[backgroundView setNoiseBlendMode:kCGBlendModeOverlay];
-	[backgroundView setNoiseOpacity:0.1];
-	[[self view] addSubview:backgroundView];
-	
-	UIImageView *barShadow = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"bar-shadow"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 0)]];
-	[barShadow setWidth:[[self view] bounds].size.width];
-	[barShadow setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-	[[self view] addSubview:barShadow];
 	
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
