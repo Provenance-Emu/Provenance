@@ -164,6 +164,7 @@
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
+		420D7B2417DCA08600D06B10 /* KGNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 420D7B2317DCA08600D06B10 /* KGNoise.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -462,6 +463,8 @@
 		1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGenesisControllerViewController.h; sourceTree = "<group>"; };
 		1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGenesisControllerViewController.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		420D7B2217DCA08600D06B10 /* KGNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGNoise.h; sourceTree = "<group>"; };
+		420D7B2317DCA08600D06B10 /* KGNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGNoise.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1017,6 +1020,8 @@
 				1A48698017C8C1170019F6D2 /* NSString+Hashing.m */,
 				1A0DDB4017D228B900B35645 /* NSObject+PVAbstractAdditions.h */,
 				1A0DDB4117D228B900B35645 /* NSObject+PVAbstractAdditions.m */,
+				420D7B2217DCA08600D06B10 /* KGNoise.h */,
+				420D7B2317DCA08600D06B10 /* KGNoise.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1160,6 +1165,7 @@
 				1A3D423417B2DD8C004DFFFC /* sram.c in Sources */,
 				1A3D423617B2DD8C004DFFFC /* ssp16.c in Sources */,
 				1A3D423717B2DD8C004DFFFC /* svp.c in Sources */,
+				420D7B2417DCA08600D06B10 /* KGNoise.m in Sources */,
 				1A3D423917B2DD8C004DFFFC /* cd_cart.c in Sources */,
 				1A3D423A17B2DD8C004DFFFC /* cdc.c in Sources */,
 				1A3D423B17B2DD8C004DFFFC /* cdd.c in Sources */,

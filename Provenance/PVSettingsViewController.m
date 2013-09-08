@@ -30,6 +30,11 @@
 	
 	self.title = @"Settings";
 	
+	if ([UIFont respondsToSelector:NSSelectorFromString(@"preferredFontForTextStyle:")] == NO)
+	{
+		[[self.navigationController navigationBar] setBarStyle:UIBarStyleBlack];
+	}
+	
 	PVSettingsModel *settings = [PVSettingsModel sharedInstance];
 	
 	[self.autoSaveSwitch setOn:[settings autoSave]];

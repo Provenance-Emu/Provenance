@@ -186,7 +186,7 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="mzJ-Th-2Xx">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="kSq-Mq-zhU">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="kSq-Mq-zhU">
                             <connections>
                                 <action selector="done:" destination="bcR-zD-bPX" id="VZl-wA-Snf"/>
                             </connections>

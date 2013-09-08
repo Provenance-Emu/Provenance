@@ -38,6 +38,9 @@
 		}
 		else
 		{
+			[_titleLabel setTextColor:[UIColor whiteColor]];
+			[_titleLabel setShadowColor:[UIColor blackColor]];
+			[_titleLabel setShadowOffset:CGSizeMake(0, 1)];
 			[_titleLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
 		}
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
