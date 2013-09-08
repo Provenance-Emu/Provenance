@@ -165,7 +165,7 @@
 	}
 	
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, screenSize.width, screenSize.height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, self.emulatorCore.videoBuffer);
 		
 	if (texture)
 	{
