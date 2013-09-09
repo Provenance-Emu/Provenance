@@ -178,7 +178,7 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Controller Settings" id="zDH-xT-eVR">
+                            <tableViewSection headerTitle="Game Library Settings" id="zDH-xT-eVR">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="IBC-zu-dJg" detailTextLabel="ifY-eR-QD5" rowHeight="54" style="IBUITableViewCellStyleSubtitle" id="lqy-4c-FqW">
                                         <rect key="frame" x="0.0" y="350" width="320" height="54"/>
