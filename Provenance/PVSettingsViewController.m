@@ -8,6 +8,8 @@
 
 #import "PVSettingsViewController.h"
 #import "PVSettingsModel.h"
+#import "PVMediaCache.h"
+#import "UIAlertView+BlockAdditions.h"
 
 @interface PVSettingsViewController ()
 
@@ -76,6 +78,26 @@
 - (IBAction)toggleAutoLock:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	if (indexPath.section == 2 && indexPath.row == 0)
+	{
+		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
+														message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
+													   delegate:nil
+											  cancelButtonTitle:@"No"
+											  otherButtonTitles:@"Yes", nil];
+		[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+			if (buttonIndex != [alert cancelButtonIndex])
+			{
+				[PVMediaCache emptyCache];
+			}
+		}];
+		[alert show];
+	}
 }
 
 @end

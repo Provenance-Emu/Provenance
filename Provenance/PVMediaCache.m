@@ -10,6 +10,8 @@
 
 NSString * const kPVCachePath = @"PVCache";
 
+NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNotification";
+
 @implementation PVMediaCache
 
 + (NSString *)cachePath
@@ -108,6 +110,8 @@ NSString * const kPVCachePath = @"PVCache";
 	{
 		[[NSFileManager defaultManager] removeItemAtPath:cachePath error:nil];
 	}
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName:PVMediaCacheWasEmptiedNotification object:nil];
 }
 
 @end

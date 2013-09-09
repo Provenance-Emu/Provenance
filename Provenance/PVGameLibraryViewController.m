@@ -91,6 +91,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 	[super viewDidLoad];
 	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(handleCacheEmptied:)
+												 name:PVMediaCacheWasEmptiedNotification
+											   object:nil];
+	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 	
 	_artworkDownloadQueue = [[NSOperationQueue alloc] init];
@@ -406,7 +411,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 							   if ([data length])
 							   {
 								   UIImage *artwork = [UIImage imageWithData:data];
-								   
+								   artwork = [artwork scaledImageWithMaxResolution:200];
 								   if (artwork)
 								   {
 									   NSLog(@"got artwork for %@", [game title]);
@@ -421,6 +426,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 							   [self save:NULL];
 							   [_collectionView reloadData];
 						   }];
+}
+
+- (void)handleCacheEmptied:(NSNotificationCenter *)notification
+{
+	[self reloadData];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -441,6 +451,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	if ([artworkURL length])
 	{
 		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
+		if (!artwork)
+		{
+			[self getArtworkForGame:game fromURL:[NSURL URLWithString:artworkURL]];
+		}
 		
 		if (artwork)
 		{
@@ -513,6 +527,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			[[game originalArtworkURL] isEqualToString:[game artworkURL]] == NO)
 		{
 			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
+				[PVMediaCache deleteImageForKey:[game artworkURL]];
 				[game setArtworkURL:[game originalArtworkURL]];
 				[self save:NULL];
 				[self reloadData];

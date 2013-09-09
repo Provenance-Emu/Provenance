@@ -6,6 +6,8 @@
 
 extern NSString * const kPVCachePath;
 
+extern NSString * const PVMediaCacheWasEmptiedNotification;
+
 @interface PVMediaCache : NSObject {
     
 }
