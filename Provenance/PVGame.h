@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *romPath;
 @property (nonatomic, strong) NSString *artworkURL;
+@property (nonatomic, strong) NSString *originalArtworkURL;
 @property (nonatomic, strong) NSString *crc32;
 @property (nonatomic, strong) NSString *md5;
 @property (nonatomic, strong) NSNumber *requiresSync;

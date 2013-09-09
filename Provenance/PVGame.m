@@ -13,6 +13,7 @@
 
 @dynamic title;
 @dynamic romPath;
+@dynamic originalArtworkURL;
 @dynamic artworkURL;
 @dynamic crc32;
 @dynamic md5;

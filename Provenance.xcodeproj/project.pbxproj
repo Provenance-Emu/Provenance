@@ -165,6 +165,9 @@
 		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		420D7B2417DCA08600D06B10 /* KGNoise.m in Sources */ = {isa = PBXBuildFile; fileRef = 420D7B2317DCA08600D06B10 /* KGNoise.m */; };
+		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
+		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
+		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -465,6 +468,12 @@
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		420D7B2217DCA08600D06B10 /* KGNoise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KGNoise.h; sourceTree = "<group>"; };
 		420D7B2317DCA08600D06B10 /* KGNoise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KGNoise.m; sourceTree = "<group>"; };
+		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		423BB97C17DD3B690048F457 /* PVGame 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PVGame 3.xcdatamodel"; sourceTree = "<group>"; };
+		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
+		423BB97E17DD46BC0048F457 /* NSData+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
+		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
+		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -472,6 +481,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
@@ -564,6 +574,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
 				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
 				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
 				1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */,
@@ -873,6 +884,8 @@
 		1A48696917C8C0C60019F6D2 /* Game Library */ = {
 			isa = PBXGroup;
 			children = (
+				1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */,
+				1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */,
 				1A48696A17C8C0DE0019F6D2 /* PVDirectoryWatcher.h */,
 				1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */,
 				1A48696C17C8C0DE0019F6D2 /* PVGameLibraryViewController.h */,
@@ -881,8 +894,6 @@
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */,
 				1A48697017C8C0DE0019F6D2 /* PVGame.h */,
 				1A48697117C8C0DE0019F6D2 /* PVGame.m */,
-				1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */,
-				1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */,
 				1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */,
 			);
 			name = "Game Library";
@@ -1022,6 +1033,10 @@
 				1A0DDB4117D228B900B35645 /* NSObject+PVAbstractAdditions.m */,
 				420D7B2217DCA08600D06B10 /* KGNoise.h */,
 				420D7B2317DCA08600D06B10 /* KGNoise.m */,
+				423BB97D17DD46BC0048F457 /* NSData+Hashing.h */,
+				423BB97E17DD46BC0048F457 /* NSData+Hashing.m */,
+				42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */,
+				42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1159,6 +1174,7 @@
 				1A3D422E17B2DD8C004DFFFC /* eeprom_93c.c in Sources */,
 				1A3D422F17B2DD8C004DFFFC /* eeprom_i2c.c in Sources */,
 				1A3D423017B2DD8C004DFFFC /* eeprom_spi.c in Sources */,
+				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
 				1A3D423117B2DD8C004DFFFC /* ggenie.c in Sources */,
 				1A3D423217B2DD8C004DFFFC /* md_cart.c in Sources */,
 				1A3D423317B2DD8C004DFFFC /* sms_cart.c in Sources */,
@@ -1223,6 +1239,7 @@
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
+				42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
@@ -1409,10 +1426,11 @@
 		1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				423BB97C17DD3B690048F457 /* PVGame 3.xcdatamodel */,
 				1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */,
 				1A486A1D17C8D98C0019F6D2 /* PVGame.xcdatamodel */,
 			);
-			currentVersion = 1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */;
+			currentVersion = 423BB97C17DD3B690048F457 /* PVGame 3.xcdatamodel */;
 			path = PVGame.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

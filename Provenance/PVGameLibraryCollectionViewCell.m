@@ -24,7 +24,8 @@
 	if ((self = [super initWithFrame:frame]))
 	{
 		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(([self bounds].size.width - 72) / 2, 3, 72, frame.size.height - 50)];
-		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
+		[_imageView setContentMode:UIViewContentModeScaleAspectFill];
+		[_imageView setClipsToBounds:YES];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		
 		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height + 3, frame.size.width, 44)];
@@ -66,7 +67,7 @@
 	if (!_selectionImage)
 	{
 		_selectionImage = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"selection"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)]];
-		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 74) / 2, 0, 74, 104)];
+		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 78) / 2, 0, 78, 104)];
 		[_selectionImage setAlpha:0];
 		[[self contentView] addSubview:_selectionImage];
 	}

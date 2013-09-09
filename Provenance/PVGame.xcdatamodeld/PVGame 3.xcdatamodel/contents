@@ -5,6 +5,7 @@
         <attribute name="crc32" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isSyncing" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="md5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="originalArtworkURL" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="requiresSync" optional="YES" attributeType="Boolean" defaultValueString="YES" syncable="YES"/>
         <attribute name="romPath" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="systemIdentifier" optional="YES" attributeType="String" syncable="YES"/>

@@ -20,6 +20,9 @@
 #import "UIActionSheet+BlockAdditions.h"
 #import "PVEmulatorConfiguration.h"
 #import "KGNoise.h"
+#import <AssetsLibrary/AssetsLibrary.h>
+#import "NSData+Hashing.h"
+#import "UIImage+Scaling.h"
 
 @interface PVGameLibraryViewController () {
 	
@@ -39,6 +42,8 @@
 @property (nonatomic, strong) UIView *renameOverlay;
 @property (nonatomic, strong) UITextField *renameTextField;
 @property (nonatomic, strong) PVGame *gameToRename;
+@property (nonatomic, strong) PVGame *gameForCustomArt;
+@property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
 
 @property (nonatomic, strong) NSArray *games;
 
@@ -406,6 +411,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 								   {
 									   NSLog(@"got artwork for %@", [game title]);
 									   [game setRequiresSync:@(NO)];
+									   [game setOriginalArtworkURL:[url absoluteString]];
 									   [PVMediaCache writeImageToDisk:artwork
 															   withKey:[url absoluteString]];
 								   }
@@ -430,9 +436,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	PVGame *game = self.games[[indexPath item]];
 	
-	if ([game artworkURL])
+	NSString *artworkURL = [game artworkURL];
+	
+	if ([artworkURL length])
 	{
-		UIImage *artwork = [PVMediaCache imageForKey:[game artworkURL]];
+		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
+		
 		if (artwork)
 		{
 			[[cell imageView] setImage:artwork];
@@ -492,9 +501,24 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		
 		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
 		[actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
+		
 		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
-			[self renameGame:game];
+			[weakSelf renameGame:game];
 		}];
+		[actionSheet PV_addButtonWithTitle:@"Choose Custom Artwork" action:^{
+			[weakSelf chooseCustomArtworkForGame:game];
+		}];
+		
+		if ([[game originalArtworkURL] length] &&
+			[[game originalArtworkURL] isEqualToString:[game artworkURL]] == NO)
+		{
+			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
+				[game setArtworkURL:[game originalArtworkURL]];
+				[self save:NULL];
+				[self reloadData];
+			}];
+		}
+		
 		[actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
 															message:@"Any save states and battery saves will also be deleted, are you sure?"
@@ -671,6 +695,118 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self save:NULL];
 
 	[self reloadData];
+}
+
+- (void)chooseCustomArtworkForGame:(PVGame *)game
+{
+	__weak PVGameLibraryViewController *weakSelf = self;
+	
+	UIActionSheet *imagePickerActionSheet = [[UIActionSheet alloc] init];
+	
+	BOOL cameraIsAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+	BOOL photoLibraryIsAvaialble = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
+	
+	PVUIActionSheetAction cameraAction = ^{
+		weakSelf.gameForCustomArt = game;
+		UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+		[pickerController setDelegate:weakSelf];
+		[pickerController setAllowsEditing:NO];
+		[pickerController setSourceType:UIImagePickerControllerSourceTypeCamera];
+		[weakSelf presentViewController:pickerController animated:YES completion:NULL];
+	};
+	
+	PVUIActionSheetAction libraryAction = ^{
+		weakSelf.gameForCustomArt = game;
+		UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+		[pickerController setDelegate:weakSelf];
+		[pickerController setAllowsEditing:NO];
+		[pickerController setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+		[weakSelf presentViewController:pickerController animated:YES completion:NULL];
+	};
+	
+	self.assetsLibrary = [[ALAssetsLibrary alloc] init];
+	[self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos
+								usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+									[group setAssetsFilter:[ALAssetsFilter allPhotos]];
+									[group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:[group numberOfAssets] - 1]
+															options:0
+														 usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+															 ALAssetRepresentation *rep = [result defaultRepresentation];
+															 if (rep)
+															 {
+																 [imagePickerActionSheet PV_addButtonWithTitle:@"Use Last Photo Taken" action:^{
+																	 UIImage *lastPhoto = [UIImage imageWithCGImage:[rep fullScreenImage]
+																											  scale:[rep scale]
+																										orientation:(UIImageOrientation)[rep orientation]];
+																	 [PVMediaCache writeImageToDisk:lastPhoto
+																							withKey:[[rep url] absoluteString]];
+																	 [game setArtworkURL:[[rep url] absoluteString]];
+																	 [weakSelf save:NULL];
+																	 [weakSelf reloadData];
+																	 weakSelf.assetsLibrary = nil;
+																 }];
+																 
+																 if (cameraIsAvailable || photoLibraryIsAvaialble)
+																 {
+																	 if (cameraIsAvailable)
+																	 {
+																		 [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
+																	 }
+																	 
+																	 if (photoLibraryIsAvaialble)
+																	 {
+																		 [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
+																	 }
+																 }
+																 
+																 [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+																 [imagePickerActionSheet showInView:self.view];
+															 }
+														 }];
+								} failureBlock:^(NSError *error) {
+									if (cameraIsAvailable || photoLibraryIsAvaialble)
+									{
+										if (cameraIsAvailable)
+										{
+											[imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
+										}
+										
+										if (photoLibraryIsAvaialble)
+										{
+											[imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
+										}
+									}
+									[imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+									[imagePickerActionSheet showInView:self.view];
+									weakSelf.assetsLibrary = nil;
+								}];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+	[self dismissViewControllerAnimated:YES completion:NULL];
+	
+	UIImage *image = info[UIImagePickerControllerOriginalImage];
+	image = [image scaledImageWithMaxResolution:200];
+	
+	if (image)
+	{
+		NSData *imageData = UIImagePNGRepresentation(image);
+		NSString *hash = [imageData md5Hash];
+		[PVMediaCache writeDataToDisk:imageData withKey:hash];
+//		[self.gameForCustomArt setOriginalArtworkURL:[self.gameForCustomArt artworkURL]];
+		[self.gameForCustomArt setArtworkURL:hash];
+		[self save:NULL];
+		[self reloadData];
+	}
+	
+	self.gameForCustomArt = nil;
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+	[self dismissViewControllerAnimated:YES completion:NULL];
+	self.gameForCustomArt = nil;
 }
 
 #pragma mark -
