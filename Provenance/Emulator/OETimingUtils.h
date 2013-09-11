@@ -26,9 +26,17 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 NSTimeInterval OEMonotonicTime(void);
 void OEWaitUntil(NSTimeInterval time);
 
 void OEPerfMonitorSignpost(NSString *name, NSTimeInterval maximumTime);
 void OEPerfMonitorObserve(NSString *name, NSTimeInterval maximumTime, void (^block)(void));
-BOOL OESetThreadRealtime(NSTimeInterval period, NSTimeInterval computation, NSTimeInterval constraint);
+BOOL OESetThreadRealtime(NSTimeInterval period, NSTimeInterval computation, NSTimeInterval constraint);\
+
+#ifdef __cplusplus
+}
+#endif

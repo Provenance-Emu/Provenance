@@ -9,6 +9,8 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVGenesisEmulatorCore.h"
 #import "PVGenesisControllerViewController.h"
+#import "PVSNESEmulatorCore.h"
+#import "PVSNESControllerViewController.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
@@ -27,6 +29,9 @@ NSString * const PVStartButton = @"PVStartButton";
 NSString * const PVSelectButton = @"PVSelectButton";
 NSString * const PVLeftShoulderButton = @"PVLeftShoulderButton";
 NSString * const PVRightShoulderButton = @"PVRightShoulderButton";
+
+NSString * const PVGenesisSystemIdentifier = @"com.provenance.genesis";
+NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 
 @interface PVEmulatorConfiguration ()
 
@@ -70,11 +75,14 @@ NSString * const PVRightShoulderButton = @"PVRightShoulderButton";
 {
 	PVEmulatorCore *core = nil;
 	
-	if ([systemID isEqualToString:@"com.provenance.genesis"])
+	if ([systemID isEqualToString:PVGenesisSystemIdentifier])
 	{
 		core = [[PVGenesisEmulatorCore alloc] init];
 	}
-	// add extra cores here
+	else if ([systemID isEqualToString:PVSNESSystemIdentifier])
+	{
+		core = [[PVSNESEmulatorCore alloc] init];
+	}
 	
 	return core;
 }
@@ -83,9 +91,13 @@ NSString * const PVRightShoulderButton = @"PVRightShoulderButton";
 {
 	PVControllerViewController *controller = nil;
 	
-	if ([systemID isEqualToString:@"com.provenance.genesis"])
+	if ([systemID isEqualToString:PVGenesisSystemIdentifier])
 	{
 		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
+	}
+	else if ([systemID isEqualToString:PVSNESSystemIdentifier])
+	{
+		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
 	}
 	
 	return controller;

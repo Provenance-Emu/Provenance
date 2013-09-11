@@ -128,6 +128,36 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			[self.buttonGroup setAlpha:alpha];
 			[self.view addSubview:self.buttonGroup];
 		}
+		else if ([controlType isEqualToString:PVLeftShoulderButton])
+		{
+			CGFloat xPadding = 10;
+			CGFloat yPadding = 10;
+			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+			self.leftShoulderButton = [[JSButton alloc] initWithFrame:CGRectMake(xPadding, yPadding, size.width, size.height)];
+			[[self.leftShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+			[self.leftShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+			[self.leftShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+			[self.leftShoulderButton setDelegate:self];
+			[self.leftShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+			[self.leftShoulderButton setAlpha:alpha];
+			[self.leftShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+			[self.view addSubview:self.leftShoulderButton];
+		}
+		else if ([controlType isEqualToString:PVRightShoulderButton])
+		{
+			CGFloat xPadding = 10;
+			CGFloat yPadding = 10;
+			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+			self.rightShoulderButton = [[JSButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width - size.width - xPadding, yPadding, size.width, size.height)];
+			[[self.rightShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+			[self.rightShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+			[self.rightShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+			[self.rightShoulderButton setDelegate:self];
+			[self.rightShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+			[self.rightShoulderButton setAlpha:alpha];
+			[self.rightShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+			[self.view addSubview:self.rightShoulderButton];
+		}
 		else if ([controlType isEqualToString:PVStartButton])
 		{
 			CGFloat yPadding = 10;
@@ -141,6 +171,20 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			[self.startButton setAlpha:alpha];
 			[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
 			[self.view addSubview:self.startButton];
+		}
+		else if ([controlType isEqualToString:PVSelectButton])
+		{
+			CGFloat yPadding = 10;
+			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+			self.selectButton = [[JSButton alloc] initWithFrame:CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - (size.height * 2) - (yPadding * 2), size.width, size.height)];
+			[[self.selectButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+			[self.selectButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+			[self.selectButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+			[self.selectButton setDelegate:self];
+			[self.selectButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+			[self.selectButton setAlpha:alpha];
+			[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+			[self.view addSubview:self.selectButton];
 		}
 	}
 }

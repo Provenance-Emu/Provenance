@@ -28,6 +28,9 @@ extern NSString * const PVSelectButton;
 extern NSString * const PVLeftShoulderButton;
 extern NSString * const PVRightShoulderButton;
 
+extern NSString * const PVGenesisSystemIdentifier;
+extern NSString * const PVSNESSystemIdentifier;
+
 @interface PVEmulatorConfiguration : NSObject
 
 + (PVEmulatorConfiguration *)sharedInstance;

@@ -9,6 +9,7 @@
 #import "PVDirectoryWatcher.h"
 #import "ZKDataArchive.h"
 #import "ZKDefs.h"
+#import "PVEmulatorConfiguration.h"
 
 @interface PVDirectoryWatcher () {
 	
@@ -122,7 +123,9 @@
 				for (NSDictionary *inflatedFile in [archive inflatedFiles])
 				{
 					NSString *fileName = [inflatedFile objectForKey:ZKPathKey];
-					if ([fileName hasSuffix:@"smd"] || [fileName hasSuffix:@"SMD"] || [fileName hasSuffix:@"bin"] || [fileName hasSuffix:@"BIN"])
+					NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
+					NSString *fileExtension = [fileName pathExtension];
+					if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
 					{
 						NSData *fileData = [inflatedFile objectForKey:ZKFileDataKey];
 						[fileData writeToFile:[self.path stringByAppendingPathComponent:fileName] atomically:YES];

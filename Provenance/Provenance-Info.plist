@@ -94,10 +94,35 @@
 				<array>
 					<string>smd</string>
 					<string>bin</string>
+					<string>md</string>
+					<string>gen</string>
 					<string>SMD</string>
 					<string>BIN</string>
+					<string>MD</string>
+					<string>GEN</string>
 				</array>
 			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>SNES ROM</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.jamsoftonline.provenance</string>
+			<key>public.filename-extension</key>
+			<array>
+				<string>smc</string>
+				<string>snes</string>
+				<string>fig</string>
+				<string>sfc</string>
+				<string>SMC</string>
+				<string>SNES</string>
+				<string>FIG</string>
+				<string>SFC</string>
+			</array>
 		</dict>
 	</array>
 </dict>

@@ -97,7 +97,6 @@ static bool environment_callback(unsigned cmd, void *data)
 	{
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
 		{
-			// FIXME: Build a path in a more appropriate place
 			NSString *appSupportPath = [NSString pathWithComponents:@[
 										[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
 										@"BIOS"]];
