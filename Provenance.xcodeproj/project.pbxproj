@@ -220,7 +220,6 @@
 		42E63ADF17E0FEDD00FE7098 /* SPC_Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AD717E0FEDD00FE7098 /* SPC_Filter.cpp */; };
 		42E63AE317E0FEF800FE7098 /* PVSNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE117E0FEF800FE7098 /* PVSNESEmulatorCore.mm */; };
 		42E63AE417E0FEF800FE7098 /* SNESOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE217E0FEF800FE7098 /* SNESOESupport.mm */; };
-		42E63AE617E12B5900FE7098 /* View.xib in Resources */ = {isa = PBXBuildFile; fileRef = 42E63AE517E12B5900FE7098 /* View.xib */; };
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 /* End PBXBuildFile section */
@@ -645,7 +644,6 @@
 		42E63AE017E0FEF800FE7098 /* PVSNESEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSNESEmulatorCore.h; sourceTree = "<group>"; };
 		42E63AE117E0FEF800FE7098 /* PVSNESEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVSNESEmulatorCore.mm; sourceTree = "<group>"; };
 		42E63AE217E0FEF800FE7098 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
-		42E63AE517E12B5900FE7098 /* View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View.xib; sourceTree = "<group>"; };
 		42E63AE717E12ECE00FE7098 /* PVSNESControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSNESControllerViewController.h; sourceTree = "<group>"; };
 		42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSNESControllerViewController.m; sourceTree = "<group>"; };
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
@@ -1174,7 +1172,6 @@
 				1A0938BE17CD45EC00029021 /* Icon-Small.png */,
 				1A4869BC17C8CA2C0019F6D2 /* Images */,
 				1A34C58517D517760058E7D1 /* systems.plist */,
-				42E63AE517E12B5900FE7098 /* View.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1452,7 +1449,6 @@
 				1AADCDAB17BD861000F53CFE /* button-thin-pressed@2x.png in Resources */,
 				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
 				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
-				42E63AE617E12B5900FE7098 /* View.xib in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
 				1A4869CB17C8CA920019F6D2 /* blank.png in Resources */,
 				1A4869CC17C8CA920019F6D2 /* blank@2x.png in Resources */,

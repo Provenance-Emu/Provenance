@@ -183,7 +183,7 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			[self.selectButton setDelegate:self];
 			[self.selectButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
 			[self.selectButton setAlpha:alpha];
-			[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+			[self.selectButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
 			[self.view addSubview:self.selectButton];
 		}
 	}

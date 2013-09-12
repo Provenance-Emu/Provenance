@@ -144,8 +144,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
 	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];
 	[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
-	[[self.menuButton titleLabel] setShadowColor:[UIColor darkGrayColor]];
 	[[self.menuButton titleLabel] setShadowOffset:CGSizeMake(0, 1)];
+	[self.menuButton setTitleShadowColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
 	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:15]];
 	[self.menuButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[self.menuButton setAlpha:alpha];
