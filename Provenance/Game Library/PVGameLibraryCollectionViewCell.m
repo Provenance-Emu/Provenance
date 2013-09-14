@@ -70,7 +70,7 @@ static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
 		[missingLabel setText:@"Missing Artwork"];
 		[missingLabel setNumberOfLines:0];
 		[missingLabel setTextAlignment:NSTextAlignmentCenter];
-		[missingLabel setTextColor:[UIColor colorWithWhite:1 alpha:0.7]];
+		[missingLabel setTextColor:[UIColor whiteColor]];
 		[missingLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
 	}
 	

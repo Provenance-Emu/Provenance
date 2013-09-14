@@ -475,6 +475,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
 	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[game romPath]]];
 	[emulatorViewController setSaveStatePath:[self saveStatePathForROM:[game romPath]]];
+	[emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 	
 	[self presentViewController:emulatorViewController animated:YES completion:NULL];
 }
