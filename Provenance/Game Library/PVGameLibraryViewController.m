@@ -376,6 +376,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)getArtworkForGame:(PVGame *)game
 {
 	NSLog(@"Starting Artwork download for %@, %@", [game title], [game artworkURL]);
+	[game setIsSyncing:@(YES)];
+	[self save:NULL];
+	
 	[NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[game artworkURL]]]
 									   queue:_artworkDownloadQueue
 						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
@@ -392,6 +395,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 									   }
 								   }
 								   
+								   [game setIsSyncing:@(NO)];
 								   [self save:NULL];
 								   [_collectionView reloadData];
 							   });
@@ -400,6 +404,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
+	for (PVGame *game in self.games)
+	{
+		[game setArtworkURL:[game originalArtworkURL]];
+	}
+	
 	[_collectionView reloadData];
 }
 
