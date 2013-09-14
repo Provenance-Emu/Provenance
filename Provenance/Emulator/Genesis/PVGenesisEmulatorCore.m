@@ -331,6 +331,11 @@ static bool environment_callback(unsigned cmd, void *data)
 	return CGRectMake(0, 0, _videoWidth, _videoHeight);
 }
 
+- (CGSize)aspectSize
+{
+	return CGSizeMake(4, 3);
+}
+
 - (CGSize)bufferSize
 {
 	return CGSizeMake(320, 480);

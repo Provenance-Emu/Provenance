@@ -271,6 +271,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     return CGRectMake(0, 0, IPPU.RenderedScreenWidth, IPPU.RenderedScreenHeight);
 }
 
+- (CGSize)aspectSize
+{
+	return CGSizeMake(4, 3);
+}
+
 - (CGSize)bufferSize
 {
     return CGSizeMake(MAX_SNES_WIDTH, MAX_SNES_HEIGHT);

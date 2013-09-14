@@ -10,10 +10,14 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+FrameAdditions.h"
 
-@interface PVGameLibraryCollectionViewCell () {
-
-	UIImageView *_selectionImage;
+static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
+{
+	return [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
 }
+
+@interface PVGameLibraryCollectionViewCell ()
+
+@property (nonatomic, strong) UIView *missingArtworkView;
 
 @end
 
@@ -23,35 +27,61 @@
 {
 	if ((self = [super initWithFrame:frame]))
 	{
-		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(([self bounds].size.width - 72) / 2, 3, 72, frame.size.height - 50)];
-		[_imageView setContentMode:UIViewContentModeScaleAspectFill];
+		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, frame.size.height - 44)];
+		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setClipsToBounds:YES];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		
-		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height + 3, frame.size.width, 44)];
+		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
 		[_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
 		[_titleLabel setTextColor:[UIColor darkTextColor]];
-		if ([UIFont respondsToSelector:NSSelectorFromString(@"preferredFontForTextStyle:")])
-		{
-			[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
-		}
-		else
-		{
-			[_titleLabel setTextColor:[UIColor whiteColor]];
-			[_titleLabel setShadowColor:[UIColor blackColor]];
-			[_titleLabel setShadowOffset:CGSizeMake(0, 1)];
-			[_titleLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
-		}
+		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 		[_titleLabel setNumberOfLines:0];
 		
 		[[self contentView] addSubview:_imageView];
 		[[self contentView] addSubview:_titleLabel];
+		
+		NSArray *backgroundColors = @[rgb(26, 188, 156),
+									  rgb(46, 204, 113),
+									  rgb(52, 152, 219),
+									  rgb(155, 89, 182),
+									  rgb(52, 73, 94),
+									  rgb(22, 160, 133),
+									  rgb(39, 174, 96),
+									  rgb(41, 128, 185),
+									  rgb(142, 68, 173),
+									  rgb(44, 62, 80),
+									  rgb(241, 196, 15),
+									  rgb(230, 126, 34),
+									  rgb(231, 76, 60),
+									  rgb(243, 156, 18),
+									  rgb(211, 84, 0),
+									  rgb(192, 57, 43)];
+		
+		UIColor *backgroundColor = backgroundColors[(arc4random() % [backgroundColors count])];
+		
+		self.missingArtworkView = [[UIView alloc] initWithFrame:CGRectMake(20, 0, 60, 100)];
+		[self.missingArtworkView setBackgroundColor:backgroundColor];
+		UILabel *missingLabel = [[UILabel alloc] initWithFrame:[self.missingArtworkView bounds]];
+		[self.missingArtworkView addSubview:missingLabel];
+		[missingLabel setText:@"Missing Artwork"];
+		[missingLabel setNumberOfLines:0];
+		[missingLabel setTextAlignment:NSTextAlignmentCenter];
+		[missingLabel setTextColor:[UIColor colorWithWhite:1 alpha:0.7]];
+		[missingLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+    _imageView = nil;
+	_titleLabel = nil;
+	self.missingArtworkView = nil;
 }
 
 - (void)prepareForReuse
@@ -62,55 +92,32 @@
 	[self.titleLabel setText:nil];
 }
 
-- (void)setHighlighted:(BOOL)highlighted
+- (void)layoutSubviews
 {
-	if (!_selectionImage)
-	{
-		_selectionImage = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"selection"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)]];
-		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 78) / 2, 0, 78, 104)];
-		[_selectionImage setAlpha:0];
-		[[self contentView] addSubview:_selectionImage];
-	}
+	[super layoutSubviews];
 	
-	if (highlighted)
+	if (![_imageView image])
 	{
-		[UIView animateWithDuration:0.3
-							  delay:0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [_selectionImage setAlpha:1];
-						 }
-						 completion:NULL];
+		[self addSubview:self.missingArtworkView];
 	}
 	else
 	{
-		[UIView animateWithDuration:0.3
-							  delay:0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [_selectionImage setAlpha:0];
-						 }
-						 completion:NULL];
+		[self.missingArtworkView removeFromSuperview];
 	}
 }
 
-- (void)setSelected:(BOOL)selected
+- (void)setHighlighted:(BOOL)highlighted
 {
-	if (!_selectionImage)
-	{
-		_selectionImage = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"selection"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 16, 0, 16)]];
-		[_selectionImage setFrame:CGRectMake(([self bounds].size.width - 76) / 2, 0, 76, 104)];
-		[_selectionImage setAlpha:0];
-		[[self contentView] addSubview:_selectionImage];
-	}
+	[super setHighlighted:highlighted];
 	
-	if (selected)
+	if (highlighted)
 	{
-		[UIView animateWithDuration:0.3
+		[UIView animateWithDuration:0.1
 							  delay:0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [_selectionImage setAlpha:1];
+							 [_imageView setAlpha:0.6];
+							 [self.missingArtworkView setAlpha:0.6];
 						 }
 						 completion:NULL];
 	}
@@ -120,7 +127,8 @@
 							  delay:0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [_selectionImage setAlpha:0];
+							 [_imageView setAlpha:1];
+							 [self.missingArtworkView setAlpha:1];
 						 }
 						 completion:NULL];
 	}

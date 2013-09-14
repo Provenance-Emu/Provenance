@@ -117,6 +117,12 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 	return CGRectZero;
 }
 
+- (CGSize)aspectSize
+{
+	[self doesNotImplementSelector:_cmd];
+	return CGSizeZero;
+}
+
 - (CGSize)bufferSize
 {
 	[self doesNotImplementSelector:_cmd];

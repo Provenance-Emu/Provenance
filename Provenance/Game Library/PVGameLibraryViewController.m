@@ -19,7 +19,6 @@
 #import "UIAlertView+BlockAdditions.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "PVEmulatorConfiguration.h"
-#import "KGNoise.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
@@ -115,24 +114,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	}];
 	[_watcher startMonitoring];
 	
-	if ([UIFont respondsToSelector:NSSelectorFromString(@"preferredFontForTextStyle:")] == NO)
-	{
-		KGNoiseRadialGradientView *backgroundView = [[KGNoiseRadialGradientView alloc] initWithFrame:[[self view] bounds]];
-		[backgroundView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-		[backgroundView setBackgroundColor:[UIColor colorWithWhite:0.05 alpha:0.7]];
-		[backgroundView setAlternateBackgroundColor:[UIColor colorWithWhite:0.3 alpha:0.7]];
-		[backgroundView setNoiseBlendMode:kCGBlendModeOverlay];
-		[backgroundView setNoiseOpacity:0.1];
-		[[self view] addSubview:backgroundView];
-		
-		[[self.navigationController navigationBar] setBarStyle:UIBarStyleBlack];
-		
-		UIImageView *barShadow = [[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"bar-shadow"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 10, 0, 0)]];
-		[barShadow setWidth:[[self view] bounds].size.width];
-		[barShadow setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-		[[self view] addSubview:barShadow];
-	}
-	
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
 	[_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
@@ -140,6 +121,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_collectionView setDelegate:self];
 	[_collectionView setBounces:YES];
 	[_collectionView setAlwaysBounceVertical:YES];
+	[_collectionView setDelaysContentTouches:NO];
 	
 	[[self view] addSubview:_collectionView];
 	
@@ -311,9 +293,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 						[game setMd5:md5];
 						[game setCrc32:crc32];
 						
-						if ([[game requiresSync] boolValue])
+						if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
 						{
-							NSLog(@"about to look up for %@", [game title]);
+							NSLog(@"about to look up for %@ after getting hash", [game title]);
 							[self lookUpInfoForGame:game];
 						}
 					});
@@ -321,9 +303,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			}
 			else
 			{
-				if ([[game requiresSync] boolValue])
+				if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
 				{
-					NSLog(@"about to look up for %@ (not hash route)", [game title]);
+					NSLog(@"about to look up for %@ ", [game title]);
 					[self lookUpInfoForGame:game];
 				}
 			}
@@ -366,71 +348,59 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)lookUpInfoForGame:(PVGame *)game
 {
 	NSLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
-	[game setIsSyncing:@(YES)];
-	[[ArchiveVG throttled] gameInfoByMD5:[game md5]
-								  andCRC:[game crc32]
-							withCallback:^(id result, NSError *error) {
-								NSLog(@"result = %@, error %@", result, [error localizedDescription]);
-								if (result)
-								{
-									[game setTitle:[result objectForKey:AVGGameTitleKey]];
-									[game setArtworkURL:[result objectForKey:AVGGameBoxURLStringKey]];
-									if ([[game artworkURL] length])
-									{
-										NSLog(@"About to get art for %@", [game title]);
-										[self getArtworkForGame:game fromURL:[NSURL URLWithString:[game artworkURL]]];
-									}
-									else
-									{
-										NSLog(@"no art, reloading for %@", [game title]);
+	if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
+	{
+		[game setIsSyncing:@(YES)];
+		[[ArchiveVG throttled] gameInfoByMD5:[game md5]
+									  andCRC:[game crc32]
+								withCallback:^(id result, NSError *error) {
+									dispatch_async(dispatch_get_main_queue(), ^{
+										NSLog(@"result = %@, error %@", result, [error localizedDescription]);
+										if (result)
+										{
+											[game setTitle:[result objectForKey:AVGGameTitleKey]];
+											[game setArtworkURL:[result objectForKey:AVGGameBoxURLStringKey]];
+											[game setOriginalArtworkURL:[result objectForKey:AVGGameBoxURLStringKey]];
+											[self getArtworkForGame:game];
+										}
+										
 										[game setRequiresSync:@(NO)];
 										[game setIsSyncing:@(NO)];
+										[self save:NULL];
 										[_collectionView reloadData];
-									}
-								}
-								else
-								{
-									NSLog(@"no result for %@", [game title]);
-									[game setRequiresSync:@(NO)];
-									[game setIsSyncing:@(NO)];
-									[_collectionView reloadData];
-								}
-								
-								[self save:NULL];
-							} usingFormat:AVGOutputFormatXML];
+									});
+								} usingFormat:AVGOutputFormatXML];
+	}
 }
 
-- (void)getArtworkForGame:(PVGame *)game fromURL:(NSURL *)url
+- (void)getArtworkForGame:(PVGame *)game
 {
-	NSLog(@"Starting Artwork download for %@, %@", [game title], [url absoluteString]);
-	[NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:url]
+	NSLog(@"Starting Artwork download for %@, %@", [game title], [game artworkURL]);
+	[NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[game artworkURL]]]
 									   queue:_artworkDownloadQueue
 						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-							   [game setIsSyncing:@(NO)];
-							   
-							   if ([data length])
-							   {
-								   UIImage *artwork = [UIImage imageWithData:data];
-								   artwork = [artwork scaledImageWithMaxResolution:200];
-								   if (artwork)
+							   dispatch_async(dispatch_get_main_queue(), ^{
+								   if ([data length])
 								   {
-									   NSLog(@"got artwork for %@", [game title]);
-									   [game setRequiresSync:@(NO)];
-									   [game setOriginalArtworkURL:[url absoluteString]];
-									   [PVMediaCache writeImageToDisk:artwork
-															   withKey:[url absoluteString]];
+									   UIImage *artwork = [UIImage imageWithData:data];
+									   artwork = [artwork scaledImageWithMaxResolution:200];
+									   if (artwork)
+									   {
+										   NSLog(@"got artwork for %@", [game title]);
+										   [PVMediaCache writeImageToDisk:artwork
+																  withKey:[game artworkURL]];
+									   }
 								   }
-							   }
-							   
-							   [game setIsSyncing:@(NO)];
-							   [self save:NULL];
-							   [_collectionView reloadData];
+								   
+								   [self save:NULL];
+								   [_collectionView reloadData];
+							   });
 						   }];
 }
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
-	[self reloadData];
+	[_collectionView reloadData];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -447,29 +417,34 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	PVGame *game = self.games[[indexPath item]];
 	
 	NSString *artworkURL = [game artworkURL];
-	
+	NSString *originalArtworkURL = [game originalArtworkURL];
+		
 	if ([artworkURL length])
 	{
 		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
-		if (!artwork)
-		{
-			[self getArtworkForGame:game fromURL:[NSURL URLWithString:artworkURL]];
-		}
-		
 		if (artwork)
 		{
 			[[cell imageView] setImage:artwork];
 		}
-		else
+		else if (![[game isSyncing] boolValue])
 		{
-			[[cell imageView] setImage:[UIImage imageNamed:@"blank"]];
+			[self getArtworkForGame:game];
 		}
 	}
-	else
+	else if ([originalArtworkURL length])
 	{
-		[[cell imageView] setImage:[UIImage imageNamed:@"blank"]];
+		[game setArtworkURL:originalArtworkURL];
+		[self save:NULL];
+		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
+		if (artwork)
+		{
+			[[cell imageView] setImage:artwork];
+		}
+		else if (![[game isSyncing] boolValue])
+		{
+			[self getArtworkForGame:game];
+		}
 	}
-	
 	
 	[[cell titleLabel] setText:[game title]];
 	
@@ -523,6 +498,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			[weakSelf chooseCustomArtworkForGame:game];
 		}];
 		
+		if ([[game artworkURL] length] && ![[game originalArtworkURL] length])
+		{
+			[actionSheet PV_addButtonWithTitle:@"Remove Artwork" action:^{
+				[PVMediaCache deleteImageForKey:[game artworkURL]];
+				[game setArtworkURL:nil];
+				[self save:NULL];
+				[_collectionView reloadData];
+			}];
+		}
+		
 		if ([[game originalArtworkURL] length] &&
 			[[game originalArtworkURL] isEqualToString:[game artworkURL]] == NO)
 		{
@@ -530,7 +515,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 				[PVMediaCache deleteImageForKey:[game artworkURL]];
 				[game setArtworkURL:[game originalArtworkURL]];
 				[self save:NULL];
-				[self reloadData];
+				[_collectionView reloadData];
 			}];
 		}
 		
@@ -635,7 +620,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		self.gameToRename = nil;
 		
 		[self save:NULL];
-		[self reloadData];
+		[_collectionView reloadData];
 	}
 	
 	[UIView animateWithDuration:0.3
@@ -708,8 +693,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	[[self managedObjectContext] deleteObject:game];
 	[self save:NULL];
-
-	[self reloadData];
 }
 
 - (void)chooseCustomArtworkForGame:(PVGame *)game
@@ -757,7 +740,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 																							withKey:[[rep url] absoluteString]];
 																	 [game setArtworkURL:[[rep url] absoluteString]];
 																	 [weakSelf save:NULL];
-																	 [weakSelf reloadData];
+																	 //[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[weakSelf.games indexOfObject:game] inSection:0]]];
+																	 [_collectionView reloadData];
 																	 weakSelf.assetsLibrary = nil;
 																 }];
 																 
@@ -809,10 +793,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		NSData *imageData = UIImagePNGRepresentation(image);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
-//		[self.gameForCustomArt setOriginalArtworkURL:[self.gameForCustomArt artworkURL]];
 		[self.gameForCustomArt setArtworkURL:hash];
 		[self save:NULL];
-		[self reloadData];
+		//[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[self.games indexOfObject:self.gameToRename] inSection:0]]];
+		[_collectionView reloadData];
 	}
 	
 	self.gameForCustomArt = nil;

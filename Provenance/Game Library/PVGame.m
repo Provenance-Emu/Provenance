@@ -19,6 +19,6 @@
 @dynamic md5;
 @dynamic requiresSync;
 @dynamic systemIdentifier;
-@synthesize isSyncing;
+@dynamic isSyncing;
 
 @end

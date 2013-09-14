@@ -37,6 +37,7 @@
 
 - (uint16_t *)videoBuffer;
 - (CGRect)screenRect;
+- (CGSize)aspectSize;
 - (CGSize)bufferSize;
 - (GLenum)pixelFormat;
 - (GLenum)pixelType;
