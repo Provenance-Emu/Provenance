@@ -165,6 +165,7 @@
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
+		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
 		42E63A9317E0FEA200FE7098 /* bsx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42E63A3517E0FEA200FE7098 /* bsx.cpp */; };
 		42E63A9417E0FEA200FE7098 /* c4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42E63A3717E0FEA200FE7098 /* c4.cpp */; };
 		42E63A9517E0FEA200FE7098 /* c4emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42E63A3917E0FEA200FE7098 /* c4emu.cpp */; };
@@ -523,6 +524,8 @@
 		423BB97C17DD3B690048F457 /* PVGame 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PVGame 3.xcdatamodel"; sourceTree = "<group>"; };
 		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		423BB97E17DD46BC0048F457 /* NSData+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
+		42BC83A717E6775E00E9A607 /* PVGameLibrarySectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameLibrarySectionHeaderView.h; sourceTree = "<group>"; };
+		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameLibrarySectionHeaderView.m; sourceTree = "<group>"; };
 		42E63A3417E0FEA200FE7098 /* 65c816.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 65c816.h; sourceTree = "<group>"; };
 		42E63A3517E0FEA200FE7098 /* bsx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bsx.cpp; sourceTree = "<group>"; };
 		42E63A3617E0FEA200FE7098 /* bsx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bsx.h; sourceTree = "<group>"; };
@@ -1066,6 +1069,8 @@
 				1A48696D17C8C0DE0019F6D2 /* PVGameLibraryViewController.m */,
 				1A48696E17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.h */,
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */,
+				42BC83A717E6775E00E9A607 /* PVGameLibrarySectionHeaderView.h */,
+				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */,
 				1A48697017C8C0DE0019F6D2 /* PVGame.h */,
 				1A48697117C8C0DE0019F6D2 /* PVGame.m */,
 				1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */,
@@ -1579,6 +1584,7 @@
 				42E63AAD17E0FEA200FE7098 /* movie.cpp in Sources */,
 				1A47C93F17BC193B00C27644 /* OEGameAudio.m in Sources */,
 				42E63AA817E0FEA200FE7098 /* fxinst.cpp in Sources */,
+				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				42E63AA517E0FEA200FE7098 /* dsp4.cpp in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,

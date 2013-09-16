@@ -22,6 +22,9 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
+#import "PVGameLibrarySectionHeaderView.h"
+
+NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
 @interface PVGameLibraryViewController () {
 	
@@ -44,7 +47,8 @@
 @property (nonatomic, strong) PVGame *gameForCustomArt;
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
 
-@property (nonatomic, strong) NSArray *games;
+@property (nonatomic, strong) NSDictionary *gamesInSections;
+@property (nonatomic, strong) NSArray *sectionInfo;
 
 @end
 
@@ -70,7 +74,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.renameTextField = nil;
 	self.renameToolbar = nil;
 	self.gameToRename = nil;
-	self.games = nil;
+	self.gamesInSections = nil;
 	
 	_watcher = nil;
 	_collectionView = nil;
@@ -115,6 +119,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_watcher startMonitoring];
 	
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
+	[layout setSectionInset:UIEdgeInsetsMake(30, 0, 30, 0)];
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
 	[_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[_collectionView setDataSource:self];
@@ -122,6 +127,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_collectionView setBounces:YES];
 	[_collectionView setAlwaysBounceVertical:YES];
 	[_collectionView setDelaysContentTouches:NO];
+	[_collectionView registerClass:[PVGameLibrarySectionHeaderView class]
+		forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
+			   withReuseIdentifier:PVGameLibraryHeaderView];
 	
 	[[self view] addSubview:_collectionView];
 	
@@ -213,7 +221,25 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[request setSortDescriptors:@[sortDescriptor]];
 	
 	NSError *error = nil;
-	self.games = [_managedObjectContext executeFetchRequest:request error:&error];
+	NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
+	NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
+	
+	for (PVGame *game in tempGames)
+	{
+		NSString *fileExtension = [[game romPath] pathExtension];
+		NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
+		NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
+		if (!games)
+		{
+			games = [NSMutableArray array];
+		}
+		
+		[games addObject:game];
+		[tempGamesInSections setObject:[games copy] forKey:systemID];
+	}
+	
+	self.gamesInSections = [tempGamesInSections copy];
+	self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 	
 	[_collectionView reloadData];
 }
@@ -404,26 +430,36 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
-	for (PVGame *game in self.games)
-	{
+	[self.sectionInfo enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
+		NSArray *games = [self.gamesInSections objectForKey:key];
+		PVGame *game = [games objectAtIndex:idx];
 		[game setArtworkURL:[game originalArtworkURL]];
-	}
+	}];
 	
 	[_collectionView reloadData];
 }
 
 #pragma mark - UICollectionViewDataSource
 
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+	return [self.sectionInfo count];
+}
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-	return [self.games count];
+	NSArray *sortedKeys = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+	NSArray *games = [self.gamesInSections objectForKey:[sortedKeys objectAtIndex:section]];
+	return [games count];
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 	PVGameLibraryCollectionViewCell *cell = [_collectionView dequeueReusableCellWithReuseIdentifier:_reuseIdentifier forIndexPath:indexPath];
 	
-	PVGame *game = self.games[[indexPath item]];
+	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+	
+	PVGame *game = games[[indexPath item]];
 	
 	NSString *artworkURL = [game artworkURL];
 	NSString *originalArtworkURL = [game originalArtworkURL];
@@ -479,7 +515,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	PVGame *game = self.games[[indexPath item]];
+	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+	
+	PVGame *game = games[[indexPath item]];
 	
 	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
 	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[game romPath]]];
@@ -489,6 +527,27 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self presentViewController:emulatorViewController animated:YES completion:NULL];
 }
 
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
+{
+	if ([kind isEqualToString:UICollectionElementKindSectionHeader])
+	{
+		PVGameLibrarySectionHeaderView *headerView = [_collectionView dequeueReusableSupplementaryViewOfKind:kind
+																						 withReuseIdentifier:PVGameLibraryHeaderView
+																								forIndexPath:indexPath];
+		NSString *systemID = [self.sectionInfo objectAtIndex:[indexPath section]];
+		NSString *title = [[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:systemID];
+		[[headerView titleLabel] setText:title];
+		return headerView;
+	}
+	
+	return nil;
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+	return CGSizeMake([self.view bounds].size.width, 60);
+}
+
 - (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
 {
 	if ([recognizer state] == UIGestureRecognizerStateBegan)
@@ -496,7 +555,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		__weak PVGameLibraryViewController *weakSelf = self;
 		CGPoint point = [recognizer locationInView:_collectionView];
 		NSIndexPath *indexPath = [_collectionView indexPathForItemAtPoint:point];
-		PVGame *game = weakSelf.games[[indexPath item]];
+		
+		NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+		PVGame *game = games[[indexPath item]];
 		
 		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
 		[actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];

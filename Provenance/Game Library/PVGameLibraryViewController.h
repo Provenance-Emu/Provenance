@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSString *PVGameLibraryHeaderView;
+
 @interface PVGameLibraryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout,
 															UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 
