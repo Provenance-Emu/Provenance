@@ -5,6 +5,8 @@
 	<dict>
 		<key>PVSystemName</key>
 		<string>Sega Genesis</string>
+		<key>PVShortSystemName</key>
+		<string>Genesis</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.genesis</string>
 		<key>PVSupportedExtensions</key>
@@ -68,6 +70,8 @@
 	<dict>
 		<key>PVSystemName</key>
 		<string>Super Nintendo Entertainment System</string>
+		<key>PVShortSystemName</key>
+		<string>SNES</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.snes</string>
 		<key>PVSupportedExtensions</key>

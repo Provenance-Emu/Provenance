@@ -119,7 +119,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_watcher startMonitoring];
 	
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-	[layout setSectionInset:UIEdgeInsetsMake(30, 0, 30, 0)];
+	[layout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
 	[_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[_collectionView setDataSource:self];
@@ -492,6 +492,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	}
 	
 	[[cell titleLabel] setText:[game title]];
+	[[cell missingLabel] setText:[game title]];
 	
 	return cell;
 }
@@ -535,7 +536,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 																						 withReuseIdentifier:PVGameLibraryHeaderView
 																								forIndexPath:indexPath];
 		NSString *systemID = [self.sectionInfo objectAtIndex:[indexPath section]];
-		NSString *title = [[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:systemID];
+		NSString *title = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
 		[[headerView titleLabel] setText:title];
 		return headerView;
 	}
@@ -545,7 +546,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
-	return CGSizeMake([self.view bounds].size.width, 60);
+	return CGSizeMake([self.view bounds].size.width, 40);
 }
 
 - (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer

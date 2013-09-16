@@ -12,5 +12,6 @@
 
 @property (nonatomic, readonly) UIImageView *imageView;
 @property (nonatomic, readonly) UILabel *titleLabel;
+@property (nonatomic, readonly) UILabel *missingLabel;
 
 @end

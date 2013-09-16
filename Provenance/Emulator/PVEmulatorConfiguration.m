@@ -13,6 +13,7 @@
 #import "PVSNESControllerViewController.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
+NSString * const PVShortSystemNameKey = @"PVShortSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
 NSString * const PVSupportedExtensionsKey = @"PVSupportedExtensions";
 NSString * const PVControlLayoutKey = @"PVControlLayout";
@@ -133,6 +134,12 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 {
 	NSDictionary *system = [self systemForIdentifier:systemID];
 	return [system objectForKey:PVSystemNameKey];
+}
+
+- (NSString *)shortNameForSystemIdentifier:(NSString *)systemID
+{
+	NSDictionary *system = [self systemForIdentifier:systemID];
+	return [system objectForKey:PVShortSystemNameKey];
 }
 
 - (NSArray *)supportedFileExtensions

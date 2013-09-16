@@ -40,38 +40,45 @@ static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
 		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 		[_titleLabel setNumberOfLines:0];
+		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
+		[_titleLabel setMinimumScaleFactor:0.75];
 		
 		[[self contentView] addSubview:_imageView];
 		[[self contentView] addSubview:_titleLabel];
 		
-		NSArray *backgroundColors = @[rgb(26, 188, 156),
-									  rgb(46, 204, 113),
-									  rgb(52, 152, 219),
-									  rgb(155, 89, 182),
-									  rgb(52, 73, 94),
-									  rgb(22, 160, 133),
-									  rgb(39, 174, 96),
-									  rgb(41, 128, 185),
-									  rgb(142, 68, 173),
-									  rgb(44, 62, 80),
-									  rgb(241, 196, 15),
-									  rgb(230, 126, 34),
-									  rgb(231, 76, 60),
-									  rgb(243, 156, 18),
-									  rgb(211, 84, 0),
-									  rgb(192, 57, 43)];
-		
-		UIColor *backgroundColor = backgroundColors[(arc4random() % [backgroundColors count])];
+//		NSArray *backgroundColors = @[rgb(26, 188, 156),
+//									  rgb(46, 204, 113),
+//									  rgb(52, 152, 219),
+//									  rgb(155, 89, 182),
+//									  rgb(52, 73, 94),
+//									  rgb(22, 160, 133),
+//									  rgb(39, 174, 96),
+//									  rgb(41, 128, 185),
+//									  rgb(142, 68, 173),
+//									  rgb(44, 62, 80),
+//									  rgb(241, 196, 15),
+//									  rgb(230, 126, 34),
+//									  rgb(231, 76, 60),
+//									  rgb(243, 156, 18),
+//									  rgb(211, 84, 0),
+//									  rgb(192, 57, 43)];
+//		
+//		UIColor *backgroundColor = backgroundColors[(arc4random() % [backgroundColors count])];
+		UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.6];
 		
 		self.missingArtworkView = [[UIView alloc] initWithFrame:CGRectMake(20, 0, 60, 100)];
 		[self.missingArtworkView setBackgroundColor:backgroundColor];
-		UILabel *missingLabel = [[UILabel alloc] initWithFrame:[self.missingArtworkView bounds]];
-		[self.missingArtworkView addSubview:missingLabel];
-		[missingLabel setText:@"Missing Artwork"];
-		[missingLabel setNumberOfLines:0];
-		[missingLabel setTextAlignment:NSTextAlignmentCenter];
-		[missingLabel setTextColor:[UIColor whiteColor]];
-		[missingLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
+		[[self.missingArtworkView layer] setBorderColor:[[UIColor colorWithWhite:0.7 alpha:0.6] CGColor]];
+		[[self.missingArtworkView layer] setBorderWidth:0.5];
+		_missingLabel = [[UILabel alloc] initWithFrame:[_missingArtworkView bounds]];
+		[self.missingArtworkView addSubview:_missingLabel];
+		[_missingLabel setText:@"Missing Artwork"];
+		[_missingLabel setNumberOfLines:0];
+		[_missingLabel setTextAlignment:NSTextAlignmentCenter];
+		[_missingLabel setTextColor:[UIColor grayColor]];
+		[_missingLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
+//		[_missingLabel setAdjustsFontSizeToFitWidth:YES];
+//		[_missingLabel setMinimumScaleFactor:0.75];
 	}
 	
 	return self;
