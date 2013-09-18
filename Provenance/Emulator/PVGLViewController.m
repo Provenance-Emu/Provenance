@@ -70,54 +70,34 @@
 - (void)didMoveToParentViewController:(UIViewController *)parent
 {
 	[super didMoveToParentViewController:parent];
-	
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+
+	if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
 	{
-		if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
-		{
-			[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 768)];
-		}
-		else
-		{
-			[self.view setFrame:CGRectMake(0, 0, 768, 576)];
-		}
+		CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[parent view] bounds].size.height;
+		
+		[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[parent view] bounds].size.height)];
 	}
 	else
 	{
-		if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
-		{
-			[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 427) / 2, 0, 427, 320)];
-		}
-		else
-		{
-			[self.view setFrame:CGRectMake(0, 0, 320, 240)];
-		}
+		CGFloat newHeight = ([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[parent view] bounds].size.width;
+		[self.view setFrame:CGRectMake(0, 0, [[parent view] bounds].size.width, newHeight)];
 	}
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+	[self.view setFrame:[[self.parentViewController view] bounds]];
+	
+	if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
 	{
-		[UIView animateWithDuration:duration
-							  delay:0.0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 1024) / 2, 0, 1024, 768)];
-						 }
-						 completion:^(BOOL finished) {
-						 }];
+		CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[self.parentViewController view] bounds].size.height;
+		
+		[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[self.parentViewController view] bounds].size.height)];
 	}
 	else
 	{
-		[UIView animateWithDuration:duration
-							  delay:0.0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-							 [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - 427) / 2, 0, 427, 320)];
-						 }
-						 completion:^(BOOL finished) {
-						 }];
+		CGFloat newHeight = ([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width;
+		[self.view setFrame:CGRectMake(0, 0, [[self.parentViewController view] bounds].size.width, newHeight)];
 	}
 }
 
