@@ -44,7 +44,7 @@ See the issues page.
 
 #Screen Shots
 
-![Provenance Game Library showing Genesis games](http://jamsoftonline.com/screenshots/provenance1.png) ![Provenance Game Library showing SNES games](http://jamsoftonline.com/screenshots/provenance2.png)  
+![Provenance Game Library showing Genesis games](http://jamsoftonline.com/screenshots/provenance1.png)  ![Provenance Game Library showing SNES games](http://jamsoftonline.com/screenshots/provenance2.png)  
 ![Provenance running Sonic 3 & Knuckles](http://jamsoftonline.com/screenshots/provenance3.png)  
 ![Provenance running Chrono Trigger](http://jamsoftonline.com/screenshots/provenance4.png)  
 ![Provenance settings](http://jamsoftonline.com/screenshots/provenance5.png)  
