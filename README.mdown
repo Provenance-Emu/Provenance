@@ -1,7 +1,8 @@
 # Provenance
-### An iOS Frontend for Sega Genesis emulation
+### An iOS Frontend for multiple emulators, currently supporting Sega Genesis and SNES
 
-Genesis emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu).
+Genesis emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
+SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu) 
 
 ###Why 'Provenance'?
 
@@ -15,9 +16,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 ##Features
 
-Since Provenances uses Genesis Plus GX, it theoretically supports evetything stated on its [features](http://code.google.com/p/genplus-gx/wiki/Features) page, however, much of it is not implemented in this frontend.
-
-- Very accurate & full speed Sega 16-bit emulation
+- Very accurate & full speed emulation
 - Stereo sound
 - OpenGL based rendering, never drops below 60fps
 - Save States
