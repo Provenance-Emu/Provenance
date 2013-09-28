@@ -17,7 +17,7 @@
                BlueprintIdentifier = "1ACEA64317F7467D0031B1C9"
                BuildableName = "libPVSupport.a"
                BlueprintName = "PVSupport"
-               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+               ReferencedContainer = "container:../ProvenanceSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,35 +31,7 @@
                BlueprintIdentifier = "1ACEA6AB17F74D150031B1C9"
                BuildableName = "libPVGenesis.a"
                BlueprintName = "PVGenesis"
-               ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA8E317F75F350031B1C9"
-               BuildableName = "libPVSNES.a"
-               BlueprintName = "PVSNES"
-               ReferencedContainer = "container:PVSNES/PVSNES.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
-               BlueprintName = "Provenance"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               ReferencedContainer = "container:PVGenesis.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -71,15 +43,6 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
@@ -90,15 +53,6 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -108,15 +62,6 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-            BuildableName = "Provenance.app"
-            BlueprintName = "Provenance"
-            ReferencedContainer = "container:Provenance.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

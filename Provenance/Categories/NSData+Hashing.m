@@ -7,13 +7,14 @@
 //
 
 #import "NSData+Hashing.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 @implementation NSData (Hashing)
 
 - (NSString *)md5Hash
 {
 	unsigned char md5Digest[16];
-	CC_MD5([self bytes], [self length], md5Digest);
+	CC_MD5([self bytes], (CC_LONG)[self length], md5Digest);
 	
 	return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 			md5Digest[0], md5Digest[1],
