@@ -11,6 +11,9 @@
 #import "PVGenesisControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
 #import "PVSNESControllerViewController.h"
+#import "PVGameControllerViewController.h"
+#import <GameController/GameController.h>
+#include "TargetConditionals.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
@@ -92,7 +95,18 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 {
 	PVControllerViewController *controller = nil;
 	
-	if ([systemID isEqualToString:PVGenesisSystemIdentifier])
+    // need to discover gamepads before this point
+    NSArray *gamepads = nil;
+    
+#if !(TARGET_IPHONE_SIMULATOR)
+    gamepads = [GCController controllers];
+#endif
+    
+    if (gamepads.count)
+    {
+        controller = [[PVGameControllerViewController alloc] initWithControlLayout:nil];
+    }
+	else if ([systemID isEqualToString:PVGenesisSystemIdentifier])
 	{
 		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
 	}

@@ -23,6 +23,8 @@
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
+#import <GameController/GameController.h>
+#include "TargetConditionals.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
@@ -138,7 +140,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	[_collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[_collectionView setBackgroundColor:[UIColor clearColor]];
-	
+    
 	[self reloadData];
 }
 
@@ -149,6 +151,23 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[indexPaths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		[_collectionView deselectItemAtIndexPath:obj animated:YES];
 	}];
+    
+    // start looking for gamepads
+#if !(TARGET_IPHONE_SIMULATOR)
+
+    if ([[GCController controllers] count] == 0)
+    {
+        [GCController startWirelessControllerDiscoveryWithCompletionHandler:nil];
+    }
+    
+#endif
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [GCController stopWirelessControllerDiscovery];
 }
 
 - (NSUInteger)supportedInterfaceOrientations
@@ -409,7 +428,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 									   queue:_artworkDownloadQueue
 						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 							   dispatch_async(dispatch_get_main_queue(), ^{
-								   if ([data length])
+								   
+                                   if ([data length])
 								   {
 									   UIImage *artwork = [UIImage imageWithData:data];
 									   artwork = [artwork scaledImageWithMaxResolution:200];
