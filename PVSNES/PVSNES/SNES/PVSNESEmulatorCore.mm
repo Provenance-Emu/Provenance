@@ -136,10 +136,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 	 Perhaps someone more knowledgable than myself can explain and/or fix this.
 	 */
 	
-	////	struct mach_timebase_info timebase;
-	////	mach_timebase_info(&timebase);
-	////	double toSec = 1e-09 * (timebase.numer / timebase.denom);
-	////	NSTimeInterval gameTime = mach_absolute_time() * toSec;
+//	struct mach_timebase_info timebase;
+//	mach_timebase_info(&timebase);
+//	double toSec = 1e-09 * (timebase.numer / timebase.denom);
+//	NSTimeInterval gameTime = mach_absolute_time() * toSec;
 	
 	OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 	while (!shouldStop)
@@ -161,7 +161,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		}
 		
 		OEWaitUntil(gameTime);
-		//		mach_wait_until(gameTime / toSec);
+//		mach_wait_until(gameTime / toSec);
 	}
 }
 
@@ -293,7 +293,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB565;
+    return GL_RGB;
 }
 
 - (NSTimeInterval)frameInterval

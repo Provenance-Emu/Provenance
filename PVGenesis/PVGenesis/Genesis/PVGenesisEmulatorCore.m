@@ -353,7 +353,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB565;
+    return GL_RGB;
 }
 
 - (NSTimeInterval)frameInterval
