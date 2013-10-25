@@ -275,28 +275,24 @@
 		1ACEA66817F7467D0031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = /tmp/PVSupport.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
 		1ACEA66917F7467D0031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = /tmp/PVSupport.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
-				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};

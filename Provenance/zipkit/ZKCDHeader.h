@@ -7,61 +7,39 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ZKCDHeader : NSObject {
-@private
-	NSUInteger magicNumber;
-	NSUInteger versionMadeBy;
-	NSUInteger versionNeededToExtract;
-	NSUInteger generalPurposeBitFlag;
-	NSUInteger compressionMethod;
-	NSDate *lastModDate;
-	NSUInteger crc;
-	unsigned long long compressedSize;
-	unsigned long long uncompressedSize;
-	NSUInteger filenameLength;
-	NSUInteger extraFieldLength;
-	NSUInteger commentLength;
-	NSUInteger diskNumberStart;
-	NSUInteger internalFileAttributes;
-	NSUInteger externalFileAttributes;
-	unsigned long long localHeaderOffset;
-	NSString *filename;
-	NSData *extraField;
-	NSString *comment;
-	NSMutableData *cachedData;
-}
+@interface ZKCDHeader : NSObject
 
-+ (ZKCDHeader *) recordWithData:(NSData *)data atOffset:(NSUInteger)offset;
-+ (ZKCDHeader *) recordWithArchivePath:(NSString *)path atOffset:(unsigned long long)offset;
-- (void) parseZip64ExtraField;
-- (NSData *) zip64ExtraField;
-- (NSData *) data;
-- (NSUInteger) length;
-- (BOOL) useZip64Extensions;
-- (NSNumber *) posixPermissions;
-- (BOOL) isDirectory;
-- (BOOL) isSymLink;
-- (BOOL) isResourceFork;
++ (ZKCDHeader *) recordWithData:(NSData *)data atOffset:(UInt64)offset;
++ (ZKCDHeader *) recordWithArchivePath:(NSString *)path atOffset:(UInt64)offset;
+- (void)                parseZip64ExtraField;
+- (NSData *)            zip64ExtraField;
+- (NSData *)            data;
+- (NSUInteger)          length;
+- (BOOL)                useZip64Extensions;
+- (NSNumber *)          posixPermissions;
+- (BOOL)                isDirectory;
+- (BOOL)                isSymLink;
+- (BOOL)                isResourceFork;
 
-@property (assign) NSUInteger magicNumber;
-@property (assign) NSUInteger versionMadeBy;
-@property (assign) NSUInteger versionNeededToExtract;
-@property (assign) NSUInteger generalPurposeBitFlag;
-@property (assign) NSUInteger compressionMethod;
-@property (retain) NSDate *lastModDate;
-@property (assign) NSUInteger crc;
-@property (assign) unsigned long long compressedSize;
-@property (assign) unsigned long long uncompressedSize;
-@property (assign) NSUInteger filenameLength;
-@property (assign) NSUInteger extraFieldLength;
-@property (assign) NSUInteger commentLength;
-@property (assign) NSUInteger diskNumberStart;
-@property (assign) NSUInteger internalFileAttributes;
-@property (assign) NSUInteger externalFileAttributes;
-@property (assign) unsigned long long localHeaderOffset;
+@property (assign) UInt32 magicNumber;
+@property (assign) UInt32 versionMadeBy;
+@property (assign) UInt32 versionNeededToExtract;
+@property (assign) UInt32 generalPurposeBitFlag;
+@property (assign) UInt32 compressionMethod;
+@property (strong) NSDate *lastModDate;
+@property (assign) UInt32 crc;
+@property (assign) UInt64 compressedSize;
+@property (assign) UInt64 uncompressedSize;
+@property (assign) UInt32 filenameLength;
+@property (assign) UInt32 extraFieldLength;
+@property (assign) UInt32 commentLength;
+@property (assign) UInt32 diskNumberStart;
+@property (assign) UInt32 internalFileAttributes;
+@property (assign) UInt32 externalFileAttributes;
+@property (assign) UInt64 localHeaderOffset;
 @property (copy) NSString *filename;
-@property (retain) NSData *extraField;
+@property (strong) NSData *extraField;
 @property (copy) NSString *comment;
-@property (retain) NSMutableData *cachedData;
+@property (strong) NSMutableData *cachedData;
 
 @end

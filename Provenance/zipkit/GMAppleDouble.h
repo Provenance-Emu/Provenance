@@ -40,7 +40,7 @@
  *
  * A utility class to construct an AppleDouble (._) file.
  *
- * AppleDouble files contain information about a corresponding file and are 
+ * AppleDouble files contain information about a corresponding file and are
  * typically used on file systems that do not support extended attributes.
  */
 
@@ -54,12 +54,12 @@
  *
  * Notes:
  * DoubleEntryFileDatesInfo
- *    File creation, modification, backup, and access times as number of seconds 
+ *    File creation, modification, backup, and access times as number of seconds
  *    before or after 12:00 AM Jan 1 2000 GMT as SInt32.
  *  DoubleEntryFinderInfo
  *    16 bytes of FinderInfo followed by 16 bytes of extended FinderInfo.
- *    New FinderInfo should be zero'd out. For a directory, when the Finder 
- *    encounters an entry with the init'd bit cleared, it will initialize the 
+ *    New FinderInfo should be zero'd out. For a directory, when the Finder
+ *    encounters an entry with the init'd bit cleared, it will initialize the
  *    frView field of the to a value indicating how the contents of the
  *    directory should be shown. Recommend to set frView to value of 256.
  *  DoubleEntryMacFileInfo
@@ -91,56 +91,56 @@ typedef enum {
 GM_EXPORT @interface GMAppleDoubleEntry : NSObject {
 @private
 	GMAppleDoubleEntryID entryID_;
-	NSData* data_;  // Format depends on entryID_
+	NSData *data_;  // Format depends on entryID_
 }
-/*! 
+/*!
  * @abstract Initializes an AppleDouble entry with ID and data.
  * @param entryID A valid entry identifier
  * @param data Raw data for the entry
  */
-- (id)initWithEntryID:(GMAppleDoubleEntryID)entryID data:(NSData *)data;
+- (id) initWithEntryID:(GMAppleDoubleEntryID)entryID data:(NSData *)data;
 
 /*! @abstract The entry ID */
-- (GMAppleDoubleEntryID)entryID;
+- (GMAppleDoubleEntryID) entryID;
 
 /*! @abstract The entry data */
-- (NSData *)data;
+- (NSData *) data;
 @end
 
 /*!
  * @class
  * @discussion This class can be used to construct raw AppleDouble data.
  */
-GM_EXPORT @interface GMAppleDouble : NSObject {  
+GM_EXPORT @interface GMAppleDouble : NSObject {
 @private
-	NSMutableArray* entries_;
+	NSMutableArray *entries_;
 }
 
 /*! @abstract An autoreleased empty GMAppleDouble file */
-+ (GMAppleDouble *)appleDouble;
++ (GMAppleDouble *) appleDouble;
 
-/*! 
+/*!
  * @abstract An autoreleased GMAppleDouble file.
  * @discussion The GMAppleDouble is pre-filled with entries from the raw
  * AppleDouble file data.
  * @param data Raw AppleDouble file data.
  */
-+ (GMAppleDouble *)appleDoubleWithData:(NSData *)data;
++ (GMAppleDouble *) appleDoubleWithData:(NSData *)data;
 
-/*! 
+/*!
  * @abstract Adds an entry to the AppleDouble file.
  * @param entry The entry to add
  */
-- (void)addEntry:(GMAppleDoubleEntry *)entry;
+- (void) addEntry:(GMAppleDoubleEntry *)entry;
 
-/*! 
+/*!
  * @abstract Adds an entry to the AppleDouble file with ID and data.
  * @param entryID The ID of the entry to add
  * @param data The raw data for the entry to add (retained)
  */
-- (void)addEntryWithID:(GMAppleDoubleEntryID)entryID data:(NSData *)data;
+- (void) addEntryWithID:(GMAppleDoubleEntryID)entryID data:(NSData *)data;
 
-/*! 
+/*!
  * @abstract Adds entries based on the provided raw AppleDouble file data.
  * @discussion This will attempt to parse the given data as an AppleDouble file
  * and add all entries found.
@@ -148,19 +148,19 @@ GM_EXPORT @interface GMAppleDouble : NSObject {
  * @param data The raw data for the entry to add (retained)
  * @result YES if the provided data was parsed correctly.
  */
-- (BOOL)addEntriesFromAppleDoubleData:(NSData *)data;
+- (BOOL) addEntriesFromAppleDoubleData:(NSData *)data;
 
 /*!
  * @abstract The set of GMAppleDoubleEntry present in this GMAppleDouble.
  * @result An array of GMAppleDoubleEntry.
  */
-- (NSArray *)entries;
+- (NSArray *) entries;
 
 /*!
  * @abstract Constructs raw data for the AppleDouble file.
  * @result The raw data for an AppleDouble file represented by this GMAppleDouble.
  */
-- (NSData *)data;
+- (NSData *) data;
 
 @end
 

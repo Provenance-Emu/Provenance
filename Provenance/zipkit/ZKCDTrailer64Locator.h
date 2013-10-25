@@ -7,23 +7,17 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ZKCDTrailer64Locator : NSObject {
-@private
-	NSUInteger magicNumber;
-	NSUInteger diskNumberWithStartOfCentralDirectory;
-	unsigned long long offsetOfStartOfCentralDirectoryTrailer64;
-	NSUInteger numberOfDisks;
-}
+@interface ZKCDTrailer64Locator : NSObject
 
-+ (ZKCDTrailer64Locator *) recordWithData:(NSData *)data atOffset:(NSUInteger) offset;
++ (ZKCDTrailer64Locator *) recordWithData:(NSData *)data atOffset:(UInt64)offset;
 + (ZKCDTrailer64Locator *) recordWithArchivePath:(NSString *)path andCDTrailerLength:(NSUInteger)cdTrailerLength;
 
-- (NSData *) data;
-- (NSUInteger) length;
+- (NSData *)	data;
+- (NSUInteger)	length;
 
-@property (assign) NSUInteger magicNumber;
-@property (assign) NSUInteger diskNumberWithStartOfCentralDirectory;
-@property (assign) unsigned long long offsetOfStartOfCentralDirectoryTrailer64;
-@property (assign) NSUInteger numberOfDisks;
+@property (assign) UInt32 magicNumber;
+@property (assign) UInt32 diskNumberWithStartOfCentralDirectory;
+@property (assign) UInt64 offsetOfStartOfCentralDirectoryTrailer64;
+@property (assign) UInt32 numberOfDisks;
 
 @end

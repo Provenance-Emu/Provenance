@@ -20,6 +20,8 @@
 #include "md_ntsc.h"
 #include "sms_ntsc.h"
 
+#include <zlib.h>
+
 sms_ntsc_t *sms_ntsc;
 md_ntsc_t  *md_ntsc;
 

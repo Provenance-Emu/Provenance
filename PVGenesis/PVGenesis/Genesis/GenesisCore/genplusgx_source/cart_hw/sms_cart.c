@@ -39,6 +39,7 @@
 #include "shared.h"
 #include "eeprom_93c.h"
 #include "terebi_oekaki.h"
+#include <zlib.h>
 
 #define MAPPER_NONE        (0x00)
 #define MAPPER_TEREBI      (0x01)

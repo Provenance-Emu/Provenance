@@ -7,42 +7,28 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ZKLFHeader : NSObject {
-@private
-	NSUInteger magicNumber;
-	NSUInteger versionNeededToExtract;
-	NSUInteger generalPurposeBitFlag;
-	NSUInteger compressionMethod;
-	NSDate *lastModDate;
-	NSUInteger crc;
-	unsigned long long compressedSize;
-	unsigned long long uncompressedSize;
-	NSUInteger filenameLength;
-	NSUInteger extraFieldLength;
-	NSString *filename;
-	NSData *extraField;
-}
+@interface ZKLFHeader : NSObject
 
-+ (ZKLFHeader *) recordWithData:(NSData *)data atOffset:(NSUInteger)offset;
-+ (ZKLFHeader *) recordWithArchivePath:(NSString *)path atOffset:(unsigned long long)offset;
-- (void) parseZip64ExtraField;
-- (NSData *) zip64ExtraField;
-- (NSData *) data;
-- (NSUInteger) length;
-- (BOOL) useZip64Extensions;
-- (BOOL) isResourceFork;
++ (ZKLFHeader *) recordWithData:(NSData *)data atOffset:(UInt64)offset;
++ (ZKLFHeader *) recordWithArchivePath:(NSString *)path atOffset:(UInt64)offset;
+- (void)                parseZip64ExtraField;
+- (NSData *)            zip64ExtraField;
+- (NSData *)            data;
+- (NSUInteger)          length;
+- (BOOL)                useZip64Extensions;
+- (BOOL)                isResourceFork;
 
-@property (assign) NSUInteger magicNumber;
-@property (assign) NSUInteger versionNeededToExtract;
-@property (assign) NSUInteger generalPurposeBitFlag;
-@property (assign) NSUInteger compressionMethod;
-@property (retain) NSDate *lastModDate;
-@property (assign) NSUInteger crc;
-@property (assign) unsigned long long compressedSize;
-@property (assign) unsigned long long uncompressedSize;
-@property (assign) NSUInteger filenameLength;
-@property (assign) NSUInteger extraFieldLength;
+@property (assign) UInt32 magicNumber;
+@property (assign) UInt32 versionNeededToExtract;
+@property (assign) UInt32 generalPurposeBitFlag;
+@property (assign) UInt32 compressionMethod;
+@property (strong) NSDate *lastModDate;
+@property (assign) UInt32 crc;
+@property (assign) UInt64 compressedSize;
+@property (assign) UInt64 uncompressedSize;
+@property (assign) UInt32 filenameLength;
+@property (assign) UInt32 extraFieldLength;
 @property (copy) NSString *filename;
-@property (retain) NSData *extraField;
+@property (strong) NSData *extraField;
 
 @end

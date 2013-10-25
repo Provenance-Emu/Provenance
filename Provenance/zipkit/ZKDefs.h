@@ -15,22 +15,22 @@ enum ZKReturnCodes {
 };
 
 // File & path naming
-extern NSString* const ZKArchiveFileExtension;
-extern NSString* const ZKMacOSXDirectory;
-extern NSString* const ZKDotUnderscore;
-extern NSString* const ZKExpansionDirectoryName;
+extern NSString *const ZKArchiveFileExtension;
+extern NSString *const ZKMacOSXDirectory;
+extern NSString *const ZKDotUnderscore;
+extern NSString *const ZKExpansionDirectoryName;
 
 // Keys for dictionary passed to size calculation thread
-extern NSString* const ZKPathsKey;
-extern NSString* const ZKusingResourceForkKey;
+extern NSString *const ZKPathsKey;
+extern NSString *const ZKusingResourceForkKey;
 
 // Keys for dictionary returned from ZKDataArchive inflation
-extern NSString* const ZKFileDataKey;
-extern NSString* const ZKFileAttributesKey;
-extern NSString* const ZKPathKey;
+extern NSString *const ZKFileDataKey;
+extern NSString *const ZKFileAttributesKey;
+extern NSString *const ZKPathKey;
 
 // Zipping & Unzipping
-extern const NSUInteger ZKZipBlockSize;
+extern const unsigned long long ZKZipBlockSize;
 extern const NSUInteger ZKNotificationIterations;
 
 // Magic numbers and lengths for zip records
