@@ -118,6 +118,7 @@
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		632284D9180C40E8008DD48B /* PVGameControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284D8180C40E8008DD48B /* PVGameControllerViewController.m */; };
 		632284DB180C4174008DD48B /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632284DA180C4174008DD48B /* GameController.framework */; };
+		632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284E0180F7D18008DD48B /* iMpulseReaderView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -297,6 +298,9 @@
 		632284D7180C40E8008DD48B /* PVGameControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerViewController.h; sourceTree = "<group>"; };
 		632284D8180C40E8008DD48B /* PVGameControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerViewController.m; sourceTree = "<group>"; };
 		632284DA180C4174008DD48B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		632284DF180F7D18008DD48B /* iMpulseReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseReaderView.h; path = iMpulse/iMpulseReaderView.h; sourceTree = "<group>"; };
+		632284E0180F7D18008DD48B /* iMpulseReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iMpulseReaderView.m; path = iMpulse/iMpulseReaderView.m; sourceTree = "<group>"; };
+		632284E1180F7D18008DD48B /* iMpulseState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseState.h; path = iMpulse/iMpulseState.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +427,7 @@
 			children = (
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
+				632284DE180F7D07008DD48B /* iMpulse */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
@@ -655,6 +660,16 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		632284DE180F7D07008DD48B /* iMpulse */ = {
+			isa = PBXGroup;
+			children = (
+				632284DF180F7D18008DD48B /* iMpulseReaderView.h */,
+				632284E0180F7D18008DD48B /* iMpulseReaderView.m */,
+				632284E1180F7D18008DD48B /* iMpulseState.h */,
+			);
+			name = iMpulse;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -803,6 +818,7 @@
 				1A4869B817C8C16E0019F6D2 /* ArchiveVGThrottling.m in Sources */,
 				1A4869B917C8C16E0019F6D2 /* ArchiveVGXMLParser.m in Sources */,
 				1A4869BA17C8C16E0019F6D2 /* ArchiveVGYAMLParser.m in Sources */,
+				632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */,
 				1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
@@ -882,7 +898,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -914,7 +930,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
