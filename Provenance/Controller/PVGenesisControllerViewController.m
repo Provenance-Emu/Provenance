@@ -8,6 +8,7 @@
 
 #import "PVGenesisControllerViewController.h"
 #import "PVGenesisEmulatorCore.h"
+#import "iMpulseState.h"
 
 @interface PVGenesisControllerViewController ()
 
@@ -113,5 +114,92 @@
 		[genesisCore releaseGenesisButton:PVGenesisButtonStart];
 	}
 }
+
+#pragma mark - iMpulse delegate methods
+
+- (void)buttonDown:(iMpulseState)button
+{
+    PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+    
+    switch (button) {
+        case iMpulseJoystickUp:
+            [genesisCore pushGenesisButton:PVGenesisButtonUp];
+            break;
+            
+        case iMpulseJoystickDown:
+            [genesisCore pushGenesisButton:PVGenesisButtonDown];
+            break;
+            
+        case iMpulseJoystickLeft:
+            [genesisCore pushGenesisButton:PVGenesisButtonLeft];
+            break;
+            
+        case iMpulseJoystickRight:
+            [genesisCore pushGenesisButton:PVGenesisButtonRight];
+            break;
+            
+        case iMpulseButton1A:
+            [genesisCore pushGenesisButton:PVGenesisButtonA];
+            break;
+            
+        case iMpulseButton1W:
+            [genesisCore pushGenesisButton:PVGenesisButtonB];
+            break;
+            
+        case GenericButtonC:
+            [genesisCore pushGenesisButton:PVGenesisButtonC];
+            break;
+            
+        case iMpulseButton1M:
+            [genesisCore pushGenesisButton:PVGenesisButtonStart];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)buttonUp:(iMpulseState)button
+{
+    PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+    
+    switch (button) {
+        case iMpulseJoystickUp:
+            [genesisCore releaseGenesisButton:PVGenesisButtonUp];
+            break;
+            
+        case iMpulseJoystickDown:
+            [genesisCore releaseGenesisButton:PVGenesisButtonDown];
+            break;
+            
+        case iMpulseJoystickLeft:
+            [genesisCore releaseGenesisButton:PVGenesisButtonLeft];
+            break;
+            
+        case iMpulseJoystickRight:
+            [genesisCore releaseGenesisButton:PVGenesisButtonRight];
+            break;
+            
+        case iMpulseButton1A:
+            [genesisCore releaseGenesisButton:PVGenesisButtonA];
+            break;
+            
+        case iMpulseButton1W:
+            [genesisCore releaseGenesisButton:PVGenesisButtonB];
+            break;
+            
+        case GenericButtonC:
+            [genesisCore releaseGenesisButton:PVGenesisButtonC];
+            break;
+            
+        case iMpulseButton1M:
+            [genesisCore releaseGenesisButton:PVGenesisButtonStart];
+            break;
+            
+        default:
+            break;
+    }
+}
+
 
 @end

@@ -13,11 +13,12 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
+#import "iMpulseReaderView.h"
 
 NSString * const PVSavedDPadOriginKey = @"PVSavedDPadOriginKey";
 NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
-@interface PVControllerViewController ()
+@interface PVControllerViewController () <iMpulseEventDelegate>
 
 @property (nonatomic, strong) NSArray *controlLayout;
 
@@ -187,6 +188,12 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			[self.view addSubview:self.selectButton];
 		}
 	}
+    
+    // add iMpulse control support
+    iMpulseReaderView *iMpulse = [[iMpulseReaderView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:iMpulse];
+    iMpulse.active = YES;
+    iMpulse.delegate = self;
 }
 
 - (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
@@ -369,6 +376,18 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 							 [self.delegate controllerViewControllerDidEndEditing:self];
 						 }
 					 }];
+}
+
+#pragma mark - iMpulse delegate methods
+
+- (void)stateChanged:(iMpulseState)state
+{
+    [UIView animateWithDuration:0.6 animations:^{
+        // if we are getting button presses, we can hide the UI
+        self.dPad.alpha = 0.0;
+        self.buttonGroup.alpha = 0.0;
+        self.startButton.alpha = 0.0;
+    }];
 }
 
 @end
