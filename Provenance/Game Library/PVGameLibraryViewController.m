@@ -138,7 +138,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	[_collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[_collectionView setBackgroundColor:[UIColor clearColor]];
-	
+    
 	[self reloadData];
 }
 
@@ -409,7 +409,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 									   queue:_artworkDownloadQueue
 						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 							   dispatch_async(dispatch_get_main_queue(), ^{
-								   if ([data length])
+								   
+                                   if ([data length])
 								   {
 									   UIImage *artwork = [UIImage imageWithData:data];
 									   artwork = [artwork scaledImageWithMaxResolution:200];

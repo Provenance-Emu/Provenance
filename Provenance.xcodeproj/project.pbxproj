@@ -116,6 +116,7 @@
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
+		632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284E0180F7D18008DD48B /* iMpulseReaderView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -292,6 +293,10 @@
 		42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSNESControllerViewController.m; sourceTree = "<group>"; };
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
+		632284DA180C4174008DD48B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		632284DF180F7D18008DD48B /* iMpulseReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseReaderView.h; path = iMpulse/iMpulseReaderView.h; sourceTree = "<group>"; };
+		632284E0180F7D18008DD48B /* iMpulseReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iMpulseReaderView.m; path = iMpulse/iMpulseReaderView.m; sourceTree = "<group>"; };
+		632284E1180F7D18008DD48B /* iMpulseState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseState.h; path = iMpulse/iMpulseState.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -385,6 +390,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				632284DA180C4174008DD48B /* GameController.framework */,
 				1A2A95AB17F7686400F1CB0D /* libPVSupport.a */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
 				1A2A95A517F7627E00F1CB0D /* libPVSNES.a */,
@@ -416,6 +422,7 @@
 			children = (
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
+				632284DE180F7D07008DD48B /* iMpulse */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
@@ -646,6 +653,16 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		632284DE180F7D07008DD48B /* iMpulse */ = {
+			isa = PBXGroup;
+			children = (
+				632284DF180F7D18008DD48B /* iMpulseReaderView.h */,
+				632284E0180F7D18008DD48B /* iMpulseReaderView.m */,
+				632284E1180F7D18008DD48B /* iMpulseState.h */,
+			);
+			name = iMpulse;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -793,6 +810,7 @@
 				1A4869B817C8C16E0019F6D2 /* ArchiveVGThrottling.m in Sources */,
 				1A4869B917C8C16E0019F6D2 /* ArchiveVGXMLParser.m in Sources */,
 				1A4869BA17C8C16E0019F6D2 /* ArchiveVGYAMLParser.m in Sources */,
+				632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */,
 				1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,

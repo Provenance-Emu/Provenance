@@ -8,6 +8,7 @@
 
 #import "PVSNESControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
+#import "iMpulseState.h"
 
 @interface PVSNESControllerViewController ()
 
@@ -144,5 +145,107 @@
 	{
 		[snesCore releaseSNESButton:PVSNESButtonSelect];
 	}
+}
+
+#pragma mark - iMpulse delegate methods
+
+- (void)buttonDown:(iMpulseState)button
+{
+	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    
+    switch (button) {
+        case iMpulseJoystickUp:
+			[snesCore pushSNESButton:PVSNESButtonUp];
+            break;
+            
+        case iMpulseJoystickDown:
+			[snesCore pushSNESButton:PVSNESButtonDown];
+            break;
+            
+        case iMpulseJoystickLeft:
+			[snesCore pushSNESButton:PVSNESButtonLeft];
+            break;
+            
+        case iMpulseJoystickRight:
+			[snesCore pushSNESButton:PVSNESButtonRight];
+            break;
+            
+        case iMpulseButton1A:
+			[snesCore pushSNESButton:PVSNESButtonY];
+            break;
+            
+        case iMpulseButton1W:
+			[snesCore pushSNESButton:PVSNESButtonB];
+            break;
+            
+        case iMpulseButton1V:
+			[snesCore pushSNESButton:PVSNESButtonA];
+            break;
+            
+        case iMpulseButton1M:
+			[snesCore pushSNESButton:PVSNESButtonX];
+            break;
+            
+        case iMpulseButton1u:
+			[snesCore pushSNESButton:PVSNESButtonTriggerLeft];
+            break;
+            
+        case iMpulseButton1n:
+			[snesCore pushSNESButton:PVSNESButtonTriggerRight];
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)buttonUp:(iMpulseState)button
+{
+	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    
+    switch (button) {
+        case iMpulseJoystickUp:
+			[snesCore releaseSNESButton:PVSNESButtonUp];
+            break;
+            
+        case iMpulseJoystickDown:
+			[snesCore releaseSNESButton:PVSNESButtonDown];
+            break;
+            
+        case iMpulseJoystickLeft:
+			[snesCore releaseSNESButton:PVSNESButtonLeft];
+            break;
+            
+        case iMpulseJoystickRight:
+			[snesCore releaseSNESButton:PVSNESButtonRight];
+            break;
+            
+        case iMpulseButton1A:
+			[snesCore releaseSNESButton:PVSNESButtonY];
+            break;
+            
+        case iMpulseButton1W:
+			[snesCore releaseSNESButton:PVSNESButtonB];
+            break;
+            
+        case iMpulseButton1V:
+			[snesCore releaseSNESButton:PVSNESButtonA];
+            break;
+            
+        case iMpulseButton1M:
+			[snesCore releaseSNESButton:PVSNESButtonX];
+            break;
+            
+        case iMpulseButton1u:
+			[snesCore releaseSNESButton:PVSNESButtonTriggerLeft];
+            break;
+            
+        case iMpulseButton1n:
+			[snesCore releaseSNESButton:PVSNESButtonTriggerRight];
+            break;
+            
+        default:
+            break;
+    }
 }
 @end

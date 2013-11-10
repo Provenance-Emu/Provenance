@@ -5,34 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>03DB5459-2398-4B60-A32B-86D2E12A6302</string>
+	<string>C0725784-E185-4817-83A3-7A71632039DC</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Provenance</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>B06F34B8-B249-4439-B808-558FB71C4877</key>
-		<string>ssh://github.com/jasarien/Provenance.git</string>
+		<key>EA942635-055C-4E0D-8C6A-AD65A85350F2</key>
+		<string>https://github.com/davidmuzi/Provenance.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Provenance.xcodeproj/project.xcworkspace</string>
+	<string>Provenance.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>B06F34B8-B249-4439-B808-558FB71C4877</key>
-		<string>../..</string>
+		<key>EA942635-055C-4E0D-8C6A-AD65A85350F2</key>
+		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/jasarien/Provenance.git</string>
+	<string>https://github.com/davidmuzi/Provenance.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>B06F34B8-B249-4439-B808-558FB71C4877</string>
+	<string>EA942635-055C-4E0D-8C6A-AD65A85350F2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>B06F34B8-B249-4439-B808-558FB71C4877</string>
+			<string>EA942635-055C-4E0D-8C6A-AD65A85350F2</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Provenance</string>
 		</dict>

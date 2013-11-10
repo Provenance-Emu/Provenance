@@ -92,7 +92,7 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 {
 	PVControllerViewController *controller = nil;
 	
-	if ([systemID isEqualToString:PVGenesisSystemIdentifier])
+    if ([systemID isEqualToString:PVGenesisSystemIdentifier])
 	{
 		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
 	}
