@@ -23,8 +23,6 @@
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
-#import <GameController/GameController.h>
-#include "TargetConditionals.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
@@ -151,23 +149,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[indexPaths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		[_collectionView deselectItemAtIndexPath:obj animated:YES];
 	}];
-    
-    // start looking for gamepads
-#if !(TARGET_IPHONE_SIMULATOR)
-
-    if ([[GCController controllers] count] == 0)
-    {
-        [GCController startWirelessControllerDiscoveryWithCompletionHandler:nil];
-    }
-    
-#endif
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    [GCController stopWirelessControllerDiscovery];
 }
 
 - (NSUInteger)supportedInterfaceOrientations
