@@ -37,7 +37,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
                             <connections>
-                                <segue destination="LwQ-vq-8lE" kind="modal" id="Onm-GE-2Ho"/>
+                                <action selector="getMoreROMs" destination="40z-oi-2L6" id="A7s-uB-BTT"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -230,42 +230,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bJp-VV-s4G" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="503" y="-38"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="2UD-Lj-i64">
-            <objects>
-                <navigationController definesPresentationContext="YES" id="LwQ-vq-8lE" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Trw-h4-tWW">
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="ODg-pu-Koo" kind="relationship" relationship="rootViewController" id="bMV-aN-2ix"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="wIV-UP-4Or" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="103" y="691"/>
-        </scene>
-        <!--Browser View Controller - Browser-->
-        <scene sceneID="Z51-he-XER">
-            <objects>
-                <viewController id="ODg-pu-Koo" customClass="PVBrowserViewController" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="mF6-aS-2NS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                    </view>
-                    <navigationItem key="navigationItem" title="Browser" id="0Sa-oP-xYx">
-                        <barButtonItem key="rightBarButtonItem" title="Done" id="NRH-QP-ulZ">
-                            <connections>
-                                <action selector="done:" destination="ODg-pu-Koo" id="TIA-uB-NOS"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BEk-Oq-Y7e" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="503" y="691"/>
         </scene>
     </scenes>
     <resources>

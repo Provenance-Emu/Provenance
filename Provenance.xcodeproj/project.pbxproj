@@ -119,7 +119,6 @@
 		632284D9180C40E8008DD48B /* PVGameControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284D8180C40E8008DD48B /* PVGameControllerViewController.m */; };
 		632284DB180C4174008DD48B /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632284DA180C4174008DD48B /* GameController.framework */; };
 		632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284E0180F7D18008DD48B /* iMpulseReaderView.m */; };
-		631F9321182EE1F9000F9B80 /* PVBrowserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 631F9320182EE1F9000F9B80 /* PVBrowserViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -302,8 +301,6 @@
 		632284DF180F7D18008DD48B /* iMpulseReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseReaderView.h; path = iMpulse/iMpulseReaderView.h; sourceTree = "<group>"; };
 		632284E0180F7D18008DD48B /* iMpulseReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iMpulseReaderView.m; path = iMpulse/iMpulseReaderView.m; sourceTree = "<group>"; };
 		632284E1180F7D18008DD48B /* iMpulseState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseState.h; path = iMpulse/iMpulseState.h; sourceTree = "<group>"; };
-		631F931F182EE1F9000F9B80 /* PVBrowserViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVBrowserViewController.h; sourceTree = "<group>"; };
-		631F9320182EE1F9000F9B80 /* PVBrowserViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVBrowserViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -463,8 +460,6 @@
 			children = (
 				632284D7180C40E8008DD48B /* PVGameControllerViewController.h */,
 				632284D8180C40E8008DD48B /* PVGameControllerViewController.m */,
-				631F931F182EE1F9000F9B80 /* PVBrowserViewController.h */,
-				631F9320182EE1F9000F9B80 /* PVBrowserViewController.m */,
 				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
 				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
 				1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */,
@@ -790,7 +785,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				631F9321182EE1F9000F9B80 /* PVBrowserViewController.m in Sources */,
 				1A3D40A417B2DCE4004DFFFC /* main.m in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
