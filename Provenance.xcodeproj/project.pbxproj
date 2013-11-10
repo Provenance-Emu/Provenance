@@ -116,7 +116,6 @@
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
-		632284D9180C40E8008DD48B /* PVGameControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284D8180C40E8008DD48B /* PVGameControllerViewController.m */; };
 		632284DB180C4174008DD48B /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 632284DA180C4174008DD48B /* GameController.framework */; };
 		632284E2180F7D18008DD48B /* iMpulseReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 632284E0180F7D18008DD48B /* iMpulseReaderView.m */; };
 /* End PBXBuildFile section */
@@ -295,8 +294,6 @@
 		42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSNESControllerViewController.m; sourceTree = "<group>"; };
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
-		632284D7180C40E8008DD48B /* PVGameControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerViewController.h; sourceTree = "<group>"; };
-		632284D8180C40E8008DD48B /* PVGameControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerViewController.m; sourceTree = "<group>"; };
 		632284DA180C4174008DD48B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		632284DF180F7D18008DD48B /* iMpulseReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iMpulseReaderView.h; path = iMpulse/iMpulseReaderView.h; sourceTree = "<group>"; };
 		632284E0180F7D18008DD48B /* iMpulseReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iMpulseReaderView.m; path = iMpulse/iMpulseReaderView.m; sourceTree = "<group>"; };
@@ -458,8 +455,6 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				632284D7180C40E8008DD48B /* PVGameControllerViewController.h */,
-				632284D8180C40E8008DD48B /* PVGameControllerViewController.m */,
 				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
 				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
 				1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */,
@@ -801,7 +796,6 @@
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
-				632284D9180C40E8008DD48B /* PVGameControllerViewController.m in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
