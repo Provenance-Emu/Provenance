@@ -386,7 +386,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
         // if we are getting button presses, we can hide the UI
         self.dPad.alpha = 0.0;
         self.buttonGroup.alpha = 0.0;
-        self.startButton.alpha = 0.0;
+        self.leftShoulderButton.alpha = 0.0;
+        self.rightShoulderButton.alpha = 0.0;
     }];
 }
 

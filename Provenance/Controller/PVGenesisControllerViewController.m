@@ -151,7 +151,7 @@
             break;
             
         case iMpulseButton1M:
-            [genesisCore pushGenesisButton:PVGenesisButtonStart];
+            [genesisCore pushGenesisButton:PVGenesisButtonY];
             break;
             
         case iMpulseButton1u:
@@ -201,7 +201,7 @@
             break;
             
         case iMpulseButton1M:
-            [genesisCore releaseGenesisButton:PVGenesisButtonStart];
+            [genesisCore releaseGenesisButton:PVGenesisButtonY];
             break;
          
         case iMpulseButton1u:
