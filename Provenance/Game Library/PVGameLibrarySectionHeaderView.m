@@ -16,6 +16,7 @@
 	{
 		UIView *topSeparator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [self bounds].size.width, 0.5)];
 		[topSeparator setBackgroundColor:[UIColor colorWithWhite:0.7 alpha:0.6]];
+		[topSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self addSubview:topSeparator];
 		
 		[self setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:0.6]];
@@ -25,10 +26,12 @@
 		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setTextColor:[UIColor darkGrayColor]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
+		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self addSubview:_titleLabel];
 		
 		UIView *bottomSeparator = [[UIView alloc] initWithFrame:CGRectMake(0, [self bounds].size.height, [self bounds].size.width, 0.5)];
 		[bottomSeparator setBackgroundColor:[UIColor colorWithWhite:0.7 alpha:0.6]];
+		[bottomSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self addSubview:bottomSeparator];
 	}
 	

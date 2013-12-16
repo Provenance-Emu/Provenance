@@ -36,6 +36,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
 
+@property (nonatomic, strong) UITextView *debugTextView;
+
 @end
 
 @implementation PVControllerViewController
@@ -52,6 +54,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	
 	self.controlLayout = nil;
 	self.dPad = nil;
 	self.buttonGroup = nil;
@@ -67,6 +71,43 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
+	
+//	self.debugTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
+	[self.view addSubview:self.debugTextView];
+	
+	
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(controllerDidConnect:)
+												 name:GCControllerDidConnectNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(controllerDidDisconnect:)
+												 name:GCControllerDidDisconnectNotification
+											   object:nil];
+	
+	
+	if ([[GCController controllers] count])
+	{
+		self.gameController = [[GCController controllers] firstObject];
+		[self log:[NSString stringWithFormat:@"controller found: %@", self.gameController]];
+	}
+	else
+	{
+		[self log:[NSString stringWithFormat:@"No controller found, starting discovery"]];
+		
+		[GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
+			if ([[GCController controllers] count] == 0)
+			{
+				NSLog(@"No controllers found");
+//				UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Controllers Found"
+//																message:@"Make sure your game controller is turned on and discoverable and that bluetooth is enabled on your iOS Device"
+//															   delegate:nil
+//													  cancelButtonTitle:@"OK"
+//													  otherButtonTitles:nil];
+//				[alert show];
+			}
+		}];
+	}
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	
@@ -186,6 +227,11 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			[self.selectButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
 			[self.view addSubview:self.selectButton];
 		}
+	}
+	
+	if (self.gameController)
+	{
+		[self setupGameController];
 	}
 }
 
@@ -369,6 +415,175 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 							 [self.delegate controllerViewControllerDidEndEditing:self];
 						 }
 					 }];
+}
+
+#pragma mark - GameController Notifications
+
+- (void)controllerDidConnect:(NSNotification *)note
+{
+	// just use the first controller that connects - we're not doing multiplayer
+	// if we already have a game controller, ignore this notification
+	if (!self.gameController)
+	{
+		self.gameController = [[GCController controllers] firstObject];
+		[GCController stopWirelessControllerDiscovery];
+		
+		[self setupGameController];
+	}
+}
+
+- (void)controllerDidDisconnect:(NSNotification *)note
+{
+	GCController *controller = (GCController *)[note object];
+	if ([controller isEqual:self.gameController])
+	{
+		self.gameController = nil;
+		[self.leftShoulderButton setHidden:NO];
+		[self.rightShoulderButton setHidden:NO];
+		[self.dPad setHidden:NO];
+		[self.buttonGroup setHidden:NO];
+		[self.startButton setHidden:NO];
+		[self.selectButton setHidden:NO];
+	}
+}
+
+#pragma mark - Controller handling
+
+- (void)setupGameController
+{
+	[self log:[NSString stringWithFormat:@"Setting up game controller"]];
+	
+	[self.leftShoulderButton setHidden:YES];
+	[self.rightShoulderButton setHidden:YES];
+	[self.dPad setHidden:YES];
+	[self.buttonGroup setHidden:YES];
+	[self.startButton setHidden:YES];
+	[self.selectButton setHidden:YES];
+	
+	if ([self.gameController extendedGamepad])
+	{
+		[self log:[NSString stringWithFormat:@"gamepad is extended"]];
+		
+		GCControllerButtonInput *a = [[self.gameController extendedGamepad] buttonA];
+		GCControllerButtonInput *b = [[self.gameController extendedGamepad] buttonB];
+		GCControllerButtonInput *x = [[self.gameController extendedGamepad] buttonX];
+		GCControllerButtonInput *y = [[self.gameController extendedGamepad] buttonY];
+		GCControllerDirectionPad *dPad = [[self.gameController extendedGamepad] dpad];
+		GCControllerDirectionPad *leftAnalog = [[self.gameController extendedGamepad] leftThumbstick];
+		__weak PVControllerViewController *weakSelf = self;
+		[self.gameController setControllerPausedHandler:^(GCController *controller) {
+			if ([weakSelf.delegate respondsToSelector:@selector(controllerViewControllerDidPressMenuButton:)])
+			{
+				[weakSelf.delegate controllerViewControllerDidPressMenuButton:weakSelf];
+			}
+		}];
+//		GCControllerDirectionPad *rightAnalog = [[self.gameController extendedGamepad] leftThumbstick];
+//		GCControllerButtonInput *leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
+//		GCControllerButtonInput *rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
+//		GCControllerButtonInput *leftTrigger = [[self.gameController extendedGamepad] leftTrigger];
+//		GCControllerButtonInput *rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
+		
+		[a setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+			[self log:[NSString stringWithFormat:@"A: %.2f, %d", value, pressed]];
+			
+			if (value > 0)
+			{
+				[self gamepadButtonPressed:button];
+			}
+			else
+			{
+				[self gamepadButtonReleased:button];
+			}
+		}];
+		[b setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+			[self log:[NSString stringWithFormat:@"B: %.2f, %d", value, pressed]];
+			
+			if (value > 0)
+			{
+				[self gamepadButtonPressed:button];
+			}
+			else
+			{
+				[self gamepadButtonReleased:button];
+			}
+		}];
+		[x setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+			[self log:[NSString stringWithFormat:@"X: %.2f, %d", value, pressed]];
+			
+			if (value > 0)
+			{
+				[self gamepadButtonPressed:button];
+			}
+			else
+			{
+				[self gamepadButtonReleased:button];
+			}
+		}];
+		[y setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+			[self log:[NSString stringWithFormat:@"Y: %.2f, %d", value, pressed]];
+			
+			if (value > 0)
+			{
+				[self gamepadButtonPressed:button];
+			}
+			else
+			{
+				[self gamepadButtonReleased:button];
+			}
+		}];
+		[dPad setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
+			[self log:[NSString stringWithFormat:@"DPad: X:%.2f, Y:%.2f", xValue, yValue]];
+			
+			if ((xValue != 0) || (yValue != 0))
+			{
+				[self gamepadPressedDirection:dpad];
+			}
+			else
+			{
+				[self gamepadReleasedDirection:dpad];
+			}
+		}];
+		[leftAnalog setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
+			if ((xValue != 0) || (yValue != 0))
+			{
+				[self gamepadPressedDirection:dpad];
+			}
+			else
+			{
+				[self gamepadReleasedDirection:dpad];
+			}
+		}];
+	}
+	else
+	{
+		[self log:[NSString stringWithFormat:@"gamepad is normal"]];
+	}
+}
+
+- (void)gamepadButtonPressed:(GCControllerButtonInput *)button
+{
+	[self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)gamepadButtonReleased:(GCControllerButtonInput *)button
+{
+	[self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad
+{
+	[self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
+{
+	[self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)log:(NSString *)string
+{
+	[self.debugTextView setText:[NSString stringWithFormat:@"%@\n%@", [self.debugTextView text], string]];
+	[self.debugTextView scrollRangeToVisible:NSMakeRange([[self.debugTextView text] length], 0)];
 }
 
 @end

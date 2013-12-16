@@ -113,6 +113,14 @@ void uncaughtExceptionHandler(NSException *exception)
 											 selector:@selector(appDidBecomeActive:)
 												 name:UIApplicationDidBecomeActiveNotification
 											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(controllerDidConnect:)
+												 name:GCControllerDidConnectNotification
+											   object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(controllerDidDisconnect:)
+												 name:GCControllerDidDisconnectNotification
+											   object:nil];
 	
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
@@ -137,7 +145,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.controllerViewController didMoveToParentViewController:self];
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
-	
 	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
@@ -151,6 +158,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton setAlpha:alpha];
 	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.menuButton];
+	
+	if ([[GCController controllers] count])
+	{
+		[self.menuButton setHidden:YES];
+	}
 	
 	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
@@ -264,9 +276,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
-	[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
-		[weakSelf.controllerViewController editControls];
-	}];
+	if (![self.controllerViewController gameController])
+	{
+		[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
+			[weakSelf.controllerViewController editControls];
+		}];
+	}
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
 		[weakSelf performSelector:@selector(showSaveStateMenu)
@@ -339,10 +354,10 @@ void uncaughtExceptionHandler(NSException *exception)
 			[formatter setDateStyle:NSDateFormatterShortStyle];
 			[formatter setTimeStyle:NSDateFormatterShortStyle];
 			
-			info[i] = [NSString stringWithFormat:@"Slot %u (%@)", i+1, [formatter stringFromDate:now]];
+			info[i] = [NSString stringWithFormat:@"Slot %tu (%@)", i+1, [formatter stringFromDate:now]];
 			[info writeToFile:infoPath atomically:YES];
 			
-			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%tu.svs", i]];
 			
 			[weakSelf.emulatorCore saveStateToFileAtPath:savePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -392,7 +407,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	for (NSUInteger i = 0; i < 5; i++)
 	{
 		[actionsheet PV_addButtonWithTitle:info[i] action:^{
-			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%u.svs", i]];
+			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%tu.svs", i]];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
 			{
 				[weakSelf.emulatorCore loadStateFromFileAtPath:savePath];
@@ -412,6 +427,14 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #pragma mark - PVControllerViewControllerDelegate
 
+- (void)controllerViewControllerDidPressMenuButton:(PVControllerViewController *)controllerViewController
+{
+	if (![self isShowingMenu])
+	{
+		[self showMenu:self];
+	}
+}
+
 - (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController
 {
 	[self.menuButton setEnabled:NO];
@@ -422,6 +445,16 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton setEnabled:YES];
 	[self.emulatorCore setPauseEmulation:NO];
 	self.isShowingMenu = NO;
+}
+
+- (void)controllerDidConnect:(NSNotification *)note
+{
+	[self.menuButton setHidden:YES];
+}
+
+- (void)controllerDidDisconnect:(NSNotification *)note
+{
+	[self.menuButton setHidden:NO];
 }
 
 @end

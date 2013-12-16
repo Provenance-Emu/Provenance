@@ -114,4 +114,85 @@
 	}
 }
 
+- (void)gamepadButtonPressed:(GCControllerButtonInput *)button
+{
+	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+	
+	if ([button isEqual:[[self.gameController extendedGamepad] buttonX]])
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonA];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonA]])
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonB];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonB]])
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonC];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonY]])
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonStart];
+	}
+}
+
+- (void)gamepadButtonReleased:(GCControllerButtonInput *)button
+{
+	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+	
+	if ([button isEqual:[[self.gameController extendedGamepad] buttonX]])
+	{
+		[genesisCore releaseGenesisButton:PVGenesisButtonA];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonA]])
+	{
+		[genesisCore releaseGenesisButton:PVGenesisButtonB];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonB]])
+	{
+		[genesisCore releaseGenesisButton:PVGenesisButtonC];
+	}
+	else if ([button isEqual:[[self.gameController extendedGamepad] buttonY]])
+	{
+		[genesisCore releaseGenesisButton:PVGenesisButtonStart];
+	}
+}
+
+- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad
+{
+	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+	
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+	
+	if ([[dpad xAxis] value] > 0)
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonRight];
+	}
+	if ([[dpad xAxis] value] < -0)
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonLeft];
+	}
+	if ([[dpad yAxis] value] > 0)
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonUp];
+	}
+	if ([[dpad yAxis] value] < 0)
+	{
+		[genesisCore pushGenesisButton:PVGenesisButtonDown];
+	}
+}
+
+- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
+{
+	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
+	
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+}
+
 @end

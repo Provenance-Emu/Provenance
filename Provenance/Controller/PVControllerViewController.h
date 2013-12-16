@@ -10,6 +10,8 @@
 #import "JSDPad.h"
 #import "JSButton.h"
 
+@import GameController;
+
 extern NSString * const PVSavedDPadOriginKey;
 extern NSString * const PVSavedButtonOriginKey;
 
@@ -19,6 +21,7 @@ extern NSString * const PVSavedButtonOriginKey;
 
 - (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController;
 - (void)controllerViewControllerDidEndEditing:(PVControllerViewController *)controllerViewController;
+- (void)controllerViewControllerDidPressMenuButton:(PVControllerViewController *)controllerViewController;
 
 @end
 
@@ -26,6 +29,7 @@ extern NSString * const PVSavedButtonOriginKey;
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
+@property (nonatomic, strong) GCController *gameController;
 
 - (id)initWithControlLayout:(NSArray *)controlLayout;
 - (void)editControls;
