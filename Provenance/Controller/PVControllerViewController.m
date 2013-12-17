@@ -36,8 +36,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
 
-@property (nonatomic, strong) UITextView *debugTextView;
-
 @end
 
 @implementation PVControllerViewController
@@ -56,6 +54,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	
+	[self.gameController setControllerPausedHandler:NULL];
+	self.gameController = nil;
 	self.controlLayout = nil;
 	self.dPad = nil;
 	self.buttonGroup = nil;
@@ -72,10 +72,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 {
 	[super viewDidLoad];
 	
-//	self.debugTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
-	[self.view addSubview:self.debugTextView];
-	
-	
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(controllerDidConnect:)
 												 name:GCControllerDidConnectNotification
@@ -89,12 +85,9 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 	if ([[GCController controllers] count])
 	{
 		self.gameController = [[GCController controllers] firstObject];
-		[self log:[NSString stringWithFormat:@"controller found: %@", self.gameController]];
 	}
 	else
 	{
-		[self log:[NSString stringWithFormat:@"No controller found, starting discovery"]];
-		
 		[GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
 			if ([[GCController controllers] count] == 0)
 			{
@@ -451,8 +444,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 - (void)setupGameController
 {
-	[self log:[NSString stringWithFormat:@"Setting up game controller"]];
-	
 	[self.leftShoulderButton setHidden:YES];
 	[self.rightShoulderButton setHidden:YES];
 	[self.dPad setHidden:YES];
@@ -462,8 +453,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 	
 	if ([self.gameController extendedGamepad])
 	{
-		[self log:[NSString stringWithFormat:@"gamepad is extended"]];
-		
 		GCControllerButtonInput *a = [[self.gameController extendedGamepad] buttonA];
 		GCControllerButtonInput *b = [[self.gameController extendedGamepad] buttonB];
 		GCControllerButtonInput *x = [[self.gameController extendedGamepad] buttonX];
@@ -484,79 +473,68 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 //		GCControllerButtonInput *rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
 		
 		[a setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			[self log:[NSString stringWithFormat:@"A: %.2f, %d", value, pressed]];
-			
 			if (value > 0)
 			{
-				[self gamepadButtonPressed:button];
+				[weakSelf gamepadButtonPressed:button];
 			}
 			else
 			{
-				[self gamepadButtonReleased:button];
+				[weakSelf gamepadButtonReleased:button];
 			}
 		}];
 		[b setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			[self log:[NSString stringWithFormat:@"B: %.2f, %d", value, pressed]];
-			
 			if (value > 0)
 			{
-				[self gamepadButtonPressed:button];
+				[weakSelf gamepadButtonPressed:button];
 			}
 			else
 			{
-				[self gamepadButtonReleased:button];
+				[weakSelf gamepadButtonReleased:button];
 			}
 		}];
 		[x setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			[self log:[NSString stringWithFormat:@"X: %.2f, %d", value, pressed]];
-			
 			if (value > 0)
 			{
-				[self gamepadButtonPressed:button];
+				[weakSelf gamepadButtonPressed:button];
 			}
 			else
 			{
-				[self gamepadButtonReleased:button];
+				[weakSelf gamepadButtonReleased:button];
 			}
 		}];
 		[y setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			[self log:[NSString stringWithFormat:@"Y: %.2f, %d", value, pressed]];
-			
 			if (value > 0)
 			{
-				[self gamepadButtonPressed:button];
+				[weakSelf gamepadButtonPressed:button];
 			}
 			else
 			{
-				[self gamepadButtonReleased:button];
+				[weakSelf gamepadButtonReleased:button];
 			}
 		}];
 		[dPad setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
-			[self log:[NSString stringWithFormat:@"DPad: X:%.2f, Y:%.2f", xValue, yValue]];
-			
 			if ((xValue != 0) || (yValue != 0))
 			{
-				[self gamepadPressedDirection:dpad];
+				[weakSelf gamepadPressedDirection:dpad];
 			}
 			else
 			{
-				[self gamepadReleasedDirection:dpad];
+				[weakSelf gamepadReleasedDirection:dpad];
 			}
 		}];
 		[leftAnalog setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
 			if ((xValue != 0) || (yValue != 0))
 			{
-				[self gamepadPressedDirection:dpad];
+				[weakSelf gamepadPressedDirection:dpad];
 			}
 			else
 			{
-				[self gamepadReleasedDirection:dpad];
+				[weakSelf gamepadReleasedDirection:dpad];
 			}
 		}];
 	}
 	else
 	{
-		[self log:[NSString stringWithFormat:@"gamepad is normal"]];
 	}
 }
 
@@ -578,12 +556,6 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 - (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
 {
 	[self doesNotImplementOptionalSelector:_cmd];
-}
-
-- (void)log:(NSString *)string
-{
-	[self.debugTextView setText:[NSString stringWithFormat:@"%@\n%@", [self.debugTextView text], string]];
-	[self.debugTextView scrollRangeToVisible:NSMakeRange([[self.debugTextView text] length], 0)];
 }
 
 @end
