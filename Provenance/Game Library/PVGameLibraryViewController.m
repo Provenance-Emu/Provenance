@@ -358,7 +358,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (IBAction)getMoreROMs
 {
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Get ROMs!"
-													message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select GB4iOS and your ROM will magically appear in the Library."
+													message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select Provenance and your ROM will magically appear in the Library."
 												   delegate:nil
 										  cancelButtonTitle:@"Cancel"
 										  otherButtonTitles:@"Open Safari", nil];
