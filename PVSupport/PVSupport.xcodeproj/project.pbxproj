@@ -76,6 +76,7 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				1ACEA69017F748F80031B1C9 /* Audio */,
 				1ACEA64917F7467D0031B1C9 /* PVSupport */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
@@ -106,7 +107,6 @@
 		1ACEA64917F7467D0031B1C9 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
-				1ACEA69017F748F80031B1C9 /* Audio */,
 				1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */,
 				1ACEA69717F748F80031B1C9 /* OETimingUtils.m */,
 				1ACEA68F17F748F80031B1C9 /* PVEmulatorCore.h */,
@@ -136,7 +136,8 @@
 				1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */,
 				1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */,
 			);
-			path = Audio;
+			name = Audio;
+			path = PVSupport/Audio;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,7 +166,7 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "James Addyman";
 			};
 			buildConfigurationList = 1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVSupport" */;
@@ -206,7 +207,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -244,7 +244,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;

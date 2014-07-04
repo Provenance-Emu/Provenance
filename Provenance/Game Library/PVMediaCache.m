@@ -43,7 +43,12 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 }
 
 + (UIImage *)imageForKey:(NSString *)key
-{	
+{
+    if (!key)
+    {
+        return nil;
+    }
+    
 	NSString *cachePath = [self cachePath];	
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
@@ -59,7 +64,11 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (NSString *)filePathForKey:(NSString *)key
 {
-	NSString *cachePath = [self cachePath];	
+    if (!key)
+    {
+        return nil;
+    }
+	NSString *cachePath = [self cachePath];
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
 	
@@ -88,6 +97,10 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (BOOL)deleteImageForKey:(NSString *)key
 {
+    if (!key)
+    {
+        return NO;
+    }
 	NSString *cachePath = [self cachePath];
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];

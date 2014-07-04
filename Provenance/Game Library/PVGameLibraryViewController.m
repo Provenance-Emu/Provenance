@@ -11,7 +11,6 @@
 #import "PVEmulatorViewController.h"
 #import "UIView+FrameAdditions.h"
 #import "PVDirectoryWatcher.h"
-#import "ArchiveVG.h"
 #import "NSFileManager+OEHashingAdditions.h"
 #import <CoreData/CoreData.h>
 #import "PVGame.h"
@@ -23,6 +22,7 @@
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
+#import "OESQLiteDatabase.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
@@ -49,6 +49,7 @@ NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
 @property (nonatomic, strong) NSDictionary *gamesInSections;
 @property (nonatomic, strong) NSArray *sectionInfo;
+@property (nonatomic, strong) OESQLiteDatabase *gameDatabase;
 
 @end
 
@@ -93,7 +94,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
+    
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(handleCacheEmptied:)
 												 name:PVMediaCacheWasEmptiedNotification
@@ -319,7 +320,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 						[game setMd5:md5];
 						[game setCrc32:crc32];
 						
-						if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
+						if ([[game requiresSync] boolValue])
 						{
 							NSLog(@"about to look up for %@ after getting hash", [game title]);
 							[self lookUpInfoForGame:game];
@@ -329,7 +330,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			}
 			else
 			{
-				if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
+				if ([[game requiresSync] boolValue])
 				{
 					NSLog(@"about to look up for %@ ", [game title]);
 					[self lookUpInfoForGame:game];
@@ -374,66 +375,78 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)lookUpInfoForGame:(PVGame *)game
 {
 	NSLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
-	if (![[game isSyncing] boolValue] && [[game requiresSync] boolValue])
-	{
-		[game setIsSyncing:@(YES)];
-		[[ArchiveVG throttled] gameInfoByMD5:[game md5]
-									  andCRC:[game crc32]
-								withCallback:^(id result, NSError *error) {
-									dispatch_async(dispatch_get_main_queue(), ^{
-										NSLog(@"result = %@, error %@", result, [error localizedDescription]);
-										if (result)
-										{
-											[game setTitle:[result objectForKey:AVGGameTitleKey]];
-											[game setArtworkURL:[result objectForKey:AVGGameBoxURLStringKey]];
-											[game setOriginalArtworkURL:[result objectForKey:AVGGameBoxURLStringKey]];
-											[self getArtworkForGame:game];
-										}
-										
-										[game setRequiresSync:@(NO)];
-										[game setIsSyncing:@(NO)];
-										[self save:NULL];
-										[_collectionView reloadData];
-									});
-								} usingFormat:AVGOutputFormatXML];
-	}
+    if (!self.gameDatabase)
+    {
+        self.gameDatabase = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
+                                                            error:NULL];
+    }
+    
+    NSError *error = nil;
+    NSArray *results =[self.gameDatabase executeQuery:[NSString stringWithFormat:@"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', releaseDescription as 'gameDescription', regionName as 'region' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE romHashMD5 = '%@'", [game md5]]
+                              error:&error];
+    if (![results count])
+    {
+        if (error)
+        {
+            NSLog(@"Error looking up game info, %@", [error localizedDescription]);
+        }
+        
+        [game setRequiresSync:@(NO)];
+        
+        return;
+    }
+    
+    // just pick any result, doesn't matter
+    NSDictionary *result = [results lastObject];
+    [game setRequiresSync:@(NO)];
+    [game setTitle:result[@"gameTitle"]];
+    [game setOriginalArtworkURL:result[@"boxImageURL"]];
+    [self save:NULL];
+    [self getArtworkForGame:game];
 }
 
 - (void)getArtworkForGame:(PVGame *)game
 {
-	NSLog(@"Starting Artwork download for %@, %@", [game title], [game artworkURL]);
-	[game setIsSyncing:@(YES)];
-	[self save:NULL];
-	
-	[NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[game artworkURL]]]
-									   queue:_artworkDownloadQueue
-						   completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-							   dispatch_async(dispatch_get_main_queue(), ^{
-								   if ([data length])
-								   {
-									   UIImage *artwork = [UIImage imageWithData:data];
-									   artwork = [artwork scaledImageWithMaxResolution:200];
-									   if (artwork)
-									   {
-										   NSLog(@"got artwork for %@", [game title]);
-										   [PVMediaCache writeImageToDisk:artwork
-																  withKey:[game artworkURL]];
-									   }
-								   }
-								   
-								   [game setIsSyncing:@(NO)];
-								   [self save:NULL];
-								   [_collectionView reloadData];
-							   });
-						   }];
+	NSLog(@"Starting Artwork download for %@, %@", [game title], [game originalArtworkURL]);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[game originalArtworkURL]]];
+        NSHTTPURLResponse *urlResponse = nil;
+        NSError *error = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                             returningResponse:&urlResponse
+                                                         error:&error];
+        if (error)
+        {
+            NSLog(@"error downloading artwork from: %@ -- %@", [game originalArtworkURL], [error localizedDescription]);
+            return;
+        }
+        
+        if ([urlResponse statusCode] != 200)
+        {
+            NSLog(@"HTTP Error: %zd", [urlResponse statusCode]);
+            NSLog(@"Response: %@", urlResponse);
+        }
+        
+        UIImage *artwork = [[UIImage alloc] initWithData:data];
+        if (artwork)
+        {
+            [PVMediaCache writeImageToDisk:artwork withKey:[game originalArtworkURL]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_collectionView reloadData];
+            });
+        }
+    });
 }
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
 	[self.sectionInfo enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
 		NSArray *games = [self.gamesInSections objectForKey:key];
-		PVGame *game = [games objectAtIndex:idx];
-		[game setArtworkURL:[game originalArtworkURL]];
+        for (PVGame *game in games)
+        {
+            [game setArtworkURL:nil];
+            [self getArtworkForGame:game];
+        }
 	}];
 	
 	[_collectionView reloadData];
@@ -471,29 +484,21 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		{
 			[[cell imageView] setImage:artwork];
 		}
-		else if (![[game isSyncing] boolValue])
-		{
-			[self getArtworkForGame:game];
-		}
 	}
 	else if ([originalArtworkURL length])
 	{
-		[game setArtworkURL:originalArtworkURL];
-		[self save:NULL];
-		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
+		UIImage *artwork = [PVMediaCache imageForKey:originalArtworkURL];
 		if (artwork)
 		{
 			[[cell imageView] setImage:artwork];
 		}
-		else if (![[game isSyncing] boolValue])
-		{
-			[self getArtworkForGame:game];
-		}
 	}
-	
+    
 	[[cell titleLabel] setText:[game title]];
 	[[cell missingLabel] setText:[game title]];
 	
+    [cell setNeedsLayout];
+    
 	return cell;
 }
 
@@ -585,7 +590,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		{
 			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
 				[PVMediaCache deleteImageForKey:[game artworkURL]];
-				[game setArtworkURL:[game originalArtworkURL]];
+				[game setArtworkURL:nil];
 				[self save:NULL];
 				[_collectionView reloadData];
 			}];
@@ -761,7 +766,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		NSLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:[game romPath]], [error localizedDescription]);
 	}
 	
-	success = [PVMediaCache deleteImageForKey:[game artworkURL]];
+	success = [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
+    success = [PVMediaCache deleteImageForKey:[game artworkURL]];
 	
 	[[self managedObjectContext] deleteObject:game];
 	[self save:NULL];
@@ -797,43 +803,61 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.assetsLibrary = [[ALAssetsLibrary alloc] init];
 	[self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos
 								usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                                    if (!group)
+                                    {
+                                        return;
+                                    }
 									[group setAssetsFilter:[ALAssetsFilter allPhotos]];
-									[group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:[group numberOfAssets] - 1]
-															options:0
-														 usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-															 ALAssetRepresentation *rep = [result defaultRepresentation];
-															 if (rep)
-															 {
-																 [imagePickerActionSheet PV_addButtonWithTitle:@"Use Last Photo Taken" action:^{
-																	 UIImage *lastPhoto = [UIImage imageWithCGImage:[rep fullScreenImage]
-																											  scale:[rep scale]
-																										orientation:(UIImageOrientation)[rep orientation]];
-																	 [PVMediaCache writeImageToDisk:lastPhoto
-																							withKey:[[rep url] absoluteString]];
-																	 [game setArtworkURL:[[rep url] absoluteString]];
-																	 [weakSelf save:NULL];
-																	 //[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[weakSelf.games indexOfObject:game] inSection:0]]];
-																	 [_collectionView reloadData];
-																	 weakSelf.assetsLibrary = nil;
-																 }];
-																 
-																 if (cameraIsAvailable || photoLibraryIsAvaialble)
-																 {
-																	 if (cameraIsAvailable)
-																	 {
-																		 [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
-																	 }
-																	 
-																	 if (photoLibraryIsAvaialble)
-																	 {
-																		 [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
-																	 }
-																 }
-																 
-																 [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
-																 [imagePickerActionSheet showInView:self.view];
-															 }
-														 }];
+                                    NSInteger index = [group numberOfAssets] - 1;
+                                    NSLog(@"Group: %@", group);
+                                    if (index >= 0)
+                                    {
+                                        [group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:index]
+                                                                options:0
+                                                             usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                                                                 ALAssetRepresentation *rep = [result defaultRepresentation];
+                                                                 if (rep)
+                                                                 {
+                                                                     [imagePickerActionSheet PV_addButtonWithTitle:@"Use Last Photo Taken" action:^{
+                                                                         UIImage *lastPhoto = [UIImage imageWithCGImage:[rep fullScreenImage]
+                                                                                                                  scale:[rep scale]
+                                                                                                            orientation:(UIImageOrientation)[rep orientation]];
+                                                                         [PVMediaCache writeImageToDisk:lastPhoto
+                                                                                                withKey:[[rep url] absoluteString]];
+                                                                         [game setArtworkURL:[[rep url] absoluteString]];
+                                                                         [weakSelf save:NULL];
+                                                                         //[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[weakSelf.games indexOfObject:game] inSection:0]]];
+                                                                         [_collectionView reloadData];
+                                                                         weakSelf.assetsLibrary = nil;
+                                                                     }];
+                                                                     
+                                                                     if (cameraIsAvailable || photoLibraryIsAvaialble)
+                                                                     {
+                                                                         if (cameraIsAvailable)
+                                                                         {
+                                                                             [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
+                                                                         }
+                                                                         
+                                                                         if (photoLibraryIsAvaialble)
+                                                                         {
+                                                                             [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
+                                                                         }
+                                                                     }
+                                                                     
+                                                                     [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+                                                                     [imagePickerActionSheet showInView:self.view];
+                                                                 }
+                                                             }];
+                                    }
+                                    else
+                                    {
+                                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Photos"
+                                                                                        message:@"There are no photos in your library to choose from"
+                                                                                       delegate:nil
+                                                                              cancelButtonTitle:nil
+                                                                              otherButtonTitles:@"OK", nil];
+                                        [alert show];
+                                    }
 								} failureBlock:^(NSError *error) {
 									if (cameraIsAvailable || photoLibraryIsAvaialble)
 									{

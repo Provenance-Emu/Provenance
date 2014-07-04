@@ -69,11 +69,6 @@
 		1A4869A717C8C1400019F6D2 /* DDXMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698C17C8C1400019F6D2 /* DDXMLElement.m */; };
 		1A4869A817C8C1400019F6D2 /* DDXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698E17C8C1400019F6D2 /* DDXMLNode.m */; };
 		1A4869A917C8C1400019F6D2 /* libzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A48699417C8C1400019F6D2 /* libzipkit.a */; };
-		1A4869B617C8C16E0019F6D2 /* ArchiveVG.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4869AC17C8C16E0019F6D2 /* ArchiveVG.m */; };
-		1A4869B717C8C16E0019F6D2 /* ArchiveVGJSONParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4869AE17C8C16E0019F6D2 /* ArchiveVGJSONParser.m */; };
-		1A4869B817C8C16E0019F6D2 /* ArchiveVGThrottling.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4869B017C8C16E0019F6D2 /* ArchiveVGThrottling.m */; };
-		1A4869B917C8C16E0019F6D2 /* ArchiveVGXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4869B317C8C16E0019F6D2 /* ArchiveVGXMLParser.m */; };
-		1A4869BA17C8C16E0019F6D2 /* ArchiveVGYAMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4869B517C8C16E0019F6D2 /* ArchiveVGYAMLParser.m */; };
 		1A4869CB17C8CA920019F6D2 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869BF17C8CA920019F6D2 /* blank.png */; };
 		1A4869CC17C8CA920019F6D2 /* blank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C017C8CA920019F6D2 /* blank@2x.png */; };
 		1A4869CD17C8CA920019F6D2 /* selection.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C117C8CA920019F6D2 /* selection.png */; };
@@ -111,6 +106,9 @@
 		1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */; };
 		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
+		1AECF4A71966D6D600F8704E /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
+		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
+		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
@@ -222,17 +220,6 @@
 		1A4869A217C8C1400019F6D2 /* ZKFileArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKFileArchive.h; sourceTree = "<group>"; };
 		1A4869A317C8C1400019F6D2 /* ZKLFHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLFHeader.h; sourceTree = "<group>"; };
 		1A4869A417C8C1400019F6D2 /* ZKLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLog.h; sourceTree = "<group>"; };
-		1A4869AB17C8C16E0019F6D2 /* ArchiveVG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVG.h; sourceTree = "<group>"; };
-		1A4869AC17C8C16E0019F6D2 /* ArchiveVG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveVG.m; sourceTree = "<group>"; };
-		1A4869AD17C8C16E0019F6D2 /* ArchiveVGJSONParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVGJSONParser.h; sourceTree = "<group>"; };
-		1A4869AE17C8C16E0019F6D2 /* ArchiveVGJSONParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveVGJSONParser.m; sourceTree = "<group>"; };
-		1A4869AF17C8C16E0019F6D2 /* ArchiveVGThrottling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVGThrottling.h; sourceTree = "<group>"; };
-		1A4869B017C8C16E0019F6D2 /* ArchiveVGThrottling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveVGThrottling.m; sourceTree = "<group>"; };
-		1A4869B117C8C16E0019F6D2 /* ArchiveVGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVGTypes.h; sourceTree = "<group>"; };
-		1A4869B217C8C16E0019F6D2 /* ArchiveVGXMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVGXMLParser.h; sourceTree = "<group>"; };
-		1A4869B317C8C16E0019F6D2 /* ArchiveVGXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveVGXMLParser.m; sourceTree = "<group>"; };
-		1A4869B417C8C16E0019F6D2 /* ArchiveVGYAMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArchiveVGYAMLParser.h; sourceTree = "<group>"; };
-		1A4869B517C8C16E0019F6D2 /* ArchiveVGYAMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArchiveVGYAMLParser.m; sourceTree = "<group>"; };
 		1A4869BF17C8CA920019F6D2 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
 		1A4869C017C8CA920019F6D2 /* blank@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blank@2x.png"; sourceTree = "<group>"; };
 		1A4869C117C8CA920019F6D2 /* selection.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = selection.png; sourceTree = "<group>"; };
@@ -282,6 +269,10 @@
 		1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGenesisControllerViewController.h; sourceTree = "<group>"; };
 		1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGenesisControllerViewController.m; sourceTree = "<group>"; };
 		1ADDA5B317B30CD7008A7ADD /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		1AECF4A61966D6D600F8704E /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
+		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
+		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		423BB97C17DD3B690048F457 /* PVGame 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PVGame 3.xcdatamodel"; sourceTree = "<group>"; };
 		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
@@ -299,6 +290,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				1A2A95AC17F7686400F1CB0D /* libPVSupport.a in Frameworks */,
 				1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */,
@@ -385,6 +377,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
 				1A2A95AB17F7686400F1CB0D /* libPVSupport.a */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
 				1A2A95A517F7627E00F1CB0D /* libPVSNES.a */,
@@ -422,7 +415,6 @@
 				1A1237F217CA279900CEC788 /* User Interface */,
 				1A48698417C8C1400019F6D2 /* KissXML */,
 				1A48699117C8C1400019F6D2 /* zipkit */,
-				1A4869AA17C8C1640019F6D2 /* ArchiveVG */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
@@ -491,6 +483,8 @@
 		1A48696917C8C0C60019F6D2 /* Game Library */ = {
 			isa = PBXGroup;
 			children = (
+				1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */,
+				1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */,
 				1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */,
 				1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */,
 				1A48696A17C8C0DE0019F6D2 /* PVDirectoryWatcher.h */,
@@ -567,24 +561,6 @@
 			path = zipkit;
 			sourceTree = "<group>";
 		};
-		1A4869AA17C8C1640019F6D2 /* ArchiveVG */ = {
-			isa = PBXGroup;
-			children = (
-				1A4869AB17C8C16E0019F6D2 /* ArchiveVG.h */,
-				1A4869AC17C8C16E0019F6D2 /* ArchiveVG.m */,
-				1A4869AD17C8C16E0019F6D2 /* ArchiveVGJSONParser.h */,
-				1A4869AE17C8C16E0019F6D2 /* ArchiveVGJSONParser.m */,
-				1A4869AF17C8C16E0019F6D2 /* ArchiveVGThrottling.h */,
-				1A4869B017C8C16E0019F6D2 /* ArchiveVGThrottling.m */,
-				1A4869B117C8C16E0019F6D2 /* ArchiveVGTypes.h */,
-				1A4869B217C8C16E0019F6D2 /* ArchiveVGXMLParser.h */,
-				1A4869B317C8C16E0019F6D2 /* ArchiveVGXMLParser.m */,
-				1A4869B417C8C16E0019F6D2 /* ArchiveVGYAMLParser.h */,
-				1A4869B517C8C16E0019F6D2 /* ArchiveVGYAMLParser.m */,
-			);
-			path = ArchiveVG;
-			sourceTree = "<group>";
-		};
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,6 +580,7 @@
 				1A0938BE17CD45EC00029021 /* Icon-Small.png */,
 				1A4869BC17C8CA2C0019F6D2 /* Images */,
 				1A34C58517D517760058E7D1 /* systems.plist */,
+				1AECF4A61966D6D600F8704E /* openvgdb.sqlite */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -673,8 +650,13 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "James Addyman";
+				TargetAttributes = {
+					1A3D409317B2DCE4004DFFFC = {
+						DevelopmentTeam = 63497P68S6;
+					};
+				};
 			};
 			buildConfigurationList = 1A3D408F17B2DCE4004DFFFC /* Build configuration list for PBXProject "Provenance" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -736,6 +718,7 @@
 				1A4869D217C8CA920019F6D2 /* Gear@2x.png in Resources */,
 				1A4869D317C8CA920019F6D2 /* GearLandscape.png in Resources */,
 				1A4869D417C8CA920019F6D2 /* GearLandscape@2x.png in Resources */,
+				1AECF4A71966D6D600F8704E /* openvgdb.sqlite in Resources */,
 				1A935E6217CD3C1E0012E0C4 /* Icon.png in Resources */,
 				1A935E6417CD3C210012E0C4 /* Icon@2x.png in Resources */,
 				1A935E6617CD3C2F0012E0C4 /* Default.png in Resources */,
@@ -769,6 +752,7 @@
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
+				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
 				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
@@ -788,11 +772,6 @@
 				1A4869A617C8C1400019F6D2 /* DDXMLDocument.m in Sources */,
 				1A4869A717C8C1400019F6D2 /* DDXMLElement.m in Sources */,
 				1A4869A817C8C1400019F6D2 /* DDXMLNode.m in Sources */,
-				1A4869B617C8C16E0019F6D2 /* ArchiveVG.m in Sources */,
-				1A4869B717C8C16E0019F6D2 /* ArchiveVGJSONParser.m in Sources */,
-				1A4869B817C8C16E0019F6D2 /* ArchiveVGThrottling.m in Sources */,
-				1A4869B917C8C16E0019F6D2 /* ArchiveVGXMLParser.m in Sources */,
-				1A4869BA17C8C16E0019F6D2 /* ArchiveVGYAMLParser.m in Sources */,
 				1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
@@ -818,7 +797,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -849,7 +827,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -876,6 +853,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -894,6 +873,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
@@ -907,6 +887,8 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -926,6 +908,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";

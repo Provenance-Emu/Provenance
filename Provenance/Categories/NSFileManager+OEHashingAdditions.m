@@ -64,7 +64,7 @@
     CC_MD5_Final(md5Digest, &md5Context);
     
 	if(outMD5 != NULL)
-		*outMD5 = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+		*outMD5 = [[NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
                md5Digest[0], md5Digest[1], 
                md5Digest[2], md5Digest[3],
                md5Digest[4], md5Digest[5],
@@ -72,11 +72,11 @@
                md5Digest[8], md5Digest[9],
                md5Digest[10], md5Digest[11],
                md5Digest[12], md5Digest[13],
-               md5Digest[14], md5Digest[15]];
+               md5Digest[14], md5Digest[15]] uppercaseString];
     
     // Finalize CRC32
     unsigned crc32 = crcval ^ 0xffffffff;
-    *outCRC32 = [NSString stringWithFormat:@"%08x", crc32];
+    *outCRC32 = [[NSString stringWithFormat:@"%08x", crc32] uppercaseString];
     
     return YES;
 }
@@ -88,7 +88,7 @@
 	unsigned char md5Digest[16];
 	CC_MD5([fileData bytes], [fileData length], md5Digest);
 	
-	return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+	return [[NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 			md5Digest[0], md5Digest[1],
 			md5Digest[2], md5Digest[3],
 			md5Digest[4], md5Digest[5],
@@ -96,7 +96,7 @@
 			md5Digest[8], md5Digest[9],
 			md5Digest[10], md5Digest[11],
 			md5Digest[12], md5Digest[13],
-			md5Digest[14], md5Digest[15]];
+			md5Digest[14], md5Digest[15]] uppercaseString];
 }
 
 #pragma mark -
