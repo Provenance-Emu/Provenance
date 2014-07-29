@@ -605,6 +605,12 @@
 					"-D__MACOSX__",
 					"-Wno-write-strings",
 					"-Dunix",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -623,6 +629,12 @@
 					"-D__MACOSX__",
 					"-Wno-write-strings",
 					"-Dunix",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
