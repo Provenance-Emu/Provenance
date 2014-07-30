@@ -24,7 +24,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 iOS Specific features:
 
-- All current generation ioS devices supported with iOS 7
+- All current generation iOS devices supported with iOS 7
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
     - iOS 7 game controller support for Genesis (needs more generalised implementation for other cores)
