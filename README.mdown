@@ -24,17 +24,15 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 iOS Specific features:
 
-- iPhone 4S, 5, iPad Support
-	- iOS 6 supported currently, but 7 support will follow very shortly.
+- All current generation ioS devices supported with iOS 7
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
-	- Support for physical game controllers will come with iOS 7 support
+    - iOS 7 game controller support for Genesis (needs more generalised implementation for other cores)
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
-- Integration with [ArchiveVG](http://archive.vg) (uses the API library code from OpenEmu)
-    - If possible, game artwork will be downloaded for display in the library
+- Uses OpenVGDB to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
 
 Feel free to suggest/request features using the Issues page.
 
