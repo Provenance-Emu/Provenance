@@ -12,7 +12,7 @@
 
 - (UIImage *)scaledImageWithMaxResolution:(NSInteger)maxResolution
 {
-	int kMaxResolution = maxResolution;
+	NSInteger kMaxResolution = maxResolution;
     
     CGImageRef imgRef = self.CGImage;
     

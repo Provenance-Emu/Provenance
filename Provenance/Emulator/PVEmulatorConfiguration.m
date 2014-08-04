@@ -94,11 +94,11 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	
 	if ([systemID isEqualToString:PVGenesisSystemIdentifier])
 	{
-		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
+		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
 	else if ([systemID isEqualToString:PVSNESSystemIdentifier])
 	{
-		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID]];
+		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
 	
 	return controller;

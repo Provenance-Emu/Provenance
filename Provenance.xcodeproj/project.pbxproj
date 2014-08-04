@@ -64,10 +64,6 @@
 		1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
 		1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */; };
 		1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
-		1A4869A517C8C1400019F6D2 /* NSString+DDXML.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698717C8C1400019F6D2 /* NSString+DDXML.m */; };
-		1A4869A617C8C1400019F6D2 /* DDXMLDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698A17C8C1400019F6D2 /* DDXMLDocument.m */; };
-		1A4869A717C8C1400019F6D2 /* DDXMLElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698C17C8C1400019F6D2 /* DDXMLElement.m */; };
-		1A4869A817C8C1400019F6D2 /* DDXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698E17C8C1400019F6D2 /* DDXMLNode.m */; };
 		1A4869A917C8C1400019F6D2 /* libzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A48699417C8C1400019F6D2 /* libzipkit.a */; };
 		1A4869CB17C8CA920019F6D2 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869BF17C8CA920019F6D2 /* blank.png */; };
 		1A4869CC17C8CA920019F6D2 /* blank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C017C8CA920019F6D2 /* blank@2x.png */; };
@@ -191,16 +187,6 @@
 		1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		1A48698017C8C1170019F6D2 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
-		1A48698617C8C1400019F6D2 /* NSString+DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+DDXML.h"; sourceTree = "<group>"; };
-		1A48698717C8C1400019F6D2 /* NSString+DDXML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+DDXML.m"; sourceTree = "<group>"; };
-		1A48698817C8C1400019F6D2 /* DDXML.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXML.h; sourceTree = "<group>"; };
-		1A48698917C8C1400019F6D2 /* DDXMLDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLDocument.h; sourceTree = "<group>"; };
-		1A48698A17C8C1400019F6D2 /* DDXMLDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLDocument.m; sourceTree = "<group>"; };
-		1A48698B17C8C1400019F6D2 /* DDXMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLElement.h; sourceTree = "<group>"; };
-		1A48698C17C8C1400019F6D2 /* DDXMLElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLElement.m; sourceTree = "<group>"; };
-		1A48698D17C8C1400019F6D2 /* DDXMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLNode.h; sourceTree = "<group>"; };
-		1A48698E17C8C1400019F6D2 /* DDXMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDXMLNode.m; sourceTree = "<group>"; };
-		1A48699017C8C1400019F6D2 /* DDXMLPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDXMLPrivate.h; sourceTree = "<group>"; };
 		1A48699217C8C1400019F6D2 /* GMAppleDouble+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GMAppleDouble+ZKAdditions.h"; sourceTree = "<group>"; };
 		1A48699317C8C1400019F6D2 /* GMAppleDouble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GMAppleDouble.h; sourceTree = "<group>"; };
 		1A48699417C8C1400019F6D2 /* libzipkit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libzipkit.a; sourceTree = "<group>"; };
@@ -413,7 +399,6 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
 				1A1237F217CA279900CEC788 /* User Interface */,
-				1A48698417C8C1400019F6D2 /* KissXML */,
 				1A48699117C8C1400019F6D2 /* zipkit */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
@@ -500,39 +485,6 @@
 				1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */,
 			);
 			path = "Game Library";
-			sourceTree = "<group>";
-		};
-		1A48698417C8C1400019F6D2 /* KissXML */ = {
-			isa = PBXGroup;
-			children = (
-				1A48698517C8C1400019F6D2 /* Categories */,
-				1A48698817C8C1400019F6D2 /* DDXML.h */,
-				1A48698917C8C1400019F6D2 /* DDXMLDocument.h */,
-				1A48698A17C8C1400019F6D2 /* DDXMLDocument.m */,
-				1A48698B17C8C1400019F6D2 /* DDXMLElement.h */,
-				1A48698C17C8C1400019F6D2 /* DDXMLElement.m */,
-				1A48698D17C8C1400019F6D2 /* DDXMLNode.h */,
-				1A48698E17C8C1400019F6D2 /* DDXMLNode.m */,
-				1A48698F17C8C1400019F6D2 /* Private */,
-			);
-			path = KissXML;
-			sourceTree = "<group>";
-		};
-		1A48698517C8C1400019F6D2 /* Categories */ = {
-			isa = PBXGroup;
-			children = (
-				1A48698617C8C1400019F6D2 /* NSString+DDXML.h */,
-				1A48698717C8C1400019F6D2 /* NSString+DDXML.m */,
-			);
-			path = Categories;
-			sourceTree = "<group>";
-		};
-		1A48698F17C8C1400019F6D2 /* Private */ = {
-			isa = PBXGroup;
-			children = (
-				1A48699017C8C1400019F6D2 /* DDXMLPrivate.h */,
-			);
-			path = Private;
 			sourceTree = "<group>";
 		};
 		1A48699117C8C1400019F6D2 /* zipkit */ = {
@@ -768,10 +720,6 @@
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
-				1A4869A517C8C1400019F6D2 /* NSString+DDXML.m in Sources */,
-				1A4869A617C8C1400019F6D2 /* DDXMLDocument.m in Sources */,
-				1A4869A717C8C1400019F6D2 /* DDXMLElement.m in Sources */,
-				1A4869A817C8C1400019F6D2 /* DDXMLNode.m in Sources */,
 				1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,

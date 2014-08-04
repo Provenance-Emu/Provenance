@@ -86,7 +86,7 @@
 	NSData *fileData = [[NSData alloc] initWithContentsOfFile:filePath];
 	
 	unsigned char md5Digest[16];
-	CC_MD5([fileData bytes], [fileData length], md5Digest);
+	CC_MD5([fileData bytes], (CC_LONG)[fileData length], md5Digest);
 	
 	return [[NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 			md5Digest[0], md5Digest[1],

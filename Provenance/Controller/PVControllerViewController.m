@@ -16,6 +16,7 @@
 
 NSString * const PVSavedDPadOriginKey = @"PVSavedDPadOriginKey";
 NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
+NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey";
 
 @interface PVControllerViewController ()
 
@@ -40,11 +41,12 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 
 @implementation PVControllerViewController
 
-- (id)initWithControlLayout:(NSArray *)controlLayout
+- (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier
 {
 	if ((self = [super initWithNibName:nil bundle:nil]))
 	{
 		self.controlLayout = controlLayout;
+        self.systemIdentifier = systemIdentifier;
 	}
 	
 	return self;
@@ -53,8 +55,10 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
+
 	[self.gameController setControllerPausedHandler:NULL];
+    self.emulatorCore = nil;
+    self.systemIdentifier = nil;
 	self.gameController = nil;
 	self.controlLayout = nil;
 	self.dPad = nil;
@@ -115,7 +119,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			CGPoint dPadOrigin = CGPointMake(xPadding, [[self view] bounds].size.height - size.height - yPadding);
 			
-			NSString *savedDPadOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedDPadOriginKey];
+            NSDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] objectForKey:self.systemIdentifier];
+			NSString *savedDPadOrigin = [savedControllerPositions objectForKey:PVSavedDPadOriginKey];
 			if ([savedDPadOrigin length])
 			{
 				CGPoint dPadDelta = CGPointFromString(savedDPadOrigin);
@@ -135,7 +140,8 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			CGPoint buttonsOrigin = CGPointMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding);
 			
-			NSString *savedButtonOrigin = [[NSUserDefaults standardUserDefaults] objectForKey:PVSavedButtonOriginKey];
+            NSDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] objectForKey:self.systemIdentifier];
+			NSString *savedButtonOrigin = [savedControllerPositions objectForKey:PVSavedButtonOriginKey];
 			if ([savedButtonOrigin length])
 			{
 				CGPoint buttonsDelta = CGPointFromString(savedButtonOrigin);
@@ -374,8 +380,19 @@ NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
 	CGPoint dPadDelta = CGPointMake(self.dPad.frame.origin.x, self.view.bounds.size.height - self.dPad.frame.origin.y);
 	CGPoint buttonsDelta = CGPointMake(self.view.bounds.size.width - self.buttonGroup.frame.origin.x, self.view.bounds.size.height - self.buttonGroup.frame.origin.y);
 	
-	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(dPadDelta) forKey:PVSavedDPadOriginKey];
-	[[NSUserDefaults standardUserDefaults] setObject:NSStringFromCGPoint(buttonsDelta) forKey:PVSavedButtonOriginKey];
+    NSMutableDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] mutableCopy];
+    
+    if (!savedControllerPositions)
+    {
+        savedControllerPositions = [NSMutableDictionary dictionary];
+    }
+    
+    NSMutableDictionary *savedControllerPositionsForSystem = [NSMutableDictionary dictionary];
+	[savedControllerPositionsForSystem setObject:NSStringFromCGPoint(dPadDelta) forKey:PVSavedDPadOriginKey];
+	[savedControllerPositionsForSystem setObject:NSStringFromCGPoint(buttonsDelta) forKey:PVSavedButtonOriginKey];
+    [savedControllerPositions setObject:[savedControllerPositionsForSystem copy] forKey:self.systemIdentifier];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[savedControllerPositions copy] forKey:PVSavedControllerPositionsKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];

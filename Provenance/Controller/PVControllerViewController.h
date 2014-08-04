@@ -14,6 +14,7 @@
 
 extern NSString * const PVSavedDPadOriginKey;
 extern NSString * const PVSavedButtonOriginKey;
+extern NSString * const PVSavedControllerPositionsKey;
 
 @class PVControllerViewController, PVEmulatorCore;
 
@@ -28,10 +29,11 @@ extern NSString * const PVSavedButtonOriginKey;
 @interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate>
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
+@property (nonatomic, copy) NSString *systemIdentifier;
 @property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
 @property (nonatomic, strong) GCController *gameController;
 
-- (id)initWithControlLayout:(NSArray *)controlLayout;
+- (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
 - (void)editControls;
 
 @end
