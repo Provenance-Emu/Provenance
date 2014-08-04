@@ -484,10 +484,10 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 			}
 		}];
 //		GCControllerDirectionPad *rightAnalog = [[self.gameController extendedGamepad] leftThumbstick];
-//		GCControllerButtonInput *leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
-//		GCControllerButtonInput *rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
-//		GCControllerButtonInput *leftTrigger = [[self.gameController extendedGamepad] leftTrigger];
-//		GCControllerButtonInput *rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
+		GCControllerButtonInput *leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
+		GCControllerButtonInput *rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
+		GCControllerButtonInput *leftTrigger = [[self.gameController extendedGamepad] leftTrigger];
+		GCControllerButtonInput *rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
 		
 		[a setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
 			if (value > 0)
@@ -549,6 +549,46 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 				[weakSelf gamepadReleasedDirection:dpad];
 			}
 		}];
+        [leftShoulder setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (value > 0)
+            {
+                [weakSelf gamepadButtonPressed:button];
+            }
+            else
+            {
+                [weakSelf gamepadButtonReleased:button];
+            }
+        }];
+        [rightShoulder setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (value > 0)
+            {
+                [weakSelf gamepadButtonPressed:button];
+            }
+            else
+            {
+                [weakSelf gamepadButtonReleased:button];
+            }
+        }];
+        [leftTrigger setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (value > 0)
+            {
+                [weakSelf gamepadButtonPressed:button];
+            }
+            else
+            {
+                [weakSelf gamepadButtonReleased:button];
+            }
+        }];
+        [rightTrigger setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (value > 0)
+            {
+                [weakSelf gamepadButtonPressed:button];
+            }
+            else
+            {
+                [weakSelf gamepadButtonReleased:button];
+            }
+        }];
 	}
 	else
 	{
