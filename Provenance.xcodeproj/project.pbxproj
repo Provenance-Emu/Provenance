@@ -82,6 +82,7 @@
 		1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */; };
+		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1A935E6217CD3C1E0012E0C4 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6117CD3C1E0012E0C4 /* Icon.png */; };
 		1A935E6417CD3C210012E0C4 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6317CD3C210012E0C4 /* Icon@2x.png */; };
 		1A935E6617CD3C2F0012E0C4 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A935E6517CD3C2E0012E0C4 /* Default.png */; };
@@ -223,6 +224,8 @@
 		1A4869DB17C8D60C0019F6D2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		1A486A1D17C8D98C0019F6D2 /* PVGame.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PVGame.xcdatamodel; sourceTree = "<group>"; };
+		1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		1A935E6117CD3C1E0012E0C4 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../../Icon.png; sourceTree = "<group>"; };
 		1A935E6317CD3C210012E0C4 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon@2x.png"; path = "../../Icon@2x.png"; sourceTree = "<group>"; };
 		1A935E6517CD3C2E0012E0C4 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../../Default.png; sourceTree = "<group>"; };
@@ -571,6 +574,8 @@
 				423BB97E17DD46BC0048F457 /* NSData+Hashing.m */,
 				42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */,
 				42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */,
+				1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */,
+				1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -710,6 +715,7 @@
 				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
+				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,

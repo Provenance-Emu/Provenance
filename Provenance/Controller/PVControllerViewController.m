@@ -34,6 +34,7 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
+@property (nonatomic, strong) UIToolbar *fakeBlurView;
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
 
@@ -251,25 +252,7 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 	[self.view setFrame:[[self.view superview] bounds]];
 }
 
-- (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
-{
-	[self doesNotImplementSelector:_cmd];
-}
-
-- (void)dPadDidReleaseDirection:(JSDPad *)dPad
-{
-	[self doesNotImplementSelector:_cmd];
-}
-
-- (void)buttonPressed:(JSButton *)button
-{
-	[self doesNotImplementSelector:_cmd];
-}
-
-- (void)buttonReleased:(JSButton *)button
-{
-	[self doesNotImplementSelector:_cmd];
-}
+# pragma mark - Controller Position And Size Editing
 
 - (void)editControls
 {
@@ -279,20 +262,40 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 	{
 		[self.delegate controllerViewControllerDidBeginEditing:self];
 	}
-	
+    
+    if (!self.fakeBlurView)
+    {
+        self.fakeBlurView = [[UIToolbar alloc] initWithFrame:[self.view bounds]];
+    }
+    [self.fakeBlurView setAutoresizingMask:[self.view autoresizingMask]];
+    [self.fakeBlurView setBarStyle:UIBarStyleBlack];
+    [self.fakeBlurView setTranslucent:YES];
+    [self.fakeBlurView setAlpha:0];
+    [self.view insertSubview:self.fakeBlurView atIndex:0];
+    
 	self.saveControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	[self.saveControlsButton setTitle:@"Save Controls" forState:UIControlStateNormal];
-	[self.saveControlsButton sizeToFit];
+    [self.saveControlsButton sizeToFit];
+    [self.saveControlsButton setWidth:[self.saveControlsButton bounds].size.width + 10];
+    [self.saveControlsButton setBackgroundColor:[UIColor whiteColor]];
+    [[self.saveControlsButton layer] setCornerRadius:[self.saveControlsButton bounds].size.height / 4];
+    [[self.saveControlsButton layer] setBorderColor:[[self.saveControlsButton tintColor] CGColor]];
+    [[self.saveControlsButton layer] setBorderWidth:1.0];
 	[self.saveControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.saveControlsButton bounds].size.width) / 2,
-												   ([self.view bounds].size.height / 2) - [self.saveControlsButton bounds].size.height)];
+												   ([self.view bounds].size.height / 2) - ([self.saveControlsButton bounds].size.height + 4))];
 	[self.saveControlsButton addTarget:self action:@selector(saveControls:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.saveControlsButton];
 	
 	self.resetControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	[self.resetControlsButton setTitle:@"Reset Controls" forState:UIControlStateNormal];
-	[self.resetControlsButton sizeToFit];
+    [self.resetControlsButton sizeToFit];
+    [self.resetControlsButton setWidth:[self.resetControlsButton bounds].size.width + 10];
+    [self.resetControlsButton setBackgroundColor:[UIColor whiteColor]];
+    [[self.resetControlsButton layer] setCornerRadius:[self.resetControlsButton bounds].size.height / 4];
+    [[self.resetControlsButton layer] setBorderColor:[[self.resetControlsButton tintColor] CGColor]];
+    [[self.resetControlsButton layer] setBorderWidth:1.0];
 	[self.resetControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.resetControlsButton bounds].size.width) / 2,
-													([self.view bounds].size.height / 2) + [self.resetControlsButton bounds].size.height)];
+													([self.view bounds].size.height / 2) + 4)];//[self.resetControlsButton bounds].size.height)];
 	[self.resetControlsButton addTarget:self action:@selector(resetControls:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.resetControlsButton];
 	
@@ -303,9 +306,9 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 						  delay:0.0
 						options:UIViewAnimationOptionBeginFromCurrentState
 					 animations:^{
+                         [self.fakeBlurView setAlpha:1.0];
 						 [self.dPad setAlpha:1.0];
 						 [self.buttonGroup setAlpha:1.0];
-						 [self.view setBackgroundColor:[UIColor colorWithWhite:0.0 alpha:0.3]];
 						 [self.saveControlsButton setAlpha:1.0];
 						 [self.resetControlsButton setAlpha:1.0];
 					 }
@@ -403,9 +406,9 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 					 animations:^{
 						 [self.dPad setAlpha:alpha];
 						 [self.buttonGroup setAlpha:alpha];
-						 [self.view setBackgroundColor:[UIColor clearColor]];
 						 [self.saveControlsButton setAlpha:0.0];
 						 [self.resetControlsButton setAlpha:0.0];
+                         [self.fakeBlurView setAlpha:0.0];
 					 }
 					 completion:^(BOOL finished) {
 						 [self.dPad removeGestureRecognizer:self.dPadPanRecognizer];
@@ -413,6 +416,7 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 						 self.dPadPanRecognizer = nil;
 						 self.buttonPanRecognizer = nil;
 						 
+                         [self.fakeBlurView removeFromSuperview];
 						 [self.saveControlsButton removeFromSuperview];
 						 [self.resetControlsButton removeFromSuperview];
 						 self.saveControlsButton = nil;
@@ -458,6 +462,28 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 }
 
 #pragma mark - Controller handling
+
+- (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
+{
+	[self doesNotImplementSelector:_cmd];
+}
+
+- (void)dPadDidReleaseDirection:(JSDPad *)dPad
+{
+	[self doesNotImplementSelector:_cmd];
+}
+
+- (void)buttonPressed:(JSButton *)button
+{
+	[self doesNotImplementSelector:_cmd];
+}
+
+- (void)buttonReleased:(JSButton *)button
+{
+	[self doesNotImplementSelector:_cmd];
+}
+
+#pragma mark -
 
 - (void)setupGameController
 {
