@@ -29,6 +29,7 @@
 #import "OERingBuffer.h"
 #import "OETimingUtils.h"
 #import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES3/gl.h>
 
 #include "memmap.h"
 #include "pixform.h"
