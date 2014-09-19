@@ -52,8 +52,6 @@
 {
 	[super viewDidLoad];
 	
-//	[self.view setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-	
 	[self setPreferredFramesPerSecond:60];
 	
 	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
@@ -65,11 +63,6 @@
 	self.effect = [[GLKBaseEffect alloc] init];
 	
 	[self setupTexture];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
 }
 
 - (void)viewWillLayoutSubviews
@@ -87,23 +80,6 @@
         CGFloat newHeight = ([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width;
         [self.view setFrame:CGRectMake(0, 0, [[self.parentViewController view] bounds].size.width, newHeight)];
     }
-}
-
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-	[self.view setFrame:[[self.parentViewController view] bounds]];
-	
-	if (UIInterfaceOrientationIsLandscape([self interfaceOrientation]))
-	{
-		CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[self.parentViewController view] bounds].size.height;
-		
-		[[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[self.parentViewController view] bounds].size.height)];
-	}
-	else
-	{
-		CGFloat newHeight = ([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width;
-		[self.view setFrame:CGRectMake(0, 0, [[self.parentViewController view] bounds].size.width, newHeight)];
-	}
 }
 
 - (void)setupTexture
