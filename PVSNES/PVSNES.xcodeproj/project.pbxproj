@@ -598,6 +598,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSNES.dst;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
