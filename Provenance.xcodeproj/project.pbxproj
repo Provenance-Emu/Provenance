@@ -57,12 +57,6 @@
 		1A48698117C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697C17C8C1170019F6D2 /* NSFileManager+OEHashingAdditions.m */; };
 		1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
 		1A4869A917C8C1400019F6D2 /* libzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A48699417C8C1400019F6D2 /* libzipkit.a */; };
-		1A4869CB17C8CA920019F6D2 /* blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869BF17C8CA920019F6D2 /* blank.png */; };
-		1A4869CC17C8CA920019F6D2 /* blank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C017C8CA920019F6D2 /* blank@2x.png */; };
-		1A4869CD17C8CA920019F6D2 /* selection.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C117C8CA920019F6D2 /* selection.png */; };
-		1A4869CE17C8CA920019F6D2 /* selection@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C217C8CA920019F6D2 /* selection@2x.png */; };
-		1A4869CF17C8CA920019F6D2 /* bar-shadow.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C317C8CA920019F6D2 /* bar-shadow.png */; };
-		1A4869D017C8CA920019F6D2 /* bar-shadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C417C8CA920019F6D2 /* bar-shadow@2x.png */; };
 		1A4869D117C8CA920019F6D2 /* Gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C517C8CA920019F6D2 /* Gear.png */; };
 		1A4869D217C8CA920019F6D2 /* Gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C617C8CA920019F6D2 /* Gear@2x.png */; };
 		1A4869D317C8CA920019F6D2 /* GearLandscape.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A4869C717C8CA920019F6D2 /* GearLandscape.png */; };
@@ -186,12 +180,6 @@
 		1A4869A217C8C1400019F6D2 /* ZKFileArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKFileArchive.h; sourceTree = "<group>"; };
 		1A4869A317C8C1400019F6D2 /* ZKLFHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLFHeader.h; sourceTree = "<group>"; };
 		1A4869A417C8C1400019F6D2 /* ZKLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLog.h; sourceTree = "<group>"; };
-		1A4869BF17C8CA920019F6D2 /* blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blank.png; sourceTree = "<group>"; };
-		1A4869C017C8CA920019F6D2 /* blank@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blank@2x.png"; sourceTree = "<group>"; };
-		1A4869C117C8CA920019F6D2 /* selection.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = selection.png; sourceTree = "<group>"; };
-		1A4869C217C8CA920019F6D2 /* selection@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selection@2x.png"; sourceTree = "<group>"; };
-		1A4869C317C8CA920019F6D2 /* bar-shadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-shadow.png"; sourceTree = "<group>"; };
-		1A4869C417C8CA920019F6D2 /* bar-shadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-shadow@2x.png"; sourceTree = "<group>"; };
 		1A4869C517C8CA920019F6D2 /* Gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gear.png; sourceTree = "<group>"; };
 		1A4869C617C8CA920019F6D2 /* Gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Gear@2x.png"; sourceTree = "<group>"; };
 		1A4869C717C8CA920019F6D2 /* GearLandscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GearLandscape.png; sourceTree = "<group>"; };
@@ -504,12 +492,6 @@
 		1A4869BC17C8CA2C0019F6D2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				1A4869BF17C8CA920019F6D2 /* blank.png */,
-				1A4869C017C8CA920019F6D2 /* blank@2x.png */,
-				1A4869C117C8CA920019F6D2 /* selection.png */,
-				1A4869C217C8CA920019F6D2 /* selection@2x.png */,
-				1A4869C317C8CA920019F6D2 /* bar-shadow.png */,
-				1A4869C417C8CA920019F6D2 /* bar-shadow@2x.png */,
 				1A4869C517C8CA920019F6D2 /* Gear.png */,
 				1A4869C617C8CA920019F6D2 /* Gear@2x.png */,
 				1A4869C717C8CA920019F6D2 /* GearLandscape.png */,
@@ -627,12 +609,6 @@
 				1AADCDAC17BD861000F53CFE /* button-thin.png in Resources */,
 				1AADCDAD17BD861000F53CFE /* button-thin@2x.png in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
-				1A4869CB17C8CA920019F6D2 /* blank.png in Resources */,
-				1A4869CC17C8CA920019F6D2 /* blank@2x.png in Resources */,
-				1A4869CD17C8CA920019F6D2 /* selection.png in Resources */,
-				1A4869CE17C8CA920019F6D2 /* selection@2x.png in Resources */,
-				1A4869CF17C8CA920019F6D2 /* bar-shadow.png in Resources */,
-				1A4869D017C8CA920019F6D2 /* bar-shadow@2x.png in Resources */,
 				1A4869D117C8CA920019F6D2 /* Gear.png in Resources */,
 				1A4869D217C8CA920019F6D2 /* Gear@2x.png in Resources */,
 				1A4869D317C8CA920019F6D2 /* GearLandscape.png in Resources */,

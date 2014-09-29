@@ -227,7 +227,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	for (PVGame *game in tempGames)
 	{
-		NSString *fileExtension = [[game romPath] pathExtension];
+		NSString *fileExtension = [[[game romPath] pathExtension] lowercaseString];
 		NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
 		NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
 		if (!games)
@@ -256,9 +256,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	for (NSString *filePath in contents)
 	{
-		NSString *fileExtension = [filePath pathExtension];
+		NSString *fileExtension = [[filePath pathExtension] lowercaseString];
 		
-		if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+		if ([supportedFileExtensions containsObject:fileExtension])
 		{
 			NSString *path = [romsPath stringByAppendingPathComponent:filePath];
 			NSString *title = [[path lastPathComponent] stringByDeletingPathExtension];
