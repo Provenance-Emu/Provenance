@@ -366,7 +366,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
 		if (buttonIndex != [alert cancelButtonIndex])
 		{
-			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://coolrom.com/roms/genesis"]];
+			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://google.com"]];
 		}
 	}];
 	[alert show];
