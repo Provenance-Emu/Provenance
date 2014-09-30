@@ -118,7 +118,13 @@
 			NSUInteger success = [archive inflateAll];
 			if (success)
 			{
-				[fileManager removeItemAtPath:filePath error:NULL];
+                NSError *error = nil;
+				BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
+                
+                if (!deleted)
+                {
+                    NSLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
+                }
 				
 				for (NSDictionary *inflatedFile in [archive inflatedFiles])
 				{
