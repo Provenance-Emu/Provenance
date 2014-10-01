@@ -92,6 +92,7 @@
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
+		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -234,6 +235,7 @@
 		42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSNESControllerViewController.m; sourceTree = "<group>"; };
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
+		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -272,6 +274,7 @@
 			isa = PBXGroup;
 			children = (
 				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
+				7556CF7919DC15C1007F8F97 /* Default.xib */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -593,6 +596,7 @@
 				1A47C96D17BC310700C27644 /* dPad-DownRight.png in Resources */,
 				1A47C96E17BC310700C27644 /* dPad-DownRight@2x.png in Resources */,
 				1A47C96F17BC310700C27644 /* dPad-Left.png in Resources */,
+				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
 				1A47C97017BC310700C27644 /* dPad-Left@2x.png in Resources */,
 				1A47C97117BC310700C27644 /* dPad-None.png in Resources */,
 				1A47C97217BC310700C27644 /* dPad-None@2x.png in Resources */,
@@ -730,7 +734,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -746,7 +749,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
@@ -766,7 +769,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -782,7 +784,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
@@ -827,7 +829,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -843,7 +844,7 @@
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",

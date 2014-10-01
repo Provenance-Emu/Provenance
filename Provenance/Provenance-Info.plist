@@ -43,6 +43,8 @@
 	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>Default</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Provenance</string>
 	<key>UIPrerenderedIcon</key>
@@ -52,7 +54,7 @@
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarHidden</key>
-	<true/>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
