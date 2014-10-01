@@ -29,7 +29,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
-                        <barButtonItem key="leftBarButtonItem" image="Gear.png" id="daz-L9-06G">
+                        <barButtonItem key="leftBarButtonItem" image="gear" id="daz-L9-06G">
                             <connections>
                                 <segue destination="YzD-6V-3zn" kind="modal" id="PHC-9h-QIz"/>
                             </connections>
@@ -233,7 +233,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Gear.png" width="20" height="20"/>
+        <image name="gear" width="20" height="20"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
