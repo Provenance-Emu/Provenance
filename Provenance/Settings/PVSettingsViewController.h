@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;
 @property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLockSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *opacityValueLabel;
 
 - (IBAction)done:(id)sender;
 

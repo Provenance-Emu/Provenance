@@ -38,6 +38,7 @@
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
+    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -67,7 +68,10 @@
 
 - (IBAction)controllerOpacityChanged:(id)sender
 {
-	[[PVSettingsModel sharedInstance] setControllerOpacity:[self.opacitySlider value]];
+    self.opacitySlider.value = floor(self.opacitySlider.value / 0.05) * 0.05;
+    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+    
+	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
 }
 
 - (IBAction)toggleAutoLock:(id)sender
