@@ -71,9 +71,11 @@
     
     if (self.view.bounds.size.width > self.view.bounds.size.height)
     {
-        CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[self.parentViewController view] bounds].size.height;
-        
-        [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[self.parentViewController view] bounds].size.height)];
+        if (!CGRectIsEmpty([self.emulatorCore screenRect]))
+        {
+            CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[self.parentViewController view] bounds].size.height;
+            [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[self.parentViewController view] bounds].size.height)];
+        }
     }
     else
     {

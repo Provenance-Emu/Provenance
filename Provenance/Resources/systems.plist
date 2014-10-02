@@ -123,6 +123,52 @@
 	</dict>
 	<dict>
 		<key>PVSystemName</key>
+		<string>Sega Master System</string>
+		<key>PVShortSystemName</key>
+		<string>Master System</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.mastersystem</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>sms</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{212,92}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>1</string>
+						<key>PVControlFrame</key>
+						<string>{{76,16},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>2</string>
+						<key>PVControlFrame</key>
+						<string>{{144,8},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVSystemName</key>
 		<string>Super Nintendo Entertainment System</string>
 		<key>PVShortSystemName</key>
 		<string>SNES</string>
