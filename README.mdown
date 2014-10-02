@@ -1,7 +1,7 @@
 # Provenance
-### An iOS Frontend for multiple emulators, currently supporting Sega Genesis and SNES
+### An iOS Frontend for multiple emulators, currently supporting Sega Genesis, Game Gear and SNES
 
-Genesis emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
+Genesis/Game Gear emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
 SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu) 
 
 ###Why 'Provenance'?
@@ -24,10 +24,10 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 iOS Specific features:
 
-- All current generation iOS devices supported with iOS 7
+- All current generation iOS devices supported with iOS 8
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
-    - iOS 7 game controller support for Genesis (needs more generalised implementation for other cores)
+    - iOS game controller support (needs more generalised implementation)
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
@@ -36,16 +36,27 @@ iOS Specific features:
 
 Feel free to suggest/request features using the Issues page.
 
-##Things Yet To Be Done
-
-See the issues page.
-
 #Screen Shots
 
+Game Library
+------------
 ![Provenance Game Library showing Genesis games](http://jamesaddyman.com/provenance/screenshots/provenance1.png)  ![Provenance Game Library showing SNES games](http://jamesaddyman.com/provenance/screenshots/provenance2.png)  
-![Provenance running Sonic 3 & Knuckles](http://jamesaddyman.com/provenance/screenshots/provenance3.png)  
-![Provenance running Chrono Trigger](http://jamesaddyman.com/provenance/screenshots/provenance4.png)  
+
+Settings
+--------
 ![Provenance settings](http://jamesaddyman.com/provenance/screenshots/provenance5.png)  
+
+Sega Genesis
+------------
+![Provenance running Sonic 3 & Knuckles](http://jamesaddyman.com/provenance/screenshots/provenance3.png)  
+
+Sega Game Gear
+--------------
+![Provenance running Sonic The Hedgehog](http://jamesaddyman.com/provenance/screenshots/provenance6.png)  
+
+Super Nintendo
+--------------
+![Provenance running Chrono Trigger](http://jamesaddyman.com/provenance/screenshots/provenance4.png)  
 
 #Provenance License (Simplified BSD)
 
