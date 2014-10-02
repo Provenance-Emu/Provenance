@@ -37,7 +37,6 @@ NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 	NSPersistentStoreCoordinator *_persistentStoreCoordinator;
 	
 	NSOperationQueue *_artworkDownloadQueue;
-	
 }
 
 @property (nonatomic, strong) UIToolbar *renameToolbar;
@@ -57,14 +56,14 @@ NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 
 static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
-	if ((self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]))
-	{
-		
-	}
-	
-	return self;
+    if ((self = [super initWithCoder:aDecoder]))
+    {
+        
+    }
+    
+    return self;
 }
 
 - (void)dealloc
@@ -95,6 +94,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 	[super viewDidLoad];
     
+    [self setDefinesPresentationContext:YES];
+    
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(handleCacheEmptied:)
 												 name:PVMediaCacheWasEmptiedNotification
@@ -118,9 +119,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		[self reloadData];
 	}];
 	[_watcher startMonitoring];
-	
+    
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	[layout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
+    
 	_collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
 	[_collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[_collectionView setDataSource:self];
@@ -133,7 +135,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			   withReuseIdentifier:PVGameLibraryHeaderView];
 	
 	[[self view] addSubview:_collectionView];
-	
+    
 	UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressRecognized:)];
 	[_collectionView addGestureRecognizer:longPressRecognizer];
 	
@@ -516,7 +518,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
-	return UIEdgeInsetsMake(15, 5, 5, 5);
+	return UIEdgeInsetsMake(5, 5, 5, 5);
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath

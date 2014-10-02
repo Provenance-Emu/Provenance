@@ -34,7 +34,7 @@
                                 <segue destination="YzD-6V-3zn" kind="modal" id="PHC-9h-QIz"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="6tp-vr-cci">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
                             <connections>
                                 <action selector="getMoreROMs" destination="40z-oi-2L6" id="mcY-ai-xh6"/>
                             </connections>
