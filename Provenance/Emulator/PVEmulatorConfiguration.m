@@ -34,6 +34,7 @@ NSString * const PVRightShoulderButton = @"PVRightShoulderButton";
 NSString * const PVGenesisSystemIdentifier = @"com.provenance.genesis";
 NSString * const PVGameGearSystemIdentifier = @"com.provenance.gamegear";
 NSString * const PVMasterSystemSystemIdentifier = @"com.provenance.mastersystem";
+NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 
 @interface PVEmulatorConfiguration ()
@@ -78,7 +79,10 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 {
 	PVEmulatorCore *core = nil;
 	
-	if ([systemID isEqualToString:PVGenesisSystemIdentifier] || [systemID isEqualToString:PVGameGearSystemIdentifier] || [systemID isEqualToString:PVMasterSystemSystemIdentifier])
+	if ([systemID isEqualToString:PVGenesisSystemIdentifier] ||
+        [systemID isEqualToString:PVGameGearSystemIdentifier] ||
+        [systemID isEqualToString:PVMasterSystemSystemIdentifier] ||
+        [systemID isEqualToString:PVSegaCDSystemIdentifier])
 	{
 		core = [[PVGenesisEmulatorCore alloc] init];
 	}
@@ -94,7 +98,10 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 {
 	PVControllerViewController *controller = nil;
 	
-	if ([systemID isEqualToString:PVGenesisSystemIdentifier] || [systemID isEqualToString:PVGameGearSystemIdentifier] || [systemID isEqualToString:PVMasterSystemSystemIdentifier])
+    if ([systemID isEqualToString:PVGenesisSystemIdentifier] ||
+        [systemID isEqualToString:PVGameGearSystemIdentifier] ||
+        [systemID isEqualToString:PVMasterSystemSystemIdentifier] ||
+        [systemID isEqualToString:PVSegaCDSystemIdentifier])
 	{
 		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
