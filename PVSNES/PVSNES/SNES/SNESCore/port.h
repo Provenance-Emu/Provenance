@@ -235,7 +235,7 @@
 #define SPC700_SHUTDOWN
 #define SPC700_C
 #define NEW_COLOUR_BLENDING
-#define USE_OPENGL
+//#define USE_OPENGL
 #define RIGHTSHIFT_IS_SAR
 #define SDD1_DECOMP
 #define CORRECT_VRAM_READS

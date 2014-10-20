@@ -48,8 +48,10 @@
 #import <AudioUnit/AudioUnit.h>
 #include <pthread.h>
 
-#define SAMPLERATE      48000
+#define SAMPLERATE      32000
 #define SIZESOUNDBUFFER SAMPLERATE / 50 * 4
+
+static __weak PVSNESEmulatorCore *_current;
 
 @interface PVSNESEmulatorCore ()
 {
@@ -69,6 +71,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 	{
 		soundBuffer = (UInt16 *)malloc(SIZESOUNDBUFFER * sizeof(UInt16));
 		memset(soundBuffer, 0, SIZESOUNDBUFFER * sizeof(UInt16));
+        _current = self;
 	}
 	
 	return self;
@@ -170,9 +173,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 {
     IPPU.RenderThisFrame = YES;
     S9xMainLoop();
-
-    S9xMixSamples((unsigned char *)soundBuffer, (SAMPLERATE / [self frameInterval]) * [self channelCount]);
-    [[self ringBufferAtIndex:0] write:soundBuffer maxLength:sizeof(UInt16) * [self channelCount] * (SAMPLERATE / [self frameInterval])];
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path
@@ -190,7 +190,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.JustifierMaster        = true;
     Settings.BlockInvalidVRAMAccess = true;
     Settings.HDMATimingHack         = 100;
-    Settings.SoundPlaybackRate      = 48000;
+    Settings.SoundPlaybackRate      = SAMPLERATE;
     Settings.Stereo                 = true;
     Settings.SixteenBitSound        = true;
     Settings.Transparency           = true;
@@ -231,8 +231,12 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     /* buffer_ms : buffer size given in millisecond
      lag_ms    : allowable time-lag given in millisecond
      S9xInitSound(macSoundBuffer_ms, macSoundLagEnable ? macSoundBuffer_ms / 2 : 0); */
-    if(!S9xInitSound(SIZESOUNDBUFFER, 0))
+    if(!S9xInitSound(100, 0))
+    {
         NSLog(@"Couldn't init sound");
+    }
+    
+    S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, NULL);
 
     Settings.NoPatch = true;
     Settings.BSXBootup = false;
@@ -299,7 +303,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (NSTimeInterval)frameInterval
 {
-    return Settings.PAL ? 50 : 60;
+    return Settings.PAL ? 50 : 60.098;
 }
 
 #pragma mark Audio
@@ -307,6 +311,16 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 bool8 S9xOpenSoundDevice(void)
 {
 	return true;
+}
+
+static void FinalizeSamplesAudioCallback(void *)
+{
+    __strong PVSNESEmulatorCore *strongCurrent = _current;
+    
+    S9xFinalizeSamples();
+    int samples = S9xGetSampleCount();
+    S9xMixSamples((uint8_t*)strongCurrent->soundBuffer, samples);
+    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];
 }
 
 - (double)audioSampleRate
