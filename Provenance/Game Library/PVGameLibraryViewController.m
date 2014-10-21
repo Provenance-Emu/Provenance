@@ -234,7 +234,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	for (PVGame *game in tempGames)
 	{
-		NSString *fileExtension = [[[game romPath] pathExtension] lowercaseString];
+		NSString *fileExtension = [[[[self romsPath] stringByAppendingPathComponent:[game romPath]] pathExtension] lowercaseString];
 		NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
 		NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
 		if (!games)
@@ -261,17 +261,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
 	
-	for (NSString *filePath in contents)
+	for (NSString *fileName in contents)
 	{
-		NSString *fileExtension = [[filePath pathExtension] lowercaseString];
+		NSString *fileExtension = [[fileName pathExtension] lowercaseString];
 		
 		if ([supportedFileExtensions containsObject:fileExtension])
 		{
-			NSString *path = [romsPath stringByAppendingPathComponent:filePath];
-			NSString *title = [[path lastPathComponent] stringByDeletingPathExtension];
+			NSString *currentPath = [romsPath stringByAppendingPathComponent:fileName];
+			NSString *title = [[currentPath lastPathComponent] stringByDeletingPathExtension];
 			NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
 			
-			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", path];
+			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", fileName];
 			NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([PVGame class])];
 			[request setPredicate:predicate];
 			[request setFetchLimit:1];
@@ -286,7 +286,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			}
 			else
 			{
-				NSString *md5Hash = [[NSFileManager defaultManager] md5HashForFile:path];
+				NSString *md5Hash = [[NSFileManager defaultManager] md5HashForFile:currentPath];
 				NSPredicate *hashPredicate = [NSPredicate predicateWithFormat:@"md5 == %@", md5Hash];
 				NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
 				[request setPredicate:hashPredicate];
@@ -295,7 +295,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 				if ([hashResults count])
 				{
 					game = hashResults[0];
-					[game setRomPath:path];
+					[game setRomPath:fileName];
 					[game setTitle:title];
 					[game setSystemIdentifier:systemID];
 				}
@@ -306,7 +306,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 				//creating
 				game = (PVGame *)[NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([PVGame class])
 																inManagedObjectContext:_managedObjectContext];
-				[game setRomPath:path];
+				[game setRomPath:fileName];
 				[game setTitle:title];
 				[game setSystemIdentifier:systemID];
 			}
@@ -314,7 +314,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			if (![[game md5] length] && ![[game crc32] length])
 			{
 				dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-					NSURL *fileURL = [NSURL fileURLWithPath:path];
+					NSURL *fileURL = [NSURL fileURLWithPath:currentPath];
 					NSString *md5 = nil;
 					NSString *crc32 = nil;
 					NSLog(@"Getting hash for %@", [game title]);
@@ -356,7 +356,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	NSArray *results = [_managedObjectContext executeFetchRequest:fetchRequest error:NULL];
 	for (PVGame *game in results)
 	{
-		if (![[NSFileManager defaultManager] fileExistsAtPath:[game romPath]])
+        if (![[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:[game romPath]]])
 		{
 			[_managedObjectContext deleteObject:game];
 		}
@@ -540,10 +540,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
 	
 	PVGame *game = games[[indexPath item]];
-	
+    
 	PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
-	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[game romPath]]];
-	[emulatorViewController setSaveStatePath:[self saveStatePathForROM:[game romPath]]];
+	[emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
+	[emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
 	[emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 	
 	[self presentViewController:emulatorViewController animated:YES completion:NULL];
@@ -763,23 +763,25 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)deleteGame:(PVGame *)game
 {
+    NSString *romPath = [[self romsPath] stringByAppendingPathComponent:[game romPath]];
+    
 	NSError *error = nil;
-	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[game romPath] error:&error];
+	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete rom at path: %@ because: %@", [game romPath], [error localizedDescription]);
+		NSLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
 	}
 	
-	success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:[game romPath]] error:&error];
+	success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:[game romPath]], [error localizedDescription]);
+		NSLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
 	}
 	
-	success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:[game romPath]] error:&error];
+	success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:[game romPath]], [error localizedDescription]);
+		NSLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
 	}
 	
 	success = [PVMediaCache deleteImageForKey:[game originalArtworkURL]];

@@ -124,7 +124,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
-	[self.emulatorCore loadFileAtPath:[self.game romPath]];
+	[self.emulatorCore loadFileAtPath:[[self romsPath] stringByAppendingPathComponent:[self.game romPath]]];
 	[self.emulatorCore startEmulation];
 	
 	self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
@@ -221,6 +221,14 @@ void uncaughtExceptionHandler(NSException *exception)
 	[super viewWillAppear:animated];
 	
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+}
+
+- (NSString *)romsPath
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    
+    return documentsDirectoryPath;
 }
 
 - (BOOL)prefersStatusBarHidden
