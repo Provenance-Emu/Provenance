@@ -11,6 +11,8 @@
 #import "ZKDefs.h"
 #import "PVEmulatorConfiguration.h"
 
+NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotification";
+
 @interface PVDirectoryWatcher () {
 	
 	dispatch_source_t _dispatch_source;
@@ -115,17 +117,9 @@
 			}
 			
 			ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:filePath];
-			NSUInteger success = [archive inflateAll];
-			if (success)
-			{
-                NSError *error = nil;
-				BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
-                
-                if (!deleted)
-                {
-                    NSLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
-                }
-				
+			NSUInteger status = [archive inflateAll];
+			if (status == zkSucceeded)
+            {
 				for (NSDictionary *inflatedFile in [archive inflatedFiles])
 				{
 					NSString *fileName = [inflatedFile objectForKey:ZKPathKey];
@@ -137,7 +131,21 @@
 						[fileData writeToFile:[self.path stringByAppendingPathComponent:fileName] atomically:YES];
 					}
 				}
+                
+                NSError *error = nil;
+                BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
+                
+                if (!deleted)
+                {
+                    NSLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
+                }
 			}
+            else
+            {
+                NSLog(@"Unable to inflate zip at %@", filePath);
+                [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
+                                                                    object:self];
+            }
 		}
 		
 		dispatch_async(dispatch_get_main_queue(), ^{

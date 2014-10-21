@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *PVArchiveInflationFailedNotification;
+
 typedef void(^PVDirectoryChangedHandler)(void);
 
 @interface PVDirectoryWatcher : NSObject
@@ -19,5 +21,6 @@ typedef void(^PVDirectoryChangedHandler)(void);
 
 - (void)startMonitoring;
 - (void)stopMonitoring;
+- (void)findAndExtractArchives;
 
 @end

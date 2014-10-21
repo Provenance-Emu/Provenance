@@ -100,6 +100,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 											 selector:@selector(handleCacheEmptied:)
 												 name:PVMediaCacheWasEmptiedNotification
 											   object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleArchiveInflationFailed:)
+                                                 name:PVArchiveInflationFailedNotification
+                                               object:nil];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 	
@@ -118,6 +122,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	_watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
 		[self reloadData];
 	}];
+    [_watcher findAndExtractArchives];
 	[_watcher startMonitoring];
     
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
@@ -452,6 +457,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	}];
 	
 	[_collectionView reloadData];
+}
+
+- (void)handleArchiveInflationFailed:(NSNotification *)note
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed to extract archive"
+                                                                   message:@"There was a problem extracting the archive. Perhaps the download was corrupt? Try downloading it again."
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:NULL]];
+    [self presentViewController:alert animated:YES completion:NULL];
 }
 
 #pragma mark - UICollectionViewDataSource

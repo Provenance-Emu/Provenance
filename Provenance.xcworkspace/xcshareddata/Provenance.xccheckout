@@ -14,11 +14,11 @@
 		<string>ssh://github.com/jasarien/Provenance.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Provenance.xcodeproj/project.xcworkspace</string>
+	<string>Provenance.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C</key>
-		<string>../..</string>
+		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/jasarien/Provenance.git</string>
