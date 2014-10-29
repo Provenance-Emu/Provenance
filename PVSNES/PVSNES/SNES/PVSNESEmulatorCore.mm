@@ -53,13 +53,26 @@
 
 static __weak PVSNESEmulatorCore *_current;
 
-@interface PVSNESEmulatorCore ()
-{
+@interface PVSNESEmulatorCore () {
+
+@public
     UInt16        *soundBuffer;
     unsigned char *videoBuffer;
+    unsigned char *videoBufferA;
+    unsigned char *videoBufferB;
 }
 
 @end
+
+bool8 S9xDeinitUpdate(int width, int height)
+{
+    __strong PVSNESEmulatorCore *strongCurrent = _current;
+    
+    [strongCurrent performSelectorOnMainThread:@selector(flipBuffers)
+                                    withObject:nil
+                                 waitUntilDone:NO];
+    return true;
+}
 
 NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", @"X", @"Y", @"L", @"R", @"Start", @"Select", nil };
 
@@ -79,8 +92,13 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)dealloc
 {
-    free(videoBuffer);
+    free(videoBufferA);
+    videoBufferA = NULL;
+    free(videoBufferB);
+    videoBuffer = NULL;
+    videoBuffer = NULL;
     free(soundBuffer);
+    soundBuffer = NULL;
 }
 
 #pragma mark Exectuion
@@ -203,14 +221,24 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     //Settings.AutoDisplayMessages    = true;
     //Settings.FrameTimeNTSC          = 16667;
 
-    if(videoBuffer) free(videoBuffer);
+    if (videoBufferA)
+    {
+        free(videoBufferA);
+    }
+    
+    if (videoBufferB)
+    {
+        free(videoBufferB);
+    }
 
-    videoBuffer = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    videoBuffer = NULL;
+    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
     //GFX.PixelFormat = 3;
 
     GFX.Pitch = 512 * 2;
     //GFX.PPL = SNES_WIDTH;
-    GFX.Screen = (short unsigned int *)videoBuffer;
+    GFX.Screen = (short unsigned int *)videoBufferA;
 
     S9xUnmapAllControls();
 
@@ -266,9 +294,23 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 #pragma mark Video
 
+- (void)flipBuffers
+{
+    if (GFX.Screen == (short unsigned int *)videoBufferA)
+    {
+        videoBuffer = videoBufferA;
+        GFX.Screen = (short unsigned int *)videoBufferB;
+    }
+    else
+    {
+        videoBuffer = videoBufferB;
+        GFX.Screen = (short unsigned int *)videoBufferA;
+    }
+}
+
 - (uint16_t *)videoBuffer
 {
-    return GFX.Screen;
+    return (uint16_t *)videoBuffer;
 }
 
 - (CGRect)screenRect

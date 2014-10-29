@@ -163,12 +163,6 @@ bool8 S9xInitUpdate (void)
     return true;
 }
 
-bool8 S9xDeinitUpdate(int width, int height)
-{
-    //NSLog(@"de init");
-    return true;
-}
-
 unsigned char S9xContinueUpdate(int width, int height)
 {
     return true;
