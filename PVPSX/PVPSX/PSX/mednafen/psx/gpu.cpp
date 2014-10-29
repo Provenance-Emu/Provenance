@@ -1357,7 +1357,7 @@ pscpu_timestamp_t PS_GPU::Update(const pscpu_timestamp_t sys_timestamp)
        }
        char buffer[256];
 
-       trio_snprintf(buffer, sizeof(buffer), _("VIDEO STANDARD MISMATCH"));
+		  //trio_snprintf(buffer, sizeof(buffer), _("VIDEO STANDARD MISMATCH"));
        DrawTextTrans(surface->pixels + ((DisplayRect->h / 2) - (13 / 2)) * surface->pitch32, surface->pitch32 << 2, DisplayRect->w, (UTF8*)buffer,
 		surface->MakeColor(0x00, 0xFF, 0x00), true, MDFN_FONT_6x13_12x13);
       }

@@ -713,7 +713,7 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const int sc
 
  shader = NULL;
 
- if(pixshader != SHADER_NONE)
+ /*if(pixshader != SHADER_NONE)
  {
   LFG(glCreateShaderObjectARB);
   LFG(glShaderSourceARB);
@@ -740,7 +740,7 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const int sc
   shader = new OpenGL_Blitter_Shader(this, pixshader);
   SupportNPOT = 0; 	 // Our pixel shaders don't work right with NPOT textures(for them to do so would probably necessitate rewriting them to use texelFetch)
   p_glActiveTextureARB(GL_TEXTURE0_ARB);
- }
+ }*/
 
  // printf here because pixel shader code will set SupportNPOT to 0
 

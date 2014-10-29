@@ -5,6 +5,18 @@
 //
 
 #ifdef __OBJC__
-	#import <UIKit/UIKit.h>
-	#import <Foundation/Foundation.h>
+//#import <UIKit/UIKit.h>
+//#import <Foundation/Foundation.h>
+#endif
+
+#if __x86_64__
+//#define ARCH_X86_64
+#endif
+
+#if __arm__
+#define ARCH_ARM
+#endif
+
+#if __i386__
+#define ARCH_x86
 #endif

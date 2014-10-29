@@ -7,14 +7,125 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		19EB255819FEAA1900050817 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB255719FEAA1900050817 /* libPVSupport.a */; };
 		19EB255A19FEAA2000050817 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB255919FEAA2000050817 /* CoreGraphics.framework */; };
 		19EB255C19FEAA2700050817 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB255B19FEAA2700050817 /* AudioToolbox.framework */; };
 		19EB255E19FEAA2C00050817 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB255D19FEAA2C00050817 /* CoreAudio.framework */; };
 		19EB256019FEAA3300050817 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB255F19FEAA3300050817 /* OpenGLES.framework */; };
 		19EB256219FEAA3900050817 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB256119FEAA3900050817 /* UIKit.framework */; };
 		19EB256419FEAA3E00050817 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB256319FEAA3E00050817 /* Foundation.framework */; };
-		19EB2BB919FEAED800050817 /* cdplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25C619FEAEB200050817 /* cdplay.cpp */; };
+		19EB2BFD19FEB53A00050817 /* negcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293619FEAEB500050817 /* negcon.cpp */; };
+		19EB2C2719FEB67E00050817 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B9019FEAEB600050817 /* video.cpp */; };
+		19EB2C3319FEBF9700050817 /* PVPSXEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19EB256E19FEAB9400050817 /* PVPSXEmulatorCore.mm */; };
+		19EB2C3419FECFCC00050817 /* galois.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25DD19FEAEB200050817 /* galois.cpp */; };
+		19EB2C3519FECFE200050817 /* PSFLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB290D19FEAEB400050817 /* PSFLoader.cpp */; };
+		19EB2C3619FECFF800050817 /* res012.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5119FEAEB600050817 /* res012.c */; };
+		19EB2C3719FED00900050817 /* psx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB294419FEAEB500050817 /* psx.cpp */; };
+		19EB2C3819FED02100050817 /* OwlResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B1819FEAEB600050817 /* OwlResampler.cpp */; };
+		19EB2C3919FED03300050817 /* CDUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25D819FEAEB200050817 /* CDUtility.cpp */; };
+		19EB2C3A19FED1E100050817 /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25DA19FEAEB200050817 /* crc32.cpp */; };
+		19EB2C3B19FED1F000050817 /* sio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB294619FEAEB500050817 /* sio.cpp */; };
+		19EB2C3C19FED20200050817 /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B4619FEAEB600050817 /* mapping0.c */; };
+		19EB2C3D19FED20900050817 /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B4F19FEAEB600050817 /* registry.c */; };
+		19EB2C3E19FED21100050817 /* okiadpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B1519FEAEB600050817 /* okiadpcm.cpp */; };
+		19EB2C3F19FED24000050817 /* mpc_demux.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27A719FEAEB300050817 /* mpc_demux.c */; };
+		19EB2C4019FED25C00050817 /* mdec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293C19FEAEB500050817 /* mdec.cpp */; };
+		19EB2C4119FED28A00050817 /* audioreader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25CA19FEAEB200050817 /* audioreader.cpp */; };
+		19EB2C4219FED29600050817 /* general.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB26C019FEAEB300050817 /* general.cpp */; };
+		19EB2C4319FED2A200050817 /* frontio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291A19FEAEB500050817 /* frontio.cpp */; };
+		19EB2C4419FED47E00050817 /* framing.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3D19FEAEB600050817 /* framing.c */; };
+		19EB2C4519FED48600050817 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B6019FEAEB600050817 /* triostr.c */; };
+		19EB2C4619FED48E00050817 /* png.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8019FEAEB600050817 /* png.cpp */; };
+		19EB2C4719FED49700050817 /* synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5319FEAEB600050817 /* synthesis.c */; };
+		19EB2C4819FED4A500050817 /* endian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB268219FEAEB300050817 /* endian.cpp */; };
+		19EB2C4919FED4A900050817 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB268819FEAEB300050817 /* FileStream.cpp */; };
+		19EB2C4A19FED4C000050817 /* gpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291C19FEAEB500050817 /* gpu.cpp */; };
+		19EB2C4B19FED4CC00050817 /* synth_filter.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27B319FEAEB300050817 /* synth_filter.c */; };
+		19EB2C4C19FED4D300050817 /* MemoryStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB278D19FEAEB300050817 /* MemoryStream.cpp */; };
+		19EB2C4D19FED4E000050817 /* trio.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5E19FEAEB600050817 /* trio.c */; };
+		19EB2C4E19FED4EC00050817 /* netplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB286B19FEAEB400050817 /* netplay.cpp */; };
+		19EB2C4F19FED4F200050817 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB260119FEAEB200050817 /* debug.cpp */; };
+		19EB2C5019FED4FE00050817 /* dualshock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292819FEAEB500050817 /* dualshock.cpp */; };
+		19EB2C5119FED50800050817 /* mpc_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27A619FEAEB300050817 /* mpc_decoder.c */; };
+		19EB2C5219FED50C00050817 /* mpc_bits_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27A419FEAEB300050817 /* mpc_bits_reader.c */; };
+		19EB2C5319FED51900050817 /* mempatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB279019FEAEB300050817 /* mempatcher.cpp */; };
+		19EB2C5419FED53300050817 /* irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293819FEAEB500050817 /* irq.cpp */; };
+		19EB2C5519FED53F00050817 /* dis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291619FEAEB500050817 /* dis.cpp */; };
+		19EB2C5619FED54400050817 /* spu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB294819FEAEB500050817 /* spu.cpp */; };
+		19EB2C5A19FED59200050817 /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2C5819FED58700050817 /* thread.cpp */; };
+		19EB2C5B19FED59D00050817 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB278B19FEAEB300050817 /* memory.cpp */; };
+		19EB2C5C19FED5A600050817 /* qtrecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB294E19FEAEB500050817 /* qtrecord.cpp */; };
+		19EB2C5D19FED5B400050817 /* streaminfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27B119FEAEB300050817 /* streaminfo.c */; };
+		19EB2C5E19FED5BA00050817 /* mednafen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB278919FEAEB300050817 /* mednafen.cpp */; };
+		19EB2C5F19FED5CB00050817 /* Fir_Resampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B1019FEAEB600050817 /* Fir_Resampler.cpp */; };
+		19EB2C6019FED5D400050817 /* sharedbook.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5219FEAEB600050817 /* sharedbook.c */; };
+		19EB2C6119FED5D900050817 /* Stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2219FEAEB600050817 /* Stream.cpp */; };
+		19EB2C6219FED5E600050817 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB279B19FEAEB300050817 /* crc32.c */; };
+		19EB2C6319FED5EB00050817 /* movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB279319FEAEB300050817 /* movie.cpp */; };
+		19EB2C6419FED5F600050817 /* CDAccess_Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25D219FEAEB200050817 /* CDAccess_Image.cpp */; };
+		19EB2C6519FED60400050817 /* gte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292219FEAEB500050817 /* gte.cpp */; };
+		19EB2C6619FED60A00050817 /* guncon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292C19FEAEB500050817 /* guncon.cpp */; };
+		19EB2C6719FED61700050817 /* text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8D19FEAEB600050817 /* text.cpp */; };
+		19EB2C6819FED62200050817 /* ConvertUTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2519FEAEB600050817 /* ConvertUTF.cpp */; };
+		19EB2C6919FED63A00050817 /* blz.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25EA19FEAEB200050817 /* blz.c */; };
+		19EB2C6A19FED64300050817 /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB268619FEAEB300050817 /* file.cpp */; };
+		19EB2C6B19FED65000050817 /* CDAccess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25CE19FEAEB200050817 /* CDAccess.cpp */; };
+		19EB2C6C19FED65800050817 /* justifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292E19FEAEB500050817 /* justifier.cpp */; };
+		19EB2C6D19FED66200050817 /* codebook.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3619FEAEB600050817 /* codebook.c */; };
+		19EB2C6E19FED66D00050817 /* stubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2C5719FED58700050817 /* stubs.cpp */; };
+		19EB2C6F19FED67A00050817 /* FileWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB268A19FEAEB300050817 /* FileWrapper.cpp */; };
+		19EB2C7019FED68A00050817 /* player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB290B19FEAEB400050817 /* player.cpp */; };
+		19EB2C7119FED69800050817 /* l-ec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25DE19FEAEB200050817 /* l-ec.cpp */; };
+		19EB2C7219FED6A100050817 /* settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB295A19FEAEB500050817 /* settings.cpp */; };
+		19EB2C7319FED6A900050817 /* trionan.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5F19FEAEB600050817 /* trionan.c */; };
+		19EB2C7419FED6B700050817 /* huffman.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB279E19FEAEB300050817 /* huffman.c */; };
+		19EB2C7519FED6C100050817 /* bitwise.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3219FEAEB600050817 /* bitwise.c */; };
+		19EB2C7619FED6C900050817 /* tblur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8B19FEAEB600050817 /* tblur.cpp */; };
+		19EB2C7719FED6CF00050817 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5519FEAEB600050817 /* vorbisfile.c */; };
+		19EB2C7819FED6DA00050817 /* minilzo.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25F119FEAEB200050817 /* minilzo.c */; };
+		19EB2C7919FED6E400050817 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291219FEAEB400050817 /* cpu.cpp */; };
+		19EB2C7A19FED6F300050817 /* requant.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB27AF19FEAEB300050817 /* requant.c */; };
+		19EB2C7B19FED6FB00050817 /* quicklz.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25F319FEAEB200050817 /* quicklz.c */; };
+		19EB2C7C19FED70500050817 /* surface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8919FEAEB600050817 /* surface.cpp */; };
+		19EB2C7D19FED70C00050817 /* Deinterlacer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B7319FEAEB600050817 /* Deinterlacer.cpp */; };
+		19EB2C7E19FED7F000050817 /* trim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2A19FEAEB600050817 /* trim.cpp */; };
+		19EB2C7F19FED7F900050817 /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293419FEAEB500050817 /* multitap.cpp */; };
+		19EB2C8019FED80400050817 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293219FEAEB500050817 /* mouse.cpp */; };
+		19EB2C8119FED81000050817 /* lec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25DF19FEAEB200050817 /* lec.cpp */; };
+		19EB2C8219FED82400050817 /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291819FEAEB500050817 /* dma.cpp */; };
+		19EB2C8319FED83500050817 /* tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2C19FEAEB600050817 /* tests.cpp */; };
+		19EB2C8419FED83E00050817 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB291019FEAEB400050817 /* cdc.cpp */; };
+		19EB2C8519FED8DB00050817 /* dualanalog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292619FEAEB500050817 /* dualanalog.cpp */; };
+		19EB2C8619FED8EC00050817 /* cdplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25C619FEAEB200050817 /* cdplay.cpp */; };
+		19EB2C8719FED8FB00050817 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB278619FEAEB300050817 /* md5.cpp */; };
+		19EB2C8819FED90C00050817 /* window.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B5719FEAEB600050817 /* window.c */; };
+		19EB2C8919FED91B00050817 /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB294C19FEAEB500050817 /* timer.cpp */; };
+		19EB2C8A19FED92300050817 /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B0A19FEAEB600050817 /* Blip_Buffer.cpp */; };
+		19EB2C8B19FED92E00050817 /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB292A19FEAEB500050817 /* gamepad.cpp */; };
+		19EB2C8C19FED94100050817 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25F619FEAEB200050817 /* unzip.c */; };
+		19EB2C8D19FED95900050817 /* resample.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB295419FEAEB500050817 /* resample.c */; };
+		19EB2C8E19FED96300050817 /* cdromif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25D619FEAEB200050817 /* cdromif.cpp */; };
+		19EB2C8F19FED96E00050817 /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB268419FEAEB300050817 /* error.cpp */; };
+		19EB2C9019FED97A00050817 /* info.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3E19FEAEB600050817 /* info.c */; };
+		19EB2C9119FED98700050817 /* resize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8519FEAEB600050817 /* resize.cpp */; };
+		19EB2C9219FED9FB00050817 /* WAVRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B1C19FEAEB600050817 /* WAVRecord.cpp */; };
+		19EB2C9319FEDA0100050817 /* block.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3319FEAEB600050817 /* block.c */; };
+		19EB2C9419FEDA0B00050817 /* memcard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB293019FEAEB500050817 /* memcard.cpp */; };
+		19EB2C9519FEDA1600050817 /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2019FEAEB600050817 /* state.cpp */; };
+		19EB2C9619FEDA2000050817 /* floor0.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3B19FEAEB600050817 /* floor0.c */; };
+		19EB2C9719FEDA2B00050817 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25EC19FEAEB200050817 /* ioapi.c */; };
+		19EB2C9819FEDA4F00050817 /* mdct.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B4719FEAEB600050817 /* mdct.c */; };
+		19EB2C9919FEDA6700050817 /* CDAccess_CCD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25D019FEAEB200050817 /* CDAccess_CCD.cpp */; };
+		19EB2C9A19FEDA7800050817 /* recover-raw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25E219FEAEB200050817 /* recover-raw.cpp */; };
+		19EB2C9B19FEDA7F00050817 /* scsicd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25E419FEAEB200050817 /* scsicd.cpp */; };
+		19EB2C9C19FEDA8800050817 /* font-data.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B7719FEAEB600050817 /* font-data.cpp */; };
+		19EB2C9D19FEDA9700050817 /* floor1.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B3C19FEAEB600050817 /* floor1.c */; };
+		19EB2C9E19FEDAA000050817 /* escape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B2719FEAEB600050817 /* escape.cpp */; };
+		19EB2C9F19FEDAA900050817 /* Stereo_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B1A19FEAEB600050817 /* Stereo_Buffer.cpp */; };
+		19EB2CA019FEDAB800050817 /* cputest.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25FA19FEAEB200050817 /* cputest.c */; };
+		19EB2CA119FEDABB00050817 /* x86_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25FF19FEAEB200050817 /* x86_cpu.c */; };
+		19EB2CA219FEDABD00050817 /* arm_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 19EB25F919FEAEB200050817 /* arm_cpu.c */; };
+		19EB2CA319FEDAC500050817 /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB260419FEAEB200050817 /* demo.cpp */; };
+		19EB2CA419FEDAD000050817 /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2B8219FEAEB600050817 /* primitives.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,7 +151,7 @@
 		19EB256319FEAA3E00050817 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		19EB256619FEAAD900050817 /* PVPSX-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPSX-Prefix.pch"; sourceTree = "<group>"; };
 		19EB256D19FEAB9400050817 /* PVPSXEmulatorCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPSXEmulatorCore.h; sourceTree = "<group>"; };
-		19EB256E19FEAB9400050817 /* PVPSXEmulatorCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVPSXEmulatorCore.m; sourceTree = "<group>"; };
+		19EB256E19FEAB9400050817 /* PVPSXEmulatorCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPSXEmulatorCore.mm; sourceTree = "<group>"; };
 		19EB25C619FEAEB200050817 /* cdplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cdplay.cpp; sourceTree = "<group>"; };
 		19EB25CA19FEAEB200050817 /* audioreader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audioreader.cpp; sourceTree = "<group>"; };
 		19EB25CB19FEAEB200050817 /* audioreader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audioreader.h; sourceTree = "<group>"; };
@@ -1342,6 +1453,16 @@
 		19EB2BB519FEAEB700050817 /* v30mz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = v30mz.cpp; sourceTree = "<group>"; };
 		19EB2BB619FEAEB700050817 /* v30mz.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = v30mz.h; sourceTree = "<group>"; };
 		19EB2BB819FEAEB700050817 /* wswan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wswan.h; sourceTree = "<group>"; };
+		19EB2C2A19FEB6AE00050817 /* CHANGES */ = {isa = PBXFileReference; lastKnownFileType = text; path = CHANGES; sourceTree = "<group>"; };
+		19EB2C2B19FEB6AE00050817 /* MEDNAFEN-MODIFICATIONS */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MEDNAFEN-MODIFICATIONS"; sourceTree = "<group>"; };
+		19EB2C2C19FEB6AE00050817 /* trio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trio.h; sourceTree = "<group>"; };
+		19EB2C2D19FEB6AE00050817 /* triodef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triodef.h; sourceTree = "<group>"; };
+		19EB2C2E19FEB6AE00050817 /* trionan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trionan.h; sourceTree = "<group>"; };
+		19EB2C2F19FEB6AE00050817 /* triop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triop.h; sourceTree = "<group>"; };
+		19EB2C3019FEB6AE00050817 /* triostr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
+		19EB2C5719FED58700050817 /* stubs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = stubs.cpp; sourceTree = "<group>"; };
+		19EB2C5819FED58700050817 /* thread.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = thread.cpp; sourceTree = "<group>"; };
+		19EB2C5919FED58700050817 /* thread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1355,7 +1476,6 @@
 				19EB255E19FEAA2C00050817 /* CoreAudio.framework in Frameworks */,
 				19EB255C19FEAA2700050817 /* AudioToolbox.framework in Frameworks */,
 				19EB255A19FEAA2000050817 /* CoreGraphics.framework in Frameworks */,
-				19EB255819FEAA1900050817 /* libPVSupport.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1413,14 +1533,18 @@
 		19EB256B19FEAB9400050817 /* PSX */ = {
 			isa = PBXGroup;
 			children = (
-				19EB25C419FEAEB200050817 /* PSXCore */,
+				19EB2C2819FEB6AE00050817 /* include */,
+				19EB25C419FEAEB200050817 /* mednafen */,
 				19EB256D19FEAB9400050817 /* PVPSXEmulatorCore.h */,
-				19EB256E19FEAB9400050817 /* PVPSXEmulatorCore.m */,
+				19EB256E19FEAB9400050817 /* PVPSXEmulatorCore.mm */,
+				19EB2C5719FED58700050817 /* stubs.cpp */,
+				19EB2C5819FED58700050817 /* thread.cpp */,
+				19EB2C5919FED58700050817 /* thread.h */,
 			);
 			path = PSX;
 			sourceTree = "<group>";
 		};
-		19EB25C419FEAEB200050817 /* PSXCore */ = {
+		19EB25C419FEAEB200050817 /* mednafen */ = {
 			isa = PBXGroup;
 			children = (
 				19EB25C519FEAEB200050817 /* cdplay */,
@@ -1519,7 +1643,7 @@
 				19EB2B9219FEAEB600050817 /* video.h */,
 				19EB2B9319FEAEB600050817 /* wswan */,
 			);
-			path = PSXCore;
+			path = mednafen;
 			sourceTree = "<group>";
 		};
 		19EB25C519FEAEB200050817 /* cdplay */ = {
@@ -3784,6 +3908,28 @@
 			path = dis;
 			sourceTree = "<group>";
 		};
+		19EB2C2819FEB6AE00050817 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				19EB2C2919FEB6AE00050817 /* trio */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		19EB2C2919FEB6AE00050817 /* trio */ = {
+			isa = PBXGroup;
+			children = (
+				19EB2C2A19FEB6AE00050817 /* CHANGES */,
+				19EB2C2B19FEB6AE00050817 /* MEDNAFEN-MODIFICATIONS */,
+				19EB2C2C19FEB6AE00050817 /* trio.h */,
+				19EB2C2D19FEB6AE00050817 /* triodef.h */,
+				19EB2C2E19FEB6AE00050817 /* trionan.h */,
+				19EB2C2F19FEB6AE00050817 /* triop.h */,
+				19EB2C3019FEB6AE00050817 /* triostr.h */,
+			);
+			path = trio;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3840,7 +3986,119 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				19EB2BB919FEAED800050817 /* cdplay.cpp in Sources */,
+				19EB2C3319FEBF9700050817 /* PVPSXEmulatorCore.mm in Sources */,
+				19EB2C2719FEB67E00050817 /* video.cpp in Sources */,
+				19EB2BFD19FEB53A00050817 /* negcon.cpp in Sources */,
+				19EB2C3419FECFCC00050817 /* galois.cpp in Sources */,
+				19EB2C3519FECFE200050817 /* PSFLoader.cpp in Sources */,
+				19EB2C3619FECFF800050817 /* res012.c in Sources */,
+				19EB2C3719FED00900050817 /* psx.cpp in Sources */,
+				19EB2C3819FED02100050817 /* OwlResampler.cpp in Sources */,
+				19EB2C3919FED03300050817 /* CDUtility.cpp in Sources */,
+				19EB2C3A19FED1E100050817 /* crc32.cpp in Sources */,
+				19EB2C3B19FED1F000050817 /* sio.cpp in Sources */,
+				19EB2C3C19FED20200050817 /* mapping0.c in Sources */,
+				19EB2C3D19FED20900050817 /* registry.c in Sources */,
+				19EB2C3E19FED21100050817 /* okiadpcm.cpp in Sources */,
+				19EB2C3F19FED24000050817 /* mpc_demux.c in Sources */,
+				19EB2C4019FED25C00050817 /* mdec.cpp in Sources */,
+				19EB2C4119FED28A00050817 /* audioreader.cpp in Sources */,
+				19EB2C4219FED29600050817 /* general.cpp in Sources */,
+				19EB2C4319FED2A200050817 /* frontio.cpp in Sources */,
+				19EB2C4419FED47E00050817 /* framing.c in Sources */,
+				19EB2C4519FED48600050817 /* triostr.c in Sources */,
+				19EB2C4619FED48E00050817 /* png.cpp in Sources */,
+				19EB2C4719FED49700050817 /* synthesis.c in Sources */,
+				19EB2C4819FED4A500050817 /* endian.cpp in Sources */,
+				19EB2C4919FED4A900050817 /* FileStream.cpp in Sources */,
+				19EB2C4A19FED4C000050817 /* gpu.cpp in Sources */,
+				19EB2C4B19FED4CC00050817 /* synth_filter.c in Sources */,
+				19EB2C4C19FED4D300050817 /* MemoryStream.cpp in Sources */,
+				19EB2C4D19FED4E000050817 /* trio.c in Sources */,
+				19EB2C4E19FED4EC00050817 /* netplay.cpp in Sources */,
+				19EB2C4F19FED4F200050817 /* debug.cpp in Sources */,
+				19EB2C5019FED4FE00050817 /* dualshock.cpp in Sources */,
+				19EB2C5119FED50800050817 /* mpc_decoder.c in Sources */,
+				19EB2C5219FED50C00050817 /* mpc_bits_reader.c in Sources */,
+				19EB2C5319FED51900050817 /* mempatcher.cpp in Sources */,
+				19EB2C5419FED53300050817 /* irq.cpp in Sources */,
+				19EB2C5519FED53F00050817 /* dis.cpp in Sources */,
+				19EB2C5619FED54400050817 /* spu.cpp in Sources */,
+				19EB2C5A19FED59200050817 /* thread.cpp in Sources */,
+				19EB2C5B19FED59D00050817 /* memory.cpp in Sources */,
+				19EB2C5C19FED5A600050817 /* qtrecord.cpp in Sources */,
+				19EB2C5D19FED5B400050817 /* streaminfo.c in Sources */,
+				19EB2C5E19FED5BA00050817 /* mednafen.cpp in Sources */,
+				19EB2C5F19FED5CB00050817 /* Fir_Resampler.cpp in Sources */,
+				19EB2C6019FED5D400050817 /* sharedbook.c in Sources */,
+				19EB2C6119FED5D900050817 /* Stream.cpp in Sources */,
+				19EB2C6219FED5E600050817 /* crc32.c in Sources */,
+				19EB2C6319FED5EB00050817 /* movie.cpp in Sources */,
+				19EB2C6419FED5F600050817 /* CDAccess_Image.cpp in Sources */,
+				19EB2C6519FED60400050817 /* gte.cpp in Sources */,
+				19EB2C6619FED60A00050817 /* guncon.cpp in Sources */,
+				19EB2C6719FED61700050817 /* text.cpp in Sources */,
+				19EB2C6819FED62200050817 /* ConvertUTF.cpp in Sources */,
+				19EB2C6919FED63A00050817 /* blz.c in Sources */,
+				19EB2C6A19FED64300050817 /* file.cpp in Sources */,
+				19EB2C6B19FED65000050817 /* CDAccess.cpp in Sources */,
+				19EB2C6C19FED65800050817 /* justifier.cpp in Sources */,
+				19EB2C6D19FED66200050817 /* codebook.c in Sources */,
+				19EB2C6E19FED66D00050817 /* stubs.cpp in Sources */,
+				19EB2C6F19FED67A00050817 /* FileWrapper.cpp in Sources */,
+				19EB2C7019FED68A00050817 /* player.cpp in Sources */,
+				19EB2C7119FED69800050817 /* l-ec.cpp in Sources */,
+				19EB2C7219FED6A100050817 /* settings.cpp in Sources */,
+				19EB2C7319FED6A900050817 /* trionan.c in Sources */,
+				19EB2C7419FED6B700050817 /* huffman.c in Sources */,
+				19EB2C7519FED6C100050817 /* bitwise.c in Sources */,
+				19EB2C7619FED6C900050817 /* tblur.cpp in Sources */,
+				19EB2C7719FED6CF00050817 /* vorbisfile.c in Sources */,
+				19EB2C7819FED6DA00050817 /* minilzo.c in Sources */,
+				19EB2C7B19FED6FB00050817 /* quicklz.c in Sources */,
+				19EB2C7919FED6E400050817 /* cpu.cpp in Sources */,
+				19EB2C7A19FED6F300050817 /* requant.c in Sources */,
+				19EB2C7C19FED70500050817 /* surface.cpp in Sources */,
+				19EB2C7D19FED70C00050817 /* Deinterlacer.cpp in Sources */,
+				19EB2C7E19FED7F000050817 /* trim.cpp in Sources */,
+				19EB2C7F19FED7F900050817 /* multitap.cpp in Sources */,
+				19EB2C8019FED80400050817 /* mouse.cpp in Sources */,
+				19EB2C8119FED81000050817 /* lec.cpp in Sources */,
+				19EB2C8219FED82400050817 /* dma.cpp in Sources */,
+				19EB2C8319FED83500050817 /* tests.cpp in Sources */,
+				19EB2C8419FED83E00050817 /* cdc.cpp in Sources */,
+				19EB2C8519FED8DB00050817 /* dualanalog.cpp in Sources */,
+				19EB2C8619FED8EC00050817 /* cdplay.cpp in Sources */,
+				19EB2C8719FED8FB00050817 /* md5.cpp in Sources */,
+				19EB2C8819FED90C00050817 /* window.c in Sources */,
+				19EB2C8919FED91B00050817 /* timer.cpp in Sources */,
+				19EB2C8A19FED92300050817 /* Blip_Buffer.cpp in Sources */,
+				19EB2C8B19FED92E00050817 /* gamepad.cpp in Sources */,
+				19EB2C8C19FED94100050817 /* unzip.c in Sources */,
+				19EB2C8D19FED95900050817 /* resample.c in Sources */,
+				19EB2C8E19FED96300050817 /* cdromif.cpp in Sources */,
+				19EB2C8F19FED96E00050817 /* error.cpp in Sources */,
+				19EB2C9019FED97A00050817 /* info.c in Sources */,
+				19EB2C9119FED98700050817 /* resize.cpp in Sources */,
+				19EB2C9219FED9FB00050817 /* WAVRecord.cpp in Sources */,
+				19EB2C9319FEDA0100050817 /* block.c in Sources */,
+				19EB2C9419FEDA0B00050817 /* memcard.cpp in Sources */,
+				19EB2C9519FEDA1600050817 /* state.cpp in Sources */,
+				19EB2C9619FEDA2000050817 /* floor0.c in Sources */,
+				19EB2C9719FEDA2B00050817 /* ioapi.c in Sources */,
+				19EB2C9819FEDA4F00050817 /* mdct.c in Sources */,
+				19EB2C9919FEDA6700050817 /* CDAccess_CCD.cpp in Sources */,
+				19EB2C9A19FEDA7800050817 /* recover-raw.cpp in Sources */,
+				19EB2C9B19FEDA7F00050817 /* scsicd.cpp in Sources */,
+				19EB2C9C19FEDA8800050817 /* font-data.cpp in Sources */,
+				19EB2C9D19FEDA9700050817 /* floor1.c in Sources */,
+				19EB2C9E19FEDAA000050817 /* escape.cpp in Sources */,
+				19EB2C9F19FEDAA900050817 /* Stereo_Buffer.cpp in Sources */,
+				19EB2CA019FEDAB800050817 /* cputest.c in Sources */,
+				19EB2CA119FEDABB00050817 /* x86_cpu.c in Sources */,
+				19EB2CA219FEDABD00050817 /* arm_cpu.c in Sources */,
+				19EB2CA319FEDAC500050817 /* demo.cpp in Sources */,
+				19EB2CA419FEDAD000050817 /* primitives.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3924,9 +4182,53 @@
 		19EB255119FEA8BD00050817 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Provenance-fgixpokdlrknrhcfvtyufeqfyola/Build/Products/Debug-iphoneos",
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				GCC_PREFIX_HEADER = "PVPSX/PVPSX-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../PVSupport/**",
+					"\"$(SRCROOT)/PVPSX/PSX\"",
+					"\"$(SRCROOT)/PVPSX/PSX/include\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_cpu\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_misc\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_sound\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_video\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = (
+					"-DMEDNAFEN_VERSION_NUMERIC=0x000936",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DWANT_PSX_EMU",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=4",
+					"-DSIZEOF_LONG_LONG=8",
+					"-DPACKAGE=\\\"mednafen\\\"",
+					"-DMEDNAFEN_VERSION=\\\"0.9.36.4\\\"",
+					"-DSIZEOF_DOUBLE=8",
+					"-DHAVE_MKDIR",
+					"-fPIC",
+					"-funroll-loops",
+					"-fno-strict-overflow",
+					"-DMPC_FIXED_POINT",
+					"-DPSS_STYLE=1",
+					"-DWANT_PSX_EMU",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=8",
+					"-DSIZEOF_LONG_LONG=8",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3937,9 +4239,54 @@
 		19EB255219FEA8BD00050817 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(USER_LIBRARY_DIR)/Developer/Xcode/DerivedData/Provenance-fgixpokdlrknrhcfvtyufeqfyola/Build/Products/Debug-iphoneos",
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREFIX_HEADER = "PVPSX/PVPSX-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../PVSupport/**",
+					"\"$(SRCROOT)/PVPSX/PSX\"",
+					"\"$(SRCROOT)/PVPSX/PSX/include\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_cpu\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_misc\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_sound\"",
+					"\"$(SRCROOT)/PVPSX/PSX/mednafen/hw_video\"",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = (
+					"-DMEDNAFEN_VERSION_NUMERIC=0x000936",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DWANT_PSX_EMU",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=4",
+					"-DSIZEOF_LONG_LONG=8",
+					"-DPACKAGE=\\\"mednafen\\\"",
+					"-DMEDNAFEN_VERSION=\\\"0.9.36.4\\\"",
+					"-DSIZEOF_DOUBLE=8",
+					"-DHAVE_MKDIR",
+					"-fPIC",
+					"-funroll-loops",
+					"-fno-strict-overflow",
+					"-DMPC_FIXED_POINT",
+					"-DPSS_STYLE=1",
+					"-DWANT_PSX_EMU",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=8",
+					"-DSIZEOF_LONG_LONG=8",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

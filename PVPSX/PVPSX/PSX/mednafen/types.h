@@ -28,7 +28,8 @@
   /* Plain Win32 */
   #define MDFN_mkdir(a, b) _mkdir(a)
  #else
-  #error "Don't know how to create a directory on this system."
+  #define MDFN_mkdir(a, b)
+//#error "Don't know how to create a directory on this system."
  #endif
 #endif
 

@@ -26,6 +26,7 @@
 #include "cputest.h"
 
 /* ebx saving is necessary for PIC. gcc seems unable to see it alone */
+#if ARCH_X86
 #define cpuid(index,eax,ebx,ecx,edx)\
     __asm__ volatile\
         ("mov %%"REG_b", %%"REG_S"\n\t"\
@@ -37,6 +38,10 @@
 
 #define xgetbv(index,eax,edx)                                   \
     __asm__ (".byte 0x0f, 0x01, 0xd0" : "=a"(eax), "=d"(edx) : "c" (index))
+#else
+#define cpuid(index,eax,ebx,ecx,edx)
+#define xgetbv(index,eax,edx) 
+#endif
 
 /* Function to test if multimedia instructions are supported...  */
 int ff_get_cpu_flags_x86(void)

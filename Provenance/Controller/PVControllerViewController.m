@@ -490,7 +490,7 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 	[self.leftShoulderButton setHidden:YES];
 	[self.rightShoulderButton setHidden:YES];
 	[self.dPad setHidden:YES];
-	[self.buttonGroup setHidden:YES];
+	//[self.buttonGroup setHidden:YES];
 	[self.startButton setHidden:YES];
 	[self.selectButton setHidden:YES];
 	

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		19EB2C3219FEBC2700050817 /* libPVPSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19EB2C3119FEBC2700050817 /* libPVPSX.a */; };
+		19EB2CA719FF197500050817 /* PVPSXControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19EB2CA619FF197500050817 /* PVPSXControllerViewController.m */; };
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A517F7627E00F1CB0D /* libPVSNES.a */; };
@@ -66,6 +68,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		19EB2C3119FEBC2700050817 /* libPVPSX.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVPSX.a; path = "PVPSX/build/Debug-iphoneos/libPVPSX.a"; sourceTree = "<group>"; };
+		19EB2CA519FF197500050817 /* PVPSXControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPSXControllerViewController.h; sourceTree = "<group>"; };
+		19EB2CA619FF197500050817 /* PVPSXControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVPSXControllerViewController.m; sourceTree = "<group>"; };
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
 		1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorViewController.h; sourceTree = "<group>"; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorViewController.m; sourceTree = "<group>"; };
@@ -188,6 +193,7 @@
 				1A2A95AC17F7686400F1CB0D /* libPVSupport.a in Frameworks */,
 				1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */,
 				1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */,
+				19EB2C3219FEBC2700050817 /* libPVPSX.a in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
@@ -271,6 +277,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				19EB2C3119FEBC2700050817 /* libPVPSX.a */,
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
 				1A2A95AB17F7686400F1CB0D /* libPVSupport.a */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
@@ -337,6 +344,8 @@
 				1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */,
 				42E63AE717E12ECE00FE7098 /* PVSNESControllerViewController.h */,
 				42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */,
+				19EB2CA519FF197500050817 /* PVPSXControllerViewController.h */,
+				19EB2CA619FF197500050817 /* PVPSXControllerViewController.m */,
 				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
 				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
 				1A47C96117BC310700C27644 /* JSButton.h */,
@@ -459,7 +468,7 @@
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = 63497P68S6;
+						DevelopmentTeam = YUT2JGW99K;
 					};
 				};
 			};
@@ -507,6 +516,7 @@
 				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
+				19EB2CA719FF197500050817 /* PVPSXControllerViewController.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
@@ -618,13 +628,15 @@
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
+					"$(SRCROOT)/PVPSX/**",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
+					"\"$(SRCROOT)/Provenance/zipkit\"",
+					"\"$(PROJECT_DIR)/PVPSX/build/Debug-iphoneos\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -645,6 +657,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -653,13 +666,15 @@
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
+					"$(SRCROOT)/PVPSX/**",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
+					"\"$(SRCROOT)/Provenance/zipkit\"",
+					"\"$(PROJECT_DIR)/PVPSX/build/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
@@ -713,13 +728,15 @@
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
+					"$(SRCROOT)/PVPSX/**",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
+					"\"$(SRCROOT)/Provenance/zipkit\"",
+					"\"$(PROJECT_DIR)/PVPSX/build/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";

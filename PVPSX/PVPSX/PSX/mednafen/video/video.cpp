@@ -123,7 +123,7 @@ void MDFN_DispMessage(const char *format, ...) throw()
 
 void MDFN_ResetMessages(void)
 {
- MDFND_DispMessage(NULL);
+ //MDFND_DispMessage(NULL);
 }
 
 

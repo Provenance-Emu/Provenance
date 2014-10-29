@@ -35,7 +35,9 @@ int cputest_get_flags(void)
     if (checked)
         return flags;
 
-//    if (ARCH_ARM) flags = ff_get_cpu_flags_arm();
+#ifdef ARCH_ARM
+    flags = ff_get_cpu_flags_arm();
+#endif
 #if ARCH_POWERPC
     flags = ff_get_cpu_flags_ppc();
 #endif

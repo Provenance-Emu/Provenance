@@ -129,6 +129,8 @@
 	
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
+	//GLenum glerror = glGetError();
+	//NSLog(@"tex error: %d", glerror);
 		
 	if (texture)
 	{

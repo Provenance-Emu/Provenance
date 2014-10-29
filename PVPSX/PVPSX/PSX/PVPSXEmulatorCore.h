@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 David Green. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "PVEmulatorCore.h"
 
 typedef NS_ENUM(NSUInteger, PVPSXButton)
@@ -41,8 +41,8 @@ typedef NS_ENUM(NSUInteger, PVPSXButton)
 
 @interface PVPSXEmulatorCore : PVEmulatorCore
 
-- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value;
-- (void)didPushPSXButton:(PVPSXButton)button;
-- (void)didReleasePSXButton:(PVPSXButton)button;
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player;
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 
 @end

@@ -11,6 +11,8 @@
 #import "PVGenesisControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
 #import "PVSNESControllerViewController.h"
+#import "PVPSXEmulatorCore.h"
+#import "PVPSXControllerViewController.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
@@ -36,6 +38,7 @@ NSString * const PVGameGearSystemIdentifier = @"com.provenance.gamegear";
 NSString * const PVMasterSystemSystemIdentifier = @"com.provenance.mastersystem";
 NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
+NSString * const PVPSXSystemIdentifier = @"com.provenance.psx";
 
 @interface PVEmulatorConfiguration ()
 
@@ -89,6 +92,9 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	else if ([systemID isEqualToString:PVSNESSystemIdentifier])
 	{
 		core = [[PVSNESEmulatorCore alloc] init];
+	} else if ([systemID isEqualToString:PVPSXSystemIdentifier])
+	{
+		core = [[PVPSXEmulatorCore alloc] init];
 	}
 	
 	return core;
@@ -108,6 +114,8 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	else if ([systemID isEqualToString:PVSNESSystemIdentifier])
 	{
 		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+	} else if ([systemID isEqualToString:PVPSXSystemIdentifier]) {
+		controller = [[PVPSXControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
 	
 	return controller;

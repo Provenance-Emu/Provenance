@@ -35,7 +35,7 @@
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
 
-- (uint16_t *)videoBuffer;
+- (const void *)videoBuffer;
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;
