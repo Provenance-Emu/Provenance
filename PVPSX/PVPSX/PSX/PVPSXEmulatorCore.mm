@@ -278,7 +278,7 @@ static void emulation_run()
 	////	double toSec = 1e-09 * (timebase.numer / timebase.denom);
 	////	NSTimeInterval gameTime = mach_absolute_time() * toSec;
 	
-	OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
+	OESetThreadRealtime(gameInterval, 0.005, 0.01666); // guessed from bsnes
 	while (!shouldStop)
 	{
 		if (self.shouldResyncTime)
@@ -304,7 +304,8 @@ static void emulation_run()
 
 - (NSTimeInterval)frameInterval
 {
-	return mednafenCoreTiming ?: 60;
+	NSLog(@"FrameInterval %f", mednafenCoreTiming);
+	return 59.97;//mednafenCoreTiming ?: 60;
 }
 
 # pragma mark - Video
