@@ -2,7 +2,7 @@
 ### An iOS Frontend for multiple emulators, currently supporting Sega Genesis, Game Gear and SNES
 
 Genesis/Game Gear emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
-SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu) 
+SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu). Playstation emulation is provided by [mednafen](http://mednafen.sourceforge.net). The specific implementation used in Provenance is based on the Playstation emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
 
 ###Why 'Provenance'?
 
@@ -57,6 +57,11 @@ Sega Game Gear
 Super Nintendo
 --------------
 ![Provenance running Chrono Trigger](http://jamesaddyman.com/provenance/screenshots/provenance4.png)  
+
+Sony Playstation
+--------------
+![Provenance running Final Fantasy VII](http://davidtgreen.net/gallery/uploads/big/d2641dcf794a0ac57b8112755b282c10.jpg)  
+
 
 #Provenance License (Simplified BSD)
 
