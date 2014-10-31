@@ -164,7 +164,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		[self.menuButton setHidden:YES];
 	}
 	
-	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
+	NSString *saveStatePath = [self saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
@@ -234,11 +234,6 @@ void uncaughtExceptionHandler(NSException *exception)
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-	return UIInterfaceOrientationLandscapeRight;
 }
 
 - (NSUInteger)supportedInterfaceOrientations

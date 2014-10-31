@@ -12,9 +12,9 @@
 
 @import GameController;
 
-extern NSString * const PVSavedDPadOriginKey;
-extern NSString * const PVSavedButtonOriginKey;
-extern NSString * const PVSavedControllerPositionsKey;
+extern NSString * const PVSavedDPadFrameKey;
+extern NSString * const PVSavedButtonFrameKey;
+extern NSString * const PVSavedControllerFramesKey;
 
 @class PVControllerViewController, PVEmulatorCore;
 

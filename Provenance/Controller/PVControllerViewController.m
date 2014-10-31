@@ -14,9 +14,9 @@
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 
-NSString * const PVSavedDPadOriginKey = @"PVSavedDPadOriginKey";
-NSString * const PVSavedButtonOriginKey = @"PVSavedButtonOriginKey";
-NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey";
+NSString * const PVSavedDPadFrameKey = @"PVSavedDPadFrameKey";
+NSString * const PVSavedButtonFrameKey = @"PVSavedButtonFrameKey";
+NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 @interface PVControllerViewController ()
 
@@ -30,7 +30,10 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 @property (nonatomic, strong) JSButton *selectButton;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
+@property (nonatomic, strong) UIPinchGestureRecognizer *dpadPinchRecognizer;
+
 @property (nonatomic, strong) UIPanGestureRecognizer *buttonPanRecognizer;
+@property (nonatomic, strong) UIPinchGestureRecognizer *buttonPinchRecognizer;
 
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
@@ -97,147 +100,14 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 			if ([[GCController controllers] count] == 0)
 			{
 				NSLog(@"No controllers found");
-//				UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Controllers Found"
-//																message:@"Make sure your game controller is turned on and discoverable and that bluetooth is enabled on your iOS Device"
-//															   delegate:nil
-//													  cancelButtonTitle:@"OK"
-//													  otherButtonTitles:nil];
-//				[alert show];
 			}
 		}];
-	}
-	
-	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
-	
-	for (NSDictionary *control in self.controlLayout)
-	{
-		NSString *controlType = [control objectForKey:PVControlTypeKey];
-		
-		if ([controlType isEqualToString:PVDPad])
-		{
-			CGFloat xPadding = 5;
-			CGFloat yPadding = 5;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGPoint dPadOrigin = CGPointMake(xPadding, [[self view] bounds].size.height - size.height - yPadding);
-			
-            NSDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] objectForKey:self.systemIdentifier];
-			NSString *savedDPadOrigin = [savedControllerPositions objectForKey:PVSavedDPadOriginKey];
-			if ([savedDPadOrigin length])
-			{
-				CGPoint dPadDelta = CGPointFromString(savedDPadOrigin);
-				dPadOrigin = CGPointMake(dPadDelta.x, self.view.bounds.size.height - dPadDelta.y);
-			}
-			
-			self.dPad = [[JSDPad alloc] initWithFrame:CGRectMake(dPadOrigin.x, dPadOrigin.y, size.width, size.height)];
-			[self.dPad setDelegate:self];
-			[self.dPad setAlpha:alpha];
-			[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
-			[self.view addSubview:self.dPad];
-		}
-		else if ([controlType isEqualToString:PVButtonGroup])
-		{
-			CGFloat xPadding = 5;
-			CGFloat yPadding = 5;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGPoint buttonsOrigin = CGPointMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding);
-			
-            NSDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] objectForKey:self.systemIdentifier];
-			NSString *savedButtonOrigin = [savedControllerPositions objectForKey:PVSavedButtonOriginKey];
-			if ([savedButtonOrigin length])
-			{
-				CGPoint buttonsDelta = CGPointFromString(savedButtonOrigin);
-				buttonsOrigin = CGPointMake(self.view.bounds.size.width - buttonsDelta.x, self.view.bounds.size.height - buttonsDelta.y);
-			}
-			
-			self.buttonGroup = [[UIView alloc] initWithFrame:CGRectMake(buttonsOrigin.x, buttonsOrigin.y, size.width, size.height)];
-			[self.buttonGroup setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
-			
-			NSArray *groupedButtons = [control objectForKey:PVGroupedButtonsKey];
-			for (NSDictionary *groupedButton in groupedButtons)
-			{
-				CGRect buttonFrame = CGRectFromString([groupedButton objectForKey:PVControlFrameKey]);
-				JSButton *button = [[JSButton alloc] initWithFrame:buttonFrame];
-				[[button titleLabel] setText:[groupedButton objectForKey:PVControlTitleKey]];
-				[button setBackgroundImage:[UIImage imageNamed:@"button"]];
-				[button setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
-				[button setDelegate:self];
-				[self.buttonGroup addSubview:button];
-			}
-			
-			PVButtonGroupOverlayView *buttonOverlay = [[PVButtonGroupOverlayView alloc] initWithButtons:[self.buttonGroup subviews]];
-			[self.buttonGroup addSubview:buttonOverlay];
-			[self.buttonGroup setAlpha:alpha];
-			[self.view addSubview:self.buttonGroup];
-		}
-		else if ([controlType isEqualToString:PVLeftShoulderButton])
-		{
-			CGFloat xPadding = 10;
-			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			self.leftShoulderButton = [[JSButton alloc] initWithFrame:CGRectMake(xPadding, yPadding, size.width, size.height)];
-			[[self.leftShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-			[self.leftShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-			[self.leftShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-			[self.leftShoulderButton setDelegate:self];
-			[self.leftShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-			[self.leftShoulderButton setAlpha:alpha];
-			[self.leftShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
-			[self.view addSubview:self.leftShoulderButton];
-		}
-		else if ([controlType isEqualToString:PVRightShoulderButton])
-		{
-			CGFloat xPadding = 10;
-			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			self.rightShoulderButton = [[JSButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width - size.width - xPadding, yPadding, size.width, size.height)];
-			[[self.rightShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-			[self.rightShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-			[self.rightShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-			[self.rightShoulderButton setDelegate:self];
-			[self.rightShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-			[self.rightShoulderButton setAlpha:alpha];
-			[self.rightShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
-			[self.view addSubview:self.rightShoulderButton];
-		}
-		else if ([controlType isEqualToString:PVStartButton])
-		{
-			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			self.startButton = [[JSButton alloc] initWithFrame:CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - size.height - yPadding, size.width, size.height)];
-			[[self.startButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-			[self.startButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-			[self.startButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-			[self.startButton setDelegate:self];
-			[self.startButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-			[self.startButton setAlpha:alpha];
-			[self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
-			[self.view addSubview:self.startButton];
-		}
-		else if ([controlType isEqualToString:PVSelectButton])
-		{
-			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			self.selectButton = [[JSButton alloc] initWithFrame:CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - (size.height * 2) - (yPadding * 2), size.width, size.height)];
-			[[self.selectButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-			[self.selectButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-			[self.selectButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-			[self.selectButton setDelegate:self];
-			[self.selectButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-			[self.selectButton setAlpha:alpha];
-			[self.selectButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
-			[self.view addSubview:self.selectButton];
-		}
 	}
 	
 	if (self.gameController)
 	{
 		[self setupGameController];
 	}
-}
-
-- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
-{
-	return UIInterfaceOrientationLandscapeRight;
 }
 
 - (NSUInteger)supportedInterfaceOrientations
@@ -250,6 +120,181 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 	[super didMoveToParentViewController:parent];
 	
 	[self.view setFrame:[[self.view superview] bounds]];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
+    
+    for (NSDictionary *control in self.controlLayout)
+    {
+        NSString *controlType = [control objectForKey:PVControlTypeKey];
+        
+        if ([controlType isEqualToString:PVDPad])
+        {
+            CGFloat xPadding = 5;
+            CGFloat yPadding = 5;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect dPadFrame = CGRectMake(xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
+            
+            NSDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] objectForKey:self.systemIdentifier];
+            NSString *savedDPadFrame = [savedControllerFrames objectForKey:PVSavedDPadFrameKey];
+            if ([savedDPadFrame length])
+            {
+                dPadFrame = CGRectFromString(savedDPadFrame);
+            }
+            
+            if (!self.dPad)
+            {
+                self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
+                [self.dPad setDelegate:self];
+                [self.dPad setAlpha:alpha];
+                [self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+                [self.view addSubview:self.dPad];
+            }
+            else
+            {
+                [self.dPad setFrame:dPadFrame];
+            }
+        }
+        else if ([controlType isEqualToString:PVButtonGroup])
+        {
+            CGFloat xPadding = 5;
+            CGFloat yPadding = 5;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect buttonsFrame = CGRectMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
+            
+            NSDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] objectForKey:self.systemIdentifier];
+            NSString *savedButtonFrame = [savedControllerFrames objectForKey:PVSavedButtonFrameKey];
+            if ([savedButtonFrame length])
+            {
+                buttonsFrame = CGRectFromString(savedButtonFrame);
+            }
+            
+            if (!self.buttonGroup)
+            {
+                self.buttonGroup = [[UIView alloc] initWithFrame:buttonsFrame];
+                [self.buttonGroup setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin];
+                
+                NSArray *groupedButtons = [control objectForKey:PVGroupedButtonsKey];
+                for (NSDictionary *groupedButton in groupedButtons)
+                {
+                    CGRect buttonFrame = CGRectFromString([groupedButton objectForKey:PVControlFrameKey]);
+                    JSButton *button = [[JSButton alloc] initWithFrame:buttonFrame];
+                    [[button titleLabel] setText:[groupedButton objectForKey:PVControlTitleKey]];
+                    [button setBackgroundImage:[UIImage imageNamed:@"button"]];
+                    [button setBackgroundImagePressed:[UIImage imageNamed:@"button-pressed"]];
+                    [button setDelegate:self];
+                    [self.buttonGroup addSubview:button];
+                }
+                
+                PVButtonGroupOverlayView *buttonOverlay = [[PVButtonGroupOverlayView alloc] initWithButtons:[self.buttonGroup subviews]];
+                [self.buttonGroup addSubview:buttonOverlay];
+                [self.buttonGroup setAlpha:alpha];
+                [self.view addSubview:self.buttonGroup];
+            }
+            else
+            {
+                [self.buttonGroup setFrame:buttonsFrame];
+            }
+        }
+        else if ([controlType isEqualToString:PVLeftShoulderButton])
+        {
+            CGFloat xPadding = 10;
+            CGFloat yPadding = 10;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, size.width, size.height);
+            
+            if (!self.leftShoulderButton)
+            {
+                self.leftShoulderButton = [[JSButton alloc] initWithFrame:leftShoulderFrame];
+                [[self.leftShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.leftShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.leftShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.leftShoulderButton setDelegate:self];
+                [self.leftShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.leftShoulderButton setAlpha:alpha];
+                [self.leftShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+                [self.view addSubview:self.leftShoulderButton];
+            }
+            else
+            {
+                [self.leftShoulderButton setFrame:leftShoulderFrame];
+            }
+        }
+        else if ([controlType isEqualToString:PVRightShoulderButton])
+        {
+            CGFloat xPadding = 10;
+            CGFloat yPadding = 10;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - size.width - xPadding, yPadding, size.width, size.height);
+            
+            if (!self.rightShoulderButton)
+            {
+                self.rightShoulderButton = [[JSButton alloc] initWithFrame:rightShoulderFrame];
+                [[self.rightShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.rightShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.rightShoulderButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.rightShoulderButton setDelegate:self];
+                [self.rightShoulderButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.rightShoulderButton setAlpha:alpha];
+                [self.rightShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+                [self.view addSubview:self.rightShoulderButton];
+            }
+            else
+            {
+                [self.rightShoulderButton setFrame:rightShoulderFrame];
+            }
+        }
+        else if ([controlType isEqualToString:PVStartButton])
+        {
+            CGFloat yPadding = 10;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect startFrame = CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - size.height - yPadding, size.width, size.height);
+            
+            if (!self.startButton)
+            {
+                self.startButton = [[JSButton alloc] initWithFrame:startFrame];
+                [[self.startButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.startButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.startButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.startButton setDelegate:self];
+                [self.startButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.startButton setAlpha:alpha];
+                [self.startButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+                [self.view addSubview:self.startButton];
+            }
+            else
+            {
+                [self.startButton setFrame:startFrame];
+            }
+        }
+        else if ([controlType isEqualToString:PVSelectButton])
+        {
+            CGFloat yPadding = 10;
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            CGRect selectFrame = CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - (size.height * 2) - (yPadding * 2), size.width, size.height);
+            
+            if (!self.selectButton)
+            {
+                self.selectButton = [[JSButton alloc] initWithFrame:selectFrame];
+                [[self.selectButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.selectButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.selectButton setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.selectButton setDelegate:self];
+                [self.selectButton setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.selectButton setAlpha:alpha];
+                [self.selectButton setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin];
+                [self.view addSubview:self.selectButton];
+            }
+            else
+            {
+                [self.selectButton setFrame:selectFrame];
+            }
+        }
+    }
 }
 
 # pragma mark - Controller Position And Size Editing
@@ -363,16 +408,32 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 {
 	CGFloat xPadding = 5;
 	CGFloat yPadding = 5;
-	
-	CGPoint dPadOrigin = CGPointMake(xPadding, [[self view] bounds].size.height - [self.dPad frame].size.height - yPadding);
-	CGPoint buttonsOrigin = CGPointMake([[self view] bounds].size.width - [self.buttonGroup frame].size.width - xPadding, [[self view] bounds].size.height - [self.buttonGroup frame].size.height - yPadding);
-	
+    
+    CGRect dPadFrame = CGRectZero;
+    CGRect buttonsFrame = CGRectZero;
+    
+    for (NSDictionary *control in self.controlLayout)
+    {
+        NSString *controlType = [control objectForKey:PVControlTypeKey];
+        
+        if ([controlType isEqualToString:PVDPad])
+        {
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            dPadFrame = CGRectMake(xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
+        }
+        else if ([controlType isEqualToString:PVButtonGroup])
+        {
+            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+            buttonsFrame = CGRectMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
+        }
+    }
+    
 	[UIView animateWithDuration:0.3
 						  delay:0.0
 						options:UIViewAnimationOptionBeginFromCurrentState
 					 animations:^{
-						 [self.dPad setOrigin:dPadOrigin];
-						 [self.buttonGroup setOrigin:buttonsOrigin];
+						 [self.dPad setFrame:dPadFrame];
+						 [self.buttonGroup setFrame:buttonsFrame];
 					 }
 					 completion:^(BOOL finished) {
 					 }];
@@ -380,22 +441,22 @@ NSString * const PVSavedControllerPositionsKey = @"PVSavedControllerPositionsKey
 
 - (void)saveControls:(id)sender
 {
-	CGPoint dPadDelta = CGPointMake(self.dPad.frame.origin.x, self.view.bounds.size.height - self.dPad.frame.origin.y);
-	CGPoint buttonsDelta = CGPointMake(self.view.bounds.size.width - self.buttonGroup.frame.origin.x, self.view.bounds.size.height - self.buttonGroup.frame.origin.y);
+    CGRect dPadFrame = [self.dPad frame];
+    CGRect buttonsFrame = [self.buttonGroup frame];
 	
-    NSMutableDictionary *savedControllerPositions = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerPositionsKey] mutableCopy];
+    NSMutableDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] mutableCopy];
     
-    if (!savedControllerPositions)
+    if (!savedControllerFrames)
     {
-        savedControllerPositions = [NSMutableDictionary dictionary];
+        savedControllerFrames = [NSMutableDictionary dictionary];
     }
     
     NSMutableDictionary *savedControllerPositionsForSystem = [NSMutableDictionary dictionary];
-	[savedControllerPositionsForSystem setObject:NSStringFromCGPoint(dPadDelta) forKey:PVSavedDPadOriginKey];
-	[savedControllerPositionsForSystem setObject:NSStringFromCGPoint(buttonsDelta) forKey:PVSavedButtonOriginKey];
-    [savedControllerPositions setObject:[savedControllerPositionsForSystem copy] forKey:self.systemIdentifier];
+	[savedControllerPositionsForSystem setObject:NSStringFromCGRect(dPadFrame) forKey:PVSavedDPadFrameKey];
+	[savedControllerPositionsForSystem setObject:NSStringFromCGRect(buttonsFrame) forKey:PVSavedButtonFrameKey];
+    [savedControllerFrames setObject:[savedControllerPositionsForSystem copy] forKey:self.systemIdentifier];
     
-    [[NSUserDefaults standardUserDefaults] setObject:[savedControllerPositions copy] forKey:PVSavedControllerPositionsKey];
+    [[NSUserDefaults standardUserDefaults] setObject:[savedControllerFrames copy] forKey:PVSavedControllerFramesKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
