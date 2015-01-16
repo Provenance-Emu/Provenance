@@ -86,7 +86,19 @@
 	{
 		[genesisCore pushGenesisButton:PVGenesisButtonC];
 	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"])
+    else if ([[[button titleLabel] text] isEqualToString:@"X"])
+    {
+        [genesisCore pushGenesisButton:PVGenesisButtonX];
+    }
+    else if ([[[button titleLabel] text] isEqualToString:@"Y"])
+    {
+        [genesisCore pushGenesisButton:PVGenesisButtonY];
+    }
+    else if ([[[button titleLabel] text] isEqualToString:@"Z"])
+    {
+        [genesisCore pushGenesisButton:PVGenesisButtonZ];
+    }
+	else if ([[[button titleLabel] text] isEqualToString:@"Start"] || [[[button titleLabel] text] isEqualToString:@"Pause"])
 	{
 		[genesisCore pushGenesisButton:PVGenesisButtonStart];
 	}
@@ -108,7 +120,19 @@
 	{
 		[genesisCore releaseGenesisButton:PVGenesisButtonC];
 	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"])
+    else if ([[[button titleLabel] text] isEqualToString:@"X"])
+    {
+        [genesisCore releaseGenesisButton:PVGenesisButtonX];
+    }
+    else if ([[[button titleLabel] text] isEqualToString:@"Y"])
+    {
+        [genesisCore releaseGenesisButton:PVGenesisButtonY];
+    }
+    else if ([[[button titleLabel] text] isEqualToString:@"Z"])
+    {
+        [genesisCore releaseGenesisButton:PVGenesisButtonZ];
+    }
+	else if ([[[button titleLabel] text] isEqualToString:@"Start"] || [[[button titleLabel] text] isEqualToString:@"Pause"])
 	{
 		[genesisCore releaseGenesisButton:PVGenesisButtonStart];
 	}
