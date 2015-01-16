@@ -39,6 +39,7 @@
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
 }
 
 - (void)didReceiveMemoryWarning
