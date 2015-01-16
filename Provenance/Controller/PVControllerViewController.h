@@ -33,6 +33,13 @@ extern NSString * const PVSavedControllerFramesKey;
 @property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
 @property (nonatomic, strong) GCController *gameController;
 
+@property (nonatomic, strong) JSDPad *dPad;
+@property (nonatomic, strong) UIView *buttonGroup;
+@property (nonatomic, strong) JSButton *leftShoulderButton;
+@property (nonatomic, strong) JSButton *rightShoulderButton;
+@property (nonatomic, strong) JSButton *startButton;
+@property (nonatomic, strong) JSButton *selectButton;
+
 - (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
 - (void)editControls;
 

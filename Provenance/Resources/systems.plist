@@ -141,7 +141,7 @@
 				<key>PVControlType</key>
 				<string>PVDPad</string>
 				<key>PVControlSize</key>
-				<string>{180,180}</string>
+				<string>{140,140}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>

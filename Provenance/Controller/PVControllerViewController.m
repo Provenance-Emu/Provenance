@@ -22,13 +22,6 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 @property (nonatomic, strong) NSArray *controlLayout;
 
-@property (nonatomic, strong) JSDPad *dPad;
-@property (nonatomic, strong) UIView *buttonGroup;
-@property (nonatomic, strong) JSButton *leftShoulderButton;
-@property (nonatomic, strong) JSButton *rightShoulderButton;
-@property (nonatomic, strong) JSButton *startButton;
-@property (nonatomic, strong) JSButton *selectButton;
-
 @property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *dpadPinchRecognizer;
 

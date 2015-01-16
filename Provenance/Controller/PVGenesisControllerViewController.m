@@ -15,6 +15,46 @@
 
 @implementation PVGenesisControllerViewController
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    for (JSButton *button in [self.buttonGroup subviews])
+    {
+        if (![button isMemberOfClass:[JSButton class]])
+        {
+            continue; // skip over the PVButtonGroupOverlayView
+        }
+        
+        if ([[[button titleLabel] text] isEqualToString:@"A"])
+        {
+            [button setTag:PVGenesisButtonA];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
+        {
+            [button setTag:PVGenesisButtonB];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"C"] || [[[button titleLabel] text] isEqualToString:@"2"])
+        {
+            [button setTag:PVGenesisButtonC];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"X"])
+        {
+            [button setTag:PVGenesisButtonX];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"Y"])
+        {
+            [button setTag:PVGenesisButtonY];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"Z"])
+        {
+            [button setTag:PVGenesisButtonZ];
+        }
+    }
+    
+    [self.startButton setTag:PVGenesisButtonStart];
+}
+
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
@@ -73,69 +113,13 @@
 - (void)buttonPressed:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-	
-	if ([[[button titleLabel] text] isEqualToString:@"A"])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonA];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonB];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"C"] || [[[button titleLabel] text] isEqualToString:@"2"])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonC];
-	}
-    else if ([[[button titleLabel] text] isEqualToString:@"X"])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonX];
-    }
-    else if ([[[button titleLabel] text] isEqualToString:@"Y"])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonY];
-    }
-    else if ([[[button titleLabel] text] isEqualToString:@"Z"])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonZ];
-    }
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"] || [[[button titleLabel] text] isEqualToString:@"Pause"])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonStart];
-	}
+    [genesisCore pushGenesisButton:[button tag]];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-	
-	if ([[[button titleLabel] text] isEqualToString:@"A"])
-	{
-		[genesisCore releaseGenesisButton:PVGenesisButtonA];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
-	{
-		[genesisCore releaseGenesisButton:PVGenesisButtonB];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"C"] || [[[button titleLabel] text] isEqualToString:@"2"])
-	{
-		[genesisCore releaseGenesisButton:PVGenesisButtonC];
-	}
-    else if ([[[button titleLabel] text] isEqualToString:@"X"])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonX];
-    }
-    else if ([[[button titleLabel] text] isEqualToString:@"Y"])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonY];
-    }
-    else if ([[[button titleLabel] text] isEqualToString:@"Z"])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonZ];
-    }
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"] || [[[button titleLabel] text] isEqualToString:@"Pause"])
-	{
-		[genesisCore releaseGenesisButton:PVGenesisButtonStart];
-	}
+    [genesisCore releaseGenesisButton:[button tag]];
 }
 
 - (void)gamepadButtonPressed:(GCControllerButtonInput *)button

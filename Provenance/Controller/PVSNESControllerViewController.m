@@ -15,6 +15,41 @@
 
 @implementation PVSNESControllerViewController
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    for (JSButton *button in [self.buttonGroup subviews])
+    {
+        if (![button isMemberOfClass:[JSButton class]])
+        {
+            continue; // skip over the PVButtonGroupOverlayView
+        }
+        
+        if ([[[button titleLabel] text] isEqualToString:@"A"])
+        {
+            [button setTag:PVSNESButtonA];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
+        {
+            [button setTag:PVSNESButtonB];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"X"] || [[[button titleLabel] text] isEqualToString:@"2"])
+        {
+            [button setTag:PVSNESButtonX];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"Y"])
+        {
+            [button setTag:PVSNESButtonY];
+        }
+    }
+    
+    [self.leftShoulderButton setTag:PVSNESButtonTriggerLeft];
+    [self.rightShoulderButton setTag:PVSNESButtonTriggerRight];
+    [self.selectButton setTag:PVSNESButtonSelect];
+    [self.startButton setTag:PVSNESButtonStart];
+}
+
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
