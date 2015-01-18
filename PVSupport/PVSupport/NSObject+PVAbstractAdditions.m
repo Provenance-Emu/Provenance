@@ -26,12 +26,12 @@
 
 + (void)doesNotImplementOptionalSelector:(SEL)aSel
 {
-    NSLog(@"*** +%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
+    DLog(@"*** +%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
 }
 
 - (void)doesNotImplementOptionalSelector:(SEL)aSel
 {
-    NSLog(@"*** -%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
+    DLog(@"*** -%s is an optional method and it is not implemented in %@!", sel_getName(aSel), NSStringFromClass([self class]));
 }
 
 

@@ -13,6 +13,7 @@ extern NSString * const kAskToAutoLoadKey;
 extern NSString * const kAutoLoadAutoSavesKey;
 extern NSString * const kControllerOpacityKey;
 extern NSString * const kDisableAutoLockKey;
+extern NSString * const kButtonVibrationKey;
 
 @interface PVSettingsModel : NSObject
 
@@ -20,6 +21,7 @@ extern NSString * const kDisableAutoLockKey;
 @property (nonatomic, assign) BOOL askToAutoLoad;
 @property (nonatomic, assign) BOOL autoLoadAutoSaves;
 @property (nonatomic, assign) BOOL disableAutoLock;
+@property (nonatomic, assign) BOOL buttonVibration;
 
 @property (nonatomic, assign) CGFloat controllerOpacity;
 

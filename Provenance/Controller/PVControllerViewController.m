@@ -13,6 +13,7 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
+#import <AudioToolbox/AudioToolbox.h>
 
 NSString * const PVSavedDPadFrameKey = @"PVSavedDPadFrameKey";
 NSString * const PVSavedButtonFrameKey = @"PVSavedButtonFrameKey";
@@ -92,7 +93,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 		[GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
 			if ([[GCController controllers] count] == 0)
 			{
-				NSLog(@"No controllers found");
+				DLog(@"No controllers found");
 			}
 		}];
 	}
@@ -535,6 +536,30 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 - (void)buttonReleased:(JSButton *)button
 {
 	[self doesNotImplementSelector:_cmd];
+}
+
+// These are private/undocumented API, so we need to expose them here
+// Based on GBA4iOS 2.0 by Riley Testut
+// https://bitbucket.org/rileytestut/gba4ios/src/6c363f7503ecc1e29a32f6869499113c3a3a6297/GBA4iOS/GBAControllerView.m?at=master#cl-245
+
+void AudioServicesStopSystemSound(int);
+void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
+
+- (void)vibrate
+{
+    AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+    
+    if ([[PVSettingsModel sharedInstance] buttonVibration])
+    {
+        NSInteger vibrationLength = 30;
+        NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
+        
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        dictionary[@"VibePattern"] = pattern;
+        dictionary[@"Intensity"] = @1;
+        
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    }
 }
 
 #pragma mark -

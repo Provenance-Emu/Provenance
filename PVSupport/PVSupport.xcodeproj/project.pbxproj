@@ -34,6 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1A4E718C1A6C699F005CA80F /* DebugUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
 		1ACEA64417F7467D0031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSupport.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACEA64717F7467D0031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1ACEA64B17F7467D0031B1C9 /* PVSupport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSupport-Prefix.pch"; sourceTree = "<group>"; };
@@ -73,9 +74,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A4E718B1A6C693A005CA80F /* DebugUtils */ = {
+			isa = PBXGroup;
+			children = (
+				1A4E718C1A6C699F005CA80F /* DebugUtils.h */,
+			);
+			name = DebugUtils;
+			sourceTree = "<group>";
+		};
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				1A4E718B1A6C693A005CA80F /* DebugUtils */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
 				1ACEA64917F7467D0031B1C9 /* PVSupport */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,

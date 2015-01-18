@@ -40,6 +40,7 @@
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
+    [self.vibrateSwitch setOn:[settings buttonVibration]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +79,11 @@
 - (IBAction)toggleAutoLock:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
+}
+
+- (IBAction)toggleVibration:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

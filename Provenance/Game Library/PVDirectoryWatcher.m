@@ -41,7 +41,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 																			 error:&error];
 			if (!succeeded)
 			{
-				NSLog(@"Unable to create directory at: %@, because: %@", _path, [error localizedDescription]);
+				DLog(@"Unable to create directory at: %@, because: %@", _path, [error localizedDescription]);
 			}
 		}
 		
@@ -137,12 +137,12 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                 
                 if (!deleted)
                 {
-                    NSLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
+                    DLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
                 }
 			}
             else
             {
-                NSLog(@"Unable to inflate zip at %@", filePath);
+                DLog(@"Unable to inflate zip at %@", filePath);
                 [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
                                                                     object:self];
             }

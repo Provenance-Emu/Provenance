@@ -43,4 +43,15 @@ extern NSString * const PVSavedControllerFramesKey;
 - (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
 - (void)editControls;
 
+- (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction;
+- (void)dPadDidReleaseDirection:(JSDPad *)dPad;
+- (void)buttonPressed:(JSButton *)button;
+- (void)buttonReleased:(JSButton *)button;
+- (void)vibrate;
+
+- (void)gamepadButtonPressed:(GCControllerButtonInput *)button;
+- (void)gamepadButtonReleased:(GCControllerButtonInput *)button;
+- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad;
+- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad;
+
 @end

@@ -164,14 +164,6 @@
 			}
 		}
 	}
-	else
-	{
-		pressed = YES;
-		if ([self.delegate respondsToSelector:@selector(buttonPressed:)])
-		{
-			[self.delegate buttonPressed:self];
-		}
-	}
     
     self.pressed = pressed;
 }

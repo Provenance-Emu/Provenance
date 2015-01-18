@@ -189,7 +189,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 													error:&error];
 	if (error)
 	{
-		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+		DLog(@"Error creating save state directory: %@", [error localizedDescription]);
 	}
 	
 	return batterySavesDirectory;
@@ -212,7 +212,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 													error:&error];
 	if (error)
 	{
-		NSLog(@"Error creating save state directory: %@", [error localizedDescription]);
+		DLog(@"Error creating save state directory: %@", [error localizedDescription]);
 	}
 	
 	return saveStateDirectory;
@@ -317,19 +317,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 					NSURL *fileURL = [NSURL fileURLWithPath:currentPath];
 					NSString *md5 = nil;
 					NSString *crc32 = nil;
-					NSLog(@"Getting hash for %@", [game title]);
+					DLog(@"Getting hash for %@", [game title]);
 					[[NSFileManager defaultManager] hashFileAtURL:fileURL
 															  md5:&md5
 															crc32:&crc32
 															error:NULL];
 					dispatch_async(dispatch_get_main_queue(), ^{
-						NSLog(@"Got hash for %@", [game title]);
+						DLog(@"Got hash for %@", [game title]);
 						[game setMd5:md5];
 						[game setCrc32:crc32];
 						
 						if ([[game requiresSync] boolValue])
 						{
-							NSLog(@"about to look up for %@ after getting hash", [game title]);
+							DLog(@"about to look up for %@ after getting hash", [game title]);
 							[self lookUpInfoForGame:game];
 						}
 					});
@@ -339,7 +339,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			{
 				if ([[game requiresSync] boolValue])
 				{
-					NSLog(@"about to look up for %@ ", [game title]);
+					DLog(@"about to look up for %@ ", [game title]);
 					[self lookUpInfoForGame:game];
 				}
 			}
@@ -381,7 +381,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)lookUpInfoForGame:(PVGame *)game
 {
-	NSLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
+	DLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
     if (!self.gameDatabase)
     {
         self.gameDatabase = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
@@ -395,7 +395,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     {
         if (error)
         {
-            NSLog(@"Error looking up game info, %@", [error localizedDescription]);
+            DLog(@"Error looking up game info, %@", [error localizedDescription]);
         }
         
         [game setRequiresSync:@(NO)];
@@ -414,7 +414,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)getArtworkForGame:(PVGame *)game
 {
-	NSLog(@"Starting Artwork download for %@, %@", [game title], [game originalArtworkURL]);
+	DLog(@"Starting Artwork download for %@, %@", [game title], [game originalArtworkURL]);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[game originalArtworkURL]]];
         NSHTTPURLResponse *urlResponse = nil;
@@ -424,14 +424,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                          error:&error];
         if (error)
         {
-            NSLog(@"error downloading artwork from: %@ -- %@", [game originalArtworkURL], [error localizedDescription]);
+            DLog(@"error downloading artwork from: %@ -- %@", [game originalArtworkURL], [error localizedDescription]);
             return;
         }
         
         if ([urlResponse statusCode] != 200)
         {
-            NSLog(@"HTTP Error: %zd", [urlResponse statusCode]);
-            NSLog(@"Response: %@", urlResponse);
+            DLog(@"HTTP Error: %zd", [urlResponse statusCode]);
+            DLog(@"Response: %@", urlResponse);
         }
         
         UIImage *artwork = [[UIImage alloc] initWithData:data];
@@ -590,25 +590,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		[actionSheet PV_addButtonWithTitle:@"Choose Custom Artwork" action:^{
 			[weakSelf chooseCustomArtworkForGame:game];
 		}];
-		
-		if ([[game artworkURL] length] && ![[game originalArtworkURL] length])
-		{
-			[actionSheet PV_addButtonWithTitle:@"Remove Artwork" action:^{
-				[PVMediaCache deleteImageForKey:[game artworkURL]];
-				[game setArtworkURL:nil];
-				[self save:NULL];
-				[_collectionView reloadData];
-			}];
-		}
-		
+				
 		if ([[game originalArtworkURL] length] &&
 			[[game originalArtworkURL] isEqualToString:[game artworkURL]] == NO)
 		{
 			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
 				[PVMediaCache deleteImageForKey:[game artworkURL]];
-				[game setArtworkURL:nil];
-				[self save:NULL];
+				[game setArtworkURL:[game originalArtworkURL]];
+				[weakSelf save:NULL];
 				[_collectionView reloadData];
+                [weakSelf getArtworkForGame:game];
 			}];
 		}
 		
@@ -769,19 +760,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
+		DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
 	}
 	
 	success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
+		DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
 	}
 	
 	success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
 	if (!success)
 	{
-		NSLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
+		DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
 	}
 	
 	success = [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
@@ -827,7 +818,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                     }
 									[group setAssetsFilter:[ALAssetsFilter allPhotos]];
                                     NSInteger index = [group numberOfAssets] - 1;
-                                    NSLog(@"Group: %@", group);
+                                    DLog(@"Group: %@", group);
                                     if (index >= 0)
                                     {
                                         [group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:index]
@@ -993,11 +984,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 														   error:&error]) {
 		if([error code] == 134100)
 		{
-			NSLog(@"Will delete old store and try again");
+			DLog(@"Will delete old store and try again");
 			[[NSFileManager defaultManager] removeItemAtURL:storeUrl error:&error];
 			
 			if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:nil error:&error]) {
-				NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+				DLog(@"Unresolved error %@, %@", error, [error userInfo]);
 			}
 		}
     }

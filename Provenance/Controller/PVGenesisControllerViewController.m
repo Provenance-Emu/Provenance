@@ -8,6 +8,8 @@
 
 #import "PVGenesisControllerViewController.h"
 #import "PVGenesisEmulatorCore.h"
+#import "PVSettingsModel.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @interface PVGenesisControllerViewController ()
 
@@ -97,7 +99,8 @@
 		default:
 			break;
 	}
-
+    
+    [self vibrate];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -114,6 +117,7 @@
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore pushGenesisButton:[button tag]];
+    [self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button

@@ -189,7 +189,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		return [self channelCount];
 	}
 	
-	NSLog(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
+	DLog(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
 	[self doesNotImplementSelector:_cmd];
 	
 	return 0;
@@ -212,7 +212,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		return [self audioSampleRate];
 	}
 	
-    NSLog(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
+    DLog(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
     [self doesNotImplementSelector:_cmd];
     return 0;
 }

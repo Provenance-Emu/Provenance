@@ -8,6 +8,8 @@
 
 #import "PVSNESControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
+#import "PVSettingsModel.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @interface PVSNESControllerViewController ()
 
@@ -93,6 +95,7 @@
 			break;
 	}
 	
+    [self vibrate];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -108,77 +111,15 @@
 - (void)buttonPressed:(JSButton *)button
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	if ([[[button titleLabel] text] isEqualToString:@"A"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonA];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"B"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonB];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"X"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonX];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Y"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonY];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"L"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonTriggerLeft];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"R"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonTriggerRight];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonStart];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Select"])
-	{
-		[snesCore pushSNESButton:PVSNESButtonSelect];
-	}
+    [snesCore pushSNESButton:[button tag]];
+    
+    [self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	if ([[[button titleLabel] text] isEqualToString:@"A"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonA];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"B"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonB];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"X"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonX];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Y"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonY];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"L"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonTriggerLeft];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"R"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonTriggerRight];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Start"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonStart];
-	}
-	else if ([[[button titleLabel] text] isEqualToString:@"Select"])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonSelect];
-	}
+    [snesCore releaseSNESButton:[button tag]];
 }
 
 - (void)gamepadButtonPressed:(GCControllerButtonInput *)button

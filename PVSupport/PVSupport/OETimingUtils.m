@@ -99,7 +99,7 @@ static void OEPerfMonitorRecordEvent(OEPerfMonitorObservation *observation, NSTi
 
         NSTimeInterval stddev = sqrt(variance / observation.numTimesRun);
 
-        NSLog(@"%@: avg %fs (%f fps), std.dev %fs (%f fps), worst %fs / over %ld/%ld = %f%%", observation->name,
+        DLog(@"%@: avg %fs (%f fps), std.dev %fs (%f fps), worst %fs / over %ld/%ld = %f%%", observation->name,
               avg, 1 / avg, stddev, 1 / stddev, worst, (long)observation.numTimesOver, (long)observation.numTimesRun,
               100. * (observation.numTimesOver / (float)observation.numTimesRun));
         observation->n = 0;
@@ -170,7 +170,7 @@ BOOL OESetThreadRealtime(NSTimeInterval period, NSTimeInterval computation, NSTi
     assert(computation < .05);
     assert(computation < constraint);
 
-    NSLog(@"RT policy: %fs (limit %fs) every %fs", computation, constraint, period);
+    DLog(@"RT policy: %fs (limit %fs) every %fs", computation, constraint, period);
 
     ttcpolicy.period      = period / mach_to_sec;
     ttcpolicy.computation = computation / mach_to_sec;
@@ -181,7 +181,7 @@ BOOL OESetThreadRealtime(NSTimeInterval period, NSTimeInterval computation, NSTi
                          THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&ttcpolicy,
                          THREAD_TIME_CONSTRAINT_POLICY_COUNT) != KERN_SUCCESS)
     {
-        NSLog(@"OESetThreadRealtime() failed.");
+        DLog(@"OESetThreadRealtime() failed.");
         return NO;
     }
 

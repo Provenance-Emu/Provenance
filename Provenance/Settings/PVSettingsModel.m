@@ -13,6 +13,7 @@ NSString * const kAutoLoadAutoSavesKey = @"kAutoLoadAutoSavesKey";
 NSString * const kControllerOpacityKey = @"kControllerOpacityKey";
 NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
+NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 
 @implementation PVSettingsModel
 
@@ -35,13 +36,18 @@ NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 {
 	if ((self = [super init]))
 	{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES), kAutoLoadAutoSavesKey : @(NO), kControllerOpacityKey : @(0.2), kDisableAutoLockKey : @(NO)}];
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES),
+                                                                  kAutoLoadAutoSavesKey : @(NO),
+                                                                  kControllerOpacityKey : @(0.2),
+                                                                  kDisableAutoLockKey : @(NO),
+                                                                  kButtonVibrationKey : @(YES)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
 		_autoLoadAutoSaves = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoLoadAutoSavesKey];
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
+        _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
 	}
 	
 	return self;
@@ -83,6 +89,13 @@ NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	[[UIApplication sharedApplication] setIdleTimerDisabled:_disableAutoLock];
+}
+
+- (void)setButtonVibration:(BOOL)buttonVibration
+{
+    _buttonVibration = buttonVibration;
+    [[NSUserDefaults standardUserDefaults] setBool:_buttonVibration forKey:kButtonVibrationKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 @end

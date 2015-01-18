@@ -69,12 +69,12 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
 static void input_poll_callback(void)
 {
-	//NSLog(@"poll callback");
+	//DLog(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
-	//NSLog(@"polled input: port: %d device: %d id: %d", port, device, id);
+	//DLog(@"polled input: port: %d device: %d id: %d", port, device, id);
 	
 	__strong PVGenesisEmulatorCore *strongCurrent = _current;
 	
@@ -103,7 +103,7 @@ static bool environment_callback(unsigned cmd, void *data)
 										@"BIOS"]];
 			
 			*(const char **)data = [appSupportPath UTF8String];
-			NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+			DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
 			break;
 		}
 		case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
@@ -111,7 +111,7 @@ static bool environment_callback(unsigned cmd, void *data)
 			break;
 		}
 		default :
-			NSLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
+			DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
 			return false;
 	}
 	
@@ -297,7 +297,7 @@ static bool environment_callback(unsigned cmd, void *data)
 	NSData *data = [NSData dataWithContentsOfFile:path];
 	if (!data || ![data length])
 	{
-		NSLog(@"Couldn't load save file.");
+		DLog(@"Couldn't load save file.");
 	}
 	
 	[data getBytes:ramData length:size];
@@ -315,7 +315,7 @@ static bool environment_callback(unsigned cmd, void *data)
 		BOOL success = [data writeToFile:path atomically:YES];
 		if (!success)
 		{
-			NSLog(@"Error writing save file");
+			DLog(@"Error writing save file");
 		}
     }
 }
@@ -408,7 +408,7 @@ static bool environment_callback(unsigned cmd, void *data)
 						 error:&error];
 	if (error)
 	{
-		NSLog(@"Error saving state: %@", [error localizedDescription]);
+		DLog(@"Error saving state: %@", [error localizedDescription]);
 		return NO;
 	}
 	
@@ -420,13 +420,13 @@ static bool environment_callback(unsigned cmd, void *data)
 	NSData *saveStateData = [NSData dataWithContentsOfFile:path];
 	if (!saveStateData)
 	{
-		NSLog(@"Unable to load save state from path: %@", path);
+		DLog(@"Unable to load save state from path: %@", path);
 		return NO;
 	}
 	
 	if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
 	{
-		NSLog(@"Unable to load save state");
+		DLog(@"Unable to load save state");
 		return NO;
 	}
 	
