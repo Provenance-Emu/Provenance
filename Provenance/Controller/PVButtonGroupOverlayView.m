@@ -37,7 +37,6 @@
 - (void)willMoveToSuperview:(UIView *)newSuperview
 {
 	[super willMoveToSuperview:newSuperview];
-	[self setFrame:CGRectMake(self.frame.origin.x, self.frame.origin.y, newSuperview.frame.size.width, newSuperview.frame.size.width)];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
