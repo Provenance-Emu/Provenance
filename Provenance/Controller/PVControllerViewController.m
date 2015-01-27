@@ -34,6 +34,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 @property (nonatomic, strong) UIToolbar *fakeBlurView;
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
+@property (nonatomic, assign) CGSize initialControlSize;
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
 @end
@@ -368,8 +369,14 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 																						  action:@selector(panRecognized:)];
 						 self.buttonPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
 																							action:@selector(panRecognized:)];
+                         self.dpadPinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self
+                                                                                              action:@selector(pinchRecognized:)];
+                         self.buttonPinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self
+                                                                                                action:@selector(pinchRecognized:)];
 						 [self.dPad addGestureRecognizer:self.dPadPanRecognizer];
 						 [self.buttonGroup addGestureRecognizer:self.buttonPanRecognizer];
+                         [self.dPad addGestureRecognizer:self.dpadPinchRecognizer];
+                         [self.buttonGroup addGestureRecognizer:self.buttonPinchRecognizer];
 					 }];
 }
 
@@ -403,6 +410,40 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 		[view setCenter:CGPointMake(newX, newY)];
 		[recognizer setTranslation:CGPointZero inView:superview];
 	}
+}
+
+- (void)pinchRecognized:(UIPinchGestureRecognizer *)recognizer
+{
+    [self adjustAnchorPointForRecognizer:recognizer];
+
+    UIView *view = [recognizer view];
+    CGFloat scale = [recognizer scale];
+    
+    NSLog(@"Scale: %.1f", scale);
+    NSLog(@"Frame: %@", NSStringFromCGRect([view frame]));
+    
+    
+    if ([recognizer state] == UIGestureRecognizerStateBegan)
+    {
+        self.initialControlSize = [view frame].size;
+    }
+    else if([recognizer state] == UIGestureRecognizerStateChanged)
+    {
+        [view setCenter:[recognizer locationInView:self.view]];
+        [view setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
+        if (recognizer == self.buttonPinchRecognizer)
+        {
+            // resize buttons, adjust origins, make sure spacing stays constant;
+            NSArray *buttons = [view subviews];
+            for (JSButton *button in buttons)
+            {
+                if ([button isMemberOfClass:[JSButton class]])
+                {
+                    [button setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)
+                }
+            }
+        }
+    }
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -480,6 +521,8 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 					 completion:^(BOOL finished) {
 						 [self.dPad removeGestureRecognizer:self.dPadPanRecognizer];
 						 [self.buttonGroup removeGestureRecognizer:self.buttonPanRecognizer];
+                         [self.dPad removeGestureRecognizer:self.dpadPinchRecognizer];
+                         [self.buttonGroup removeGestureRecognizer:self.buttonPinchRecognizer];
 						 self.dPadPanRecognizer = nil;
 						 self.buttonPanRecognizer = nil;
 						 
