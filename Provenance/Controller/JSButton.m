@@ -42,7 +42,6 @@
 {	
 	_backgroundImageView = [[UIImageView alloc] initWithImage:self.backgroundImage];
 	[_backgroundImageView setFrame:[self bounds]];
-	[_backgroundImageView setContentMode:UIViewContentModeCenter];
 	[_backgroundImageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self addSubview:_backgroundImageView];
 	

@@ -35,6 +35,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
 @property (nonatomic, assign) CGSize initialControlSize;
+@property (nonatomic, assign) CGSize initialButtonSize;
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
 @end
@@ -419,13 +420,14 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     UIView *view = [recognizer view];
     CGFloat scale = [recognizer scale];
     
-    NSLog(@"Scale: %.1f", scale);
-    NSLog(@"Frame: %@", NSStringFromCGRect([view frame]));
-    
     
     if ([recognizer state] == UIGestureRecognizerStateBegan)
     {
         self.initialControlSize = [view frame].size;
+        if (recognizer == self.buttonPinchRecognizer)
+        {
+            self.initialButtonSize = [[[view subviews] firstObject] frame].size;
+        }
     }
     else if([recognizer state] == UIGestureRecognizerStateChanged)
     {
@@ -433,15 +435,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
         [view setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
         if (recognizer == self.buttonPinchRecognizer)
         {
-            // resize buttons, adjust origins, make sure spacing stays constant;
-            NSArray *buttons = [view subviews];
-            for (JSButton *button in buttons)
-            {
-                if ([button isMemberOfClass:[JSButton class]])
-                {
-                    [button setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)
-                }
-            }
+            
         }
     }
 }
