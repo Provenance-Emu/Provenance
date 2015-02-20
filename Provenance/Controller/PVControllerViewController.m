@@ -615,138 +615,92 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
 - (void)setupGameController
 {
-	[self.leftShoulderButton setHidden:YES];
-	[self.rightShoulderButton setHidden:YES];
-	[self.dPad setHidden:YES];
-	[self.buttonGroup setHidden:YES];
-	[self.startButton setHidden:YES];
-	[self.selectButton setHidden:YES];
-	
+    __weak PVControllerViewController *weakSelf = self;
+    [self.gameController setControllerPausedHandler:^(GCController *controller) {
+        if ([weakSelf.delegate respondsToSelector:@selector(controllerViewControllerDidPressMenuButton:)])
+        {
+            [weakSelf.delegate controllerViewControllerDidPressMenuButton:weakSelf];
+        }
+    }];
+    
+    NSArray *buttons = nil;
+    
 	if ([self.gameController extendedGamepad])
 	{
-		GCControllerButtonInput *a = [[self.gameController extendedGamepad] buttonA];
-		GCControllerButtonInput *b = [[self.gameController extendedGamepad] buttonB];
-		GCControllerButtonInput *x = [[self.gameController extendedGamepad] buttonX];
-		GCControllerButtonInput *y = [[self.gameController extendedGamepad] buttonY];
-		GCControllerDirectionPad *dPad = [[self.gameController extendedGamepad] dpad];
-		GCControllerDirectionPad *leftAnalog = [[self.gameController extendedGamepad] leftThumbstick];
-		__weak PVControllerViewController *weakSelf = self;
-		[self.gameController setControllerPausedHandler:^(GCController *controller) {
-			if ([weakSelf.delegate respondsToSelector:@selector(controllerViewControllerDidPressMenuButton:)])
-			{
-				[weakSelf.delegate controllerViewControllerDidPressMenuButton:weakSelf];
-			}
-		}];
-//		GCControllerDirectionPad *rightAnalog = [[self.gameController extendedGamepad] leftThumbstick];
-		GCControllerButtonInput *leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
-		GCControllerButtonInput *rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
-		GCControllerButtonInput *leftTrigger = [[self.gameController extendedGamepad] leftTrigger];
-		GCControllerButtonInput *rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
+        _dPad = [[self.gameController extendedGamepad] dpad];
+        
+		_a = [[self.gameController extendedGamepad] buttonA];
+		_b = [[self.gameController extendedGamepad] buttonB];
+		_x = [[self.gameController extendedGamepad] buttonX];
+		_y = [[self.gameController extendedGamepad] buttonY];
+        
+		_leftAnalog = [[self.gameController extendedGamepad] leftThumbstick];
+        _rightAnalog = [[self.gameController extendedGamepad] leftThumbstick];
+        
+		_leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
+		_rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
 		
-		[a setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			if (value > 0)
-			{
-				[weakSelf gamepadButtonPressed:button];
-			}
-			else
-			{
-				[weakSelf gamepadButtonReleased:button];
-			}
-		}];
-		[b setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			if (value > 0)
-			{
-				[weakSelf gamepadButtonPressed:button];
-			}
-			else
-			{
-				[weakSelf gamepadButtonReleased:button];
-			}
-		}];
-		[x setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			if (value > 0)
-			{
-				[weakSelf gamepadButtonPressed:button];
-			}
-			else
-			{
-				[weakSelf gamepadButtonReleased:button];
-			}
-		}];
-		[y setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-			if (value > 0)
-			{
-				[weakSelf gamepadButtonPressed:button];
-			}
-			else
-			{
-				[weakSelf gamepadButtonReleased:button];
-			}
-		}];
-		[dPad setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
-			if ((xValue != 0) || (yValue != 0))
-			{
-				[weakSelf gamepadPressedDirection:dpad];
-			}
-			else
-			{
-				[weakSelf gamepadReleasedDirection:dpad];
-			}
-		}];
-		[leftAnalog setValueChangedHandler:^(GCControllerDirectionPad *dpad, float xValue, float yValue){
-			if ((xValue != 0) || (yValue != 0))
-			{
-				[weakSelf gamepadPressedDirection:dpad];
-			}
-			else
-			{
-				[weakSelf gamepadReleasedDirection:dpad];
-			}
-		}];
-        [leftShoulder setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
-            {
-                [weakSelf gamepadButtonPressed:button];
-            }
-            else
-            {
-                [weakSelf gamepadButtonReleased:button];
-            }
-        }];
-        [rightShoulder setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
-            {
-                [weakSelf gamepadButtonPressed:button];
-            }
-            else
-            {
-                [weakSelf gamepadButtonReleased:button];
-            }
-        }];
-        [leftTrigger setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
-            {
-                [weakSelf gamepadButtonPressed:button];
-            }
-            else
-            {
-                [weakSelf gamepadButtonReleased:button];
-            }
-        }];
-        [rightTrigger setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
-            {
-                [weakSelf gamepadButtonPressed:button];
-            }
-            else
-            {
-                [weakSelf gamepadButtonReleased:button];
-            }
-        }];
+        _leftTrigger = [[self.gameController extendedGamepad] leftTrigger];
+		_rightTrigger = [[self.gameController extendedGamepad] rightTrigger];
+        
+        buttons = @[_a, _b, _x, _y, _leftShoulder, _rightShoulder, _leftTrigger, _rightTrigger];
 	}
 	else
 	{
+        _dPad = [[self.gameController gamepad] dpad];
+        
+        _a = [[self.gameController gamepad] buttonA];
+        _b = [[self.gameController gamepad] buttonB];
+        _x = [[self.gameController gamepad] buttonX];
+        _y = [[self.gameController gamepad] buttonY];
+        
+        _leftShoulder = [[self.gameController gamepad] leftShoulder];
+        _rightShoulder = [[self.gameController gamepad] rightShoulder];
+        
+        buttons = @[_a, _b, _x, _y, _leftShoulder, _rightShoulder];
 	}
+    
+    GCControllerDirectionPadValueChangedHandler dPadHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
+        if ((xValue != 0) || (yValue != 0))
+        {
+            [weakSelf gamepadPressedDirection:dpad];
+        }
+        else
+        {
+            [weakSelf gamepadReleasedDirection:dpad];
+        }
+    };
+    
+    [_dPad setValueChangedHandler:dPadHandler];
+    if (_leftAnalog)
+    {
+        [_leftAnalog setValueChangedHandler:dPadHandler];
+    }
+    
+    GCControllerButtonValueChangedHandler buttonHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed){
+        if (value > 0)
+        {
+            [weakSelf gamepadButtonPressed:button];
+        }
+        else
+        {
+            [weakSelf gamepadButtonReleased:button];
+        }
+    };
+    
+    [buttons makeObjectsPerformSelector:@selector(setValueChangedHandler:)
+                             withObject:buttonHandler];
+    
+    [self.dPad setHidden:YES];
+    [self.buttonGroup setHidden:YES];
+    [self.leftShoulderButton setHidden:YES];
+    [self.rightShoulderButton setHidden:YES];
+    
+    if ([self.gameController extendedGamepad])
+    {
+        [self.startButton setHidden:YES];
+        [self.selectButton setHidden:YES];
+    }
 }
 
 - (void)gamepadButtonPressed:(GCControllerButtonInput *)button

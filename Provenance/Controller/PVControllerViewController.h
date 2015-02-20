@@ -26,7 +26,23 @@ extern NSString * const PVSavedControllerFramesKey;
 
 @end
 
-@interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate>
+@interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate> {
+    GCControllerDirectionPad *_dPad;
+    
+    GCControllerButtonInput *_a;
+    GCControllerButtonInput *_b;
+    GCControllerButtonInput *_x;
+    GCControllerButtonInput *_y;
+    
+    GCControllerDirectionPad *_leftAnalog;
+    GCControllerDirectionPad *_rightAnalog;
+    
+    GCControllerButtonInput *_leftShoulder;
+    GCControllerButtonInput *_rightShoulder;
+    
+    GCControllerButtonInput *_leftTrigger;
+    GCControllerButtonInput *_rightTrigger;
+}
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, copy) NSString *systemIdentifier;
