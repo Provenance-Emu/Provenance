@@ -27,7 +27,7 @@ extern NSString * const PVSavedControllerFramesKey;
 @end
 
 @interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate> {
-    GCControllerDirectionPad *_dPad;
+    GCControllerDirectionPad *_pad;
     
     GCControllerButtonInput *_a;
     GCControllerButtonInput *_b;

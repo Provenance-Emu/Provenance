@@ -8,10 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
+		1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D517F74D410031B1C9 /* libPVSupport.a */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A517F7627E00F1CB0D /* libPVSNES.a */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
-		1A2A95AC17F7686400F1CB0D /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95AB17F7686400F1CB0D /* libPVSupport.a */; };
 		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
 		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
@@ -72,7 +72,6 @@
 		1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A2A95A517F7627E00F1CB0D /* libPVSNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNES.a; path = "PVSNES/build/Debug-iphoneos/libPVSNES.a"; sourceTree = "<group>"; };
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
-		1A2A95AB17F7686400F1CB0D /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "PVSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1A34C58517D517760058E7D1 /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConfiguration.h; sourceTree = "<group>"; };
 		1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConfiguration.m; sourceTree = "<group>"; };
@@ -154,9 +153,7 @@
 		1AB9600217C572B400D3E392 /* PVSettingsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsModel.m; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
-		1ACEA69E17F749350031B1C9 /* libProvenanceSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libProvenanceSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libProvenanceSupport.a"; sourceTree = "<group>"; };
 		1ACEA6D517F74D410031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
-		1ACEA6D717F74DEC0031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "PVGenesis/build/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
 		1ADB316317D9341600DB6043 /* PVGenesisControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGenesisControllerViewController.h; sourceTree = "<group>"; };
 		1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGenesisControllerViewController.m; sourceTree = "<group>"; };
@@ -185,7 +182,7 @@
 			files = (
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
-				1A2A95AC17F7686400F1CB0D /* libPVSupport.a in Frameworks */,
+				1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */,
 				1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */,
 				1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
@@ -272,13 +269,10 @@
 			isa = PBXGroup;
 			children = (
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
-				1A2A95AB17F7686400F1CB0D /* libPVSupport.a */,
 				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
 				1A2A95A517F7627E00F1CB0D /* libPVSNES.a */,
 				1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */,
-				1ACEA6D717F74DEC0031B1C9 /* libPVSupport.a */,
 				1ACEA6D517F74D410031B1C9 /* libPVSupport.a */,
-				1ACEA69E17F749350031B1C9 /* libProvenanceSupport.a */,
 				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
 				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
 				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
