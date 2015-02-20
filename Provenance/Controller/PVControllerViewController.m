@@ -635,7 +635,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     
 	if ([self.gameController extendedGamepad])
 	{
-        _dPad = [[self.gameController extendedGamepad] dpad];
+        _pad = [[self.gameController extendedGamepad] dpad];
         
 		_a = [[self.gameController extendedGamepad] buttonA];
 		_b = [[self.gameController extendedGamepad] buttonB];
@@ -655,7 +655,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	}
 	else
 	{
-        _dPad = [[self.gameController gamepad] dpad];
+        _pad = [[self.gameController gamepad] dpad];
         
         _a = [[self.gameController gamepad] buttonA];
         _b = [[self.gameController gamepad] buttonB];
@@ -679,7 +679,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         }
     };
     
-    [_dPad setValueChangedHandler:dPadHandler];
+    [_pad setValueChangedHandler:dPadHandler];
     if (_leftAnalog)
     {
         [_leftAnalog setValueChangedHandler:dPadHandler];
