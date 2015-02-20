@@ -126,35 +126,35 @@
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     
-	if ([button isEqual:[[self.gameController extendedGamepad] buttonX]])
+	if ([button isEqual:_x])
 	{
 		[snesCore pushSNESButton:PVSNESButtonY];
 	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonA]])
+	else if ([button isEqual:_a])
 	{
 		[snesCore pushSNESButton:PVSNESButtonB];
 	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonB]])
+	else if ([button isEqual:_b])
 	{
 		[snesCore pushSNESButton:PVSNESButtonA];
 	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonY]])
+	else if ([button isEqual:_y])
 	{
 		[snesCore pushSNESButton:PVSNESButtonX];
 	}
-    else if ([button isEqual:[[self.gameController extendedGamepad] leftShoulder]])
+    else if ([button isEqual:_leftShoulder])
     {
         [snesCore pushSNESButton:PVSNESButtonTriggerLeft];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] rightShoulder]])
+    else if ([button isEqual:_rightShoulder])
     {
         [snesCore pushSNESButton:PVSNESButtonTriggerRight];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] leftTrigger]])
+    else if ([button isEqual:_leftTrigger])
     {
         [snesCore pushSNESButton:PVSNESButtonStart];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] rightTrigger]])
+    else if ([button isEqual:_rightTrigger])
     {
         [snesCore pushSNESButton:PVSNESButtonSelect];
     }
@@ -164,35 +164,35 @@
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
 	
-	if ([button isEqual:[[self.gameController extendedGamepad] buttonX]])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonY];
-	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonA]])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonB];
-	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonB]])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonA];
-	}
-	else if ([button isEqual:[[self.gameController extendedGamepad] buttonY]])
-	{
-		[snesCore releaseSNESButton:PVSNESButtonX];
-	}
-    else if ([button isEqual:[[self.gameController extendedGamepad] leftShoulder]])
+    if ([button isEqual:_x])
+    {
+        [snesCore releaseSNESButton:PVSNESButtonY];
+    }
+    else if ([button isEqual:_a])
+    {
+        [snesCore releaseSNESButton:PVSNESButtonB];
+    }
+    else if ([button isEqual:_b])
+    {
+        [snesCore releaseSNESButton:PVSNESButtonA];
+    }
+    else if ([button isEqual:_y])
+    {
+        [snesCore releaseSNESButton:PVSNESButtonX];
+    }
+    else if ([button isEqual:_leftShoulder])
     {
         [snesCore releaseSNESButton:PVSNESButtonTriggerLeft];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] rightShoulder]])
+    else if ([button isEqual:_rightShoulder])
     {
         [snesCore releaseSNESButton:PVSNESButtonTriggerRight];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] leftTrigger]])
+    else if ([button isEqual:_leftTrigger])
     {
         [snesCore releaseSNESButton:PVSNESButtonStart];
     }
-    else if ([button isEqual:[[self.gameController extendedGamepad] rightTrigger]])
+    else if ([button isEqual:_rightTrigger])
     {
         [snesCore releaseSNESButton:PVSNESButtonSelect];
     }
