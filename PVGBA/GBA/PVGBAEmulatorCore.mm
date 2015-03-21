@@ -40,7 +40,7 @@
 
 EmulatedSystem vba;
 int emulating = 0;
-uint32_t pad[OEGBAButtonCount];
+uint32_t pad[PVGBAButtonCount];
 
 @interface PVGBAEmulatorCore ()
 {
@@ -140,7 +140,7 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (BOOL)loadFileAtPath:(NSString *)path
 {
-    memset(pad, 0, sizeof(uint32_t) * OEGBAButtonCount);
+    memset(pad, 0, sizeof(uint32_t) * PVGBAButtonCount);
 
     _romFile = [NSURL fileURLWithPath:path];
 
@@ -294,16 +294,14 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
-    BOOL success = vba.emuWriteState([fileName UTF8String]);
-    if(block) block(success==YES, nil);
+    return vba.emuWriteState([fileName UTF8String]);
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
-    BOOL success = vba.emuReadState([fileName UTF8String]);
-    if(block) block(success==YES, nil);
+    return vba.emuReadState([fileName UTF8String]);
 }
 
 # pragma mark - Input
@@ -322,14 +320,14 @@ enum {
 };
 const int GBAMap[] = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BUTTON_A, KEY_BUTTON_B, KEY_BUTTON_L, KEY_BUTTON_R, KEY_BUTTON_START, KEY_BUTTON_SELECT};
 
-- (oneway void)didPushGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player;
+- (oneway void)pushGBAButton:(PVGBAButton)button
 {
-    pad[player - 1] |= GBAMap[button];
+    pad[0] |= GBAMap[button];
 }
 
-- (oneway void)didReleaseGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player;
+- (oneway void)releaseGBAButton:(PVGBAButton)button
 {
-    pad[player - 1] &= ~GBAMap[button];
+    pad[0] &= ~GBAMap[button];
 }
 
 #pragma mark - Cheats

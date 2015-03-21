@@ -28,24 +28,24 @@
 #import <Foundation/Foundation.h>
 #import "PVEmulatorCore.h"
 
-typedef enum _OEGBAButton
+typedef NS_ENUM(NSInteger, PVGBAButton)
 {
-    OEGBAButtonUp,
-    OEGBAButtonDown,
-    OEGBAButtonLeft,
-    OEGBAButtonRight,
-    OEGBAButtonA,
-    OEGBAButtonB,
-    OEGBAButtonL,
-    OEGBAButtonR,
-    OEGBAButtonStart,
-    OEGBAButtonSelect,
-    OEGBAButtonCount
-} OEGBAButton;
+    PVGBAButtonUp,
+    PVGBAButtonDown,
+    PVGBAButtonLeft,
+    PVGBAButtonRight,
+    PVGBAButtonA,
+    PVGBAButtonB,
+    PVGBAButtonL,
+    PVGBAButtonR,
+    PVGBAButtonStart,
+    PVGBAButtonSelect,
+    PVGBAButtonCount
+};
 
 @interface PVGBAEmulatorCore : PVEmulatorCore
 
-- (oneway void)didPushGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseGBAButton:(OEGBAButton)button forPlayer:(NSUInteger)player;
+- (oneway void)pushGBAButton:(PVGBAButton)button;
+- (oneway void)releaseGBAButton:(PVGBAButton)button;
 
 @end

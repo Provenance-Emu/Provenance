@@ -123,6 +123,10 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     [super viewDidLayoutSubviews];
     
     [self setupTouchControls];
+    if (self.gameController)
+    {
+        [self setupGameController];
+    }
 }
 
 # pragma mark - Controller Position And Size Editing

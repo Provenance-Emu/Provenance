@@ -211,7 +211,7 @@
 	{
 		[snesCore pushSNESButton:PVSNESButtonRight];
 	}
-	if ([[dpad xAxis] value] < -0)
+	if ([[dpad xAxis] value] < 0)
 	{
 		[snesCore pushSNESButton:PVSNESButtonLeft];
 	}

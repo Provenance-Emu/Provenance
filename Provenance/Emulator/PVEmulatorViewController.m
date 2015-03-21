@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
 
+@property (nonatomic, weak) UIActionSheet *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
 @end
@@ -276,7 +277,9 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
-	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
+    
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if (![self.controllerViewController gameController])
@@ -328,6 +331,16 @@ void uncaughtExceptionHandler(NSException *exception)
 	[actionsheet showInView:self.view];
 }
 
+- (void)hideMenu
+{
+    if (self.menuActionSheet)
+    {
+        [self.menuActionSheet dismissWithClickedButtonIndex:[self.menuActionSheet cancelButtonIndex] animated:YES];
+        [self.emulatorCore setPauseEmulation:NO];
+        self.isShowingMenu = NO;
+    }
+}
+
 - (void)showSaveStateMenu
 {
 	__block PVEmulatorViewController *weakSelf = self;
@@ -347,6 +360,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	for (NSUInteger i = 0; i < 5; i++)
@@ -396,6 +410,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
@@ -436,6 +451,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		[self showMenu:self];
 	}
+    else
+    {
+        [self hideMenu];
+    }
 }
 
 - (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController
