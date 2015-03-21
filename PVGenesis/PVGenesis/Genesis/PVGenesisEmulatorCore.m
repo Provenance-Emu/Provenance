@@ -322,7 +322,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Video
 
-- (uint16_t *)videoBuffer
+- (const void *)videoBuffer
 {
 	return _videoBuffer;
 }

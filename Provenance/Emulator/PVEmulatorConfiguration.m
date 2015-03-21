@@ -7,10 +7,15 @@
 //
 
 #import "PVEmulatorConfiguration.h"
+
 #import "PVGenesisEmulatorCore.h"
 #import "PVGenesisControllerViewController.h"
+
 #import "PVSNESEmulatorCore.h"
 #import "PVSNESControllerViewController.h"
+
+#import "PVGBAEmulatorCore.h"
+#import "PVGBAControllerViewController.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
@@ -36,6 +41,7 @@ NSString * const PVGameGearSystemIdentifier = @"com.provenance.gamegear";
 NSString * const PVMasterSystemSystemIdentifier = @"com.provenance.mastersystem";
 NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
+NSString * const PVGBASystemIdentifier = @"com.provenance.gba";
 
 @interface PVEmulatorConfiguration ()
 
@@ -90,6 +96,10 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	{
 		core = [[PVSNESEmulatorCore alloc] init];
 	}
+    else if ([systemID isEqualToString:PVGBASystemIdentifier])
+    {
+        core = [[PVGBAEmulatorCore alloc] init];
+    }
 	
 	return core;
 }
@@ -109,6 +119,10 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	{
 		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
+    else if ([systemID isEqualToString:PVGBASystemIdentifier])
+    {
+        controller = [[PVGBAControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
 	
 	return controller;
 }

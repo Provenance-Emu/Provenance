@@ -105,7 +105,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 #pragma mark - Video
 
-- (uint16_t *)videoBuffer
+- (const void *)videoBuffer
 {
 	[self doesNotImplementSelector:_cmd];
 	return NULL;

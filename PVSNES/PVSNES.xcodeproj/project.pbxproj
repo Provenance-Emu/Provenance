@@ -280,8 +280,8 @@
 			children = (
 				1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */,
 				1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */,
-				1ACEA91A17F760390031B1C9 /* SNESCore */,
 				1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */,
+				1ACEA91A17F760390031B1C9 /* SNESCore */,
 			);
 			path = SNES;
 			sourceTree = "<group>";

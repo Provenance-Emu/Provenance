@@ -275,17 +275,16 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 
         NSString *batterySavesDirectory = [self batterySavesPath];
-
-        //if((batterySavesDirectory != nil) && ![batterySavesDirectory isEqualToString:@""])
-        if([batterySavesDirectory length] != 0)
+        
+        if([batterySavesDirectory length])
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-
+            
             NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
-
+            
             Memory.LoadSRAM([filePath UTF8String]);
         }
-
+        
         return YES;
     }
 
@@ -308,9 +307,9 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     }
 }
 
-- (uint16_t *)videoBuffer
+- (const void *)videoBuffer
 {
-    return (uint16_t *)videoBuffer;
+    return videoBuffer;
 }
 
 - (CGRect)screenRect
