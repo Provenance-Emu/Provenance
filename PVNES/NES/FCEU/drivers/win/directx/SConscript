@@ -1,0 +1,10 @@
+my_list =  Split("""
+dsound.lib
+dxguid.lib
+ddraw.lib
+dinput.lib
+""")
+
+for x in range(len(my_list)):
+  my_list[x] = 'drivers/win/directx/' + my_list[x]
+Return('my_list')

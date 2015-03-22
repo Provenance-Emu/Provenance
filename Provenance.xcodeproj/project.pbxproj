@@ -43,6 +43,8 @@
 		1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		1A486A1E17C8D98C0019F6D2 /* PVGame.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A486A1C17C8D98C0019F6D2 /* PVGame.xcdatamodeld */; };
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
+		1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7417181ABF215B00F3CD3C /* libPVNES.a */; };
+		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
 		1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9647B017D6864300A55612 /* PVControllerViewController.m */; };
 		1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
 		1A9FBE1D1ABD268B004E778B /* libPVGBA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE1C1ABD268B004E778B /* libPVGBA.a */; };
@@ -142,6 +144,9 @@
 		1A486A1D17C8D98C0019F6D2 /* PVGame.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PVGame.xcdatamodel; sourceTree = "<group>"; };
 		1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		1A7417181ABF215B00F3CD3C /* libPVNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVNES.a"; sourceTree = "<group>"; };
+		1A74171B1ABF231500F3CD3C /* PVNESControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVNESControllerViewController.h; sourceTree = "<group>"; };
+		1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVNESControllerViewController.m; sourceTree = "<group>"; };
 		1A9647AE17D675C300A55612 /* PVGame 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "PVGame 2.xcdatamodel"; sourceTree = "<group>"; };
 		1A9647AF17D6864300A55612 /* PVControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerViewController.h; sourceTree = "<group>"; };
 		1A9647B017D6864300A55612 /* PVControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerViewController.m; sourceTree = "<group>"; };
@@ -199,6 +204,7 @@
 				1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */,
 				1A9FBE1D1ABD268B004E778B /* libPVGBA.a in Frameworks */,
 				1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */,
+				1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
@@ -282,6 +288,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A7417181ABF215B00F3CD3C /* libPVNES.a */,
 				1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */,
 				1A9FBE1C1ABD268B004E778B /* libPVGBA.a */,
 				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
@@ -347,6 +354,7 @@
 				1A9FBE1F1ABD28A9004E778B /* SNES */,
 				1A9FBE201ABD28B6004E778B /* GBA */,
 				1AABE0CD1ABE3E4000FF6AEF /* GB */,
+				1A74171A1ABF22FD00F3CD3C /* NES */,
 				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
 				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
 				1A47C96117BC310700C27644 /* JSButton.h */,
@@ -414,6 +422,15 @@
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		1A74171A1ABF22FD00F3CD3C /* NES */ = {
+			isa = PBXGroup;
+			children = (
+				1A74171B1ABF231500F3CD3C /* PVNESControllerViewController.h */,
+				1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */,
+			);
+			name = NES;
 			sourceTree = "<group>";
 		};
 		1A9FBE1E1ABD28A1004E778B /* Genesis */ = {
@@ -558,6 +575,7 @@
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
+				1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
@@ -671,14 +689,13 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
+					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-iphoneos",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -710,14 +727,13 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
+					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-iphoneos",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
@@ -774,14 +790,13 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
+					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-iphoneos",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";

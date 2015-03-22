@@ -447,6 +447,69 @@
 		<array>
 			<string>gb</string>
 			<string>gbc</string>
+			<string>sgb</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>A</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>B</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Start</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVSystemName</key>
+		<string>Nintendo Entertainment System</string>
+		<key>PVShortSystemName</key>
+		<string>NES</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.nes</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>nes</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

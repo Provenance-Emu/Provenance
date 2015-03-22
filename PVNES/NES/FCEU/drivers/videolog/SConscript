@@ -1,0 +1,14 @@
+my_list = Split("""
+nesvideos-piece.cpp
+rgbtorgb.cpp
+""")
+
+Import('env')
+
+if env['LOGO']:
+  env.Append(CCFLAGS = "-DHAVE_GD")
+
+for x in range(len(my_list)):
+  my_list[x] = 'drivers/videolog/' + my_list[x]
+Return('my_list')
+

@@ -20,6 +20,9 @@
 #import "PVGBEmulatorCore.h"
 #import "PVGBControllerViewController.h"
 
+#import "PVNESEmulatorCore.h"
+#import "PVNESControllerViewController.h"
+
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
@@ -46,6 +49,7 @@ NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 NSString * const PVGBASystemIdentifier = @"com.provenance.gba";
 NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
+NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 
 @interface PVEmulatorConfiguration ()
 
@@ -108,6 +112,10 @@ NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
     {
         core = [[PVGBEmulatorCore alloc] init];
     }
+    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    {
+        core = [[PVNESEmulatorCore alloc] init];
+    }
 	
 	return core;
 }
@@ -134,6 +142,10 @@ NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
     else if ([systemID isEqualToString:PVGBSystemIdentifier])
     {
         controller = [[PVGBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    {
+        controller = [[PVNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;
