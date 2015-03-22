@@ -362,7 +362,7 @@
 		<key>PVSystemName</key>
 		<string>Gameboy Advance</string>
 		<key>PVShortSystemName</key>
-		<string>GBA</string>
+		<string>Gameboy Advance</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gba</string>
 		<key>PVSupportedExtensions</key>
@@ -440,12 +440,13 @@
 		<key>PVSystemName</key>
 		<string>Gameboy</string>
 		<key>PVShortSystemName</key>
-		<string>GB</string>
+		<string>Gameboy</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gb</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gb</string>
+			<string>gbc</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

@@ -8,8 +8,6 @@
 
 #import "PVSNESControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
-#import "PVSettingsModel.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 @interface PVSNESControllerViewController ()
 

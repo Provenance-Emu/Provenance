@@ -8,8 +8,6 @@
 
 #import "PVGenesisControllerViewController.h"
 #import "PVGenesisEmulatorCore.h"
-#import "PVSettingsModel.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 @interface PVGenesisControllerViewController ()
 
