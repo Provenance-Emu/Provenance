@@ -14,6 +14,7 @@
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
 		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
+		1A35A85B1ABF3EDE00D6DDAF /* libPVGBA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */; };
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
@@ -47,7 +48,6 @@
 		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
 		1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9647B017D6864300A55612 /* PVControllerViewController.m */; };
 		1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
-		1A9FBE1D1ABD268B004E778B /* libPVGBA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE1C1ABD268B004E778B /* libPVGBA.a */; };
 		1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.m */; };
 		1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */; };
 		1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */; };
@@ -82,6 +82,7 @@
 		1A34C58517D517760058E7D1 /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConfiguration.h; sourceTree = "<group>"; };
 		1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConfiguration.m; sourceTree = "<group>"; };
+		1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "PVGBA/build/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
 		1A3D409417B2DCE4004DFFFC /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A3D409717B2DCE4004DFFFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A3D409917B2DCE4004DFFFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -202,7 +203,7 @@
 				1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */,
 				1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */,
 				1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */,
-				1A9FBE1D1ABD268B004E778B /* libPVGBA.a in Frameworks */,
+				1A35A85B1ABF3EDE00D6DDAF /* libPVGBA.a in Frameworks */,
 				1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */,
 				1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
@@ -288,6 +289,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */,
 				1A7417181ABF215B00F3CD3C /* libPVNES.a */,
 				1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */,
 				1A9FBE1C1ABD268B004E778B /* libPVGBA.a */,
@@ -696,6 +698,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
+					"$(BUILD_DIR)/**",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -734,6 +737,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
+					"$(BUILD_DIR)/**",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
@@ -797,6 +801,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/Provenance/zipkit",
+					"$(BUILD_DIR)/**",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
