@@ -21,6 +21,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - MegaCD (partial support)
     - Game Gear
 - Nintendo
+    - NES
     - SNES
     - Gameboy / Gameboy Color
     - Gameboy Advance
@@ -50,6 +51,8 @@ Feel free to suggest/request features using the Issues page.
 #Attributions
 
 Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
+
+NES Emulation is provided by [FCEU](http://www.fceux.com/web/home.html).
 
 SNES emulation is provided by [SNES9x](http://www.snes9x.com).
 
