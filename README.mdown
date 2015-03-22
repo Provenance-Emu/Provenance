@@ -1,8 +1,7 @@
 # Provenance
-### An iOS Frontend for multiple emulators, currently supporting Sega Genesis, Game Gear and SNES
+### An iOS Frontend for multiple emulators
 
-Genesis/Game Gear emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
-SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu) 
+
 
 ###Why 'Provenance'?
 
@@ -14,20 +13,29 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 > > 1. The place of origin or earliest known history of something: "a rug of Iranian provenance".  
 > > 2. The beginning of something's existence; something's origin.
 
-##Features
+###Currently Supported Emulators:
+
+- Sega
+    - Genesis / Mega Drive
+    - Master System
+    - MegaCD (partial support)
+    - Game Gear
+- Nintendo
+    - SNES
+    - Gameboy / Gameboy Color
+    - Gameboy Advance
+
+###Features
 
 - Very accurate & full speed emulation
 - Stereo sound
 - OpenGL based rendering, never drops below 60fps
 - Save States
 - Battery saves (native game saves, i.e. Sonic 3)
-
-iOS Specific features:
-
 - All current generation iOS devices supported with iOS 8
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
-    - iOS game controller support (needs more generalised implementation)
+    - iOS game controller support
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
@@ -36,27 +44,20 @@ iOS Specific features:
 
 Feel free to suggest/request features using the Issues page.
 
-#Screen Shots
+###Screenshots
+[Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
 
-Game Library
-------------
-![Provenance Game Library showing Genesis games](http://jamesaddyman.com/provenance/screenshots/provenance1.png)  ![Provenance Game Library showing SNES games](http://jamesaddyman.com/provenance/screenshots/provenance2.png)  
+#Attributions
 
-Settings
---------
-![Provenance settings](http://jamesaddyman.com/provenance/screenshots/provenance5.png)  
+Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
 
-Sega Genesis
-------------
-![Provenance running Sonic 3 & Knuckles](http://jamesaddyman.com/provenance/screenshots/provenance3.png)  
+SNES emulation is provided by [SNES9x](http://www.snes9x.com).
 
-Sega Game Gear
---------------
-![Provenance running Sonic The Hedgehog](http://jamesaddyman.com/provenance/screenshots/provenance6.png)  
+Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.net/projects/vba/).
 
-Super Nintendo
---------------
-![Provenance running Chrono Trigger](http://jamesaddyman.com/provenance/screenshots/provenance4.png)  
+Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
+
+The specific implementations used in Provenance are based on [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
 
 #Provenance License (Simplified BSD)
 
