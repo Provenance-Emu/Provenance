@@ -369,11 +369,6 @@ static void FinalizeSamplesAudioCallback(void *)
     return SAMPLERATE;
 }
 
-- (NSUInteger)audioBufferCount
-{
-	return 1;
-}
-
 - (NSUInteger)channelCount
 {
     return 2;

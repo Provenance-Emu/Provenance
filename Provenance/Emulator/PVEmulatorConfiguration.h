@@ -32,6 +32,7 @@ extern NSString * const PVRightShoulderButton;
 extern NSString * const PVGenesisSystemIdentifier;
 extern NSString * const PVSNESSystemIdentifier;
 extern NSString * const PVGBASystemIdentifier;
+extern NSString * const PVGBSystemIdentifier;
 
 @interface PVEmulatorConfiguration : NSObject
 

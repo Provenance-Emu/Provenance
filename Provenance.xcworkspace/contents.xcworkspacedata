@@ -16,4 +16,7 @@
    <FileRef
       location = "group:PVGBA/PVGBA.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:PVGB/PVGB.xcodeproj">
+   </FileRef>
 </Workspace>

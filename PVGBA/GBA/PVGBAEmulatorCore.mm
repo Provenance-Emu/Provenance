@@ -278,10 +278,6 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Audio
 
-- (NSUInteger)audioBufferCount {
-    return 1;
-}
-
 - (double)audioSampleRate
 {
     return soundGetSampleRate();

@@ -168,8 +168,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (NSUInteger)audioBufferCount
 {
-	[self doesNotImplementSelector:_cmd];
-	return 0;
+	return 1;
 }
 
 - (void)getAudioBuffer:(void *)buffer frameCount:(NSUInteger)frameCount bufferIndex:(NSUInteger)index

@@ -1,0 +1,13 @@
+//
+//  PVGB-Prefix.pch
+//  PVGB
+//
+//  Created by James Addyman on 21/03/2015.
+//  Copyright (c) 2015 JamSoft. All rights reserved.
+//
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import "DebugUtils.h"
+#endif

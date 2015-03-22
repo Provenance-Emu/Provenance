@@ -91,24 +91,6 @@
 		1A9FBC561ABD0FEF004E778B /* SoundSDL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SoundSDL.cpp; sourceTree = "<group>"; };
 		1A9FBC571ABD0FEF004E778B /* SoundSDL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SoundSDL.h; sourceTree = "<group>"; };
 		1A9FBC581ABD0FEF004E778B /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
-		1A9FBC751ABD0FEF004E778B /* GB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GB.cpp; sourceTree = "<group>"; };
-		1A9FBC761ABD0FEF004E778B /* gb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gb.h; sourceTree = "<group>"; };
-		1A9FBC771ABD0FEF004E778B /* gbCheats.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbCheats.cpp; sourceTree = "<group>"; };
-		1A9FBC781ABD0FEF004E778B /* gbCheats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbCheats.h; sourceTree = "<group>"; };
-		1A9FBC791ABD0FEF004E778B /* gbCodes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbCodes.h; sourceTree = "<group>"; };
-		1A9FBC7A1ABD0FEF004E778B /* gbCodesCB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbCodesCB.h; sourceTree = "<group>"; };
-		1A9FBC7B1ABD0FEF004E778B /* gbDis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbDis.cpp; sourceTree = "<group>"; };
-		1A9FBC7C1ABD0FEF004E778B /* gbGfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbGfx.cpp; sourceTree = "<group>"; };
-		1A9FBC7D1ABD0FEF004E778B /* gbGlobals.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbGlobals.cpp; sourceTree = "<group>"; };
-		1A9FBC7E1ABD0FEF004E778B /* gbGlobals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbGlobals.h; sourceTree = "<group>"; };
-		1A9FBC7F1ABD0FEF004E778B /* gbMemory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbMemory.cpp; sourceTree = "<group>"; };
-		1A9FBC801ABD0FEF004E778B /* gbMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbMemory.h; sourceTree = "<group>"; };
-		1A9FBC811ABD0FEF004E778B /* gbPrinter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbPrinter.cpp; sourceTree = "<group>"; };
-		1A9FBC821ABD0FEF004E778B /* gbPrinter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbPrinter.h; sourceTree = "<group>"; };
-		1A9FBC831ABD0FEF004E778B /* gbSGB.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbSGB.cpp; sourceTree = "<group>"; };
-		1A9FBC841ABD0FEF004E778B /* gbSGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbSGB.h; sourceTree = "<group>"; };
-		1A9FBC851ABD0FEF004E778B /* gbSound.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gbSound.cpp; sourceTree = "<group>"; };
-		1A9FBC861ABD0FEF004E778B /* gbSound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gbSound.h; sourceTree = "<group>"; };
 		1A9FBC881ABD0FEF004E778B /* agbprint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = agbprint.cpp; sourceTree = "<group>"; };
 		1A9FBC891ABD0FEF004E778B /* agbprint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = agbprint.h; sourceTree = "<group>"; };
 		1A9FBC8A1ABD0FEF004E778B /* armdis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = armdis.cpp; sourceTree = "<group>"; };
@@ -228,7 +210,6 @@
 				1A9FBC3B1ABD0FEF004E778B /* apu */,
 				1A9FBC4A1ABD0FEF004E778B /* AutoBuild.h */,
 				1A9FBC4B1ABD0FEF004E778B /* common */,
-				1A9FBC741ABD0FEF004E778B /* gb */,
 				1A9FBC871ABD0FEF004E778B /* gba */,
 				1A9FBD0A1ABD0FEF004E778B /* NLS.h */,
 				1A9FBD201ABD0FEF004E778B /* System.h */,
@@ -278,31 +259,6 @@
 				1A9FBC581ABD0FEF004E778B /* Types.h */,
 			);
 			path = common;
-			sourceTree = "<group>";
-		};
-		1A9FBC741ABD0FEF004E778B /* gb */ = {
-			isa = PBXGroup;
-			children = (
-				1A9FBC751ABD0FEF004E778B /* GB.cpp */,
-				1A9FBC761ABD0FEF004E778B /* gb.h */,
-				1A9FBC771ABD0FEF004E778B /* gbCheats.cpp */,
-				1A9FBC781ABD0FEF004E778B /* gbCheats.h */,
-				1A9FBC791ABD0FEF004E778B /* gbCodes.h */,
-				1A9FBC7A1ABD0FEF004E778B /* gbCodesCB.h */,
-				1A9FBC7B1ABD0FEF004E778B /* gbDis.cpp */,
-				1A9FBC7C1ABD0FEF004E778B /* gbGfx.cpp */,
-				1A9FBC7D1ABD0FEF004E778B /* gbGlobals.cpp */,
-				1A9FBC7E1ABD0FEF004E778B /* gbGlobals.h */,
-				1A9FBC7F1ABD0FEF004E778B /* gbMemory.cpp */,
-				1A9FBC801ABD0FEF004E778B /* gbMemory.h */,
-				1A9FBC811ABD0FEF004E778B /* gbPrinter.cpp */,
-				1A9FBC821ABD0FEF004E778B /* gbPrinter.h */,
-				1A9FBC831ABD0FEF004E778B /* gbSGB.cpp */,
-				1A9FBC841ABD0FEF004E778B /* gbSGB.h */,
-				1A9FBC851ABD0FEF004E778B /* gbSound.cpp */,
-				1A9FBC861ABD0FEF004E778B /* gbSound.h */,
-			);
-			path = gb;
 			sourceTree = "<group>";
 		};
 		1A9FBC871ABD0FEF004E778B /* gba */ = {
@@ -602,6 +558,7 @@
 				1A9FBC301ABD0DA7004E778B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

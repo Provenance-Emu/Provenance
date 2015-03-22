@@ -374,11 +374,6 @@ static bool environment_callback(unsigned cmd, void *data)
     return 2;
 }
 
-- (NSUInteger)audioBufferCount
-{
-    return 1;
-}
-
 #pragma mark - Input
 
 - (void)pushGenesisButton:(PVGenesisButton)button
