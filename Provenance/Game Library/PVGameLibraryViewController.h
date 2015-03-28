@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 extern NSString *PVGameLibraryHeaderView;
+extern NSString *kRefreshLibraryNotification;
 
 @interface PVGameLibraryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout,
 															UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>

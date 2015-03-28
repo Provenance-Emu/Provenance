@@ -26,6 +26,7 @@
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
+NSString * const PVDatabaseID = @"PVDatabaseID";
 NSString * const PVSupportedExtensionsKey = @"PVSupportedExtensions";
 NSString * const PVControlLayoutKey = @"PVControlLayout";
 NSString * const PVControlTypeKey = @"PVControlType";
@@ -49,6 +50,7 @@ NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 NSString * const PVGBASystemIdentifier = @"com.provenance.gba";
 NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
+NSString * const PVGBCSystemIdentifier = @"com.provenance.gbc";
 NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 
 @interface PVEmulatorConfiguration ()
@@ -108,7 +110,8 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
     {
         core = [[PVGBAEmulatorCore alloc] init];
     }
-    else if ([systemID isEqualToString:PVGBSystemIdentifier])
+    else if ([systemID isEqualToString:PVGBSystemIdentifier] ||
+             [systemID isEqualToString:PVGBCSystemIdentifier])
     {
         core = [[PVGBEmulatorCore alloc] init];
     }
@@ -226,6 +229,12 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 {
 	NSDictionary *system = [self systemForIdentifier:systemID];
 	return [system objectForKey:PVControlLayoutKey];
+}
+
+- (NSString *)databaseIDForSystemID:(NSString *)systemID
+{
+    NSDictionary *system = [self systemForIdentifier:systemID];
+    return system[PVDatabaseID];
 }
 
 @end

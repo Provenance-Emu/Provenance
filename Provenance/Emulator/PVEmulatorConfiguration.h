@@ -13,6 +13,7 @@
 extern NSString * const PVSystemNameKey;
 extern NSString * const PVShortSystemNameKey;
 extern NSString * const PVSystemIdentifierKey;
+extern NSString * const PVDatabaseID;
 extern NSString * const PVSupportedExtensionsKey;
 extern NSString * const PVControlLayoutKey;
 extern NSString * const PVControlTypeKey;
@@ -33,6 +34,7 @@ extern NSString * const PVGenesisSystemIdentifier;
 extern NSString * const PVSNESSystemIdentifier;
 extern NSString * const PVGBASystemIdentifier;
 extern NSString * const PVGBSystemIdentifier;
+extern NSString * const PVGBCSystemIdentifier;
 extern NSString * const PVNESSystemIdentifier;
 
 @interface PVEmulatorConfiguration : NSObject
@@ -50,5 +52,6 @@ extern NSString * const PVNESSystemIdentifier;
 - (NSArray *)fileExtensionsForSystemIdentifier:(NSString *)systemID;
 - (NSString *)systemIdentifierForFileExtension:(NSString *)fileExtension;
 - (NSArray *)controllerLayoutForSystem:(NSString *)systemID;
+- (NSString *)databaseIDForSystemID:(NSString *)systemID;
 
 @end

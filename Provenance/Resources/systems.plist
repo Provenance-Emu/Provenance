@@ -9,6 +9,8 @@
 		<string>SegaCD</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.segacd</string>
+		<key>PVDatabaseID</key>
+		<string>32</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>iso</string>
@@ -71,6 +73,8 @@
 		<string>Genesis</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.genesis</string>
+		<key>PVDatabaseID</key>
+		<string>33</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smd</string>
@@ -160,6 +164,8 @@
 		<string>Game Gear</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gamegear</string>
+		<key>PVDatabaseID</key>
+		<string>30</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gg</string>
@@ -214,6 +220,8 @@
 		<string>Master System</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.mastersystem</string>
+		<key>PVDatabaseID</key>
+		<string>31</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>sms</string>
@@ -268,6 +276,8 @@
 		<string>SNES</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.snes</string>
+		<key>PVDatabaseID</key>
+		<string>26</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smc</string>
@@ -365,6 +375,8 @@
 		<string>Gameboy Advance</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gba</string>
+		<key>PVDatabaseID</key>
+		<string>20</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gba</string>
@@ -443,9 +455,74 @@
 		<string>Gameboy</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gb</string>
+		<key>PVDatabaseID</key>
+		<string>19</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gb</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>A</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>B</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Start</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVSystemName</key>
+		<string>Gameboy Color</string>
+		<key>PVShortSystemName</key>
+		<string>Gameboy Color</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.gbc</string>
+		<key>PVDatabaseID</key>
+		<string>21</string>
+		<key>PVSupportedExtensions</key>
+		<array>
 			<string>gbc</string>
 			<string>sgb</string>
 		</array>
@@ -507,6 +584,8 @@
 		<string>NES</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.nes</string>
+		<key>PVDatabaseID</key>
+		<string>25</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>nes</string>

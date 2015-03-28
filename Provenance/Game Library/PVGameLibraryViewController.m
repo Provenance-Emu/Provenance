@@ -25,6 +25,7 @@
 #import "OESQLiteDatabase.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
+NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 @interface PVGameLibraryViewController () {
 	
@@ -104,6 +105,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleArchiveInflationFailed:)
                                                  name:PVArchiveInflationFailedNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleRefreshLibrary:)
+                                                 name:kRefreshLibraryNotification
+                                               object:nil];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 	
@@ -116,14 +121,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	_managedObjectContext = [self managedObjectContext];
 	
 	[self setTitle:@"Library"];
-	
-	NSString *romsPath = [self romsPath];
-	
-	_watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
-		[self reloadData];
-	}];
-    [_watcher findAndExtractArchives];
-	[_watcher startMonitoring];
     
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	[layout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
@@ -146,8 +143,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	[_collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[_collectionView setBackgroundColor:[UIColor clearColor]];
-	
-	[self reloadData];
+    
+    NSString *romsPath = [self romsPath];
+    
+    _watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
+        [self reloadData];
+    }];
+    [_watcher findAndExtractArchives];
+    [_watcher startMonitoring];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -220,134 +223,149 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)reloadData
 {
-	[self refreshLibrary];
-	
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	[request setEntity:[NSEntityDescription entityForName:NSStringFromClass([PVGame class]) inManagedObjectContext:_managedObjectContext]];
-	
-	NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
-	[request setSortDescriptors:@[sortDescriptor]];
-	
-	NSError *error = nil;
-	NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
-	NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
-	
-	for (PVGame *game in tempGames)
-	{
-		NSString *fileExtension = [[[[self romsPath] stringByAppendingPathComponent:[game romPath]] pathExtension] lowercaseString];
-		NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
-		NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
-		if (!games)
-		{
-			games = [NSMutableArray array];
-		}
-		
-		[games addObject:game];
-		[tempGamesInSections setObject:[games copy] forKey:systemID];
-	}
-	
-	self.gamesInSections = [tempGamesInSections copy];
-	self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-	
-	[_collectionView reloadData];
+    [self refreshLibrary:^{
+       	NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        [request setEntity:[NSEntityDescription entityForName:NSStringFromClass([PVGame class]) inManagedObjectContext:_managedObjectContext]];
+        
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
+        [request setSortDescriptors:@[sortDescriptor]];
+        
+        NSError *error = nil;
+        NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
+        NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
+        
+        for (PVGame *game in tempGames)
+        {
+            NSString *fileExtension = [[[[self romsPath] stringByAppendingPathComponent:[game romPath]] pathExtension] lowercaseString];
+            NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
+            NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
+            if (!games)
+            {
+                games = [NSMutableArray array];
+            }
+            
+            [games addObject:game];
+            [tempGamesInSections setObject:[games copy] forKey:systemID];
+        }
+        
+        self.gamesInSections = [tempGamesInSections copy];
+        self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+        
+        [_collectionView reloadData];
+    }];
 }
 
-- (void)refreshLibrary
+- (void)refreshLibrary:(void (^)())completionHandler
 {
-	NSString *romsPath = [self romsPath];
-	
-	NSFileManager *fileManager = [NSFileManager defaultManager];
-	NSArray *contents = [fileManager contentsOfDirectoryAtPath:romsPath error:NULL];
-	
-	NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
-	
-	for (NSString *fileName in contents)
-	{
-		NSString *fileExtension = [[fileName pathExtension] lowercaseString];
-		
-		if ([supportedFileExtensions containsObject:fileExtension])
-		{
-			NSString *currentPath = [romsPath stringByAppendingPathComponent:fileName];
-			NSString *title = [[currentPath lastPathComponent] stringByDeletingPathExtension];
-			NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
-			
-			NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", fileName];
-			NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([PVGame class])];
-			[request setPredicate:predicate];
-			[request setFetchLimit:1];
-			
-			PVGame *game = nil;
-			
-			NSArray *results = [_managedObjectContext executeFetchRequest:request error:NULL];
-			if ([results count])
-			{
-				game = results[0];
-				[game setSystemIdentifier:systemID];
-			}
-			else
-			{
-				NSString *md5Hash = [[NSFileManager defaultManager] md5HashForFile:currentPath];
-				NSPredicate *hashPredicate = [NSPredicate predicateWithFormat:@"md5 == %@", md5Hash];
-				NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
-				[request setPredicate:hashPredicate];
-				[request setFetchLimit:1];
-				NSArray *hashResults = [_managedObjectContext executeFetchRequest:request error:NULL];
-				if ([hashResults count])
-				{
-					game = hashResults[0];
-					[game setRomPath:fileName];
-					[game setTitle:title];
-					[game setSystemIdentifier:systemID];
-				}
-			}
-
-			if (!game)
-			{
-				//creating
-				game = (PVGame *)[NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([PVGame class])
-																inManagedObjectContext:_managedObjectContext];
-				[game setRomPath:fileName];
-				[game setTitle:title];
-				[game setSystemIdentifier:systemID];
-			}
-			
-			if (![[game md5] length] && ![[game crc32] length])
-			{
-				dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-					NSURL *fileURL = [NSURL fileURLWithPath:currentPath];
-					NSString *md5 = nil;
-					NSString *crc32 = nil;
-					DLog(@"Getting hash for %@", [game title]);
-					[[NSFileManager defaultManager] hashFileAtURL:fileURL
-															  md5:&md5
-															crc32:&crc32
-															error:NULL];
-					dispatch_async(dispatch_get_main_queue(), ^{
-						DLog(@"Got hash for %@", [game title]);
-						[game setMd5:md5];
-						[game setCrc32:crc32];
-						
-						if ([[game requiresSync] boolValue])
-						{
-							DLog(@"about to look up for %@ after getting hash", [game title]);
-							[self lookUpInfoForGame:game];
-						}
-					});
-				});
-			}
-			else
-			{
-				if ([[game requiresSync] boolValue])
-				{
-					DLog(@"about to look up for %@ ", [game title]);
-					[self lookUpInfoForGame:game];
-				}
-			}
-		}
-	}
-	
-	[self removeOrphans];
-	[self save:NULL];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *romsPath = [self romsPath];
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *contents = [fileManager contentsOfDirectoryAtPath:romsPath error:NULL];
+        
+        NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
+        
+        for (NSString *fileName in contents)
+        {
+            DLog(@"\n\nFILE: %@\n\n", fileName);
+            
+            BOOL isDirectory = NO;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:fileName isDirectory:&isDirectory])
+            {
+                if (isDirectory)
+                {
+                    continue;
+                }
+            }
+            
+            
+            NSString *fileExtension = [[fileName pathExtension] lowercaseString];
+            
+            if ([supportedFileExtensions containsObject:fileExtension])
+            {
+                NSString *currentPath = [romsPath stringByAppendingPathComponent:fileName];
+                NSString *title = [[currentPath lastPathComponent] stringByDeletingPathExtension];
+                NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
+                
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"romPath == %@", fileName];
+                NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:NSStringFromClass([PVGame class])];
+                [request setPredicate:predicate];
+                [request setFetchLimit:1];
+                
+                PVGame *game = nil;
+                
+                NSArray *results = [_managedObjectContext executeFetchRequest:request error:NULL];
+                if ([results count])
+                {
+                    game = results[0];
+                    [game setSystemIdentifier:systemID];
+                }
+                else
+                {
+                    NSString *md5Hash = [[NSFileManager defaultManager] md5HashForFile:currentPath];
+                    NSPredicate *hashPredicate = [NSPredicate predicateWithFormat:@"md5 == %@", md5Hash];
+                    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
+                    [request setPredicate:hashPredicate];
+                    [request setFetchLimit:1];
+                    NSArray *hashResults = [_managedObjectContext executeFetchRequest:request error:NULL];
+                    if ([hashResults count])
+                    {
+                        game = hashResults[0];
+                        [game setRomPath:fileName];
+                        [game setTitle:title];
+                        [game setSystemIdentifier:systemID];
+                    }
+                }
+                
+                if (!game)
+                {
+                    //creating
+                    game = (PVGame *)[NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([PVGame class])
+                                                                   inManagedObjectContext:_managedObjectContext];
+                    [game setRomPath:fileName];
+                    [game setTitle:title];
+                    [game setSystemIdentifier:systemID];
+                }
+                
+                if (![[game md5] length] && ![[game crc32] length])
+                {
+                    NSURL *fileURL = [NSURL fileURLWithPath:currentPath];
+                    NSString *md5 = nil;
+                    NSString *crc32 = nil;
+                    [[NSFileManager defaultManager] hashFileAtURL:fileURL
+                                                              md5:&md5
+                                                            crc32:&crc32
+                                                            error:NULL];
+                    DLog(@"Got hash for %@", [game title]);
+                    [game setMd5:md5];
+                    [game setCrc32:crc32];
+                    
+                    if ([[game requiresSync] boolValue])
+                    {
+                        DLog(@"about to look up for %@ after getting hash", [game title]);
+                        [self lookUpInfoForGame:game];
+                    }
+                }
+                else
+                {
+                    if ([[game requiresSync] boolValue])
+                    {
+                        DLog(@"about to look up for %@ ", [game title]);
+                        [self lookUpInfoForGame:game];
+                    }
+                }
+            }
+        }
+        
+        [self removeOrphans];
+        [self save:NULL];
+        if (completionHandler != NULL)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler();
+            });
+        }
+    });
 }
 
 - (void)removeOrphans
@@ -379,23 +397,68 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[alert show];
 }
 
+- (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error
+{
+    NSArray *results = nil;
+    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
+    NSString *likeQuery = @"SELECT DISTINCT romFileName as 'romFileName', releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\"";
+    NSString *queryString = nil;
+    
+    NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
+    
+    if ([key isEqualToString:@"romFileName"])
+    {
+        queryString = [NSString stringWithFormat:likeQuery, key, value, dbSystemID];
+    }
+    else
+    {
+        queryString = [NSString stringWithFormat:exactQuery, key, value];
+    }
+    
+    results = [self.gameDatabase executeQuery:queryString
+                                        error:error];
+    return results;
+}
+
 - (void)lookUpInfoForGame:(PVGame *)game
 {
-	DLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
+    DLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
     if (!self.gameDatabase)
     {
         self.gameDatabase = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
                                                             error:NULL];
     }
     
-    NSError *error = nil;
-    NSArray *results =[self.gameDatabase executeQuery:[NSString stringWithFormat:@"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', releaseDescription as 'gameDescription', regionName as 'region' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE romHashMD5 = '%@'", [game md5]]
-                              error:&error];
+    __block NSError *error = nil;
+    __block NSArray *results = nil;
+    NSString *md5 = [game md5];
+    NSString *crc32 = [game crc32];
+    NSString *romPath = [game romPath];
+    NSString *systemID = [game systemIdentifier];
+    
+    results = [self searchDatabaseUsingKey:@"romHashMD5" value:md5 systemID:systemID error:&error];
+    
+    if (![results count])
+    {
+        results = [self searchDatabaseUsingKey:@"romHashCRC" value:crc32 systemID:systemID error:&error];
+    }
+    
+    if (![results count])
+    {
+        NSString *extension = [@"." stringByAppendingString:[romPath pathExtension]];
+        NSString *name = [romPath stringByReplacingOccurrencesOfString:extension withString:@""];
+        results = [self searchDatabaseUsingKey:@"romFileName" value:name systemID:systemID error:&error];
+    }
+    
     if (![results count])
     {
         if (error)
         {
             DLog(@"Error looking up game info, %@", [error localizedDescription]);
+        }
+        else
+        {
+            DLog(@"Got no results for DB search for game: %@", romPath);
         }
         
         [game setRequiresSync:@(NO)];
@@ -403,46 +466,58 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         return;
     }
     
-    // just pick any result, doesn't matter
-    NSDictionary *result = [results lastObject];
+    NSDictionary *chosenResult = nil;
+    for (NSDictionary *result in results)
+    {
+        if ([result[@"region"] isEqualToString:@"USA"])
+        {
+            chosenResult = result;
+            break;
+        }
+    }
+    
+    if (!chosenResult)
+    {
+        chosenResult = [results firstObject];
+    }
+    
     [game setRequiresSync:@(NO)];
-    [game setTitle:result[@"gameTitle"]];
-    [game setOriginalArtworkURL:result[@"boxImageURL"]];
+    [game setTitle:chosenResult[@"gameTitle"]];
+    [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
     [self save:NULL];
     [self getArtworkForGame:game];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_collectionView reloadData];
+    });
 }
 
 - (void)getArtworkForGame:(PVGame *)game
 {
-	DLog(@"Starting Artwork download for %@, %@", [game title], [game originalArtworkURL]);
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:[game originalArtworkURL]]];
-        NSHTTPURLResponse *urlResponse = nil;
-        NSError *error = nil;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request
-                                             returningResponse:&urlResponse
-                                                         error:&error];
-        if (error)
-        {
-            DLog(@"error downloading artwork from: %@ -- %@", [game originalArtworkURL], [error localizedDescription]);
-            return;
-        }
-        
-        if ([urlResponse statusCode] != 200)
-        {
-            DLog(@"HTTP Error: %zd", [urlResponse statusCode]);
-            DLog(@"Response: %@", urlResponse);
-        }
-        
-        UIImage *artwork = [[UIImage alloc] initWithData:data];
-        if (artwork)
-        {
-            [PVMediaCache writeImageToDisk:artwork withKey:[game originalArtworkURL]];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_collectionView reloadData];
-            });
-        }
-    });
+    DLog(@"Starting Artwork download for %@, %@", [game title], [game originalArtworkURL]);
+    NSString *originalArtworkURL = [game originalArtworkURL];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:originalArtworkURL]];
+    NSHTTPURLResponse *urlResponse = nil;
+    NSError *error = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&urlResponse
+                                                     error:&error];
+    if (error)
+    {
+        DLog(@"error downloading artwork from: %@ -- %@", originalArtworkURL, [error localizedDescription]);
+        return;
+    }
+    
+    if ([urlResponse statusCode] != 200)
+    {
+        DLog(@"HTTP Error: %zd", [urlResponse statusCode]);
+        DLog(@"Response: %@", urlResponse);
+    }
+    
+    UIImage *artwork = [[UIImage alloc] initWithData:data];
+    if (artwork)
+    {
+        [PVMediaCache writeImageToDisk:artwork withKey:originalArtworkURL];
+    }
 }
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
@@ -466,6 +541,27 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:NULL]];
     [self presentViewController:alert animated:YES completion:NULL];
+}
+
+- (void)handleRefreshLibrary:(NSNotification *)note
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
+            NSArray *games = [self.gamesInSections objectForKey:key];
+            for (PVGame *game in games)
+            {
+                [game setRequiresSync:@(YES)];
+                [game setArtworkURL:nil];
+                [game setOriginalArtworkURL:nil];
+            }
+        }];
+        
+        if ([self save:NULL])
+        {
+            [_collectionView reloadData];
+            [self reloadData];
+        }
+    });
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -598,8 +694,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 				[PVMediaCache deleteImageForKey:[game artworkURL]];
 				[game setArtworkURL:[game originalArtworkURL]];
 				[weakSelf save:NULL];
-				[_collectionView reloadData];
-                [weakSelf getArtworkForGame:game];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [weakSelf getArtworkForGame:game];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [_collectionView reloadData];
+                    });
+                });
 			}];
 		}
 		
@@ -775,8 +875,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
 	}
 	
-	success = [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
-    success = [PVMediaCache deleteImageForKey:[game artworkURL]];
+	[PVMediaCache deleteImageForKey:[game originalArtworkURL]];
+    [PVMediaCache deleteImageForKey:[game artworkURL]];
 	
 	[[self managedObjectContext] deleteObject:game];
 	[self save:NULL];
