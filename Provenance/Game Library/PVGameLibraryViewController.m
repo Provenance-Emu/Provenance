@@ -588,23 +588,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	NSString *artworkURL = [game artworkURL];
 	NSString *originalArtworkURL = [game originalArtworkURL];
-		
-	if ([artworkURL length])
-	{
-		UIImage *artwork = [PVMediaCache imageForKey:artworkURL];
-		if (artwork)
-		{
-			[[cell imageView] setImage:artwork];
-		}
-	}
-	else if ([originalArtworkURL length])
-	{
-		UIImage *artwork = [PVMediaCache imageForKey:originalArtworkURL];
-		if (artwork)
-		{
-			[[cell imageView] setImage:artwork];
-		}
-	}
+    __block UIImage *artwork = nil;
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if ([artworkURL length])
+        {
+            artwork = [PVMediaCache imageForKey:artworkURL];
+        }
+        else if ([originalArtworkURL length])
+        {
+            artwork = [PVMediaCache imageForKey:originalArtworkURL];
+        }
+        
+        if (artwork)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[cell imageView] setImage:artwork];
+                [cell setNeedsLayout];
+            });
+        }
+    });
     
 	[[cell titleLabel] setText:[game title]];
 	[[cell missingLabel] setText:[game title]];
