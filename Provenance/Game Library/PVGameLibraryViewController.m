@@ -228,18 +228,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)reloadData
 {
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_collectionView animated:YES];
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:[self.navigationController view] animated:YES];
     [hud setMode:MBProgressHUDModeIndeterminate];
     [hud setLabelText:@"Refreshing, please wait."];
     [hud setYOffset:-50];
-    [_collectionView setUserInteractionEnabled:NO];
     
     self.refreshing = YES;
     
-    [self refreshLibrary:^{
+    [self refreshLibraryWithCompletion:^{
         [self fetchFromCoreData];
         [_collectionView setUserInteractionEnabled:YES];
-        MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:[self.navigationController view]];
         [hud setMode:MBProgressHUDModeAnnularDeterminate];
         [hud setProgress:1];
         [hud setLabelText:@"Done!"];
@@ -259,7 +258,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [request setSortDescriptors:@[sortDescriptor]];
     
     NSError *error = nil;
-    NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
+    NSArray *tempGames = nil;
+    @synchronized(_managedObjectContext)
+    {
+        tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
+    }
     NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
     
     for (PVGame *game in tempGames)
@@ -282,7 +285,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [_collectionView reloadData];
 }
 
-- (void)refreshLibrary:(void (^)())completionHandler
+- (void)refreshLibraryWithCompletion:(void (^)())completionHandler
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *romsPath = [self romsPath];
@@ -295,7 +298,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSUInteger filesCompleted = 0;
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+            MBProgressHUD *hud = [MBProgressHUD HUDForView:[self.navigationController view]];
             [hud setMode:MBProgressHUDModeAnnularDeterminate];
             [hud setProgress:0];
             [hud setDetailsLabelText:[NSString stringWithFormat:@"%zd of %zd", filesCompleted, [contents count]]];
@@ -330,7 +333,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                 
                 PVGame *game = nil;
                 
-                NSArray *results = [_managedObjectContext executeFetchRequest:request error:NULL];
+                NSArray *results = nil;
+                @synchronized(_managedObjectContext)
+                {
+                    results = [_managedObjectContext executeFetchRequest:request error:NULL];
+                }
+                
                 if ([results count])
                 {
                     game = results[0];
@@ -343,7 +351,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
                     [request setPredicate:hashPredicate];
                     [request setFetchLimit:1];
-                    NSArray *hashResults = [_managedObjectContext executeFetchRequest:request error:NULL];
+                    NSArray *hashResults = nil;
+                    @synchronized(_managedObjectContext)
+                    {
+                        hashResults = [_managedObjectContext executeFetchRequest:request error:NULL];
+                    }
                     if ([hashResults count])
                     {
                         game = hashResults[0];
@@ -395,7 +407,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             filesCompleted++;
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+                MBProgressHUD *hud = [MBProgressHUD HUDForView:[self.navigationController view]];
                 [hud setMode:MBProgressHUDModeAnnularDeterminate];
                 [hud setProgress:(CGFloat)filesCompleted / (CGFloat)[contents count]];
                 [hud setDetailsLabelText:[NSString stringWithFormat:@"%zd of %zd", filesCompleted, [contents count]]];
@@ -403,27 +415,32 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }
         
         [self removeOrphans];
-        [self save:NULL];
-        if (completionHandler != NULL)
+        if ([self save:NULL])
         {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionHandler();
-            });
+            if (completionHandler != NULL)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionHandler();
+                });
+            }
         }
     });
 }
 
 - (void)removeOrphans
 {
-	NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
-	NSArray *results = [_managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-	for (PVGame *game in results)
-	{
-        if (![[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:[game romPath]]])
-		{
-			[_managedObjectContext deleteObject:game];
-		}
-	}
+    @synchronized(_managedObjectContext)
+    {
+        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
+        NSArray *results = [_managedObjectContext executeFetchRequest:fetchRequest error:NULL];
+        for (PVGame *game in results)
+        {
+            if (![[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:[game romPath]]])
+            {
+                [_managedObjectContext deleteObject:game];
+            }
+        }
+    }
 }
 
 - (IBAction)getMoreROMs
