@@ -17,7 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *opacityValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
-
+@property (weak, nonatomic) IBOutlet UILabel *modeLabel;
 
 - (IBAction)done:(id)sender;
 

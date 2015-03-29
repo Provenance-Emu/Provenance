@@ -42,6 +42,12 @@
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+#if DEBUG
+    [self.modeLabel setText:@"DEBUG"];
+#else
+    [self.modeLabel setText:@"RELEASE"];
+#endif
+    
 }
 
 - (void)didReceiveMemoryWarning
