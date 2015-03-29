@@ -85,13 +85,13 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     __weak PVDirectoryWatcher *weakSelf = self;
     
 	dispatch_source_set_event_handler(_dispatch_source, ^{
-        [weakSelf findAndExtractArchives];
+        [weakSelf performSelector:@selector(findAndExtractArchives) withObject:nil afterDelay:1.0];
 	});
 	
 	dispatch_resume(_dispatch_source);
     if (!self.timer)
     {
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0
                                                       target:self
                                                     selector:@selector(checkForUpdates:)
                                                     userInfo:nil

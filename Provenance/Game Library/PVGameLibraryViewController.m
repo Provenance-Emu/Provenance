@@ -154,7 +154,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     _watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
         if (!self.refreshing)
         {
-            [_watcher setUpdates:NO];
             [self reloadData];
         }
     }];
@@ -250,6 +249,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud hide:YES afterDelay:0.5];
         
         self.refreshing = NO;
+        [_watcher setUpdates:NO];
     }];
 }
 
@@ -1104,6 +1104,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if (coordinator != nil)
 	{
         _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        [_managedObjectContext setMergePolicy:NSOverwriteMergePolicy];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
     
@@ -1117,6 +1118,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if (coordinator != nil)
     {
         backgroundManagedObjectContext = [[NSManagedObjectContext alloc] init];
+        [backgroundManagedObjectContext setMergePolicy:NSOverwriteMergePolicy];
         [backgroundManagedObjectContext setPersistentStoreCoordinator:coordinator];
     }
     
