@@ -910,30 +910,32 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     NSString *romPath = [[self romsPath] stringByAppendingPathComponent:[game romPath]];
     
-	NSError *error = nil;
-	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
-	if (!success)
-	{
-		DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
-	}
-	
-	success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
-	if (!success)
-	{
-		DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
-	}
-	
-	success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
-	if (!success)
-	{
-		DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
-	}
-	
-	[PVMediaCache deleteImageForKey:[game originalArtworkURL]];
-    [PVMediaCache deleteImageForKey:[game artworkURL]];
-	
-	[[self managedObjectContext] deleteObject:game];
-	[self save:NULL];
+    [[self managedObjectContext] deleteObject:game];
+    if ([self save:NULL])
+    {
+        NSError *error = nil;
+        
+        [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
+        [PVMediaCache deleteImageForKey:[game artworkURL]];
+        
+        BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
+        if (!success)
+        {
+            DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
+        }
+        
+        success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
+        if (!success)
+        {
+            DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
+        }
+        
+        success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
+        if (!success)
+        {
+            DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
+        }
+    }
 }
 
 - (void)chooseCustomArtworkForGame:(PVGame *)game
