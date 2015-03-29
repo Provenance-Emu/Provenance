@@ -288,6 +288,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)refreshLibraryWithCompletion:(void (^)())completionHandler
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSManagedObjectContext *backgroundContext = [self backgroundManagedObjectContext];
+        
         NSString *romsPath = [self romsPath];
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -334,10 +336,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                 PVGame *game = nil;
                 
                 NSArray *results = nil;
-                @synchronized(_managedObjectContext)
-                {
-                    results = [_managedObjectContext executeFetchRequest:request error:NULL];
-                }
+                NSError *error = nil;
+                results = [backgroundContext executeFetchRequest:request error:&error];
                 
                 if ([results count])
                 {
@@ -352,10 +352,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                     [request setPredicate:hashPredicate];
                     [request setFetchLimit:1];
                     NSArray *hashResults = nil;
-                    @synchronized(_managedObjectContext)
-                    {
-                        hashResults = [_managedObjectContext executeFetchRequest:request error:NULL];
-                    }
+                    NSError *error = nil;
+                    hashResults = [backgroundContext executeFetchRequest:request error:&error];
                     if ([hashResults count])
                     {
                         game = hashResults[0];
@@ -369,7 +367,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                 {
                     //creating
                     game = (PVGame *)[NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([PVGame class])
-                                                                   inManagedObjectContext:_managedObjectContext];
+                                                                   inManagedObjectContext:backgroundContext];
                     [game setRomPath:fileName];
                     [game setTitle:title];
                     [game setSystemIdentifier:systemID];
@@ -391,7 +389,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                     if ([[game requiresSync] boolValue])
                     {
                         DLog(@"about to look up for %@ after getting hash", [game title]);
-                        [self lookUpInfoForGame:game];
+                        [self lookUpInfoForGame:game inContext:backgroundContext];
                     }
                 }
                 else
@@ -399,7 +397,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                     if ([[game requiresSync] boolValue])
                     {
                         DLog(@"about to look up for %@ ", [game title]);
-                        [self lookUpInfoForGame:game];
+                        [self lookUpInfoForGame:game inContext:backgroundContext];
                     }
                 }
             }
@@ -414,31 +412,28 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             });
         }
         
-        [self removeOrphans];
-        if ([self save:NULL])
+        [self removeOrphansInContext:backgroundContext];
+        NSError *error = nil;
+        [self saveContext:backgroundContext error:&error];
+        
+        if (completionHandler != NULL)
         {
-            if (completionHandler != NULL)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    completionHandler();
-                });
-            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler();
+            });
         }
     });
 }
 
-- (void)removeOrphans
+- (void)removeOrphansInContext:(NSManagedObjectContext *)context
 {
-    @synchronized(_managedObjectContext)
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
+    NSArray *results = [context executeFetchRequest:fetchRequest error:NULL];
+    for (PVGame *game in results)
     {
-        NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:NSStringFromClass([PVGame class])];
-        NSArray *results = [_managedObjectContext executeFetchRequest:fetchRequest error:NULL];
-        for (PVGame *game in results)
+        if (![[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:[game romPath]]])
         {
-            if (![[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:[game romPath]]])
-            {
-                [_managedObjectContext deleteObject:game];
-            }
+            [context deleteObject:game];
         }
     }
 }
@@ -482,7 +477,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     return results;
 }
 
-- (void)lookUpInfoForGame:(PVGame *)game
+- (void)lookUpInfoForGame:(PVGame *)game inContext:(NSManagedObjectContext *)context
 {
     DLog(@"%@ MD5: %@, CRC32: %@", [game title], [game md5], [game crc32]);
     if (!self.gameDatabase)
@@ -546,10 +541,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [game setRequiresSync:@(NO)];
     [game setTitle:chosenResult[@"gameTitle"]];
     [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
-    [self save:NULL];
+    error = nil;
+    [self saveContext:context error:&error];
     [self getArtworkForGame:game];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [_collectionView reloadData];
+        [_collectionView reloadData]; // TODO: only reload collection items that matter
     });
 }
 
@@ -622,8 +618,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                 [game setOriginalArtworkURL:nil];
             }
         }];
-        
-        if ([self save:NULL])
+        NSError *error = nil;
+        if ([self saveContext:_managedObjectContext error:&error])
         {
             [_collectionView reloadData];
             [self reloadData];
@@ -764,7 +760,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
 				[PVMediaCache deleteImageForKey:[game artworkURL]];
 				[game setArtworkURL:[game originalArtworkURL]];
-				[weakSelf save:NULL];
+                NSError *error = nil;
+				[weakSelf saveContext:_managedObjectContext error:&error];
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     [weakSelf getArtworkForGame:game];
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -873,8 +870,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	{
 		[self.gameToRename setTitle:newTitle];
 		self.gameToRename = nil;
-		
-		[self save:NULL];
+		NSError *error = nil;
+		[self saveContext:_managedObjectContext error:&error];
 		[_collectionView reloadData];
 	}
 	
@@ -928,7 +925,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *romPath = [[self romsPath] stringByAppendingPathComponent:[game romPath]];
     
     [[self managedObjectContext] deleteObject:game];
-    if ([self save:NULL])
+    NSError *error = nil;
+    if ([self saveContext:_managedObjectContext error:&error])
     {
         NSError *error = nil;
         
@@ -1007,7 +1005,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                                          [PVMediaCache writeImageToDisk:lastPhoto
                                                                                                 withKey:[[rep url] absoluteString]];
                                                                          [game setArtworkURL:[[rep url] absoluteString]];
-                                                                         [weakSelf save:NULL];
+                                                                         NSError *error = nil;
+                                                                         [weakSelf saveContext:_managedObjectContext error:&error];
                                                                          //[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[weakSelf.games indexOfObject:game] inSection:0]]];
                                                                          [_collectionView reloadData];
                                                                          weakSelf.assetsLibrary = nil;
@@ -1072,7 +1071,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
 		[self.gameForCustomArt setArtworkURL:hash];
-		[self save:NULL];
+        NSError *error = nil;
+		[self saveContext:_managedObjectContext error:&error];
 		//[_collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:[self.games indexOfObject:self.gameToRename] inSection:0]]];
 		[_collectionView reloadData];
 	}
@@ -1089,9 +1089,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #pragma mark -
 #pragma mark Core Data stack
 
-- (NSManagedObjectContext *) managedObjectContext {
-    
-    if (_managedObjectContext != nil) {
+- (NSManagedObjectContext *)managedObjectContext
+{
+    if (_managedObjectContext != nil)
+    {
         return _managedObjectContext;
     }
     
@@ -1101,7 +1102,21 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         _managedObjectContext = [[NSManagedObjectContext alloc] init];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
     }
+    
     return _managedObjectContext;
+}
+
+- (NSManagedObjectContext *)backgroundManagedObjectContext
+{
+    NSManagedObjectContext *backgroundManagedObjectContext = nil;
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
+    if (coordinator != nil)
+    {
+        backgroundManagedObjectContext = [[NSManagedObjectContext alloc] init];
+        [backgroundManagedObjectContext setPersistentStoreCoordinator:coordinator];
+    }
+    
+    return backgroundManagedObjectContext;
 }
 
 - (NSManagedObjectModel *)managedObjectModel {
@@ -1169,37 +1184,24 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     return _persistentStoreCoordinator;
 }
 
-- (BOOL)hasChanges
+- (BOOL)saveContext:(NSManagedObjectContext *)context error:(NSError **)error
 {
-	if (_managedObjectContext != nil)
+    if (context != nil)
     {
-		return [_managedObjectContext hasChanges];
-	}
-	else
-	{
-		return NO;
-	}
-}
-
-- (BOOL)save:(NSError **)error
-{
-	if (_managedObjectContext != nil)
-	{
-		if ([_managedObjectContext hasChanges])
-		{
-			if (![_managedObjectContext save:error])
-			{
-				return NO;
-			}
-			else
-			{
-				return YES;
-			}
-			
-		}
-	}
-	
-	return NO;
+        if ([context hasChanges])
+        {
+            if (![context save:error])
+            {
+                return NO;
+            }
+            else
+            {
+                return YES;
+            }
+        }
+    }
+    
+    return NO;
 }
 
 @end
