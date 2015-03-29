@@ -109,7 +109,7 @@
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
-                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, please be patient."
+                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
                                                        delegate:nil
                                               cancelButtonTitle:@"No"
                                               otherButtonTitles:@"Yes", nil];

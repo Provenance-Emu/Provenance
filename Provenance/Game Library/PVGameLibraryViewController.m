@@ -23,6 +23,7 @@
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
 #import "OESQLiteDatabase.h"
+#import "MBProgressHUD.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -50,6 +51,8 @@ NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 @property (nonatomic, strong) NSDictionary *gamesInSections;
 @property (nonatomic, strong) NSArray *sectionInfo;
 @property (nonatomic, strong) OESQLiteDatabase *gameDatabase;
+
+@property (nonatomic, assign, getter=isRefreshing) BOOL refreshing;
 
 @end
 
@@ -144,6 +147,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[_collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[_collectionView setBackgroundColor:[UIColor clearColor]];
     
+    [self fetchFromCoreData];
+    
     NSString *romsPath = [self romsPath];
     
     _watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
@@ -223,36 +228,58 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)reloadData
 {
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:_collectionView animated:YES];
+    [hud setMode:MBProgressHUDModeIndeterminate];
+    [hud setLabelText:@"Refreshing, please wait."];
+    [hud setYOffset:-50];
+    [_collectionView setUserInteractionEnabled:NO];
+    
+    self.refreshing = YES;
+    
     [self refreshLibrary:^{
-       	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        [request setEntity:[NSEntityDescription entityForName:NSStringFromClass([PVGame class]) inManagedObjectContext:_managedObjectContext]];
+        [self fetchFromCoreData];
+        [_collectionView setUserInteractionEnabled:YES];
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+        [hud setMode:MBProgressHUDModeAnnularDeterminate];
+        [hud setProgress:1];
+        [hud setLabelText:@"Done!"];
+        [hud setDetailsLabelText:nil];
+        [hud hide:YES afterDelay:0.5];
         
-        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
-        [request setSortDescriptors:@[sortDescriptor]];
-        
-        NSError *error = nil;
-        NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
-        NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
-        
-        for (PVGame *game in tempGames)
+        self.refreshing = NO;
+    }];
+}
+
+- (void)fetchFromCoreData
+{
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:NSStringFromClass([PVGame class]) inManagedObjectContext:_managedObjectContext]];
+    
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
+    [request setSortDescriptors:@[sortDescriptor]];
+    
+    NSError *error = nil;
+    NSArray *tempGames = [_managedObjectContext executeFetchRequest:request error:&error];
+    NSMutableDictionary *tempGamesInSections = [[NSMutableDictionary alloc] init];
+    
+    for (PVGame *game in tempGames)
+    {
+        NSString *fileExtension = [[[[self romsPath] stringByAppendingPathComponent:[game romPath]] pathExtension] lowercaseString];
+        NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
+        NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
+        if (!games)
         {
-            NSString *fileExtension = [[[[self romsPath] stringByAppendingPathComponent:[game romPath]] pathExtension] lowercaseString];
-            NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
-            NSMutableArray *games = [[tempGamesInSections objectForKey:systemID] mutableCopy];
-            if (!games)
-            {
-                games = [NSMutableArray array];
-            }
-            
-            [games addObject:game];
-            [tempGamesInSections setObject:[games copy] forKey:systemID];
+            games = [NSMutableArray array];
         }
         
-        self.gamesInSections = [tempGamesInSections copy];
-        self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
-        
-        [_collectionView reloadData];
-    }];
+        [games addObject:game];
+        [tempGamesInSections setObject:[games copy] forKey:systemID];
+    }
+    
+    self.gamesInSections = [tempGamesInSections copy];
+    self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+    
+    [_collectionView reloadData];
 }
 
 - (void)refreshLibrary:(void (^)())completionHandler
@@ -264,6 +291,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSArray *contents = [fileManager contentsOfDirectoryAtPath:romsPath error:NULL];
         
         NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
+        
+        NSUInteger filesCompleted = 0;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+            [hud setMode:MBProgressHUDModeAnnularDeterminate];
+            [hud setProgress:0];
+            [hud setDetailsLabelText:[NSString stringWithFormat:@"%zd of %zd", filesCompleted, [contents count]]];
+        });
         
         for (NSString *fileName in contents)
         {
@@ -355,6 +391,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                     }
                 }
             }
+            
+            filesCompleted++;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                MBProgressHUD *hud = [MBProgressHUD HUDForView:_collectionView];
+                [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                [hud setProgress:(CGFloat)filesCompleted / (CGFloat)[contents count]];
+                [hud setDetailsLabelText:[NSString stringWithFormat:@"%zd of %zd", filesCompleted, [contents count]]];
+            });
         }
         
         [self removeOrphans];
@@ -545,6 +590,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleRefreshLibrary:(NSNotification *)note
 {
+    if (self.refreshing)
+    {
+        return;
+    }
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
             NSArray *games = [self.gamesInSections objectForKey:key];
@@ -560,6 +610,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         {
             [_collectionView reloadData];
             [self reloadData];
+            
         }
     });
 }

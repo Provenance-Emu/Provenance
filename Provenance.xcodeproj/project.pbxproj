@@ -24,6 +24,7 @@
 		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
 		1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
+		1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
 		1A47C94117BC1BBE00C27644 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94017BC1BBE00C27644 /* CoreAudio.framework */; };
 		1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
 		1A47C97B17BC310700C27644 /* JSButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96217BC310700C27644 /* JSButton.m */; };
@@ -97,6 +98,8 @@
 		1A3D432B17B2FDFE004DFFFC /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1A3D433917B30BA2004DFFFC /* PVGLViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGLViewController.h; sourceTree = "<group>"; };
 		1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGLViewController.m; sourceTree = "<group>"; };
+		1A3FD78C1AC7744100F8C23C /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		1A47C94017BC1BBE00C27644 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1A47C94217BC1BC400C27644 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		1A47C96117BC310700C27644 /* JSButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSButton.h; sourceTree = "<group>"; };
@@ -474,6 +477,8 @@
 		1AADCDB117BD997500F53CFE /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				1A3FD78C1AC7744100F8C23C /* MBProgressHUD.h */,
+				1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */,
 				1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */,
 				1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */,
 				1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */,
@@ -572,6 +577,7 @@
 				1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
+				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
 				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
