@@ -153,7 +153,7 @@ static __weak PVNESEmulatorCore *_current;
     if(!FCEUGameInfo)
         return NO;
 
-    //NSLog(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
+    //DLog(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
 
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
@@ -357,11 +357,11 @@ FCEUFILE *FCEUD_OpenArchive(ArchiveScanRecord &asr, std::string &fname, std::str
 ArchiveScanRecord FCEUD_ScanArchive(std::string fname) { return ArchiveScanRecord(); }
 void FCEUD_PrintError(const char *s)
 {
-    NSLog(@"FCEUX error: %s", s);
+    DLog(@"FCEUX error: %s", s);
 }
 void FCEUD_Message(const char *s)
 {
-    NSLog(@"FCEUX message: %s", s);
+    DLog(@"FCEUX message: %s", s);
 }
 
 @end

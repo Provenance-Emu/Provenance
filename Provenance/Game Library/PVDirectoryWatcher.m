@@ -14,10 +14,10 @@
 NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotification";
 
 @interface PVDirectoryWatcher () {
-	
 	dispatch_source_t _dispatch_source;
-	
 }
+
+@property (nonatomic, strong) NSTimer *timer;
 
 @end
 
@@ -82,11 +82,21 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 		return;
 	}
 	
+    __weak PVDirectoryWatcher *weakSelf = self;
+    
 	dispatch_source_set_event_handler(_dispatch_source, ^{
-		[self performSelector:@selector(findAndExtractArchives) withObject:nil afterDelay:1.0];
+        [weakSelf findAndExtractArchives];
 	});
 	
 	dispatch_resume(_dispatch_source);
+    if (!self.timer)
+    {
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0
+                                                      target:self
+                                                    selector:@selector(checkForUpdates:)
+                                                    userInfo:nil
+                                                     repeats:YES];
+    }
 }
 
 - (void)stopMonitoring
@@ -97,40 +107,42 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 		_path = nil;
 		dispatch_source_cancel(_dispatch_source);
 		_dispatch_source = NULL;
+        [self.timer invalidate];
+        self.timer = nil;
 	}
 }
 
 - (void)findAndExtractArchives
 {
-	dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		NSFileManager *fileManager = [NSFileManager defaultManager];
-		NSArray *contents = [fileManager contentsOfDirectoryAtPath:self.path error:NULL];
-		
-		for (NSString *path in contents)
-		{
-			NSString *filePath = [self.path stringByAppendingPathComponent:path];
-			BOOL isDir = NO;
-			[fileManager fileExistsAtPath:filePath isDirectory:&isDir];
-			if (isDir || ([ZKDataArchive validArchiveAtPath:filePath] == NO))
-			{
-				continue;
-			}
-			
-			ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:filePath];
-			NSUInteger status = [archive inflateAll];
-			if (status == zkSucceeded)
+    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *contents = [fileManager contentsOfDirectoryAtPath:self.path error:NULL];
+        
+        for (NSString *path in contents)
+        {
+            NSString *filePath = [self.path stringByAppendingPathComponent:path];
+            BOOL isDir = NO;
+            [fileManager fileExistsAtPath:filePath isDirectory:&isDir];
+            if (isDir || ([ZKDataArchive validArchiveAtPath:filePath] == NO))
             {
-				for (NSDictionary *inflatedFile in [archive inflatedFiles])
-				{
-					NSString *fileName = [inflatedFile objectForKey:ZKPathKey];
-					NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
-					NSString *fileExtension = [fileName pathExtension];
-					if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
-					{
-						NSData *fileData = [inflatedFile objectForKey:ZKFileDataKey];
-						[fileData writeToFile:[self.path stringByAppendingPathComponent:fileName] atomically:YES];
-					}
-				}
+                continue;
+            }
+            
+            ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:filePath];
+            NSUInteger status = [archive inflateAll];
+            if (status == zkSucceeded)
+            {
+                for (NSDictionary *inflatedFile in [archive inflatedFiles])
+                {
+                    NSString *fileName = [inflatedFile objectForKey:ZKPathKey];
+                    NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
+                    NSString *fileExtension = [fileName pathExtension];
+                    if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+                    {
+                        NSData *fileData = [inflatedFile objectForKey:ZKFileDataKey];
+                        [fileData writeToFile:[self.path stringByAppendingPathComponent:fileName] atomically:YES];
+                    }
+                }
                 
                 NSError *error = nil;
                 BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
@@ -139,22 +151,30 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                 {
                     DLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
                 }
-			}
+            }
             else
             {
                 DLog(@"Unable to inflate zip at %@", filePath);
                 [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
                                                                     object:self];
             }
-		}
-		
-		dispatch_async(dispatch_get_main_queue(), ^{
-			if (self.directoryChangedHandler != NULL)
-			{
-				self.directoryChangedHandler();
-			}
-		});
-	});
+        }
+        
+        self.updates = YES;
+    });
+}
+
+- (void)checkForUpdates:(NSTimer *)timer
+{
+    if ([self hasUpdates])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.directoryChangedHandler != NULL)
+            {
+                self.directoryChangedHandler();
+            }
+        });
+    }
 }
 
 @end

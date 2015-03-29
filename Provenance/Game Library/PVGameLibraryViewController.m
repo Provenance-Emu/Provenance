@@ -152,7 +152,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *romsPath = [self romsPath];
     
     _watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
-        [self reloadData];
+        if (!self.refreshing)
+        {
+            [_watcher setUpdates:NO];
+            [self reloadData];
+        }
     }];
     [_watcher findAndExtractArchives];
     [_watcher startMonitoring];
