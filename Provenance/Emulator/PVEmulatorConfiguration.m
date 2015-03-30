@@ -142,7 +142,8 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
     {
         controller = [[PVGBAControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
-    else if ([systemID isEqualToString:PVGBSystemIdentifier])
+    else if ([systemID isEqualToString:PVGBSystemIdentifier] ||
+             [systemID isEqualToString:PVGBCSystemIdentifier])
     {
         controller = [[PVGBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
