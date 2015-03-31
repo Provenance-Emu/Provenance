@@ -472,6 +472,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     if (![results count])
     {
+        // Remove any extraneous stuff in the rom name such as (U) or (J) or [T+Eng] etc
+        NSRange parenRange = [[game title] rangeOfString:@"("];
+        NSRange bracketRange = [[game title] rangeOfString:@"["];
+        NSRange hyphenRange = [[game title] rangeOfString:@"-"];
+        NSUInteger gameTitleLen;
+        if (parenRange.length > 0 || bracketRange.length > 0 || hyphenRange.length > 0) {
+            gameTitleLen = MIN(hyphenRange.location, MIN(parenRange.location, bracketRange.location)) - 1;
+        } else {
+            gameTitleLen = [[game title] length];
+        }
+        
+        NSString *gameTitle = [[game title] substringToIndex:gameTitleLen];
+        NSString *system = [[[game systemIdentifier] pathExtension] uppercaseString];
+        
+        results =[self.gameDatabase executeQuery:[NSString stringWithFormat:@"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', releaseDescription as 'gameDescription', regionName as 'region' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE releaseTitleName >= '%@' and releaseTitleName <= '%@' || 'z' and regionName = 'USA' and TEMPsystemShortName = '%@'", gameTitle, gameTitle, system]
+                                                    error:&error];
+    }
+    
+    if (![results count])
+    {
         if (error)
         {
             DLog(@"Error looking up game info, %@", [error localizedDescription]);
