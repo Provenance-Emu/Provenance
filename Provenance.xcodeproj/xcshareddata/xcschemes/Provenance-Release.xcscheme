@@ -104,6 +104,20 @@
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1AD9AA341ACC988F00EC87A0"
+               BuildableName = "Provenance Tests.xctest"
+               BlueprintName = "Provenance Tests"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -112,6 +126,16 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1AD9AA341ACC988F00EC87A0"
+               BuildableName = "Provenance Tests.xctest"
+               BlueprintName = "Provenance Tests"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

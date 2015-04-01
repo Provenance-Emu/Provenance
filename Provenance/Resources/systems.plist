@@ -14,6 +14,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>iso</string>
+			<string>cue</string>
+			<string>bin</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

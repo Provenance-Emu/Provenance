@@ -1,0 +1,11 @@
+//
+// Prefix header for all source files of the 'Provenance Tests' target in the 'Provenance' project
+//
+
+#import <Availability.h>
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import "DebugUtils.h"
+#endif
