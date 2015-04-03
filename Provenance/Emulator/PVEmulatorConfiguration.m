@@ -26,7 +26,8 @@
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
-NSString * const PVDatabaseID = @"PVDatabaseID";
+NSString * const PVDatabaseIDKey = @"PVDatabaseID";
+NSString * const PVUsesCDsKey = @"PVUsesCDs";
 NSString * const PVSupportedExtensionsKey = @"PVSupportedExtensions";
 NSString * const PVControlLayoutKey = @"PVControlLayout";
 NSString * const PVControlTypeKey = @"PVControlType";
@@ -193,6 +194,21 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 	return [system objectForKey:PVShortSystemNameKey];
 }
 
+- (NSArray *)supportedCDFileExtensions
+{
+    NSMutableSet *extensions = [NSMutableSet set];
+    
+    for (NSDictionary *system in self.systems)
+    {
+        if (system[PVUsesCDsKey])
+        {
+            [extensions addObjectsFromArray:system[PVSupportedExtensionsKey]];
+        }
+    }
+    
+    return [extensions allObjects];
+}
+
 - (NSArray *)supportedFileExtensions
 {
 	NSMutableSet *extentions = [NSMutableSet set];
@@ -235,7 +251,7 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 - (NSString *)databaseIDForSystemID:(NSString *)systemID
 {
     NSDictionary *system = [self systemForIdentifier:systemID];
-    return system[PVDatabaseID];
+    return system[PVDatabaseIDKey];
 }
 
 @end

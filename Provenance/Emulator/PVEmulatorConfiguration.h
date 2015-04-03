@@ -13,7 +13,8 @@
 extern NSString * const PVSystemNameKey;
 extern NSString * const PVShortSystemNameKey;
 extern NSString * const PVSystemIdentifierKey;
-extern NSString * const PVDatabaseID;
+extern NSString * const PVDatabaseIDKey;
+extern NSString * const PVUsesCDsKey;
 extern NSString * const PVSupportedExtensionsKey;
 extern NSString * const PVControlLayoutKey;
 extern NSString * const PVControlTypeKey;
@@ -49,6 +50,7 @@ extern NSString * const PVNESSystemIdentifier;
 - (NSString *)nameForSystemIdentifier:(NSString *)systemID;
 - (NSString *)shortNameForSystemIdentifier:(NSString *)systemID;
 - (NSArray *)supportedFileExtensions;
+- (NSArray *)supportedCDFileExtensions;
 - (NSArray *)fileExtensionsForSystemIdentifier:(NSString *)systemID;
 - (NSString *)systemIdentifierForFileExtension:(NSString *)fileExtension;
 - (NSArray *)controllerLayoutForSystem:(NSString *)systemID;

@@ -10,4 +10,6 @@
 
 @interface PVGameImporter : NSObject
 
+@property (nonatomic, copy) void (^completionHandler)();
+
 @end
