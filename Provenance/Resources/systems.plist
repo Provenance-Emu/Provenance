@@ -17,6 +17,7 @@
 		<array>
 			<string>iso</string>
 			<string>cue</string>
+			<string>img</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

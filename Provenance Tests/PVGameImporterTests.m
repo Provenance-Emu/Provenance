@@ -15,9 +15,10 @@
 // expose for testing
 - (NSDictionary *)updateSystemToPathMap;
 - (NSDictionary *)updateRomToSystemMap;
-- (NSString *)documentsDirectoryPath;
+- (NSString *)documentsPath;
 - (NSString *)pathForSystemID:(NSString *)systemID;
 - (NSArray *)systemIDsForRomAtPath:(NSString *)path;
+- (BOOL)isCDROM:(NSString *)filePath;
 
 @end
 
@@ -35,28 +36,40 @@
     [super tearDown];
 }
 
+- (void)testIsCDROM {
+    PVGameImporter *importer = [[PVGameImporter alloc] init];
+    BOOL isCDROM = [importer isCDROM:@"game.cue"];
+    XCTAssertTrue(isCDROM == YES, @".cue should be a CDROM");
+    
+    isCDROM = [importer isCDROM:@"game.iso"];
+    XCTAssertTrue(isCDROM == YES, @".iso should be a CDROM");
+    
+    isCDROM = [importer isCDROM:@"game.bin"];
+    XCTAssertTrue(isCDROM == NO, @".bin should not be a CDROM");
+}
+
 - (void)testRomToSystemMap {
     PVGameImporter *importer = [[PVGameImporter alloc] init];
-    NSArray *systemIDs = [importer systemIDsForRomAtPath:@"fakerom.bin"];
-    XCTAssertTrue(([systemIDs containsObject:@"com.provenance.genesis"] && [systemIDs containsObject:@"com.provenance.segacd"]), @"System IDs should include GBC, but does not.");
+    NSArray *systemIDs = [importer systemIDsForRomAtPath:@"game.bin"];
+    XCTAssertTrue(([systemIDs containsObject:@"com.provenance.genesis"]), @"System IDs should include Genesis, but does not.");
 }
 
 - (void)testSystemToPathMap {
     PVGameImporter *importer = [[PVGameImporter alloc] init];
     NSString *path = [importer pathForSystemID:@"com.provenance.gbc"];
-    XCTAssertTrue(([path isEqualToString:[NSString stringWithFormat:@"%@/com.provenance.gbc", [importer documentsDirectoryPath]]]), @"Path should be documents/com.provenance.gbc, but it is not.");
+    XCTAssertTrue(([path isEqualToString:[NSString stringWithFormat:@"%@/com.provenance.gbc", [importer documentsPath]]]), @"Path should be documents/com.provenance.gbc, but it is not.");
 }
 
 - (void)testPerformanceUpdateSystemToPathMap {
-    PVGameImporter *importer = [[PVGameImporter alloc] init];
     [self measureBlock:^{
+        PVGameImporter *importer = [[PVGameImporter alloc] init];
         [importer updateSystemToPathMap];
     }];
 }
 
 - (void)testPerformanceUpdateRomToSystemMap {
-    PVGameImporter *importer = [[PVGameImporter alloc] init];
     [self measureBlock:^{
+        PVGameImporter *importer = [[PVGameImporter alloc] init];
         [importer updateRomToSystemMap];
     }];
 }

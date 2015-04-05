@@ -14,6 +14,7 @@
 @property (nonatomic, strong) dispatch_queue_t serialImportQueue;
 @property (nonatomic, strong) NSDictionary *systemToPathMap;
 @property (nonatomic, strong) NSDictionary *romToSystemMap;
+@property (nonatomic, assign) BOOL encounteredConflicts;
 
 @end
 
@@ -42,7 +43,9 @@
         [self scanForRoms];
         if (self.completionHandler)
         {
-            dispatch_async(dispatch_get_main_queue(), self.completionHandler);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.completionHandler(self.encounteredConflicts);
+            });
         }
     });
 }
@@ -112,6 +115,7 @@
     if ([systemsForExtension count] > 1)
     {
         subfolderPath = [self conflictPath];
+        self.encounteredConflicts = YES;
     }
     else
     {
@@ -169,6 +173,7 @@
     if ([systemsForExtension count] > 1)
     {
         subfolderPath = [self conflictPath];
+        self.encounteredConflicts = YES;
     }
     else
     {
@@ -189,6 +194,33 @@
     if (![[NSFileManager defaultManager] moveItemAtPath:filePath toPath:subfolderPath error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
+    }
+}
+
+- (NSArray *)conflictedFiles
+{
+    NSError *error = nil;
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self conflictPath] error:&error];
+    if (!contents)
+    {
+        DLog(@"Unable to get contents of %@ because %@", [self conflictPath], [error localizedDescription]);
+    }
+    
+    return contents;
+}
+
+- (void)resolveConflictsWithSolutions:(NSDictionary *)solutions
+{
+    NSArray *filePaths = [solutions allKeys];
+    for (NSString *filePath in filePaths)
+    {
+        NSString *systemID = solutions[filePath];
+        NSString *subfolder = self.systemToPathMap[systemID];
+        NSError *error = nil;
+        if (![[NSFileManager defaultManager] moveItemAtPath:filePath toPath:subfolder error:&error])
+        {
+            DLog(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
+        }
     }
 }
 
