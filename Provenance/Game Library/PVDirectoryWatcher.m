@@ -71,9 +71,9 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 	
 	_dispatch_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE,
 											  dirFileDescriptor,
-											  DISPATCH_VNODE_WRITE |
-											  DISPATCH_VNODE_DELETE |
-											  DISPATCH_VNODE_RENAME,
+											  DISPATCH_VNODE_WRITE,// |
+											  //DISPATCH_VNODE_DELETE |
+											  //DISPATCH_VNODE_RENAME,
 											  dispatch_get_main_queue());
 	if (!_dispatch_source)
 	{
@@ -106,17 +106,13 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSArray *contents = [fileManager contentsOfDirectoryAtPath:self.path error:NULL];
         
-        DLog(@"before loop");
-        
         for (NSString *path in contents)
         {
             NSString *filePath = [self.path stringByAppendingPathComponent:path];
             BOOL isDir = NO;
             [fileManager fileExistsAtPath:filePath isDirectory:&isDir];
-            DLog(@"FilePath: %@", filePath);
             if (isDir || [filePath containsString:@"realm"] || ([ZKDataArchive validArchiveAtPath:filePath] == NO))
             {
-                DLog(@"Not a zip, continuing");
                 continue;
             }
             
@@ -151,8 +147,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                                                                     object:self];
             }
         }
-        
-        DLog(@"outside loop");
         
         if (self.directoryChangedHandler)
         {
