@@ -8,6 +8,11 @@
 
 #import "PVGameImporter.h"
 #import "PVEmulatorConfiguration.h"
+#import "PVGame.h"
+#import "OESQLiteDatabase.h"
+#import "NSData+Hashing.h"
+#import "PVMediaCache.h"
+#import <Realm/Realm.h>
 
 @interface PVGameImporter ()
 
@@ -20,13 +25,14 @@
 
 @implementation PVGameImporter
 
-- (instancetype)init
+- (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler
 {
     if ((self = [super init]))
     {
         self.serialImportQueue = dispatch_queue_create("com.jamsoftonline.provenance.serialImportQueue", DISPATCH_QUEUE_SERIAL);
         self.systemToPathMap = [self updateSystemToPathMap];
         self.romToSystemMap = [self updateRomToSystemMap];
+        self.completionHandler = completionHandler;
     }
     
     return self;
@@ -37,10 +43,11 @@
     self.serialImportQueue = nil;
 }
 
-- (void)enqueueScan
+- (void)startImport
 {
     dispatch_async(self.serialImportQueue, ^{
         [self scanForRoms];
+        [self getRomInfo];
         if (self.completionHandler)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -67,7 +74,7 @@
     for (NSString *filePath in contents)
     {
         BOOL isDirectory = NO;
-        if ([fileManager fileExistsAtPath:filePath isDirectory:&isDirectory])
+        if ([fileManager fileExistsAtPath:[documentsDirectoryPath stringByAppendingPathComponent:filePath] isDirectory:&isDirectory])
         {
             if (isDirectory)
             {
@@ -93,7 +100,7 @@
     for (NSString *filePath in contents)
     {
         BOOL isDirectory = NO;
-        if ([fileManager fileExistsAtPath:filePath isDirectory:&isDirectory])
+        if ([fileManager fileExistsAtPath:[documentsDirectoryPath stringByAppendingPathComponent:filePath] isDirectory:&isDirectory])
         {
             if (isDirectory)
             {
@@ -123,6 +130,11 @@
         subfolderPath = self.systemToPathMap[systemID];
     }
     
+    if (![subfolderPath length])
+    {
+        return;
+    }
+    
     NSError *error = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:subfolderPath
                                    withIntermediateDirectories:YES
@@ -133,7 +145,7 @@
         return;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:filePath toPath:subfolderPath error:&error])
+    if (![[NSFileManager defaultManager] moveItemAtPath:[[self documentsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
     }
@@ -155,7 +167,7 @@
         
         if ([fileWithoutExtension isEqual:relatedFileName])
         {
-            if (![[NSFileManager defaultManager] moveItemAtPath:file toPath:subfolderPath error:&error])
+            if (![[NSFileManager defaultManager] moveItemAtPath:[[self documentsPath] stringByAppendingPathComponent:file] toPath:[subfolderPath stringByAppendingPathComponent:file] error:&error])
             {
                 DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
             }
@@ -181,6 +193,11 @@
         subfolderPath = self.systemToPathMap[systemID];
     }
     
+    if (![subfolderPath length])
+    {
+        return;
+    }
+    
     NSError *error = nil;
     if (![[NSFileManager defaultManager] createDirectoryAtPath:subfolderPath
                                    withIntermediateDirectories:YES
@@ -191,7 +208,7 @@
         return;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:filePath toPath:subfolderPath error:&error])
+    if (![[NSFileManager defaultManager] moveItemAtPath:[[self documentsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
     }
@@ -217,11 +234,241 @@
         NSString *systemID = solutions[filePath];
         NSString *subfolder = self.systemToPathMap[systemID];
         NSError *error = nil;
-        if (![[NSFileManager defaultManager] moveItemAtPath:filePath toPath:subfolder error:&error])
+        if (![[NSFileManager defaultManager] moveItemAtPath:[[self conflictPath] stringByAppendingPathComponent:filePath] toPath:[subfolder stringByAppendingPathComponent:filePath] error:&error])
         {
             DLog(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
         }
     }
+}
+
+#pragma mark - ROM Lookup
+
+- (void)getRomInfo
+{
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    NSArray *systemIDs = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
+    NSString *documentsPath = [self documentsPath];
+    for (NSString *systemID in systemIDs)
+    {
+        NSString *systemPath = [documentsPath stringByAppendingPathComponent:systemID];
+        NSError *error = nil;
+        BOOL isDir = NO;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:systemPath isDirectory:&isDir] && isDir)
+        {
+            NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:systemPath error:&error];
+            if (!contents)
+            {
+                DLog(@"Unable to get contents of %@ because %@", systemPath, [error localizedDescription]);
+                continue;
+            }
+            
+            for (NSString *romPath in contents)
+            {
+                NSString *fullPath = [systemPath stringByAppendingPathComponent:romPath];
+                NSString *partialPath = [systemID stringByAppendingPathComponent:romPath];
+                NSString *title = [romPath stringByReplacingOccurrencesOfString:[romPath pathExtension] withString:@""];
+                NSString *md5 = [[NSData dataWithContentsOfFile:fullPath] md5Hash];
+                PVGame *game = nil;
+                RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"md5Hash == %@", md5]];
+                if ([results count])
+                {
+                    game = [results firstObject];
+                }
+                else
+                {
+                    NSString *systemIDForRom = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[romPath pathExtension]];
+                    if (![systemIDForRom length])
+                    {
+                        continue;
+                    }
+                    
+                    game = [[PVGame alloc] init];
+                    [game setRomPath:partialPath];
+                    [game setMd5Hash:md5];
+                    [game setTitle:title];
+                    [game setSystemIdentifier:systemIDForRom];
+                    [game setRequiresSync:YES];
+                    [realm beginWriteTransaction];
+                    [realm addObject:game];
+                    [realm commitWriteTransaction];
+                }
+                
+                [self lookupInfoForGame:game];
+            }
+        }
+    }
+}
+
+- (void)lookupInfoForGame:(PVGame *)game
+{
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    
+    if ([game requiresSync])
+    {
+        NSData *romData = nil;
+        
+        if (![[game md5Hash] length])
+        {
+            if (!romData)
+            {
+                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+            }
+            
+            [realm beginWriteTransaction];
+            [game setMd5Hash:[romData md5Hash]];
+            [realm commitWriteTransaction];
+        }
+        
+        if (![[game crc32Checksum] length])
+        {
+            if (!romData)
+            {
+                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+            }
+            
+            [realm beginWriteTransaction];
+            [game setCrc32Checksum:[romData crc32Checksum]];
+            [realm commitWriteTransaction];
+        }
+        
+        if (![[game sha1Hash] length])
+        {
+            if (!romData)
+            {
+                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+            }
+            
+            [realm beginWriteTransaction];
+            [game setSha1Hash:[romData sha1Hash]];
+            [realm commitWriteTransaction];
+        }
+        
+        NSError *error = nil;
+        NSArray *results = nil;
+        
+        if ([[game md5Hash] length])
+        {
+            results = [self searchDatabaseUsingKey:@"romHashMD5"
+                                             value:[game md5Hash]
+                                          systemID:[game systemIdentifier]
+                                             error:&error];
+        }
+        
+        if (![results count] && [[game crc32Checksum] length])
+        {
+            results = [self searchDatabaseUsingKey:@"romHashCRC32"
+                                             value:[game crc32Checksum]
+                                          systemID:[game systemIdentifier]
+                                             error:&error];
+        }
+        
+        if (![results count] && [[game sha1Hash] length])
+        {
+            results = [self searchDatabaseUsingKey:@"romHashSHA1"
+                                             value:[game sha1Hash]
+                                          systemID:[game systemIdentifier]
+                                             error:&error];
+        }
+        
+        if (![results count])
+        {
+            NSString *fileName = [[game romPath] lastPathComponent];
+            results = [self searchDatabaseUsingKey:@"romFileName"
+                                             value:fileName
+                                          systemID:[game systemIdentifier]
+                                             error:&error];
+        }
+        
+        if (![results count])
+        {
+            DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
+            [realm beginWriteTransaction];
+            [game setRequiresSync:NO];
+            [realm commitWriteTransaction];
+            return;
+        }
+        
+        NSDictionary *chosenResult = nil;
+        for (NSDictionary *result in results)
+        {
+            if ([result[@"region"] isEqualToString:@"USA"])
+            {
+                chosenResult = result;
+                break;
+            }
+        }
+        
+        if (!chosenResult)
+        {
+            chosenResult = [results firstObject];
+        }
+        
+        [realm beginWriteTransaction];
+        [game setRequiresSync:NO];
+        [game setTitle:chosenResult[@"gameTitle"]];
+        [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+        [realm commitWriteTransaction];
+        [self getArtworkFromURL:[game originalArtworkURL]];
+    }
+}
+
+- (void)getArtworkFromURL:(NSString *)url
+{
+    DLog(@"Starting Artwork download for %@", url);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSHTTPURLResponse *urlResponse = nil;
+    NSError *error = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request
+                                         returningResponse:&urlResponse
+                                                     error:&error];
+    if (error)
+    {
+        DLog(@"error downloading artwork from: %@ -- %@", url, [error localizedDescription]);
+        return;
+    }
+    
+    if ([urlResponse statusCode] != 200)
+    {
+        DLog(@"HTTP Error: %zd", [urlResponse statusCode]);
+        DLog(@"Response: %@", urlResponse);
+    }
+    
+    UIImage *artwork = [[UIImage alloc] initWithData:data];
+    if (artwork)
+    {
+        [PVMediaCache writeImageToDisk:artwork withKey:url];
+    }
+}
+
+- (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error
+{
+    OESQLiteDatabase *gameDatabase = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
+                                                                     error:error];
+    if (!gameDatabase)
+    {
+        DLog(@"Unable to open game database: %@", [*error localizedDescription]);
+        return nil;
+    }
+    
+    NSArray *results = nil;
+    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
+    NSString *likeQuery = @"SELECT DISTINCT romFileName as 'romFileName', releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\"";
+    NSString *queryString = nil;
+    
+    NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
+    
+    if ([key isEqualToString:@"romFileName"])
+    {
+        queryString = [NSString stringWithFormat:likeQuery, key, value, dbSystemID];
+    }
+    else
+    {
+        queryString = [NSString stringWithFormat:exactQuery, key, value];
+    }
+    
+    results = [gameDatabase executeQuery:queryString
+                                   error:error];
+    return results;
 }
 
 #pragma mark - Utils

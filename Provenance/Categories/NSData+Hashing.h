@@ -11,5 +11,7 @@
 @interface NSData (Hashing)
 
 - (NSString *)md5Hash;
+- (NSString *)crc32Checksum;
+- (NSString *)sha1Hash;
 
 @end

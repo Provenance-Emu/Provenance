@@ -14,6 +14,10 @@ typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
 
 @property (nonatomic, copy) PVGameImporterCompletionHandler completionHandler;
 
+- (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler;
+
+- (void)startImport;
+
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
 

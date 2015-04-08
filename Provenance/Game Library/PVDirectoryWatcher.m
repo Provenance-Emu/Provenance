@@ -17,8 +17,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 	dispatch_source_t _dispatch_source;
 }
 
-@property (nonatomic, strong) NSTimer *timer;
-
 @end
 
 @implementation PVDirectoryWatcher
@@ -81,7 +79,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 	{
 		return;
 	}
-	
+    
     __weak PVDirectoryWatcher *weakSelf = self;
     
 	dispatch_source_set_event_handler(_dispatch_source, ^{
@@ -89,14 +87,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 	});
 	
 	dispatch_resume(_dispatch_source);
-    if (!self.timer)
-    {
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                                      target:self
-                                                    selector:@selector(checkForUpdates:)
-                                                    userInfo:nil
-                                                     repeats:YES];
-    }
 }
 
 - (void)stopMonitoring
@@ -107,24 +97,26 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 		_path = nil;
 		dispatch_source_cancel(_dispatch_source);
 		_dispatch_source = NULL;
-        [self.timer invalidate];
-        self.timer = nil;
 	}
 }
 
 - (void)findAndExtractArchives
 {
-    dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSArray *contents = [fileManager contentsOfDirectoryAtPath:self.path error:NULL];
+        
+        DLog(@"before loop");
         
         for (NSString *path in contents)
         {
             NSString *filePath = [self.path stringByAppendingPathComponent:path];
             BOOL isDir = NO;
             [fileManager fileExistsAtPath:filePath isDirectory:&isDir];
-            if (isDir || ([ZKDataArchive validArchiveAtPath:filePath] == NO))
+            DLog(@"FilePath: %@", filePath);
+            if (isDir || [filePath containsString:@"realm"] || ([ZKDataArchive validArchiveAtPath:filePath] == NO))
             {
+                DLog(@"Not a zip, continuing");
                 continue;
             }
             
@@ -160,21 +152,15 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             }
         }
         
-        self.updates = YES;
-    });
-}
-
-- (void)checkForUpdates:(NSTimer *)timer
-{
-    if ([self hasUpdates])
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.directoryChangedHandler != NULL)
-            {
+        DLog(@"outside loop");
+        
+        if (self.directoryChangedHandler)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
                 self.directoryChangedHandler();
-            }
-        });
-    }
+            });
+        }
+    });
 }
 
 @end

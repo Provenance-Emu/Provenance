@@ -7,19 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import <Realm/Realm.h>
 
+@interface PVGame : RLMObject
 
-@interface PVGame : NSManagedObject
+@property NSString *title;
+@property NSString *romPath;
+@property NSString *customArtworkURL;
+@property NSString *originalArtworkURL;
 
-@property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *romPath;
-@property (nonatomic, strong) NSString *artworkURL;
-@property (nonatomic, strong) NSString *originalArtworkURL;
-@property (nonatomic, strong) NSString *crc32;
-@property (nonatomic, strong) NSString *md5;
-@property (nonatomic, strong) NSNumber *requiresSync;
-@property (nonatomic, strong) NSString *systemIdentifier;
-@property (nonatomic, strong) NSNumber *isSyncing;
+@property NSString *crc32Checksum;
+@property NSString *md5Hash;
+@property NSString *sha1Hash;
+
+@property BOOL requiresSync;
+@property NSString *systemIdentifier;
 
 @end

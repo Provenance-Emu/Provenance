@@ -17,8 +17,6 @@ typedef void(^PVDirectoryChangedHandler)(void);
 @property (nonatomic, readonly) NSString *path;
 @property (nonatomic, readonly) PVDirectoryChangedHandler directoryChangedHandler;
 
-@property (nonatomic, assign, getter=hasUpdates) BOOL updates;
-
 - (id)initWithPath:(NSString *)path directoryChangedHandler:(PVDirectoryChangedHandler)handler;
 
 - (void)startMonitoring;

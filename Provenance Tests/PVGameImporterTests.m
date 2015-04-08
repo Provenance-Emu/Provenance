@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 #import "PVGameImporter.h"
+#import "NSData+Hashing.h"
+
 
 @interface PVGameImporter ()
 
@@ -72,6 +74,20 @@
         PVGameImporter *importer = [[PVGameImporter alloc] init];
         [importer updateRomToSystemMap];
     }];
+}
+
+- (void)testCRC32 {
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"testdata" withExtension:@"txt"];
+    NSData *data = [NSData dataWithContentsOfURL:fileURL];
+    NSString *crc32 = [data crc32Checksum];
+    XCTAssertTrue([crc32 isEqualToString:@"3610A686"]);
+}
+
+- (void)testSha1 {
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"testdata" withExtension:@"txt"];
+    NSData *data = [NSData dataWithContentsOfURL:fileURL];
+    NSString *sha1 = [data sha1Hash];
+    XCTAssertTrue([sha1 isEqualToString:@"AAF4C61DDCC5E8A2DABEDE0F3B482CD9AEA9434D"]);
 }
 
 @end
