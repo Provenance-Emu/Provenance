@@ -9,10 +9,14 @@
 #import <Foundation/Foundation.h>
 
 typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
+typedef void (^PVGameImporterFinishedImportingGameHandler)(NSString *md5Hash);
+typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL);
 
 @interface PVGameImporter : NSObject
 
 @property (nonatomic, copy) PVGameImporterCompletionHandler completionHandler;
+@property (nonatomic, copy) PVGameImporterFinishedImportingGameHandler finishedImportHandler;
+@property (nonatomic, copy) PVGameImporterFinishedGettingArtworkHandler finishedArtworkHandler;
 
 - (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler;
 
@@ -20,5 +24,7 @@ typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
 
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
+
+- (void)getArtworkFromURL:(NSString *)url;
 
 @end

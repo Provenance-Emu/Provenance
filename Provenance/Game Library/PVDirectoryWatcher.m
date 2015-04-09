@@ -143,8 +143,10 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             else
             {
                 DLog(@"Unable to inflate zip at %@", filePath);
-                [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
-                                                                    object:self];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
+                                                                        object:self];
+                });
             }
         }
         

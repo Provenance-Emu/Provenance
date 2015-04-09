@@ -293,7 +293,12 @@
                     [realm commitWriteTransaction];
                 }
                 
-                [self lookupInfoForGame:game];
+                if ([game requiresSync])
+                {
+                    [self lookupInfoForGame:game];
+                }
+                
+                [self getArtworkFromURL:[game originalArtworkURL]];
             }
         }
     }
@@ -302,120 +307,133 @@
 - (void)lookupInfoForGame:(PVGame *)game
 {
     RLMRealm *realm = [RLMRealm defaultRealm];
+    NSData *romData = nil;
     
-    if ([game requiresSync])
+    if (![[game md5Hash] length])
     {
-        NSData *romData = nil;
-        
-        if (![[game md5Hash] length])
+        if (!romData)
         {
-            if (!romData)
-            {
-                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
-            }
-            
-            [realm beginWriteTransaction];
-            [game setMd5Hash:[romData md5Hash]];
-            [realm commitWriteTransaction];
-        }
-        
-        if (![[game crc32Checksum] length])
-        {
-            if (!romData)
-            {
-                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
-            }
-            
-            [realm beginWriteTransaction];
-            [game setCrc32Checksum:[romData crc32Checksum]];
-            [realm commitWriteTransaction];
-        }
-        
-        if (![[game sha1Hash] length])
-        {
-            if (!romData)
-            {
-                romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
-            }
-            
-            [realm beginWriteTransaction];
-            [game setSha1Hash:[romData sha1Hash]];
-            [realm commitWriteTransaction];
-        }
-        
-        NSError *error = nil;
-        NSArray *results = nil;
-        
-        if ([[game md5Hash] length])
-        {
-            results = [self searchDatabaseUsingKey:@"romHashMD5"
-                                             value:[game md5Hash]
-                                          systemID:[game systemIdentifier]
-                                             error:&error];
-        }
-        
-        if (![results count] && [[game crc32Checksum] length])
-        {
-            results = [self searchDatabaseUsingKey:@"romHashCRC32"
-                                             value:[game crc32Checksum]
-                                          systemID:[game systemIdentifier]
-                                             error:&error];
-        }
-        
-        if (![results count] && [[game sha1Hash] length])
-        {
-            results = [self searchDatabaseUsingKey:@"romHashSHA1"
-                                             value:[game sha1Hash]
-                                          systemID:[game systemIdentifier]
-                                             error:&error];
-        }
-        
-        if (![results count])
-        {
-            NSString *fileName = [[game romPath] lastPathComponent];
-            results = [self searchDatabaseUsingKey:@"romFileName"
-                                             value:fileName
-                                          systemID:[game systemIdentifier]
-                                             error:&error];
-        }
-        
-        if (![results count])
-        {
-            DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
-            [realm beginWriteTransaction];
-            [game setRequiresSync:NO];
-            [realm commitWriteTransaction];
-            return;
-        }
-        
-        NSDictionary *chosenResult = nil;
-        for (NSDictionary *result in results)
-        {
-            if ([result[@"region"] isEqualToString:@"USA"])
-            {
-                chosenResult = result;
-                break;
-            }
-        }
-        
-        if (!chosenResult)
-        {
-            chosenResult = [results firstObject];
+            romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
         }
         
         [realm beginWriteTransaction];
-        [game setRequiresSync:NO];
-        [game setTitle:chosenResult[@"gameTitle"]];
-        [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+        [game setMd5Hash:[romData md5Hash]];
         [realm commitWriteTransaction];
-        [self getArtworkFromURL:[game originalArtworkURL]];
+    }
+    
+    if (![[game crc32Checksum] length])
+    {
+        if (!romData)
+        {
+            romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+        }
+        
+        [realm beginWriteTransaction];
+        [game setCrc32Checksum:[romData crc32Checksum]];
+        [realm commitWriteTransaction];
+    }
+    
+    if (![[game sha1Hash] length])
+    {
+        if (!romData)
+        {
+            romData = [NSData dataWithContentsOfFile:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+        }
+        
+        [realm beginWriteTransaction];
+        [game setSha1Hash:[romData sha1Hash]];
+        [realm commitWriteTransaction];
+    }
+    
+    NSError *error = nil;
+    NSArray *results = nil;
+    
+    if ([[game md5Hash] length])
+    {
+        results = [self searchDatabaseUsingKey:@"romHashMD5"
+                                         value:[game md5Hash]
+                                      systemID:[game systemIdentifier]
+                                         error:&error];
+    }
+    
+    if (![results count] && [[game crc32Checksum] length])
+    {
+        results = [self searchDatabaseUsingKey:@"romHashCRC32"
+                                         value:[game crc32Checksum]
+                                      systemID:[game systemIdentifier]
+                                         error:&error];
+    }
+    
+    if (![results count] && [[game sha1Hash] length])
+    {
+        results = [self searchDatabaseUsingKey:@"romHashSHA1"
+                                         value:[game sha1Hash]
+                                      systemID:[game systemIdentifier]
+                                         error:&error];
+    }
+    
+    if (![results count])
+    {
+        NSString *fileName = [[game romPath] lastPathComponent];
+        results = [self searchDatabaseUsingKey:@"romFileName"
+                                         value:fileName
+                                      systemID:[game systemIdentifier]
+                                         error:&error];
+    }
+    
+    if (![results count])
+    {
+        DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
+        [realm beginWriteTransaction];
+        [game setRequiresSync:NO];
+        [realm commitWriteTransaction];
+        return;
+    }
+    
+    NSDictionary *chosenResult = nil;
+    for (NSDictionary *result in results)
+    {
+        if ([result[@"region"] isEqualToString:@"USA"])
+        {
+            chosenResult = result;
+            break;
+        }
+    }
+    
+    if (!chosenResult)
+    {
+        chosenResult = [results firstObject];
+    }
+    
+    [realm beginWriteTransaction];
+    [game setRequiresSync:NO];
+    [game setTitle:chosenResult[@"gameTitle"]];
+    [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+    [realm commitWriteTransaction];
+    
+    if (self.finishedImportHandler)
+    {
+        NSString *md5 = [game md5Hash];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.finishedImportHandler(md5);
+        });
     }
 }
 
 - (void)getArtworkFromURL:(NSString *)url
 {
+    if (![url length] || [[PVMediaCache filePathForKey:url] length])
+    {
+        return;
+    }
+    
     DLog(@"Starting Artwork download for %@", url);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSURL *artworkURL = [NSURL URLWithString:url];
+    if (!artworkURL)
+    {
+        return;
+    }
+    NSURLRequest *request = [NSURLRequest requestWithURL:artworkURL];
     NSHTTPURLResponse *urlResponse = nil;
     NSError *error = nil;
     NSData *data = [NSURLConnection sendSynchronousRequest:request
@@ -437,6 +455,13 @@
     if (artwork)
     {
         [PVMediaCache writeImageToDisk:artwork withKey:url];
+    }
+    
+    if (self.finishedArtworkHandler)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.finishedArtworkHandler(url);
+        });
     }
 }
 

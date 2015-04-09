@@ -90,6 +90,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleArchiveInflationFailed:)
                                                  name:PVArchiveInflationFailedNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleRefreshLibrary:)
+                                                 name:kRefreshLibraryNotification
+                                               object:nil];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -121,14 +125,20 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     NSString *romsPath = [self romsPath];
     
+    __weak typeof(self) weakSelf = self;
+    
     self.gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:^(BOOL encounteredConflicts) {
-        [self.gameImporter resolveConflictsWithSolutions:@{}];
-        [self fetchGames];
-        [self.collectionView reloadData];
+        [weakSelf.gameImporter resolveConflictsWithSolutions:@{}];
+    }];
+    [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
+        [weakSelf fetchGames];
+    }];
+    [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
+        [weakSelf fetchGames];
     }];
     
     self.watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
-        [self.gameImporter startImport];
+        [weakSelf.gameImporter startImport];
     }];
     [self.watcher findAndExtractArchives];
     [self.watcher startMonitoring];
@@ -240,49 +250,77 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.collectionView reloadData];
 }
 
-- (void)getArtworkFromURL:(NSString *)url
+- (NSIndexPath *)indexPathForGameWithMD5Hash:(NSString *)md5Hash
 {
-    DLog(@"Starting Artwork download for %@", url);
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSHTTPURLResponse *urlResponse = nil;
-    NSError *error = nil;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request
-                                         returningResponse:&urlResponse
-                                                     error:&error];
-    if (error)
+    NSIndexPath *indexPath = nil;
+    __block NSInteger section = NSNotFound;
+    __block NSInteger item = NSNotFound;
+    
+    [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
+        NSArray *games = self.gamesInSections[sectionKey];
+        [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+            if ([[game md5Hash] isEqualToString:md5Hash])
+            {
+                section = sectionIndex;
+                item = gameIndex;
+                *gameStop = YES;
+                *sectionStop = YES;
+            }
+        }];
+    }];
+    
+    if ((section != NSNotFound) && (item != NSNotFound))
     {
-        DLog(@"error downloading artwork from: %@ -- %@", url, [error localizedDescription]);
-        return;
+        indexPath = [NSIndexPath indexPathForItem:item inSection:section];
     }
     
-    if ([urlResponse statusCode] != 200)
+    return indexPath;
+}
+
+- (NSIndexPath *)indexPathForGameWithURL:(NSString *)url
+{
+    NSIndexPath *indexPath = nil;
+    __block NSInteger section = NSNotFound;
+    __block NSInteger item = NSNotFound;
+    
+    [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
+        NSArray *games = self.gamesInSections[sectionKey];
+        [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+            if ([[game originalArtworkURL] isEqualToString:url] ||
+                [[game customArtworkURL] isEqualToString:url])
+            {
+                section = sectionIndex;
+                item = gameIndex;
+                *gameStop = YES;
+                *sectionStop = YES;
+            }
+        }];
+    }];
+    
+    if ((section != NSNotFound) && (item != NSNotFound))
     {
-        DLog(@"HTTP Error: %zd", [urlResponse statusCode]);
-        DLog(@"Response: %@", urlResponse);
+        indexPath = [NSIndexPath indexPathForItem:item inSection:section];
     }
     
-    UIImage *artwork = [[UIImage alloc] initWithData:data];
-    if (artwork)
-    {
-        [PVMediaCache writeImageToDisk:artwork withKey:url];
-    }
+    return indexPath;
 }
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
-    [self.realm beginWriteTransaction];
     for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
     {
+        [self.realm beginWriteTransaction];
         [game setCustomArtworkURL:nil];
+        [self.realm commitWriteTransaction];
         __weak typeof(self) weakSelf = self;
+        NSString *originalArtworkURL = [game originalArtworkURL];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            RLMRealm *realm = [RLMRealm defaultRealm];
-            [realm beginWriteTransaction];
-            [weakSelf getArtworkFromURL:[game originalArtworkURL]];
-            [realm commitWriteTransaction];
+            [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.collectionView reloadData];
+            });
         });
     }
-    [self.realm commitWriteTransaction];
 }
 
 - (void)handleArchiveInflationFailed:(NSNotification *)note
@@ -300,7 +338,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
     {
         [game setCustomArtworkURL:nil];
-        [game setOriginalArtworkURL:nil];
+        [game setRequiresSync:YES];
     }
     [self.realm commitWriteTransaction];
     [self.gameImporter startImport];
@@ -436,13 +474,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		{
 			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
 				[PVMediaCache deleteImageForKey:[game customArtworkURL]];
-                [self.realm beginWriteTransaction];
-				[game setCustomArtworkURL:[game originalArtworkURL]];
-                [self.realm commitWriteTransaction];
+                [weakSelf.realm beginWriteTransaction];
+                [game setCustomArtworkURL:@""];
+                [weakSelf.realm commitWriteTransaction];
+                NSString *originalArtworkURL = [game originalArtworkURL];
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [weakSelf getArtworkFromURL:[game originalArtworkURL]];
+                    [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.collectionView reloadData];
+                        [weakSelf.collectionView reloadData];
                     });
                 });
 			}];
@@ -627,6 +666,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     {
         DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
     }
+    
+    [self fetchGames];
 }
 
 - (void)chooseCustomArtworkForGame:(PVGame *)game
