@@ -14,8 +14,8 @@ typedef void(^PVDirectoryChangedHandler)(void);
 
 @interface PVDirectoryWatcher : NSObject
 
-@property (nonatomic, readonly) NSString *path;
-@property (nonatomic, readonly) PVDirectoryChangedHandler directoryChangedHandler;
+@property (nonatomic, readonly, copy) NSString *path;
+@property (nonatomic, readonly, copy) PVDirectoryChangedHandler directoryChangedHandler;
 
 - (id)initWithPath:(NSString *)path directoryChangedHandler:(PVDirectoryChangedHandler)handler;
 

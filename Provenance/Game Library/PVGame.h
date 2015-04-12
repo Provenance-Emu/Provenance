@@ -16,9 +16,7 @@
 @property NSString *customArtworkURL;
 @property NSString *originalArtworkURL;
 
-@property NSString *crc32Checksum;
 @property NSString *md5Hash;
-@property NSString *sha1Hash;
 
 @property BOOL requiresSync;
 @property NSString *systemIdentifier;

@@ -123,21 +123,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     [self fetchGames];
     
-    NSString *romsPath = [self romsPath];
-    
     __weak typeof(self) weakSelf = self;
     
     self.gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:^(BOOL encounteredConflicts) {
         [weakSelf.gameImporter resolveConflictsWithSolutions:@{}];
     }];
     [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
-        [weakSelf fetchGames];
+        [weakSelf finishedImportingGameWithMD5:md5];
     }];
     [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
-        [weakSelf fetchGames];
+        [weakSelf finishedDownloadingArtworkForURL:url];
     }];
     
-    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:romsPath directoryChangedHandler:^{
+    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath] directoryChangedHandler:^{
         [weakSelf.gameImporter startImport];
     }];
     [self.watcher findAndExtractArchives];
@@ -163,7 +161,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	
-	return documentsDirectoryPath;
+	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
 }
 
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
@@ -230,6 +228,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)fetchGames
 {
+    [self.realm refresh];
     NSMutableDictionary *tempSections = [NSMutableDictionary dictionary];
     for (PVGame *game in [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES])
     {
@@ -247,7 +246,49 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     self.gamesInSections = tempSections;
     self.sectionInfo = [[self.gamesInSections allKeys] sortedArrayUsingSelector:@selector(compare:)];
-    [self.collectionView reloadData];
+}
+
+- (void)finishedImportingGameWithMD5:(NSString *)md5
+{
+    NSArray *oldSectionInfo = self.sectionInfo;
+    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
+    [self fetchGames];
+    if (indexPath)
+    {
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    }
+    else
+    {
+        indexPath = [self indexPathForGameWithMD5Hash:md5];
+        PVGame *game = [[PVGame objectsInRealm:self.realm where:@"md5Hash == %@", md5] firstObject];
+        NSString *systemID = [game systemIdentifier];
+        __block BOOL needToInsertSection = YES;
+        [oldSectionInfo enumerateObjectsUsingBlock:^(NSString *section, NSUInteger sectionIndex, BOOL *stop) {
+            if ([systemID isEqualToString:section])
+            {
+                needToInsertSection = NO;
+                *stop = YES;
+            }
+        }];
+        
+        [self.collectionView performBatchUpdates:^{
+            if (needToInsertSection)
+            {
+                [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
+            }
+            [self.collectionView insertItemsAtIndexPaths:@[indexPath]];
+        } completion:^(BOOL finished) {
+        }];
+    }
+}
+
+- (void)finishedDownloadingArtworkForURL:(NSString *)url
+{
+    NSIndexPath *indexPath = [self indexPathForGameWithURL:url];
+    if (indexPath)
+    {
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    }
 }
 
 - (NSIndexPath *)indexPathForGameWithMD5Hash:(NSString *)md5Hash

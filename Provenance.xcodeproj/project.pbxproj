@@ -10,6 +10,11 @@
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D517F74D410031B1C9 /* libPVSupport.a */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
+		1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2B1AD9FFBF004EA30B /* mztools.c */; };
+		1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2D1AD9FFBF004EA30B /* unzip.c */; };
+		1A26EE361AD9FFBF004EA30B /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2F1AD9FFBF004EA30B /* zip.c */; };
+		1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
 		1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A517F7627E00F1CB0D /* libPVSNES.a */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E861AD15C2F005FB77C /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E851AD15C2F005FB77C /* Realm.framework */; };
@@ -40,7 +45,6 @@
 		1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697117C8C0DE0019F6D2 /* PVGame.m */; };
 		1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
 		1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
-		1A4869A917C8C1400019F6D2 /* libzipkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A48699417C8C1400019F6D2 /* libzipkit.a */; };
 		1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
 		1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
 		1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
@@ -50,6 +54,7 @@
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7417181ABF215B00F3CD3C /* libPVNES.a */; };
 		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
+		1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9647B017D6864300A55612 /* PVControllerViewController.m */; };
 		1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
 		1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.m */; };
@@ -58,6 +63,7 @@
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
+		1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
 		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
@@ -103,6 +109,17 @@
 		1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorViewController.h; sourceTree = "<group>"; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorViewController.m; sourceTree = "<group>"; };
 		1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1A26EE281AD9FFBF004EA30B /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		1A26EE291AD9FFBF004EA30B /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		1A26EE2A1AD9FFBF004EA30B /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		1A26EE2B1AD9FFBF004EA30B /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		1A26EE2C1AD9FFBF004EA30B /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		1A26EE2D1AD9FFBF004EA30B /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		1A26EE2E1AD9FFBF004EA30B /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		1A26EE2F1AD9FFBF004EA30B /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		1A26EE301AD9FFBF004EA30B /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		1A26EE311AD9FFBF004EA30B /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
+		1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
 		1A2A95A517F7627E00F1CB0D /* libPVSNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNES.a; path = "PVSNES/build/Debug-iphoneos/libPVSNES.a"; sourceTree = "<group>"; };
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E851AD15C2F005FB77C /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
@@ -146,25 +163,6 @@
 		1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMediaCache.m; sourceTree = "<group>"; };
 		1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		1A48698017C8C1170019F6D2 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
-		1A48699217C8C1400019F6D2 /* GMAppleDouble+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GMAppleDouble+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699317C8C1400019F6D2 /* GMAppleDouble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GMAppleDouble.h; sourceTree = "<group>"; };
-		1A48699417C8C1400019F6D2 /* libzipkit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libzipkit.a; sourceTree = "<group>"; };
-		1A48699517C8C1400019F6D2 /* NSData+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699617C8C1400019F6D2 /* NSDate+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699717C8C1400019F6D2 /* NSDictionary+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699817C8C1400019F6D2 /* NSFileHandle+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699917C8C1400019F6D2 /* NSFileManager+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699A17C8C1400019F6D2 /* NSString+ZKAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ZKAdditions.h"; sourceTree = "<group>"; };
-		1A48699B17C8C1400019F6D2 /* ZKArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKArchive.h; sourceTree = "<group>"; };
-		1A48699C17C8C1400019F6D2 /* ZKCDHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKCDHeader.h; sourceTree = "<group>"; };
-		1A48699D17C8C1400019F6D2 /* ZKCDTrailer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKCDTrailer.h; sourceTree = "<group>"; };
-		1A48699E17C8C1400019F6D2 /* ZKCDTrailer64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKCDTrailer64.h; sourceTree = "<group>"; };
-		1A48699F17C8C1400019F6D2 /* ZKCDTrailer64Locator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKCDTrailer64Locator.h; sourceTree = "<group>"; };
-		1A4869A017C8C1400019F6D2 /* ZKDataArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDataArchive.h; sourceTree = "<group>"; };
-		1A4869A117C8C1400019F6D2 /* ZKDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKDefs.h; sourceTree = "<group>"; };
-		1A4869A217C8C1400019F6D2 /* ZKFileArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKFileArchive.h; sourceTree = "<group>"; };
-		1A4869A317C8C1400019F6D2 /* ZKLFHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLFHeader.h; sourceTree = "<group>"; };
-		1A4869A417C8C1400019F6D2 /* ZKLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKLog.h; sourceTree = "<group>"; };
 		1A4869D517C8D5450019F6D2 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A4869D717C8D54D0019F6D2 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -176,6 +174,8 @@
 		1A7417181ABF215B00F3CD3C /* libPVNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVNES.a"; sourceTree = "<group>"; };
 		1A74171B1ABF231500F3CD3C /* PVNESControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVNESControllerViewController.h; sourceTree = "<group>"; };
 		1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVNESControllerViewController.m; sourceTree = "<group>"; };
+		1A9442551AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NSDate_SignificantDates.h"; sourceTree = "<group>"; };
+		1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NSDate_SignificantDates.m"; sourceTree = "<group>"; };
 		1A9647AF17D6864300A55612 /* PVControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerViewController.h; sourceTree = "<group>"; };
 		1A9647B017D6864300A55612 /* PVControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerViewController.m; sourceTree = "<group>"; };
 		1A9FBE1A1ABD23DD004E778B /* vba-over.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "vba-over.ini"; sourceTree = "<group>"; };
@@ -191,6 +191,8 @@
 		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
 		1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+BlockAdditions.m"; sourceTree = "<group>"; };
+		1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
+		1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
 		1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsViewController.h; sourceTree = "<group>"; };
 		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsViewController.m; sourceTree = "<group>"; };
 		1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Provenance.storyboard; sourceTree = "<group>"; };
@@ -257,7 +259,6 @@
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
-				1A4869A917C8C1400019F6D2 /* libzipkit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,6 +311,32 @@
 			children = (
 			);
 			path = Audio;
+			sourceTree = "<group>";
+		};
+		1A26EE261AD9FFBF004EA30B /* SSZipArchive */ = {
+			isa = PBXGroup;
+			children = (
+				1A26EE311AD9FFBF004EA30B /* SSZipArchive.h */,
+				1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */,
+				1A26EE271AD9FFBF004EA30B /* minizip */,
+			);
+			path = SSZipArchive;
+			sourceTree = "<group>";
+		};
+		1A26EE271AD9FFBF004EA30B /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				1A26EE281AD9FFBF004EA30B /* crypt.h */,
+				1A26EE291AD9FFBF004EA30B /* ioapi.c */,
+				1A26EE2A1AD9FFBF004EA30B /* ioapi.h */,
+				1A26EE2B1AD9FFBF004EA30B /* mztools.c */,
+				1A26EE2C1AD9FFBF004EA30B /* mztools.h */,
+				1A26EE2D1AD9FFBF004EA30B /* unzip.c */,
+				1A26EE2E1AD9FFBF004EA30B /* unzip.h */,
+				1A26EE2F1AD9FFBF004EA30B /* zip.c */,
+				1A26EE301AD9FFBF004EA30B /* zip.h */,
+			);
+			path = minizip;
 			sourceTree = "<group>";
 		};
 		1A3D408B17B2DCE4004DFFFC = {
@@ -374,7 +401,7 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
 				1A1237F217CA279900CEC788 /* User Interface */,
-				1A48699117C8C1400019F6D2 /* zipkit */,
+				1A26EE261AD9FFBF004EA30B /* SSZipArchive */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
@@ -436,32 +463,6 @@
 				1A48697117C8C0DE0019F6D2 /* PVGame.m */,
 			);
 			path = "Game Library";
-			sourceTree = "<group>";
-		};
-		1A48699117C8C1400019F6D2 /* zipkit */ = {
-			isa = PBXGroup;
-			children = (
-				1A48699217C8C1400019F6D2 /* GMAppleDouble+ZKAdditions.h */,
-				1A48699317C8C1400019F6D2 /* GMAppleDouble.h */,
-				1A48699417C8C1400019F6D2 /* libzipkit.a */,
-				1A48699517C8C1400019F6D2 /* NSData+ZKAdditions.h */,
-				1A48699617C8C1400019F6D2 /* NSDate+ZKAdditions.h */,
-				1A48699717C8C1400019F6D2 /* NSDictionary+ZKAdditions.h */,
-				1A48699817C8C1400019F6D2 /* NSFileHandle+ZKAdditions.h */,
-				1A48699917C8C1400019F6D2 /* NSFileManager+ZKAdditions.h */,
-				1A48699A17C8C1400019F6D2 /* NSString+ZKAdditions.h */,
-				1A48699B17C8C1400019F6D2 /* ZKArchive.h */,
-				1A48699C17C8C1400019F6D2 /* ZKCDHeader.h */,
-				1A48699D17C8C1400019F6D2 /* ZKCDTrailer.h */,
-				1A48699E17C8C1400019F6D2 /* ZKCDTrailer64.h */,
-				1A48699F17C8C1400019F6D2 /* ZKCDTrailer64Locator.h */,
-				1A4869A017C8C1400019F6D2 /* ZKDataArchive.h */,
-				1A4869A117C8C1400019F6D2 /* ZKDefs.h */,
-				1A4869A217C8C1400019F6D2 /* ZKFileArchive.h */,
-				1A4869A317C8C1400019F6D2 /* ZKLFHeader.h */,
-				1A4869A417C8C1400019F6D2 /* ZKLog.h */,
-			);
-			path = zipkit;
 			sourceTree = "<group>";
 		};
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
@@ -533,12 +534,16 @@
 				1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */,
 				1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */,
 				1A48698017C8C1170019F6D2 /* NSString+Hashing.m */,
+				1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */,
+				1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */,
 				423BB97D17DD46BC0048F457 /* NSData+Hashing.h */,
 				423BB97E17DD46BC0048F457 /* NSData+Hashing.m */,
 				42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */,
 				42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */,
 				1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */,
 				1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */,
+				1A9442551AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.h */,
+				1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -672,6 +677,8 @@
 			files = (
 				1A3D40A417B2DCE4004DFFFC /* main.m in Sources */,
 				1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */,
+				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
+				1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
@@ -684,17 +691,21 @@
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
+				1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
 				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
+				1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
+				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
+				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
@@ -702,6 +713,7 @@
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
+				1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

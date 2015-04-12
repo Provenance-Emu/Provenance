@@ -17,9 +17,7 @@
              @"romPath" : @"",
              @"customArtworkURL" : @"",
              @"originalArtworkURL" : @"",
-             @"crc32Checksum" : @"",
              @"md5Hash" : @"",
-             @"sha1Hash" : @"",
              @"requiresSync" : @YES,
              @"systemIdentifier" : @"",};
 }

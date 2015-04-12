@@ -17,7 +17,7 @@
 // expose for testing
 - (NSDictionary *)updateSystemToPathMap;
 - (NSDictionary *)updateRomToSystemMap;
-- (NSString *)documentsPath;
+- (NSString *)romsPath;
 - (NSString *)pathForSystemID:(NSString *)systemID;
 - (NSArray *)systemIDsForRomAtPath:(NSString *)path;
 - (BOOL)isCDROM:(NSString *)filePath;
@@ -59,7 +59,7 @@
 - (void)testSystemToPathMap {
     PVGameImporter *importer = [[PVGameImporter alloc] init];
     NSString *path = [importer pathForSystemID:@"com.provenance.gbc"];
-    XCTAssertTrue(([path isEqualToString:[NSString stringWithFormat:@"%@/com.provenance.gbc", [importer documentsPath]]]), @"Path should be documents/com.provenance.gbc, but it is not.");
+    XCTAssertTrue(([path isEqualToString:[NSString stringWithFormat:@"%@/com.provenance.gbc", [importer romsPath]]]), @"Path should be documents/com.provenance.gbc, but it is not.");
 }
 
 - (void)testPerformanceUpdateSystemToPathMap {
@@ -74,13 +74,6 @@
         PVGameImporter *importer = [[PVGameImporter alloc] init];
         [importer updateRomToSystemMap];
     }];
-}
-
-- (void)testCRC32 {
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"testdata" withExtension:@"txt"];
-    NSData *data = [NSData dataWithContentsOfURL:fileURL];
-    NSString *crc32 = [data crc32Checksum];
-    XCTAssertTrue([crc32 isEqualToString:@"3610A686"]);
 }
 
 - (void)testSha1 {
