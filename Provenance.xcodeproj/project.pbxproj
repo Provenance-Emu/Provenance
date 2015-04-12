@@ -841,7 +841,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
 					"$(BUILD_DIR)/**",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -884,7 +883,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
 					"$(BUILD_DIR)/**",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
@@ -1107,7 +1105,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/Provenance/zipkit",
 					"$(BUILD_DIR)/**",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";

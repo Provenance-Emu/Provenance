@@ -135,10 +135,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [weakSelf finishedDownloadingArtworkForURL:url];
     }];
     
-    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath] directoryChangedHandler:^{
-        [weakSelf.gameImporter startImport];
+    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath] extractionCompleteHandler:^(NSArray *paths){
+        [weakSelf.gameImporter startImportForPaths:paths];
     }];
-    [self.watcher findAndExtractArchives];
+    // TODO: Find a way to start an import on launch without directory watchers
+//    [self.watcher findAndExtractArchives];
     [self.watcher startMonitoring];
 }
 
@@ -382,7 +383,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [game setRequiresSync:YES];
     }
     [self.realm commitWriteTransaction];
-    [self.gameImporter startImport];
+    // TODO: find a way to refresh library
+//    [self.gameImporter startImportForPaths:];
 }
 
 #pragma mark - UICollectionViewDataSource

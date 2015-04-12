@@ -32,7 +32,7 @@
 		
 		NSString *sourcePath = [url path];
 		NSString *filename = [sourcePath lastPathComponent];
-		NSString *destinationPath = [documentsDirectory stringByAppendingPathComponent:filename];
+		NSString *destinationPath = [[documentsDirectory stringByAppendingPathComponent:@"roms"] stringByAppendingPathComponent:filename];
 		
 		NSFileManager *fileManager = [NSFileManager defaultManager];
 		NSError *error = nil;

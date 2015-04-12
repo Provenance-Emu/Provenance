@@ -684,6 +684,7 @@
 				DSTROOT = /tmp/PVGenesis.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -706,6 +707,7 @@
 				DSTROOT = /tmp/PVGenesis.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -760,6 +762,7 @@
 				DSTROOT = /tmp/PVGenesis.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",

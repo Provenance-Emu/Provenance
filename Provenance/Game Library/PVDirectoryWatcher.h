@@ -10,17 +10,16 @@
 
 extern NSString *PVArchiveInflationFailedNotification;
 
-typedef void(^PVDirectoryChangedHandler)(void);
+typedef void(^PVExtractionCompleteHandler)(NSArray *paths);
 
 @interface PVDirectoryWatcher : NSObject
 
 @property (nonatomic, readonly, copy) NSString *path;
-@property (nonatomic, readonly, copy) PVDirectoryChangedHandler directoryChangedHandler;
+@property (nonatomic, readonly, copy) PVExtractionCompleteHandler extractionCompleteHandler;
 
-- (id)initWithPath:(NSString *)path directoryChangedHandler:(PVDirectoryChangedHandler)handler;
+- (id)initWithPath:(NSString *)path extractionCompleteHandler:(PVExtractionCompleteHandler)handler;
 
 - (void)startMonitoring;
 - (void)stopMonitoring;
-- (void)findAndExtractArchives;
 
 @end

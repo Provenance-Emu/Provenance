@@ -20,7 +20,7 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 
 - (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler;
 
-- (void)startImport;
+- (void)startImportForPaths:(NSArray *)paths;
 
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
