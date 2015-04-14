@@ -19,7 +19,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 @property (nonatomic, readwrite, copy) PVExtractionCompleteHandler extractionCompleteHandler;
 @property (nonatomic, strong) dispatch_source_t dispatch_source;
 @property (nonatomic, strong) dispatch_queue_t serialQueue;
-@property (nonatomic, strong) NSMutableDictionary *fileWatchers;
 @property (nonatomic, strong) NSArray *previousContents;
 
 
@@ -48,8 +47,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 				DLog(@"Unable to create directory at: %@, because: %@", self.path, [error localizedDescription]);
 			}
 		}
-		
-        self.fileWatchers = [NSMutableDictionary dictionary];
         
 		self.extractionCompleteHandler = handler;
         self.serialQueue = dispatch_queue_create("com.jamsoftonline.provenance.serialExtractorQueue", DISPATCH_QUEUE_SERIAL);
@@ -130,29 +127,37 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     if ([[path pathExtension] isEqualToString:@"zip"])
     {
         DLog(@"Start watching %@", [path lastPathComponent]);
-        dispatch_source_t fileDispatchSource = [self.fileWatchers objectForKey:path];
-        if (!fileDispatchSource)
+        NSError *error = nil;
+        NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+        if (!attributes)
         {
-            int fileDescriptor = open([path fileSystemRepresentation], O_EVTONLY);
-            fileDispatchSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE,
-                                                        fileDescriptor,
-                                                        DISPATCH_VNODE_ATTRIB,
-                                                        self.serialQueue);
-            dispatch_source_set_registration_handler(fileDispatchSource, ^{
-                dispatch_source_set_event_handler(fileDispatchSource, ^{
-                    DLog(@"%@ finished writing, starting extraction", [path lastPathComponent]);
-                    [self extractArchiveAtPath:path];
-                    [self.fileWatchers removeObjectForKey:path];
-                    dispatch_source_cancel(fileDispatchSource);
-                });
-                dispatch_source_set_cancel_handler(fileDispatchSource, ^{
-                    close(fileDescriptor);
-                });
-            });
-            [self.fileWatchers setObject:fileDispatchSource forKey:path];
-            dispatch_resume(fileDispatchSource);
+            DLog(@"Error getting file attributes for %@", path);
+            return;
         }
+        unsigned long long filesize = [attributes fileSize];
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [NSTimer scheduledTimerWithTimeInterval:1 target:weakSelf selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(filesize)} repeats:NO];
+        });
     }
+}
+
+- (void)checkFileProgress:(NSTimer *)timer
+{
+    NSString *path = [timer userInfo][@"path"];
+    unsigned long long previousFilesize = [[timer userInfo][@"filesize"] unsignedLongLongValue];
+    NSError *error = nil;
+    NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
+    NSUInteger currentFilesize = [attributes fileSize];
+    if (previousFilesize == currentFilesize)
+    {
+        dispatch_async(self.serialQueue, ^{
+            [self extractArchiveAtPath:path];
+        });
+        return;
+    }
+    
+    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(currentFilesize)} repeats:NO];
 }
 
 - (void)extractArchiveAtPath:(NSString *)filePath
