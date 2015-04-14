@@ -189,7 +189,7 @@
     if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
-        return nil;
+//        return nil; // if one file amongst a group fails, should we return nil? I don't think so...
     }
     
     if (!self.encounteredConflicts)
