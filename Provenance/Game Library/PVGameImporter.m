@@ -16,7 +16,7 @@
 
 @interface PVGameImporter ()
 
-@property (nonatomic, strong) dispatch_queue_t serialImportQueue;
+@property (nonatomic, readwrite, strong) dispatch_queue_t serialImportQueue;
 @property (nonatomic, strong) NSDictionary *systemToPathMap;
 @property (nonatomic, strong) NSDictionary *romToSystemMap;
 @property (nonatomic, assign) BOOL encounteredConflicts;

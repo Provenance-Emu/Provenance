@@ -137,7 +137,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
                                    extractionStartedHandler:^(NSString *path) {
-                                       MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       if (!hud)
+                                       {
+                                           hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                                       }
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                        [hud setProgress:0];
@@ -377,20 +381,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleCacheEmptied:(NSNotificationCenter *)notification
 {
-    for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
-    {
-        [self.realm beginWriteTransaction];
-        [game setCustomArtworkURL:nil];
-        [self.realm commitWriteTransaction];
-        __weak typeof(self) weakSelf = self;
-        NSString *originalArtworkURL = [game originalArtworkURL];
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm refresh];
+        for (PVGame *game in [PVGame allObjectsInRealm:realm])
+        {
+            [realm beginWriteTransaction];
+            [game setCustomArtworkURL:nil];
+            [realm commitWriteTransaction];
+            NSString *originalArtworkURL = [game originalArtworkURL];
             [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.collectionView reloadData];
-            });
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf.realm refresh];
+            [weakSelf fetchGames];
+            [weakSelf.collectionView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self.sectionInfo count])]];
         });
-    }
+
+    });
 }
 
 - (void)handleArchiveInflationFailed:(NSNotification *)note
@@ -404,15 +414,18 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleRefreshLibrary:(NSNotification *)note
 {
-    [self.realm beginWriteTransaction];
+    NSString *documentsPath = [self documentsPath];
     for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
-    {
+    {   [self.realm beginWriteTransaction];
         [game setCustomArtworkURL:nil];
+        [game setOriginalArtworkURL:nil];
         [game setRequiresSync:YES];
+        [self.realm commitWriteTransaction];
+        NSString *path = [documentsPath stringByAppendingPathComponent:[game romPath]];
+        dispatch_async([self.gameImporter serialImportQueue], ^{
+           [self.gameImporter getRomInfoForFilesAtPaths:@[path]];
+        });
     }
-    [self.realm commitWriteTransaction];
-    // TODO: find a way to refresh library
-//    [self.gameImporter startImportForPaths:];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -552,7 +565,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        [weakSelf.collectionView reloadData];
+                        NSIndexPath *indexPath = [weakSelf indexPathForGameWithMD5Hash:[game md5Hash]];
+                        [weakSelf fetchGames];
+                        [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
                     });
                 });
 			}];
@@ -658,10 +673,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self.realm beginWriteTransaction];
 		[self.gameToRename setTitle:newTitle];
         [self.realm commitWriteTransaction];
+        
+        NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[self.gameToRename md5Hash]];
+        [self fetchGames];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        
 		self.gameToRename = nil;
-        [self.collectionView reloadData];
 	}
-	
+    
 	[UIView animateWithDuration:0.3
 						  delay:0.0
 						options:UIViewAnimationOptionBeginFromCurrentState
@@ -811,7 +830,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                                          [self.realm beginWriteTransaction];
                                                                          [game setCustomArtworkURL:[[rep url] absoluteString]];
                                                                          [self.realm commitWriteTransaction];
-                                                                         [self.collectionView reloadData];
+                                                                         NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
+                                                                         [self fetchGames];
+                                                                         [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
                                                                          weakSelf.assetsLibrary = nil;
                                                                      }];
                                                                      
@@ -876,7 +897,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self.realm beginWriteTransaction];
 		[self.gameForCustomArt setCustomArtworkURL:hash];
         [self.realm commitWriteTransaction];
-		[self.collectionView reloadData];
+        NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[self.gameForCustomArt md5Hash]];
+		[self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
 	}
 	
 	self.gameForCustomArt = nil;

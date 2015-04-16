@@ -14,6 +14,8 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 
 @interface PVGameImporter : NSObject
 
+@property (nonatomic, readonly, strong) dispatch_queue_t serialImportQueue;
+
 @property (nonatomic, copy) PVGameImporterCompletionHandler completionHandler;
 @property (nonatomic, copy) PVGameImporterFinishedImportingGameHandler finishedImportHandler;
 @property (nonatomic, copy) PVGameImporterFinishedGettingArtworkHandler finishedArtworkHandler;
@@ -25,6 +27,7 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
 
+- (void)getRomInfoForFilesAtPaths:(NSArray *)paths;
 - (void)getArtworkFromURL:(NSString *)url;
 
 @end
