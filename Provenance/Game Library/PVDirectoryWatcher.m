@@ -16,6 +16,8 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 @interface PVDirectoryWatcher ()
 
 @property (nonatomic, readwrite, copy) NSString *path;
+@property (nonatomic, readwrite, copy) PVExtractionStartedHandler extractionStartedHandler;
+@property (nonatomic, readwrite, copy) PVExtractionUpdatedHandler extractionUpdatedHandler;
 @property (nonatomic, readwrite, copy) PVExtractionCompleteHandler extractionCompleteHandler;
 @property (nonatomic, strong) dispatch_source_t dispatch_source;
 @property (nonatomic, strong) dispatch_queue_t serialQueue;
@@ -26,7 +28,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 
 @implementation PVDirectoryWatcher
 
-- (id)initWithPath:(NSString *)path extractionCompleteHandler:(PVExtractionCompleteHandler)handler
+- (id)initWithPath:(NSString *)path extractionStartedHandler:(PVExtractionStartedHandler)startedHandler extractionUpdatedHandler:(PVExtractionUpdatedHandler)updatedHandler extractionCompleteHandler:(PVExtractionCompleteHandler)completeHandler
 {
 	if ((self = [super init]))
 	{
@@ -48,8 +50,30 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 			}
 		}
         
-		self.extractionCompleteHandler = handler;
+        self.extractionStartedHandler = startedHandler;
+        self.extractionUpdatedHandler = updatedHandler;
+		self.extractionCompleteHandler = completeHandler;
+        
         self.serialQueue = dispatch_queue_create("com.jamsoftonline.provenance.serialExtractorQueue", DISPATCH_QUEUE_SERIAL);
+        
+        dispatch_async(self.serialQueue, ^{
+            NSError *error = nil;
+            NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.path error:&error];
+            if (contents)
+            {
+                for (NSString *file in contents)
+                {
+                    if ([[file pathExtension] isEqualToString:@"zip"])
+                    {
+                        [self extractArchiveAtPath:file];
+                    }
+                }
+            }
+            else
+            {
+                DLog(@"Unable to get contents");
+            }
+        });
 	}
 	
 	return self;
@@ -58,6 +82,8 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 - (void)dealloc
 {
     self.serialQueue = nil;
+    self.extractionStartedHandler = nil;
+    self.extractionUpdatedHandler = nil;
     self.extractionCompleteHandler = nil;
 }
 
@@ -162,13 +188,29 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 
 - (void)extractArchiveAtPath:(NSString *)filePath
 {
+    if (self.extractionStartedHandler)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.extractionStartedHandler(filePath);
+        });
+    }
+    
     NSMutableArray *unzippedFiles = [NSMutableArray array];
     [SSZipArchive unzipFileAtPath:filePath
                     toDestination:self.path
                         overwrite:YES
                          password:nil
-                  progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total) {
-                      [unzippedFiles addObject:entry];
+                  progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead) {
+                      if ([entry length])
+                      {
+                          [unzippedFiles addObject:entry];
+                      }
+                      if (self.extractionUpdatedHandler)
+                      {
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              self.extractionUpdatedHandler(filePath, entryNumber, total, fileSize, bytesRead);
+                          });
+                      }
                   }
                 completionHandler:^(NSString *path, BOOL succeeded, NSError *error) {
                     if (succeeded)
@@ -198,91 +240,5 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                     }
                 }];
 }
-
-//- (void)findAndExtractArchives
-//{
-//    NSFileManager *fileManager = [NSFileManager defaultManager];
-//    NSArray *contents = [fileManager contentsOfDirectoryAtPath:self.path error:NULL];
-//
-//    for (NSString *path in contents)
-//    {
-//        @autoreleasepool {
-//            NSString *filePath = [self.path stringByAppendingPathComponent:path];
-//            BOOL isDir = NO;
-//            BOOL fileExists = [fileManager fileExistsAtPath:filePath isDirectory:&isDir];
-//            
-//            if (!fileExists || isDir || ([path containsString:@"realm"]) || ([SSZipArchive validArchiveAtPath:filePath] == NO))
-//            {
-//                continue;
-//            }
-//            
-//            NSError *zipError = nil;
-//            if ([SSZipArchive unzipFileAtPath:filePath
-//                            toDestination:self.path
-//                                overwrite:YES
-//                                 password:nil
-//                                    error:&zipError])
-//            {
-//                NSError *error = nil;
-//                BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
-//                
-//                if (!deleted)
-//                {
-//                    DLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
-//                }
-//            }
-//            else
-//            {
-//                DLog(@"Unable to unzip file: %@ because: %@", filePath, [zipError localizedDescription]);
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
-//                                                                        object:self];
-//                });
-//            }
-//            
-//            ZKDataArchive *archive = [ZKDataArchive archiveWithArchivePath:filePath];
-//            NSUInteger status = [archive inflateAll];
-//            if (status == zkSucceeded)
-//            {
-//                for (NSDictionary *inflatedFile in [archive inflatedFiles])
-//                {
-//                    @autoreleasepool {
-//                        NSString *fileName = [inflatedFile objectForKey:ZKPathKey];
-//                        NSArray *supportedFileExtensions = [[PVEmulatorConfiguration sharedInstance] supportedFileExtensions];
-//                        NSString *fileExtension = [fileName pathExtension];
-//                        if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
-//                        {
-//                            NSData *fileData = [inflatedFile objectForKey:ZKFileDataKey];
-//                            [fileData writeToFile:[self.path stringByAppendingPathComponent:fileName] atomically:YES];
-//                        }
-//                    }
-//                }
-//            
-//                NSError *error = nil;
-//                BOOL deleted = [fileManager removeItemAtPath:filePath error:&error];
-//                
-//                if (!deleted)
-//                {
-//                    DLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
-//                }
-//            }
-//            else
-//            {
-//                DLog(@"Unable to inflate zip at %@, status: %tu", filePath, status);
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
-//                                                                        object:self];
-//                });
-//            }
-//        }
-//    }
-//    
-//    if (self.directoryChangedHandler)
-//    {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            self.directoryChangedHandler();
-//        });
-//    }
-//}
 
 @end

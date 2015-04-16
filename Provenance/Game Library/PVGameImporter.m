@@ -59,18 +59,22 @@
 
 - (NSArray *)importFilesAtPaths:(NSArray *)paths
 {
-    NSArray *newPaths = nil;
+    NSMutableArray *newPaths = [NSMutableArray array];
     for (NSString *path in paths)
     {
         if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
         {
             if ([self isCDROM:path])
             {
-                newPaths = [self moveCDROMToAppropriateSubfolder:path];
+                [newPaths addObjectsFromArray:[self moveCDROMToAppropriateSubfolder:path]];
             }
             else
             {
-                newPaths = [self moveROMToAppropriateSubfolder:path];
+                NSString *newPath = [self moveROMToAppropriateSubfolder:path];
+                if ([newPath length])
+                {
+                    [newPaths addObject:newPath];
+                }
             }
         }
     }
@@ -132,7 +136,7 @@
     if (!contents)
     {
         DLog(@"Error scanning %@, %@", [self romsPath], [error localizedDescription]);
-        return nil;
+        return [newPaths copy];
     }
     
     for (NSString *file in contents)
@@ -151,9 +155,9 @@
     return [newPaths copy];
 }
 
-- (NSArray *)moveROMToAppropriateSubfolder:(NSString *)filePath
+- (NSString *)moveROMToAppropriateSubfolder:(NSString *)filePath
 {
-    NSMutableArray *newPaths = [NSMutableArray array];
+    NSString *newPath = nil;
     
     NSArray *systemsForExtension = [self systemIDsForRomAtPath:filePath];
     
@@ -189,15 +193,15 @@
     if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
-//        return nil; // if one file amongst a group fails, should we return nil? I don't think so...
+        return nil;
     }
     
     if (!self.encounteredConflicts)
     {
-        [newPaths addObject:[subfolderPath stringByAppendingPathComponent:filePath]];
+      newPath = [subfolderPath stringByAppendingPathComponent:filePath];
     }
     
-    return [newPaths copy];
+    return newPath;
 }
 
 - (NSArray *)conflictedFiles

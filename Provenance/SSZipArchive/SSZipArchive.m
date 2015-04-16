@@ -65,7 +65,7 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 		  toDestination:(NSString *)destination
 			  overwrite:(BOOL)overwrite
 			   password:(NSString *)password
-		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
+		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead))progressHandler
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler
 {
 	return [self unzipFileAtPath:path toDestination:destination overwrite:overwrite password:password error:nil delegate:nil progressHandler:progressHandler completionHandler:completionHandler];
@@ -73,7 +73,7 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 
 + (BOOL)unzipFileAtPath:(NSString *)path
 		  toDestination:(NSString *)destination
-		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
+		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead))progressHandler
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler
 {
 	return [self unzipFileAtPath:path toDestination:destination overwrite:YES password:nil error:nil delegate:nil progressHandler:progressHandler completionHandler:completionHandler];
@@ -85,7 +85,7 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 			   password:(NSString *)password
 				  error:(NSError **)error
 			   delegate:(id<SSZipArchiveDelegate>)delegate
-		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
+		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead))progressHandler
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler
 {
 	// Begin opening
@@ -108,6 +108,7 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 	NSDictionary * fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
 	unsigned long long fileSize = [[fileAttributes objectForKey:NSFileSize] unsignedLongLongValue];
 	unsigned long long currentPosition = 0;
+    unsigned long long totalBytesRead = 0;
 
 	unz_global_info  globalInfo = {0ul, 0ul};
 	unzGetGlobalInfo(zip, &globalInfo);
@@ -255,6 +256,11 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 
 	                if (readBytes > 0) {
 	                    fwrite(buffer, readBytes, 1, fp );
+                        totalBytesRead += readBytes;
+                        if (progressHandler)
+                        {
+                            progressHandler(nil, fileInfo, currentFileNumber, globalInfo.number_entry, fileSize, totalBytesRead);
+                        }
 	                } else {
 	                    break;
 	                }
@@ -343,7 +349,7 @@ const UInt32 SSLFHeaderMagicNumber = 0x04034B50;
 			currentFileNumber++;
 			if (progressHandler)
 			{
-				progressHandler(strPath, fileInfo, currentFileNumber, globalInfo.number_entry);
+				progressHandler(strPath, fileInfo, currentFileNumber, globalInfo.number_entry, fileSize, totalBytesRead);
 			}
 		}
 	} while(ret == UNZ_OK && ret != UNZ_END_OF_LIST_OF_FILE);

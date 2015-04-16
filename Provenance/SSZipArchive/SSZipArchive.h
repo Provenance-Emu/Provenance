@@ -27,14 +27,14 @@
 
 + (BOOL)unzipFileAtPath:(NSString *)path
 		  toDestination:(NSString *)destination
-		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
+		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead))progressHandler
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler;
 
 + (BOOL)unzipFileAtPath:(NSString *)path
 		  toDestination:(NSString *)destination
 			  overwrite:(BOOL)overwrite
 			   password:(NSString *)password
-		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total))progressHandler
+		progressHandler:(void (^)(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead))progressHandler
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler;
 
 // Zip

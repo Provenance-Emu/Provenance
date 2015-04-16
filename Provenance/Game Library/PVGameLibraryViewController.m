@@ -135,11 +135,31 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [weakSelf finishedDownloadingArtworkForURL:url];
     }];
     
-    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath] extractionCompleteHandler:^(NSArray *paths){
-        [weakSelf.gameImporter startImportForPaths:paths];
-    }];
-    // TODO: Find a way to start an import on launch without directory watchers
-//    [self.watcher findAndExtractArchives];
+    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
+                                   extractionStartedHandler:^(NSString *path) {
+                                       MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                                       [hud setUserInteractionEnabled:NO];
+                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                       [hud setProgress:0];
+                                       [hud setLabelText:@"Extracting Archive..."];
+                                   }
+                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       [hud setUserInteractionEnabled:NO];
+                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                       [hud setProgress:(float)bytesRead / (float)fileSize];
+                                       [hud setLabelText:@"Extracting Archive..."];
+                                   }
+                                  extractionCompleteHandler:^(NSArray *paths) {
+                                      MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                      [hud setUserInteractionEnabled:NO];
+                                      [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                      [hud setProgress:1];
+                                      [hud setLabelText:@"Extraction Complete!"];
+                                      [hud hide:YES afterDelay:0.5];
+                                      [weakSelf.gameImporter startImportForPaths:paths];
+                                  }];
+    
     [self.watcher startMonitoring];
 }
 
@@ -155,6 +175,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (NSUInteger)supportedInterfaceOrientations
 {
 	return UIInterfaceOrientationMaskAll;
+}
+
+- (NSString *)documentsPath
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    
+    return documentsDirectoryPath;
 }
 
 - (NSString *)romsPath
@@ -681,14 +709,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)deleteGame:(PVGame *)game
 {
-    NSString *romPath = [[self romsPath] stringByAppendingPathComponent:[game romPath]];
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
+    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
     
     [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
     [PVMediaCache deleteImageForKey:[game customArtworkURL]];
-    
-    [self.realm beginWriteTransaction];
-    [self.realm deleteObject:game];
-    [self.realm commitWriteTransaction];
     
     NSError *error = nil;
     
@@ -710,7 +735,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
     }
     
+    [self.realm beginWriteTransaction];
+    [self.realm deleteObject:game];
+    [self.realm commitWriteTransaction];
+    
+    NSArray *oldSectionInfo = self.sectionInfo;
+    NSDictionary *oldGamesInSections = self.gamesInSections;
     [self fetchGames];
+    
+    NSString *sectionID = [oldSectionInfo objectAtIndex:[indexPath section]];
+    NSUInteger count = [oldGamesInSections[sectionID] count];
+    
+    [self.collectionView performBatchUpdates:^{
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+        
+        if (count == 1)
+        {
+            [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
+        }
+    } completion:^(BOOL finished) {
+    }];
 }
 
 - (void)chooseCustomArtworkForGame:(PVGame *)game
