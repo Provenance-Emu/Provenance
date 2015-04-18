@@ -54,6 +54,8 @@ NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
+#pragma mark - Lifecycle
+
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     if ((self = [super initWithCoder:aDecoder]))
@@ -205,6 +207,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return UIInterfaceOrientationMaskAll;
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([[segue identifier] isEqualToString:@"SettingsSegue"])
+    {
+        [(PVSettingsViewController *)[[segue destinationViewController] topViewController] setGameImporter:self.gameImporter];
+    }
+}
+
+#pragma mark - Filesystem Helpers
+
 - (NSString *)documentsPath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -287,6 +299,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     return [[[self documentsPath] stringByAppendingPathComponent:@"BIOS"] stringByAppendingPathComponent:systemID];
 }
+
+#pragma mark - Game Library Management
 
 - (void)fetchGames
 {
@@ -522,12 +536,332 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
 {
-    if ([[segue identifier] isEqualToString:@"SettingsSegue"])
+    if ([recognizer state] == UIGestureRecognizerStateBegan)
     {
-        [(PVSettingsViewController *)[[segue destinationViewController] topViewController] setGameImporter:self.gameImporter];
+        __weak PVGameLibraryViewController *weakSelf = self;
+        CGPoint point = [recognizer locationInView:self.collectionView];
+        NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:point];
+        
+        NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+        PVGame *game = games[[indexPath item]];
+        
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
+        [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
+        
+        [actionSheet PV_addButtonWithTitle:@"Rename" action:^{
+            [weakSelf renameGame:game];
+        }];
+        [actionSheet PV_addButtonWithTitle:@"Choose Custom Artwork" action:^{
+            [weakSelf chooseCustomArtworkForGame:game];
+        }];
+        
+        if ([[game originalArtworkURL] length] &&
+            [[game originalArtworkURL] isEqualToString:[game customArtworkURL]] == NO)
+        {
+            [actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
+                [PVMediaCache deleteImageForKey:[game customArtworkURL]];
+                [weakSelf.realm beginWriteTransaction];
+                [game setCustomArtworkURL:@""];
+                [weakSelf.realm commitWriteTransaction];
+                NSString *originalArtworkURL = [game originalArtworkURL];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSIndexPath *indexPath = [weakSelf indexPathForGameWithMD5Hash:[game md5Hash]];
+                        [weakSelf fetchGames];
+                        [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+                    });
+                });
+            }];
+        }
+        
+        [actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
+                                                            message:@"Any save states and battery saves will also be deleted, are you sure?"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"No"
+                                                  otherButtonTitles:@"Yes", nil];
+            [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+                if (buttonIndex != [alert cancelButtonIndex])
+                {
+                    [weakSelf deleteGame:game];
+                }
+            }];
+            [alert show];
+        }];
+        [actionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+        [actionSheet showInView:self.view];
     }
+}
+
+- (void)renameGame:(PVGame *)game
+{
+    self.gameToRename = game;
+    
+    self.renameOverlay = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [self.renameOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
+    [self.renameOverlay setBackgroundColor:[UIColor colorWithWhite:0.0 alpha:0.3]];
+    [self.renameOverlay setAlpha:0.0];
+    [self.view addSubview:self.renameOverlay];
+    
+    [UIView animateWithDuration:0.3
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         [self.renameOverlay setAlpha:1.0];
+                     }
+                     completion:NULL];
+    
+    
+    self.renameToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+    [self.renameToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
+    [self.renameToolbar setBarStyle:UIBarStyleBlack];
+    
+    self.renameTextField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width - 24, 30)];
+    [self.renameTextField setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
+    [self.renameTextField setBorderStyle:UITextBorderStyleRoundedRect];
+    [self.renameTextField setPlaceholder:[game title]];
+    [self.renameTextField setKeyboardAppearance:UIKeyboardAppearanceAlert];
+    [self.renameTextField setReturnKeyType:UIReturnKeyDone];
+    [self.renameTextField setDelegate:self];
+    UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:self.renameTextField];
+    
+    [self.renameToolbar setItems:@[textFieldItem]];
+    
+    [self.renameToolbar setOriginY:self.view.bounds.size.height];
+    [self.renameOverlay addSubview:self.renameToolbar];
+    
+    [self.navigationController.view addSubview:self.renameOverlay];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification
+                                               object:nil];
+    
+    [self.renameTextField becomeFirstResponder];
+}
+
+- (void)doneRenaming:(id)sender
+{
+    NSString *newTitle = [self.renameTextField text];
+    
+    if ([newTitle length])
+    {
+        [self.realm beginWriteTransaction];
+        [self.gameToRename setTitle:newTitle];
+        [self.realm commitWriteTransaction];
+        
+        NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[self.gameToRename md5Hash]];
+        [self fetchGames];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        
+        self.gameToRename = nil;
+    }
+    
+    [UIView animateWithDuration:0.3
+                          delay:0.0
+                        options:UIViewAnimationOptionBeginFromCurrentState
+                     animations:^{
+                         [self.renameOverlay setAlpha:0.0];
+                     }
+                     completion:^(BOOL finished) {
+                         [self.renameOverlay removeFromSuperview];
+                         self.renameOverlay = nil;
+                     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
+    [self.renameTextField resignFirstResponder];
+}
+- (void)deleteGame:(PVGame *)game
+{
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
+    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
+    
+    [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
+    [PVMediaCache deleteImageForKey:[game customArtworkURL]];
+    
+    NSError *error = nil;
+    
+    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
+    if (!success)
+    {
+        DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
+    }
+    
+    success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
+    if (!success)
+    {
+        DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
+    }
+    
+    success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
+    if (!success)
+    {
+        DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
+    }
+    
+    [self deleteRelatedFilesGame:game];
+    
+    [self.realm beginWriteTransaction];
+    [self.realm deleteObject:game];
+    [self.realm commitWriteTransaction];
+    
+    NSArray *oldSectionInfo = self.sectionInfo;
+    NSDictionary *oldGamesInSections = self.gamesInSections;
+    [self fetchGames];
+    
+    NSString *sectionID = [oldSectionInfo objectAtIndex:[indexPath section]];
+    NSUInteger count = [oldGamesInSections[sectionID] count];
+    
+    [self.collectionView performBatchUpdates:^{
+        [self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+        
+        if (count == 1)
+        {
+            [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
+        }
+    } completion:^(BOOL finished) {
+    }];
+}
+
+- (void)deleteRelatedFilesGame:(PVGame *)game
+{
+    NSString *romPath = [game romPath];
+    NSString *romDirectory = [[self documentsPath] stringByAppendingPathComponent:[game systemIdentifier]];
+    NSString *relatedFileName = [[romPath lastPathComponent] stringByReplacingOccurrencesOfString:[romPath pathExtension] withString:@""];
+    NSError *error = nil;
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:romDirectory error:&error];
+    
+    if (!contents)
+    {
+        DLog(@"Error scanning %@, %@", romDirectory, [error localizedDescription]);
+        return;
+    }
+    
+    for (NSString *file in contents)
+    {
+        NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[file pathExtension] withString:@""];
+        
+        if ([fileWithoutExtension isEqual:relatedFileName])
+        {
+            if (![[NSFileManager defaultManager] removeItemAtPath:[romDirectory stringByAppendingPathComponent:file]
+                                                            error:&error])
+            {
+                DLog(@"Unable to delete file at %@ because %@", file, [error localizedDescription]);
+            }
+        }
+    }
+}
+
+- (void)chooseCustomArtworkForGame:(PVGame *)game
+{
+    __weak PVGameLibraryViewController *weakSelf = self;
+    
+    UIActionSheet *imagePickerActionSheet = [[UIActionSheet alloc] init];
+    
+    BOOL cameraIsAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
+    BOOL photoLibraryIsAvaialble = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
+    
+    PVUIActionSheetAction cameraAction = ^{
+        weakSelf.gameForCustomArt = game;
+        UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+        [pickerController setDelegate:weakSelf];
+        [pickerController setAllowsEditing:NO];
+        [pickerController setSourceType:UIImagePickerControllerSourceTypeCamera];
+        [weakSelf presentViewController:pickerController animated:YES completion:NULL];
+    };
+    
+    PVUIActionSheetAction libraryAction = ^{
+        weakSelf.gameForCustomArt = game;
+        UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
+        [pickerController setDelegate:weakSelf];
+        [pickerController setAllowsEditing:NO];
+        [pickerController setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+        [weakSelf presentViewController:pickerController animated:YES completion:NULL];
+    };
+    
+    self.assetsLibrary = [[ALAssetsLibrary alloc] init];
+    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos
+                                      usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                                          if (!group)
+                                          {
+                                              return;
+                                          }
+                                          [group setAssetsFilter:[ALAssetsFilter allPhotos]];
+                                          NSInteger index = [group numberOfAssets] - 1;
+                                          DLog(@"Group: %@", group);
+                                          if (index >= 0)
+                                          {
+                                              [group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:index]
+                                                                      options:0
+                                                                   usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                                                                       ALAssetRepresentation *rep = [result defaultRepresentation];
+                                                                       if (rep)
+                                                                       {
+                                                                           [imagePickerActionSheet PV_addButtonWithTitle:@"Use Last Photo Taken" action:^{
+                                                                               UIImage *lastPhoto = [UIImage imageWithCGImage:[rep fullScreenImage]
+                                                                                                                        scale:[rep scale]
+                                                                                                                  orientation:(UIImageOrientation)[rep orientation]];
+                                                                               [PVMediaCache writeImageToDisk:lastPhoto
+                                                                                                      withKey:[[rep url] absoluteString]];
+                                                                               [self.realm beginWriteTransaction];
+                                                                               [game setCustomArtworkURL:[[rep url] absoluteString]];
+                                                                               [self.realm commitWriteTransaction];
+                                                                               NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
+                                                                               [self fetchGames];
+                                                                               [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+                                                                               weakSelf.assetsLibrary = nil;
+                                                                           }];
+                                                                           
+                                                                           if (cameraIsAvailable || photoLibraryIsAvaialble)
+                                                                           {
+                                                                               if (cameraIsAvailable)
+                                                                               {
+                                                                                   [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
+                                                                               }
+                                                                               
+                                                                               if (photoLibraryIsAvaialble)
+                                                                               {
+                                                                                   [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
+                                                                               }
+                                                                           }
+                                                                           
+                                                                           [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+                                                                           [imagePickerActionSheet showInView:self.view];
+                                                                       }
+                                                                   }];
+                                          }
+                                          else
+                                          {
+                                              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Photos"
+                                                                                              message:@"There are no photos in your library to choose from"
+                                                                                             delegate:nil
+                                                                                    cancelButtonTitle:nil
+                                                                                    otherButtonTitles:@"OK", nil];
+                                              [alert show];
+                                          }
+                                      } failureBlock:^(NSError *error) {
+                                          if (cameraIsAvailable || photoLibraryIsAvaialble)
+                                          {
+                                              if (cameraIsAvailable)
+                                              {
+                                                  [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
+                                              }
+                                              
+                                              if (photoLibraryIsAvaialble)
+                                              {
+                                                  [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
+                                              }
+                                          }
+                                          [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
+                                          [imagePickerActionSheet showInView:self.view];
+                                          weakSelf.assetsLibrary = nil;
+                                      }];
 }
 
 #pragma mark - UICollectionViewDataSource
@@ -628,113 +962,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return CGSizeMake([self.view bounds].size.width, 40);
 }
 
-- (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
-{
-	if ([recognizer state] == UIGestureRecognizerStateBegan)
-	{
-		__weak PVGameLibraryViewController *weakSelf = self;
-		CGPoint point = [recognizer locationInView:self.collectionView];
-		NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:point];
-		
-		NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-		PVGame *game = games[[indexPath item]];
-		
-		UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
-		[actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
-		
-		[actionSheet PV_addButtonWithTitle:@"Rename" action:^{
-			[weakSelf renameGame:game];
-		}];
-		[actionSheet PV_addButtonWithTitle:@"Choose Custom Artwork" action:^{
-			[weakSelf chooseCustomArtworkForGame:game];
-		}];
-				
-		if ([[game originalArtworkURL] length] &&
-			[[game originalArtworkURL] isEqualToString:[game customArtworkURL]] == NO)
-		{
-			[actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
-				[PVMediaCache deleteImageForKey:[game customArtworkURL]];
-                [weakSelf.realm beginWriteTransaction];
-                [game setCustomArtworkURL:@""];
-                [weakSelf.realm commitWriteTransaction];
-                NSString *originalArtworkURL = [game originalArtworkURL];
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        NSIndexPath *indexPath = [weakSelf indexPathForGameWithMD5Hash:[game md5Hash]];
-                        [weakSelf fetchGames];
-                        [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-                    });
-                });
-			}];
-		}
-		
-		[actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
-			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
-															message:@"Any save states and battery saves will also be deleted, are you sure?"
-														   delegate:nil
-												  cancelButtonTitle:@"No"
-												  otherButtonTitles:@"Yes", nil];
-			[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-				if (buttonIndex != [alert cancelButtonIndex])
-				{
-					[weakSelf deleteGame:game];
-				}
-			}];
-			[alert show];
-		}];
-		[actionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
-		[actionSheet showInView:self.view];
-	}
-}
-
-- (void)renameGame:(PVGame *)game
-{
-	self.gameToRename = game;
-	
-	self.renameOverlay = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-	[self.renameOverlay setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[self.renameOverlay setBackgroundColor:[UIColor colorWithWhite:0.0 alpha:0.3]];
-	[self.renameOverlay setAlpha:0.0];
-	[self.view addSubview:self.renameOverlay];
-	
-	[UIView animateWithDuration:0.3
-						  delay:0.0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-						 [self.renameOverlay setAlpha:1.0];
-					 }
-					 completion:NULL];
-	
-	
-	self.renameToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
-	[self.renameToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
-	[self.renameToolbar setBarStyle:UIBarStyleBlack];
-	
-	self.renameTextField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width - 24, 30)];
-	[self.renameTextField setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-	[self.renameTextField setBorderStyle:UITextBorderStyleRoundedRect];
-	[self.renameTextField setPlaceholder:[game title]];
-	[self.renameTextField setKeyboardAppearance:UIKeyboardAppearanceAlert];
-	[self.renameTextField setReturnKeyType:UIReturnKeyDone];
-	[self.renameTextField setDelegate:self];
-	UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:self.renameTextField];
-	
-	[self.renameToolbar setItems:@[textFieldItem]];
-	
-	[self.renameToolbar setOriginY:self.view.bounds.size.height];
-	[self.renameOverlay addSubview:self.renameToolbar];
-	
-	[self.navigationController.view addSubview:self.renameOverlay];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(keyboardWillShow:)
-												 name:UIKeyboardWillShowNotification
-											   object:nil];
-	
-	[self.renameTextField becomeFirstResponder];
-}
-
+#pragma mark - Text Field and Keyboard Delegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	[self doneRenaming:self];
@@ -760,40 +988,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 					 }];
 }
 
-- (void)doneRenaming:(id)sender
-{
-	NSString *newTitle = [self.renameTextField text];
-	
-	if ([newTitle length])
-	{
-        [self.realm beginWriteTransaction];
-		[self.gameToRename setTitle:newTitle];
-        [self.realm commitWriteTransaction];
-        
-        NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[self.gameToRename md5Hash]];
-        [self fetchGames];
-        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-        
-		self.gameToRename = nil;
-	}
-    
-	[UIView animateWithDuration:0.3
-						  delay:0.0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-						 [self.renameOverlay setAlpha:0.0];
-					 }
-					 completion:^(BOOL finished) {
-						 [self.renameOverlay removeFromSuperview];
-						 self.renameOverlay = nil;
-					 }];
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(keyboardWillHide:)
-												 name:UIKeyboardWillHideNotification
-											   object:nil];
-	[self.renameTextField resignFirstResponder];
-}
 
 - (void)keyboardWillHide:(NSNotification *)note
 {
@@ -822,192 +1016,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 												  object:nil];
 }
 
-- (void)deleteGame:(PVGame *)game
-{
-    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
-    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
-    
-    [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
-    [PVMediaCache deleteImageForKey:[game customArtworkURL]];
-    
-    NSError *error = nil;
-    
-    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
-    if (!success)
-    {
-        DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
-    }
-    
-    success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
-    if (!success)
-    {
-        DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
-    }
-    
-    success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
-    if (!success)
-    {
-        DLog(@"Unable to delete rom at path: %@ because: %@", romPath, [error localizedDescription]);
-    }
-    
-    [self deleteRelatedFilesGame:game];
-    
-    [self.realm beginWriteTransaction];
-    [self.realm deleteObject:game];
-    [self.realm commitWriteTransaction];
-    
-    NSArray *oldSectionInfo = self.sectionInfo;
-    NSDictionary *oldGamesInSections = self.gamesInSections;
-    [self fetchGames];
-    
-    NSString *sectionID = [oldSectionInfo objectAtIndex:[indexPath section]];
-    NSUInteger count = [oldGamesInSections[sectionID] count];
-    
-    [self.collectionView performBatchUpdates:^{
-        [self.collectionView deleteItemsAtIndexPaths:@[indexPath]];
-        
-        if (count == 1)
-        {
-            [self.collectionView deleteSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
-        }
-    } completion:^(BOOL finished) {
-    }];
-}
-
-- (void)deleteRelatedFilesGame:(PVGame *)game
-{
-    NSString *romPath = [game romPath];
-    NSString *romDirectory = [[self documentsPath] stringByAppendingPathComponent:[game systemIdentifier]];
-    NSString *relatedFileName = [[romPath lastPathComponent] stringByReplacingOccurrencesOfString:[romPath pathExtension] withString:@""];
-    NSError *error = nil;
-    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:romDirectory error:&error];
-    
-    if (!contents)
-    {
-        DLog(@"Error scanning %@, %@", romDirectory, [error localizedDescription]);
-        return;
-    }
-    
-    for (NSString *file in contents)
-    {
-        NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[file pathExtension] withString:@""];
-        
-        if ([fileWithoutExtension isEqual:relatedFileName])
-        {
-            if (![[NSFileManager defaultManager] removeItemAtPath:[romDirectory stringByAppendingPathComponent:file]
-                                                            error:&error])
-            {
-                DLog(@"Unable to delete file at %@ because %@", file, [error localizedDescription]);
-            }
-        }
-    }
-}
-
-- (void)chooseCustomArtworkForGame:(PVGame *)game
-{
-	__weak PVGameLibraryViewController *weakSelf = self;
-	
-	UIActionSheet *imagePickerActionSheet = [[UIActionSheet alloc] init];
-	
-	BOOL cameraIsAvailable = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera];
-	BOOL photoLibraryIsAvaialble = [UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary];
-	
-	PVUIActionSheetAction cameraAction = ^{
-		weakSelf.gameForCustomArt = game;
-		UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
-		[pickerController setDelegate:weakSelf];
-		[pickerController setAllowsEditing:NO];
-		[pickerController setSourceType:UIImagePickerControllerSourceTypeCamera];
-		[weakSelf presentViewController:pickerController animated:YES completion:NULL];
-	};
-	
-	PVUIActionSheetAction libraryAction = ^{
-		weakSelf.gameForCustomArt = game;
-		UIImagePickerController *pickerController = [[UIImagePickerController alloc] init];
-		[pickerController setDelegate:weakSelf];
-		[pickerController setAllowsEditing:NO];
-		[pickerController setSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-		[weakSelf presentViewController:pickerController animated:YES completion:NULL];
-	};
-	
-	self.assetsLibrary = [[ALAssetsLibrary alloc] init];
-	[self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos
-								usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                                    if (!group)
-                                    {
-                                        return;
-                                    }
-									[group setAssetsFilter:[ALAssetsFilter allPhotos]];
-                                    NSInteger index = [group numberOfAssets] - 1;
-                                    DLog(@"Group: %@", group);
-                                    if (index >= 0)
-                                    {
-                                        [group enumerateAssetsAtIndexes:[NSIndexSet indexSetWithIndex:index]
-                                                                options:0
-                                                             usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                                                                 ALAssetRepresentation *rep = [result defaultRepresentation];
-                                                                 if (rep)
-                                                                 {
-                                                                     [imagePickerActionSheet PV_addButtonWithTitle:@"Use Last Photo Taken" action:^{
-                                                                         UIImage *lastPhoto = [UIImage imageWithCGImage:[rep fullScreenImage]
-                                                                                                                  scale:[rep scale]
-                                                                                                            orientation:(UIImageOrientation)[rep orientation]];
-                                                                         [PVMediaCache writeImageToDisk:lastPhoto
-                                                                                                withKey:[[rep url] absoluteString]];
-                                                                         [self.realm beginWriteTransaction];
-                                                                         [game setCustomArtworkURL:[[rep url] absoluteString]];
-                                                                         [self.realm commitWriteTransaction];
-                                                                         NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
-                                                                         [self fetchGames];
-                                                                         [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-                                                                         weakSelf.assetsLibrary = nil;
-                                                                     }];
-                                                                     
-                                                                     if (cameraIsAvailable || photoLibraryIsAvaialble)
-                                                                     {
-                                                                         if (cameraIsAvailable)
-                                                                         {
-                                                                             [imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
-                                                                         }
-                                                                         
-                                                                         if (photoLibraryIsAvaialble)
-                                                                         {
-                                                                             [imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
-                                                                         }
-                                                                     }
-                                                                     
-                                                                     [imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
-                                                                     [imagePickerActionSheet showInView:self.view];
-                                                                 }
-                                                             }];
-                                    }
-                                    else
-                                    {
-                                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Photos"
-                                                                                        message:@"There are no photos in your library to choose from"
-                                                                                       delegate:nil
-                                                                              cancelButtonTitle:nil
-                                                                              otherButtonTitles:@"OK", nil];
-                                        [alert show];
-                                    }
-								} failureBlock:^(NSError *error) {
-									if (cameraIsAvailable || photoLibraryIsAvaialble)
-									{
-										if (cameraIsAvailable)
-										{
-											[imagePickerActionSheet	PV_addButtonWithTitle:@"Take Photo..." action:cameraAction];
-										}
-										
-										if (photoLibraryIsAvaialble)
-										{
-											[imagePickerActionSheet PV_addButtonWithTitle:@"Choose from Library..." action:libraryAction];
-										}
-									}
-									[imagePickerActionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
-									[imagePickerActionSheet showInView:self.view];
-									weakSelf.assetsLibrary = nil;
-								}];
-}
+#pragma mark - Image Picker Deleate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
