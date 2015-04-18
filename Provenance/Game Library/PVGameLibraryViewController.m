@@ -45,8 +45,9 @@ NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 @property (nonatomic, strong) NSDictionary *gamesInSections;
 @property (nonatomic, strong) NSArray *sectionInfo;
+@property (nonatomic, strong) RLMResults *searchResults;
 
-@property (nonatomic, assign, getter=isRefreshing) BOOL refreshing;
+@property (nonatomic, assign) IBOutlet UITextField *searchField;
 
 @end
 
@@ -99,6 +100,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleRefreshLibrary:)
                                                  name:kRefreshLibraryNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleTextFieldDidChange:)
+                                                 name:UITextFieldTextDidChangeNotification
+                                               object:self.searchField];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -114,6 +119,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self.collectionView setBounces:YES];
 	[self.collectionView setAlwaysBounceVertical:YES];
 	[self.collectionView setDelaysContentTouches:NO];
+    [self.collectionView setKeyboardDismissMode:UIScrollViewKeyboardDismissModeInteractive];
     [self.collectionView registerClass:[PVGameLibrarySectionHeaderView class]
             forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                    withReuseIdentifier:PVGameLibraryHeaderView];
@@ -864,26 +870,71 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                       }];
 }
 
+#pragma mark - Searching
+
+- (void)searchLibrary:(NSString *)searchText
+{
+    self.searchResults = [[PVGame objectsWhere:@"title CONTAINS[c] %@", searchText] sortedResultsUsingProperty:@"title" ascending:YES];
+    [self.collectionView reloadData];
+}
+
+- (void)clearSearch
+{
+    [self.searchField setText:nil];
+    self.searchResults = nil;
+    [self.collectionView reloadData];
+}
+
 #pragma mark - UICollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-	return [self.sectionInfo count];
+    NSInteger sections = 0;
+    
+    if (self.searchResults)
+    {
+        sections = 1;
+    }
+    else
+    {
+        sections = [self.sectionInfo count];
+    }
+    
+    return sections;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:section]];
-	return [games count];
+    NSInteger items = 0;
+    
+    if (self.searchResults)
+    {
+        items = [self.searchResults count];
+    }
+    else
+    {
+        NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:section]];
+        items = [games count];
+    }
+    
+    return items;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 	PVGameLibraryCollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:_reuseIdentifier forIndexPath:indexPath];
 	
-	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-	
-	PVGame *game = games[[indexPath item]];
+    PVGame *game = nil;
+    
+    if (self.searchResults)
+    {
+        game = [self.searchResults objectAtIndex:[indexPath item]];
+    }
+    else
+    {
+        NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+        game = games[[indexPath item]];
+    }
 	
 	NSString *artworkURL = [game customArtworkURL];
 	NSString *originalArtworkURL = [game originalArtworkURL];
@@ -943,14 +994,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
 {
-	if ([kind isEqualToString:UICollectionElementKindSectionHeader])
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader])
 	{
-		PVGameLibrarySectionHeaderView *headerView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind
-																						 withReuseIdentifier:PVGameLibraryHeaderView
-																								forIndexPath:indexPath];
-		NSString *systemID = [self.sectionInfo objectAtIndex:[indexPath section]];
-		NSString *title = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
-		[[headerView titleLabel] setText:title];
+        PVGameLibrarySectionHeaderView *headerView = nil;
+        
+        if (self.searchResults)
+        {
+            headerView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                 withReuseIdentifier:PVGameLibraryHeaderView
+                                                                        forIndexPath:indexPath];
+            [[headerView titleLabel] setText:@"Search Results"];
+        }
+        else
+        {
+            headerView = [self.collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                 withReuseIdentifier:PVGameLibraryHeaderView
+                                                                        forIndexPath:indexPath];
+            NSString *systemID = [self.sectionInfo objectAtIndex:[indexPath section]];
+            NSString *title = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
+            [[headerView titleLabel] setText:title];
+        }
 		return headerView;
 	}
 	
@@ -963,10 +1026,31 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 
 #pragma mark - Text Field and Keyboard Delegate
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-	[self doneRenaming:self];
+    if (textField != self.searchField)
+    {
+        [self doneRenaming:self];
+    }
+    else
+    {
+        [textField resignFirstResponder];
+    }
+    
 	return YES;
+}
+
+- (void)handleTextFieldDidChange:(NSNotification *)notification
+{
+    if ([[self.searchField text] length])
+    {
+        [self searchLibrary:[self.searchField text]];
+    }
+    else
+    {
+        [self clearSearch];
+    }
 }
 
 - (void)keyboardWillShow:(NSNotification *)note
