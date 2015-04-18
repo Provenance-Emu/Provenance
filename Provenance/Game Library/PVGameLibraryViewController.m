@@ -1060,8 +1060,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-	PVGame *game = games[[indexPath item]];
+    PVGame *game = nil;
+    if (self.searchResults)
+    {
+        game = [self.searchResults objectAtIndex:[indexPath item]];
+    }
+    else
+    {
+        NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+        game = games[[indexPath item]];
+    }
     
     [self loadGame:game];
 }
@@ -1113,6 +1121,18 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
     
 	return YES;
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField
+{
+    if (textField == self.searchField)
+    {
+        [textField performSelector:@selector(resignFirstResponder)
+                        withObject:nil
+                        afterDelay:0.0];
+    }
+    
+    return YES;
 }
 
 - (void)handleTextFieldDidChange:(NSNotification *)notification
