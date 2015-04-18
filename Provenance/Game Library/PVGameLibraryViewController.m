@@ -27,8 +27,10 @@
 #import "PVConflictViewController.h"
 #import "PVSettingsViewController.h"
 
-NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
-NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
+NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
+NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
+
+NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
 @interface PVGameLibraryViewController ()
 
@@ -61,6 +63,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     if ((self = [super initWithCoder:aDecoder]))
     {
+        [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
         self.realm = [RLMRealm defaultRealm];
     }
     
@@ -132,66 +135,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self.collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[self.collectionView setBackgroundColor:[UIColor clearColor]];
     
-    [self fetchGames];
-    
-    __weak typeof(self) weakSelf = self;
-    
-    self.gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:^(BOOL encounteredConflicts) {
-        if (encounteredConflicts)
-        {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Oops!"
-                                                                           message:@"There was a conflict while importing your game."
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Let's go fix it!"
-                                                      style:UIAlertActionStyleDefault
-                                                    handler:^(UIAlertAction *action) {
-                                                        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-                                                        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-                                                        [self presentViewController:navController animated:YES completion:NULL];
-                                                    }]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Nah, I'll do it later..."
-                                                      style:UIAlertActionStyleCancel
-                                                    handler:NULL]];
-            [self presentViewController:alert animated:YES completion:NULL];
-        }
-    }];
-    [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
-        [weakSelf finishedImportingGameWithMD5:md5];
-    }];
-    [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
-        [weakSelf finishedDownloadingArtworkForURL:url];
-    }];
-    
-    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
-                                   extractionStartedHandler:^(NSString *path) {
-                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
-                                       if (!hud)
-                                       {
-                                           hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-                                       }
-                                       [hud setUserInteractionEnabled:NO];
-                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
-                                       [hud setProgress:0];
-                                       [hud setLabelText:@"Extracting Archive..."];
-                                   }
-                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
-                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
-                                       [hud setUserInteractionEnabled:NO];
-                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
-                                       [hud setProgress:(float)bytesRead / (float)fileSize];
-                                       [hud setLabelText:@"Extracting Archive..."];
-                                   }
-                                  extractionCompleteHandler:^(NSArray *paths) {
-                                      MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
-                                      [hud setUserInteractionEnabled:NO];
-                                      [hud setMode:MBProgressHUDModeAnnularDeterminate];
-                                      [hud setProgress:1];
-                                      [hud setLabelText:@"Extraction Complete!"];
-                                      [hud hide:YES afterDelay:0.5];
-                                      [weakSelf.gameImporter startImportForPaths:paths];
-                                  }];
-    
-    [self.watcher startMonitoring];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:PVRequiresMigrationKey])
+    {
+        [self migrateLibrary];
+    }
+    else
+    {
+        [self setUpGameLibrary];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -307,6 +258,130 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 
 #pragma mark - Game Library Management
+
+- (void)migrateLibrary
+{
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [hud setMode:MBProgressHUDModeIndeterminate];
+    [hud setLabelText:@"Migrating Game Library"];
+    [hud setDetailsLabelText:@"Please be patient, this may take a while..."];
+    
+    NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtPath:[libraryPath stringByAppendingPathComponent:@"PVGame.sqlite"] error:&error])
+    {
+        DLog(@"Unable to delete PVGame.sqlite because %@", [error localizedDescription]);
+    }
+    if (![[NSFileManager defaultManager] removeItemAtPath:[libraryPath stringByAppendingPathComponent:@"PVGame.sqlite-shm"] error:&error])
+    {
+        DLog(@"Unable to delete PVGame.sqlite-shm because %@", [error localizedDescription]);
+    }
+    if (![[NSFileManager defaultManager] removeItemAtPath:[libraryPath stringByAppendingPathComponent:@"PVGame.sqlite-wal"] error:&error])
+    {
+        DLog(@"Unable to delete PVGame.sqlite-wal because %@", [error localizedDescription]);
+    }
+    
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:[self romsPath]
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error])
+    {
+        DLog(@"Unable to create roms directory because %@", [error localizedDescription]);
+        return; // dunno what else can be done if this fails
+    }
+    
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self documentsPath] error:&error];
+    if (!contents)
+    {
+        DLog(@"Unable to get contents of documents because %@", [error localizedDescription]);
+    }
+    
+    for (NSString *path in contents)
+    {
+        NSString *fullPath = [[self documentsPath] stringByAppendingPathComponent:path];
+        BOOL isDir = NO;
+        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDir];
+        if (exists && !isDir && ![path containsString:@"realm"])
+        {
+            if (![[NSFileManager defaultManager] moveItemAtPath:fullPath
+                                                         toPath:[[self romsPath] stringByAppendingPathComponent:path]
+                                                          error:&error])
+            {
+                DLog(@"Unable to move %@ to %@ because %@", fullPath, [[self romsPath] stringByAppendingPathComponent:path], [error localizedDescription]);
+            }
+        }
+    }
+    
+    [hud hide:YES];
+    
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVRequiresMigrationKey];
+    
+    [self setUpGameLibrary];
+    [self.gameImporter startImportForPaths:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error]];
+}
+
+- (void)setUpGameLibrary
+{
+    [self fetchGames];
+    
+    __weak typeof(self) weakSelf = self;
+    
+    self.gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:^(BOOL encounteredConflicts) {
+        if (encounteredConflicts)
+        {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Oops!"
+                                                                           message:@"There was a conflict while importing your game."
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Let's go fix it!"
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction *action) {
+                                                        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
+                                                        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
+                                                        [self presentViewController:navController animated:YES completion:NULL];
+                                                    }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Nah, I'll do it later..."
+                                                      style:UIAlertActionStyleCancel
+                                                    handler:NULL]];
+            [self presentViewController:alert animated:YES completion:NULL];
+        }
+    }];
+    [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
+        [weakSelf finishedImportingGameWithMD5:md5];
+    }];
+    [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
+        [weakSelf finishedDownloadingArtworkForURL:url];
+    }];
+    
+    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
+                                   extractionStartedHandler:^(NSString *path) {
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       if (!hud)
+                                       {
+                                           hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                                       }
+                                       [hud setUserInteractionEnabled:NO];
+                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                       [hud setProgress:0];
+                                       [hud setLabelText:@"Extracting Archive..."];
+                                   }
+                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       [hud setUserInteractionEnabled:NO];
+                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                       [hud setProgress:(float)bytesRead / (float)fileSize];
+                                       [hud setLabelText:@"Extracting Archive..."];
+                                   }
+                                  extractionCompleteHandler:^(NSArray *paths) {
+                                      MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                      [hud setUserInteractionEnabled:NO];
+                                      [hud setMode:MBProgressHUDModeAnnularDeterminate];
+                                      [hud setProgress:1];
+                                      [hud setLabelText:@"Extraction Complete!"];
+                                      [hud hide:YES afterDelay:0.5];
+                                      [weakSelf.gameImporter startImportForPaths:paths];
+                                  }];
+    [self.watcher startMonitoring];
+}
 
 - (void)fetchGames
 {
@@ -619,7 +694,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                          [self.renameOverlay setAlpha:1.0];
                      }
                      completion:NULL];
-    
     
     self.renameToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
     [self.renameToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
