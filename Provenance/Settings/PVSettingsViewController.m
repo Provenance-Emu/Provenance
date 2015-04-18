@@ -11,6 +11,7 @@
 #import "PVMediaCache.h"
 #import "UIAlertView+BlockAdditions.h"
 #import "PVGameLibraryViewController.h"
+#import "PVConflictViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -95,23 +96,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (indexPath.section == 2 && indexPath.row == 1)
-	{
-		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
-														message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
-													   delegate:nil
-											  cancelButtonTitle:@"No"
-											  otherButtonTitles:@"Yes", nil];
-		[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-			if (buttonIndex != [alert cancelButtonIndex])
-			{
-				[PVMediaCache emptyCache];
-			}
-		}];
-		[alert show];
-	}
-    else if (indexPath.section == 2 && indexPath.row == 0)
+    if (indexPath.section == 2 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
@@ -127,6 +112,28 @@
             }
         }];
         [alert show];
+    }
+	else if (indexPath.section == 2 && indexPath.row == 1)
+	{
+		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
+														message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
+													   delegate:nil
+											  cancelButtonTitle:@"No"
+											  otherButtonTitles:@"Yes", nil];
+		[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+			if (buttonIndex != [alert cancelButtonIndex])
+			{
+				[PVMediaCache emptyCache];
+			}
+		}];
+		[alert show];
+	}
+    else if (indexPath.section == 2 && indexPath.row == 2)
+    {
+        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
+        [self presentViewController:navController animated:YES completion:NULL];
     }
 }
 

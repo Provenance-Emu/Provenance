@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class PVGameImporter;
+
 @interface PVSettingsViewController : UITableViewController
 
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
@@ -18,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
+
+@property (nonatomic, strong) PVGameImporter *gameImporter;
 
 - (IBAction)done:(id)sender;
 

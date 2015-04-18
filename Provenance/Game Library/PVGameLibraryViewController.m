@@ -25,6 +25,7 @@
 #import "NSData+Hashing.h"
 #import "PVSettingsModel.h"
 #import "PVConflictViewController.h"
+#import "PVSettingsViewController.h"
 
 NSString *PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString *kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -133,15 +134,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Oops!"
                                                                            message:@"There was a conflict while importing your game."
                                                                     preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Let's go fix them!"
+            [alert addAction:[UIAlertAction actionWithTitle:@"Let's go fix it!"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction *action) {
-                                                        
+                                                        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
+                                                        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
+                                                        [self presentViewController:navController animated:YES completion:NULL];
                                                     }]];
             [alert addAction:[UIAlertAction actionWithTitle:@"Nah, I'll do it later..."
                                                       style:UIAlertActionStyleCancel
-                                                    handler:^(UIAlertAction *action) {
-                                                    }]];
+                                                    handler:NULL]];
             [self presentViewController:alert animated:YES completion:NULL];
         }
     }];
@@ -517,6 +519,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
         
         [self presentViewController:emulatorViewController animated:YES completion:NULL];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([[segue identifier] isEqualToString:@"SettingsSegue"])
+    {
+        [(PVSettingsViewController *)[[segue destinationViewController] topViewController] setGameImporter:self.gameImporter];
     }
 }
 

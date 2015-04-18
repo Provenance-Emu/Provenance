@@ -37,6 +37,8 @@
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
     [self.navigationItem setRightBarButtonItem:doneButton];
+    
+    self.conflictedFiles = [self.gameImporter conflictedFiles];
 }
 
 - (void)done:(id)sender
@@ -73,6 +75,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    if (!cell)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+    }
     NSString *file = self.conflictedFiles[[indexPath row]];
     NSString *name = [[file lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[file pathExtension]] withString:@""];
     
@@ -91,16 +97,25 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose a System"
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
+    
     for (NSString *systemID in [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers])
     {
-        NSString *name = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
-        [alertController addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            [self.gameImporter resolveConflictsWithSolutions:@{path: systemID}];
-        }]];
+        NSArray *supportedExtensions = [[PVEmulatorConfiguration sharedInstance] fileExtensionsForSystemIdentifier:systemID];
+        if ([supportedExtensions containsObject:[path pathExtension]])
+        {
+            NSString *name = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
+            [alertController addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [self.gameImporter resolveConflictsWithSolutions:@{path: systemID}];
+                [self.tableView beginUpdates];
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+                self.conflictedFiles = [self.gameImporter conflictedFiles];
+                [self.tableView endUpdates];
+            }]];
+        }
     }
     
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:NULL]];
+    [self presentViewController:alertController animated:YES completion:NULL];
 }
 
 @end
