@@ -94,13 +94,13 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
 
 static bool environment_callback(unsigned cmd, void *data)
 {
+    __strong PVGenesisEmulatorCore *strongCurrent = _current;
+    
 	switch(cmd)
 	{
 		case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
 		{
-			NSString *appSupportPath = [NSString pathWithComponents:@[
-										[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject],
-										@"BIOS"]];
+			NSString *appSupportPath = [strongCurrent BIOSPath];
 			
 			*(const char **)data = [appSupportPath UTF8String];
 			DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
@@ -115,6 +115,8 @@ static bool environment_callback(unsigned cmd, void *data)
 			return false;
 	}
 	
+    strongCurrent = nil;
+    
 	return true;
 }
 
@@ -229,7 +231,7 @@ static bool environment_callback(unsigned cmd, void *data)
     
     const void *data;
     size_t size;
-    self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];;
+    self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
     
     //load cart, read bytes, get length
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];

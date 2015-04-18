@@ -60,6 +60,8 @@
 - (NSArray *)importFilesAtPaths:(NSArray *)paths
 {
     NSMutableArray *newPaths = [NSMutableArray array];
+    
+    // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved before processing its CD cue sheet or something
     for (NSString *path in paths)
     {
         if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
@@ -68,13 +70,17 @@
             {
                 [newPaths addObjectsFromArray:[self moveCDROMToAppropriateSubfolder:path]];
             }
-            else
+        }
+    }
+    
+    for (NSString *path in paths)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
+        {
+            NSString *newPath = [self moveROMToAppropriateSubfolder:path];
+            if ([newPath length])
             {
-                NSString *newPath = [self moveROMToAppropriateSubfolder:path];
-                if ([newPath length])
-                {
-                    [newPaths addObject:newPath];
-                }
+                [newPaths addObject:newPath];
             }
         }
     }
@@ -228,6 +234,17 @@
         {
             DLog(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
         }
+        
+        __weak typeof(self) weakSelf = self;
+        dispatch_async(self.serialImportQueue, ^{
+            [weakSelf getRomInfoForFilesAtPaths:@[filePath]];
+            if (weakSelf.completionHandler)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    weakSelf.completionHandler(NO);
+                });
+            }
+        });
     }
 }
 

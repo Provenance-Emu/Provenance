@@ -15,6 +15,8 @@ extern NSString * const PVShortSystemNameKey;
 extern NSString * const PVSystemIdentifierKey;
 extern NSString * const PVDatabaseIDKey;
 extern NSString * const PVUsesCDsKey;
+extern NSString * const PVRequiresBIOSKey;
+extern NSString * const PVBIOSNamesKey;
 extern NSString * const PVSupportedExtensionsKey;
 extern NSString * const PVControlLayoutKey;
 extern NSString * const PVControlTypeKey;

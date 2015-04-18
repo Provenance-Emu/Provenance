@@ -19,6 +19,7 @@
 @property (nonatomic, strong) PVGame *game;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *saveStatePath;
+@property (nonatomic, copy) NSString *BIOSPath;
 
 - (instancetype)initWithGame:(PVGame *)game;
 

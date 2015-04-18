@@ -13,6 +13,14 @@
 		<string>32</string>
 		<key>PVUsesCDs</key>
 		<true/>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<string>bios_CD_E.bin</string>
+			<string>bios_CD_U.bin</string>
+			<string>bios_CD_J.bin</string>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>iso</string>
