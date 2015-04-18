@@ -129,12 +129,13 @@
         return nil;
     }
     
+    NSString *cueSheetPath = [subfolderPath stringByAppendingPathComponent:filePath];
     if (!self.encounteredConflicts)
     {
-        [newPaths addObject:[subfolderPath stringByAppendingPathComponent:filePath]];
+        [newPaths addObject:cueSheetPath];
     }
     
-    // moved the .cue, or .iso or whatever, now move .bins .imgs etc
+    // moved the .cue, now move .bins .imgs etc
     
     NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[filePath pathExtension] withString:@""];
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error];
@@ -151,6 +152,27 @@
         
         if ([fileWithoutExtension isEqual:relatedFileName])
         {
+            // Before moving the file, make sure the cue sheet's reference uses the same case.
+            NSMutableString *cuesheet = [NSMutableString stringWithContentsOfFile:cueSheetPath encoding:NSUTF8StringEncoding error:&error];
+            if (cuesheet)
+            {
+                NSRange range = [cuesheet rangeOfString:file options:NSCaseInsensitiveSearch];
+                [cuesheet replaceCharactersInRange:range withString:file];
+                if (![cuesheet writeToFile:cueSheetPath
+                                atomically:NO
+                                  encoding:NSUTF8StringEncoding
+                                     error:&error])
+                {
+                    DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                }
+            }
+            else
+            {
+                DLog(@"Unable to read cue sheet %@ because %@", cueSheetPath, [error localizedDescription]);
+            }
+            
+            
+            
             if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[subfolderPath stringByAppendingPathComponent:file] error:&error])
             {
                 DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
