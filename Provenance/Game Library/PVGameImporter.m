@@ -19,7 +19,7 @@
 @property (nonatomic, readwrite, strong) dispatch_queue_t serialImportQueue;
 @property (nonatomic, strong) NSDictionary *systemToPathMap;
 @property (nonatomic, strong) NSDictionary *romToSystemMap;
-@property (nonatomic, assign) BOOL encounteredConflicts;
+@property (nonatomic, strong) OESQLiteDatabase *openVGDB;
 
 @end
 
@@ -40,7 +40,12 @@
 
 - (void)dealloc
 {
+    self.openVGDB = nil;
     self.serialImportQueue = nil;
+    self.importStartedHandler = nil;
+    self.completionHandler = nil;
+    self.finishedImportHandler = nil;
+    self.finishedArtworkHandler = nil;
 }
 
 - (void)startImportForPaths:(NSArray *)paths
@@ -279,6 +284,13 @@
     for (NSString *path in paths)
     {
         @autoreleasepool {
+            if (self.importStartedHandler)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.importStartedHandler(path);
+                });
+            }
+            
             NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
             NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
             NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
@@ -322,7 +334,15 @@
     
     if (![[game md5Hash] length])
     {
-         NSString *md5Hash = [[NSFileManager defaultManager] MD5ForFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]];
+        NSUInteger offset = 0;
+        
+        if ([[game systemIdentifier] isEqualToString:PVNESSystemIdentifier])
+        {
+            offset = 16; // make this better
+        }
+        
+        NSString *md5Hash = [[NSFileManager defaultManager] MD5ForFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]
+                                                                   fromOffset:offset];
         
         [realm beginWriteTransaction];
         [game setMd5Hash:md5Hash];
@@ -335,7 +355,7 @@
     if ([[game md5Hash] length])
     {
         results = [self searchDatabaseUsingKey:@"romHashMD5"
-                                         value:[game md5Hash]
+                                         value:[[game md5Hash] uppercaseString]
                                       systemID:[game systemIdentifier]
                                          error:&error];
     }
@@ -444,9 +464,12 @@
 
 - (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error
 {
-    OESQLiteDatabase *gameDatabase = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
-                                                                     error:error];
-    if (!gameDatabase)
+    if (!self.openVGDB)
+    {
+        self.openVGDB = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
+                                                        error:error];
+    }
+    if (!self.openVGDB)
     {
         DLog(@"Unable to open game database: %@", [*error localizedDescription]);
         return nil;
@@ -454,7 +477,7 @@
     
     NSArray *results = nil;
     NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
-    NSString *likeQuery = @"SELECT DISTINCT romFileName as 'romFileName', releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\"";
+    NSString *likeQuery = @"SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\"";
     NSString *queryString = nil;
     
     NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
@@ -468,8 +491,8 @@
         queryString = [NSString stringWithFormat:exactQuery, key, value];
     }
     
-    results = [gameDatabase executeQuery:queryString
-                                   error:error];
+    results = [self.openVGDB executeQuery:queryString
+                                    error:error];
     return results;
 }
 

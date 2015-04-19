@@ -13,7 +13,7 @@
 
 @implementation NSFileManager (Hashing)
 
-- (NSString *)MD5ForFileAtPath:(NSString *)path
+- (NSString *)MD5ForFileAtPath:(NSString *)path fromOffset:(NSUInteger)offset
 {
     NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
     if (!handle)
@@ -21,7 +21,7 @@
         return nil;
     }
     
-    [handle seekToFileOffset:0];
+    [handle seekToFileOffset:offset];
     
     CC_MD5_CTX md5Context;
     CC_MD5_Init(&md5Context);
@@ -47,7 +47,7 @@
     unsigned char md5Digest[CC_MD5_DIGEST_LENGTH];
     CC_MD5_Final(md5Digest, &md5Context);
     
-    return [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+    return [[NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
             md5Digest[0], md5Digest[1],
             md5Digest[2], md5Digest[3],
             md5Digest[4], md5Digest[5],
@@ -55,7 +55,7 @@
             md5Digest[8], md5Digest[9],
             md5Digest[10], md5Digest[11],
             md5Digest[12], md5Digest[13],
-            md5Digest[14], md5Digest[15]];
+            md5Digest[14], md5Digest[15]] uppercaseString];
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void (^PVGameImporterImportStartedHandler)(NSString *path);
 typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
 typedef void (^PVGameImporterFinishedImportingGameHandler)(NSString *md5Hash);
 typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL);
@@ -16,9 +17,11 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 
 @property (nonatomic, readonly, strong) dispatch_queue_t serialImportQueue;
 
+@property (nonatomic, copy) PVGameImporterImportStartedHandler importStartedHandler;
 @property (nonatomic, copy) PVGameImporterCompletionHandler completionHandler;
 @property (nonatomic, copy) PVGameImporterFinishedImportingGameHandler finishedImportHandler;
 @property (nonatomic, copy) PVGameImporterFinishedGettingArtworkHandler finishedArtworkHandler;
+@property (nonatomic, assign) BOOL encounteredConflicts;
 
 - (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler;
 

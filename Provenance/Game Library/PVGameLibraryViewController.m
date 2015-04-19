@@ -262,6 +262,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)migrateLibrary
 {
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [hud setUserInteractionEnabled:NO];
     [hud setMode:MBProgressHUDModeIndeterminate];
     [hud setLabelText:@"Migrating Game Library"];
     [hud setDetailsLabelText:@"Please be patient, this may take a while..."];
@@ -335,15 +336,21 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [alert addAction:[UIAlertAction actionWithTitle:@"Let's go fix it!"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction *action) {
-                                                        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
+                                                        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:weakSelf.gameImporter];
                                                         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-                                                        [self presentViewController:navController animated:YES completion:NULL];
+                                                        [weakSelf presentViewController:navController animated:YES completion:NULL];
                                                     }]];
             [alert addAction:[UIAlertAction actionWithTitle:@"Nah, I'll do it later..."
                                                       style:UIAlertActionStyleCancel
                                                     handler:NULL]];
-            [self presentViewController:alert animated:YES completion:NULL];
+            [weakSelf presentViewController:alert animated:YES completion:NULL];
         }
+    }];
+    [self.gameImporter setImportStartedHandler:^(NSString *path) {
+        MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        [hud setUserInteractionEnabled:NO];
+        [hud setMode:MBProgressHUDModeIndeterminate];
+        [hud setLabelText:[NSString stringWithFormat:@"Importing %@", [path lastPathComponent]]];
     }];
     [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
         [weakSelf finishedImportingGameWithMD5:md5];
@@ -354,10 +361,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
                                    extractionStartedHandler:^(NSString *path) {
-                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        if (!hud)
                                        {
-                                           hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                                           hud = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
                                        }
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
@@ -365,14 +372,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                        [hud setLabelText:@"Extracting Archive..."];
                                    }
                                    extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
-                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                        [hud setProgress:(float)bytesRead / (float)fileSize];
                                        [hud setLabelText:@"Extracting Archive..."];
                                    }
                                   extractionCompleteHandler:^(NSArray *paths) {
-                                      MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+                                      MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                       [hud setUserInteractionEnabled:NO];
                                       [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                       [hud setProgress:1];
@@ -407,6 +414,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)finishedImportingGameWithMD5:(NSString *)md5
 {
+    MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
+    [hud hide:YES];
+    
     NSArray *oldSectionInfo = self.sectionInfo;
     NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
     [self fetchGames];
@@ -547,9 +557,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self.realm commitWriteTransaction];
         NSString *path = [documentsPath stringByAppendingPathComponent:[game romPath]];
         dispatch_async([self.gameImporter serialImportQueue], ^{
-           [self.gameImporter getRomInfoForFilesAtPaths:@[path]];
+            [self.gameImporter getRomInfoForFilesAtPaths:@[path]];
+            if ([self.gameImporter completionHandler])
+            {
+                [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);
+            }
         });
     }
+    
+    [self.collectionView reloadData];
 }
 
 - (BOOL)canLoadGame:(PVGame *)game

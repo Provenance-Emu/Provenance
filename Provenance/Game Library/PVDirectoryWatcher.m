@@ -134,7 +134,15 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         });
     });
 	
-	dispatch_resume(self.dispatch_source);
+    dispatch_resume(self.dispatch_source);
+    
+    // trigger the event watcher above to start an initial import on launch
+    NSString *triggerPath = [self.path stringByAppendingPathComponent:@"0"];
+    [@"0" writeToFile:triggerPath
+           atomically:NO
+             encoding:NSUTF8StringEncoding
+                error:NULL];
+    [[NSFileManager defaultManager] removeItemAtPath:triggerPath error:NULL];
 }
 
 - (void)stopMonitoring
@@ -193,6 +201,11 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         dispatch_async(dispatch_get_main_queue(), ^{
             self.extractionStartedHandler(filePath);
         });
+    }
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath])
+    {
+        return;
     }
     
     NSMutableArray *unzippedFiles = [NSMutableArray array];
