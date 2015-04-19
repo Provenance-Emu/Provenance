@@ -18,7 +18,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Sega
     - Genesis / Mega Drive
     - Master System
-    - MegaCD (partial support)
+    - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
     - Game Gear
 - Nintendo
     - NES
@@ -42,11 +42,18 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
 - Uses OpenVGDB to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
+- Game library searching
 
 Feel free to suggest/request features using the Issues page.
 
+###Importing ROMs
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
+
 ###Screenshots
 [Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
+
+###Building Provenance
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance)
 
 #Attributions
 
