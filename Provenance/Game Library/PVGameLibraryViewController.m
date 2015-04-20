@@ -388,6 +388,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                       [weakSelf.gameImporter startImportForPaths:paths];
                                   }];
     [self.watcher startMonitoring];
+    
+    NSArray *systems = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
+    for (NSString *systemID in systems)
+    {
+        NSString *systemDir = [[self documentsPath] stringByAppendingPathComponent:systemID];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:systemDir])
+        {
+            NSError *error = nil;
+            NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:systemDir error:&error];
+            dispatch_async([self.gameImporter serialImportQueue], ^{
+                [self.gameImporter getRomInfoForFilesAtPaths:contents];
+                if ([self.gameImporter completionHandler])
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);
+                    });
+                }
+            });
+        }
+    }
 }
 
 - (void)fetchGames

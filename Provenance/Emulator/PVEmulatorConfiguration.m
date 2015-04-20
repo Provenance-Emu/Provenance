@@ -235,7 +235,7 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 	for (NSDictionary *system in self.systems)
 	{
 		NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
-		if ([supportedFileExtensions containsObject:fileExtension])
+		if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
 		{
 			return [system objectForKey:PVSystemIdentifierKey];
 		}

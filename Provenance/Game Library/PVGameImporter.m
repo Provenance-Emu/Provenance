@@ -225,6 +225,15 @@
     
     if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
     {
+        
+        if ([error code] == NSFileWriteFileExistsError)
+        {
+            if (![[NSFileManager defaultManager] removeItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] error:&error])
+            {
+                DLog(@"Unable to delete %@ (after trying to move and getting 'file exists error', because %@", filePath, [error localizedDescription]);
+            }
+        }
+        
         DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
         return nil;
     }
@@ -283,19 +292,17 @@
     [realm refresh];
     for (NSString *path in paths)
     {
+        if ([path hasPrefix:@"."])
+        {
+            continue;
+        }
+        
         @autoreleasepool {
-            if (self.importStartedHandler)
-            {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.importStartedHandler(path);
-                });
-            }
-            
             NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
             NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
             NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
             PVGame *game = nil;
-            RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", partialPath]];
+            RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
             if ([results count])
             {
                 game = [results firstObject];
@@ -319,7 +326,22 @@
             
             if ([game requiresSync])
             {
+                if (self.importStartedHandler)
+                {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        self.importStartedHandler(path);
+                    });
+                }
+                
                 [self lookupInfoForGame:game];
+            }
+            
+            if (self.finishedImportHandler)
+            {
+                NSString *md5 = [game md5Hash];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.finishedImportHandler(md5);
+                });
             }
             
             [self getArtworkFromURL:[game originalArtworkURL]];
@@ -376,14 +398,6 @@
         [game setRequiresSync:NO];
         [realm commitWriteTransaction];
         
-        if (self.finishedImportHandler)
-        {
-            NSString *md5 = [game md5Hash];
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                self.finishedImportHandler(md5);
-            });
-        }
-        
         return;
     }
     
@@ -407,14 +421,6 @@
     [game setTitle:chosenResult[@"gameTitle"]];
     [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
     [realm commitWriteTransaction];
-    
-    if (self.finishedImportHandler)
-    {
-        NSString *md5 = [game md5Hash];
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            self.finishedImportHandler(md5);
-        });
-    }
 }
 
 - (void)getArtworkFromURL:(NSString *)url
