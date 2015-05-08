@@ -52,7 +52,7 @@
 {
     dispatch_async(self.serialImportQueue, ^{
         NSArray *newPaths = [self importFilesAtPaths:paths];
-        [self getRomInfoForFilesAtPaths:newPaths];
+        [self getRomInfoForFilesAtPaths:newPaths userChosenSystem:nil];
         if (self.completionHandler)
         {
             dispatch_sync(dispatch_get_main_queue(), ^{
@@ -265,15 +265,56 @@
     {
         NSString *systemID = solutions[filePath];
         NSString *subfolder = self.systemToPathMap[systemID];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:subfolder])
+        {
+            [[NSFileManager defaultManager] createDirectoryAtPath:subfolder withIntermediateDirectories:YES attributes:nil error:NULL];
+        }
         NSError *error = nil;
         if (![[NSFileManager defaultManager] moveItemAtPath:[[self conflictPath] stringByAppendingPathComponent:filePath] toPath:[subfolder stringByAppendingPathComponent:filePath] error:&error])
         {
             DLog(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
         }
         
+        // moved the .cue, now move .bins .imgs etc
+        NSString *cueSheetPath = [subfolder stringByAppendingPathComponent:filePath];
+        NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[filePath pathExtension] withString:@""];
+        NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self conflictPath] error:&error];
+        
+        for (NSString *file in contents)
+        {
+            NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[file pathExtension] withString:@""];
+            
+            if ([fileWithoutExtension isEqual:relatedFileName])
+            {
+                // Before moving the file, make sure the cue sheet's reference uses the same case.
+                NSMutableString *cuesheet = [NSMutableString stringWithContentsOfFile:cueSheetPath encoding:NSUTF8StringEncoding error:&error];
+                if (cuesheet)
+                {
+                    NSRange range = [cuesheet rangeOfString:file options:NSCaseInsensitiveSearch];
+                    [cuesheet replaceCharactersInRange:range withString:file];
+                    if (![cuesheet writeToFile:cueSheetPath
+                                    atomically:NO
+                                      encoding:NSUTF8StringEncoding
+                                         error:&error])
+                    {
+                        DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                    }
+                }
+                else
+                {
+                    DLog(@"Unable to read cue sheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                }
+                
+                if (![[NSFileManager defaultManager] moveItemAtPath:[[self conflictPath] stringByAppendingPathComponent:file] toPath:[subfolder stringByAppendingPathComponent:file] error:&error])
+                {
+                    DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolder, [error localizedDescription]);
+                }
+            }
+        }
+        
         __weak typeof(self) weakSelf = self;
         dispatch_async(self.serialImportQueue, ^{
-            [weakSelf getRomInfoForFilesAtPaths:@[filePath]];
+            [weakSelf getRomInfoForFilesAtPaths:@[filePath] userChosenSystem:systemID];
             if (weakSelf.completionHandler)
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -286,7 +327,7 @@
 
 #pragma mark - ROM Lookup
 
-- (void)getRomInfoForFilesAtPaths:(NSArray *)paths
+- (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)chosenSystemID
 {
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm refresh];
@@ -298,10 +339,25 @@
         }
         
         @autoreleasepool {
-            NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
+            NSString *systemID = nil;
+            if (![chosenSystemID length])
+            {
+                systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
+            }
+            else
+            {
+                systemID = chosenSystemID;
+            }
             NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
             NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
             PVGame *game = nil;
+            //prevent duplicates entries for related files (eg, cue and bins)
+            RLMResults *dupeResults = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath contains[c] %@", ([partialPath length]) ? [partialPath stringByReplacingOccurrencesOfString:[partialPath pathExtension] withString:@""] : @""]];
+            if ([dupeResults count])
+            {
+                continue;
+            }
+                
             RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
             if ([results count])
             {

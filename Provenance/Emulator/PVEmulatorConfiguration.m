@@ -244,6 +244,21 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 	return nil;
 }
 
+- (NSArray *)systemIdentifiersForFileExtension:(NSString *)fileExtension
+{
+    NSMutableArray *systems = [NSMutableArray array];
+    for (NSDictionary *system in self.systems)
+    {
+        NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
+        if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+        {
+            [systems addObject:[system objectForKey:PVSystemIdentifierKey]];
+        }
+    }
+    
+    return [systems copy];
+}
+
 - (NSArray *)controllerLayoutForSystem:(NSString *)systemID
 {
 	NSDictionary *system = [self systemForIdentifier:systemID];

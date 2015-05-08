@@ -398,7 +398,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             NSError *error = nil;
             NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:systemDir error:&error];
             dispatch_async([self.gameImporter serialImportQueue], ^{
-                [self.gameImporter getRomInfoForFilesAtPaths:contents];
+                [self.gameImporter getRomInfoForFilesAtPaths:contents userChosenSystem:systemID];
                 if ([self.gameImporter completionHandler])
                 {
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -416,8 +416,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSMutableDictionary *tempSections = [NSMutableDictionary dictionary];
     for (PVGame *game in [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES])
     {
-        NSString *fileExtension = [[[game romPath] pathExtension] lowercaseString];
-        NSString *systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:fileExtension];
+        NSString *systemID = [game systemIdentifier];
         NSMutableArray *games = [[tempSections objectForKey:systemID] mutableCopy];
         if (!games)
         {
@@ -577,7 +576,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self.realm commitWriteTransaction];
         NSString *path = [documentsPath stringByAppendingPathComponent:[game romPath]];
         dispatch_async([self.gameImporter serialImportQueue], ^{
-            [self.gameImporter getRomInfoForFilesAtPaths:@[path]];
+            [self.gameImporter getRomInfoForFilesAtPaths:@[path] userChosenSystem:nil];
             if ([self.gameImporter completionHandler])
             {
                 [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);

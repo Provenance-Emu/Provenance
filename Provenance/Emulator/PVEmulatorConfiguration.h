@@ -55,6 +55,7 @@ extern NSString * const PVNESSystemIdentifier;
 - (NSArray *)supportedCDFileExtensions;
 - (NSArray *)fileExtensionsForSystemIdentifier:(NSString *)systemID;
 - (NSString *)systemIdentifierForFileExtension:(NSString *)fileExtension;
+- (NSArray *)systemIdentifiersForFileExtension:(NSString *)fileExtension;
 - (NSArray *)controllerLayoutForSystem:(NSString *)systemID;
 - (NSString *)databaseIDForSystemID:(NSString *)systemID;
 

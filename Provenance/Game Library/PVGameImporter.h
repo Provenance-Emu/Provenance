@@ -30,7 +30,7 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
 
-- (void)getRomInfoForFilesAtPaths:(NSArray *)paths;
+- (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)systemID;
 - (void)getArtworkFromURL:(NSString *)url;
 
 @end

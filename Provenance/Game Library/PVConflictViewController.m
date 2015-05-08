@@ -37,8 +37,23 @@
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
     [self.navigationItem setRightBarButtonItem:doneButton];
+ 
+    [self updateConflictedFiles];
+}
+
+- (void)updateConflictedFiles
+{
+    NSMutableArray *tempConflictedFiles = [NSMutableArray array];
+    for (NSString *file in [self.gameImporter conflictedFiles])
+    {
+        NSString *extension = [file pathExtension];
+        if ([[[PVEmulatorConfiguration sharedInstance] systemIdentifiersForFileExtension:[extension lowercaseString]] count] > 1)
+        {
+            [tempConflictedFiles addObject:file];
+        }
+    }
     
-    self.conflictedFiles = [self.gameImporter conflictedFiles];
+    self.conflictedFiles = [tempConflictedFiles copy];
 }
 
 - (void)done:(id)sender
@@ -108,7 +123,7 @@
                 [self.gameImporter resolveConflictsWithSolutions:@{path: systemID}];
                 [self.tableView beginUpdates];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-                self.conflictedFiles = [self.gameImporter conflictedFiles];
+                [self updateConflictedFiles];
                 [self.tableView endUpdates];
             }]];
         }
