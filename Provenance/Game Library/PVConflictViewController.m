@@ -112,6 +112,8 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose a System"
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
+    [[alertController popoverPresentationController] setSourceView:self.view];
+    [[alertController popoverPresentationController] setSourceRect:[self.tableView rectForRowAtIndexPath:indexPath]];
     
     for (NSString *systemID in [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers])
     {
