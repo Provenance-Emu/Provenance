@@ -10,6 +10,8 @@
 #import "PVSettingsModel.h"
 #import "PVMediaCache.h"
 #import "UIAlertView+BlockAdditions.h"
+#import "PVGameLibraryViewController.h"
+#import "PVConflictViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -41,6 +43,12 @@
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+#if DEBUG
+    [self.modeLabel setText:@"DEBUG"];
+#else
+    [self.modeLabel setText:@"RELEASE"];
+#endif
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -88,7 +96,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (indexPath.section == 2 && indexPath.row == 0)
+    if (indexPath.section == 2 && indexPath.row == 0)
+    {
+        [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
+                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"No"
+                                              otherButtonTitles:@"Yes", nil];
+        [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+            if (buttonIndex != [alert cancelButtonIndex])
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
+                                                                    object:nil];
+            }
+        }];
+        [alert show];
+    }
+	else if (indexPath.section == 2 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
@@ -104,6 +129,12 @@
 		}];
 		[alert show];
 	}
+    else if (indexPath.section == 2 && indexPath.row == 2)
+    {
+        PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
+        [self presentViewController:navController animated:YES completion:NULL];
+    }
 }
 
 @end

@@ -8,8 +8,6 @@
 
 #import "PVSNESControllerViewController.h"
 #import "PVSNESEmulatorCore.h"
-#import "PVSettingsModel.h"
-#import <AudioToolbox/AudioToolbox.h>
 
 @interface PVSNESControllerViewController ()
 
@@ -211,7 +209,7 @@
 	{
 		[snesCore pushSNESButton:PVSNESButtonRight];
 	}
-	if ([[dpad xAxis] value] < -0)
+	if ([[dpad xAxis] value] < 0)
 	{
 		[snesCore pushSNESButton:PVSNESButtonLeft];
 	}

@@ -11,5 +11,6 @@
 @interface NSData (Hashing)
 
 - (NSString *)md5Hash;
+- (NSString *)sha1Hash;
 
 @end

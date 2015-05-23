@@ -44,7 +44,7 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (UIImage *)imageForKey:(NSString *)key
 {
-    if (!key)
+    if (![key length])
     {
         return nil;
     }
@@ -64,10 +64,11 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (NSString *)filePathForKey:(NSString *)key
 {
-    if (!key)
+    if (![key length])
     {
         return nil;
     }
+    
 	NSString *cachePath = [self cachePath];
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
@@ -79,6 +80,11 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (NSString *)writeImageToDisk:(UIImage *)image withKey:(NSString *)key
 {
+    if (!image || ![key length])
+    {
+        return nil;
+    }
+    
 	NSData *imageData = UIImagePNGRepresentation(image);
 	
 	return [self writeDataToDisk:imageData withKey:key];
@@ -86,7 +92,12 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (NSString *)writeDataToDisk:(NSData *)data withKey:(NSString *)key
 {
-	NSString *cachePath = [self cachePath];	
+    if (![key length])
+    {
+        return nil;
+    }
+    
+	NSString *cachePath = [self cachePath];
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
 	
@@ -97,20 +108,23 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 
 + (BOOL)deleteImageForKey:(NSString *)key
 {
-    if (!key)
+    if (![key length])
     {
         return NO;
     }
+    
 	NSString *cachePath = [self cachePath];
 	NSString *keyHash = [key MD5Hash];
 	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
 	NSError *error = nil;
-	BOOL success = [[NSFileManager defaultManager] removeItemAtPath:cachePath error:&error];
-	if (!success)
-	{
-		DLog(@"Unable to delete cache item: %@ because: %@", cachePath, [error localizedDescription]);
-		return NO;
-	}
+    if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath])
+    {
+        if (![[NSFileManager defaultManager] removeItemAtPath:cachePath error:&error])
+        {
+            DLog(@"Unable to delete cache item: %@ because: %@", cachePath, [error localizedDescription]);
+            return NO;
+        }
+    }
 	
 	return YES;
 }

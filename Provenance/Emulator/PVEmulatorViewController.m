@@ -34,6 +34,7 @@
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
 
+@property (nonatomic, weak) UIActionSheet *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
 @end
@@ -124,7 +125,25 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
-	[self.emulatorCore loadFileAtPath:[[self romsPath] stringByAppendingPathComponent:[self.game romPath]]];
+    [self.emulatorCore setBIOSPath:self.BIOSPath];
+    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
+    {
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            DLog(@"Unable to load ROM at %@", [self.game romPath]);
+            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unable to load ROM"
+                                                                                     message:@"Maybe it's corrupt? Try deleting and reimporting it."
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [weakSelf dismissViewControllerAnimated:YES completion:NULL];
+            }]];
+            [weakSelf presentViewController:alertController animated:YES completion:NULL];
+        });
+        
+        return;
+    }
+    
 	[self.emulatorCore startEmulation];
 	
 	self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
@@ -223,7 +242,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
-- (NSString *)romsPath
+- (NSString *)documentsPath
 {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
@@ -276,7 +295,9 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
-	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
+    
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if (![self.controllerViewController gameController])
@@ -328,6 +349,16 @@ void uncaughtExceptionHandler(NSException *exception)
 	[actionsheet showInView:self.view];
 }
 
+- (void)hideMenu
+{
+    if (self.menuActionSheet)
+    {
+        [self.menuActionSheet dismissWithClickedButtonIndex:[self.menuActionSheet cancelButtonIndex] animated:YES];
+        [self.emulatorCore setPauseEmulation:NO];
+        self.isShowingMenu = NO;
+    }
+}
+
 - (void)showSaveStateMenu
 {
 	__block PVEmulatorViewController *weakSelf = self;
@@ -347,6 +378,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	for (NSUInteger i = 0; i < 5; i++)
@@ -396,6 +428,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}
 	
 	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    self.menuActionSheet = actionsheet;
 	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
@@ -436,6 +469,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		[self showMenu:self];
 	}
+    else
+    {
+        [self hideMenu];
+    }
 }
 
 - (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController

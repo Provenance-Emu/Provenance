@@ -287,6 +287,7 @@
 				DSTROOT = /tmp/PVSupport.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
@@ -299,6 +300,7 @@
 				DSTROOT = /tmp/PVSupport.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
@@ -342,6 +344,7 @@
 				DSTROOT = /tmp/PVSupport.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;

@@ -7,14 +7,29 @@
 //
 
 #import "PVEmulatorConfiguration.h"
+
 #import "PVGenesisEmulatorCore.h"
 #import "PVGenesisControllerViewController.h"
+
 #import "PVSNESEmulatorCore.h"
 #import "PVSNESControllerViewController.h"
+
+#import "PVGBAEmulatorCore.h"
+#import "PVGBAControllerViewController.h"
+
+#import "PVGBEmulatorCore.h"
+#import "PVGBControllerViewController.h"
+
+#import "PVNESEmulatorCore.h"
+#import "PVNESControllerViewController.h"
 
 NSString * const PVSystemNameKey = @"PVSystemName";
 NSString * const PVShortSystemNameKey = @"PVShortSystemName";
 NSString * const PVSystemIdentifierKey = @"PVSystemIdentifier";
+NSString * const PVDatabaseIDKey = @"PVDatabaseID";
+NSString * const PVUsesCDsKey = @"PVUsesCDs";
+NSString * const PVRequiresBIOSKey = @"PVRequiresBIOS";
+NSString * const PVBIOSNamesKey = @"PVBIOSNames";
 NSString * const PVSupportedExtensionsKey = @"PVSupportedExtensions";
 NSString * const PVControlLayoutKey = @"PVControlLayout";
 NSString * const PVControlTypeKey = @"PVControlType";
@@ -36,6 +51,10 @@ NSString * const PVGameGearSystemIdentifier = @"com.provenance.gamegear";
 NSString * const PVMasterSystemSystemIdentifier = @"com.provenance.mastersystem";
 NSString * const PVSegaCDSystemIdentifier = @"com.provenance.segacd";
 NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
+NSString * const PVGBASystemIdentifier = @"com.provenance.gba";
+NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
+NSString * const PVGBCSystemIdentifier = @"com.provenance.gbc";
+NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 
 @interface PVEmulatorConfiguration ()
 
@@ -90,6 +109,19 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	{
 		core = [[PVSNESEmulatorCore alloc] init];
 	}
+    else if ([systemID isEqualToString:PVGBASystemIdentifier])
+    {
+        core = [[PVGBAEmulatorCore alloc] init];
+    }
+    else if ([systemID isEqualToString:PVGBSystemIdentifier] ||
+             [systemID isEqualToString:PVGBCSystemIdentifier])
+    {
+        core = [[PVGBEmulatorCore alloc] init];
+    }
+    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    {
+        core = [[PVNESEmulatorCore alloc] init];
+    }
 	
 	return core;
 }
@@ -109,6 +141,19 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	{
 		controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
+    else if ([systemID isEqualToString:PVGBASystemIdentifier])
+    {
+        controller = [[PVGBAControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVGBSystemIdentifier] ||
+             [systemID isEqualToString:PVGBCSystemIdentifier])
+    {
+        controller = [[PVGBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    {
+        controller = [[PVNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
 	
 	return controller;
 }
@@ -151,6 +196,21 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	return [system objectForKey:PVShortSystemNameKey];
 }
 
+- (NSArray *)supportedCDFileExtensions
+{
+    NSMutableSet *extensions = [NSMutableSet set];
+    
+    for (NSDictionary *system in self.systems)
+    {
+        if (system[PVUsesCDsKey])
+        {
+            [extensions addObjectsFromArray:system[PVSupportedExtensionsKey]];
+        }
+    }
+    
+    return [extensions allObjects];
+}
+
 - (NSArray *)supportedFileExtensions
 {
 	NSMutableSet *extentions = [NSMutableSet set];
@@ -175,7 +235,7 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	for (NSDictionary *system in self.systems)
 	{
 		NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
-		if ([supportedFileExtensions containsObject:fileExtension])
+		if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
 		{
 			return [system objectForKey:PVSystemIdentifierKey];
 		}
@@ -184,10 +244,31 @@ NSString * const PVSNESSystemIdentifier = @"com.provenance.snes";
 	return nil;
 }
 
+- (NSArray *)systemIdentifiersForFileExtension:(NSString *)fileExtension
+{
+    NSMutableArray *systems = [NSMutableArray array];
+    for (NSDictionary *system in self.systems)
+    {
+        NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
+        if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+        {
+            [systems addObject:[system objectForKey:PVSystemIdentifierKey]];
+        }
+    }
+    
+    return [systems copy];
+}
+
 - (NSArray *)controllerLayoutForSystem:(NSString *)systemID
 {
 	NSDictionary *system = [self systemForIdentifier:systemID];
 	return [system objectForKey:PVControlLayoutKey];
+}
+
+- (NSString *)databaseIDForSystemID:(NSString *)systemID
+{
+    NSDictionary *system = [self systemForIdentifier:systemID];
+    return system[PVDatabaseIDKey];
 }
 
 @end

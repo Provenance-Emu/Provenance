@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "OERingBuffer.h"
 
 @interface PVEmulatorCore : NSObject {
@@ -24,6 +24,7 @@
 
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *batterySavesPath;
+@property (nonatomic, copy) NSString *BIOSPath;
 @property (atomic, assign) BOOL shouldResyncTime;
 
 - (void)startEmulation;
@@ -35,7 +36,7 @@
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
 
-- (uint16_t *)videoBuffer;
+- (const void *)videoBuffer;
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;

@@ -1,0 +1,25 @@
+import glob                                                                                   
+#source_list = glob.glob('*.cpp')
+source_list = Split(
+"""
+backward.cpp
+ConvertUTF.c
+xstring.cpp
+crc32.cpp     
+endian.cpp  
+general.cpp  
+guid.cpp    
+md5.cpp  
+memory.cpp  
+""")
+
+Import('env')
+
+
+if env['SYSTEM_MINIZIP'] == 0:
+  source_list.append('unzip.cpp')
+  source_list.append('ioapi.cpp')
+
+for x in range(len(source_list)):
+  source_list[x] = 'utils/' + source_list[x]
+Return('source_list')

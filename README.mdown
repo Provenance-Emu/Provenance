@@ -1,8 +1,7 @@
 # Provenance
-### An iOS Frontend for multiple emulators, currently supporting Sega Genesis, Game Gear and SNES
+### An iOS Frontend for multiple emulators
 
-Genesis/Game Gear emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke. The specific implementation used in Provenance is based on the Genesis emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
-SNES emulation is provided by [SNES9x](http://www.snes9x.com). The specific implementation used in Provenance is based on the SNES emulator core from [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu) 
+
 
 ###Why 'Provenance'?
 
@@ -14,53 +13,65 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 > > 1. The place of origin or earliest known history of something: "a rug of Iranian provenance".  
 > > 2. The beginning of something's existence; something's origin.
 
-##Features
+###Currently Supported Emulators:
+
+- Sega
+    - Genesis / Mega Drive
+    - Master System
+    - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
+    - Game Gear
+- Nintendo
+    - NES
+    - SNES
+    - Gameboy / Gameboy Color
+    - Gameboy Advance
+
+###Features
 
 - Very accurate & full speed emulation
 - Stereo sound
 - OpenGL based rendering, never drops below 60fps
 - Save States
 - Battery saves (native game saves, i.e. Sonic 3)
-
-iOS Specific features:
-
 - All current generation iOS devices supported with iOS 8
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
-    - iOS game controller support (needs more generalised implementation)
+    - iOS game controller support
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
 - Uses OpenVGDB to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
+- Game library searching
 
 Feel free to suggest/request features using the Issues page.
 
-#Screen Shots
+###Importing ROMs
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
 
-Game Library
-------------
-![Provenance Game Library showing Genesis games](http://jamesaddyman.com/provenance/screenshots/provenance1.png)  ![Provenance Game Library showing SNES games](http://jamesaddyman.com/provenance/screenshots/provenance2.png)  
+###Screenshots
+[Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
 
-Settings
---------
-![Provenance settings](http://jamesaddyman.com/provenance/screenshots/provenance5.png)  
+###Building Provenance
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance)
 
-Sega Genesis
-------------
-![Provenance running Sonic 3 & Knuckles](http://jamesaddyman.com/provenance/screenshots/provenance3.png)  
+#Attributions
 
-Sega Game Gear
---------------
-![Provenance running Sonic The Hedgehog](http://jamesaddyman.com/provenance/screenshots/provenance6.png)  
+Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
 
-Super Nintendo
---------------
-![Provenance running Chrono Trigger](http://jamesaddyman.com/provenance/screenshots/provenance4.png)  
+NES Emulation is provided by [FCEU](http://www.fceux.com/web/home.html).
+
+SNES emulation is provided by [SNES9x](http://www.snes9x.com).
+
+Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.net/projects/vba/).
+
+Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
+
+The specific implementations used in Provenance are based on [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
 
 #Provenance License (Simplified BSD)
 
-Copyright 2013 James Addyman (JamSoft). All rights reserved.
+Copyright (c) 2015, James Addyman (JamSoft). All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
@@ -84,7 +95,7 @@ or implied, of James Addyman (JamSoft).
 
 #OpenEmu License
 
-Copyright (c) 2012, OpenEmu Team
+Copyright (c) 2015, OpenEmu Team
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
