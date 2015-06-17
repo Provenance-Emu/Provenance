@@ -7,22 +7,49 @@
 //
 
 #import <GameController/GameController.h>
+#import "iCadeReaderView.h"
 
 @class PViCadeGamepadDirectionPad;
 @class PViCadeGamepadButtonInput;
 
-@interface PViCadeGamepad : GCGamepad {
+
+@interface PViCadeGamepad : GCExtendedGamepad {
     PViCadeGamepadDirectionPad* _dpad;
     
     PViCadeGamepadButtonInput* _buttonA;
     PViCadeGamepadButtonInput* _buttonB;
-    PViCadeGamepadButtonInput* _buttonC;
-    PViCadeGamepadButtonInput* _buttonD;
+    PViCadeGamepadButtonInput* _buttonX;
+    PViCadeGamepadButtonInput* _buttonY;
     
     PViCadeGamepadButtonInput* _leftShoulder;
     PViCadeGamepadButtonInput* _rightShoulder;
     
+    PViCadeGamepadButtonInput* _leftTrigger;
+    PViCadeGamepadButtonInput* _rightTrigger;
+    
+    PViCadeGamepadDirectionPad* _dummyThumbstick;
+    
 }
 
+-(PViCadeGamepadDirectionPad*) dpad;
+
+// iCade only support 1 dpad and 8 buttons :(,
+// thus these are dummies.
+-(PViCadeGamepadDirectionPad*) leftThumbstick;
+-(PViCadeGamepadDirectionPad*) rightThumbstick;
+
+-(PViCadeGamepadButtonInput*) buttonA;
+-(PViCadeGamepadButtonInput*) buttonB;
+-(PViCadeGamepadButtonInput*) buttonX;
+-(PViCadeGamepadButtonInput*) buttonY;
+-(PViCadeGamepadButtonInput*) leftShoulder;
+-(PViCadeGamepadButtonInput*) rightShoulder;
+-(PViCadeGamepadButtonInput*) leftTrigger;
+-(PViCadeGamepadButtonInput*) rightTrigger;
+@end
+
+@interface PViCadeController : GCController<iCadeEventDelegate> {
+    PViCadeGamepad* _gamepad;
+}
 
 @end
