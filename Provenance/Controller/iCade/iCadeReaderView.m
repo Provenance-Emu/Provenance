@@ -102,7 +102,7 @@ static const char *OFF_STATES = "eczqtrfnmpgv";
     char *p = strchr(ON_STATES, ch);
     bool stateChanged = false;
     if (p) {
-        int index = p-ON_STATES;
+        long index = p-ON_STATES;
         _iCadeState |= (1 << index);
         stateChanged = true;
         if (_delegateFlags.buttonDown) {
@@ -111,7 +111,7 @@ static const char *OFF_STATES = "eczqtrfnmpgv";
     } else {
         p = strchr(OFF_STATES, ch);
         if (p) {
-            int index = p-OFF_STATES;
+            long index = p-OFF_STATES;
             _iCadeState &= ~(1 << index);
             stateChanged = true;
             if (_delegateFlags.buttonUp) {
