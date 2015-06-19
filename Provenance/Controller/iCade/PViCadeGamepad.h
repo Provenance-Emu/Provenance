@@ -52,4 +52,6 @@
     PViCadeGamepad* _gamepad;
 }
 
+@property (copy) void (^controllerPressedAnyKey)(PViCadeController *controller);
+
 @end

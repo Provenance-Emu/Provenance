@@ -69,7 +69,9 @@ static iCadeReaderView* _reader;
     float y = (_reader.iCadeState & iCadeJoystickDown)? -1.0f: ((_reader.iCadeState & iCadeJoystickUp)? 1.0f : 0.0f );
     [_xAxis setValue:x];
     [_yAxis setValue:y];
-    _handler(self, x, y);
+    if (_handler) {
+        _handler(self, x, y);
+    }
 }
 
 -(PViCadeAxisInput*) xAxis {
@@ -89,11 +91,15 @@ static iCadeReaderView* _reader;
 }
 
 -(void) buttonPressed {
-    _handler(self, 1.0, YES);
+    if (_handler) {
+        _handler(self, 1.0, YES);
+    }
 }
 
 -(void) buttonReleased {
-    _handler(self, 0.0, NO);
+    if (_handler) {
+        _handler(self, 0.0, NO);
+    }
 }
 
 @end
@@ -114,6 +120,10 @@ static iCadeReaderView* _reader;
         
     }
     return self;
+}
+
+- (void) setControllerPausedHandler:(void (^)(GCController *controller)) controllerPausedHandler {
+    // dummy method to avoid NSInternalInconsistencyException
 }
 
 - (void)buttonDown:(iCadeState)button {
@@ -156,6 +166,9 @@ static iCadeReaderView* _reader;
             break;
         default:
             break;
+    }
+    if (self.controllerPressedAnyKey) {
+        self.controllerPressedAnyKey(self);
     }
 }
 
