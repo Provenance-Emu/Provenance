@@ -7,7 +7,7 @@
 //
 
 #import <GameController/GameController.h>
-#import "iCadeReaderView.h"
+#import "PViCadeReader.h"
 
 @class PViCadeGamepadDirectionPad;
 @class PViCadeGamepadButtonInput;
@@ -48,10 +48,3 @@
 -(PViCadeGamepadButtonInput*) rightTrigger;
 @end
 
-@interface PViCadeController : GCController<iCadeEventDelegate> {
-    PViCadeGamepad* _gamepad;
-}
-
-@property (copy) void (^controllerPressedAnyKey)(PViCadeController *controller);
-
-@end
