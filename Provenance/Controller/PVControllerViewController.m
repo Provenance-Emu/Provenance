@@ -60,6 +60,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     self.emulatorCore = nil;
     self.systemIdentifier = nil;
 	self.gameController = nil;
+    self.iCadeController = nil;
 	self.controlLayout = nil;
 	self.dPad = nil;
 	self.buttonGroup = nil;
@@ -70,6 +71,23 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	self.saveControlsButton = nil;
 	self.resetControlsButton = nil;
 	self.delegate = nil;
+}
+
+-(void) viewDidAppear:(BOOL) animated {
+    [super viewDidAppear:animated];
+    
+    if (YES) { // if iCadeController is enabled
+        self.iCadeController = [[PViCadeController alloc] init];
+        __weak PVControllerViewController* weakSelf = self;
+        self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
+            if (!weakSelf.gameController) {
+                weakSelf.gameController = controller;
+                [weakSelf setupGameController];
+            }
+            weakSelf.iCadeController.controllerPressedAnyKey = nil;
+        };
+    }
+    
 }
 
 - (void)viewDidLoad
