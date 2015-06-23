@@ -27,38 +27,40 @@
         _reader.buttonDown = ^(iCadeState button) {
             switch (button) {
                 case iCadeButtonA:
-                    [[weakSelf->_gamepad rightTrigger] buttonPressed];
+                    [[weakSelf->_gamepad buttonY] buttonPressed];
+//                    [[weakSelf->_gamepad rightTrigger] buttonPressed];
                     break;
                 case iCadeButtonB:
-                    [[weakSelf->_gamepad leftShoulder] buttonPressed];
+                    [[weakSelf->_gamepad buttonB] buttonPressed];
+//                    [[weakSelf->_gamepad leftShoulder] buttonPressed];
                     break;
                 case iCadeButtonC:
-                    [[weakSelf->_gamepad leftTrigger] buttonPressed];
+                    [[weakSelf->_gamepad buttonA] buttonPressed];
+//                    [[weakSelf->_gamepad leftTrigger] buttonPressed];
                     break;
                 case iCadeButtonD:
-                    [[weakSelf->_gamepad rightShoulder] buttonPressed];
+                    [[weakSelf->_gamepad buttonX] buttonPressed];
+//                    [[weakSelf->_gamepad rightShoulder] buttonPressed];
                     break;
                 case iCadeButtonE:
-                    [[weakSelf->_gamepad buttonX] buttonPressed];
+                    [[weakSelf->_gamepad rightShoulder] buttonPressed];
+//                    [[weakSelf->_gamepad buttonX] buttonPressed];
                     break;
                 case iCadeButtonF:
-                    [[weakSelf->_gamepad buttonA] buttonPressed];
+                    [[weakSelf->_gamepad leftShoulder] buttonPressed];
+//                    [[weakSelf->_gamepad buttonA] buttonPressed];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf->_gamepad buttonY] buttonPressed];
+                    [[weakSelf->_gamepad rightTrigger] buttonPressed];
+//                    [[weakSelf->_gamepad buttonY] buttonPressed];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf->_gamepad buttonB] buttonPressed];
+                    [[weakSelf->_gamepad leftTrigger] buttonPressed];
+//                    [[weakSelf->_gamepad buttonB] buttonPressed];
                     break;
                 case iCadeJoystickDown:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickLeft:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickRight:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickUp:
                     [[weakSelf->_gamepad dpad] padChanged];
                     break;
@@ -73,38 +75,40 @@
         _reader.buttonUp = ^(iCadeState button) {
             switch (button) {
                 case iCadeButtonA:
-                    [[weakSelf->_gamepad rightTrigger] buttonReleased];
+                    [[weakSelf->_gamepad buttonY] buttonReleased];
+//                    [[weakSelf->_gamepad rightTrigger] buttonPressed];
                     break;
                 case iCadeButtonB:
-                    [[weakSelf->_gamepad leftShoulder] buttonReleased];
+                    [[weakSelf->_gamepad buttonB] buttonReleased];
+//                    [[weakSelf->_gamepad leftShoulder] buttonPressed];
                     break;
                 case iCadeButtonC:
-                    [[weakSelf->_gamepad leftTrigger] buttonReleased];
+                    [[weakSelf->_gamepad buttonA] buttonReleased];
+//                    [[weakSelf->_gamepad leftTrigger] buttonPressed];
                     break;
                 case iCadeButtonD:
-                    [[weakSelf->_gamepad rightShoulder] buttonReleased];
+                    [[weakSelf->_gamepad buttonX] buttonReleased];
+//                    [[weakSelf->_gamepad rightShoulder] buttonPressed];
                     break;
                 case iCadeButtonE:
-                    [[weakSelf->_gamepad buttonX] buttonReleased];
+                    [[weakSelf->_gamepad rightShoulder] buttonReleased];
+//                    [[weakSelf->_gamepad buttonX] buttonPressed];
                     break;
                 case iCadeButtonF:
-                    [[weakSelf->_gamepad buttonA] buttonReleased];
+                    [[weakSelf->_gamepad leftShoulder] buttonReleased];
+//                    [[weakSelf->_gamepad buttonA] buttonPressed];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf->_gamepad buttonY] buttonReleased];
+                    [[weakSelf->_gamepad rightTrigger] buttonReleased];
+//                    [[weakSelf->_gamepad buttonY] buttonPressed];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf->_gamepad buttonB] buttonReleased];
+                    [[weakSelf->_gamepad leftTrigger] buttonReleased];
+//                    [[weakSelf->_gamepad buttonB] buttonPressed];
                     break;
                 case iCadeJoystickDown:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickLeft:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickRight:
-                    [[weakSelf->_gamepad dpad] padChanged];
-                    break;
                 case iCadeJoystickUp:
                     [[weakSelf->_gamepad dpad] padChanged];
                     break;
