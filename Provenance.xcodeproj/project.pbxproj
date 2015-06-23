@@ -667,7 +667,7 @@
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = 63497P68S6;
+						DevelopmentTeam = GL485K76T8;
 					};
 					1AD9AA341ACC988F00EC87A0 = {
 						CreatedOnToolsVersion = 6.2;
