@@ -602,7 +602,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 		_y = [[self.gameController extendedGamepad] buttonY];
         
 		_leftAnalog = [[self.gameController extendedGamepad] leftThumbstick];
-        _rightAnalog = [[self.gameController extendedGamepad] leftThumbstick];
+        _rightAnalog = [[self.gameController extendedGamepad] rightThumbstick];
         
 		_leftShoulder = [[self.gameController extendedGamepad] leftShoulder];
 		_rightShoulder = [[self.gameController extendedGamepad] rightShoulder];
