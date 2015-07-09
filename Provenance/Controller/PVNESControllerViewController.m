@@ -122,11 +122,11 @@
     {
         [nesCore pushNESButton:PVNESButtonB];
     }
-    else if ([button isEqual:_x])
+    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
     {
         [nesCore pushNESButton:PVNESButtonStart];
     }
-    else if ([button isEqual:_y])
+    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
     {
         [nesCore pushNESButton:PVNESButtonSelect];
     }
@@ -144,11 +144,11 @@
     {
         [nesCore releaseNESButton:PVNESButtonB];
     }
-    else if ([button isEqual:_x])
+    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
     {
         [nesCore releaseNESButton:PVNESButtonStart];
     }
-    else if ([button isEqual:_y])
+    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
     {
         [nesCore releaseNESButton:PVNESButtonSelect];
     }
