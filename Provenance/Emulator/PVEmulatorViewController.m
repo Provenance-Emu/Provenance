@@ -305,7 +305,13 @@ void uncaughtExceptionHandler(NSException *exception)
 		[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
 			[weakSelf.controllerViewController editControls];
 		}];
-	}
+    } else if ([self.controllerViewController iCadeController] == [self.controllerViewController gameController]) {
+        [actionsheet PV_addButtonWithTitle:@"Disconnect iCade" action:^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+        }];
+    }
 	
 	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
 		[weakSelf performSelector:@selector(showSaveStateMenu)

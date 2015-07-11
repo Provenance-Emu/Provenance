@@ -87,7 +87,6 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
                     weakSelf.gameController = controller;
                     [weakSelf setupGameController];
                 }
-                weakSelf.iCadeController.controllerPressedAnyKey = nil;
             };
         }
     }
