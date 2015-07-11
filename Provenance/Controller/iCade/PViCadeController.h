@@ -12,9 +12,10 @@
 @class PViCadeReader;
 
 @interface PViCadeController : GCController {
-    PViCadeGamepad* _gamepad;
-    PViCadeReader* _reader;
 }
+
+@property (readonly) PViCadeGamepad* iCadeGamepad;
+@property (readonly) PViCadeReader* reader;
 
 @property (copy) void (^controllerPressedAnyKey)(PViCadeController *controller);
 
