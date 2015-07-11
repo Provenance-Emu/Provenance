@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "kICadeControllerSetting.h"
+
 
 extern NSString * const kAutoSaveKey;
 extern NSString * const kAskToAutoLoadKey;
@@ -14,6 +16,7 @@ extern NSString * const kAutoLoadAutoSavesKey;
 extern NSString * const kControllerOpacityKey;
 extern NSString * const kDisableAutoLockKey;
 extern NSString * const kButtonVibrationKey;
+extern NSString * const kiCadeControllerSettingKey;
 
 @interface PVSettingsModel : NSObject
 
@@ -22,6 +25,7 @@ extern NSString * const kButtonVibrationKey;
 @property (nonatomic, assign) BOOL autoLoadAutoSaves;
 @property (nonatomic, assign) BOOL disableAutoLock;
 @property (nonatomic, assign) BOOL buttonVibration;
+@property (nonatomic, assign) kICadeControllerSetting iCadeControllerSetting;
 
 @property (nonatomic, assign) CGFloat controllerOpacity;
 

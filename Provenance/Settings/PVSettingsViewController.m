@@ -12,6 +12,7 @@
 #import "UIAlertView+BlockAdditions.h"
 #import "PVGameLibraryViewController.h"
 #import "PVConflictViewController.h"
+#import "PViCadeControllerViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -59,6 +60,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
+    [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
 - (IBAction)done:(id)sender
@@ -98,6 +101,12 @@
 {
     if (indexPath.section == 2 && indexPath.row == 0)
     {
+        PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
+        [self presentViewController:navController animated:YES completion:NULL];
+    }
+    else if (indexPath.section == 3 && indexPath.row == 0)
+    {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
                                                         message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
@@ -113,7 +122,7 @@
         }];
         [alert show];
     }
-	else if (indexPath.section == 2 && indexPath.row == 1)
+	else if (indexPath.section == 3 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
@@ -129,7 +138,7 @@
 		}];
 		[alert show];
 	}
-    else if (indexPath.section == 2 && indexPath.row == 2)
+    else if (indexPath.section == 3 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];

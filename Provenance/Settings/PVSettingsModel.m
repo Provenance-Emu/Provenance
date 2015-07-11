@@ -14,6 +14,7 @@ NSString * const kControllerOpacityKey = @"kControllerOpacityKey";
 NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
+NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 
 @implementation PVSettingsModel
 
@@ -40,7 +41,8 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
                                                                   kAutoLoadAutoSavesKey : @(NO),
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
-                                                                  kButtonVibrationKey : @(YES)}];
+                                                                  kButtonVibrationKey : @(YES),
+                                                                  kICadeControllerSettingKey : @(kICadeControllerSettingDisabled)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -48,6 +50,7 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
+        _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
 	}
 	
 	return self;
@@ -95,6 +98,13 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 {
     _buttonVibration = buttonVibration;
     [[NSUserDefaults standardUserDefaults] setBool:_buttonVibration forKey:kButtonVibrationKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void) setICadeControllerSetting:(kICadeControllerSetting)iCadeControllerSetting
+{
+    _iCadeControllerSetting = iCadeControllerSetting;
+    [[NSUserDefaults standardUserDefaults] setInteger:iCadeControllerSetting forKey:kICadeControllerSettingKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
