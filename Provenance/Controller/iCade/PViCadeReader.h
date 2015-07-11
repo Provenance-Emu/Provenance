@@ -17,6 +17,7 @@
 +(PViCadeReader*) sharedReader;
 
 -(void) listenToKeyWindow;
+-(void) stopListening;
 -(iCadeState) state;
 
 @property (copy) void (^stateChanged)(iCadeState state);

@@ -17,6 +17,7 @@ static PViCadeReader* sharedReader = nil;
     if (!sharedReader) {
         sharedReader = [[PViCadeReader alloc] init];
     }
+    
     return sharedReader;
 }
 
@@ -35,6 +36,12 @@ static PViCadeReader* sharedReader = nil;
     }
     _internalReader.active = YES;
     _internalReader.delegate = self;
+}
+
+-(void) stopListening {
+    _internalReader.active = NO;
+    _internalReader.delegate = nil;
+    [_internalReader removeFromSuperview];
 }
 
 -(iCadeState) state {

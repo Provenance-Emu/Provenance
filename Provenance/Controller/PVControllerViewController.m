@@ -14,6 +14,7 @@
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "kICadeControllerSetting.h"
 
 NSString * const PVSavedDPadFrameKey = @"PVSavedDPadFrameKey";
 NSString * const PVSavedButtonFrameKey = @"PVSavedButtonFrameKey";
@@ -76,18 +77,20 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 -(void) viewDidAppear:(BOOL) animated {
     [super viewDidAppear:animated];
     
-    if (YES) { // if iCadeController is enabled
-        self.iCadeController = [[PViCadeController alloc] init];
-        __weak PVControllerViewController* weakSelf = self;
-        self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
-            if (!weakSelf.gameController) {
-                weakSelf.gameController = controller;
-                [weakSelf setupGameController];
-            }
-            weakSelf.iCadeController.controllerPressedAnyKey = nil;
-        };
+    if (!self.iCadeController) {
+        PVSettingsModel* settings = [PVSettingsModel sharedInstance];
+        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+        if (self.iCadeController) {
+            __weak PVControllerViewController* weakSelf = self;
+            self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
+                if (!weakSelf.gameController) {
+                    weakSelf.gameController = controller;
+                    [weakSelf setupGameController];
+                }
+                weakSelf.iCadeController.controllerPressedAnyKey = nil;
+            };
+        }
     }
-    
 }
 
 - (void)viewDidLoad
