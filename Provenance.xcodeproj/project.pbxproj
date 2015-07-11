@@ -100,6 +100,9 @@
 		E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448961B34C4080056D80A /* PViCadeGamepadButtonInput.m */; };
 		E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448991B34C48D0056D80A /* PViCadeGamepadDirectionPad.m */; };
 		E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */ = {isa = PBXBuildFile; fileRef = E414489C1B34C4E50056D80A /* PViCadeInputAxis.m */; };
+		E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F936991B50829F009403C5 /* PViCade8BitdoController.m */; };
+		E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */; };
+		E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -252,6 +255,12 @@
 		E41448991B34C48D0056D80A /* PViCadeGamepadDirectionPad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeGamepadDirectionPad.m; sourceTree = "<group>"; };
 		E414489B1B34C4E50056D80A /* PViCadeInputAxis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeInputAxis.h; sourceTree = "<group>"; };
 		E414489C1B34C4E50056D80A /* PViCadeInputAxis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeInputAxis.m; sourceTree = "<group>"; };
+		E4F936981B50829F009403C5 /* PViCade8BitdoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCade8BitdoController.h; sourceTree = "<group>"; };
+		E4F936991B50829F009403C5 /* PViCade8BitdoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCade8BitdoController.m; sourceTree = "<group>"; };
+		E4F9369B1B50BF3B009403C5 /* PViCadeControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeControllerViewController.h; sourceTree = "<group>"; };
+		E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeControllerViewController.m; sourceTree = "<group>"; };
+		E4F9369E1B50C0D8009403C5 /* kICadeControllerSetting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kICadeControllerSetting.h; sourceTree = "<group>"; };
+		E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = kICadeControllerSetting.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -599,6 +608,8 @@
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
+				E4F9369B1B50BF3B009403C5 /* PViCadeControllerViewController.h */,
+				E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */,
 				E41448881B3125D90056D80A /* iCadeReaderView.h */,
 				E41448891B3125D90056D80A /* iCadeReaderView.m */,
 				E414488A1B3125D90056D80A /* iCadeState.h */,
@@ -606,6 +617,8 @@
 				E414488D1B3126190056D80A /* PViCadeGamepad.m */,
 				E414488F1B34B9600056D80A /* PViCadeController.h */,
 				E41448901B34B9600056D80A /* PViCadeController.m */,
+				E4F936981B50829F009403C5 /* PViCade8BitdoController.h */,
+				E4F936991B50829F009403C5 /* PViCade8BitdoController.m */,
 				E41448921B34BBAB0056D80A /* PViCadeReader.h */,
 				E41448931B34BBAB0056D80A /* PViCadeReader.m */,
 				E41448951B34C4080056D80A /* PViCadeGamepadButtonInput.h */,
@@ -614,6 +627,8 @@
 				E41448991B34C48D0056D80A /* PViCadeGamepadDirectionPad.m */,
 				E414489B1B34C4E50056D80A /* PViCadeInputAxis.h */,
 				E414489C1B34C4E50056D80A /* PViCadeInputAxis.m */,
+				E4F9369E1B50C0D8009403C5 /* kICadeControllerSetting.h */,
+				E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */,
 			);
 			path = iCade;
 			sourceTree = "<group>";
@@ -667,7 +682,7 @@
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = GL485K76T8;
+						DevelopmentTeam = 63497P68S6;
 					};
 					1AD9AA341ACC988F00EC87A0 = {
 						CreatedOnToolsVersion = 6.2;
@@ -739,6 +754,7 @@
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
+				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */,
@@ -761,6 +777,7 @@
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
+				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
@@ -771,6 +788,7 @@
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
+				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
 				1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
