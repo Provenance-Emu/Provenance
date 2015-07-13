@@ -255,9 +255,14 @@ void uncaughtExceptionHandler(NSException *exception)
     return YES;
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+//- (NSUInteger)supportedInterfaceOrientations
+//{
+//	return UIInterfaceOrientationMaskLandscape;
+//}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
 {
-	return UIInterfaceOrientationMaskLandscape;
+    return UIInterfaceOrientationLandscapeLeft;
 }
 
 

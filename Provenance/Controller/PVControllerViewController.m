@@ -435,20 +435,26 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     }
     else if([recognizer state] == UIGestureRecognizerStateChanged)
     {
-        [view setCenter:[recognizer locationInView:self.view]];
-        [view setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
-        if (recognizer == self.buttonPinchRecognizer)
+        if (view == self.dPad)
         {
-            // resize buttons, adjust origins, make sure spacing stays constant;
-            NSArray *buttons = [view subviews];
-            for (JSButton *button in buttons)
-            {
-                if ([button isMemberOfClass:[JSButton class]])
-                {
-                    [button setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
-                }
-            }
+            [view setCenter:[recognizer locationInView:self.view]];
+            [view setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
         }
+        
+        // todo later when I figure out a better way to individually resize each button at the same time.
+        
+//        if (recognizer == self.buttonPinchRecognizer)
+//        {
+//            // resize buttons, adjust origins, make sure spacing stays constant;
+//            NSArray *buttons = [view subviews];
+//            for (JSButton *button in buttons)
+//            {
+//                if ([button isMemberOfClass:[JSButton class]])
+//                {
+//                    [button setSize:CGSizeMake(self.initialControlSize.width * scale, self.initialControlSize.height * scale)];
+//                }
+//            }
+//        }
     }
 }
 
