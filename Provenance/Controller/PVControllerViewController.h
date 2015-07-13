@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "JSDPad.h"
 #import "JSButton.h"
+#import "PViCadeController.h"
 
 @import GameController;
 
@@ -48,6 +49,7 @@ extern NSString * const PVSavedControllerFramesKey;
 @property (nonatomic, copy) NSString *systemIdentifier;
 @property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
 @property (nonatomic, strong) GCController *gameController;
+@property (nonatomic, strong) PViCadeController *iCadeController;
 
 @property (nonatomic, strong) JSDPad *dPad;
 @property (nonatomic, strong) UIView *buttonGroup;

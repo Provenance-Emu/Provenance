@@ -134,11 +134,11 @@
     {
         [gbaCore pushGBAButton:PVGBAButtonR];
     }
-    else if ([button isEqual:_x])
+    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
     {
         [gbaCore pushGBAButton:PVGBAButtonStart];
     }
-    else if ([button isEqual:_y])
+    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
     {
         [gbaCore pushGBAButton:PVGBAButtonSelect];
     }
@@ -164,11 +164,11 @@
     {
         [gbaCore releaseGBAButton:PVGBAButtonR];
     }
-    else if ([button isEqual:_x])
+    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) // nes30
     {
         [gbaCore releaseGBAButton:PVGBAButtonStart];
     }
-    else if ([button isEqual:_y])
+    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
     {
         [gbaCore releaseGBAButton:PVGBAButtonSelect];
     }

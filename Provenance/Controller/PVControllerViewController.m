@@ -14,6 +14,7 @@
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import "kICadeControllerSetting.h"
 
 NSString * const PVSavedDPadFrameKey = @"PVSavedDPadFrameKey";
 NSString * const PVSavedButtonFrameKey = @"PVSavedButtonFrameKey";
@@ -60,6 +61,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     self.emulatorCore = nil;
     self.systemIdentifier = nil;
 	self.gameController = nil;
+    self.iCadeController = nil;
 	self.controlLayout = nil;
 	self.dPad = nil;
 	self.buttonGroup = nil;
@@ -70,6 +72,24 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	self.saveControlsButton = nil;
 	self.resetControlsButton = nil;
 	self.delegate = nil;
+}
+
+-(void) viewDidAppear:(BOOL) animated {
+    [super viewDidAppear:animated];
+    
+    if (!self.iCadeController) {
+        PVSettingsModel* settings = [PVSettingsModel sharedInstance];
+        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+        if (self.iCadeController) {
+            __weak PVControllerViewController* weakSelf = self;
+            self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
+                if (!weakSelf.gameController) {
+                    weakSelf.gameController = controller;
+                    [weakSelf setupGameController];
+                }
+            };
+        }
+    }
 }
 
 - (void)viewDidLoad

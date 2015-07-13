@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 
