@@ -37,7 +37,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
     
     if ([method isEqualToString: @"POST"])
     {
-        if ([path isEqualToString: @"/upload.html"])
+        if ([path isEqualToString: @"/upload"])
         {
             return YES;
         }
@@ -50,45 +50,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
 {
     HTTPLogTrace();
     
-    // Inform HTTP server that we expect a body to accompany a POST request
     
-    if([method isEqualToString:@"POST"] && [path isEqualToString:@"/upload.html"]) {
-        // here we need to make sure, boundary is set in header
-        NSString* contentType = [request headerField:@"Content-Type"];
-        NSUInteger paramsSeparator = [contentType rangeOfString:@";"].location;
-        if( NSNotFound == paramsSeparator ) {
-            return NO;
-        }
-        if( paramsSeparator >= contentType.length - 1 ) {
-            return NO;
-        }
-        NSString* type = [contentType substringToIndex:paramsSeparator];
-        if( ![type isEqualToString:@"multipart/form-data"] ) {
-            // we expect multipart/form-data content type
-            return NO;
-        }
-        
-        // enumerate all params in content-type, and find boundary there
-        NSArray* params = [[contentType substringFromIndex:paramsSeparator + 1] componentsSeparatedByString:@";"];
-        for( NSString* param in params ) {
-            paramsSeparator = [param rangeOfString:@"="].location;
-            if( (NSNotFound == paramsSeparator) || paramsSeparator >= param.length - 1 ) {
-                continue;
-            }
-            NSString* paramName = [param substringWithRange:NSMakeRange(1, paramsSeparator-1)];
-            NSString* paramValue = [param substringFromIndex:paramsSeparator+1];
-            
-            if( [paramName isEqualToString: @"boundary"] ) {
-                // let's separate the boundary from content-type, to make it more handy to handle
-                [request setHeaderField:@"boundary" value:paramValue];
-            }
-        }
-        // check if boundary specified
-        if( nil == [request headerField:@"boundary"] )  {
-            return NO;
-        }
-        return YES;
-    }
     return [super expectsRequestBodyFromMethod:method atPath:path];
 }
 
@@ -100,19 +62,37 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
     return documentPath;
 }
 
--(NSArray *)listFileAtPath:(NSString *)path
-{
-    //-----> LIST ALL FILES <-----//
-    NSLog(@"LISTING ALL FILES FOUND");
+-(NSArray*) listAllFilesInPath:(NSString*)path {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    int count;
+    NSURL *url = [NSURL URLWithString:[path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    NSDirectoryEnumerator *enumerator = [fileManager enumeratorAtURL: url
+                                          includingPropertiesForKeys:@[NSURLNameKey, NSURLIsDirectoryKey]
+                                                             options:NSDirectoryEnumerationSkipsHiddenFiles
+                                                        errorHandler: nil];
     
-    NSArray *directoryContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:NULL];
-    for (count = 0; count < (int)[directoryContent count]; count++)
-    {
-        NSLog(@"File %d: %@", (count + 1), [directoryContent objectAtIndex:count]);
+    NSMutableArray *mutableFileURLs = [NSMutableArray array];
+    for (NSURL *fileURL in enumerator) {
+        NSString *filename;
+        [fileURL getResourceValue:&filename forKey:NSURLNameKey error:nil];
+        
+        NSNumber *isDirectory;
+        [fileURL getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:nil];
+        
+        // Skip directories with '_' prefix, for example
+        if ([filename hasPrefix:@"_"] && [isDirectory boolValue]) {
+            [enumerator skipDescendants];
+            continue;
+        }
+        
+        if (![isDirectory boolValue]) {
+            //[mutableFileURLs addObject:fileURL];
+            [mutableFileURLs addObject: [fileURL absoluteString]];
+        }
     }
-    return directoryContent;
+    
+    
+    return [NSArray arrayWithArray: mutableFileURLs];
 }
 
 - (NSObject<HTTPResponse> *)httpResponseForMethod:(NSString *)method URI:(NSString *)path
@@ -124,34 +104,16 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
         
         NSString *savePath = [[self getDocumentsDirectory] stringByAppendingString: @"/Battery States"];
         NSLog(@"Save Path: %@", savePath);
-        NSArray *fileList = [self listFileAtPath: savePath];
+    
+        NSArray *fileList = [self listAllFilesInPath: savePath];
         
-        return [[HTTPDataResponse alloc] initWithData: [savePath dataUsingEncoding: NSUTF8StringEncoding]];
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject: fileList options: NSJSONWritingPrettyPrinted error: nil];
+        NSString *json = [[NSString alloc] initWithData: jsonData encoding:NSUTF8StringEncoding];
+        
+        return [[HTTPDataResponse alloc] initWithData: [json dataUsingEncoding: NSUTF8StringEncoding]];
     }
     
     return [super httpResponseForMethod:method URI:path];
-    
-    
-    // TBD REMOVE
-    if ([method isEqualToString:@"POST"] && [path isEqualToString:@"/upload.html"])
-    {
-        // this method will generate response with links to uploaded file
-        NSMutableString* filesStr = [[NSMutableString alloc] init];
-        
-        for( NSString* filePath in uploadedFiles ) {
-            //generate links
-            [filesStr appendFormat:@"<a href=\"%@\"> %@ </a><br/>",filePath, [filePath lastPathComponent]];
-        }
-        NSString* templatePath = [[config documentRoot] stringByAppendingPathComponent:@"upload.html"];
-        NSDictionary* replacementDict = [NSDictionary dictionaryWithObject:filesStr forKey:@"MyFiles"];
-        // use dynamic file response to apply our links to response template
-        return [[HTTPDynamicFileResponse alloc] initWithFilePath:templatePath forConnection:self separator:@"%" replacementDictionary:replacementDict];
-        
-    } else if( [method isEqualToString:@"GET"] && [path hasPrefix:@"/upload/"] ) {
-        // let download the uploaded files
-        return [[HTTPFileResponse alloc] initWithFilePath: [[config documentRoot] stringByAppendingString:path] forConnection:self];
-    }
-    
 }
 
 - (void)prepareForBodyWithSize:(UInt64)contentLength
