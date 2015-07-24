@@ -8,9 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@class PVGameImporter;
 
-@interface PVSettingsViewController : UITableViewController
+@class PVGameImporter;
+@class HTTPServer;
+
+@interface PVSettingsViewController : UITableViewController {
+    HTTPServer *httpServer;
+}
+
+
 
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;
