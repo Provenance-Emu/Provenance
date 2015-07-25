@@ -15,17 +15,13 @@
 // Web Server
 #import "GCDWebUploader.h"
 
-
 @interface PVWebServer : NSObject <GCDWebUploaderDelegate>
 
++ (PVWebServer *)sharedInstance;
 
-// prototypes
--(id)init;
--(NSString*) getDocumentDirectory;
+- (NSString *)getDocumentDirectory;
 - (NSString *)getIPAddress;
--(void) startServer;
--(void) stopServer;
+- (void)startServer;
+- (void)stopServer;
 
 @end
-
-GCDWebUploader *webServer;

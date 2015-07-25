@@ -8,82 +8,113 @@
 
 #import "PVWebServer.h"
 
+@interface PVWebServer ()
+
+@property (nonatomic, strong) GCDWebUploader *webServer;
+
+@end
+
 @implementation PVWebServer
 
--(id)init {
-    webServer = [[GCDWebUploader alloc] initWithUploadDirectory: [self getDocumentDirectory]];
-    webServer.delegate = self;
-    webServer.allowHiddenItems = NO;
++ (PVWebServer *)sharedInstance
+{
+    static PVWebServer *_sharedInstance;
+    
+    if (!_sharedInstance)
+    {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            _sharedInstance = [[super allocWithZone:nil] init];
+        });
+    }
+    
+    return _sharedInstance;
+}
+
+- (id)init
+{
+    if ((self = [super init]))
+    {
+        self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory: [self getDocumentDirectory]];
+        self.webServer.delegate = self;
+        self.webServer.allowHiddenItems = NO;
+    }
     
     return self;
 }
 
--(NSString*) getDocumentDirectory {
+- (NSString*)getDocumentDirectory
+{
     NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentPath = [searchPaths objectAtIndex: 0];
     
     return documentPath;
 }
 
--(void) startServer {
+- (void)startServer
+{
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
-    [webServer start];
+    [self.webServer start];
 }
 
--(void) stopServer {
+- (void)stopServer
+{
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
-    [webServer stop];
+    [self.webServer stop];
 }
 
-
-- (NSString *)getIPAddress {
-    
+- (NSString *)getIPAddress
+{
     NSString *address = @"error";
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *temp_addr = NULL;
     int success = 0;
     // retrieve the current interfaces - returns 0 on success
     success = getifaddrs(&interfaces);
-    if (success == 0) {
+    if (success == 0)
+    {
         // Loop through linked list of interfaces
         temp_addr = interfaces;
-        while(temp_addr != NULL) {
-            if(temp_addr->ifa_addr->sa_family == AF_INET) {
+        while (temp_addr != NULL)
+        {
+            if (temp_addr->ifa_addr->sa_family == AF_INET)
+            {
                 // Check if interface is en0 which is the wifi connection on the iPhone
-                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
+                if ([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"])
+                {
                     // Get NSString from C String
                     address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-                    
                 }
-                
             }
             
             temp_addr = temp_addr->ifa_next;
         }
     }
+    
     // Free memory
     freeifaddrs(interfaces);
     return address;
-    
 }
-
-
 
 #pragma mark - Web Server Delegate
 
-- (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path {
+- (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path
+{
     NSLog(@"[UPLOAD] %@", path);
 }
 
-- (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+- (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath
+{
     NSLog(@"[MOVE] %@ -> %@", fromPath, toPath);
 }
 
-- (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path {
+- (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path
+{
     NSLog(@"[DELETE] %@", path);
 }
 
-- (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path {
+- (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path
+{
     NSLog(@"[CREATE] %@", path);
 }
 

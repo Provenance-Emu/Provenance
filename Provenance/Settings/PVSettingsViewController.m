@@ -20,15 +20,6 @@
 
 @implementation PVSettingsViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    if ((self = [super initWithStyle:style]))
-	{
-    }
-	
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -127,11 +118,10 @@
             // connected via wifi, let's continue
             
             // start web transfer service
-            pvWebServer = [[PVWebServer alloc] init];
-            [pvWebServer startServer];
+            [[PVWebServer sharedInstance] startServer];
             
             // get the IP address of the device
-            NSString *ipAddress = [pvWebServer getIPAddress];
+            NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
             
 #if TARGET_IPHONE_SIMULATOR
             ipAddress = [ipAddress stringByAppendingString: @":8080"];
@@ -145,7 +135,7 @@
                                                   otherButtonTitles: nil];
             
             [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-                [pvWebServer stopServer];
+                [[PVWebServer sharedInstance] stopServer];
             }];
             
             [alert show];

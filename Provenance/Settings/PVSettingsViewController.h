@@ -14,9 +14,6 @@
 
 @class PVGameImporter;
 
-
-PVWebServer *pvWebServer;
-
 @interface PVSettingsViewController : UITableViewController {
     
     
