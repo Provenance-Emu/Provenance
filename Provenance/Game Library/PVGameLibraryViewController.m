@@ -159,7 +159,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [super viewDidAppear:animated];
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
 	return UIInterfaceOrientationMaskAll;
 }

@@ -255,7 +255,7 @@ void uncaughtExceptionHandler(NSException *exception)
     return YES;
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
 	return UIInterfaceOrientationMaskLandscape;
 }

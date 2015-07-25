@@ -126,7 +126,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	}
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
 	return UIInterfaceOrientationMaskLandscape;
 }
