@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "kICadeControllerSetting.h"
 
-
 extern NSString * const kAutoSaveKey;
 extern NSString * const kAskToAutoLoadKey;
 extern NSString * const kAutoLoadAutoSavesKey;

@@ -8,9 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+#import "Reachability.h"
+#import "PVWebServer.h"
+
+
 @class PVGameImporter;
 
-@interface PVSettingsViewController : UITableViewController
+
+PVWebServer *pvWebServer;
+
+@interface PVSettingsViewController : UITableViewController {
+    
+    
+}
 
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;

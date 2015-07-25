@@ -84,9 +84,26 @@
 		1AD9AA4B1ACC99C900EC87A0 /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
 		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
-		1AECF4A71966D6D600F8704E /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
+		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
+		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
+		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
+		378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
+		378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
+		378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E91B63D7CD0065FA39 /* GCDWebServerResponse.m */; };
+		378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */; };
+		378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EE1B63D7CD0065FA39 /* GCDWebServerFileRequest.m */; };
+		378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F01B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m */; };
+		378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F21B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m */; };
+		378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F51B63D7CD0065FA39 /* GCDWebServerDataResponse.m */; };
+		378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
+		378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */; };
+		378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */; };
+		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
+		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
+		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		378F4A151B63F2240065FA39 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
@@ -230,6 +247,42 @@
 		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
+		370B89BD1B61F74800DF626E /* web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = web; sourceTree = SOURCE_ROOT; };
+		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
+		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
+		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
+		378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerConnection.m; sourceTree = "<group>"; };
+		378F49E21B63D7CD0065FA39 /* GCDWebServerFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFunctions.h; sourceTree = "<group>"; };
+		378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFunctions.m; sourceTree = "<group>"; };
+		378F49E41B63D7CD0065FA39 /* GCDWebServerHTTPStatusCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerHTTPStatusCodes.h; sourceTree = "<group>"; };
+		378F49E51B63D7CD0065FA39 /* GCDWebServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerPrivate.h; sourceTree = "<group>"; };
+		378F49E61B63D7CD0065FA39 /* GCDWebServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerRequest.h; sourceTree = "<group>"; };
+		378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerRequest.m; sourceTree = "<group>"; };
+		378F49E81B63D7CD0065FA39 /* GCDWebServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerResponse.h; sourceTree = "<group>"; };
+		378F49E91B63D7CD0065FA39 /* GCDWebServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerResponse.m; sourceTree = "<group>"; };
+		378F49EB1B63D7CD0065FA39 /* GCDWebServerDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerDataRequest.h; sourceTree = "<group>"; };
+		378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerDataRequest.m; sourceTree = "<group>"; };
+		378F49ED1B63D7CD0065FA39 /* GCDWebServerFileRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFileRequest.h; sourceTree = "<group>"; };
+		378F49EE1B63D7CD0065FA39 /* GCDWebServerFileRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFileRequest.m; sourceTree = "<group>"; };
+		378F49EF1B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerMultiPartFormRequest.h; sourceTree = "<group>"; };
+		378F49F01B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerMultiPartFormRequest.m; sourceTree = "<group>"; };
+		378F49F11B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerURLEncodedFormRequest.h; sourceTree = "<group>"; };
+		378F49F21B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerURLEncodedFormRequest.m; sourceTree = "<group>"; };
+		378F49F41B63D7CD0065FA39 /* GCDWebServerDataResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerDataResponse.h; sourceTree = "<group>"; };
+		378F49F51B63D7CD0065FA39 /* GCDWebServerDataResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerDataResponse.m; sourceTree = "<group>"; };
+		378F49F61B63D7CD0065FA39 /* GCDWebServerErrorResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerErrorResponse.h; sourceTree = "<group>"; };
+		378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerErrorResponse.m; sourceTree = "<group>"; };
+		378F49F81B63D7CD0065FA39 /* GCDWebServerFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFileResponse.h; sourceTree = "<group>"; };
+		378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFileResponse.m; sourceTree = "<group>"; };
+		378F49FA1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerStreamedResponse.h; sourceTree = "<group>"; };
+		378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerStreamedResponse.m; sourceTree = "<group>"; };
+		378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GCDWebUploader.bundle; sourceTree = "<group>"; };
+		378F49FE1B63D7CD0065FA39 /* GCDWebUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebUploader.h; sourceTree = "<group>"; };
+		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
+		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
+		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		378F4A131B63F2240065FA39 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		378F4A141B63F2240065FA39 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		423BB97E17DD46BC0048F457 /* NSData+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
@@ -429,6 +482,8 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				378F4A121B63F2240065FA39 /* Reachability */,
+				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
@@ -505,6 +560,7 @@
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				370B89BD1B61F74800DF626E /* web */,
 				1A34C58517D517760058E7D1 /* systems.plist */,
 				1AECF4A61966D6D600F8704E /* openvgdb.sqlite */,
 				1A9FBE1A1ABD23DD004E778B /* vba-over.ini */,
@@ -605,6 +661,95 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		378F49DB1B63D7CD0065FA39 /* http */ = {
+			isa = PBXGroup;
+			children = (
+				378F49DC1B63D7CD0065FA39 /* GCDWebServer */,
+				378F49FC1B63D7CD0065FA39 /* GCDWebUploader */,
+				378F4A0F1B63DCF00065FA39 /* PVWebServer.h */,
+				378F4A101B63DCF00065FA39 /* PVWebServer.m */,
+			);
+			path = http;
+			sourceTree = "<group>";
+		};
+		378F49DC1B63D7CD0065FA39 /* GCDWebServer */ = {
+			isa = PBXGroup;
+			children = (
+				378F49DD1B63D7CD0065FA39 /* Core */,
+				378F49EA1B63D7CD0065FA39 /* Requests */,
+				378F49F31B63D7CD0065FA39 /* Responses */,
+			);
+			path = GCDWebServer;
+			sourceTree = "<group>";
+		};
+		378F49DD1B63D7CD0065FA39 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */,
+				378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */,
+				378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */,
+				378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */,
+				378F49E21B63D7CD0065FA39 /* GCDWebServerFunctions.h */,
+				378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */,
+				378F49E41B63D7CD0065FA39 /* GCDWebServerHTTPStatusCodes.h */,
+				378F49E51B63D7CD0065FA39 /* GCDWebServerPrivate.h */,
+				378F49E61B63D7CD0065FA39 /* GCDWebServerRequest.h */,
+				378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */,
+				378F49E81B63D7CD0065FA39 /* GCDWebServerResponse.h */,
+				378F49E91B63D7CD0065FA39 /* GCDWebServerResponse.m */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		378F49EA1B63D7CD0065FA39 /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				378F49EB1B63D7CD0065FA39 /* GCDWebServerDataRequest.h */,
+				378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */,
+				378F49ED1B63D7CD0065FA39 /* GCDWebServerFileRequest.h */,
+				378F49EE1B63D7CD0065FA39 /* GCDWebServerFileRequest.m */,
+				378F49EF1B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.h */,
+				378F49F01B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m */,
+				378F49F11B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.h */,
+				378F49F21B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
+		378F49F31B63D7CD0065FA39 /* Responses */ = {
+			isa = PBXGroup;
+			children = (
+				378F49F41B63D7CD0065FA39 /* GCDWebServerDataResponse.h */,
+				378F49F51B63D7CD0065FA39 /* GCDWebServerDataResponse.m */,
+				378F49F61B63D7CD0065FA39 /* GCDWebServerErrorResponse.h */,
+				378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */,
+				378F49F81B63D7CD0065FA39 /* GCDWebServerFileResponse.h */,
+				378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */,
+				378F49FA1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.h */,
+				378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */,
+			);
+			path = Responses;
+			sourceTree = "<group>";
+		};
+		378F49FC1B63D7CD0065FA39 /* GCDWebUploader */ = {
+			isa = PBXGroup;
+			children = (
+				378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */,
+				378F49FE1B63D7CD0065FA39 /* GCDWebUploader.h */,
+				378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */,
+			);
+			path = GCDWebUploader;
+			sourceTree = "<group>";
+		};
+		378F4A121B63F2240065FA39 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				378F4A131B63F2240065FA39 /* Reachability.h */,
+				378F4A141B63F2240065FA39 /* Reachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
@@ -682,7 +827,7 @@
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = 63497P68S6;
+						DevelopmentTeam = V9E3MVH28N;
 					};
 					1AD9AA341ACC988F00EC87A0 = {
 						CreatedOnToolsVersion = 6.2;
@@ -716,10 +861,11 @@
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */,
+				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
-				1AECF4A71966D6D600F8704E /* openvgdb.sqlite in Resources */,
+				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -745,15 +891,21 @@
 				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
 				1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */,
+				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
+				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
+				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
 				E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */,
 				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
+				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
+				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
@@ -761,10 +913,15 @@
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
+				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
 				1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */,
 				1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */,
 				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
+				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
+				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
+				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
+				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
 				1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
@@ -773,10 +930,12 @@
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
+				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
+				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
 				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
 				42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */,
@@ -785,9 +944,12 @@
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
+				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
+				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
+				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
 				1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */,
 			);

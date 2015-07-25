@@ -105,7 +105,54 @@
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
         [self presentViewController:navController animated:YES completion:NULL];
     }
-    else if (indexPath.section == 3 && indexPath.row == 0)
+    else if(indexPath.section == 3 && indexPath. row == 0) {
+        // import/export roms and game saves button
+        [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+        
+        // Check to see if we are connected to WiFi. Cannot continue otherwise.
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        [reachability startNotifier];
+        
+        NetworkStatus status = [reachability currentReachabilityStatus];
+        
+        if (status != ReachableViaWiFi)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Unable to start web server!"
+                                                            message: @"Your device needs to be connected to a WiFi network to continue!"
+                                                           delegate: nil
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        } else {
+            // connected via wifi, let's continue
+            
+            // start web transfer service
+            pvWebServer = [[PVWebServer alloc] init];
+            [pvWebServer startServer];
+            
+            // get the IP address of the device
+            NSString *ipAddress = [pvWebServer getIPAddress];
+            
+#if TARGET_IPHONE_SIMULATOR
+            ipAddress = [ipAddress stringByAppendingString: @":8080"];
+#endif
+            
+            NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Web server started!"
+                                                            message: message
+                                                           delegate: self
+                                                  cancelButtonTitle: @"Stop Web Server"
+                                                  otherButtonTitles: nil];
+            
+            [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+                [pvWebServer stopServer];
+            }];
+            
+            [alert show];
+        }
+        
+    }
+    else if (indexPath.section == 4 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
@@ -122,7 +169,7 @@
         }];
         [alert show];
     }
-	else if (indexPath.section == 3 && indexPath.row == 1)
+	else if (indexPath.section == 4 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
@@ -138,12 +185,13 @@
 		}];
 		[alert show];
 	}
-    else if (indexPath.section == 3 && indexPath.row == 2)
+    else if (indexPath.section == 4 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
         [self presentViewController:navController animated:YES completion:NULL];
     }
 }
+
 
 @end
