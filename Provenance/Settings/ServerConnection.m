@@ -51,7 +51,7 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
     HTTPLogTrace();
     
     
-    return [super expectsRequestBodyFromMethod:method atPath:path];
+    return [super expectsRequestBodyFromMethod:method atPath: path];
 }
 
 -(NSString*) getDocumentsDirectory {
@@ -111,8 +111,24 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_VERBOSE; // | HTTP_LOG_FLAG_TRACE
         NSString *json = [[NSString alloc] initWithData: jsonData encoding:NSUTF8StringEncoding];
         
         return [[HTTPDataResponse alloc] initWithData: [json dataUsingEncoding: NSUTF8StringEncoding]];
-    }
     
+    } else if([method isEqualToString: @"GET"] && [path hasPrefix: @"/download/save/"]) {
+        
+        NSString *itemPath = [[path substringFromIndex: 15] stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+        NSString *newPath = [itemPath substringFromIndex: 7];
+        NSData *data = nil;
+        
+        if([[NSFileManager defaultManager] fileExistsAtPath: newPath])
+        {
+            data = [[NSFileManager defaultManager] contentsAtPath: newPath];
+        } else {
+            NSLog(@"File not exits");
+        }
+        
+        return [[HTTPDataResponse alloc] initWithData: data];
+    }
+
+              
     return [super httpResponseForMethod:method URI:path];
 }
 
