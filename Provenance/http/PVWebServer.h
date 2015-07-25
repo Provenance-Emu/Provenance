@@ -22,6 +22,7 @@
 // prototypes
 -(id)init;
 -(NSString*) getDocumentDirectory;
+- (NSString *)getIPAddress;
 -(void) startServer;
 -(void) stopServer;
 

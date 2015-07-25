@@ -130,13 +130,20 @@
             pvWebServer = [[PVWebServer alloc] init];
             [pvWebServer startServer];
             
-            
+            // get the IP address of the device
+            NSString *ipAddress = [pvWebServer getIPAddress];
+            NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
             
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Web server started!"
-                                                            message: @"TBD"
+                                                            message: message
                                                            delegate: self
                                                   cancelButtonTitle: @"Stop Web Server"
                                                   otherButtonTitles: nil];
+            
+            [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+                [pvWebServer stopServer];
+            }];
+            
             [alert show];
         }
         
