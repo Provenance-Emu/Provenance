@@ -132,8 +132,12 @@
             
             // get the IP address of the device
             NSString *ipAddress = [pvWebServer getIPAddress];
-            NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
             
+#if TARGET_IPHONE_SIMULATOR
+            ipAddress = [ipAddress stringByAppendingString: @":8080"];
+#endif
+            
+            NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Web server started!"
                                                             message: message
                                                            delegate: self

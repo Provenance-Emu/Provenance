@@ -26,10 +26,12 @@
 }
 
 -(void) startServer {
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
     [webServer start];
 }
 
 -(void) stopServer {
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
     [webServer stop];
 }
 
