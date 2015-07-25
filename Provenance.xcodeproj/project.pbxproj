@@ -103,6 +103,7 @@
 		378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
 		378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		378F4A151B63F2240065FA39 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
@@ -280,6 +281,8 @@
 		378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		378F4A0F1B63DCF00065FA39 /* PVWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWebServer.h; sourceTree = "<group>"; };
 		378F4A101B63DCF00065FA39 /* PVWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWebServer.m; sourceTree = "<group>"; };
+		378F4A131B63F2240065FA39 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		378F4A141B63F2240065FA39 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		423BB97E17DD46BC0048F457 /* NSData+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
@@ -479,6 +482,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				378F4A121B63F2240065FA39 /* Reachability */,
 				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
@@ -737,6 +741,15 @@
 			path = GCDWebUploader;
 			sourceTree = "<group>";
 		};
+		378F4A121B63F2240065FA39 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				378F4A131B63F2240065FA39 /* Reachability.h */,
+				378F4A141B63F2240065FA39 /* Reachability.m */,
+			);
+			path = Reachability;
+			sourceTree = "<group>";
+		};
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
@@ -931,6 +944,7 @@
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
+				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,

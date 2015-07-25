@@ -106,11 +106,40 @@
         [self presentViewController:navController animated:YES completion:NULL];
     }
     else if(indexPath.section == 3 && indexPath. row == 0) {
-        // import/export game same saves
+        // import/export roms and game saves button
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         
-        pvWebServer = [[PVWebServer alloc] init];
-        [pvWebServer startServer];
+        // Check to see if we are connected to WiFi. Cannot continue otherwise.
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        [reachability startNotifier];
+        
+        NetworkStatus status = [reachability currentReachabilityStatus];
+        
+        if (status != ReachableViaWiFi)
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Unable to start web server!"
+                                                            message: @"Your device needs to be connected to a WiFi network to continue!"
+                                                           delegate: nil
+                                                  cancelButtonTitle: @"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        } else {
+            // connected via wifi, let's continue
+            
+            // start web transfer service
+            pvWebServer = [[PVWebServer alloc] init];
+            [pvWebServer startServer];
+            
+            
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Web server started!"
+                                                            message: @"TBD"
+                                                           delegate: self
+                                                  cancelButtonTitle: @"Stop Web Server"
+                                                  otherButtonTitles: nil];
+            [alert show];
+        }
+        
     }
     else if (indexPath.section == 4 && indexPath.row == 0)
     {
