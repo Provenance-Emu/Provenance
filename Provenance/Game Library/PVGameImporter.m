@@ -442,19 +442,22 @@
     {
         NSString *fileName = [[game romPath] lastPathComponent];
         
-        // Remove any extraneous stuff in the rom name such as (U) or (J) or [T+Eng] etc
-        NSRange parenRange = [fileName rangeOfString:@"("];
-        NSRange bracketRange = [fileName rangeOfString:@"["];
-        NSRange hyphenRange = [fileName rangeOfString:@"-"];
+        // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
+        static NSMutableCharacterSet *charSet = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            charSet = [NSMutableCharacterSet punctuationCharacterSet];
+            [charSet removeCharactersInString:@"-+&"];
+        });
+        
+        NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
         NSUInteger gameTitleLen;
-        if (parenRange.length > 0 || bracketRange.length > 0 || hyphenRange.length > 0) {
-            gameTitleLen = MIN(hyphenRange.location, MIN(parenRange.location, bracketRange.location)) - 1;
+        if (nonCharRange.length > 0) {
+            gameTitleLen = nonCharRange.location - 1;
         } else {
             gameTitleLen = [fileName length];
         }
-        
         fileName = [fileName substringToIndex:gameTitleLen];
-
         results = [self searchDatabaseUsingKey:@"romFileName"
                                          value:fileName
                                       systemID:[game systemIdentifier]
