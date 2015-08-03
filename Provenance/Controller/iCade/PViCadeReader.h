@@ -20,7 +20,6 @@
 -(void) stopListening;
 -(iCadeState) state;
 
-@property (copy) void (^stateChanged)(iCadeState state);
 @property (copy) void (^buttonDown)(iCadeState state);
 @property (copy) void (^buttonUp)(iCadeState state);
 
