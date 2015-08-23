@@ -651,12 +651,14 @@
 		1A35A85F1ABF405D00D6DDAF /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -744,12 +746,14 @@
 		1AABDFF11ABE366100FF6AEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -760,12 +764,14 @@
 		1AABDFF21ABE366100FF6AEF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

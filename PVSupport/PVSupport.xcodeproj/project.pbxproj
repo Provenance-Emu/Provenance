@@ -286,9 +286,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
@@ -299,9 +301,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;
@@ -343,9 +347,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = PVSupport;
 				SKIP_INSTALL = YES;

@@ -683,10 +683,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-fPIC",
 					"-DLSB_FIRST",
@@ -706,10 +708,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fPIC",
@@ -761,10 +765,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fPIC",

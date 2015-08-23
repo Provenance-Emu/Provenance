@@ -1243,6 +1243,7 @@
 		1A35A8611ABF406500D6DDAF /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1252,6 +1253,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
@@ -1348,6 +1350,7 @@
 		1A3A74FD1ABF11AC002274A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1357,6 +1360,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
@@ -1378,6 +1382,7 @@
 		1A3A74FE1ABF11AC002274A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1387,6 +1392,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",

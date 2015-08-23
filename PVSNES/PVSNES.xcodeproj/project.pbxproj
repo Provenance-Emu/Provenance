@@ -601,10 +601,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-Wno-write-strings",
@@ -626,9 +628,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-Wno-write-strings",
@@ -682,9 +686,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-D__MACOSX__",
 					"-Wno-write-strings",
