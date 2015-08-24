@@ -129,7 +129,9 @@ static __weak PVGBAEmulatorCore *_current;
         {
             if (isRunning)
             {
-                [self executeFrame];
+                @synchronized(self) {
+                    [self executeFrame];
+                }
             }
         }
         
@@ -292,12 +294,16 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
-    return vba.emuWriteState([fileName UTF8String]);
+    @synchronized(self) {
+        return vba.emuWriteState([fileName UTF8String]);
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
-    return vba.emuReadState([fileName UTF8String]);
+    @synchronized(self) {
+        return vba.emuReadState([fileName UTF8String]);
+    }
 }
 
 # pragma mark - Input

@@ -122,7 +122,9 @@ static __weak PVNESEmulatorCore *_current;
         {
             if (isRunning)
             {
-                [self executeFrame];
+                @synchronized(self) {
+                    [self executeFrame];
+                }
             }
         }
         
@@ -252,13 +254,17 @@ static __weak PVNESEmulatorCore *_current;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
-    FCEUSS_Save([fileName UTF8String], false);
-    return YES;
+    @synchronized(self) {
+        FCEUSS_Save([fileName UTF8String], false);
+        return YES;
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
-    return FCEUSS_Load([fileName UTF8String], false);
+    @synchronized(self) {
+        return FCEUSS_Load([fileName UTF8String], false);
+    }
 }
 
 - (NSData *)serializeStateWithError:(NSError **)outError

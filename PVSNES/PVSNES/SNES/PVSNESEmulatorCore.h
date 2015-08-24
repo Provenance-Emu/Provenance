@@ -50,5 +50,6 @@ typedef NS_ENUM(NSUInteger, PVSNESButton)
 
 - (void)pushSNESButton:(PVSNESButton)button;
 - (void)releaseSNESButton:(PVSNESButton)button;
+- (void)flipBuffers;
 
 @end

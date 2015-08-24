@@ -211,7 +211,9 @@ static bool environment_callback(unsigned cmd, void *data)
 		{
 			if (isRunning)
 			{
-				[self executeFrame];
+                @synchronized(self) {
+                    [self executeFrame];
+                }
 			}
 		}
 		
@@ -288,37 +290,41 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)loadSaveFile:(NSString *)path forType:(int)type
 {
-	size_t size = retro_get_memory_size(type);
-	void *ramData = retro_get_memory_data(type);
-	
-	if (size == 0 || !ramData)
-	{
-		return;
-	}
-	
-	NSData *data = [NSData dataWithContentsOfFile:path];
-	if (!data || ![data length])
-	{
-		DLog(@"Couldn't load save file.");
-	}
-	
-	[data getBytes:ramData length:size];
+    @synchronized(self) {
+        size_t size = retro_get_memory_size(type);
+        void *ramData = retro_get_memory_data(type);
+        
+        if (size == 0 || !ramData)
+        {
+            return;
+        }
+        
+        NSData *data = [NSData dataWithContentsOfFile:path];
+        if (!data || ![data length])
+        {
+            DLog(@"Couldn't load save file.");
+        }
+        
+        [data getBytes:ramData length:size];
+    }
 }
 
 - (void)writeSaveFile:(NSString *)path forType:(int)type
 {
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
-    
-    if (ramData && (size > 0))
-    {
-		retro_serialize(ramData, size);
-		NSData *data = [NSData dataWithBytes:ramData length:size];
-		BOOL success = [data writeToFile:path atomically:YES];
-		if (!success)
-		{
-			DLog(@"Error writing save file");
-		}
+    @synchronized(self) {
+        size_t size = retro_get_memory_size(type);
+        void *ramData = retro_get_memory_data(type);
+        
+        if (ramData && (size > 0))
+        {
+            retro_serialize(ramData, size);
+            NSData *data = [NSData dataWithBytes:ramData length:size];
+            BOOL success = [data writeToFile:path atomically:YES];
+            if (!success)
+            {
+                DLog(@"Error writing save file");
+            }
+        }
     }
 }
 
