@@ -137,7 +137,9 @@ static __weak PVGBEmulatorCore *_current;
         {
             if (isRunning)
             {
-                [self executeFrame];
+                @synchronized(self) {
+                    [self executeFrame];
+                }
             }
         }
         
@@ -271,12 +273,16 @@ static __weak PVGBEmulatorCore *_current;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
-    return gb.saveState(0, 0, [fileName UTF8String]);
+    @synchronized(self) {
+        return gb.saveState(0, 0, [fileName UTF8String]);
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
-    return gb.loadState([fileName UTF8String]);
+    @synchronized(self) {
+        return gb.loadState([fileName UTF8String]);
+    }
 }
 
 # pragma mark - Input
