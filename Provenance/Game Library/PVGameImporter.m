@@ -353,31 +353,35 @@
             PVGame *game = nil;
             //prevent duplicates entries for related files (eg, cue and bins)
             RLMResults *dupeResults = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath contains[c] %@", ([partialPath length]) ? [partialPath stringByReplacingOccurrencesOfString:[partialPath pathExtension] withString:@""] : @""]];
-            if ([dupeResults count])
-            {
-                continue;
-            }
-                
-            RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
-            if ([results count])
-            {
-                game = [results firstObject];
-            }
-            else
-            {
-                if (![systemID length])
-                {
-                    continue;
+            for (PVGame *dupe in dupeResults) {
+                if ([[dupe romPath] isEqualToString:partialPath]) {
+                    game = dupe;
                 }
-                
-                game = [[PVGame alloc] init];
-                [game setRomPath:partialPath];
-                [game setTitle:title];
-                [game setSystemIdentifier:systemID];
-                [game setRequiresSync:YES];
-                [realm beginWriteTransaction];
-                [realm addObject:game];
-                [realm commitWriteTransaction];
+            }
+
+            if (!game)
+            {
+                RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
+                if ([results count])
+                {
+                    game = [results firstObject];
+                }
+                else
+                {
+                    if (![systemID length])
+                    {
+                        continue;
+                    }
+
+                    game = [[PVGame alloc] init];
+                    [game setRomPath:partialPath];
+                    [game setTitle:title];
+                    [game setSystemIdentifier:systemID];
+                    [game setRequiresSync:YES];
+                    [realm beginWriteTransaction];
+                    [realm addObject:game];
+                    [realm commitWriteTransaction];
+                }
             }
             
             if ([game requiresSync])
