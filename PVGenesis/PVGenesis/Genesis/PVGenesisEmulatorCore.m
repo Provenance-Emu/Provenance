@@ -290,40 +290,36 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (void)loadSaveFile:(NSString *)path forType:(int)type
 {
-    @synchronized(self) {
-        size_t size = retro_get_memory_size(type);
-        void *ramData = retro_get_memory_data(type);
-        
-        if (size == 0 || !ramData)
-        {
-            return;
-        }
-        
-        NSData *data = [NSData dataWithContentsOfFile:path];
-        if (!data || ![data length])
-        {
-            DLog(@"Couldn't load save file.");
-        }
-        
-        [data getBytes:ramData length:size];
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (size == 0 || !ramData)
+    {
+        return;
     }
+    
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data || ![data length])
+    {
+        DLog(@"Couldn't load save file.");
+    }
+    
+    [data getBytes:ramData length:size];
 }
 
 - (void)writeSaveFile:(NSString *)path forType:(int)type
 {
-    @synchronized(self) {
-        size_t size = retro_get_memory_size(type);
-        void *ramData = retro_get_memory_data(type);
-        
-        if (ramData && (size > 0))
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (ramData && (size > 0))
+    {
+        retro_serialize(ramData, size);
+        NSData *data = [NSData dataWithBytes:ramData length:size];
+        BOOL success = [data writeToFile:path atomically:YES];
+        if (!success)
         {
-            retro_serialize(ramData, size);
-            NSData *data = [NSData dataWithBytes:ramData length:size];
-            BOOL success = [data writeToFile:path atomically:YES];
-            if (!success)
-            {
-                DLog(@"Error writing save file");
-            }
+            DLog(@"Error writing save file");
         }
     }
 }
@@ -398,42 +394,46 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (BOOL)saveStateToFileAtPath:(NSString *)path
 {
-	int serial_size = retro_serialize_size();
-    uint8_t *serial_data = (uint8_t *) malloc(serial_size);
-    
-    retro_serialize(serial_data, serial_size);
-	
-	NSError *error = nil;
-	NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
-	free(serial_data);
-	[saveStateData writeToFile:path
-					   options:NSDataWritingAtomic
-						 error:&error];
-	if (error)
-	{
-		DLog(@"Error saving state: %@", [error localizedDescription]);
-		return NO;
-	}
-	
-	return YES;
+    @synchronized(self) {
+        int serial_size = retro_serialize_size();
+        uint8_t *serial_data = (uint8_t *) malloc(serial_size);
+        
+        retro_serialize(serial_data, serial_size);
+        
+        NSError *error = nil;
+        NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
+        free(serial_data);
+        [saveStateData writeToFile:path
+                           options:NSDataWritingAtomic
+                             error:&error];
+        if (error)
+        {
+            DLog(@"Error saving state: %@", [error localizedDescription]);
+            return NO;
+        }
+        
+        return YES;
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)path
 {
-	NSData *saveStateData = [NSData dataWithContentsOfFile:path];
-	if (!saveStateData)
-	{
-		DLog(@"Unable to load save state from path: %@", path);
-		return NO;
-	}
-	
-	if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
-	{
-		DLog(@"Unable to load save state");
-		return NO;
-	}
-	
-	return YES;
+    @synchronized(self) {
+        NSData *saveStateData = [NSData dataWithContentsOfFile:path];
+        if (!saveStateData)
+        {
+            DLog(@"Unable to load save state from path: %@", path);
+            return NO;
+        }
+        
+        if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
+        {
+            DLog(@"Unable to load save state");
+            return NO;
+        }
+        
+        return YES;
+    }
 }
 
 @end
