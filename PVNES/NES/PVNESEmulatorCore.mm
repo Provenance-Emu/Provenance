@@ -218,6 +218,11 @@ static __weak PVNESEmulatorCore *_current;
     return CGRectMake(0, 0, 256, 240);
 }
 
+- (CGSize)aspectSize
+{
+    return CGSizeMake(4, 3);
+}
+
 - (CGSize)bufferSize
 {
     return CGSizeMake(256, 240);
