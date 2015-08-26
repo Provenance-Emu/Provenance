@@ -68,20 +68,41 @@
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    
     if (self.view.bounds.size.width > self.view.bounds.size.height)
     {
         if (!CGRectIsEmpty([self.emulatorCore screenRect]))
         {
-            CGFloat newWidth = ([self.emulatorCore screenRect].size.width / [self.emulatorCore screenRect].size.height) * [[self.parentViewController view] bounds].size.height;
-            [[self view] setFrame:CGRectMake(([[self.view superview] bounds].size.width - newWidth) / 2, 0, newWidth, [[self.parentViewController view] bounds].size.height)];
+            CGSize aspectSize = [self.emulatorCore aspectSize];
+            CGFloat ratio = 0;
+            if (aspectSize.width > aspectSize.height) {
+                ratio = aspectSize.width / aspectSize.height;
+            } else {
+                ratio = aspectSize.height / aspectSize.width;
+            }
+
+            CGSize parentSize = [[[self parentViewController] view] bounds].size;
+
+            CGFloat height = 0;
+            CGFloat width = 0;
+
+            if (parentSize.width > parentSize.height) {
+                height = parentSize.height;
+                width = roundf(height * ratio);
+            } else {
+                width = parentSize.width;
+                height = roundf(width / ratio);
+            }
+
+            [[self view] setFrame:CGRectMake(roundf((parentSize.width - width) / 2.0), 0, width, height)];
         }
     }
     else
     {
-        CGFloat newHeight = ([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width;
+        CGFloat newHeight = roundf(([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width);
         [self.view setFrame:CGRectMake(0, 0, [[self.parentViewController view] bounds].size.width, newHeight)];
     }
+
+    NSLog(@"GL View: %@", NSStringFromCGRect([[self view] frame]));
 }
 
 - (void)setupTexture
