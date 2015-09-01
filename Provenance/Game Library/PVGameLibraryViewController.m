@@ -435,37 +435,42 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
     [hud hide:YES];
-    
-    NSArray *oldSectionInfo = self.sectionInfo;
-    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
+
     [self fetchGames];
-    if (indexPath)
-    {
-        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-    }
-    else
-    {
-        indexPath = [self indexPathForGameWithMD5Hash:md5];
-        PVGame *game = [[PVGame objectsInRealm:self.realm where:@"md5Hash == %@", md5] firstObject];
-        NSString *systemID = [game systemIdentifier];
-        __block BOOL needToInsertSection = YES;
-        [oldSectionInfo enumerateObjectsUsingBlock:^(NSString *section, NSUInteger sectionIndex, BOOL *stop) {
-            if ([systemID isEqualToString:section])
-            {
-                needToInsertSection = NO;
-                *stop = YES;
-            }
-        }];
-        
-        [self.collectionView performBatchUpdates:^{
-            if (needToInsertSection)
-            {
-                [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
-            }
-            [self.collectionView insertItemsAtIndexPaths:@[indexPath]];
-        } completion:^(BOOL finished) {
-        }];
-    }
+    [self.collectionView reloadData];
+
+    // code below is simply to animate updates... currently crashy
+
+//    NSArray *oldSectionInfo = [self.sectionInfo copy];
+//    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
+//    [self fetchGames];
+//    if (indexPath)
+//    {
+//        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+//    }
+//    else
+//    {
+//        indexPath = [self indexPathForGameWithMD5Hash:md5];
+//        PVGame *game = [[PVGame objectsInRealm:self.realm where:@"md5Hash == %@", md5] firstObject];
+//        NSString *systemID = [game systemIdentifier];
+//        __block BOOL needToInsertSection = YES;
+//        [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *section, NSUInteger sectionIndex, BOOL *stop) {
+//            if ([systemID isEqualToString:section])
+//            {
+//                needToInsertSection = NO;
+//                *stop = YES;
+//            }
+//        }];
+//        
+//        [self.collectionView performBatchUpdates:^{
+//            if (needToInsertSection)
+//            {
+//                [self.collectionView insertSections:[NSIndexSet indexSetWithIndex:[indexPath section]]];
+//            }
+//            [self.collectionView insertItemsAtIndexPaths:@[indexPath]];
+//        } completion:^(BOOL finished) {
+//        }];
+//    }
 }
 
 - (void)finishedDownloadingArtworkForURL:(NSString *)url
@@ -568,23 +573,29 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)handleRefreshLibrary:(NSNotification *)note
 {
     NSString *documentsPath = [self documentsPath];
+    NSMutableArray *romPaths = [NSMutableArray array];
+
     for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
-    {   [self.realm beginWriteTransaction];
-        [game setCustomArtworkURL:nil];
-        [game setOriginalArtworkURL:nil];
-        [game setRequiresSync:YES];
-        [self.realm commitWriteTransaction];
+    {
         NSString *path = [documentsPath stringByAppendingPathComponent:[game romPath]];
-        dispatch_async([self.gameImporter serialImportQueue], ^{
-            [self.gameImporter getRomInfoForFilesAtPaths:@[path] userChosenSystem:nil];
-            if ([self.gameImporter completionHandler])
-            {
-                [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);
-            }
-        });
+        [romPaths addObject:path];
     }
-    
+
+    [self.realm beginWriteTransaction];
+    [self.realm deleteAllObjects];
+    [self.realm commitWriteTransaction];
+    [self fetchGames];
     [self.collectionView reloadData];
+
+    [self setUpGameLibrary];
+
+//    dispatch_async([self.gameImporter serialImportQueue], ^{
+//        [self.gameImporter getRomInfoForFilesAtPaths:romPaths userChosenSystem:nil];
+//        if ([self.gameImporter completionHandler])
+//        {
+//            [self.gameImporter completionHandler]([self.gameImporter encounteredConflicts]);
+//        }
+//    });
 }
 
 - (BOOL)canLoadGame:(PVGame *)game

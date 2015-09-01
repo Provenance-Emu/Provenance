@@ -211,6 +211,21 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
     return [extensions allObjects];
 }
 
+- (NSArray *)cdBasedSystemIDs
+{
+    NSMutableSet *systems = [NSMutableSet set];
+
+    for (NSDictionary *system in self.systems)
+    {
+        if (system[PVUsesCDsKey])
+        {
+            [systems addObject:system[PVSystemIdentifierKey]];
+        }
+    }
+
+    return [systems allObjects];
+}
+
 - (NSArray *)supportedFileExtensions
 {
 	NSMutableSet *extentions = [NSMutableSet set];

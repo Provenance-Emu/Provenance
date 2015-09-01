@@ -34,6 +34,9 @@ extern NSString * const PVLeftShoulderButton;
 extern NSString * const PVRightShoulderButton;
 
 extern NSString * const PVGenesisSystemIdentifier;
+extern NSString * const PVGameGearSystemIdentifier;
+extern NSString * const PVMasterSystemSystemIdentifier;
+extern NSString * const PVSegaCDSystemIdentifier;
 extern NSString * const PVSNESSystemIdentifier;
 extern NSString * const PVGBASystemIdentifier;
 extern NSString * const PVGBSystemIdentifier;
@@ -53,6 +56,7 @@ extern NSString * const PVNESSystemIdentifier;
 - (NSString *)shortNameForSystemIdentifier:(NSString *)systemID;
 - (NSArray *)supportedFileExtensions;
 - (NSArray *)supportedCDFileExtensions;
+- (NSArray *)cdBasedSystemIDs;
 - (NSArray *)fileExtensionsForSystemIdentifier:(NSString *)systemID;
 - (NSString *)systemIdentifierForFileExtension:(NSString *)fileExtension;
 - (NSArray *)systemIdentifiersForFileExtension:(NSString *)fileExtension;
