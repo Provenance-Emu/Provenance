@@ -18,7 +18,9 @@
 #import "UIAlertView+BlockAdditions.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "PVEmulatorConfiguration.h"
-#import <AssetsLibrary/AssetsLibrary.h>
+#if !TARGET_OS_TV
+    #import <AssetsLibrary/AssetsLibrary.h>
+#endif
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
 #import "MBProgressHUD.h"
@@ -38,12 +40,16 @@ NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 @property (nonatomic, strong) UICollectionView *collectionView;
+#if !TARGET_OS_TV
 @property (nonatomic, strong) UIToolbar *renameToolbar;
+#endif
 @property (nonatomic, strong) UIView *renameOverlay;
 @property (nonatomic, strong) UITextField *renameTextField;
 @property (nonatomic, strong) PVGame *gameToRename;
 @property (nonatomic, strong) PVGame *gameForCustomArt;
+#if !TARGET_OS_TV
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
+#endif
 
 @property (nonatomic, strong) NSDictionary *gamesInSections;
 @property (nonatomic, strong) NSArray *sectionInfo;
@@ -76,7 +82,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	self.renameOverlay = nil;
 	self.renameTextField = nil;
-	self.renameToolbar = nil;
+#if !TARGET_OS_TV
+    self.renameToolbar = nil;
+#endif
 	self.gameToRename = nil;
 	self.gamesInSections = nil;
 	
@@ -143,6 +151,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     {
         [self setUpGameLibrary];
     }
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        NSString *rompath = [[NSBundle mainBundle] pathForResource:@"GoldenAxe" ofType:@"zip"];
+        NSError *error = nil;
+        NSString *newPath = [[self romsPath] stringByAppendingPathComponent:[rompath lastPathComponent]];
+        if (![[NSFileManager defaultManager] copyItemAtPath:rompath toPath:newPath error:&error])
+        {
+            NSLog(@"Error: %@", [error localizedDescription]);
+        }
+    });
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -166,10 +184,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
+#if !TARGET_OS_TV
     if ([[segue identifier] isEqualToString:@"SettingsSegue"])
     {
         [(PVSettingsViewController *)[[segue destinationViewController] topViewController] setGameImporter:self.gameImporter];
     }
+#endif
 }
 
 #pragma mark - Filesystem Helpers
@@ -238,18 +258,20 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (IBAction)getMoreROMs
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Get ROMs!"
-                                                    message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select Provenance and your ROM will magically appear in the Library.\n\nNEW: Now you can bulk transfer ROMs through your PC. See Menu."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"Cancel"
-                                          otherButtonTitles:@"Open Safari", nil];
-    [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-        if (buttonIndex != [alert cancelButtonIndex])
-        {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://google.com"]];
-        }
-    }];
-    [alert show];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Get ROMs!"
+                                                                   message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select Provenance and your ROM will magically appear in the Library.\n\nNEW: Now you can bulk transfer ROMs through your PC. See Menu."
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Open Safari"
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction * _Nonnull action) {
+                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://google.com"]];
+                                            }]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                              style:UIAlertActionStyleCancel
+                                            handler:^(UIAlertAction * _Nonnull action) {
+                                                // no op
+                                            }]];
+    [self presentViewController:alert animated:YES completion:NULL];
 }
 
 - (NSString *)BIOSPathForSystemID:(NSString *)systemID
@@ -674,55 +696,61 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
         PVGame *game = games[[indexPath item]];
         
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] init];
-        [actionSheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
-        
-        [actionSheet PV_addButtonWithTitle:@"Rename" action:^{
-            [weakSelf renameGame:game];
-        }];
-        [actionSheet PV_addButtonWithTitle:@"Choose Custom Artwork" action:^{
-            [weakSelf chooseCustomArtworkForGame:game];
-        }];
-        
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@""
+                                                                             message:@""
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+#if !TARGET_OS_TV
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Rename"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * _Nonnull action) {
+                                                          [weakSelf renameGame:game];
+                                                      }]];
+
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Choose Custom Artwork"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * _Nonnull action) {
+                                                          [weakSelf chooseCustomArtworkForGame:game];
+                                                      }]];
+
         if ([[game originalArtworkURL] length] &&
             [[game originalArtworkURL] isEqualToString:[game customArtworkURL]] == NO)
         {
-            [actionSheet PV_addButtonWithTitle:@"Restore Original Artwork" action:^{
-                [PVMediaCache deleteImageForKey:[game customArtworkURL]];
-                [weakSelf.realm beginWriteTransaction];
-                [game setCustomArtworkURL:@""];
-                [weakSelf.realm commitWriteTransaction];
-                NSString *originalArtworkURL = [game originalArtworkURL];
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        NSIndexPath *indexPath = [weakSelf indexPathForGameWithMD5Hash:[game md5Hash]];
-                        [weakSelf fetchGames];
-                        [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
-                    });
-                });
-            }];
+            [actionSheet addAction:[UIAlertAction actionWithTitle:@"Restore Original Artwork"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * _Nonnull action) {
+                                                              [PVMediaCache deleteImageForKey:[game customArtworkURL]];
+                                                              [weakSelf.realm beginWriteTransaction];
+                                                              [game setCustomArtworkURL:@""];
+                                                              [weakSelf.realm commitWriteTransaction];
+                                                              NSString *originalArtworkURL = [game originalArtworkURL];
+                                                              dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                                                                  [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
+                                                                  dispatch_async(dispatch_get_main_queue(), ^{
+                                                                      NSIndexPath *indexPath = [weakSelf indexPathForGameWithMD5Hash:[game md5Hash]];
+                                                                      [weakSelf fetchGames];
+                                                                      [weakSelf.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+                                                                  });
+                                                              });
+                                                          }]];
         }
-        
-        [actionSheet PV_addDestructiveButtonWithTitle:@"Delete" action:^{
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
-                                                            message:@"Any save states and battery saves will also be deleted, are you sure?"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"No"
-                                                  otherButtonTitles:@"Yes", nil];
-            [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-                if (buttonIndex != [alert cancelButtonIndex])
-                {
-                    [weakSelf deleteGame:game];
-                }
-            }];
-            [alert show];
-        }];
-        [actionSheet PV_addCancelButtonWithTitle:@"Cancel" action:NULL];
-        [actionSheet showInView:self.view];
+#endif
+
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
+                                                                           message:@"Any save states and battery saves will also be deleted, are you sure?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                [weakSelf deleteGame:game];
+            }]];
+            [weakSelf presentViewController:alert animated:YES completion:NULL];
+        }]];
+
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:NULL]];
+        [weakSelf presentViewController:actionSheet animated:YES completion:NULL];
     }
 }
 
+#if !TARGET_OS_TV
 - (void)renameGame:(PVGame *)game
 {
     self.gameToRename = game;
@@ -740,7 +768,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                          [self.renameOverlay setAlpha:1.0];
                      }
                      completion:NULL];
-    
+
     self.renameToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
     [self.renameToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
     [self.renameToolbar setBarStyle:UIBarStyleBlack];
@@ -768,6 +796,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     [self.renameTextField becomeFirstResponder];
 }
+#endif
 
 - (void)doneRenaming:(id)sender
 {
@@ -803,6 +832,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                object:nil];
     [self.renameTextField resignFirstResponder];
 }
+
 - (void)deleteGame:(PVGame *)game
 {
     NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
@@ -884,6 +914,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
+#if !TARGET_OS_TV
 - (void)chooseCustomArtworkForGame:(PVGame *)game
 {
     __weak PVGameLibraryViewController *weakSelf = self;
@@ -989,6 +1020,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                           weakSelf.assetsLibrary = nil;
                                       }];
 }
+#endif
 
 #pragma mark - Searching
 
@@ -1195,6 +1227,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)keyboardWillShow:(NSNotification *)note
 {
+#if !TARGET_OS_TV
 	NSDictionary *userInfo = [note userInfo];
 	
 	CGRect keyboardEndFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
@@ -1210,11 +1243,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 					 }
 					 completion:^(BOOL finished) {
 					 }];
+#endif
 }
 
 
 - (void)keyboardWillHide:(NSNotification *)note
 {
+#if !TARGET_OS_TV
 	NSDictionary *userInfo = [note userInfo];
 	
 	CGFloat animationDuration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
@@ -1238,10 +1273,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 													name:UIKeyboardWillHideNotification
 												  object:nil];
+#endif
 }
 
 #pragma mark - Image Picker Deleate
 
+#if !TARGET_OS_TV
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
 	[self dismissViewControllerAnimated:YES completion:NULL];
@@ -1269,5 +1306,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self dismissViewControllerAnimated:YES completion:NULL];
 	self.gameForCustomArt = nil;
 }
+#endif
 
 @end

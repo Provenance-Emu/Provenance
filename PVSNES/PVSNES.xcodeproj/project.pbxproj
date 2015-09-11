@@ -12,7 +12,6 @@
 		1ACEA91017F75FA10031B1C9 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; };
 		1ACEA91217F75FA80031B1C9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */; };
 		1ACEA91517F75FAF0031B1C9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
-		1ACEA91617F75FAF0031B1C9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91417F75FAF0031B1C9 /* CoreAudio.framework */; };
 		1ACEA99017F760390031B1C9 /* PVSNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */; };
 		1ACEA99117F760390031B1C9 /* apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91D17F760390031B1C9 /* apu.cpp */; };
 		1ACEA99217F760390031B1C9 /* SNES_SPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92817F760390031B1C9 /* SNES_SPC.cpp */; };
@@ -66,10 +65,77 @@
 		1ACEA9C517F760390031B1C9 /* srtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98917F760390031B1C9 /* srtc.cpp */; };
 		1ACEA9C717F760390031B1C9 /* tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98D17F760390031B1C9 /* tile.cpp */; };
 		1ACEA9C817F760390031B1C9 /* SNESOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */; };
+		1AD482901BA363E900FDA50A /* sa1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96F17F760390031B1C9 /* sa1.cpp */; };
+		1AD482911BA363E900FDA50A /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93E17F760390031B1C9 /* cpu.cpp */; };
+		1AD482921BA363E900FDA50A /* netplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96517F760390031B1C9 /* netplay.cpp */; };
+		1AD482931BA363E900FDA50A /* obc1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96717F760390031B1C9 /* obc1.cpp */; };
+		1AD482941BA363E900FDA50A /* SPC_DSP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92D17F760390031B1C9 /* SPC_DSP.cpp */; };
+		1AD482951BA363E900FDA50A /* dsp4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95117F760390031B1C9 /* dsp4.cpp */; };
+		1AD482961BA363E900FDA50A /* dsp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94F17F760390031B1C9 /* dsp2.cpp */; };
+		1AD482971BA363E900FDA50A /* SNES_SPC_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92B17F760390031B1C9 /* SNES_SPC_state.cpp */; };
+		1AD482981BA363E900FDA50A /* sa1cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97117F760390031B1C9 /* sa1cpu.cpp */; };
+		1AD482991BA363E900FDA50A /* seta011.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97D17F760390031B1C9 /* seta011.cpp */; };
+		1AD4829A1BA363E900FDA50A /* controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93C17F760390031B1C9 /* controls.cpp */; };
+		1AD4829B1BA363E900FDA50A /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96B17F760390031B1C9 /* ppu.cpp */; };
+		1AD4829C1BA363E900FDA50A /* fxinst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95617F760390031B1C9 /* fxinst.cpp */; };
+		1AD4829D1BA363E900FDA50A /* SPC_Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92F17F760390031B1C9 /* SPC_Filter.cpp */; };
+		1AD4829E1BA363E900FDA50A /* dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94C17F760390031B1C9 /* dsp.cpp */; };
+		1AD4829F1BA363E900FDA50A /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95917F760390031B1C9 /* gfx.cpp */; };
+		1AD482A01BA363E900FDA50A /* cpuops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94317F760390031B1C9 /* cpuops.cpp */; };
+		1AD482A11BA363E900FDA50A /* c4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93317F760390031B1C9 /* c4.cpp */; };
+		1AD482A21BA363E900FDA50A /* snapshot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97F17F760390031B1C9 /* snapshot.cpp */; };
+		1AD482A31BA363E900FDA50A /* seta018.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97E17F760390031B1C9 /* seta018.cpp */; };
+		1AD482A41BA363E900FDA50A /* spc7110.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98317F760390031B1C9 /* spc7110.cpp */; };
+		1AD482A51BA363E900FDA50A /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95F17F760390031B1C9 /* memmap.cpp */; };
+		1AD482A61BA363E900FDA50A /* tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98D17F760390031B1C9 /* tile.cpp */; };
+		1AD482A71BA363E900FDA50A /* cpuexec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94017F760390031B1C9 /* cpuexec.cpp */; };
+		1AD482A81BA363E900FDA50A /* fxemu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95417F760390031B1C9 /* fxemu.cpp */; };
+		1AD482A91BA363E900FDA50A /* apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91D17F760390031B1C9 /* apu.cpp */; };
+		1AD482AA1BA363E900FDA50A /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94717F760390031B1C9 /* debug.cpp */; };
+		1AD482AB1BA363E900FDA50A /* SNES_SPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92817F760390031B1C9 /* SNES_SPC.cpp */; };
+		1AD482AC1BA363E900FDA50A /* clip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93917F760390031B1C9 /* clip.cpp */; };
+		1AD482AD1BA363E900FDA50A /* srtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98917F760390031B1C9 /* srtc.cpp */; };
+		1AD482AE1BA363E900FDA50A /* sdd1emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97717F760390031B1C9 /* sdd1emu.cpp */; };
+		1AD482AF1BA363E900FDA50A /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96D17F760390031B1C9 /* reader.cpp */; };
+		1AD482B01BA363E900FDA50A /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97917F760390031B1C9 /* server.cpp */; };
+		1AD482B11BA363E900FDA50A /* cheats2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93817F760390031B1C9 /* cheats2.cpp */; };
+		1AD482B21BA363E900FDA50A /* cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93617F760390031B1C9 /* cheats.cpp */; };
+		1AD482B31BA363E900FDA50A /* conffile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93A17F760390031B1C9 /* conffile.cpp */; };
+		1AD482B41BA363E900FDA50A /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94A17F760390031B1C9 /* dma.cpp */; };
+		1AD482B51BA363E900FDA50A /* dsp3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95017F760390031B1C9 /* dsp3.cpp */; };
+		1AD482B61BA363E900FDA50A /* movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA96317F760390031B1C9 /* movie.cpp */; };
+		1AD482B71BA363E900FDA50A /* snes9x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98117F760390031B1C9 /* snes9x.cpp */; };
+		1AD482B81BA363E900FDA50A /* dsp1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94E17F760390031B1C9 /* dsp1.cpp */; };
+		1AD482B91BA363E900FDA50A /* globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95B17F760390031B1C9 /* globals.cpp */; };
+		1AD482BA1BA363E900FDA50A /* c4emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93517F760390031B1C9 /* c4emu.cpp */; };
+		1AD482BB1BA363E900FDA50A /* crosshairs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA94517F760390031B1C9 /* crosshairs.cpp */; };
+		1AD482BC1BA363E900FDA50A /* seta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97A17F760390031B1C9 /* seta.cpp */; };
+		1AD482BD1BA363E900FDA50A /* logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95D17F760390031B1C9 /* logger.cpp */; };
+		1AD482BE1BA363E900FDA50A /* fxdbg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA95317F760390031B1C9 /* fxdbg.cpp */; };
+		1AD482BF1BA363E900FDA50A /* bsx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA93117F760390031B1C9 /* bsx.cpp */; };
+		1AD482C01BA363E900FDA50A /* seta010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97C17F760390031B1C9 /* seta010.cpp */; };
+		1AD482C11BA363E900FDA50A /* SNESOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */; };
+		1AD482C21BA363E900FDA50A /* PVSNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */; };
+		1AD482C31BA363E900FDA50A /* SNES_SPC_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA92A17F760390031B1C9 /* SNES_SPC_misc.cpp */; };
+		1AD482C41BA363E900FDA50A /* sdd1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97517F760390031B1C9 /* sdd1.cpp */; };
+		1AD482C61BA363E900FDA50A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
+		1AD482C71BA363E900FDA50A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */; };
+		1AD482C81BA363E900FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; };
+		1AD482C91BA363E900FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */; };
+		1AD482CA1BA363E900FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1ACEA8E217F75F350031B1C9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482CB1BA363E900FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -208,6 +274,7 @@
 		1ACEA98D17F760390031B1C9 /* tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tile.cpp; sourceTree = "<group>"; };
 		1ACEA98E17F760390031B1C9 /* tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
 		1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
+		1AD482D01BA363E900FDA50A /* libPVSNESTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSNESTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,11 +283,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ACEA91517F75FAF0031B1C9 /* AudioToolbox.framework in Frameworks */,
-				1ACEA91617F75FAF0031B1C9 /* CoreAudio.framework in Frameworks */,
 				1ACEA91217F75FA80031B1C9 /* CoreGraphics.framework in Frameworks */,
 				1ACEA91017F75FA10031B1C9 /* OpenGLES.framework in Frameworks */,
 				1ACEA90E17F75F6E0031B1C9 /* UIKit.framework in Frameworks */,
 				1ACEA8E817F75F350031B1C9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482C51BA363E900FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482C61BA363E900FDA50A /* AudioToolbox.framework in Frameworks */,
+				1AD482C71BA363E900FDA50A /* CoreGraphics.framework in Frameworks */,
+				1AD482C81BA363E900FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD482C91BA363E900FDA50A /* UIKit.framework in Frameworks */,
+				1AD482CA1BA363E900FDA50A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,6 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				1ACEA8E417F75F350031B1C9 /* libPVSNES.a */,
+				1AD482D01BA363E900FDA50A /* libPVSNESTV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -436,6 +515,23 @@
 			productReference = 1ACEA8E417F75F350031B1C9 /* libPVSNES.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD4828E1BA363E900FDA50A /* PVSNESTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD482CC1BA363E900FDA50A /* Build configuration list for PBXNativeTarget "PVSNESTV" */;
+			buildPhases = (
+				1AD4828F1BA363E900FDA50A /* Sources */,
+				1AD482C51BA363E900FDA50A /* Frameworks */,
+				1AD482CB1BA363E900FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVSNESTV;
+			productName = PVSNES;
+			productReference = 1AD482D01BA363E900FDA50A /* libPVSNESTV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -458,6 +554,7 @@
 			projectRoot = "";
 			targets = (
 				1ACEA8E317F75F350031B1C9 /* PVSNES */,
+				1AD4828E1BA363E900FDA50A /* PVSNESTV */,
 			);
 		};
 /* End PBXProject section */
@@ -520,6 +617,66 @@
 				1ACEA99017F760390031B1C9 /* PVSNESEmulatorCore.mm in Sources */,
 				1ACEA99317F760390031B1C9 /* SNES_SPC_misc.cpp in Sources */,
 				1ACEA9B917F760390031B1C9 /* sdd1.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD4828F1BA363E900FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482901BA363E900FDA50A /* sa1.cpp in Sources */,
+				1AD482911BA363E900FDA50A /* cpu.cpp in Sources */,
+				1AD482921BA363E900FDA50A /* netplay.cpp in Sources */,
+				1AD482931BA363E900FDA50A /* obc1.cpp in Sources */,
+				1AD482941BA363E900FDA50A /* SPC_DSP.cpp in Sources */,
+				1AD482951BA363E900FDA50A /* dsp4.cpp in Sources */,
+				1AD482961BA363E900FDA50A /* dsp2.cpp in Sources */,
+				1AD482971BA363E900FDA50A /* SNES_SPC_state.cpp in Sources */,
+				1AD482981BA363E900FDA50A /* sa1cpu.cpp in Sources */,
+				1AD482991BA363E900FDA50A /* seta011.cpp in Sources */,
+				1AD4829A1BA363E900FDA50A /* controls.cpp in Sources */,
+				1AD4829B1BA363E900FDA50A /* ppu.cpp in Sources */,
+				1AD4829C1BA363E900FDA50A /* fxinst.cpp in Sources */,
+				1AD4829D1BA363E900FDA50A /* SPC_Filter.cpp in Sources */,
+				1AD4829E1BA363E900FDA50A /* dsp.cpp in Sources */,
+				1AD4829F1BA363E900FDA50A /* gfx.cpp in Sources */,
+				1AD482A01BA363E900FDA50A /* cpuops.cpp in Sources */,
+				1AD482A11BA363E900FDA50A /* c4.cpp in Sources */,
+				1AD482A21BA363E900FDA50A /* snapshot.cpp in Sources */,
+				1AD482A31BA363E900FDA50A /* seta018.cpp in Sources */,
+				1AD482A41BA363E900FDA50A /* spc7110.cpp in Sources */,
+				1AD482A51BA363E900FDA50A /* memmap.cpp in Sources */,
+				1AD482A61BA363E900FDA50A /* tile.cpp in Sources */,
+				1AD482A71BA363E900FDA50A /* cpuexec.cpp in Sources */,
+				1AD482A81BA363E900FDA50A /* fxemu.cpp in Sources */,
+				1AD482A91BA363E900FDA50A /* apu.cpp in Sources */,
+				1AD482AA1BA363E900FDA50A /* debug.cpp in Sources */,
+				1AD482AB1BA363E900FDA50A /* SNES_SPC.cpp in Sources */,
+				1AD482AC1BA363E900FDA50A /* clip.cpp in Sources */,
+				1AD482AD1BA363E900FDA50A /* srtc.cpp in Sources */,
+				1AD482AE1BA363E900FDA50A /* sdd1emu.cpp in Sources */,
+				1AD482AF1BA363E900FDA50A /* reader.cpp in Sources */,
+				1AD482B01BA363E900FDA50A /* server.cpp in Sources */,
+				1AD482B11BA363E900FDA50A /* cheats2.cpp in Sources */,
+				1AD482B21BA363E900FDA50A /* cheats.cpp in Sources */,
+				1AD482B31BA363E900FDA50A /* conffile.cpp in Sources */,
+				1AD482B41BA363E900FDA50A /* dma.cpp in Sources */,
+				1AD482B51BA363E900FDA50A /* dsp3.cpp in Sources */,
+				1AD482B61BA363E900FDA50A /* movie.cpp in Sources */,
+				1AD482B71BA363E900FDA50A /* snes9x.cpp in Sources */,
+				1AD482B81BA363E900FDA50A /* dsp1.cpp in Sources */,
+				1AD482B91BA363E900FDA50A /* globals.cpp in Sources */,
+				1AD482BA1BA363E900FDA50A /* c4emu.cpp in Sources */,
+				1AD482BB1BA363E900FDA50A /* crosshairs.cpp in Sources */,
+				1AD482BC1BA363E900FDA50A /* seta.cpp in Sources */,
+				1AD482BD1BA363E900FDA50A /* logger.cpp in Sources */,
+				1AD482BE1BA363E900FDA50A /* fxdbg.cpp in Sources */,
+				1AD482BF1BA363E900FDA50A /* bsx.cpp in Sources */,
+				1AD482C01BA363E900FDA50A /* seta010.cpp in Sources */,
+				1AD482C11BA363E900FDA50A /* SNESOESupport.mm in Sources */,
+				1AD482C21BA363E900FDA50A /* PVSNESEmulatorCore.mm in Sources */,
+				1AD482C31BA363E900FDA50A /* SNES_SPC_misc.cpp in Sources */,
+				1AD482C41BA363E900FDA50A /* sdd1.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,6 +807,88 @@
 			};
 			name = Release;
 		};
+		1AD482CD1BA363E900FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"-Wno-write-strings",
+					"-Dunix",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1AD482CE1BA363E900FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"-Wno-write-strings",
+					"-Dunix",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1AD482CF1BA363E900FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSNES.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSNES/PVSNES-Prefix.pch";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"-Wno-write-strings",
+					"-Dunix",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = AdHoc;
+		};
 		1AE17E1C19884A2400AE3AB1 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -727,6 +966,16 @@
 				1ACEA90817F75F350031B1C9 /* Debug */,
 				1ACEA90917F75F350031B1C9 /* Release */,
 				1AE17E1D19884A2400AE3AB1 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD482CC1BA363E900FDA50A /* Build configuration list for PBXNativeTarget "PVSNESTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD482CD1BA363E900FDA50A /* Debug */,
+				1AD482CE1BA363E900FDA50A /* Release */,
+				1AD482CF1BA363E900FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

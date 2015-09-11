@@ -10,10 +10,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+FrameAdditions.h"
 
-static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
-{
-	return [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
-}
+//static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
+//{
+//	return [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
+//}
 
 @interface PVGameLibraryCollectionViewCell ()
 
@@ -36,7 +36,7 @@ static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
 		[_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
-		[_titleLabel setTextColor:[UIColor darkTextColor]];
+		[_titleLabel setTextColor:[UIColor blackColor]];
 		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 		[_titleLabel setNumberOfLines:0];
