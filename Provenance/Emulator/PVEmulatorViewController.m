@@ -34,7 +34,7 @@
 @property (nonatomic, strong) UIButton *saveControlsButton;
 @property (nonatomic, strong) UIButton *resetControlsButton;
 
-@property (nonatomic, weak) UIActionSheet *menuActionSheet;
+@property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
 @end
@@ -131,7 +131,9 @@ void uncaughtExceptionHandler(NSException *exception)
         __weak typeof(self) weakSelf = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DLog(@"Unable to load ROM at %@", [self.game romPath]);
+#if !TARGET_OS_TV
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+#endif
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unable to load ROM"
                                                                                      message:@"Maybe it's corrupt? Try deleting and reimporting it."
                                                                               preferredStyle:UIAlertControllerStyleAlert];
@@ -200,37 +202,35 @@ void uncaughtExceptionHandler(NSException *exception)
 		{
 			[self.emulatorCore setPauseEmulation:YES];
 			
-			UIAlertView *alert = [[UIAlertView alloc] init];
-			[alert setTitle:@"Autosave file detected"];
-			[alert setMessage:@"Would you like to load it?"];\
-			[alert addButtonWithTitle:@"Yes"];
-			[alert addButtonWithTitle:@"Yes, and stop asking"];
-			[alert addButtonWithTitle:@"No"];
-			[alert addButtonWithTitle:@"No, and stop asking"];
-			[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-				if (buttonIndex == 0)
-				{
-					[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
-					[weakSelf.emulatorCore setPauseEmulation:NO];
-				}
-				else if (buttonIndex == 1)
-				{
-					[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
-					[[PVSettingsModel sharedInstance] setAutoSave:YES];
-					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
-				}
-				else if (buttonIndex == 2)
-				{
-					[weakSelf.emulatorCore setPauseEmulation:NO];
-				}
-				else if (buttonIndex == 3)
-				{
-					[weakSelf.emulatorCore setPauseEmulation:NO];
-					[[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
-					[[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
-				}
-			}];
-			[alert show];
+			UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Autosave file detected"
+                                                                           message:@"Would you like to load it?"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Yes"
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                        [weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
+                                                        [weakSelf.emulatorCore setPauseEmulation:NO];
+                                                    }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Yes, and stop asking"
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                        [weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
+                                                        [[PVSettingsModel sharedInstance] setAutoSave:YES];
+                                                        [[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
+                                                    }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"No"
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                        [weakSelf.emulatorCore setPauseEmulation:NO];
+                                                    }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"No, and stop asking"
+                                                      style:UIAlertActionStyleDefault
+                                                    handler:^(UIAlertAction * _Nonnull action) {
+                                                        [weakSelf.emulatorCore setPauseEmulation:NO];
+                                                        [[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
+                                                        [[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
+                                                    }]];
+			[self presentViewController:alert animated:YES completion:NULL];
 		}
 	}
 }
@@ -238,8 +238,10 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	
+
+#if !TARGET_OS_TV
 	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+#endif
 }
 
 - (NSString *)documentsPath
@@ -295,35 +297,35 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
-    UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
+                                                                         message:@""
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
     self.menuActionSheet = actionsheet;
-    
-	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if (![self.controllerViewController gameController])
 	{
-		[actionsheet PV_addButtonWithTitle:@"Edit Controls" action:^{
+		[actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			[weakSelf.controllerViewController editControls];
-		}];
+		}]];
     } else if ([self.controllerViewController iCadeController] == [self.controllerViewController gameController]) {
-        [actionsheet PV_addButtonWithTitle:@"Disconnect iCade" action:^{
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Disconnect iCade" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-        }];
+        }]];
     }
 	
-	[actionsheet PV_addButtonWithTitle:@"Save State" action:^{
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSaveStateMenu)
 					   withObject:nil
 					   afterDelay:0.1];
-	}];
-	[actionsheet PV_addButtonWithTitle:@"Load State" action:^{
+	}]];
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Load State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showLoadStateMenu)
 					   withObject:nil
 					   afterDelay:0.1];
-	}];
-	[actionsheet PV_addButtonWithTitle:@"Reset" action:^{
+	}]];
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
 			NSString *saveStatePath = [self saveStatePath];
@@ -334,8 +336,8 @@ void uncaughtExceptionHandler(NSException *exception)
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		[weakSelf.emulatorCore resetEmulation];
 		weakSelf.isShowingMenu = NO;
-	}];
-	[actionsheet PV_addButtonWithTitle:@"Quit" action:^{
+	}]];
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
 			NSString *saveStatePath = [weakSelf saveStatePath];
@@ -345,21 +347,24 @@ void uncaughtExceptionHandler(NSException *exception)
 		
 		[weakSelf.gameAudio stopAudio];
 		[weakSelf.emulatorCore stopEmulation];
+#if !TARGET_OS_TV
 		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+#endif
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
-	}];
-	[actionsheet PV_addCancelButtonWithTitle:@"Resume" action:^{
+	}]];
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
-	}];
-	[actionsheet showInView:self.view];
+	}]];
+
+    [self presentViewController:actionsheet animated:YES completion:NULL];
 }
 
 - (void)hideMenu
 {
     if (self.menuActionSheet)
     {
-        [self.menuActionSheet dismissWithClickedButtonIndex:[self.menuActionSheet cancelButtonIndex] animated:YES];
+        [self dismissViewControllerAnimated:YES completion:NULL];
         [self.emulatorCore setPauseEmulation:NO];
         self.isShowingMenu = NO;
     }
@@ -376,20 +381,21 @@ void uncaughtExceptionHandler(NSException *exception)
 	if (!info)
 	{
 		info = [NSMutableArray array];
-		[info addObjectsFromArray:@[@"Slot 1 (empty)",
-		 @"Slot 2 (empty)",
-		 @"Slot 3 (empty)",
-		 @"Slot 4 (empty)",
-		 @"Slot 5 (empty)"]];
+        [info addObjectsFromArray:@[@"Slot 1 (empty)",
+                                    @"Slot 2 (empty)",
+                                    @"Slot 3 (empty)",
+                                    @"Slot 4 (empty)",
+                                    @"Slot 5 (empty)"]];
 	}
 	
-	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
+                                                                         message:@""
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
     self.menuActionSheet = actionsheet;
-	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	for (NSUInteger i = 0; i < 5; i++)
 	{
-		[actionsheet PV_addButtonWithTitle:info[i] action:^{
+		[actionsheet addAction:[UIAlertAction actionWithTitle:info[i] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			NSDate *now = [NSDate date];
 			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 			[formatter setDateStyle:NSDateFormatterShortStyle];
@@ -403,15 +409,15 @@ void uncaughtExceptionHandler(NSException *exception)
 			[weakSelf.emulatorCore saveStateToFileAtPath:savePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-		}];
+		}]];
 	}
 	
-	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
-	}];
+	}]];
 	
-	[actionsheet showInView:self.view];
+    [self presentViewController:actionsheet animated:YES completion:NULL];
 }
 
 - (void)showLoadStateMenu
@@ -425,30 +431,31 @@ void uncaughtExceptionHandler(NSException *exception)
 	NSMutableArray *info = [NSMutableArray arrayWithContentsOfFile:infoPath];
 	if (!info)
 	{
-		info = [NSMutableArray array];
-		[info addObjectsFromArray:@[@"Slot 1 (empty)",
-		 @"Slot 2 (empty)",
-		 @"Slot 3 (empty)",
-		 @"Slot 4 (empty)",
-		 @"Slot 5 (empty)"]];
+        info = [NSMutableArray array];
+        [info addObjectsFromArray:@[@"Slot 1 (empty)",
+                                    @"Slot 2 (empty)",
+                                    @"Slot 3 (empty)",
+                                    @"Slot 4 (empty)",
+                                    @"Slot 5 (empty)"]];
 	}
 	
-	UIActionSheet *actionsheet = [[UIActionSheet alloc] init];
+	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
+                                                                         message:@""
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
     self.menuActionSheet = actionsheet;
-	[actionsheet setActionSheetStyle:UIActionSheetStyleBlackTranslucent];
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
 	{
-		[actionsheet PV_addButtonWithTitle:@"Last Autosave" action:^{
+		[actionsheet addAction:[UIAlertAction actionWithTitle:@"Last AutoSave" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-		}];
+		}]];
 	}
 	
 	for (NSUInteger i = 0; i < 5; i++)
 	{
-		[actionsheet PV_addButtonWithTitle:info[i] action:^{
+		[actionsheet addAction:[UIAlertAction actionWithTitle:info[i] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			NSString *savePath = [saveStatePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%tu.svs", i]];
 			if ([[NSFileManager defaultManager] fileExistsAtPath:savePath])
 			{
@@ -456,15 +463,15 @@ void uncaughtExceptionHandler(NSException *exception)
 			}
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-		}];
+		}]];
 	}
 	
-	[actionsheet PV_addCancelButtonWithTitle:@"Cancel" action:^{
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
-	}];
+	}]];
 	
-	[actionsheet showInView:self.view];
+     [self presentViewController:actionsheet animated:YES completion:NULL];
 }
 
 #pragma mark - PVControllerViewControllerDelegate

@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+#if !TARGET_OS_TV
+
 #import <UIKit/UIKit.h>
 
 #import "Reachability.h"
@@ -34,3 +36,5 @@
 - (IBAction)done:(id)sender;
 
 @end
+
+#endif

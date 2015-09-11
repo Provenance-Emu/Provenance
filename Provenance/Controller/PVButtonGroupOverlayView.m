@@ -21,7 +21,9 @@
 {
 	if ((self = [super initWithFrame:CGRectZero]))
 	{
+#if !TARGET_OS_TV
 		[self setMultipleTouchEnabled:YES];
+#endif
 		[self setBackgroundColor:[UIColor clearColor]];
 		self.buttons = buttons;
 	}

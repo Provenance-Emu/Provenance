@@ -24,6 +24,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 @property (nonatomic, strong) NSArray *controlLayout;
 
+#if !TARGET_OS_TV
 @property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
 @property (nonatomic, strong) UIPinchGestureRecognizer *dpadPinchRecognizer;
 
@@ -35,6 +36,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 @property (nonatomic, strong) UIToolbar *fakeBlurView;
 
 @property (nonatomic, assign, getter = isEditing) BOOL editing;
+#endif
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
 @end
@@ -69,8 +71,10 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
+#if !TARGET_OS_TV
 	self.saveControlsButton = nil;
 	self.resetControlsButton = nil;
+#endif
 	self.delegate = nil;
 }
 
@@ -153,6 +157,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 - (void)setupTouchControls
 {
+#if !TARGET_OS_TV
     if (!self.touchControlsSetup)
     {
         self.touchControlsSetup = YES;
@@ -327,10 +332,12 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
             }
         }
     }
+#endif
 }
 
 - (void)editControls
 {
+#if !TARGET_OS_TV
 	self.editing = YES;
 	
 	if ([self.delegate respondsToSelector:@selector(controllerViewControllerDidBeginEditing:)])
@@ -395,6 +402,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 						 [self.dPad addGestureRecognizer:self.dPadPanRecognizer];
 						 [self.buttonGroup addGestureRecognizer:self.buttonPanRecognizer];
 					 }];
+#endif
 }
 
 - (void)adjustAnchorPointForRecognizer:(UIGestureRecognizer *)recognizer
@@ -471,6 +479,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 
 - (void)saveControls:(id)sender
 {
+#if !TARGET_OS_TV
     CGRect dPadFrame = [self.dPad frame];
     CGRect buttonsFrame = [self.buttonGroup frame];
 	
@@ -520,6 +529,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 							 [self.delegate controllerViewControllerDidEndEditing:self];
 						 }
 					 }];
+#endif
 }
 
 #pragma mark - GameController Notifications

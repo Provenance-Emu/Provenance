@@ -11,7 +11,6 @@
 		1ACEA67717F746F80031B1C9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67617F746F80031B1C9 /* UIKit.framework */; };
 		1ACEA67917F747150031B1C9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67817F747150031B1C9 /* CoreGraphics.framework */; };
 		1ACEA67B17F747250031B1C9 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67A17F747250031B1C9 /* OpenGLES.framework */; };
-		1ACEA67D17F7472F0031B1C9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67C17F7472F0031B1C9 /* CoreAudio.framework */; };
 		1ACEA67F17F7473C0031B1C9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
 		1ACEA69917F748F80031B1C9 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		1ACEA69A17F748F80031B1C9 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69417F748F80031B1C9 /* OERingBuffer.m */; };
@@ -19,10 +18,30 @@
 		1ACEA69C17F748F80031B1C9 /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
 		1ACEA69D17F748F80031B1C9 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69817F748F80031B1C9 /* PVEmulatorCore.m */; };
 		1ACEA6A217F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
+		1AD4823D1BA363A400FDA50A /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
+		1AD4823E1BA363A400FDA50A /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
+		1AD4823F1BA363A400FDA50A /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69417F748F80031B1C9 /* OERingBuffer.m */; };
+		1AD482401BA363A400FDA50A /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
+		1AD482411BA363A400FDA50A /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
+		1AD482421BA363A400FDA50A /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69817F748F80031B1C9 /* PVEmulatorCore.m */; };
+		1AD482441BA363A400FDA50A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
+		1AD482451BA363A400FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67A17F747250031B1C9 /* OpenGLES.framework */; };
+		1AD482461BA363A400FDA50A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67817F747150031B1C9 /* CoreGraphics.framework */; };
+		1AD482471BA363A400FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67617F746F80031B1C9 /* UIKit.framework */; };
+		1AD482481BA363A400FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1ACEA64217F7467D0031B1C9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482491BA363A400FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -55,6 +74,7 @@
 		1ACEA69817F748F80031B1C9 /* PVEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorCore.m; sourceTree = "<group>"; };
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
+		1AD4824E1BA363A400FDA50A /* libPVSupportTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSupportTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,11 +83,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				1ACEA67F17F7473C0031B1C9 /* AudioToolbox.framework in Frameworks */,
-				1ACEA67D17F7472F0031B1C9 /* CoreAudio.framework in Frameworks */,
 				1ACEA67B17F747250031B1C9 /* OpenGLES.framework in Frameworks */,
 				1ACEA67917F747150031B1C9 /* CoreGraphics.framework in Frameworks */,
 				1ACEA67717F746F80031B1C9 /* UIKit.framework in Frameworks */,
 				1ACEA64817F7467D0031B1C9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482431BA363A400FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482441BA363A400FDA50A /* AudioToolbox.framework in Frameworks */,
+				1AD482451BA363A400FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD482461BA363A400FDA50A /* CoreGraphics.framework in Frameworks */,
+				1AD482471BA363A400FDA50A /* UIKit.framework in Frameworks */,
+				1AD482481BA363A400FDA50A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				1ACEA64417F7467D0031B1C9 /* libPVSupport.a */,
+				1AD4824E1BA363A400FDA50A /* libPVSupportTV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,6 +202,23 @@
 			productReference = 1ACEA64417F7467D0031B1C9 /* libPVSupport.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD4823B1BA363A400FDA50A /* PVSupportTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD4824A1BA363A400FDA50A /* Build configuration list for PBXNativeTarget "PVSupportTV" */;
+			buildPhases = (
+				1AD4823C1BA363A400FDA50A /* Sources */,
+				1AD482431BA363A400FDA50A /* Frameworks */,
+				1AD482491BA363A400FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVSupportTV;
+			productName = ProvenanceSupport;
+			productReference = 1AD4824E1BA363A400FDA50A /* libPVSupportTV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -192,6 +241,7 @@
 			projectRoot = "";
 			targets = (
 				1ACEA64317F7467D0031B1C9 /* PVSupport */,
+				1AD4823B1BA363A400FDA50A /* PVSupportTV */,
 			);
 		};
 /* End PBXProject section */
@@ -207,6 +257,19 @@
 				1ACEA6A217F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m in Sources */,
 				1ACEA69C17F748F80031B1C9 /* OETimingUtils.m in Sources */,
 				1ACEA69D17F748F80031B1C9 /* PVEmulatorCore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD4823C1BA363A400FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD4823D1BA363A400FDA50A /* TPCircularBuffer.c in Sources */,
+				1AD4823E1BA363A400FDA50A /* OEGameAudio.m in Sources */,
+				1AD4823F1BA363A400FDA50A /* OERingBuffer.m in Sources */,
+				1AD482401BA363A400FDA50A /* NSObject+PVAbstractAdditions.m in Sources */,
+				1AD482411BA363A400FDA50A /* OETimingUtils.m in Sources */,
+				1AD482421BA363A400FDA50A /* PVEmulatorCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,6 +375,54 @@
 			};
 			name = Release;
 		};
+		1AD4824B1BA363A400FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1AD4824C1BA363A400FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1AD4824D1BA363A400FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVSupport.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = AdHoc;
+		};
 		1AE17E1819884A1000AE3AB1 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -377,6 +488,16 @@
 				1ACEA66817F7467D0031B1C9 /* Debug */,
 				1ACEA66917F7467D0031B1C9 /* Release */,
 				1AE17E1919884A1000AE3AB1 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD4824A1BA363A400FDA50A /* Build configuration list for PBXNativeTarget "PVSupportTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD4824B1BA363A400FDA50A /* Debug */,
+				1AD4824C1BA363A400FDA50A /* Release */,
+				1AD4824D1BA363A400FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

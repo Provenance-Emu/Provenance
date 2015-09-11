@@ -13,7 +13,7 @@
 
 @class PVEmulatorCore, PVGame;
 
-@interface PVEmulatorViewController : UIViewController <UIActionSheetDelegate, PVControllerViewControllerDelegate>
+@interface PVEmulatorViewController : UIViewController <PVControllerViewControllerDelegate>
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, strong) PVGame *game;
