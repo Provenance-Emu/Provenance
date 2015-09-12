@@ -71,6 +71,9 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
+    [self.emulatorCore stopEmulation];
+    [self.gameAudio stopAudio];
+
 	NSSetUncaughtExceptionHandler(NULL);
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	_staticEmulatorViewController = nil;

@@ -6,8 +6,6 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-#if !TARGET_OS_TV
-
 #import <UIKit/UIKit.h>
 
 #import "Reachability.h"
@@ -21,13 +19,15 @@
     
 }
 
+#if !TARGET_OS_TV
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;
-@property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLockSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
+@property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
+#endif
 @property (weak, nonatomic) IBOutlet UILabel *opacityValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-@property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 
@@ -36,5 +36,3 @@
 - (IBAction)done:(id)sender;
 
 @end
-
-#endif
