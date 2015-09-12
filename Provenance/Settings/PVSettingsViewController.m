@@ -25,16 +25,17 @@
     [super viewDidLoad];
 	
 	self.title = @"Settings";
-		
-	PVSettingsModel *settings = [PVSettingsModel sharedInstance];
-	
+
+#if !TARGET_OS_TV
+    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
-    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
-    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+#endif
+    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
 #else
@@ -62,30 +63,40 @@
 
 - (IBAction)toggleAutoSave:(id)sender
 {
+#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setAutoSave:[self.autoSaveSwitch isOn]];
+#endif
 }
 
 - (IBAction)toggleAutoLoadAutoSaves:(id)sender
 {
+#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:[self.autoLoadSwitch isOn]];
+#endif
 }
 
 - (IBAction)controllerOpacityChanged:(id)sender
 {
+#if !TARGET_OS_TV
     self.opacitySlider.value = floor(self.opacitySlider.value / 0.05) * 0.05;
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     
 	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
+#endif
 }
 
 - (IBAction)toggleAutoLock:(id)sender
 {
+#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
+#endif
 }
 
 - (IBAction)toggleVibration:(id)sender
 {
+#if !TARGET_OS_TV
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
+#endif
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -108,12 +119,10 @@
         
         if (status != ReachableViaWiFi)
         {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Unable to start web server!"
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
                                                             message: @"Your device needs to be connected to a WiFi network to continue!"
-                                                           delegate: nil
-                                                  cancelButtonTitle: @"OK"
-                                                  otherButtonTitles: nil];
-            [alert show];
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [self presentViewController:alert animated:YES completion:NULL];
         } else {
             // connected via wifi, let's continue
             
@@ -128,52 +137,40 @@
 #endif
             
             NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Web server started!"
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
                                                             message: message
-                                                           delegate: self
-                                                  cancelButtonTitle: @"Stop Web Server"
-                                                  otherButtonTitles: nil];
-            
-            [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [[PVWebServer sharedInstance] stopServer];
-            }];
-            
-            [alert show];
+            }]];
+            [self presentViewController:alert animated:YES completion:NULL];
         }
         
     }
     else if (indexPath.section == 4 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
-                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"No"
-                                              otherButtonTitles:@"Yes", nil];
-        [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-            if (buttonIndex != [alert cancelButtonIndex])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
-                                                                    object:nil];
-            }
-        }];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Refresh Game Library?"
+                                                                       message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
+                                                                object:nil];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:NULL]];
+        [self presentViewController:alert animated:YES completion:NULL];
     }
 	else if (indexPath.section == 4 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
-														message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
-													   delegate:nil
-											  cancelButtonTitle:@"No"
-											  otherButtonTitles:@"Yes", nil];
-		[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-			if (buttonIndex != [alert cancelButtonIndex])
-			{
-				[PVMediaCache emptyCache];
-			}
-		}];
-		[alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Image Cache?"
+                                                                       message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [PVMediaCache emptyCache];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
+        [self presentViewController:alert animated:YES completion:NULL];
 	}
     else if (indexPath.section == 4 && indexPath.row == 2)
     {
