@@ -45,8 +45,12 @@
 
 - (NSString*)getDocumentDirectory
 {
-    NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentPath = [searchPaths objectAtIndex: 0];
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *documentPath = [paths objectAtIndex: 0];
     
     return documentPath;
 }
@@ -80,7 +84,9 @@
             if (temp_addr->ifa_addr->sa_family == AF_INET)
             {
                 // Check if interface is en0 which is the wifi connection on the iPhone
-                if ([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"])
+                NSString *interfaceName = [NSString stringWithUTF8String:temp_addr->ifa_name];
+                NSLog(@"Interface name: %@", interfaceName);
+                if ([interfaceName isEqualToString:@"en0"] || [interfaceName isEqualToString:@"en1"])
                 {
                     // Get NSString from C String
                     address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
@@ -94,6 +100,11 @@
     // Free memory
     freeifaddrs(interfaces);
     return address;
+}
+
+- (NSURL *)bonjourServerURL
+{
+    return self.webServer.bonjourServerURL;
 }
 
 #pragma mark - Web Server Delegate

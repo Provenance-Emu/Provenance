@@ -27,9 +27,10 @@
 {
 	if ((self = [super initWithFrame:frame]))
 	{
-		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, frame.size.height - 44)];
+		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
-		[_imageView setClipsToBounds:YES];
+		[_imageView setClipsToBounds:NO];
+        [_imageView setAdjustsImageWhenAncestorFocused:YES];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 		
 		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
@@ -66,7 +67,7 @@
 //		UIColor *backgroundColor = backgroundColors[(arc4random() % [backgroundColors count])];
 		UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.6];
 		
-		self.missingArtworkView = [[UIView alloc] initWithFrame:CGRectMake(20, 0, 60, 100)];
+		self.missingArtworkView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
 		[self.missingArtworkView setBackgroundColor:backgroundColor];
 		[[self.missingArtworkView layer] setBorderColor:[[UIColor colorWithWhite:0.7 alpha:0.6] CGColor]];
 		[[self.missingArtworkView layer] setBorderWidth:0.5];
@@ -140,5 +141,34 @@
 						 completion:NULL];
 	}
 }
+
+- (void)setSelected:(BOOL)selected
+{
+    [super setSelected:selected];
+
+    if (selected)
+    {
+        [UIView animateWithDuration:0.1
+                              delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             [_imageView setAlpha:0.6];
+                             [self.missingArtworkView setAlpha:0.6];
+                         }
+                         completion:NULL];
+    }
+    else
+    {
+        [UIView animateWithDuration:0.3
+                              delay:0
+                            options:UIViewAnimationOptionBeginFromCurrentState
+                         animations:^{
+                             [_imageView setAlpha:1];
+                             [self.missingArtworkView setAlpha:1];
+                         }
+                         completion:NULL];
+    }
+}
+
 
 @end

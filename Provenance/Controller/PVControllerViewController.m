@@ -642,6 +642,17 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         
         buttons = @[_a, _b, _x, _y, _leftShoulder, _rightShoulder, _leftTrigger, _rightTrigger];
 	}
+    else if ([self.gameController microGamepad])
+    {
+        [[self.gameController microGamepad] setAllowsRotation:YES];
+
+        _pad = [[self.gameController microGamepad] dpad];
+
+        _a = [[self.gameController microGamepad] buttonA];
+        _b = [[self.gameController microGamepad] buttonX];
+
+        buttons = @[_a, _b];
+    }
 	else
 	{
         _pad = [[self.gameController gamepad] dpad];

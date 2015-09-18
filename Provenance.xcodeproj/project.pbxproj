@@ -1488,12 +1488,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
@@ -1548,12 +1542,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
@@ -1608,12 +1596,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
-					"$(PROJECT_DIR)/PVGBA/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGB/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSNES/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
