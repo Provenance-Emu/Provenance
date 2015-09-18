@@ -68,6 +68,7 @@
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
 		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
+		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */; };
 		1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */; };
 		1AD481B81BA350A400FDA50A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD481B71BA350A400FDA50A /* main.m */; };
 		1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Main.storyboard */; };
@@ -175,7 +176,6 @@
 		1AD9AA4A1ACC99C900EC87A0 /* PVGBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */; };
 		1AD9AA4B1ACC99C900EC87A0 /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
 		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.m */; };
-		1ADCF8C31BA4EF5100C04EAF /* PVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
@@ -323,6 +323,8 @@
 		1AB9600217C572B400D3E392 /* PVSettingsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsModel.m; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
+		1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVTVSettingsViewController.h; sourceTree = "<group>"; };
+		1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVTVSettingsViewController.m; sourceTree = "<group>"; };
 		1ACEA6D517F74D410031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "PVGenesis/build/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
 		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -817,6 +819,8 @@
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
 			isa = PBXGroup;
 			children = (
+				1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */,
+				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */,
 				1AD481BF1BA350A400FDA50A /* Main.storyboard */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
@@ -1210,6 +1214,7 @@
 				1AD482011BA354B100FDA50A /* kICadeControllerSetting.m in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				1AD482071BA354C400FDA50A /* PVNESControllerViewController.m in Sources */,
+				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.m in Sources */,
 				1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.m in Sources */,
 				1AD481ED1BA3548400FDA50A /* zip.c in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
@@ -1230,7 +1235,6 @@
 				1AD481EC1BA3548200FDA50A /* unzip.c in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
-				1ADCF8C31BA4EF5100C04EAF /* PVSettingsViewController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
