@@ -26,7 +26,6 @@
 	
 	self.title = @"Settings";
 
-#if !TARGET_OS_TV
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
@@ -34,8 +33,7 @@
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
-#endif
-    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
+    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
 #else
@@ -63,40 +61,30 @@
 
 - (IBAction)toggleAutoSave:(id)sender
 {
-#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setAutoSave:[self.autoSaveSwitch isOn]];
-#endif
 }
 
 - (IBAction)toggleAutoLoadAutoSaves:(id)sender
 {
-#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:[self.autoLoadSwitch isOn]];
-#endif
 }
 
 - (IBAction)controllerOpacityChanged:(id)sender
 {
-#if !TARGET_OS_TV
     self.opacitySlider.value = floor(self.opacitySlider.value / 0.05) * 0.05;
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     
 	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
-#endif
 }
 
 - (IBAction)toggleAutoLock:(id)sender
 {
-#if !TARGET_OS_TV
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
-#endif
 }
 
 - (IBAction)toggleVibration:(id)sender
 {
-#if !TARGET_OS_TV
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
-#endif
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

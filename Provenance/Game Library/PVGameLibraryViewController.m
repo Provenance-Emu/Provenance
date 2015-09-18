@@ -20,6 +20,7 @@
 #import "PVEmulatorConfiguration.h"
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
+    #import "PVSettingsViewController.h"
 #endif
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
@@ -27,8 +28,8 @@
 #import "NSData+Hashing.h"
 #import "PVSettingsModel.h"
 #import "PVConflictViewController.h"
-#import "PVSettingsViewController.h"
 #import "PVWebServer.h"
+#import "Reachability.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -635,7 +636,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         for (PVGame *game in [PVGame allObjectsInRealm:realm])
         {
             [realm beginWriteTransaction];
-            [game setCustomArtworkURL:nil];
+            [game setCustomArtworkURL:@""];
             [realm commitWriteTransaction];
             NSString *originalArtworkURL = [game originalArtworkURL];
             [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
@@ -644,7 +645,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf.realm refresh];
             [weakSelf fetchGames];
-            [weakSelf.collectionView reloadSections:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, [self.sectionInfo count])]];
         });
 
     });
