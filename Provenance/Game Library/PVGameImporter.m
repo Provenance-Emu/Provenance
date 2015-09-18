@@ -493,8 +493,14 @@
     
     [realm beginWriteTransaction];
     [game setRequiresSync:NO];
-    [game setTitle:chosenResult[@"gameTitle"]];
-    [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+    if ([chosenResult[@"gameTitle"] length])
+    {
+        [game setTitle:chosenResult[@"gameTitle"]];
+    }
+    if ([chosenResult[@"boxImageURL"] length])
+    {
+        [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+    }
     [realm commitWriteTransaction];
 }
 

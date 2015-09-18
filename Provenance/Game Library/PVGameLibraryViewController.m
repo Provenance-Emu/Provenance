@@ -28,6 +28,7 @@
 #import "PVSettingsModel.h"
 #import "PVConflictViewController.h"
 #import "PVSettingsViewController.h"
+#import "PVWebServer.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -56,6 +57,8 @@ NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 @property (nonatomic, strong) RLMResults *searchResults;
 
 @property (nonatomic, assign) IBOutlet UITextField *searchField;
+
+@property (nonatomic, assign) BOOL initialAppearance;
 
 @end
 
@@ -104,7 +107,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-    
+
+    self.initialAppearance = YES;
+
     [self setDefinesPresentationContext:YES];
     
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -183,6 +188,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
+    if (self.initialAppearance)
+    {
+        self.initialAppearance = NO;
+#if TARGET_OS_TV
+        UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:0]];
+        [cell setNeedsFocusUpdate];
+        [cell updateFocusIfNeeded];
+#endif
+    }
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -282,6 +297,41 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (IBAction)getMoreROMs
 {
+#if TARGET_OS_TV
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    [reachability startNotifier];
+
+    NetworkStatus status = [reachability currentReachabilityStatus];
+
+    if (status != ReachableViaWiFi)
+    {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                       message: @"Your device needs to be connected to a network to continue!"
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [self presentViewController:alert animated:YES completion:NULL];
+    } else {
+        // connected via wifi, let's continue
+
+        // start web transfer service
+        [[PVWebServer sharedInstance] startServer];
+
+        // get the IP address of the device
+        NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
+
+#if TARGET_IPHONE_SIMULATOR
+        ipAddress = [ipAddress stringByAppendingString:@":8080"];
+#endif
+
+        NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
+                                                                       message: message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[PVWebServer sharedInstance] stopServer];
+        }]];
+        [self presentViewController:alert animated:YES completion:NULL];
+    }
+#else
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Get ROMs!"
                                                                    message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select Provenance and your ROM will magically appear in the Library.\n\nNEW: Now you can bulk transfer ROMs through your PC. See Menu."
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -296,6 +346,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                 // no op
                                             }]];
     [self presentViewController:alert animated:YES completion:NULL];
+#endif
 }
 
 - (NSString *)BIOSPathForSystemID:(NSString *)systemID
@@ -716,6 +767,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         __weak PVGameLibraryViewController *weakSelf = self;
         CGPoint point = [recognizer locationInView:self.collectionView];
         NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:point];
+
+        if (!indexPath)
+        {
+            indexPath = [self.collectionView indexPathForCell:(UICollectionViewCell *)[[UIScreen mainScreen] focusedView]];
+        }
+
+        if (!indexPath)
+        {
+            // no index path, we're buggered.
+            return;
+        }
         
         NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
         PVGame *game = games[[indexPath item]];
@@ -759,6 +821,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }
 #endif
 
+#if TARGET_OS_TV
+        [actionSheet setMessage:[NSString stringWithFormat:@"Options for %@", [game title]]];
+#endif
+
         [actionSheet addAction:[UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Delete %@", [game title]]
                                                                            message:@"Any save states and battery saves will also be deleted, are you sure?"
@@ -766,6 +832,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 [weakSelf deleteGame:game];
             }]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:NULL]];
             [weakSelf presentViewController:alert animated:YES completion:NULL];
         }]];
 
@@ -1164,14 +1231,29 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #endif
 }
 
+#if TARGET_OS_TV
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 88;
+}
+#endif
+
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
+#if TARGET_OS_TV
+    return 30;
+#else
 	return 5.0;
+#endif
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
-	return UIEdgeInsetsMake(5, 5, 5, 5);
+#if TARGET_OS_TV
+    	return UIEdgeInsetsMake(40, 40, 40, 40);
+#else
+    	return UIEdgeInsetsMake(5, 5, 5, 5);
+#endif
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -1220,7 +1302,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
+#if TARGET_OS_TV
+    return CGSizeMake([self.view bounds].size.width, 90);
+#else
 	return CGSizeMake([self.view bounds].size.width, 40);
+#endif
 }
 
 #pragma mark - Text Field and Keyboard Delegate

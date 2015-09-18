@@ -2,6 +2,7 @@
   "images" : [
     {
       "idiom" : "tv",
+      "filename" : "pad.png",
       "scale" : "1x"
     }
   ],

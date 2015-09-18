@@ -71,7 +71,7 @@
 		1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */; };
 		1AD481B81BA350A400FDA50A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD481B71BA350A400FDA50A /* main.m */; };
 		1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Main.storyboard */; };
-		1AD481C31BA350A400FDA50A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* Assets.xcassets */; };
+		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */; };
 		1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
 		1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
@@ -328,7 +328,7 @@
 		1AD481B41BA350A400FDA50A /* ProvenanceTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProvenanceTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481B71BA350A400FDA50A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1AD481C01BA350A400FDA50A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		1AD481C21BA350A400FDA50A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1AD481C21BA350A400FDA50A /* TVAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TVAssets.xcassets; sourceTree = "<group>"; };
 		1AD481C41BA350A400FDA50A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AD4820C1BA3557900FDA50A /* libPVGB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGB.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGB.a"; sourceTree = "<group>"; };
 		1AD4820D1BA3557900FDA50A /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
@@ -818,7 +818,7 @@
 			isa = PBXGroup;
 			children = (
 				1AD481BF1BA350A400FDA50A /* Main.storyboard */,
-				1AD481C21BA350A400FDA50A /* Assets.xcassets */,
+				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
 				1AD481B61BA350A400FDA50A /* Supporting Files */,
 			);
@@ -1092,7 +1092,7 @@
 				1AD482371BA35A3300FDA50A /* systems.plist in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
 				1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */,
-				1AD481C31BA350A400FDA50A /* Assets.xcassets in Resources */,
+				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */,
 			);
