@@ -166,16 +166,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     {
         [self setUpGameLibrary];
     }
-
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-//        NSString *rompath = [[NSBundle mainBundle] pathForResource:@"GoldenAxe" ofType:@"zip"];
-//        NSError *error = nil;
-//        NSString *newPath = [[self romsPath] stringByAppendingPathComponent:[rompath lastPathComponent]];
-//        if (![[NSFileManager defaultManager] copyItemAtPath:rompath toPath:newPath error:&error])
-//        {
-//            NSLog(@"Error: %@", [error localizedDescription]);
-//        }
-//    });
 }
 
 - (void)viewWillAppear:(BOOL)animated
