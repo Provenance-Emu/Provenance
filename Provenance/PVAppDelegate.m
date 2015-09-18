@@ -27,7 +27,11 @@
 {
 	if (url && [url isFileURL])
 	{
+#if TARGET_OS_TV
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
         NSString *documentsDirectory = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
 		
 		NSString *sourcePath = [url path];

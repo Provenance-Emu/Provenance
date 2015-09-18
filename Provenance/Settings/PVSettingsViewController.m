@@ -133,10 +133,10 @@
             NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
             
 #if TARGET_IPHONE_SIMULATOR
-            ipAddress = [ipAddress stringByAppendingString: @":8080"];
+            ipAddress = [ipAddress stringByAppendingString:@":8080"];
 #endif
             
-            NSString *message = [NSString stringWithFormat: @"Start transferring data by visiting this website on your computer:\nhttp://%@/", ipAddress];
+            NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
                                                             message: message
                                                                     preferredStyle:UIAlertControllerStyleAlert];

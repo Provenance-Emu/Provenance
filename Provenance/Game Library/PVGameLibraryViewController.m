@@ -70,6 +70,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if ((self = [super initWithCoder:aDecoder]))
     {
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
+        RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
+#if TARGET_OS_TV
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+        [config setPath:[[paths firstObject] stringByAppendingPathComponent:@"default.realm"]];
+        [RLMRealmConfiguration setDefaultConfiguration:config];
         self.realm = [RLMRealm defaultRealm];
     }
     
@@ -196,7 +204,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (NSString *)documentsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
     
     return documentsDirectoryPath;
@@ -204,7 +216,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (NSString *)romsPath
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	
 	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
@@ -212,7 +228,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
 	NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
 	
@@ -235,7 +255,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (NSString *)saveStatePathForROM:(NSString *)romPath
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
 	
@@ -324,7 +348,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSString *fullPath = [[self documentsPath] stringByAppendingPathComponent:path];
         BOOL isDir = NO;
         BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDir];
-        if (exists && !isDir && ![path containsString:@"realm"])
+        if (exists && !isDir && ![[path lowercaseString] containsString:@"realm"])
         {
             if (![[NSFileManager defaultManager] moveItemAtPath:fullPath
                                                          toPath:[[self romsPath] stringByAppendingPathComponent:path]
@@ -1121,9 +1145,23 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 #pragma mark - UICollectionViewDelegate & UICollectionViewDelegateFlowLayout
 
+- (BOOL)collectionView:(UICollectionView *)collectionView canFocusItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldUpdateFocusInContext:(UICollectionViewFocusUpdateContext *)context
+{
+    return YES;
+}
+
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
+#if TARGET_OS_TV
+    return CGSizeMake(250, 360);
+#else
 	return CGSizeMake(100, 144);
+#endif
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section

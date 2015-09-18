@@ -581,7 +581,11 @@
 
 - (NSString *)documentsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     
     return [paths firstObject];
 }

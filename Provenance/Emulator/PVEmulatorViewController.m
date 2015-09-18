@@ -249,7 +249,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (NSString *)documentsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
     
     return documentsDirectoryPath;
@@ -295,6 +299,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)showMenu:(id)sender
 {
+#if TARGET_OS_TV
+    self.controllerUserInteractionEnabled = YES;
+#endif
+
 	__block PVEmulatorViewController *weakSelf = self;
 	
 	[self.emulatorCore setPauseEmulation:YES];
@@ -309,12 +317,18 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		[actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			[weakSelf.controllerViewController editControls];
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
 		}]];
     } else if ([self.controllerViewController iCadeController] == [self.controllerViewController gameController]) {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Disconnect iCade" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
         }]];
     }
 	
@@ -339,6 +353,10 @@ void uncaughtExceptionHandler(NSException *exception)
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		[weakSelf.emulatorCore resetEmulation];
 		weakSelf.isShowingMenu = NO;
+
+#if TARGET_OS_TV
+        self.controllerUserInteractionEnabled = NO;
+#endif
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
@@ -354,10 +372,16 @@ void uncaughtExceptionHandler(NSException *exception)
 		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 #endif
 		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
+#if TARGET_OS_TV
+        self.controllerUserInteractionEnabled = NO;
+#endif
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+        self.controllerUserInteractionEnabled = NO;
+#endif
 	}]];
 
     [self presentViewController:actionsheet animated:YES completion:NULL];
@@ -365,6 +389,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)hideMenu
 {
+#if TARGET_OS_TV
+    self.controllerUserInteractionEnabled = NO;
+#endif
+
     if (self.menuActionSheet)
     {
         [self dismissViewControllerAnimated:YES completion:NULL];
@@ -412,14 +440,20 @@ void uncaughtExceptionHandler(NSException *exception)
 			[weakSelf.emulatorCore saveStateToFileAtPath:savePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
 		}]];
 	}
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+        self.controllerUserInteractionEnabled = NO;
+#endif
 	}]];
-	
+
     [self presentViewController:actionsheet animated:YES completion:NULL];
 }
 
@@ -453,6 +487,9 @@ void uncaughtExceptionHandler(NSException *exception)
 			[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
 		}]];
 	}
 	
@@ -466,14 +503,20 @@ void uncaughtExceptionHandler(NSException *exception)
 			}
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
 		}]];
 	}
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+        self.controllerUserInteractionEnabled = NO;
+#endif
 	}]];
-	
+
      [self presentViewController:actionsheet animated:YES completion:NULL];
 }
 

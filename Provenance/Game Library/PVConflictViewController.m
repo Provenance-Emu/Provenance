@@ -63,7 +63,11 @@
 
 - (NSString *)documentsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
     
     return documentsDirectoryPath;
@@ -71,7 +75,11 @@
 
 - (NSString *)conflictsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
     
     return [documentsDirectoryPath stringByAppendingPathComponent:@"conflicts"];
