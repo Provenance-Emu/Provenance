@@ -29,12 +29,16 @@
 	{
 		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
-		[_imageView setClipsToBounds:NO];
-        [_imageView setAdjustsImageWhenAncestorFocused:YES];
+//        [_imageView setAdjustsImageWhenAncestorFocused:YES];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-		
-		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
-		[_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
+
+#if TARGET_OS_TV
+        [_titleLabel setLineBreakMode:NSLineBreakByWordWrapping];
+#else
+        [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+#endif
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
 		[_titleLabel setTextColor:[UIColor blackColor]];
@@ -43,9 +47,9 @@
 		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
 		[_titleLabel setMinimumScaleFactor:0.75];
-		
-		[[self contentView] addSubview:_imageView];
+
 		[[self contentView] addSubview:_titleLabel];
+        [[self contentView] addSubview:_imageView];
 		
 //		NSArray *backgroundColors = @[rgb(26, 188, 156),
 //									  rgb(46, 204, 113),
@@ -112,6 +116,37 @@
 	{
 		[self.missingArtworkView removeFromSuperview];
 	}
+
+#if TARGET_OS_TV
+    [_titleLabel sizeToFit];
+    [_titleLabel setWidth:[[self contentView] bounds].size.width];
+#endif
+}
+
+- (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
+{
+    if (self.focused)
+    {
+        [self setHighlighted:YES];
+    }
+    else
+    {
+        [self setHighlighted:NO];
+    }
+}
+
+- (BOOL)shouldUpdateFocusInContext:(UIFocusUpdateContext *)context
+{
+    if ([context nextFocusedView] == self)
+    {
+        [self setHighlighted:YES];
+    }
+    else if ([context previouslyFocusedView] == self)
+    {
+        [self setHighlighted:NO];
+    }
+
+    return YES;
 }
 
 - (void)setHighlighted:(BOOL)highlighted
@@ -120,12 +155,12 @@
 	
 	if (highlighted)
 	{
-		[UIView animateWithDuration:0.1
+		[UIView animateWithDuration:0.3
 							  delay:0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [_imageView setAlpha:0.6];
-							 [self.missingArtworkView setAlpha:0.6];
+                             [self.imageView setTransform:CGAffineTransformMakeScale(1.33, 1.33)];
+                             [self.missingArtworkView setTransform:CGAffineTransformMakeScale(1.33, 1.33)];
 						 }
 						 completion:NULL];
 	}
@@ -135,8 +170,8 @@
 							  delay:0
 							options:UIViewAnimationOptionBeginFromCurrentState
 						 animations:^{
-							 [_imageView setAlpha:1];
-							 [self.missingArtworkView setAlpha:1];
+                             [self.imageView setTransform:CGAffineTransformIdentity];
+                             [self.missingArtworkView setTransform:CGAffineTransformIdentity];
 						 }
 						 completion:NULL];
 	}
