@@ -760,10 +760,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         CGPoint point = [recognizer locationInView:self.collectionView];
         NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:point];
 
+#if TARGET_OS_TV
         if (!indexPath)
         {
             indexPath = [self.collectionView indexPathForCell:(UICollectionViewCell *)[[UIScreen mainScreen] focusedView]];
         }
+#endif
 
         if (!indexPath)
         {
@@ -824,7 +826,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 [weakSelf deleteGame:game];
             }]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:NULL]];
+            [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
             [weakSelf presentViewController:alert animated:YES completion:NULL];
         }]];
 
@@ -1204,6 +1206,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 #pragma mark - UICollectionViewDelegate & UICollectionViewDelegateFlowLayout
 
+#if TARGET_OS_TV
 - (BOOL)collectionView:(UICollectionView *)collectionView canFocusItemAtIndexPath:(NSIndexPath *)indexPath
 {
     return YES;
@@ -1213,6 +1216,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     return YES;
 }
+#endif
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {

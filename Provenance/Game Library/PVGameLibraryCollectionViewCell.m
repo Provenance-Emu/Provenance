@@ -123,6 +123,7 @@
 #endif
 }
 
+#if TARGET_OS_TV
 - (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
 {
     if (self.focused)
@@ -176,6 +177,7 @@
 						 completion:NULL];
 	}
 }
+#endif
 
 - (void)setSelected:(BOOL)selected
 {

@@ -13,7 +13,12 @@
 
 @class PVEmulatorCore, PVGame;
 
+#if TARGET_OS_TV
 @interface PVEmulatorViewController : GCEventViewController <PVControllerViewControllerDelegate>
+#else
+@interface PVEmulatorViewController : UIViewController <PVControllerViewControllerDelegate>
+#endif
+
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, strong) PVGame *game;
