@@ -33,7 +33,14 @@
         [bottomSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [self addSubview:bottomSeparator];
 #endif
-		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1]];
+        if (&UIFontTextStyleTitle1 != NULL)
+        {
+            [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1]];
+        }
+        else
+        {
+            [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
+        }
 		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setTextColor:[UIColor darkGrayColor]];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];

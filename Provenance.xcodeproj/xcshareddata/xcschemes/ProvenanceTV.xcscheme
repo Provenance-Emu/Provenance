@@ -99,7 +99,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-               BuildableName = "ProvenanceTV.app"
+               BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
@@ -117,7 +117,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "ProvenanceTV.app"
+            BuildableName = "Provenance.app"
             BlueprintName = "ProvenanceTV"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
@@ -140,7 +140,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "ProvenanceTV.app"
+            BuildableName = "Provenance.app"
             BlueprintName = "ProvenanceTV"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
@@ -159,7 +159,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "ProvenanceTV.app"
+            BuildableName = "Provenance.app"
             BlueprintName = "ProvenanceTV"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>

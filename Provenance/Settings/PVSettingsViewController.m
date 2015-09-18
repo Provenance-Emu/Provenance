@@ -145,7 +145,7 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
                                                                 object:nil];
         }]];
-        [alert addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleCancel handler:NULL]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
         [self presentViewController:alert animated:YES completion:NULL];
     }
 	else if (indexPath.section == 4 && indexPath.row == 1)
