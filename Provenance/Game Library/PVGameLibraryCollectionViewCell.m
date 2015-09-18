@@ -42,7 +42,7 @@
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
 		[_titleLabel setTextColor:[UIColor blackColor]];
-		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
+		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleBody]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];

@@ -147,7 +147,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.collectionView registerClass:[PVGameLibrarySectionHeaderView class]
             forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                    withReuseIdentifier:PVGameLibraryHeaderView];
-	
+#if TARGET_OS_TV
+    [self.collectionView setContentInset:UIEdgeInsetsMake(40, 20, 40, 20)];
+#endif
 	[[self view] addSubview:self.collectionView];
     
 	UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressRecognized:)];

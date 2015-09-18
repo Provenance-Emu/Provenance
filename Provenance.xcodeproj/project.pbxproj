@@ -325,7 +325,7 @@
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ACEA6D517F74D410031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "PVGenesis/build/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
-		1AD481B41BA350A400FDA50A /* ProvenanceTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProvenanceTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481B71BA350A400FDA50A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1AD481C01BA350A400FDA50A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1AD481C21BA350A400FDA50A /* TVAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = TVAssets.xcassets; sourceTree = "<group>"; };
@@ -587,7 +587,7 @@
 			children = (
 				1A3D409417B2DCE4004DFFFC /* Provenance.app */,
 				1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */,
-				1AD481B41BA350A400FDA50A /* ProvenanceTV.app */,
+				1AD481B41BA350A400FDA50A /* Provenance.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1004,7 +1004,7 @@
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
-			productReference = 1AD481B41BA350A400FDA50A /* ProvenanceTV.app */;
+			productReference = 1AD481B41BA350A400FDA50A /* Provenance.app */;
 			productType = "com.apple.product-type.application";
 		};
 		1AD9AA341ACC988F00EC87A0 /* Provenance Tests */ = {
@@ -1491,7 +1491,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -1545,7 +1545,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -1599,7 +1599,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
