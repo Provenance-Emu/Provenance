@@ -779,6 +779,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@""
                                                                              message:@""
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
+        if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+        {
+            UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+            [[actionSheet popoverPresentationController] setSourceView:cell];
+            [[actionSheet popoverPresentationController] setSourceRect:[[self.collectionView layoutAttributesForItemAtIndexPath:indexPath] bounds]];
+        }
 #if !TARGET_OS_TV
         [actionSheet addAction:[UIAlertAction actionWithTitle:@"Rename"
                                                         style:UIAlertActionStyleDefault

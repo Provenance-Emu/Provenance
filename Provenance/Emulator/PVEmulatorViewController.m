@@ -311,6 +311,12 @@ void uncaughtExceptionHandler(NSException *exception)
     UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
                                                                          message:@""
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+    {
+        [[actionsheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionsheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+    }
+
     self.menuActionSheet = actionsheet;
 	
 	if (![self.controllerViewController gameController])
@@ -422,6 +428,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
                                                                          message:@""
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+    {
+        [[actionsheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionsheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+    }
     self.menuActionSheet = actionsheet;
 	
 	for (NSUInteger i = 0; i < 5; i++)
@@ -479,6 +490,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
                                                                          message:@""
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+    {
+        [[actionsheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionsheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+    }
     self.menuActionSheet = actionsheet;
 	
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
