@@ -96,6 +96,21 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     }
 }
 
+- (GCController *)getBestGamepad:(NSArray *)controllers
+{
+    for (GCController *controller in controllers) {
+        if (controller.extendedGamepad) {
+            return controller;
+        }
+    }
+    for (GCController *controller in controllers) {
+        if (controller.gamepad) {
+            return controller;
+        }
+    }
+    return [controllers firstObject];
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -112,7 +127,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	
 	if ([[GCController controllers] count])
 	{
-		self.gameController = [[GCController controllers] firstObject];
+        self.gameController = [self getBestGamepad:[GCController controllers]];
 	}
 	else
 	{
@@ -540,7 +555,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	// if we already have a game controller, ignore this notification
 	if (!self.gameController)
 	{
-		self.gameController = [[GCController controllers] firstObject];
+        self.gameController = [self getBestGamepad:[GCController controllers]];
 		[GCController stopWirelessControllerDiscovery];
 		
 		[self setupGameController];
@@ -560,6 +575,9 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 		[self.startButton setHidden:NO];
 		[self.selectButton setHidden:NO];
 	}
+    if ([[GCController controllers] count]) {
+        self.gameController = [self getBestGamepad:[GCController controllers]];
+    }
 }
 
 #pragma mark - Controller handling
