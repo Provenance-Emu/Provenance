@@ -380,14 +380,14 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Input
 
-- (void)pushGenesisButton:(PVGenesisButton)button
+- (void)pushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
 {
-	_pad[0][_GenesisEmulatorValues[button]] = 1;
+	_pad[player][_GenesisEmulatorValues[button]] = 1;
 }
 
-- (void)releaseGenesisButton:(PVGenesisButton)button
+- (void)releaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
 {
-	_pad[0][_GenesisEmulatorValues[button]] = 0;
+	_pad[player][_GenesisEmulatorValues[button]] = 0;
 }
 
 #pragma mark - State Saving

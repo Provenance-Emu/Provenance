@@ -307,15 +307,20 @@ static __weak PVNESEmulatorCore *_current;
 # pragma mark - Input
 
 const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
-- (oneway void)pushNESButton:(PVNESButton)button
+- (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
-    pad[0][0] |= NESMap[button];
+    int playerShift = player != 0 ? 8 : 0;
+
+    pad[player][0] |= NESMap[button] << playerShift;
 }
 
-- (oneway void)releaseNESButton:(PVNESButton)button
+- (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
-    pad[0][0] &= ~NESMap[button];
+    int playerShift = player != 0 ? 8 : 0;
+
+    pad[player][0] &= ~NESMap[button] << playerShift;
 }
+
 
 // FCEUX internal functions and stubs
 void FCEUD_SetPalette(unsigned char index, unsigned char r, unsigned char g, unsigned char b)

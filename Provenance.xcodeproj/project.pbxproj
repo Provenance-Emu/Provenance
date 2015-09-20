@@ -51,6 +51,10 @@
 		1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DA17C8D60C0019F6D2 /* MobileCoreServices.framework */; };
 		1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
+		1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */; };
+		1A5209891BADCBB500DAE6E3 /* PVControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */; };
+		1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
+		1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7417181ABF215B00F3CD3C /* libPVNES.a */; };
 		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
@@ -292,6 +296,10 @@
 		1A4869DA17C8D60C0019F6D2 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		1A4869DB17C8D60C0019F6D2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1A5209861BADCBB500DAE6E3 /* PVControllerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerManager.h; sourceTree = "<group>"; };
+		1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerManager.m; sourceTree = "<group>"; };
+		1A52098A1BADD4F900DAE6E3 /* PVControllerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerSelectionViewController.h; sourceTree = "<group>"; };
+		1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerSelectionViewController.m; sourceTree = "<group>"; };
 		1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		1A7417181ABF215B00F3CD3C /* libPVNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVNES.a"; sourceTree = "<group>"; };
@@ -693,6 +701,10 @@
 				E41448871B3125D90056D80A /* iCade */,
 				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
 				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
+				1A5209861BADCBB500DAE6E3 /* PVControllerManager.h */,
+				1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */,
+				1A52098A1BADD4F900DAE6E3 /* PVControllerSelectionViewController.h */,
+				1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */,
 				1A9FBE1E1ABD28A1004E778B /* Genesis */,
 				1A9FBE1F1ABD28A9004E778B /* SNES */,
 				1A9FBE201ABD28B6004E778B /* GBA */,
@@ -1141,6 +1153,7 @@
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
+				1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
@@ -1177,6 +1190,7 @@
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
+				1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
@@ -1218,6 +1232,7 @@
 				1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.m in Sources */,
 				1AD481ED1BA3548400FDA50A /* zip.c in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
+				1A5209891BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
 				1AD482001BA354B100FDA50A /* PViCadeInputAxis.m in Sources */,
 				1AD481D11BA3540600FDA50A /* PVConflictViewController.m in Sources */,
 				1AD482031BA354C400FDA50A /* PVGenesisControllerViewController.m in Sources */,
@@ -1245,6 +1260,7 @@
 				1AD482041BA354C400FDA50A /* PVSNESControllerViewController.m in Sources */,
 				1AD481B81BA350A400FDA50A /* main.m in Sources */,
 				1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */,
+				1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,

@@ -110,51 +110,59 @@
     [gbCore releaseGBButton:[button tag]];
 }
 
-- (void)gamepadButtonPressed:(GCControllerButtonInput *)button
+- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
-    
-    if ([button isEqual:_b])
-    {
-        [gbCore pushGBButton:PVGBButtonA];
-    }
-    else if ([button isEqual:_a])
-    {
-        [gbCore pushGBButton:PVGBButtonB];
-    }
-    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
-    {
-        [gbCore pushGBButton:PVGBButtonStart];
-    }
-    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
-    {
-        [gbCore pushGBButton:PVGBButtonSelect];
+
+    switch (button) {
+        case PVControllerButtonA:
+            [gbCore pushGBButton:PVGBButtonB];
+            break;
+        case PVControllerButtonB:
+            [gbCore pushGBButton:PVGBButtonA];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftShoulder:
+        case PVControllerButtonLeftTrigger:
+            [gbCore pushGBButton:PVGBButtonStart];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightShoulder:
+        case PVControllerButtonRightTrigger:
+            [gbCore pushGBButton:PVGBButtonSelect];
+            break;
+        default:
+            break;
     }
 }
 
-- (void)gamepadButtonReleased:(GCControllerButtonInput *)button
+- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     
-    if ([button isEqual:_b])
-    {
-        [gbCore releaseGBButton:PVGBButtonA];
-    }
-    else if ([button isEqual:_a])
-    {
-        [gbCore releaseGBButton:PVGBButtonB];
-    }
-    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
-    {
-        [gbCore releaseGBButton:PVGBButtonStart];
-    }
-    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
-    {
-        [gbCore releaseGBButton:PVGBButtonSelect];
+    switch (button) {
+        case PVControllerButtonA:
+            [gbCore releaseGBButton:PVGBButtonB];
+            break;
+        case PVControllerButtonB:
+            [gbCore releaseGBButton:PVGBButtonA];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftShoulder:
+        case PVControllerButtonLeftTrigger:
+            [gbCore releaseGBButton:PVGBButtonStart];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightShoulder:
+        case PVControllerButtonRightTrigger:
+            [gbCore releaseGBButton:PVGBButtonSelect];
+            break;
+        default:
+            break;
     }
 }
 
-- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     
@@ -181,7 +189,7 @@
     }
 }
 
-- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     

@@ -12,6 +12,7 @@
 #import "PVGameImporter.h"
 #import "PVMediaCache.h"
 #import "PVConflictViewController.h"
+#import "PVControllerSelectionViewController.h"
 
 @interface PVTVSettingsViewController ()
 
@@ -40,7 +41,7 @@
     switch (section) {
         case 0:
             // Emu Settings
-            return 2;
+            return 3;
             break;
         case 1:
             // Library Settings
@@ -72,6 +73,7 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                     [[cell textLabel] setText:@"Auto Save"];
                     [[cell detailTextLabel] setText:([settings autoSave]) ? @"On" : @"Off"];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 case 1:
@@ -80,6 +82,16 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                     [[cell textLabel] setText:@"Automatically Load Saves"];
                     [[cell detailTextLabel] setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
+                    return cell;
+                    break;
+                case 2:
+                    // Controllers
+                    cell = [tableView dequeueReusableCellWithIdentifier:@"subtitle"];
+                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                    [[cell textLabel] setText:@"Controller Settings"];
+                    [[cell detailTextLabel] setText:@"Choose which controller players use"];
+                    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
                     return cell;
                     break;
                 default:
@@ -95,6 +107,7 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                     [[cell textLabel] setText:@"Refresh Game Library"];
                     [[cell detailTextLabel] setText:@"Reimport ROMs (warning: slow)"];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 case 1:
@@ -103,6 +116,7 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                     [[cell textLabel] setText:@"Empty Image Cache"];
                     [[cell detailTextLabel] setText:@"Images will redownload on demand"];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 case 2:
@@ -111,6 +125,7 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                     [[cell textLabel] setText:@"Manage Conflicts"];
                     [[cell detailTextLabel] setText:@"Manually solve import conflicts"];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 default:
@@ -126,6 +141,7 @@
                     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
                     [[cell textLabel] setText:@"Version"];
                     [[cell detailTextLabel] setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 case 1:
@@ -138,6 +154,7 @@
 #else
                     [[cell detailTextLabel] setText:@"RELEASE"];
 #endif
+                    [cell setAccessoryType:UITableViewCellAccessoryNone];
                     return cell;
                     break;
                 default:
@@ -192,6 +209,13 @@
                     // auto load
                     [settings setAutoLoadAutoSaves:![settings autoLoadAutoSaves]];
                     [tableView reloadData];
+                    break;
+                case 2:
+                {
+                    // controllers
+                    PVControllerSelectionViewController *controllerSelectionViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:NSStringFromClass([PVControllerSelectionViewController class])];
+                    [self.navigationController pushViewController:controllerSelectionViewController animated:YES];
+                }
                     break;
                 default:
                     break;
