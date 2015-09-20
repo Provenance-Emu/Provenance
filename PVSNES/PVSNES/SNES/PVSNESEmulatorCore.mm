@@ -428,7 +428,7 @@ static void FinalizeSamplesAudioCallback(void *)
 
 - (void)mapButtons
 {
-    for(int player = 1; player < 8; player++)
+    for(int player = 1; player <= 8; player++)
     {
         NSUInteger playerMask = player << 16;
 		
