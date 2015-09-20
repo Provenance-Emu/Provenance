@@ -48,17 +48,6 @@
             self.player1 = [[GCController controllers] firstObject];
             [self.player1 setPlayerIndex:0];
         }
-
-//        // start discovery for any new controllers
-//        [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
-//            NSLog(@"Controller discovery completed");
-//            if (!self.player1 && [[GCController controllers] count])
-//            {
-//                // if we didn't have a player1 set before discovery and discovery found one, auto set it as player1.
-//                self.player1 = [[GCController controllers] firstObject];
-//                [self.player1 setPlayerIndex:0];
-//            }
-//        }];
     }
 
     return self;
@@ -66,21 +55,12 @@
 
 - (void)setPlayer1:(GCController *)player1
 {
-    if (!player1)
-    {
-        [_player1 setPlayerIndex:GCControllerPlayerIndexUnset];
-    }
     _player1 = player1;
     [_player1 setPlayerIndex:0];
 }
 
 - (void)setPlayer2:(GCController *)player2
 {
-    if (!player2)
-    {
-        [_player2 setPlayerIndex:GCControllerPlayerIndexUnset];
-    }
-
     _player2 = player2;
     [_player2 setPlayerIndex:1];
 }
@@ -120,8 +100,6 @@
     {
         self.player2 = nil;
     }
-
-    [controller setPlayerIndex:GCControllerPlayerIndexUnset];
 }
 
 @end
