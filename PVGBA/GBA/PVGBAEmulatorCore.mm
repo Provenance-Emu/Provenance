@@ -322,14 +322,14 @@ enum {
 };
 const int GBAMap[] = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BUTTON_A, KEY_BUTTON_B, KEY_BUTTON_L, KEY_BUTTON_R, KEY_BUTTON_START, KEY_BUTTON_SELECT};
 
-- (oneway void)pushGBAButton:(PVGBAButton)button
+- (oneway void)pushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player
 {
-    pad[0] |= GBAMap[button];
+    pad[player] |= GBAMap[button];
 }
 
-- (oneway void)releaseGBAButton:(PVGBAButton)button
+- (oneway void)releaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player
 {
-    pad[0] &= ~GBAMap[button];
+    pad[player] &= ~GBAMap[button];
 }
 
 #pragma mark - Cheats

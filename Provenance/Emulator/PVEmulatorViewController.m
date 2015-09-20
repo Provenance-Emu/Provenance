@@ -20,6 +20,7 @@
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import "PVEmulatorConfiguration.h"
+#import "PVControllerManager.h"
 
 @interface PVEmulatorViewController ()
 
@@ -319,7 +320,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
     self.menuActionSheet = actionsheet;
 	
-	if (![self.controllerViewController gameController])
+	if (![[PVControllerManager sharedManager] player1] && ![[PVControllerManager sharedManager] player2])
 	{
 		[actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			[weakSelf.controllerViewController editControls];
@@ -327,7 +328,7 @@ void uncaughtExceptionHandler(NSException *exception)
             self.controllerUserInteractionEnabled = NO;
 #endif
 		}]];
-    } else if ([self.controllerViewController iCadeController] == [self.controllerViewController gameController]) {
+    } else if ([self.controllerViewController iCadeController]) {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Disconnect iCade" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
             [weakSelf.emulatorCore setPauseEmulation:NO];

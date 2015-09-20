@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, PVGenesisButton)
 
 @interface PVGenesisEmulatorCore : PVEmulatorCore
 
-- (void)pushGenesisButton:(PVGenesisButton)button;
-- (void)releaseGenesisButton:(PVGenesisButton)button;
+- (void)pushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
+- (void)releaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
 
 @end

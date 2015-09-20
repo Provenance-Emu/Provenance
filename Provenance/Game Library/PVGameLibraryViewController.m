@@ -30,6 +30,7 @@
 #import "PVConflictViewController.h"
 #import "PVWebServer.h"
 #import "Reachability.h"
+#import "PVControllerManager.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -181,6 +182,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
+    [PVControllerManager sharedManager];
 
     if (self.initialAppearance)
     {

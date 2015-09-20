@@ -8,6 +8,7 @@
 
 #import "PVAppDelegate.h"
 #import "PVSettingsModel.h"
+#import "PVControllerManager.h"
 
 @interface PVAppDelegate ()
 
