@@ -591,7 +591,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 - (void)setupGameController:(GCController *)controller
 {
     NSInteger player = -1;
-    if (controller == [[PVControllerManager sharedManager] player1])
+    if (controller == [[PVControllerManager sharedManager] player1] || controller == self.iCadeController)
     {
         player = 0;
     }
