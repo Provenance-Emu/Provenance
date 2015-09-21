@@ -117,7 +117,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     __weak typeof(self) weakSelf = self;
     dispatch_source_set_registration_handler(self.dispatch_source, ^{
         dispatch_source_set_event_handler(weakSelf.dispatch_source, ^{
-            DLog(@"Dir changed");
             NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:weakSelf.path error:NULL];
             NSSet *previousContentsSet = [NSSet setWithArray:self.previousContents];
             NSMutableSet *contentsSet = [NSMutableSet setWithArray:contents];

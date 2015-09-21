@@ -35,6 +35,8 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)dealloc
 {
+    [self stopEmulation];
+
 	for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
 	{
 		ringBuffers[i] = nil;

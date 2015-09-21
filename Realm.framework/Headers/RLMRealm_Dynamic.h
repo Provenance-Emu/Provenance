@@ -17,6 +17,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import <Realm/RLMRealm.h>
+
 #import <Realm/RLMObjectSchema.h>
 #import <Realm/RLMProperty.h>
 
@@ -24,21 +25,20 @@
 
 @interface RLMRealm (Dynamic)
 
-// full constructor
-+ (instancetype)realmWithPath:(NSString *)path
-                          key:(NSData *)key
-                     readOnly:(BOOL)readonly
-                     inMemory:(BOOL)inMemory
-                      dynamic:(BOOL)dynamic
-                       schema:(RLMSchema *)customSchema
-                        error:(NSError **)outError;
-
 /**---------------------------------------------------------------------------------------
  *  @name Getting Objects from a Realm
  * ---------------------------------------------------------------------------------------
  */
 /**
+ This method is useful only in specialized circumstances, for example, when building components
+ that integrate with Realm. If you are simply building an app on Realm, it is
+ recommended to use the class methods on `RLMObject`.
+ 
  Get all objects of a given type in this Realm.
+ 
+ The preferred way to get objects of a single class is to use the class methods on RLMObject.
+ 
+ @warning This method is useful only in specialized circumstances.
 
  @param className   The name of the RLMObject subclass to retrieve on e.g. `MyClass.className`.
 
@@ -49,9 +49,15 @@
 - (RLMResults *)allObjects:(NSString *)className;
 
 /**
+ This method is useful only in specialized circumstances, for example, when building components
+ that integrate with Realm. If you are simply building an app on Realm, it is
+ recommended to use the class methods on `RLMObject`.
+ 
  Get objects matching the given predicate from the this Realm.
 
  The preferred way to get objects of a single class is to use the class methods on RLMObject.
+ 
+ @warning This method is useful only in specialized circumstances.
 
  @param className       The type of objects you are looking for (name of the class).
  @param predicateFormat The predicate format string which can accept variable arguments.
@@ -63,9 +69,15 @@
 - (RLMResults *)objects:(NSString *)className where:(NSString *)predicateFormat, ...;
 
 /**
+ This method is useful only in specialized circumstances, for example, when building components
+ that integrate with Realm. If you are simply building an app on Realm, it is
+ recommended to use the class methods on `RLMObject`.
+ 
  Get objects matching the given predicate from the this Realm.
 
  The preferred way to get objects of a single class is to use the class methods on RLMObject.
+ 
+ @warning This method is useful only in specialized circumstances.
 
  @param className   The type of objects you are looking for (name of the class).
  @param predicate   The predicate to filter the objects.
@@ -77,45 +89,44 @@
 - (RLMResults *)objects:(NSString *)className withPredicate:(NSPredicate *)predicate;
 
 /**
- Create an RLMObject of type `className` in the Realm with a given object.
+ This method is useful only in specialized circumstances, for example, when building components
+ that integrate with Realm. If you are simply building an app on Realm, it is
+ recommended to use the class methods on `RLMObject`.
+ 
+ Get an object of a given class name with a primary key
+ 
+ The preferred way to get an object of a single class is to use the class methods on RLMObject.
+ 
+ @warning This method is useful only in specialized circumstances.
+ 
+ @param className   The class name for the object you are looking for
+ @param primaryKey  The primary key value for the object you are looking for
+ 
+ @return    An object or nil if an object with the given primary key does not exist.
+ 
+ @see       RLMObject objectForPrimaryKey:
+ */
+- (RLMObject *)objectWithClassName:(NSString *)className forPrimaryKey:(id)primaryKey;
 
- @param object  The object used to populate the object. This can be any key/value coding compliant
+/**
+ This method is useful only in specialized circumstances, for example, when building components
+ that integrate with Realm. If you are simply building an app on Realm, it is
+ recommended to use [RLMObject createInDefaultRealmWithValue:].
+ 
+ Create an RLMObject of type `className` in the Realm with a given object.
+ 
+ @warning This method is useful only in specialized circumstances.
+
+ @param value   The value used to populate the object. This can be any key/value coding compliant
                 object, or a JSON object such as those returned from the methods in NSJSONSerialization, or
                 an NSArray with one object for each persisted property. An exception will be
                 thrown if any required properties are not present and no default is set.
 
- When passing in an NSArray, all properties must be present, valid and in the same order as the properties defined in the model.
+                When passing in an NSArray, all properties must be present, valid and in the same order as 
+                the properties defined in the model.
+ 
+ @return    An RLMObject of type `className`
  */
--(RLMObject *)createObject:(NSString *)className withObject:(id)object;
+-(RLMObject *)createObject:(NSString *)className withValue:(id)value;
 
-@end
-
-@interface RLMObjectSchema (Dynamic)
-/**
- Initialize an RLMObjectSchema with classname, objectClass, and an array of properties
-
- @param objectClassName     The name of the class used to refer to objects of this type.
- @param objectClass         The objective-c class used when creating instances of this type.
- @param properties          An array RLMProperty describing the persisted properties for this type.
-
- @return    An initialized instance of RLMObjectSchema.
- */
-- (instancetype)initWithClassName:(NSString *)objectClassName objectClass:(Class)objectClass properties:(NSArray *)properties;
-@end
-
-@interface RLMProperty (Dynamic)
-/**
- Initialize an RLMProperty
-
- @param name            The property name.
- @param type            The property type.
- @param objectClassName The object type used for Object and Array types.
- @param attributes      A bitmask of attributes for this property.
-
- @return    An initialized instance of RLMProperty.
- */
-- (instancetype)initWithName:(NSString *)name
-                        type:(RLMPropertyType)type
-             objectClassName:(NSString *)objectClassName
-                     indexed:(BOOL)indexed;
 @end

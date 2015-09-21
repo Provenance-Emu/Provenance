@@ -20,30 +20,20 @@
 
 @implementation PVSettingsViewController
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    if ((self = [super initWithStyle:style]))
-	{
-    }
-	
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	
 	self.title = @"Settings";
-		
-	PVSettingsModel *settings = [PVSettingsModel sharedInstance];
-	
+
+    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
-    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
-    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+    [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
 #else
@@ -105,45 +95,78 @@
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
         [self presentViewController:navController animated:YES completion:NULL];
     }
-    else if (indexPath.section == 3 && indexPath.row == 0)
+    else if(indexPath.section == 3 && indexPath. row == 0) {
+        // import/export roms and game saves button
+        [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
+        
+        // Check to see if we are connected to WiFi. Cannot continue otherwise.
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        [reachability startNotifier];
+        
+        NetworkStatus status = [reachability currentReachabilityStatus];
+        
+        if (status != ReachableViaWiFi)
+        {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                            message: @"Your device needs to be connected to a WiFi network to continue!"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [self presentViewController:alert animated:YES completion:NULL];
+        } else {
+            // connected via wifi, let's continue
+            
+            // start web transfer service
+            [[PVWebServer sharedInstance] startServer];
+            
+            // get the IP address of the device
+            NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
+            
+#if TARGET_IPHONE_SIMULATOR
+            ipAddress = [ipAddress stringByAppendingString:@":8080"];
+#endif
+            
+            NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
+                                                            message: message
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [[PVWebServer sharedInstance] stopServer];
+            }]];
+            [self presentViewController:alert animated:YES completion:NULL];
+        }
+        
+    }
+    else if (indexPath.section == 4 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Refresh Game Library?"
-                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"No"
-                                              otherButtonTitles:@"Yes", nil];
-        [alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-            if (buttonIndex != [alert cancelButtonIndex])
-            {
-                [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
-                                                                    object:nil];
-            }
-        }];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Refresh Game Library?"
+                                                                       message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
+                                                                object:nil];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
+        [self presentViewController:alert animated:YES completion:NULL];
     }
-	else if (indexPath.section == 3 && indexPath.row == 1)
+	else if (indexPath.section == 4 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Empty Image Cache?"
-														message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
-													   delegate:nil
-											  cancelButtonTitle:@"No"
-											  otherButtonTitles:@"Yes", nil];
-		[alert PV_setCompletionHandler:^(NSUInteger buttonIndex) {
-			if (buttonIndex != [alert cancelButtonIndex])
-			{
-				[PVMediaCache emptyCache];
-			}
-		}];
-		[alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Image Cache?"
+                                                                       message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [PVMediaCache emptyCache];
+        }]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
+        [self presentViewController:alert animated:YES completion:NULL];
 	}
-    else if (indexPath.section == 3 && indexPath.row == 2)
+    else if (indexPath.section == 4 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
         [self presentViewController:navController animated:YES completion:NULL];
     }
 }
+
 
 @end

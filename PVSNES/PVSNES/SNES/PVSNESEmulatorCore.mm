@@ -68,9 +68,8 @@ bool8 S9xDeinitUpdate(int width, int height)
 {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
     
-    [strongCurrent performSelectorOnMainThread:@selector(flipBuffers)
-                                    withObject:nil
-                                 waitUntilDone:NO];
+    [strongCurrent flipBuffers];
+    
     return true;
 }
 
@@ -95,7 +94,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     free(videoBufferA);
     videoBufferA = NULL;
     free(videoBufferB);
-    videoBuffer = NULL;
+    videoBufferB = NULL;
     videoBuffer = NULL;
     free(soundBuffer);
     soundBuffer = NULL;
@@ -178,7 +177,9 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		{
 			if (isRunning)
 			{
-				[self executeFrame];
+                @synchronized(self){
+                    [self executeFrame];
+                }
 			}
 		}
 		
@@ -377,12 +378,16 @@ static void FinalizeSamplesAudioCallback(void *)
 #pragma mark Save States
 - (BOOL)saveStateToFileAtPath: (NSString *) fileName
 {
-    return S9xFreezeGame([fileName UTF8String]) ? YES : NO;
+    @synchronized(self) {
+        return S9xFreezeGame([fileName UTF8String]) ? YES : NO;
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath: (NSString *) fileName
 {
-    return S9xUnfreezeGame([fileName UTF8String]) ? YES : NO;
+    @synchronized(self) {
+        return S9xUnfreezeGame([fileName UTF8String]) ? YES : NO;
+    }
 }
 
 #pragma mark - Cheats
@@ -411,14 +416,14 @@ static void FinalizeSamplesAudioCallback(void *)
 
 #pragma mark - Input
 
-- (void)pushSNESButton:(PVSNESButton)button
+- (void)pushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((1 << 16) | button, true);
+    S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (void)releaseSNESButton:(PVSNESButton)button
+- (void)releaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
-    S9xReportButton((1 << 16) | button, false);
+    S9xReportButton((player+1 << 16) | button, false);
 }
 
 - (void)mapButtons

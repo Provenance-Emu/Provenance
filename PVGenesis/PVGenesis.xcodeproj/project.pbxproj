@@ -11,7 +11,6 @@
 		1ACEA6DA17F7512B0031B1C9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; };
 		1ACEA6DC17F751320031B1C9 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; };
 		1ACEA6DF17F751380031B1C9 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
-		1ACEA6E017F751380031B1C9 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DE17F751380031B1C9 /* CoreAudio.framework */; };
 		1ACEA6E217F751590031B1C9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
 		1ACEA86917F752610031B1C9 /* areplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6E917F752600031B1C9 /* areplay.c */; };
 		1ACEA86A17F752610031B1C9 /* eeprom_93c.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EB17F752600031B1C9 /* eeprom_93c.c */; };
@@ -62,10 +61,73 @@
 		1ACEA8C917F752610031B1C9 /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85817F752610031B1C9 /* z80.c */; };
 		1ACEA8CA17F752610031B1C9 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
 		1ACEA8CF17F752610031B1C9 /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
+		1AD482511BA363CC00FDA50A /* gamepad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AC17F752600031B1C9 /* gamepad.c */; };
+		1AD482521BA363CC00FDA50A /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E617F752600031B1C9 /* eq.c */; };
+		1AD482531BA363CC00FDA50A /* scd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70B17F752600031B1C9 /* scd.c */; };
+		1AD482541BA363CC00FDA50A /* z80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85817F752610031B1C9 /* z80.c */; };
+		1AD482551BA363CC00FDA50A /* input.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AE17F752600031B1C9 /* input.c */; };
+		1AD482561BA363CC00FDA50A /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70317F752600031B1C9 /* cdc.c */; };
+		1AD482571BA363CC00FDA50A /* loadrom.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C017F752600031B1C9 /* loadrom.c */; };
+		1AD482581BA363CC00FDA50A /* genesis.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70D17F752600031B1C9 /* genesis.c */; };
+		1AD482591BA363CC00FDA50A /* ym2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EC17F752600031B1C9 /* ym2413.c */; };
+		1AD4825A1BA363CC00FDA50A /* paddle.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B417F752600031B1C9 /* paddle.c */; };
+		1AD4825B1BA363CC00FDA50A /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
+		1AD4825C1BA363CC00FDA50A /* mem68k.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7CF17F752600031B1C9 /* mem68k.c */; };
+		1AD4825D1BA363CC00FDA50A /* cd_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70117F752600031B1C9 /* cd_cart.c */; };
+		1AD4825E1BA363CC00FDA50A /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EA17F752600031B1C9 /* sound.c */; };
+		1AD4825F1BA363CC00FDA50A /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70517F752600031B1C9 /* cdd.c */; };
+		1AD482601BA363CC00FDA50A /* mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B217F752600031B1C9 /* mouse.c */; };
+		1AD482611BA363CC00FDA50A /* vdp_render.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA84217F752610031B1C9 /* vdp_render.c */; };
+		1AD482621BA363CC00FDA50A /* io_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7BE17F752600031B1C9 /* io_ctrl.c */; };
+		1AD482631BA363CC00FDA50A /* sn76489.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E817F752600031B1C9 /* sn76489.c */; };
+		1AD482641BA363CC00FDA50A /* membnk.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D117F752600031B1C9 /* membnk.c */; };
+		1AD482651BA363CC00FDA50A /* blip_buf.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E417F752600031B1C9 /* blip_buf.c */; };
+		1AD482661BA363CC00FDA50A /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70917F752600031B1C9 /* pcm.c */; };
+		1AD482671BA363CC00FDA50A /* sportspad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B617F752600031B1C9 /* sportspad.c */; };
+		1AD482681BA363CC00FDA50A /* lightgun.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B017F752600031B1C9 /* lightgun.c */; };
+		1AD482691BA363CC00FDA50A /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70717F752600031B1C9 /* gfx.c */; };
+		1AD4826A1BA363CC00FDA50A /* xe_a1p.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7BC17F752600031B1C9 /* xe_a1p.c */; };
+		1AD4826B1BA363CC00FDA50A /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F017F752600031B1C9 /* state.c */; };
+		1AD4826C1BA363CC00FDA50A /* terebi_oekaki.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7BA17F752600031B1C9 /* terebi_oekaki.c */; };
+		1AD4826D1BA363CC00FDA50A /* activator.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AA17F752600031B1C9 /* activator.c */; };
+		1AD4826E1BA363CC00FDA50A /* md_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F317F752600031B1C9 /* md_cart.c */; };
+		1AD4826F1BA363CC00FDA50A /* s68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7CC17F752600031B1C9 /* s68kcpu.c */; };
+		1AD482701BA363CC00FDA50A /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7C517F752600031B1C9 /* m68kcpu.c */; };
+		1AD482711BA363CC00FDA50A /* eeprom_spi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EF17F752600031B1C9 /* eeprom_spi.c */; };
+		1AD482721BA363CC00FDA50A /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F717F752600031B1C9 /* sram.c */; };
+		1AD482731BA363CC00FDA50A /* memz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D317F752600031B1C9 /* memz80.c */; };
+		1AD482741BA363CC00FDA50A /* eeprom_i2c.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6ED17F752600031B1C9 /* eeprom_i2c.c */; };
+		1AD482751BA363CC00FDA50A /* teamplayer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7B817F752600031B1C9 /* teamplayer.c */; };
+		1AD482761BA363CC00FDA50A /* sms_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F517F752600031B1C9 /* sms_cart.c */; };
+		1AD482771BA363CC00FDA50A /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
+		1AD482781BA363CC00FDA50A /* vdp_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA84017F752610031B1C9 /* vdp_ctrl.c */; };
+		1AD482791BA363CC00FDA50A /* areplay.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6E917F752600031B1C9 /* areplay.c */; };
+		1AD4827A1BA363CC00FDA50A /* sms_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7DD17F752600031B1C9 /* sms_ntsc.c */; };
+		1AD4827B1BA363CC00FDA50A /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6FB17F752600031B1C9 /* ssp16.c */; };
+		1AD4827C1BA363CC00FDA50A /* md_ntsc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7D817F752600031B1C9 /* md_ntsc.c */; };
+		1AD4827D1BA363CC00FDA50A /* ggenie.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6F117F752600031B1C9 /* ggenie.c */; };
+		1AD4827E1BA363CC00FDA50A /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7EE17F752600031B1C9 /* ym2612.c */; };
+		1AD4827F1BA363CC00FDA50A /* eeprom_93c.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6EB17F752600031B1C9 /* eeprom_93c.c */; };
+		1AD482801BA363CC00FDA50A /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6FD17F752600031B1C9 /* svp.c */; };
+		1AD482811BA363CC00FDA50A /* system.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7F217F752600031B1C9 /* system.c */; };
+		1AD482831BA363CC00FDA50A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
+		1AD482841BA363CC00FDA50A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
+		1AD482851BA363CC00FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; };
+		1AD482861BA363CC00FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; };
+		1AD482871BA363CC00FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1ACEA6AA17F74D150031B1C9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482881BA363CC00FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -210,6 +272,7 @@
 		1ACEA8D517F75B8A0031B1C9 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		1ACEA8D717F75B8A0031B1C9 /* fileio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
+		1AD4828D1BA363CC00FDA50A /* libPVGenesisTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGenesisTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,10 +282,21 @@
 			files = (
 				1ACEA6E217F751590031B1C9 /* CoreGraphics.framework in Frameworks */,
 				1ACEA6DF17F751380031B1C9 /* AudioToolbox.framework in Frameworks */,
-				1ACEA6E017F751380031B1C9 /* CoreAudio.framework in Frameworks */,
 				1ACEA6DC17F751320031B1C9 /* OpenGLES.framework in Frameworks */,
 				1ACEA6DA17F7512B0031B1C9 /* UIKit.framework in Frameworks */,
 				1ACEA6B017F74D150031B1C9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482821BA363CC00FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482831BA363CC00FDA50A /* CoreGraphics.framework in Frameworks */,
+				1AD482841BA363CC00FDA50A /* AudioToolbox.framework in Frameworks */,
+				1AD482851BA363CC00FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD482861BA363CC00FDA50A /* UIKit.framework in Frameworks */,
+				1AD482871BA363CC00FDA50A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				1ACEA6AC17F74D150031B1C9 /* libPVGenesis.a */,
+				1AD4828D1BA363CC00FDA50A /* libPVGenesisTV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -524,13 +599,30 @@
 			productReference = 1ACEA6AC17F74D150031B1C9 /* libPVGenesis.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD4824F1BA363CC00FDA50A /* PVGenesisTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD482891BA363CC00FDA50A /* Build configuration list for PBXNativeTarget "PVGenesisTV" */;
+			buildPhases = (
+				1AD482501BA363CC00FDA50A /* Sources */,
+				1AD482821BA363CC00FDA50A /* Frameworks */,
+				1AD482881BA363CC00FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVGenesisTV;
+			productName = PVGenesis;
+			productReference = 1AD4828D1BA363CC00FDA50A /* libPVGenesisTV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		1ACEA6A417F74D140031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "James Addyman";
 			};
 			buildConfigurationList = 1ACEA6A717F74D140031B1C9 /* Build configuration list for PBXProject "PVGenesis" */;
@@ -546,6 +638,7 @@
 			projectRoot = "";
 			targets = (
 				1ACEA6AB17F74D150031B1C9 /* PVGenesis */,
+				1AD4824F1BA363CC00FDA50A /* PVGenesisTV */,
 			);
 		};
 /* End PBXProject section */
@@ -607,6 +700,62 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AD482501BA363CC00FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482511BA363CC00FDA50A /* gamepad.c in Sources */,
+				1AD482521BA363CC00FDA50A /* eq.c in Sources */,
+				1AD482531BA363CC00FDA50A /* scd.c in Sources */,
+				1AD482541BA363CC00FDA50A /* z80.c in Sources */,
+				1AD482551BA363CC00FDA50A /* input.c in Sources */,
+				1AD482561BA363CC00FDA50A /* cdc.c in Sources */,
+				1AD482571BA363CC00FDA50A /* loadrom.c in Sources */,
+				1AD482581BA363CC00FDA50A /* genesis.c in Sources */,
+				1AD482591BA363CC00FDA50A /* ym2413.c in Sources */,
+				1AD4825A1BA363CC00FDA50A /* paddle.c in Sources */,
+				1AD4825B1BA363CC00FDA50A /* PVGenesisEmulatorCore.m in Sources */,
+				1AD4825C1BA363CC00FDA50A /* mem68k.c in Sources */,
+				1AD4825D1BA363CC00FDA50A /* cd_cart.c in Sources */,
+				1AD4825E1BA363CC00FDA50A /* sound.c in Sources */,
+				1AD4825F1BA363CC00FDA50A /* cdd.c in Sources */,
+				1AD482601BA363CC00FDA50A /* mouse.c in Sources */,
+				1AD482611BA363CC00FDA50A /* vdp_render.c in Sources */,
+				1AD482621BA363CC00FDA50A /* io_ctrl.c in Sources */,
+				1AD482631BA363CC00FDA50A /* sn76489.c in Sources */,
+				1AD482641BA363CC00FDA50A /* membnk.c in Sources */,
+				1AD482651BA363CC00FDA50A /* blip_buf.c in Sources */,
+				1AD482661BA363CC00FDA50A /* pcm.c in Sources */,
+				1AD482671BA363CC00FDA50A /* sportspad.c in Sources */,
+				1AD482681BA363CC00FDA50A /* lightgun.c in Sources */,
+				1AD482691BA363CC00FDA50A /* gfx.c in Sources */,
+				1AD4826A1BA363CC00FDA50A /* xe_a1p.c in Sources */,
+				1AD4826B1BA363CC00FDA50A /* state.c in Sources */,
+				1AD4826C1BA363CC00FDA50A /* terebi_oekaki.c in Sources */,
+				1AD4826D1BA363CC00FDA50A /* activator.c in Sources */,
+				1AD4826E1BA363CC00FDA50A /* md_cart.c in Sources */,
+				1AD4826F1BA363CC00FDA50A /* s68kcpu.c in Sources */,
+				1AD482701BA363CC00FDA50A /* m68kcpu.c in Sources */,
+				1AD482711BA363CC00FDA50A /* eeprom_spi.c in Sources */,
+				1AD482721BA363CC00FDA50A /* sram.c in Sources */,
+				1AD482731BA363CC00FDA50A /* memz80.c in Sources */,
+				1AD482741BA363CC00FDA50A /* eeprom_i2c.c in Sources */,
+				1AD482751BA363CC00FDA50A /* teamplayer.c in Sources */,
+				1AD482761BA363CC00FDA50A /* sms_cart.c in Sources */,
+				1AD482771BA363CC00FDA50A /* libretro.c in Sources */,
+				1AD482781BA363CC00FDA50A /* vdp_ctrl.c in Sources */,
+				1AD482791BA363CC00FDA50A /* areplay.c in Sources */,
+				1AD4827A1BA363CC00FDA50A /* sms_ntsc.c in Sources */,
+				1AD4827B1BA363CC00FDA50A /* ssp16.c in Sources */,
+				1AD4827C1BA363CC00FDA50A /* md_ntsc.c in Sources */,
+				1AD4827D1BA363CC00FDA50A /* ggenie.c in Sources */,
+				1AD4827E1BA363CC00FDA50A /* ym2612.c in Sources */,
+				1AD4827F1BA363CC00FDA50A /* eeprom_93c.c in Sources */,
+				1AD482801BA363CC00FDA50A /* svp.c in Sources */,
+				1AD482811BA363CC00FDA50A /* system.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -627,6 +776,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -682,10 +832,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-fPIC",
 					"-DLSB_FIRST",
@@ -705,10 +857,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fPIC",
@@ -724,6 +878,86 @@
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
+		};
+		1AD4828A1BA363CC00FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Debug;
+		};
+		1AD4828B1BA363CC00FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Release;
+		};
+		1AD4828C1BA363CC00FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-DNS_BLOCK_ASSERTIONS=1",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_ZLIB",
+					"-DUSE_16BPP_RENDERING",
+					"-DNDEBUG",
+					"-D__LIBRETRO__",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = AdHoc;
 		};
 		1AE17E1A19884A1900AE3AB1 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
@@ -760,10 +994,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/PVGenesis.dst;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../PVSupport/**";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-fPIC",
@@ -799,6 +1035,16 @@
 				1ACEA6D017F74D150031B1C9 /* Debug */,
 				1ACEA6D117F74D150031B1C9 /* Release */,
 				1AE17E1B19884A1900AE3AB1 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD482891BA363CC00FDA50A /* Build configuration list for PBXNativeTarget "PVGenesisTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD4828A1BA363CC00FDA50A /* Debug */,
+				1AD4828B1BA363CC00FDA50A /* Release */,
+				1AD4828C1BA363CC00FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

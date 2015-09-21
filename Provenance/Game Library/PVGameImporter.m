@@ -348,16 +348,18 @@
             {
                 systemID = chosenSystemID;
             }
-            NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
-            NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
-            PVGame *game = nil;
-            //prevent duplicates entries for related files (eg, cue and bins)
-            RLMResults *dupeResults = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath contains[c] %@", ([partialPath length]) ? [partialPath stringByReplacingOccurrencesOfString:[partialPath pathExtension] withString:@""] : @""]];
-            if ([dupeResults count])
+
+            NSArray * cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
+            if ([cdBasedSystems containsObject:systemID] &&
+                ([[path pathExtension] isEqualToString:@"cue"] == NO))
             {
                 continue;
             }
-                
+
+            NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
+            NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
+            PVGame *game = nil;
+
             RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
             if ([results count])
             {
@@ -369,7 +371,7 @@
                 {
                     continue;
                 }
-                
+
                 game = [[PVGame alloc] init];
                 [game setRomPath:partialPath];
                 [game setTitle:title];
@@ -379,7 +381,7 @@
                 [realm addObject:game];
                 [realm commitWriteTransaction];
             }
-            
+
             if ([game requiresSync])
             {
                 if (self.importStartedHandler)
@@ -441,6 +443,23 @@
     if (![results count])
     {
         NSString *fileName = [[game romPath] lastPathComponent];
+        
+        // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
+        static NSMutableCharacterSet *charSet = nil;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            charSet = [NSMutableCharacterSet punctuationCharacterSet];
+            [charSet removeCharactersInString:@"-+&"];
+        });
+        
+        NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
+        NSUInteger gameTitleLen;
+        if (nonCharRange.length > 0) {
+            gameTitleLen = nonCharRange.location - 1;
+        } else {
+            gameTitleLen = [fileName length];
+        }
+        fileName = [fileName substringToIndex:gameTitleLen];
         results = [self searchDatabaseUsingKey:@"romFileName"
                                          value:fileName
                                       systemID:[game systemIdentifier]
@@ -474,8 +493,14 @@
     
     [realm beginWriteTransaction];
     [game setRequiresSync:NO];
-    [game setTitle:chosenResult[@"gameTitle"]];
-    [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+    if ([chosenResult[@"gameTitle"] length])
+    {
+        [game setTitle:chosenResult[@"gameTitle"]];
+    }
+    if ([chosenResult[@"boxImageURL"] length])
+    {
+        [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+    }
     [realm commitWriteTransaction];
 }
 
@@ -562,7 +587,11 @@
 
 - (NSString *)documentsPath
 {
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
     
     return [paths firstObject];
 }
