@@ -23,7 +23,7 @@
 
  See [Realm Models](http://realm.io/docs/cocoa/latest/#models)
  */
-// Make sure numbers match those in <tightdb/data_type.hpp>
+// Make sure numbers match those in <realm/data_type.hpp>
 typedef NS_ENUM(int32_t, RLMPropertyType) {
     ////////////////////////////////
     // Primitive types
@@ -94,7 +94,7 @@ extern NSString * const RLMRealmDidChangeNotification;
 #endif
 
 typedef NS_ENUM(NSInteger, RLMError) {
-    /** Retuned by RLMRealm if no other specific error is returned when a realm is opened. */
+    /** Returned by RLMRealm if no other specific error is returned when a realm is opened. */
     RLMErrorFail                  = 1,
     /** Returned by RLMRealm for any I/O related exception scenarios when a realm is opened. */
     RLMErrorFileAccessError       = 2,
@@ -111,8 +111,8 @@ typedef NS_ENUM(NSInteger, RLMError) {
     RLMErrorIncompatibleLockFile  = 8,
 };
 
-// Schema version used for unitialized Realms
-extern const NSUInteger RLMNotVersioned;
+// Schema version used for uninitialized Realms
+extern const uint64_t RLMNotVersioned;
 
 extern NSString * const RLMErrorDomain;
 
@@ -121,3 +121,5 @@ extern NSString * const RLMExceptionName;
 extern NSString * const RLMRealmVersionKey;
 
 extern NSString * const RLMRealmCoreVersionKey;
+
+extern NSString * const RLMInvalidatedKey;

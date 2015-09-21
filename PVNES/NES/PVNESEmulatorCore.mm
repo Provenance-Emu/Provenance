@@ -122,7 +122,9 @@ static __weak PVNESEmulatorCore *_current;
         {
             if (isRunning)
             {
-                [self executeFrame];
+                @synchronized(self) {
+                    [self executeFrame];
+                }
             }
         }
         
@@ -216,6 +218,11 @@ static __weak PVNESEmulatorCore *_current;
     return CGRectMake(0, 0, 256, 240);
 }
 
+- (CGSize)aspectSize
+{
+    return CGSizeMake(4, 3);
+}
+
 - (CGSize)bufferSize
 {
     return CGSizeMake(256, 240);
@@ -252,13 +259,17 @@ static __weak PVNESEmulatorCore *_current;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName
 {
-    FCEUSS_Save([fileName UTF8String], false);
-    return YES;
+    @synchronized(self) {
+        FCEUSS_Save([fileName UTF8String], false);
+        return YES;
+    }
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName
 {
-    return FCEUSS_Load([fileName UTF8String], false);
+    @synchronized(self) {
+        return FCEUSS_Load([fileName UTF8String], false);
+    }
 }
 
 - (NSData *)serializeStateWithError:(NSError **)outError
@@ -296,15 +307,20 @@ static __weak PVNESEmulatorCore *_current;
 # pragma mark - Input
 
 const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
-- (oneway void)pushNESButton:(PVNESButton)button
+- (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
-    pad[0][0] |= NESMap[button];
+    int playerShift = player != 0 ? 8 : 0;
+
+    pad[player][0] |= NESMap[button] << playerShift;
 }
 
-- (oneway void)releaseNESButton:(PVNESButton)button
+- (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
-    pad[0][0] &= ~NESMap[button];
+    int playerShift = player != 0 ? 8 : 0;
+
+    pad[player][0] &= ~NESMap[button] << playerShift;
 }
+
 
 // FCEUX internal functions and stubs
 void FCEUD_SetPalette(unsigned char index, unsigned char r, unsigned char g, unsigned char b)

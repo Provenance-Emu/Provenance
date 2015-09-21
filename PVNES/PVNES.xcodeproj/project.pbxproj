@@ -212,10 +212,224 @@
 		1A3A79B21ABF1D41002274A3 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
 		1A3A79B31ABF1D41002274A3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79B01ABF1D41002274A3 /* UIKit.framework */; };
 		1A74171E1ABF2CEB00F3CD3C /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A776E1ABF16A4002274A3 /* input.cpp */; };
+		1AD483331BA3641200FDA50A /* 71.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75491ABF16A3002274A3 /* 71.cpp */; };
+		1AD483341BA3641200FDA50A /* 253.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75331ABF16A3002274A3 /* 253.cpp */; };
+		1AD483351BA3641200FDA50A /* bonza.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75621ABF16A3002274A3 /* bonza.cpp */; };
+		1AD483361BA3641200FDA50A /* bandai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755C1ABF16A3002274A3 /* bandai.cpp */; };
+		1AD483371BA3641200FDA50A /* pec-586.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A758B1ABF16A3002274A3 /* pec-586.cpp */; };
+		1AD483381BA3641200FDA50A /* 15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75151ABF16A3002274A3 /* 15.cpp */; };
+		1AD483391BA3641200FDA50A /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E01ABF16A5002274A3 /* memory.cpp */; };
+		1AD4833A1BA3641200FDA50A /* 42.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753D1ABF16A3002274A3 /* 42.cpp */; };
+		1AD4833B1BA3641200FDA50A /* drawing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75AC1ABF16A3002274A3 /* drawing.cpp */; };
+		1AD4833C1BA3641200FDA50A /* 206.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75271ABF16A3002274A3 /* 206.cpp */; };
+		1AD4833D1BA3641200FDA50A /* dream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75671ABF16A3002274A3 /* dream.cpp */; };
+		1AD4833E1BA3641200FDA50A /* ghostbusters63in1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A756E1ABF16A3002274A3 /* ghostbusters63in1.cpp */; };
+		1AD4833F1BA3641200FDA50A /* ax5705.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755B1ABF16A3002274A3 /* ax5705.cpp */; };
+		1AD483401BA3641200FDA50A /* kof97.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75731ABF16A3002274A3 /* kof97.cpp */; };
+		1AD483411BA3641200FDA50A /* unzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E31ABF16A5002274A3 /* unzip.cpp */; };
+		1AD483421BA3641200FDA50A /* 175.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751B1ABF16A3002274A3 /* 175.cpp */; };
+		1AD483431BA3641200FDA50A /* sl1632.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75911ABF16A3002274A3 /* sl1632.cpp */; };
+		1AD483441BA3641200FDA50A /* vrc2and4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759B1ABF16A3002274A3 /* vrc2and4.cpp */; };
+		1AD483451BA3641200FDA50A /* __dummy_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75571ABF16A3002274A3 /* __dummy_mapper.cpp */; };
+		1AD483461BA3641200FDA50A /* 72.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754A1ABF16A3002274A3 /* 72.cpp */; };
+		1AD483471BA3641200FDA50A /* sachen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A758D1ABF16A3002274A3 /* sachen.cpp */; };
+		1AD483481BA3641200FDA50A /* lh32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757D1ABF16A3002274A3 /* lh32.cpp */; };
+		1AD483491BA3641200FDA50A /* 252.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75321ABF16A3002274A3 /* 252.cpp */; };
+		1AD4834A1BA3641200FDA50A /* vrc6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759E1ABF16A3002274A3 /* vrc6.cpp */; };
+		1AD4834B1BA3641200FDA50A /* cheat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A41ABF16A3002274A3 /* cheat.cpp */; };
+		1AD4834C1BA3641200FDA50A /* oldmovie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77B61ABF16A4002274A3 /* oldmovie.cpp */; };
+		1AD4834D1BA3641200FDA50A /* filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A773B1ABF16A4002274A3 /* filter.cpp */; };
+		1AD4834E1BA3641200FDA50A /* 40.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753A1ABF16A3002274A3 /* 40.cpp */; };
+		1AD4834F1BA3641200FDA50A /* 235.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752F1ABF16A3002274A3 /* 235.cpp */; };
+		1AD483501BA3641200FDA50A /* fceu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77331ABF16A4002274A3 /* fceu.cpp */; };
+		1AD483511BA3641200FDA50A /* novel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75891ABF16A3002274A3 /* novel.cpp */; };
+		1AD483521BA3641200FDA50A /* 67.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75461ABF16A3002274A3 /* 67.cpp */; };
+		1AD483531BA3641200FDA50A /* 603-5052.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75431ABF16A3002274A3 /* 603-5052.cpp */; };
+		1AD483541BA3641200FDA50A /* 151.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75161ABF16A3002274A3 /* 151.cpp */; };
+		1AD483551BA3641200FDA50A /* sa-9602b.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A758C1ABF16A3002274A3 /* sa-9602b.cpp */; };
+		1AD483561BA3641200FDA50A /* karaoke.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75721ABF16A3002274A3 /* karaoke.cpp */; };
+		1AD483571BA3641200FDA50A /* 99.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75561ABF16A3002274A3 /* 99.cpp */; };
+		1AD483581BA3641200FDA50A /* mmc1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75821ABF16A3002274A3 /* mmc1.cpp */; };
+		1AD483591BA3641200FDA50A /* 199.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75261ABF16A3002274A3 /* 199.cpp */; };
+		1AD4835A1BA3641200FDA50A /* sc-127.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A758E1ABF16A3002274A3 /* sc-127.cpp */; };
+		1AD4835B1BA3641200FDA50A /* 96.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75551ABF16A3002274A3 /* 96.cpp */; };
+		1AD4835C1BA3641200FDA50A /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C71ABF16A5002274A3 /* sound.cpp */; };
+		1AD4835D1BA3641200FDA50A /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DA1ABF16A5002274A3 /* guid.cpp */; };
+		1AD4835E1BA3641200FDA50A /* 117.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75111ABF16A3002274A3 /* 117.cpp */; };
+		1AD4835F1BA3641200FDA50A /* PVNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */; };
+		1AD483601BA3641200FDA50A /* bs-5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75631ABF16A3002274A3 /* bs-5.cpp */; };
+		1AD483611BA3641200FDA50A /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E91ABF16A5002274A3 /* video.cpp */; };
+		1AD483621BA3641200FDA50A /* 185.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75211ABF16A3002274A3 /* 185.cpp */; };
+		1AD483631BA3641200FDA50A /* mihunche.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75811ABF16A3002274A3 /* mihunche.cpp */; };
+		1AD483641BA3641200FDA50A /* 164.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75181ABF16A3002274A3 /* 164.cpp */; };
+		1AD483651BA3641200FDA50A /* hypershot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77601ABF16A4002274A3 /* hypershot.cpp */; };
+		1AD483661BA3641200FDA50A /* 246.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75311ABF16A3002274A3 /* 246.cpp */; };
+		1AD483671BA3641200FDA50A /* 43.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753E1ABF16A3002274A3 /* 43.cpp */; };
+		1AD483681BA3641200FDA50A /* ioapi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DC1ABF16A5002274A3 /* ioapi.cpp */; };
+		1AD483691BA3641200FDA50A /* tf-1201.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75981ABF16A3002274A3 /* tf-1201.cpp */; };
+		1AD4836A1BA3641200FDA50A /* 189.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75241ABF16A3002274A3 /* 189.cpp */; };
+		1AD4836B1BA3641200FDA50A /* 225.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752A1ABF16A3002274A3 /* 225.cpp */; };
+		1AD4836C1BA3641200FDA50A /* mmc3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75841ABF16A3002274A3 /* mmc3.cpp */; };
+		1AD4836D1BA3641200FDA50A /* 187.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75231ABF16A3002274A3 /* 187.cpp */; };
+		1AD4836E1BA3641200FDA50A /* 12in1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75141ABF16A3002274A3 /* 12in1.cpp */; };
+		1AD4836F1BA3641200FDA50A /* 36.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75381ABF16A3002274A3 /* 36.cpp */; };
+		1AD483701BA3641200FDA50A /* transformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75991ABF16A3002274A3 /* transformer.cpp */; };
+		1AD483711BA3641200FDA50A /* backward.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77D01ABF16A5002274A3 /* backward.cpp */; };
+		1AD483721BA3641200FDA50A /* tengen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75971ABF16A3002274A3 /* tengen.cpp */; };
+		1AD483731BA3641200FDA50A /* cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A775C1ABF16A4002274A3 /* cursor.cpp */; };
+		1AD483741BA3641200FDA50A /* famicombox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A756B1ABF16A3002274A3 /* famicombox.cpp */; };
+		1AD483751BA3641200FDA50A /* ks7031.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75781ABF16A3002274A3 /* ks7031.cpp */; };
+		1AD483761BA3641200FDA50A /* shadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77671ABF16A4002274A3 /* shadow.cpp */; };
+		1AD483771BA3641200FDA50A /* ks7032.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75791ABF16A3002274A3 /* ks7032.cpp */; };
+		1AD483781BA3641200FDA50A /* 8157.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754E1ABF16A3002274A3 /* 8157.cpp */; };
+		1AD483791BA3641200FDA50A /* t-227-1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75951ABF16A3002274A3 /* t-227-1.cpp */; };
+		1AD4837A1BA3641200FDA50A /* vsuni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77EB1ABF16A5002274A3 /* vsuni.cpp */; };
+		1AD4837B1BA3641200FDA50A /* 186.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75221ABF16A3002274A3 /* 186.cpp */; };
+		1AD4837C1BA3641200FDA50A /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C31ABF16A5002274A3 /* ppu.cpp */; };
+		1AD4837D1BA3641200FDA50A /* endian.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77D61ABF16A5002274A3 /* endian.cpp */; };
+		1AD4837E1BA3641200FDA50A /* 177.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751D1ABF16A3002274A3 /* 177.cpp */; };
+		1AD4837F1BA3641200FDA50A /* ines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77571ABF16A4002274A3 /* ines.cpp */; };
+		1AD483801BA3641200FDA50A /* 120.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75121ABF16A3002274A3 /* 120.cpp */; };
+		1AD483811BA3641200FDA50A /* ks7012.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75741ABF16A3002274A3 /* ks7012.cpp */; };
+		1AD483821BA3641200FDA50A /* addrlatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755A1ABF16A3002274A3 /* addrlatch.cpp */; };
+		1AD483831BA3641200FDA50A /* 170.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751A1ABF16A3002274A3 /* 170.cpp */; };
+		1AD483841BA3641200FDA50A /* 32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75351ABF16A3002274A3 /* 32.cpp */; };
+		1AD483851BA3641200FDA50A /* 116.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75101ABF16A3002274A3 /* 116.cpp */; };
+		1AD483861BA3641200FDA50A /* yoko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A11ABF16A3002274A3 /* yoko.cpp */; };
+		1AD483871BA3641200FDA50A /* ks7037.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757A1ABF16A3002274A3 /* ks7037.cpp */; };
+		1AD483881BA3641200FDA50A /* movie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77B01ABF16A4002274A3 /* movie.cpp */; };
+		1AD483891BA3641200FDA50A /* vrc7p.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A01ABF16A3002274A3 /* vrc7p.cpp */; };
+		1AD4838A1BA3641200FDA50A /* 88.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75521ABF16A3002274A3 /* 88.cpp */; };
+		1AD4838B1BA3641200FDA50A /* unif.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77CD1ABF16A5002274A3 /* unif.cpp */; };
+		1AD4838C1BA3641200FDA50A /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DE1ABF16A5002274A3 /* md5.cpp */; };
+		1AD4838D1BA3641200FDA50A /* subor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75921ABF16A3002274A3 /* subor.cpp */; };
+		1AD4838E1BA3641200FDA50A /* 168.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75191ABF16A3002274A3 /* 168.cpp */; };
+		1AD4838F1BA3641200FDA50A /* ks7057.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757B1ABF16A3002274A3 /* ks7057.cpp */; };
+		1AD483901BA3641200FDA50A /* arkanoid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A775A1ABF16A4002274A3 /* arkanoid.cpp */; };
+		1AD483911BA3641200FDA50A /* wave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77ED1ABF16A5002274A3 /* wave.cpp */; };
+		1AD483921BA3641200FDA50A /* toprider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A776B1ABF16A4002274A3 /* toprider.cpp */; };
+		1AD483931BA3641200FDA50A /* quiz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77651ABF16A4002274A3 /* quiz.cpp */; };
+		1AD483941BA3641200FDA50A /* bmc13in1jy110.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755E1ABF16A3002274A3 /* bmc13in1jy110.cpp */; };
+		1AD483951BA3641200FDA50A /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77391ABF16A4002274A3 /* file.cpp */; };
+		1AD483961BA3641200FDA50A /* 79.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754C1ABF16A3002274A3 /* 79.cpp */; };
+		1AD483971BA3641200FDA50A /* 3d-block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75391ABF16A3002274A3 /* 3d-block.cpp */; };
+		1AD483981BA3641200FDA50A /* bmc70in1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75611ABF16A3002274A3 /* bmc70in1.cpp */; };
+		1AD483991BA3641200FDA50A /* emufile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77301ABF16A4002274A3 /* emufile.cpp */; };
+		1AD4839A1BA3641200FDA50A /* fds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77371ABF16A4002274A3 /* fds.cpp */; };
+		1AD4839B1BA3641200FDA50A /* 176.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751C1ABF16A3002274A3 /* 176.cpp */; };
+		1AD4839C1BA3641200FDA50A /* 228.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752B1ABF16A3002274A3 /* 228.cpp */; };
+		1AD4839D1BA3641200FDA50A /* 46.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753F1ABF16A3002274A3 /* 46.cpp */; };
+		1AD4839E1BA3641200FDA50A /* 82.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754F1ABF16A3002274A3 /* 82.cpp */; };
+		1AD4839F1BA3641200FDA50A /* 208.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75281ABF16A3002274A3 /* 208.cpp */; };
+		1AD483A01BA3641200FDA50A /* 34.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75371ABF16A3002274A3 /* 34.cpp */; };
+		1AD483A11BA3641200FDA50A /* ftrainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A775F1ABF16A4002274A3 /* ftrainer.cpp */; };
+		1AD483A21BA3641200FDA50A /* 230.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752C1ABF16A3002274A3 /* 230.cpp */; };
+		1AD483A31BA3641200FDA50A /* vrc5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759D1ABF16A3002274A3 /* vrc5.cpp */; };
+		1AD483A41BA3641200FDA50A /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75AA1ABF16A3002274A3 /* debug.cpp */; };
+		1AD483A51BA3641200FDA50A /* 62.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75441ABF16A3002274A3 /* 62.cpp */; };
+		1AD483A61BA3641200FDA50A /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A21ABF16A3002274A3 /* cart.cpp */; };
+		1AD483A71BA3641200FDA50A /* malee.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757F1ABF16A3002274A3 /* malee.cpp */; };
+		1AD483A81BA3641200FDA50A /* 183.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75201ABF16A3002274A3 /* 183.cpp */; };
+		1AD483A91BA3641200FDA50A /* ac-08.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75591ABF16A3002274A3 /* ac-08.cpp */; };
+		1AD483AA1BA3641200FDA50A /* 69.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75481ABF16A3002274A3 /* 69.cpp */; };
+		1AD483AB1BA3641200FDA50A /* 91.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75541ABF16A3002274A3 /* 91.cpp */; };
+		1AD483AC1BA3641200FDA50A /* 193.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75251ABF16A3002274A3 /* 193.cpp */; };
+		1AD483AD1BA3641200FDA50A /* 8237.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75501ABF16A3002274A3 /* 8237.cpp */; };
+		1AD483AE1BA3641200FDA50A /* edu2000.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75681ABF16A3002274A3 /* edu2000.cpp */; };
+		1AD483AF1BA3641200FDA50A /* bb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755D1ABF16A3002274A3 /* bb.cpp */; };
+		1AD483B01BA3641200FDA50A /* 50.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75401ABF16A3002274A3 /* 50.cpp */; };
+		1AD483B11BA3641200FDA50A /* 103.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750C1ABF16A3002274A3 /* 103.cpp */; };
+		1AD483B21BA3641200FDA50A /* lh53.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757E1ABF16A3002274A3 /* lh53.cpp */; };
+		1AD483B31BA3641200FDA50A /* a9746.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75581ABF16A3002274A3 /* a9746.cpp */; };
+		1AD483B41BA3641200FDA50A /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A81ABF16A3002274A3 /* config.cpp */; };
+		1AD483B51BA3641200FDA50A /* 121.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75131ABF16A3002274A3 /* 121.cpp */; };
+		1AD483B61BA3641200FDA50A /* emu2413.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75691ABF16A3002274A3 /* emu2413.c */; };
+		1AD483B71BA3641200FDA50A /* 33.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75361ABF16A3002274A3 /* 33.cpp */; };
+		1AD483B81BA3641200FDA50A /* powerpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77641ABF16A4002274A3 /* powerpad.cpp */; };
+		1AD483B91BA3641200FDA50A /* 178.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751E1ABF16A3002274A3 /* 178.cpp */; };
+		1AD483BA1BA3641200FDA50A /* le05.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A757C1ABF16A3002274A3 /* le05.cpp */; };
+		1AD483BB1BA3641200FDA50A /* datalatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75661ABF16A3002274A3 /* datalatch.cpp */; };
+		1AD483BC1BA3641200FDA50A /* fkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A775D1ABF16A4002274A3 /* fkb.cpp */; };
+		1AD483BD1BA3641200FDA50A /* nsf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77B41ABF16A4002274A3 /* nsf.cpp */; };
+		1AD483BE1BA3641200FDA50A /* ks7030.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75771ABF16A3002274A3 /* ks7030.cpp */; };
+		1AD483BF1BA3641200FDA50A /* onebus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A758A1ABF16A3002274A3 /* onebus.cpp */; };
+		1AD483C01BA3641200FDA50A /* asm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75061ABF16A3002274A3 /* asm.cpp */; };
+		1AD483C11BA3641200FDA50A /* 156.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75171ABF16A3002274A3 /* 156.cpp */; };
+		1AD483C21BA3641200FDA50A /* 57.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75421ABF16A3002274A3 /* 57.cpp */; };
+		1AD483C31BA3641200FDA50A /* 90.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75531ABF16A3002274A3 /* 90.cpp */; };
+		1AD483C41BA3641200FDA50A /* ffe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A756C1ABF16A3002274A3 /* ffe.cpp */; };
+		1AD483C51BA3641200FDA50A /* n625092.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75881ABF16A3002274A3 /* n625092.cpp */; };
+		1AD483C61BA3641200FDA50A /* 234.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752E1ABF16A3002274A3 /* 234.cpp */; };
+		1AD483C71BA3641200FDA50A /* 51.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75411ABF16A3002274A3 /* 51.cpp */; };
+		1AD483C81BA3641200FDA50A /* sheroes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75901ABF16A3002274A3 /* sheroes.cpp */; };
+		1AD483C91BA3641200FDA50A /* 77.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754B1ABF16A3002274A3 /* 77.cpp */; };
+		1AD483CA1BA3641200FDA50A /* 41.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753B1ABF16A3002274A3 /* 41.cpp */; };
+		1AD483CB1BA3641200FDA50A /* x6502.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77EF1ABF16A5002274A3 /* x6502.cpp */; };
+		1AD483CC1BA3641200FDA50A /* super24.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75931ABF16A3002274A3 /* super24.cpp */; };
+		1AD483CD1BA3641200FDA50A /* dance2000.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75651ABF16A3002274A3 /* dance2000.cpp */; };
+		1AD483CE1BA3641200FDA50A /* oekakids.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77631ABF16A4002274A3 /* oekakids.cpp */; };
+		1AD483CF1BA3641200FDA50A /* ks7017.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75761ABF16A3002274A3 /* ks7017.cpp */; };
+		1AD483D01BA3641200FDA50A /* n106.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75871ABF16A3002274A3 /* n106.cpp */; };
+		1AD483D11BA3641200FDA50A /* conddebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75A61ABF16A3002274A3 /* conddebug.cpp */; };
+		1AD483D21BA3641200FDA50A /* 01-222.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750A1ABF16A3002274A3 /* 01-222.cpp */; };
+		1AD483D31BA3641200FDA50A /* supervision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75941ABF16A3002274A3 /* supervision.cpp */; };
+		1AD483D41BA3641200FDA50A /* 411120-c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A753C1ABF16A3002274A3 /* 411120-c.cpp */; };
+		1AD483D51BA3641200FDA50A /* 830118C.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75511ABF16A3002274A3 /* 830118C.cpp */; };
+		1AD483D61BA3641200FDA50A /* vrc3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759C1ABF16A3002274A3 /* vrc3.cpp */; };
+		1AD483D71BA3641200FDA50A /* 80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A754D1ABF16A3002274A3 /* 80.cpp */; };
+		1AD483D81BA3641200FDA50A /* h2288.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75711ABF16A3002274A3 /* h2288.cpp */; };
+		1AD483D91BA3641200FDA50A /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C91ABF16A5002274A3 /* state.cpp */; };
+		1AD483DA1BA3641200FDA50A /* bmc64in1nr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75601ABF16A3002274A3 /* bmc64in1nr.cpp */; };
+		1AD483DB1BA3641200FDA50A /* palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77B91ABF16A4002274A3 /* palette.cpp */; };
+		1AD483DC1BA3641200FDA50A /* 222.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75291ABF16A3002274A3 /* 222.cpp */; };
+		1AD483DD1BA3641200FDA50A /* zapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A776C1ABF16A4002274A3 /* zapper.cpp */; };
+		1AD483DE1BA3641200FDA50A /* suborkb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77691ABF16A4002274A3 /* suborkb.cpp */; };
+		1AD483DF1BA3641200FDA50A /* ks7013.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75751ABF16A3002274A3 /* ks7013.cpp */; };
+		1AD483E01BA3641200FDA50A /* bworld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A775B1ABF16A4002274A3 /* bworld.cpp */; };
+		1AD483E11BA3641200FDA50A /* 68.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75471ABF16A3002274A3 /* 68.cpp */; };
+		1AD483E21BA3641200FDA50A /* ConvertUTF.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77D21ABF16A5002274A3 /* ConvertUTF.c */; };
+		1AD483E31BA3641200FDA50A /* t-262.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75961ABF16A3002274A3 /* t-262.cpp */; };
+		1AD483E41BA3641200FDA50A /* 108.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750E1ABF16A3002274A3 /* 108.cpp */; };
+		1AD483E51BA3641200FDA50A /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A776E1ABF16A4002274A3 /* input.cpp */; };
+		1AD483E61BA3641200FDA50A /* mahjong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77611ABF16A4002274A3 /* mahjong.cpp */; };
+		1AD483E71BA3641200FDA50A /* 28.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75341ABF16A3002274A3 /* 28.cpp */; };
+		1AD483E81BA3641200FDA50A /* vrc7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759F1ABF16A3002274A3 /* vrc7.cpp */; };
+		1AD483E91BA3641200FDA50A /* xstring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E61ABF16A5002274A3 /* xstring.cpp */; };
+		1AD483EA1BA3641200FDA50A /* 244.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75301ABF16A3002274A3 /* 244.cpp */; };
+		1AD483EB1BA3641200FDA50A /* general.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77D81ABF16A5002274A3 /* general.cpp */; };
+		1AD483EC1BA3641200FDA50A /* fk23c.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A756D1ABF16A3002274A3 /* fk23c.cpp */; };
+		1AD483ED1BA3641200FDA50A /* gs-2013.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75701ABF16A3002274A3 /* gs-2013.cpp */; };
+		1AD483EE1BA3641200FDA50A /* 09-034a.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750B1ABF16A3002274A3 /* 09-034a.cpp */; };
+		1AD483EF1BA3641200FDA50A /* 65.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75451ABF16A3002274A3 /* 65.cpp */; };
+		1AD483F01BA3641200FDA50A /* mmc2and4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75831ABF16A3002274A3 /* mmc2and4.cpp */; };
+		1AD483F11BA3641200FDA50A /* vrc1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A759A1ABF16A3002274A3 /* vrc1.cpp */; };
+		1AD483F21BA3641200FDA50A /* cityfighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75641ABF16A3002274A3 /* cityfighter.cpp */; };
+		1AD483F31BA3641200FDA50A /* netplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77B21ABF16A4002274A3 /* netplay.cpp */; };
+		1AD483F41BA3641200FDA50A /* mmc5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75861ABF16A3002274A3 /* mmc5.cpp */; };
+		1AD483F51BA3641200FDA50A /* 106.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750D1ABF16A3002274A3 /* 106.cpp */; };
+		1AD483F61BA3641200FDA50A /* gs-2004.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A756F1ABF16A3002274A3 /* gs-2004.cpp */; };
+		1AD483F71BA3641200FDA50A /* 18.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A751F1ABF16A3002274A3 /* 18.cpp */; };
+		1AD483F81BA3641200FDA50A /* bmc42in1r.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A755F1ABF16A3002274A3 /* bmc42in1r.cpp */; };
+		1AD483F91BA3641200FDA50A /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77D41ABF16A5002274A3 /* crc32.cpp */; };
+		1AD483FA1BA3641200FDA50A /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77621ABF16A4002274A3 /* mouse.cpp */; };
+		1AD483FB1BA3641200FDA50A /* 232.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A752D1ABF16A3002274A3 /* 232.cpp */; };
+		1AD483FC1BA3641200FDA50A /* 112.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A750F1ABF16A3002274A3 /* 112.cpp */; };
+		1AD483FE1BA3641200FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
+		1AD483FF1BA3641200FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
+		1AD484001BA3641200FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79B01ABF1D41002274A3 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1A3A74E61ABF11AC002274A3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD484011BA3641200FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -529,6 +743,7 @@
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1AD484061BA3641200FDA50A /* libPVNESTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVNESTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -539,6 +754,16 @@
 				1A3A79B11ABF1D41002274A3 /* Foundation.framework in Frameworks */,
 				1A3A79B21ABF1D41002274A3 /* OpenGLES.framework in Frameworks */,
 				1A3A79B31ABF1D41002274A3 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD483FD1BA3641200FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD483FE1BA3641200FDA50A /* Foundation.framework in Frameworks */,
+				1AD483FF1BA3641200FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD484001BA3641200FDA50A /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,6 +783,7 @@
 			isa = PBXGroup;
 			children = (
 				1A3A74E81ABF11AC002274A3 /* libPVNES.a */,
+				1AD484061BA3641200FDA50A /* libPVNESTV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -962,13 +1188,30 @@
 			productReference = 1A3A74E81ABF11AC002274A3 /* libPVNES.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD483311BA3641200FDA50A /* PVNESTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD484021BA3641200FDA50A /* Build configuration list for PBXNativeTarget "PVNESTV" */;
+			buildPhases = (
+				1AD483321BA3641200FDA50A /* Sources */,
+				1AD483FD1BA3641200FDA50A /* Frameworks */,
+				1AD484011BA3641200FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVNESTV;
+			productName = PVNES;
+			productReference = 1AD484061BA3641200FDA50A /* libPVNESTV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		1A3A74E01ABF11AC002274A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = JamSoft;
 				TargetAttributes = {
 					1A3A74E71ABF11AC002274A3 = {
@@ -989,6 +1232,7 @@
 			projectRoot = "";
 			targets = (
 				1A3A74E71ABF11AC002274A3 /* PVNES */,
+				1AD483311BA3641200FDA50A /* PVNESTV */,
 			);
 		};
 /* End PBXProject section */
@@ -1203,6 +1447,215 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AD483321BA3641200FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD483331BA3641200FDA50A /* 71.cpp in Sources */,
+				1AD483341BA3641200FDA50A /* 253.cpp in Sources */,
+				1AD483351BA3641200FDA50A /* bonza.cpp in Sources */,
+				1AD483361BA3641200FDA50A /* bandai.cpp in Sources */,
+				1AD483371BA3641200FDA50A /* pec-586.cpp in Sources */,
+				1AD483381BA3641200FDA50A /* 15.cpp in Sources */,
+				1AD483391BA3641200FDA50A /* memory.cpp in Sources */,
+				1AD4833A1BA3641200FDA50A /* 42.cpp in Sources */,
+				1AD4833B1BA3641200FDA50A /* drawing.cpp in Sources */,
+				1AD4833C1BA3641200FDA50A /* 206.cpp in Sources */,
+				1AD4833D1BA3641200FDA50A /* dream.cpp in Sources */,
+				1AD4833E1BA3641200FDA50A /* ghostbusters63in1.cpp in Sources */,
+				1AD4833F1BA3641200FDA50A /* ax5705.cpp in Sources */,
+				1AD483401BA3641200FDA50A /* kof97.cpp in Sources */,
+				1AD483411BA3641200FDA50A /* unzip.cpp in Sources */,
+				1AD483421BA3641200FDA50A /* 175.cpp in Sources */,
+				1AD483431BA3641200FDA50A /* sl1632.cpp in Sources */,
+				1AD483441BA3641200FDA50A /* vrc2and4.cpp in Sources */,
+				1AD483451BA3641200FDA50A /* __dummy_mapper.cpp in Sources */,
+				1AD483461BA3641200FDA50A /* 72.cpp in Sources */,
+				1AD483471BA3641200FDA50A /* sachen.cpp in Sources */,
+				1AD483481BA3641200FDA50A /* lh32.cpp in Sources */,
+				1AD483491BA3641200FDA50A /* 252.cpp in Sources */,
+				1AD4834A1BA3641200FDA50A /* vrc6.cpp in Sources */,
+				1AD4834B1BA3641200FDA50A /* cheat.cpp in Sources */,
+				1AD4834C1BA3641200FDA50A /* oldmovie.cpp in Sources */,
+				1AD4834D1BA3641200FDA50A /* filter.cpp in Sources */,
+				1AD4834E1BA3641200FDA50A /* 40.cpp in Sources */,
+				1AD4834F1BA3641200FDA50A /* 235.cpp in Sources */,
+				1AD483501BA3641200FDA50A /* fceu.cpp in Sources */,
+				1AD483511BA3641200FDA50A /* novel.cpp in Sources */,
+				1AD483521BA3641200FDA50A /* 67.cpp in Sources */,
+				1AD483531BA3641200FDA50A /* 603-5052.cpp in Sources */,
+				1AD483541BA3641200FDA50A /* 151.cpp in Sources */,
+				1AD483551BA3641200FDA50A /* sa-9602b.cpp in Sources */,
+				1AD483561BA3641200FDA50A /* karaoke.cpp in Sources */,
+				1AD483571BA3641200FDA50A /* 99.cpp in Sources */,
+				1AD483581BA3641200FDA50A /* mmc1.cpp in Sources */,
+				1AD483591BA3641200FDA50A /* 199.cpp in Sources */,
+				1AD4835A1BA3641200FDA50A /* sc-127.cpp in Sources */,
+				1AD4835B1BA3641200FDA50A /* 96.cpp in Sources */,
+				1AD4835C1BA3641200FDA50A /* sound.cpp in Sources */,
+				1AD4835D1BA3641200FDA50A /* guid.cpp in Sources */,
+				1AD4835E1BA3641200FDA50A /* 117.cpp in Sources */,
+				1AD4835F1BA3641200FDA50A /* PVNESEmulatorCore.mm in Sources */,
+				1AD483601BA3641200FDA50A /* bs-5.cpp in Sources */,
+				1AD483611BA3641200FDA50A /* video.cpp in Sources */,
+				1AD483621BA3641200FDA50A /* 185.cpp in Sources */,
+				1AD483631BA3641200FDA50A /* mihunche.cpp in Sources */,
+				1AD483641BA3641200FDA50A /* 164.cpp in Sources */,
+				1AD483651BA3641200FDA50A /* hypershot.cpp in Sources */,
+				1AD483661BA3641200FDA50A /* 246.cpp in Sources */,
+				1AD483671BA3641200FDA50A /* 43.cpp in Sources */,
+				1AD483681BA3641200FDA50A /* ioapi.cpp in Sources */,
+				1AD483691BA3641200FDA50A /* tf-1201.cpp in Sources */,
+				1AD4836A1BA3641200FDA50A /* 189.cpp in Sources */,
+				1AD4836B1BA3641200FDA50A /* 225.cpp in Sources */,
+				1AD4836C1BA3641200FDA50A /* mmc3.cpp in Sources */,
+				1AD4836D1BA3641200FDA50A /* 187.cpp in Sources */,
+				1AD4836E1BA3641200FDA50A /* 12in1.cpp in Sources */,
+				1AD4836F1BA3641200FDA50A /* 36.cpp in Sources */,
+				1AD483701BA3641200FDA50A /* transformer.cpp in Sources */,
+				1AD483711BA3641200FDA50A /* backward.cpp in Sources */,
+				1AD483721BA3641200FDA50A /* tengen.cpp in Sources */,
+				1AD483731BA3641200FDA50A /* cursor.cpp in Sources */,
+				1AD483741BA3641200FDA50A /* famicombox.cpp in Sources */,
+				1AD483751BA3641200FDA50A /* ks7031.cpp in Sources */,
+				1AD483761BA3641200FDA50A /* shadow.cpp in Sources */,
+				1AD483771BA3641200FDA50A /* ks7032.cpp in Sources */,
+				1AD483781BA3641200FDA50A /* 8157.cpp in Sources */,
+				1AD483791BA3641200FDA50A /* t-227-1.cpp in Sources */,
+				1AD4837A1BA3641200FDA50A /* vsuni.cpp in Sources */,
+				1AD4837B1BA3641200FDA50A /* 186.cpp in Sources */,
+				1AD4837C1BA3641200FDA50A /* ppu.cpp in Sources */,
+				1AD4837D1BA3641200FDA50A /* endian.cpp in Sources */,
+				1AD4837E1BA3641200FDA50A /* 177.cpp in Sources */,
+				1AD4837F1BA3641200FDA50A /* ines.cpp in Sources */,
+				1AD483801BA3641200FDA50A /* 120.cpp in Sources */,
+				1AD483811BA3641200FDA50A /* ks7012.cpp in Sources */,
+				1AD483821BA3641200FDA50A /* addrlatch.cpp in Sources */,
+				1AD483831BA3641200FDA50A /* 170.cpp in Sources */,
+				1AD483841BA3641200FDA50A /* 32.cpp in Sources */,
+				1AD483851BA3641200FDA50A /* 116.cpp in Sources */,
+				1AD483861BA3641200FDA50A /* yoko.cpp in Sources */,
+				1AD483871BA3641200FDA50A /* ks7037.cpp in Sources */,
+				1AD483881BA3641200FDA50A /* movie.cpp in Sources */,
+				1AD483891BA3641200FDA50A /* vrc7p.cpp in Sources */,
+				1AD4838A1BA3641200FDA50A /* 88.cpp in Sources */,
+				1AD4838B1BA3641200FDA50A /* unif.cpp in Sources */,
+				1AD4838C1BA3641200FDA50A /* md5.cpp in Sources */,
+				1AD4838D1BA3641200FDA50A /* subor.cpp in Sources */,
+				1AD4838E1BA3641200FDA50A /* 168.cpp in Sources */,
+				1AD4838F1BA3641200FDA50A /* ks7057.cpp in Sources */,
+				1AD483901BA3641200FDA50A /* arkanoid.cpp in Sources */,
+				1AD483911BA3641200FDA50A /* wave.cpp in Sources */,
+				1AD483921BA3641200FDA50A /* toprider.cpp in Sources */,
+				1AD483931BA3641200FDA50A /* quiz.cpp in Sources */,
+				1AD483941BA3641200FDA50A /* bmc13in1jy110.cpp in Sources */,
+				1AD483951BA3641200FDA50A /* file.cpp in Sources */,
+				1AD483961BA3641200FDA50A /* 79.cpp in Sources */,
+				1AD483971BA3641200FDA50A /* 3d-block.cpp in Sources */,
+				1AD483981BA3641200FDA50A /* bmc70in1.cpp in Sources */,
+				1AD483991BA3641200FDA50A /* emufile.cpp in Sources */,
+				1AD4839A1BA3641200FDA50A /* fds.cpp in Sources */,
+				1AD4839B1BA3641200FDA50A /* 176.cpp in Sources */,
+				1AD4839C1BA3641200FDA50A /* 228.cpp in Sources */,
+				1AD4839D1BA3641200FDA50A /* 46.cpp in Sources */,
+				1AD4839E1BA3641200FDA50A /* 82.cpp in Sources */,
+				1AD4839F1BA3641200FDA50A /* 208.cpp in Sources */,
+				1AD483A01BA3641200FDA50A /* 34.cpp in Sources */,
+				1AD483A11BA3641200FDA50A /* ftrainer.cpp in Sources */,
+				1AD483A21BA3641200FDA50A /* 230.cpp in Sources */,
+				1AD483A31BA3641200FDA50A /* vrc5.cpp in Sources */,
+				1AD483A41BA3641200FDA50A /* debug.cpp in Sources */,
+				1AD483A51BA3641200FDA50A /* 62.cpp in Sources */,
+				1AD483A61BA3641200FDA50A /* cart.cpp in Sources */,
+				1AD483A71BA3641200FDA50A /* malee.cpp in Sources */,
+				1AD483A81BA3641200FDA50A /* 183.cpp in Sources */,
+				1AD483A91BA3641200FDA50A /* ac-08.cpp in Sources */,
+				1AD483AA1BA3641200FDA50A /* 69.cpp in Sources */,
+				1AD483AB1BA3641200FDA50A /* 91.cpp in Sources */,
+				1AD483AC1BA3641200FDA50A /* 193.cpp in Sources */,
+				1AD483AD1BA3641200FDA50A /* 8237.cpp in Sources */,
+				1AD483AE1BA3641200FDA50A /* edu2000.cpp in Sources */,
+				1AD483AF1BA3641200FDA50A /* bb.cpp in Sources */,
+				1AD483B01BA3641200FDA50A /* 50.cpp in Sources */,
+				1AD483B11BA3641200FDA50A /* 103.cpp in Sources */,
+				1AD483B21BA3641200FDA50A /* lh53.cpp in Sources */,
+				1AD483B31BA3641200FDA50A /* a9746.cpp in Sources */,
+				1AD483B41BA3641200FDA50A /* config.cpp in Sources */,
+				1AD483B51BA3641200FDA50A /* 121.cpp in Sources */,
+				1AD483B61BA3641200FDA50A /* emu2413.c in Sources */,
+				1AD483B71BA3641200FDA50A /* 33.cpp in Sources */,
+				1AD483B81BA3641200FDA50A /* powerpad.cpp in Sources */,
+				1AD483B91BA3641200FDA50A /* 178.cpp in Sources */,
+				1AD483BA1BA3641200FDA50A /* le05.cpp in Sources */,
+				1AD483BB1BA3641200FDA50A /* datalatch.cpp in Sources */,
+				1AD483BC1BA3641200FDA50A /* fkb.cpp in Sources */,
+				1AD483BD1BA3641200FDA50A /* nsf.cpp in Sources */,
+				1AD483BE1BA3641200FDA50A /* ks7030.cpp in Sources */,
+				1AD483BF1BA3641200FDA50A /* onebus.cpp in Sources */,
+				1AD483C01BA3641200FDA50A /* asm.cpp in Sources */,
+				1AD483C11BA3641200FDA50A /* 156.cpp in Sources */,
+				1AD483C21BA3641200FDA50A /* 57.cpp in Sources */,
+				1AD483C31BA3641200FDA50A /* 90.cpp in Sources */,
+				1AD483C41BA3641200FDA50A /* ffe.cpp in Sources */,
+				1AD483C51BA3641200FDA50A /* n625092.cpp in Sources */,
+				1AD483C61BA3641200FDA50A /* 234.cpp in Sources */,
+				1AD483C71BA3641200FDA50A /* 51.cpp in Sources */,
+				1AD483C81BA3641200FDA50A /* sheroes.cpp in Sources */,
+				1AD483C91BA3641200FDA50A /* 77.cpp in Sources */,
+				1AD483CA1BA3641200FDA50A /* 41.cpp in Sources */,
+				1AD483CB1BA3641200FDA50A /* x6502.cpp in Sources */,
+				1AD483CC1BA3641200FDA50A /* super24.cpp in Sources */,
+				1AD483CD1BA3641200FDA50A /* dance2000.cpp in Sources */,
+				1AD483CE1BA3641200FDA50A /* oekakids.cpp in Sources */,
+				1AD483CF1BA3641200FDA50A /* ks7017.cpp in Sources */,
+				1AD483D01BA3641200FDA50A /* n106.cpp in Sources */,
+				1AD483D11BA3641200FDA50A /* conddebug.cpp in Sources */,
+				1AD483D21BA3641200FDA50A /* 01-222.cpp in Sources */,
+				1AD483D31BA3641200FDA50A /* supervision.cpp in Sources */,
+				1AD483D41BA3641200FDA50A /* 411120-c.cpp in Sources */,
+				1AD483D51BA3641200FDA50A /* 830118C.cpp in Sources */,
+				1AD483D61BA3641200FDA50A /* vrc3.cpp in Sources */,
+				1AD483D71BA3641200FDA50A /* 80.cpp in Sources */,
+				1AD483D81BA3641200FDA50A /* h2288.cpp in Sources */,
+				1AD483D91BA3641200FDA50A /* state.cpp in Sources */,
+				1AD483DA1BA3641200FDA50A /* bmc64in1nr.cpp in Sources */,
+				1AD483DB1BA3641200FDA50A /* palette.cpp in Sources */,
+				1AD483DC1BA3641200FDA50A /* 222.cpp in Sources */,
+				1AD483DD1BA3641200FDA50A /* zapper.cpp in Sources */,
+				1AD483DE1BA3641200FDA50A /* suborkb.cpp in Sources */,
+				1AD483DF1BA3641200FDA50A /* ks7013.cpp in Sources */,
+				1AD483E01BA3641200FDA50A /* bworld.cpp in Sources */,
+				1AD483E11BA3641200FDA50A /* 68.cpp in Sources */,
+				1AD483E21BA3641200FDA50A /* ConvertUTF.c in Sources */,
+				1AD483E31BA3641200FDA50A /* t-262.cpp in Sources */,
+				1AD483E41BA3641200FDA50A /* 108.cpp in Sources */,
+				1AD483E51BA3641200FDA50A /* input.cpp in Sources */,
+				1AD483E61BA3641200FDA50A /* mahjong.cpp in Sources */,
+				1AD483E71BA3641200FDA50A /* 28.cpp in Sources */,
+				1AD483E81BA3641200FDA50A /* vrc7.cpp in Sources */,
+				1AD483E91BA3641200FDA50A /* xstring.cpp in Sources */,
+				1AD483EA1BA3641200FDA50A /* 244.cpp in Sources */,
+				1AD483EB1BA3641200FDA50A /* general.cpp in Sources */,
+				1AD483EC1BA3641200FDA50A /* fk23c.cpp in Sources */,
+				1AD483ED1BA3641200FDA50A /* gs-2013.cpp in Sources */,
+				1AD483EE1BA3641200FDA50A /* 09-034a.cpp in Sources */,
+				1AD483EF1BA3641200FDA50A /* 65.cpp in Sources */,
+				1AD483F01BA3641200FDA50A /* mmc2and4.cpp in Sources */,
+				1AD483F11BA3641200FDA50A /* vrc1.cpp in Sources */,
+				1AD483F21BA3641200FDA50A /* cityfighter.cpp in Sources */,
+				1AD483F31BA3641200FDA50A /* netplay.cpp in Sources */,
+				1AD483F41BA3641200FDA50A /* mmc5.cpp in Sources */,
+				1AD483F51BA3641200FDA50A /* 106.cpp in Sources */,
+				1AD483F61BA3641200FDA50A /* gs-2004.cpp in Sources */,
+				1AD483F71BA3641200FDA50A /* 18.cpp in Sources */,
+				1AD483F81BA3641200FDA50A /* bmc42in1r.cpp in Sources */,
+				1AD483F91BA3641200FDA50A /* crc32.cpp in Sources */,
+				1AD483FA1BA3641200FDA50A /* mouse.cpp in Sources */,
+				1AD483FB1BA3641200FDA50A /* 232.cpp in Sources */,
+				1AD483FC1BA3641200FDA50A /* 112.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -1243,6 +1696,7 @@
 		1A35A8611ABF406500D6DDAF /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1252,6 +1706,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
@@ -1289,6 +1744,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1347,6 +1803,7 @@
 		1A3A74FD1ABF11AC002274A3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1356,6 +1813,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
@@ -1377,6 +1835,7 @@
 		1A3A74FE1ABF11AC002274A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
@@ -1386,6 +1845,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
@@ -1403,6 +1863,105 @@
 				WARNING_CFLAGS = "-Wno-write-strings";
 			};
 			name = Release;
+		};
+		1AD484031BA3641200FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+				);
+				OTHER_CFLAGS = (
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-write-strings";
+			};
+			name = Debug;
+		};
+		1AD484041BA3641200FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+				);
+				OTHER_CFLAGS = (
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-write-strings";
+			};
+			name = Release;
+		};
+		1AD484051BA3641200FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/directx",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/win32",
+					"$(PROJECT_DIR)/NES/FCEU/drivers/win/lua/x64",
+				);
+				OTHER_CFLAGS = (
+					"-DHAVE_ASPRINTF",
+					"-DPSS_STYLE=1",
+					"-DLSB_FIRST",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-write-strings";
+			};
+			name = AdHoc;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1423,6 +1982,16 @@
 				1A3A74FD1ABF11AC002274A3 /* Debug */,
 				1A3A74FE1ABF11AC002274A3 /* Release */,
 				1A35A8611ABF406500D6DDAF /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD484021BA3641200FDA50A /* Build configuration list for PBXNativeTarget "PVNESTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD484031BA3641200FDA50A /* Debug */,
+				1AD484041BA3641200FDA50A /* Release */,
+				1AD484051BA3641200FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

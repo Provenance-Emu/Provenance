@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, PVNESButton)
 
 @interface PVNESEmulatorCore : PVEmulatorCore
 
-- (oneway void)pushNESButton:(PVNESButton)button;
-- (oneway void)releaseNESButton:(PVNESButton)button;
+- (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
+- (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
 
 @end

@@ -17,31 +17,25 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import <Foundation/Foundation.h>
+#import <Realm/RLMDefines.h>
+
+RLM_ASSUME_NONNULL_BEGIN
 
 @class RLMRealm;
 @class RLMSchema;
 @class RLMObjectSchema;
 
 @interface RLMObjectBase : NSObject
-@property (nonatomic, readonly) RLMRealm *realm;
-@property (nonatomic, readonly) RLMObjectSchema *objectSchema;
+
 @property (nonatomic, readonly, getter = isInvalidated) BOOL invalidated;
 
 - (instancetype)init;
-- (instancetype)initWithObject:(id)object;
-- (instancetype)initWithObject:(id)value schema:(RLMSchema *)schema;
-- (instancetype)initWithObjectSchema:(RLMObjectSchema *)schema;
-
-- (BOOL)isEqualToObject:(RLMObjectBase *)object;
-- (NSArray *)linkingObjectsOfClass:(NSString *)className forProperty:(NSString *)property;
-
-- (id)objectForKeyedSubscript:(NSString *)key;
-- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key;
 
 + (NSString *)className;
 
-+ (NSDictionary *)defaultPropertyValues;
-+ (NSString *)primaryKey;
-+ (NSArray *)ignoredProperties;
+// Returns whether the class is included in the default set of classes persisted in a Realm.
++ (BOOL)shouldIncludeInDefaultSchema;
 
 @end
+
+RLM_ASSUME_NONNULL_END

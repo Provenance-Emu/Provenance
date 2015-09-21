@@ -59,40 +59,40 @@
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
 	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:0];
 
 	switch (direction)
 	{
 		case JSDPadDirectionUpLeft:
-			[genesisCore pushGenesisButton:PVGenesisButtonUp];
-			[genesisCore pushGenesisButton:PVGenesisButtonLeft];
+			[genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:0];
+			[genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:0];
 			break;
 		case JSDPadDirectionUp:
-			[genesisCore pushGenesisButton:PVGenesisButtonUp];
+			[genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:0];
 			break;
 		case JSDPadDirectionUpRight:
-			[genesisCore pushGenesisButton:PVGenesisButtonUp];
-			[genesisCore pushGenesisButton:PVGenesisButtonRight];
+			[genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:0];
+			[genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:0];
 			break;
 		case JSDPadDirectionLeft:
-			[genesisCore pushGenesisButton:PVGenesisButtonLeft];
+			[genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:0];
 			break;
 		case JSDPadDirectionRight:
-			[genesisCore pushGenesisButton:PVGenesisButtonRight];
+			[genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:0];
 			break;
 		case JSDPadDirectionDownLeft:
-			[genesisCore pushGenesisButton:PVGenesisButtonDown];
-			[genesisCore pushGenesisButton:PVGenesisButtonLeft];
+			[genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:0];
+			[genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:0];
 			break;
 		case JSDPadDirectionDown:
-			[genesisCore pushGenesisButton:PVGenesisButtonDown];
+			[genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:0];
 			break;
 		case JSDPadDirectionDownRight:
-			[genesisCore pushGenesisButton:PVGenesisButtonDown];
-			[genesisCore pushGenesisButton:PVGenesisButtonRight];
+			[genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:0];
+			[genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:0];
 			break;
 		default:
 			break;
@@ -105,128 +105,127 @@
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
 	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:0];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:0];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-    [genesisCore pushGenesisButton:[button tag]];
+    [genesisCore pushGenesisButton:[button tag] forPlayer:0];
     [self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-    [genesisCore releaseGenesisButton:[button tag]];
+    [genesisCore releaseGenesisButton:[button tag] forPlayer:0];
 }
 
-- (void)gamepadButtonPressed:(GCControllerButtonInput *)button
+- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-	
-	if ([button isEqual:_x])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonA];
-	}
-	else if ([button isEqual:_a])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonB];
-	}
-	else if ([button isEqual:_b])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonC];
-	}
-    else if ([button isEqual:_leftShoulder])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonX];
+
+    switch (button) {
+        case PVControllerButtonX:
+            [genesisCore pushGenesisButton:PVGenesisButtonA forPlayer:player];
+            break;
+        case PVControllerButtonA:
+            [genesisCore pushGenesisButton:PVGenesisButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [genesisCore pushGenesisButton:PVGenesisButtonC forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [genesisCore pushGenesisButton:PVGenesisButtonX forPlayer:player];
+            break;
+        case PVControllerButtonY:
+            [genesisCore pushGenesisButton:PVGenesisButtonY forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [genesisCore pushGenesisButton:PVGenesisButtonZ forPlayer:player];
+            break;
+        case PVControllerButtonLeftTrigger:
+            [genesisCore pushGenesisButton:PVGenesisButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonRightTrigger:
+            break;
+        default:
+            break;
     }
-	else if ([button isEqual:_y])
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonY];
-	}
-    else if ([button isEqual:_rightShoulder])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonZ];
-    }
-    else if ([button isEqual:_leftTrigger])
-    {
-        [genesisCore pushGenesisButton:PVGenesisButtonStart];
-    }
+
 }
 
-- (void)gamepadButtonReleased:(GCControllerButtonInput *)button
+- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     
-    if ([button isEqual:_x])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonA];
-    }
-    else if ([button isEqual:_a])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonB];
-    }
-    else if ([button isEqual:_b])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonC];
-    }
-    else if ([button isEqual:_leftShoulder])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonX];
-    }
-    else if ([button isEqual:_y])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonY];
-    }
-    else if ([button isEqual:_rightShoulder])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonZ];
-    }
-    else if ([button isEqual:_leftTrigger])
-    {
-        [genesisCore releaseGenesisButton:PVGenesisButtonStart];
+    switch (button) {
+        case PVControllerButtonX:
+            [genesisCore releaseGenesisButton:PVGenesisButtonA forPlayer:player];
+            break;
+        case PVControllerButtonA:
+            [genesisCore releaseGenesisButton:PVGenesisButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [genesisCore releaseGenesisButton:PVGenesisButtonC forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [genesisCore releaseGenesisButton:PVGenesisButtonX forPlayer:player];
+            break;
+        case PVControllerButtonY:
+            [genesisCore releaseGenesisButton:PVGenesisButtonY forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [genesisCore releaseGenesisButton:PVGenesisButtonZ forPlayer:player];
+            break;
+        case PVControllerButtonLeftTrigger:
+            [genesisCore releaseGenesisButton:PVGenesisButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonRightTrigger:
+            break;
+        default:
+            break;
     }
 }
 
-- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
 	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
 	
 	if ([[dpad xAxis] value] > 0)
 	{
-		[genesisCore pushGenesisButton:PVGenesisButtonRight];
+		[genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
 	}
 	if ([[dpad xAxis] value] < -0)
 	{
-		[genesisCore pushGenesisButton:PVGenesisButtonLeft];
+		[genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
 	}
 	if ([[dpad yAxis] value] > 0)
 	{
-		[genesisCore pushGenesisButton:PVGenesisButtonUp];
+		[genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
 	}
 	if ([[dpad yAxis] value] < 0)
 	{
-		[genesisCore pushGenesisButton:PVGenesisButtonDown];
+		[genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
 	}
 }
 
-- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
 	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight];
+	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
+	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
 }
 
 @end

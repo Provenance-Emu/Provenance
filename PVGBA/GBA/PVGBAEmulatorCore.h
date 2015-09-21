@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, PVGBAButton)
 
 @interface PVGBAEmulatorCore : PVEmulatorCore
 
-- (oneway void)pushGBAButton:(PVGBAButton)button;
-- (oneway void)releaseGBAButton:(PVGBAButton)button;
+- (oneway void)pushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
+- (oneway void)releaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 
 @end

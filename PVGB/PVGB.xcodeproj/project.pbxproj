@@ -48,10 +48,60 @@
 		1AABE0C21ABE378800FF6AEF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 		1AABE0C41ABE378D00FF6AEF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		1AABE0C61ABE379500FF6AEF /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; };
+		1AD483011BA3640500FDA50A /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
+		1AD483021BA3640500FDA50A /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08B1ABE373800FF6AEF /* video.cpp */; };
+		1AD483031BA3640500FDA50A /* lyc_irq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0821ABE373800FF6AEF /* lyc_irq.cpp */; };
+		1AD483041BA3640500FDA50A /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05D1ABE373800FF6AEF /* rtc.cpp */; };
+		1AD483051BA3640500FDA50A /* loadres.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0551ABE373800FF6AEF /* loadres.cpp */; };
+		1AD483061BA3640500FDA50A /* channel3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0691ABE373800FF6AEF /* channel3.cpp */; };
+		1AD483071BA3640500FDA50A /* channel1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0651ABE373800FF6AEF /* channel1.cpp */; };
+		1AD483081BA3640500FDA50A /* u48div.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0191ABE373800FF6AEF /* u48div.cpp */; };
+		1AD483091BA3640500FDA50A /* state_osd_elements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0781ABE373800FF6AEF /* state_osd_elements.cpp */; };
+		1AD4830A1BA3640500FDA50A /* kaiser50sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00D1ABE373800FF6AEF /* kaiser50sinc.cpp */; };
+		1AD4830B1BA3640500FDA50A /* resamplerinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0161ABE373800FF6AEF /* resamplerinfo.cpp */; };
+		1AD4830C1BA3640500FDA50A /* cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0571ABE373800FF6AEF /* cartridge.cpp */; };
+		1AD4830D1BA3640500FDA50A /* channel2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0671ABE373800FF6AEF /* channel2.cpp */; };
+		1AD4830E1BA3640500FDA50A /* pakinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05B1ABE373800FF6AEF /* pakinfo.cpp */; };
+		1AD4830F1BA3640500FDA50A /* interruptrequester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0531ABE373800FF6AEF /* interruptrequester.cpp */; };
+		1AD483101BA3640500FDA50A /* i0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00B1ABE373800FF6AEF /* i0.cpp */; };
+		1AD483111BA3640500FDA50A /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE05F1ABE373800FF6AEF /* memory.cpp */; };
+		1AD483121BA3640500FDA50A /* statesaver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07A1ABE373800FF6AEF /* statesaver.cpp */; };
+		1AD483131BA3640500FDA50A /* tima.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE07C1ABE373800FF6AEF /* tima.cpp */; };
+		1AD483141BA3640500FDA50A /* envelope_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06F1ABE373800FF6AEF /* envelope_unit.cpp */; };
+		1AD483151BA3640500FDA50A /* memptrs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0591ABE373800FF6AEF /* memptrs.cpp */; };
+		1AD483161BA3640500FDA50A /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0761ABE373800FF6AEF /* sound.cpp */; };
+		1AD483171BA3640500FDA50A /* sprite_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0891ABE373800FF6AEF /* sprite_mapper.cpp */; };
+		1AD483181BA3640500FDA50A /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0401ABE373800FF6AEF /* cpu.cpp */; };
+		1AD483191BA3640500FDA50A /* PVGBEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08D1ABE373800FF6AEF /* PVGBEmulatorCore.mm */; };
+		1AD4831A1BA3640500FDA50A /* bitmap_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE03D1ABE373800FF6AEF /* bitmap_font.cpp */; };
+		1AD4831B1BA3640500FDA50A /* chainresampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0051ABE373700FF6AEF /* chainresampler.cpp */; };
+		1AD4831C1BA3640500FDA50A /* channel4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06B1ABE373800FF6AEF /* channel4.cpp */; };
+		1AD4831D1BA3640500FDA50A /* file.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0431ABE373800FF6AEF /* file.cpp */; };
+		1AD4831E1BA3640500FDA50A /* next_m0_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0851ABE373800FF6AEF /* next_m0_time.cpp */; };
+		1AD4831F1BA3640500FDA50A /* length_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0711ABE373800FF6AEF /* length_counter.cpp */; };
+		1AD483201BA3640500FDA50A /* ly_counter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0801ABE373800FF6AEF /* ly_counter.cpp */; };
+		1AD483211BA3640500FDA50A /* kaiser70sinc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE00F1ABE373800FF6AEF /* kaiser70sinc.cpp */; };
+		1AD483221BA3640500FDA50A /* gambatte.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04D1ABE373800FF6AEF /* gambatte.cpp */; };
+		1AD483231BA3640500FDA50A /* duty_unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE06D1ABE373800FF6AEF /* duty_unit.cpp */; };
+		1AD483241BA3640500FDA50A /* initstate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE04E1ABE373800FF6AEF /* initstate.cpp */; };
+		1AD483251BA3640500FDA50A /* makesinckernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0121ABE373800FF6AEF /* makesinckernel.cpp */; };
+		1AD483261BA3640500FDA50A /* ppu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0871ABE373800FF6AEF /* ppu.cpp */; };
+		1AD483281BA3640500FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */; };
+		1AD483291BA3640500FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
+		1AD4832A1BA3640500FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1AABDFDA1ABE366000FF6AEF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD4832B1BA3640500FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -205,6 +255,7 @@
 		1AABE0C31ABE378D00FF6AEF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGB-Prefix.pch"; sourceTree = "<group>"; };
+		1AD483301BA3640500FDA50A /* libPVGBTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGBTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +266,16 @@
 				1AABE0C61ABE379500FF6AEF /* OpenGLES.framework in Frameworks */,
 				1AABE0C41ABE378D00FF6AEF /* Foundation.framework in Frameworks */,
 				1AABE0C21ABE378800FF6AEF /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD483271BA3640500FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD483281BA3640500FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD483291BA3640500FDA50A /* Foundation.framework in Frameworks */,
+				1AD4832A1BA3640500FDA50A /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +295,7 @@
 			isa = PBXGroup;
 			children = (
 				1AABDFDC1ABE366000FF6AEF /* libPVGB.a */,
+				1AD483301BA3640500FDA50A /* libPVGBTV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -533,13 +595,30 @@
 			productReference = 1AABDFDC1ABE366000FF6AEF /* libPVGB.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD482FF1BA3640500FDA50A /* PVGBTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD4832C1BA3640500FDA50A /* Build configuration list for PBXNativeTarget "PVGBTV" */;
+			buildPhases = (
+				1AD483001BA3640500FDA50A /* Sources */,
+				1AD483271BA3640500FDA50A /* Frameworks */,
+				1AD4832B1BA3640500FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVGBTV;
+			productName = PVGB;
+			productReference = 1AD483301BA3640500FDA50A /* libPVGBTV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		1AABDFD41ABE366000FF6AEF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = JamSoft;
 				TargetAttributes = {
 					1AABDFDB1ABE366000FF6AEF = {
@@ -560,6 +639,7 @@
 			projectRoot = "";
 			targets = (
 				1AABDFDB1ABE366000FF6AEF /* PVGB */,
+				1AD482FF1BA3640500FDA50A /* PVGBTV */,
 			);
 		};
 /* End PBXProject section */
@@ -610,6 +690,51 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AD483001BA3640500FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD483011BA3640500FDA50A /* interrupter.cpp in Sources */,
+				1AD483021BA3640500FDA50A /* video.cpp in Sources */,
+				1AD483031BA3640500FDA50A /* lyc_irq.cpp in Sources */,
+				1AD483041BA3640500FDA50A /* rtc.cpp in Sources */,
+				1AD483051BA3640500FDA50A /* loadres.cpp in Sources */,
+				1AD483061BA3640500FDA50A /* channel3.cpp in Sources */,
+				1AD483071BA3640500FDA50A /* channel1.cpp in Sources */,
+				1AD483081BA3640500FDA50A /* u48div.cpp in Sources */,
+				1AD483091BA3640500FDA50A /* state_osd_elements.cpp in Sources */,
+				1AD4830A1BA3640500FDA50A /* kaiser50sinc.cpp in Sources */,
+				1AD4830B1BA3640500FDA50A /* resamplerinfo.cpp in Sources */,
+				1AD4830C1BA3640500FDA50A /* cartridge.cpp in Sources */,
+				1AD4830D1BA3640500FDA50A /* channel2.cpp in Sources */,
+				1AD4830E1BA3640500FDA50A /* pakinfo.cpp in Sources */,
+				1AD4830F1BA3640500FDA50A /* interruptrequester.cpp in Sources */,
+				1AD483101BA3640500FDA50A /* i0.cpp in Sources */,
+				1AD483111BA3640500FDA50A /* memory.cpp in Sources */,
+				1AD483121BA3640500FDA50A /* statesaver.cpp in Sources */,
+				1AD483131BA3640500FDA50A /* tima.cpp in Sources */,
+				1AD483141BA3640500FDA50A /* envelope_unit.cpp in Sources */,
+				1AD483151BA3640500FDA50A /* memptrs.cpp in Sources */,
+				1AD483161BA3640500FDA50A /* sound.cpp in Sources */,
+				1AD483171BA3640500FDA50A /* sprite_mapper.cpp in Sources */,
+				1AD483181BA3640500FDA50A /* cpu.cpp in Sources */,
+				1AD483191BA3640500FDA50A /* PVGBEmulatorCore.mm in Sources */,
+				1AD4831A1BA3640500FDA50A /* bitmap_font.cpp in Sources */,
+				1AD4831B1BA3640500FDA50A /* chainresampler.cpp in Sources */,
+				1AD4831C1BA3640500FDA50A /* channel4.cpp in Sources */,
+				1AD4831D1BA3640500FDA50A /* file.cpp in Sources */,
+				1AD4831E1BA3640500FDA50A /* next_m0_time.cpp in Sources */,
+				1AD4831F1BA3640500FDA50A /* length_counter.cpp in Sources */,
+				1AD483201BA3640500FDA50A /* ly_counter.cpp in Sources */,
+				1AD483211BA3640500FDA50A /* kaiser70sinc.cpp in Sources */,
+				1AD483221BA3640500FDA50A /* gambatte.cpp in Sources */,
+				1AD483231BA3640500FDA50A /* duty_unit.cpp in Sources */,
+				1AD483241BA3640500FDA50A /* initstate.cpp in Sources */,
+				1AD483251BA3640500FDA50A /* makesinckernel.cpp in Sources */,
+				1AD483261BA3640500FDA50A /* ppu.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -651,12 +776,14 @@
 		1A35A85F1ABF405D00D6DDAF /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -683,6 +810,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -743,12 +871,14 @@
 		1AABDFF11ABE366100FF6AEF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -759,18 +889,77 @@
 		1AABDFF21ABE366100FF6AEF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
+		};
+		1AD4832D1BA3640500FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = "-DHAVE_STDINT_H";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1AD4832E1BA3640500FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = "-DHAVE_STDINT_H";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1AD4832F1BA3640500FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = "-DHAVE_STDINT_H";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = AdHoc;
 		};
 /* End XCBuildConfiguration section */
 
@@ -791,6 +980,16 @@
 				1AABDFF11ABE366100FF6AEF /* Debug */,
 				1AABDFF21ABE366100FF6AEF /* Release */,
 				1A35A85F1ABF405D00D6DDAF /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD4832C1BA3640500FDA50A /* Build configuration list for PBXNativeTarget "PVGBTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD4832D1BA3640500FDA50A /* Debug */,
+				1AD4832E1BA3640500FDA50A /* Release */,
+				1AD4832F1BA3640500FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

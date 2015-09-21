@@ -1,8 +1,6 @@
 # Provenance
 ### An iOS Frontend for multiple emulators
 
-
-
 ###Why 'Provenance'?
 
 I was looking for a word with a similar meaning to Genesis and came across Provenance:
@@ -43,6 +41,9 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Just drop ROMs into the app from iTunes on your Mac or PC
 - Uses OpenVGDB to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
 - Game library searching
+- Built-in web server for easy:
+    - Import/Export game saves
+    - Import/Export ROMs
 
 Feel free to suggest/request features using the Issues page.
 

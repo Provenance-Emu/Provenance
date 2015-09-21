@@ -44,10 +44,56 @@
 		1A9FBE0E1ABD12C6004E778B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
 		1A9FBE151ABD1B41004E778B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE141ABD1B41004E778B /* UIKit.framework */; };
 		1A9FBE171ABD1B46004E778B /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE161ABD1B46004E778B /* OpenGLES.framework */; };
+		1AD482D31BA363F900FDA50A /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
+		1AD482D41BA363F900FDA50A /* Effects_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC411ABD0FEF004E778B /* Effects_Buffer.cpp */; };
+		1AD482D51BA363F900FDA50A /* EEprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC921ABD0FEF004E778B /* EEprom.cpp */; };
+		1AD482D61BA363F900FDA50A /* Gb_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC431ABD0FEF004E778B /* Gb_Apu.cpp */; };
+		1AD482D71BA363F900FDA50A /* GBA-arm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC981ABD0FEF004E778B /* GBA-arm.cpp */; };
+		1AD482D81BA363F900FDA50A /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA61ABD0FEF004E778B /* Globals.cpp */; };
+		1AD482D91BA363F900FDA50A /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBD211ABD0FEF004E778B /* Util.cpp */; };
+		1AD482DA1BA363F900FDA50A /* Multi_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC481ABD0FEF004E778B /* Multi_Buffer.cpp */; };
+		1AD482DB1BA363F900FDA50A /* GBAGfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9F1ABD0FEF004E778B /* GBAGfx.cpp */; };
+		1AD482DC1BA363F900FDA50A /* CheatSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC901ABD0FEF004E778B /* CheatSearch.cpp */; };
+		1AD482DD1BA363F900FDA50A /* armdis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8A1ABD0FEF004E778B /* armdis.cpp */; };
+		1AD482DE1BA363F900FDA50A /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB11ABD0FEF004E778B /* Sound.cpp */; };
+		1AD482DF1BA363F900FDA50A /* Mode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA91ABD0FEF004E778B /* Mode1.cpp */; };
+		1AD482E01BA363F900FDA50A /* Sram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCB31ABD0FEF004E778B /* Sram.cpp */; };
+		1AD482E11BA363F900FDA50A /* Mode4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAC1ABD0FEF004E778B /* Mode4.cpp */; };
+		1AD482E21BA363F900FDA50A /* gbafilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9D1ABD0FEF004E778B /* gbafilter.cpp */; };
+		1AD482E31BA363F900FDA50A /* Mode5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAD1ABD0FEF004E778B /* Mode5.cpp */; };
+		1AD482E41BA363F900FDA50A /* Blip_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC3F1ABD0FEF004E778B /* Blip_Buffer.cpp */; };
+		1AD482E51BA363F900FDA50A /* agbprint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC881ABD0FEF004E778B /* agbprint.cpp */; };
+		1AD482E61BA363F900FDA50A /* PVGBAEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC381ABD0FE2004E778B /* PVGBAEmulatorCore.mm */; };
+		1AD482E71BA363F900FDA50A /* GBALink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA21ABD0FEF004E778B /* GBALink.cpp */; };
+		1AD482E81BA363F900FDA50A /* Mode0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA81ABD0FEF004E778B /* Mode0.cpp */; };
+		1AD482E91BA363F900FDA50A /* memgzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC4F1ABD0FEF004E778B /* memgzio.c */; };
+		1AD482EA1BA363F900FDA50A /* Cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8E1ABD0FEF004E778B /* Cheats.cpp */; };
+		1AD482EB1BA363F900FDA50A /* Mode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAB1ABD0FEF004E778B /* Mode3.cpp */; };
+		1AD482EC1BA363F900FDA50A /* GBASockClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCA41ABD0FEF004E778B /* GBASockClient.cpp */; };
+		1AD482ED1BA363F900FDA50A /* Gb_Oscs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC461ABD0FEF004E778B /* Gb_Oscs.cpp */; };
+		1AD482EE1BA363F900FDA50A /* elf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC941ABD0FEF004E778B /* elf.cpp */; };
+		1AD482EF1BA363F900FDA50A /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC8C1ABD0FEF004E778B /* bios.cpp */; };
+		1AD482F01BA363F900FDA50A /* GBA-thumb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC991ABD0FEF004E778B /* GBA-thumb.cpp */; };
+		1AD482F11BA363F900FDA50A /* Mode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAA1ABD0FEF004E778B /* Mode2.cpp */; };
+		1AD482F21BA363F900FDA50A /* RTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBCAF1ABD0FEF004E778B /* RTC.cpp */; };
+		1AD482F31BA363F900FDA50A /* Flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC961ABD0FEF004E778B /* Flash.cpp */; };
+		1AD482F41BA363F900FDA50A /* Gb_Apu_State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */; };
+		1AD482F61BA363F900FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE161ABD1B46004E778B /* OpenGLES.framework */; };
+		1AD482F71BA363F900FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE141ABD1B41004E778B /* UIKit.framework */; };
+		1AD482F81BA363F900FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		1A9FBC181ABD0DA7004E778B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482F91BA363F900FDA50A /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -144,6 +190,7 @@
 		1A9FBE0A1ABD1289004E778B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A9FBE141ABD1B41004E778B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A9FBE161ABD1B46004E778B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		1AD482FE1BA363F900FDA50A /* libPVGBATV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGBATV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +201,16 @@
 				1A9FBE171ABD1B46004E778B /* OpenGLES.framework in Frameworks */,
 				1A9FBE151ABD1B41004E778B /* UIKit.framework in Frameworks */,
 				1A9FBE0E1ABD12C6004E778B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AD482F51BA363F900FDA50A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482F61BA363F900FDA50A /* OpenGLES.framework in Frameworks */,
+				1AD482F71BA363F900FDA50A /* UIKit.framework in Frameworks */,
+				1AD482F81BA363F900FDA50A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -173,6 +230,7 @@
 			isa = PBXGroup;
 			children = (
 				1A9FBC1A1ABD0DA7004E778B /* libPVGBA.a */,
+				1AD482FE1BA363F900FDA50A /* libPVGBATV.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -343,13 +401,30 @@
 			productReference = 1A9FBC1A1ABD0DA7004E778B /* libPVGBA.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AD482D11BA363F900FDA50A /* PVGBATV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AD482FA1BA363F900FDA50A /* Build configuration list for PBXNativeTarget "PVGBATV" */;
+			buildPhases = (
+				1AD482D21BA363F900FDA50A /* Sources */,
+				1AD482F51BA363F900FDA50A /* Frameworks */,
+				1AD482F91BA363F900FDA50A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVGBATV;
+			productName = PVGBA;
+			productReference = 1AD482FE1BA363F900FDA50A /* libPVGBATV.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		1A9FBC121ABD0DA7004E778B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0620;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = JamSoft;
 				TargetAttributes = {
 					1A9FBC191ABD0DA7004E778B = {
@@ -370,6 +445,7 @@
 			projectRoot = "";
 			targets = (
 				1A9FBC191ABD0DA7004E778B /* PVGBA */,
+				1AD482D11BA363F900FDA50A /* PVGBATV */,
 			);
 		};
 /* End PBXProject section */
@@ -416,6 +492,47 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AD482D21BA363F900FDA50A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AD482D31BA363F900FDA50A /* GBA.cpp in Sources */,
+				1AD482D41BA363F900FDA50A /* Effects_Buffer.cpp in Sources */,
+				1AD482D51BA363F900FDA50A /* EEprom.cpp in Sources */,
+				1AD482D61BA363F900FDA50A /* Gb_Apu.cpp in Sources */,
+				1AD482D71BA363F900FDA50A /* GBA-arm.cpp in Sources */,
+				1AD482D81BA363F900FDA50A /* Globals.cpp in Sources */,
+				1AD482D91BA363F900FDA50A /* Util.cpp in Sources */,
+				1AD482DA1BA363F900FDA50A /* Multi_Buffer.cpp in Sources */,
+				1AD482DB1BA363F900FDA50A /* GBAGfx.cpp in Sources */,
+				1AD482DC1BA363F900FDA50A /* CheatSearch.cpp in Sources */,
+				1AD482DD1BA363F900FDA50A /* armdis.cpp in Sources */,
+				1AD482DE1BA363F900FDA50A /* Sound.cpp in Sources */,
+				1AD482DF1BA363F900FDA50A /* Mode1.cpp in Sources */,
+				1AD482E01BA363F900FDA50A /* Sram.cpp in Sources */,
+				1AD482E11BA363F900FDA50A /* Mode4.cpp in Sources */,
+				1AD482E21BA363F900FDA50A /* gbafilter.cpp in Sources */,
+				1AD482E31BA363F900FDA50A /* Mode5.cpp in Sources */,
+				1AD482E41BA363F900FDA50A /* Blip_Buffer.cpp in Sources */,
+				1AD482E51BA363F900FDA50A /* agbprint.cpp in Sources */,
+				1AD482E61BA363F900FDA50A /* PVGBAEmulatorCore.mm in Sources */,
+				1AD482E71BA363F900FDA50A /* GBALink.cpp in Sources */,
+				1AD482E81BA363F900FDA50A /* Mode0.cpp in Sources */,
+				1AD482E91BA363F900FDA50A /* memgzio.c in Sources */,
+				1AD482EA1BA363F900FDA50A /* Cheats.cpp in Sources */,
+				1AD482EB1BA363F900FDA50A /* Mode3.cpp in Sources */,
+				1AD482EC1BA363F900FDA50A /* GBASockClient.cpp in Sources */,
+				1AD482ED1BA363F900FDA50A /* Gb_Oscs.cpp in Sources */,
+				1AD482EE1BA363F900FDA50A /* elf.cpp in Sources */,
+				1AD482EF1BA363F900FDA50A /* bios.cpp in Sources */,
+				1AD482F01BA363F900FDA50A /* GBA-thumb.cpp in Sources */,
+				1AD482F11BA363F900FDA50A /* Mode2.cpp in Sources */,
+				1AD482F21BA363F900FDA50A /* RTC.cpp in Sources */,
+				1AD482F31BA363F900FDA50A /* Flash.cpp in Sources */,
+				1AD482F41BA363F900FDA50A /* Gb_Apu_State.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -456,6 +573,7 @@
 		1A35A85D1ABF404D00D6DDAF /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -464,6 +582,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -496,6 +615,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -554,6 +674,7 @@
 		1A9FBC2F1ABD0DA7004E778B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -562,6 +683,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -578,6 +700,7 @@
 		1A9FBC301ABD0DA7004E778B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -586,6 +709,7 @@
 					"$(SRCROOT)/../PVSupport/**",
 					"$(SRCROOT)/**",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = (
 					"-DC_CORE",
 					"-DFINAL_VERSION",
@@ -598,6 +722,87 @@
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
+		};
+		1AD482FB1BA363F900FDA50A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-DC_CORE",
+					"-DFINAL_VERSION",
+					"-DNO_LINK",
+					"-DNO_PNG",
+					"-DTILED_RENDERING",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1AD482FC1BA363F900FDA50A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-DC_CORE",
+					"-DFINAL_VERSION",
+					"-DNO_LINK",
+					"-DNO_PNG",
+					"-DTILED_RENDERING",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		1AD482FD1BA363F900FDA50A /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_BITCODE = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../PVSupport/**",
+					"$(SRCROOT)/**",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = (
+					"-DC_CORE",
+					"-DFINAL_VERSION",
+					"-DNO_LINK",
+					"-DNO_PNG",
+					"-DTILED_RENDERING",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+			};
+			name = AdHoc;
 		};
 /* End XCBuildConfiguration section */
 
@@ -618,6 +823,16 @@
 				1A9FBC2F1ABD0DA7004E778B /* Debug */,
 				1A9FBC301ABD0DA7004E778B /* Release */,
 				1A35A85D1ABF404D00D6DDAF /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AD482FA1BA363F900FDA50A /* Build configuration list for PBXNativeTarget "PVGBATV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AD482FB1BA363F900FDA50A /* Debug */,
+				1AD482FC1BA363F900FDA50A /* Release */,
+				1AD482FD1BA363F900FDA50A /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

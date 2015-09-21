@@ -12,6 +12,12 @@ extern NSString * const PVGameLibraryHeaderView;
 extern NSString * const kRefreshLibraryNotification;
 
 @interface PVGameLibraryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout,
-															UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+                                                            UITextFieldDelegate, UINavigationControllerDelegate>
 
 @end
+
+#if !TARGET_OS_TV
+@interface PVGameLibraryViewController () <UIImagePickerControllerDelegate>
+
+@end
+#endif

@@ -48,40 +48,40 @@
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp];
-    [gbaCore releaseGBAButton:PVGBAButtonDown];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft];
-    [gbaCore releaseGBAButton:PVGBAButtonRight];
+    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:0];
     
     switch (direction)
     {
         case JSDPadDirectionUpLeft:
-            [gbaCore pushGBAButton:PVGBAButtonUp];
-            [gbaCore pushGBAButton:PVGBAButtonLeft];
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:0];
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionUp:
-            [gbaCore pushGBAButton:PVGBAButtonUp];
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:0];
             break;
         case JSDPadDirectionUpRight:
-            [gbaCore pushGBAButton:PVGBAButtonUp];
-            [gbaCore pushGBAButton:PVGBAButtonRight];
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:0];
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:0];
             break;
         case JSDPadDirectionLeft:
-            [gbaCore pushGBAButton:PVGBAButtonLeft];
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionRight:
-            [gbaCore pushGBAButton:PVGBAButtonRight];
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:0];
             break;
         case JSDPadDirectionDownLeft:
-            [gbaCore pushGBAButton:PVGBAButtonDown];
-            [gbaCore pushGBAButton:PVGBAButtonLeft];
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:0];
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionDown:
-            [gbaCore pushGBAButton:PVGBAButtonDown];
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:0];
             break;
         case JSDPadDirectionDownRight:
-            [gbaCore pushGBAButton:PVGBAButtonDown];
-            [gbaCore pushGBAButton:PVGBAButtonRight];
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:0];
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:0];
             break;
         default:
             break;
@@ -94,16 +94,16 @@
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp];
-    [gbaCore releaseGBAButton:PVGBAButtonDown];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft];
-    [gbaCore releaseGBAButton:PVGBAButtonRight];
+    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:0];
+    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:0];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore pushGBAButton:[button tag]];
+    [gbaCore pushGBAButton:[button tag] forPlayer:0];
     
     [self vibrate];
 }
@@ -111,104 +111,104 @@
 - (void)buttonReleased:(JSButton *)button
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore releaseGBAButton:[button tag]];
+    [gbaCore releaseGBAButton:[button tag] forPlayer:0];
 }
 
-- (void)gamepadButtonPressed:(GCControllerButtonInput *)button
+- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    
-    if ([button isEqual:_b])
-    {
-        [gbaCore pushGBAButton:PVGBAButtonA];
-    }
-    else if ([button isEqual:_a])
-    {
-        [gbaCore pushGBAButton:PVGBAButtonB];
-    }
-    else if ([button isEqual:_leftShoulder])
-    {
-        [gbaCore pushGBAButton:PVGBAButtonL];
-    }
-    else if ([button isEqual:_rightShoulder])
-    {
-        [gbaCore pushGBAButton:PVGBAButtonR];
-    }
-    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) //nes30
-    {
-        [gbaCore pushGBAButton:PVGBAButtonStart];
-    }
-    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
-    {
-        [gbaCore pushGBAButton:PVGBAButtonSelect];
-    }
-}
 
-- (void)gamepadButtonReleased:(GCControllerButtonInput *)button
-{
-    PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    
-    if ([button isEqual:_b])
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonA];
-    }
-    else if ([button isEqual:_a])
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonB];
-    }
-    else if ([button isEqual:_leftShoulder])
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonL];
-    }
-    else if ([button isEqual:_rightShoulder])
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonR];
-    }
-    else if ([button isEqual:_x] || [button isEqual:_leftTrigger]) // nes30
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonStart];
-    }
-    else if ([button isEqual:_y] || [button isEqual:_rightTrigger]) //nes30
-    {
-        [gbaCore releaseGBAButton:PVGBAButtonSelect];
+    switch (button) {
+        case PVControllerButtonA:
+            [gbaCore pushGBAButton:PVGBAButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [gbaCore pushGBAButton:PVGBAButtonA forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [gbaCore pushGBAButton:PVGBAButtonL forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [gbaCore pushGBAButton:PVGBAButtonR forPlayer:player];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftTrigger:
+            [gbaCore pushGBAButton:PVGBAButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightTrigger:
+            [gbaCore pushGBAButton:PVGBAButtonSelect forPlayer:player];
+            break;
+        default:
+            break;
     }
 }
 
-- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp];
-    [gbaCore releaseGBAButton:PVGBAButtonDown];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft];
-    [gbaCore releaseGBAButton:PVGBAButtonRight];
+    switch (button) {
+        case PVControllerButtonA:
+            [gbaCore releaseGBAButton:PVGBAButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [gbaCore releaseGBAButton:PVGBAButtonA forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [gbaCore releaseGBAButton:PVGBAButtonL forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [gbaCore releaseGBAButton:PVGBAButtonR forPlayer:player];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftTrigger:
+            [gbaCore releaseGBAButton:PVGBAButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightTrigger:
+            [gbaCore releaseGBAButton:PVGBAButtonSelect forPlayer:player];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+{
+    PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
+    
+    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
     
     if ([[dpad xAxis] value] > 0)
     {
-        [gbaCore pushGBAButton:PVGBAButtonRight];
+        [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
     }
     if ([[dpad xAxis] value] < 0)
     {
-        [gbaCore pushGBAButton:PVGBAButtonLeft];
+        [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
     }
     if ([[dpad yAxis] value] > 0)
     {
-        [gbaCore pushGBAButton:PVGBAButtonUp];
+        [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
     }
     if ([[dpad yAxis] value] < 0)
     {
-        [gbaCore pushGBAButton:PVGBAButtonDown];
+        [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
     }
 }
 
-- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad
+- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp];
-    [gbaCore releaseGBAButton:PVGBAButtonDown];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft];
-    [gbaCore releaseGBAButton:PVGBAButtonRight];
+    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
 }
 
 @end

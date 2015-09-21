@@ -19,6 +19,17 @@ extern NSString * const PVSavedControllerFramesKey;
 
 @class PVControllerViewController, PVEmulatorCore;
 
+typedef NS_ENUM(NSInteger, PVControllerButton) {
+    PVControllerButtonA,
+    PVControllerButtonB,
+    PVControllerButtonX,
+    PVControllerButtonY,
+    PVControllerButtonLeftShoulder,
+    PVControllerButtonRightShoulder,
+    PVControllerButtonLeftTrigger,
+    PVControllerButtonRightTrigger
+};
+
 @protocol PVControllerViewControllerDelegate <NSObject>
 
 - (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController;
@@ -28,27 +39,12 @@ extern NSString * const PVSavedControllerFramesKey;
 @end
 
 @interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate> {
-    GCControllerDirectionPad *_pad;
-    
-    GCControllerButtonInput *_a;
-    GCControllerButtonInput *_b;
-    GCControllerButtonInput *_x;
-    GCControllerButtonInput *_y;
-    
-    GCControllerDirectionPad *_leftAnalog;
-    GCControllerDirectionPad *_rightAnalog;
-    
-    GCControllerButtonInput *_leftShoulder;
-    GCControllerButtonInput *_rightShoulder;
-    
-    GCControllerButtonInput *_leftTrigger;
-    GCControllerButtonInput *_rightTrigger;
+
 }
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, copy) NSString *systemIdentifier;
 @property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
-@property (nonatomic, strong) GCController *gameController;
 @property (nonatomic, strong) PViCadeController *iCadeController;
 
 @property (nonatomic, strong) JSDPad *dPad;
@@ -67,9 +63,10 @@ extern NSString * const PVSavedControllerFramesKey;
 - (void)buttonReleased:(JSButton *)button;
 - (void)vibrate;
 
-- (void)gamepadButtonPressed:(GCControllerButtonInput *)button;
-- (void)gamepadButtonReleased:(GCControllerButtonInput *)button;
-- (void)gamepadPressedDirection:(GCControllerDirectionPad *)dpad;
-- (void)gamepadReleasedDirection:(GCControllerDirectionPad *)dpad;
+- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
+- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
+
+- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
+- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
 
 @end
