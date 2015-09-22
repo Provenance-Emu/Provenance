@@ -44,11 +44,14 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UITouch *touch = [touches anyObject];
-	CGPoint location = [touch locationInView:[self superview]];
+	CGPoint location = [touch locationInView:self];
 	
 	for (JSButton *button in [self buttons])
 	{
-		if (CGRectContainsPoint([button frame], location))
+        CGRect touchArea = CGRectMake(location.x - 10, location.y - 10, 20, 20);
+        CGRect buttonFrame = [self convertRect:[button frame] toView:self];
+        if (CGRectIntersectsRect(touchArea, buttonFrame))
+//		if (CGRectContainsPoint([button frame], location))
 		{
 			[button touchesBegan:touches withEvent:event];
 		}
@@ -58,11 +61,14 @@
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UITouch *touch = [touches anyObject];
-	CGPoint location = [touch locationInView:[self superview]];
+	CGPoint location = [touch locationInView:self];
 	
 	for (JSButton *button in [self buttons])
 	{
-		if (CGRectContainsPoint([button frame], location))
+        CGRect touchArea = CGRectMake(location.x - 10, location.y - 10, 20, 20);
+        CGRect buttonFrame = [self convertRect:[button frame] toView:self];
+        if (CGRectIntersectsRect(touchArea, buttonFrame))
+//		if (CGRectContainsPoint([button frame], location))
 		{
 			[button touchesMoved:touches withEvent:event];
 		}

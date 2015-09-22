@@ -138,10 +138,9 @@
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	UITouch *touch = [touches anyObject];
-	CGPoint point = [touch locationInView:self];
-	CGFloat width = [self frame].size.width;
-	CGFloat height = [self frame].size.height;
-	
+	CGPoint point = [touch locationInView:[self superview]];
+    CGRect touchArea = CGRectMake(point.x - 10, point.y - 10, 20, 20);
+
     BOOL pressed = _pressed;
     
 	if (!pressed)
@@ -152,8 +151,8 @@
 			[self.delegate buttonPressed:self];
 		}
 	}
-	
-	if (((point.x < 0) || (point.x > width)) || ((point.y < 0) || (point.y > height)))
+
+    if (!CGRectIntersectsRect(touchArea, [self frame]))
 	{
 		if (pressed)
 		{
