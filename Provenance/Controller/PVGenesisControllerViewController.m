@@ -194,28 +194,42 @@
 - (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
-	
-	if ([[dpad xAxis] value] > 0)
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
-	}
-	if ([[dpad xAxis] value] < -0)
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
-	}
-	if ([[dpad yAxis] value] > 0)
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
-	}
-	if ([[dpad yAxis] value] < 0)
-	{
-		[genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
-	}
+
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
+    {
+        if (xAxis > 0)
+        {
+            [genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
+        }
+        else if (xAxis < 0)
+        {
+            [genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
+        }
+    }
+    else
+    {
+        [genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
+        [genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
+    }
+
+    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
+    {
+        if (yAxis > 0)
+        {
+            [genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
+        }
+        else if (yAxis < 0)
+        {
+            [genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
+        }
+    }
+    else
+    {
+        [genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
+        [genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
+    }
 }
 
 - (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player

@@ -168,29 +168,36 @@
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis)) {
+    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
+    {
         if (xAxis > 0)
         {
             [nesCore pushNESButton:PVNESButtonRight forPlayer:player];
-        } else
-        if (xAxis < 0)
+        }
+        else if (xAxis < 0)
         {
             [nesCore pushNESButton:PVNESButtonLeft forPlayer:player];
         }
-    } else  {
-            [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
-            [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
     }
-    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis)) {
+    else
+    {
+        [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
+        [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+    }
+    
+    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
+    {
         if (yAxis > 0)
         {
             [nesCore pushNESButton:PVNESButtonUp forPlayer:player];
-        } else
-        if (yAxis < 0)
+        }
+        else if (yAxis < 0)
         {
             [nesCore pushNESButton:PVNESButtonDown forPlayer:player];
         }
-    } else  {
+    }
+    else
+    {
         [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
         [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
     }

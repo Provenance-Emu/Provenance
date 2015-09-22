@@ -710,7 +710,20 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
         pad = [[controller microGamepad] dpad];
 
+        // options are so limited here, mapping is so arbitrary. Most games need a start button, so just use A and Start? (Start is mapped to Left trigger for most pads) :/
+        // Siri-Remote != game controller. (Sorry Apple, but it's the truth and the sooner you realise it the sooner we can get on with our lives.)
+
         [[[controller microGamepad] buttonA] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (value > 0)
+            {
+                [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
+            }
+            else
+            {
+                [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
+            }
+        }];
+        [[[controller microGamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (value > 0)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
@@ -718,16 +731,6 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
             else
             {
                 [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
-            }
-        }];
-        [[[controller microGamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
             }
         }];
     }
