@@ -190,29 +190,43 @@
 
 - (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	[snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
-	
-	if ([[dpad xAxis] value] > 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
-	}
-	if ([[dpad xAxis] value] < 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
-	}
-	if ([[dpad yAxis] value] > 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
-	}
-	if ([[dpad yAxis] value] < 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
-	}
+    PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
+    {
+        if (xAxis > 0)
+        {
+            [snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
+        }
+        else if (xAxis < 0)
+        {
+            [snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
+        }
+    }
+    else
+    {
+        [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
+        [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
+    }
+    
+    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
+    {
+        if (yAxis > 0)
+        {
+            [snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
+        }
+        else if (yAxis < 0)
+        {
+            [snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
+        }
+    }
+    else
+    {
+        [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
+        [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
+    }
 }
 
 - (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player

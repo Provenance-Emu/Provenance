@@ -177,27 +177,41 @@
 - (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
+
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
+    {
+        if (xAxis > 0)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
+        }
+        else if (xAxis < 0)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
+        }
+    }
+    else
+    {
+        [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+    }
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
-    
-    if ([[dpad xAxis] value] > 0)
+    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
     {
-        [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
+        if (yAxis > 0)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
+        }
+        else if (yAxis < 0)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
+        }
     }
-    if ([[dpad xAxis] value] < 0)
+    else
     {
-        [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
-    }
-    if ([[dpad yAxis] value] > 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
-    }
-    if ([[dpad yAxis] value] < 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
     }
 }
 

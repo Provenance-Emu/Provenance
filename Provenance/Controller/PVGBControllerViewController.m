@@ -165,27 +165,41 @@
 - (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
-    
-    [gbCore releaseGBButton:PVGBButtonUp];
-    [gbCore releaseGBButton:PVGBButtonDown];
-    [gbCore releaseGBButton:PVGBButtonLeft];
-    [gbCore releaseGBButton:PVGBButtonRight];
-    
-    if ([[dpad xAxis] value] > 0)
+
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
     {
-        [gbCore pushGBButton:PVGBButtonRight];
+        if (xAxis > 0)
+        {
+            [gbCore pushGBButton:PVGBButtonRight];
+        }
+        else if (xAxis < 0)
+        {
+            [gbCore pushGBButton:PVGBButtonLeft];
+        }
     }
-    if ([[dpad xAxis] value] < 0)
+    else
     {
-        [gbCore pushGBButton:PVGBButtonLeft];
+        [gbCore releaseGBButton:PVGBButtonRight];
+        [gbCore releaseGBButton:PVGBButtonLeft];
     }
-    if ([[dpad yAxis] value] > 0)
+
+    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
     {
-        [gbCore pushGBButton:PVGBButtonUp];
+        if (yAxis > 0)
+        {
+            [gbCore pushGBButton:PVGBButtonUp];
+        }
+        else if (yAxis < 0)
+        {
+            [gbCore pushGBButton:PVGBButtonDown];
+        }
     }
-    if ([[dpad yAxis] value] < 0)
+    else
     {
-        [gbCore pushGBButton:PVGBButtonDown];
+        [gbCore releaseGBButton:PVGBButtonDown];
+        [gbCore releaseGBButton:PVGBButtonUp];
     }
 }
 
