@@ -13,6 +13,7 @@
 #import "NSFileManager+Hashing.h"
 #import "PVMediaCache.h"
 #import <Realm/Realm.h>
+#import "PVSynchronousURLSession.h"
 
 @interface PVGameImporter ()
 
@@ -520,9 +521,9 @@
     NSURLRequest *request = [NSURLRequest requestWithURL:artworkURL];
     NSHTTPURLResponse *urlResponse = nil;
     NSError *error = nil;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request
-                                         returningResponse:&urlResponse
-                                                     error:&error];
+    NSData *data = [PVSynchronousURLSession sendSynchronousRequest:request
+                                                 returningResponse:&urlResponse
+                                                             error:&error];
     if (error)
     {
         DLog(@"error downloading artwork from: %@ -- %@", url, [error localizedDescription]);
