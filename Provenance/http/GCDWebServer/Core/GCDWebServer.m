@@ -914,7 +914,13 @@ static inline NSString* _EncodeBase64(NSString* string) {
   for (NSString* file in enumerator) {
     if (![file hasPrefix:@"."]) {
       NSString* type = [[enumerator fileAttributes] objectForKey:NSFileType];
-      NSString* escapedFile = [file stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+      NSString* escapedFile = nil;
+#if TARGET_OS_TV
+        escapedFile = [file stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"] invertedSet]];
+#else
+        escapedFile = [file stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+#endif
+        
       GWS_DCHECK(escapedFile);
       if ([type isEqualToString:NSFileTypeRegular]) {
         [html appendFormat:@"<li><a href=\"%@\">%@</a></li>\n", escapedFile, file];
