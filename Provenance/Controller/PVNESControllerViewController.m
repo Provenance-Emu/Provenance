@@ -166,6 +166,12 @@
 - (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
+
+    [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
+
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
     if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
