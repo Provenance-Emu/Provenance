@@ -141,6 +141,13 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     }
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    [self resetControls:self];
+}
+
 # pragma mark - Controller Position And Size Editing
 
 - (void)setupTouchControls
