@@ -426,8 +426,8 @@ void uncaughtExceptionHandler(NSException *exception)
                                     @"Slot 5 (empty)"]];
 	}
 	
-	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -458,7 +458,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
 	}
 	
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
@@ -488,8 +488,8 @@ void uncaughtExceptionHandler(NSException *exception)
                                     @"Slot 5 (empty)"]];
 	}
 	
-	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -526,7 +526,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
 	}
 	
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
