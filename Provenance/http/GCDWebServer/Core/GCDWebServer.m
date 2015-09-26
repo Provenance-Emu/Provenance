@@ -915,11 +915,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
     if (![file hasPrefix:@"."]) {
       NSString* type = [[enumerator fileAttributes] objectForKey:NSFileType];
       NSString* escapedFile = nil;
-#if TARGET_OS_TV
         escapedFile = [file stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@"!*'();:@&=+$,/?%#[]"] invertedSet]];
-#else
-        escapedFile = [file stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-#endif
         
       GWS_DCHECK(escapedFile);
       if ([type isEqualToString:NSFileTypeRegular]) {
