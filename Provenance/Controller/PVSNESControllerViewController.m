@@ -196,11 +196,11 @@
     float yAxis = [[dpad yAxis] value];
     if (xAxis != 0)
     {
-        if (xAxis > 0)
+        if (xAxis > 0.5)
         {
             [snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
         }
-        else if (xAxis < 0)
+        else if (xAxis < -0.5)
         {
             [snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
         }
@@ -213,11 +213,11 @@
     
     if (yAxis != 0)
     {
-        if (yAxis > 0)
+        if (yAxis > 0.5)
         {
             [snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
         }
-        else if (yAxis < 0)
+        else if (yAxis < -0.5)
         {
             [snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
         }

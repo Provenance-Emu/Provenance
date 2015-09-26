@@ -199,11 +199,11 @@
     float yAxis = [[dpad yAxis] value];
     if (xAxis != 0)
     {
-        if (xAxis > 0)
+        if (xAxis > 0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
         }
-        else if (xAxis < 0)
+        else if (xAxis < -0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
         }
@@ -216,11 +216,11 @@
 
     if (yAxis != 0)
     {
-        if (yAxis > 0)
+        if (yAxis > 0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
         }
-        else if (yAxis < 0)
+        else if (yAxis < -0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
         }

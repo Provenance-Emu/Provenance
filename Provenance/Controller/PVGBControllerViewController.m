@@ -170,11 +170,11 @@
     float yAxis = [[dpad yAxis] value];
     if (xAxis != 0)
     {
-        if (xAxis > 0)
+        if (xAxis > 0.5)
         {
             [gbCore pushGBButton:PVGBButtonRight];
         }
-        else if (xAxis < 0)
+        else if (xAxis < -0.5)
         {
             [gbCore pushGBButton:PVGBButtonLeft];
         }
@@ -187,11 +187,11 @@
 
     if (yAxis != 0)
     {
-        if (yAxis > 0)
+        if (yAxis > 0.5)
         {
             [gbCore pushGBButton:PVGBButtonUp];
         }
-        else if (yAxis < 0)
+        else if (yAxis < -0.5)
         {
             [gbCore pushGBButton:PVGBButtonDown];
         }
