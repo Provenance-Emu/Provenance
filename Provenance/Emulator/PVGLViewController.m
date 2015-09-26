@@ -88,9 +88,19 @@
             if (parentSize.width > parentSize.height) {
                 height = parentSize.height;
                 width = roundf(height * ratio);
+                if (width > parentSize.width)
+                {
+                    width = parentSize.width;
+                    height = roundf(width / ratio);
+                }
             } else {
                 width = parentSize.width;
                 height = roundf(width / ratio);
+                if (height > parentSize.height)
+                {
+                    height = parentSize.width;
+                    width = roundf(height / ratio);
+                }
             }
 
             [[self view] setFrame:CGRectMake(roundf((parentSize.width - width) / 2.0), 0, width, height)];
