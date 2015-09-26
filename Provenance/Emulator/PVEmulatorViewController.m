@@ -267,7 +267,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-	return UIInterfaceOrientationMaskLandscape;
+    return UIInterfaceOrientationMaskAll;
 }
 
 
@@ -309,8 +309,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
-    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -365,7 +365,7 @@ void uncaughtExceptionHandler(NSException *exception)
         self.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
 			NSString *saveStatePath = [weakSelf saveStatePath];
