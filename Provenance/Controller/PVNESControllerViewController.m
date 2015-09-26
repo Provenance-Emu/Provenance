@@ -176,11 +176,11 @@
     float yAxis = [[dpad yAxis] value];
     if (xAxis != 0)
     {
-        if (xAxis > 0)
+        if (xAxis > 0.5)
         {
             [nesCore pushNESButton:PVNESButtonRight forPlayer:player];
         }
-        else if (xAxis < 0)
+        else if (xAxis < -0.5)
         {
             [nesCore pushNESButton:PVNESButtonLeft forPlayer:player];
         }
@@ -193,11 +193,11 @@
     
     if (yAxis != 0)
     {
-        if (yAxis > 0)
+        if (yAxis > 0.5)
         {
             [nesCore pushNESButton:PVNESButtonUp forPlayer:player];
         }
-        else if (yAxis < 0)
+        else if (yAxis < -0.5)
         {
             [nesCore pushNESButton:PVNESButtonDown forPlayer:player];
         }
