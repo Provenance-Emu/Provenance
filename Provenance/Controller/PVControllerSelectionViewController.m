@@ -11,8 +11,6 @@
 
 @interface PVControllerSelectionViewController ()
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @end
 
 @implementation PVControllerSelectionViewController
@@ -21,7 +19,13 @@
 {
     [super viewDidLoad];
 
+#if TARGET_OS_TV
+    [self.splitViewController setTitle:@"Controller Settings"];
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
+    [self.tableView setBackgroundView:nil];
+#else
     [self setTitle:@"Controller Settings"];
+#endif
 }
 
 #pragma mark - UITableViewDataSource
