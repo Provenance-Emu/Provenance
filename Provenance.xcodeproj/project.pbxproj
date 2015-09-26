@@ -69,6 +69,7 @@
 		1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */; };
 		1AACCAEA1BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */; };
+		1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.m */; };
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
@@ -337,6 +338,8 @@
 		1AACCAE01BB60D8200DC21AE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1AACCAE71BB615FE00DC21AE /* PVSynchronousURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSynchronousURLSession.h; sourceTree = "<group>"; };
 		1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSynchronousURLSession.m; sourceTree = "<group>"; };
+		1AACCAEB1BB61D5600DC21AE /* PVTVSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVTVSplitViewController.h; sourceTree = "<group>"; };
+		1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVTVSplitViewController.m; sourceTree = "<group>"; };
 		1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+BlockAdditions.m"; sourceTree = "<group>"; };
 		1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameAdditions.h"; sourceTree = "<group>"; };
@@ -872,6 +875,8 @@
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
 			isa = PBXGroup;
 			children = (
+				1AACCAEB1BB61D5600DC21AE /* PVTVSplitViewController.h */,
+				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.m */,
 				1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */,
 				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */,
 				1AD481BF1BA350A400FDA50A /* Main.storyboard */,
@@ -1311,6 +1316,7 @@
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
 				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				1AD481F41BA3549A00FDA50A /* NSData+Hashing.m in Sources */,
+				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.m in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1AD481EA1BA3547B00FDA50A /* ioapi.c in Sources */,

@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 @import GameController;
 
-@interface PVControllerSelectionViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface PVControllerSelectionViewController : UITableViewController
 
 @end
