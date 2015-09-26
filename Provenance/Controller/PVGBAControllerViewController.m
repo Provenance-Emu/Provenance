@@ -120,10 +120,10 @@
 
     switch (button) {
         case PVControllerButtonA:
-            [gbaCore pushGBAButton:PVGBAButtonB forPlayer:player];
+            [gbaCore pushGBAButton:PVGBAButtonA forPlayer:player];
             break;
         case PVControllerButtonB:
-            [gbaCore pushGBAButton:PVGBAButtonA forPlayer:player];
+            [gbaCore pushGBAButton:PVGBAButtonB forPlayer:player];
             break;
         case PVControllerButtonLeftShoulder:
             [gbaCore pushGBAButton:PVGBAButtonL forPlayer:player];
@@ -150,10 +150,10 @@
     
     switch (button) {
         case PVControllerButtonA:
-            [gbaCore releaseGBAButton:PVGBAButtonB forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonA forPlayer:player];
             break;
         case PVControllerButtonB:
-            [gbaCore releaseGBAButton:PVGBAButtonA forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonB forPlayer:player];
             break;
         case PVControllerButtonLeftShoulder:
             [gbaCore releaseGBAButton:PVGBAButtonL forPlayer:player];

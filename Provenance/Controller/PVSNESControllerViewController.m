@@ -126,16 +126,16 @@
 
     switch (button) {
         case PVControllerButtonX:
-            [snesCore pushSNESButton:PVSNESButtonY forPlayer:player];
+            [snesCore pushSNESButton:PVSNESButtonX forPlayer:player];
             break;
         case PVControllerButtonA:
-            [snesCore pushSNESButton:PVSNESButtonB forPlayer:player];
-            break;
-        case PVControllerButtonB:
             [snesCore pushSNESButton:PVSNESButtonA forPlayer:player];
             break;
+        case PVControllerButtonB:
+            [snesCore pushSNESButton:PVSNESButtonB forPlayer:player];
+            break;
         case PVControllerButtonY:
-            [snesCore pushSNESButton:PVSNESButtonX forPlayer:player];
+            [snesCore pushSNESButton:PVSNESButtonY forPlayer:player];
             break;
         case PVControllerButtonLeftShoulder:
             [snesCore pushSNESButton:PVSNESButtonTriggerLeft forPlayer:player];
@@ -160,16 +160,16 @@
 	
     switch (button) {
         case PVControllerButtonX:
-            [snesCore releaseSNESButton:PVSNESButtonY forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonX forPlayer:player];
             break;
         case PVControllerButtonA:
-            [snesCore releaseSNESButton:PVSNESButtonB forPlayer:player];
-            break;
-        case PVControllerButtonB:
             [snesCore releaseSNESButton:PVSNESButtonA forPlayer:player];
             break;
+        case PVControllerButtonB:
+            [snesCore releaseSNESButton:PVSNESButtonB forPlayer:player];
+            break;
         case PVControllerButtonY:
-            [snesCore releaseSNESButton:PVSNESButtonX forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonY forPlayer:player];
             break;
         case PVControllerButtonLeftShoulder:
             [snesCore releaseSNESButton:PVSNESButtonTriggerLeft forPlayer:player];
