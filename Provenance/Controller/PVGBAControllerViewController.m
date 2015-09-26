@@ -180,7 +180,7 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis))
+    if (xAxis != 0)
     {
         if (xAxis > 0)
         {
@@ -197,7 +197,7 @@
         [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
     }
     
-    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis))
+    if (yAxis != 0)
     {
         if (yAxis > 0)
         {
