@@ -293,7 +293,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (IBAction)getMoreROMs
 {
-#if TARGET_OS_TV
     Reachability *reachability = [Reachability reachabilityForInternetConnection];
     [reachability startNotifier];
 
@@ -327,22 +326,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }]];
         [self presentViewController:alert animated:YES completion:NULL];
     }
-#else
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Get ROMs!"
-                                                                   message:@"Download a ROM from your favourite ROM site using Safari and once the download is complete choose \"Open In...\", select Provenance and your ROM will magically appear in the Library.\n\nNEW: Now you can bulk transfer ROMs through your PC. See Menu."
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Open Safari"
-                                              style:UIAlertActionStyleDefault
-                                            handler:^(UIAlertAction * _Nonnull action) {
-                                                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://google.com"]];
-                                            }]];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel"
-                                              style:UIAlertActionStyleCancel
-                                            handler:^(UIAlertAction * _Nonnull action) {
-                                                // no op
-                                            }]];
-    [self presentViewController:alert animated:YES completion:NULL];
-#endif
 }
 
 - (NSString *)BIOSPathForSystemID:(NSString *)systemID
