@@ -529,6 +529,15 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
         [self setupGameController:[[PVControllerManager sharedManager] player1]];
         [self setupGameController:[[PVControllerManager sharedManager] player2]];
     }
+    else
+    {
+        [self.dPad setHidden:NO];
+        [self.buttonGroup setHidden:NO];
+        [self.leftShoulderButton setHidden:NO];
+        [self.rightShoulderButton setHidden:NO];
+        [self.startButton setHidden:NO];
+        [self.selectButton setHidden:NO];
+    }
 }
 
 - (void)controllerDidDisconnect:(NSNotification *)note
@@ -537,6 +546,15 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     {
         [self setupGameController:[[PVControllerManager sharedManager] player1]];
         [self setupGameController:[[PVControllerManager sharedManager] player2]];
+    }
+    else
+    {
+        [self.dPad setHidden:NO];
+        [self.buttonGroup setHidden:NO];
+        [self.leftShoulderButton setHidden:NO];
+        [self.rightShoulderButton setHidden:NO];
+        [self.startButton setHidden:NO];
+        [self.selectButton setHidden:NO];
     }
 }
 
