@@ -43,9 +43,6 @@
     float y = (state & iCadeJoystickDown)? -1.0f: ((state & iCadeJoystickUp)? 1.0f : 0.0f );
     [_xAxis setValue:x];
     [_yAxis setValue:y];
-    if (_handler) {
-        _handler(self, x, y);
-    }
 
     if (x == -1.0f) {
         [_left setPressed:YES];
@@ -63,6 +60,10 @@
     } else {
         [_down setPressed:NO];
         [_up setPressed:NO];
+    }
+
+    if (_handler) {
+        _handler(self, x, y);
     }
 }
 
