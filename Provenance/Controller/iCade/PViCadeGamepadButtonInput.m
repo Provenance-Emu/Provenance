@@ -30,4 +30,8 @@
     }
 }
 
+-(void) setPressed:(BOOL)pressed {
+    _pressed = pressed;
+}
+
 @end

@@ -13,12 +13,21 @@
 -(void) setValue:(float) value;
 @end
 
+@interface PViCadeGamepadButtonInput(PVPrivateAPI)
+-(void) setPressed:(BOOL)pressed;
+@end
+
 @implementation PViCadeGamepadDirectionPad
 
 -(instancetype) init {
     if (self = [super init]) {
         _xAxis = [[PViCadeAxisInput alloc] init];
         _yAxis = [[PViCadeAxisInput alloc] init];
+
+        _up = [[PViCadeGamepadButtonInput alloc] init];
+        _down = [[PViCadeGamepadButtonInput alloc] init];
+        _left = [[PViCadeGamepadButtonInput alloc] init];
+        _right = [[PViCadeGamepadButtonInput alloc] init];
     }
     return self;
 }
@@ -37,6 +46,24 @@
     if (_handler) {
         _handler(self, x, y);
     }
+
+    if (x == -1.0f) {
+        [_left setPressed:YES];
+    } else if (x == 1.0f) {
+        [_right setPressed:YES];
+    } else {
+        [_left setPressed:NO];
+        [_right setPressed:NO];
+    }
+
+    if (y == -1.0f) {
+        [_down setPressed:YES];
+    } else if (y == 1.0f) {
+        [_up setPressed:YES];
+    } else {
+        [_down setPressed:NO];
+        [_up setPressed:NO];
+    }
 }
 
 -(PViCadeAxisInput*) xAxis {
@@ -45,6 +72,26 @@
 
 -(PViCadeAxisInput*) yAxis {
     return _yAxis;
+}
+
+-(PViCadeGamepadButtonInput*) up
+{
+    return _up;
+}
+
+-(PViCadeGamepadButtonInput*) down;
+{
+    return _down;
+}
+
+-(PViCadeGamepadButtonInput*) left;
+{
+    return _left;
+}
+
+-(PViCadeGamepadButtonInput*) right;
+{
+    return _right;
 }
 
 @end
