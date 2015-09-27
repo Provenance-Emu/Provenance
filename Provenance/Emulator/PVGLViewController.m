@@ -79,7 +79,16 @@
             ratio = aspectSize.height / aspectSize.width;
         }
 
-        CGSize parentSize = [[[self parentViewController] view] bounds].size;
+        CGSize parentSize = CGSizeZero;
+        if ([self parentViewController])
+        {
+            parentSize = [[[self parentViewController] view] bounds].size;
+        }
+        else
+        {
+            parentSize = [[self.view window] bounds].size;
+        }
+
 
         CGFloat height = 0;
         CGFloat width = 0;
