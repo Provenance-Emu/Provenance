@@ -38,6 +38,10 @@
 @property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
+@property (nonatomic, strong) UIScreen *secondaryScreen;
+@property (nonatomic, strong) UIWindow *secondaryWindow;
+
+
 @end
 
 static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewController;
@@ -101,7 +105,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.title = [self.game title];
 	
 	[self.view setBackgroundColor:[UIColor blackColor]];
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appWillEnterForeground:)
 												 name:UIApplicationWillEnterForegroundNotification
@@ -126,6 +130,14 @@ void uncaughtExceptionHandler(NSException *exception)
 											 selector:@selector(controllerDidDisconnect:)
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenDidConnect:)
+                                                 name:UIScreenDidConnectNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenDidDisconnect:)
+                                                 name:UIScreenDidDisconnectNotification
+                                               object:nil];
 	
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
@@ -158,9 +170,23 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.gameAudio startAudio];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
-	[self addChildViewController:self.glViewController];
-	[self.view addSubview:[self.glViewController view]];
-	[self.glViewController didMoveToParentViewController:self];
+
+    if ([[UIScreen screens] count] > 1)
+    {
+        self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
+        self.secondaryWindow = [[UIWindow alloc] initWithFrame:[self.secondaryScreen bounds]];
+        [self.secondaryWindow setScreen:self.secondaryScreen];
+        [self.secondaryWindow setRootViewController:self.glViewController];
+        [[self.glViewController view] setFrame:[self.secondaryWindow bounds]];
+        [self.secondaryWindow addSubview:[self.glViewController view]];
+        [self.secondaryWindow setHidden:NO];
+    }
+    else
+    {
+        [self addChildViewController:self.glViewController];
+        [self.view addSubview:[self.glViewController view]];
+        [self.glViewController didMoveToParentViewController:self];
+    }
 	
 	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
 	[self.controllerViewController setEmulatorCore:self.emulatorCore];
@@ -571,6 +597,42 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)controllerDidDisconnect:(NSNotification *)note
 {
 	[self.menuButton setHidden:NO];
+}
+
+#pragma mark - UIScreenNotifications
+
+- (void)screenDidConnect:(NSNotification *)note
+{
+    NSLog(@"Screen did connect: %@", [note object]);
+    if (!self.secondaryScreen)
+    {
+        self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
+        self.secondaryWindow = [[UIWindow alloc] initWithFrame:[self.secondaryScreen bounds]];
+        [self.secondaryWindow setScreen:self.secondaryScreen];
+        [[self.glViewController view] removeFromSuperview];
+        [self.glViewController removeFromParentViewController];
+        [self.secondaryWindow setRootViewController:self.glViewController];
+        [[self.glViewController view] setFrame:[self.secondaryWindow bounds]];
+        [self.secondaryWindow addSubview:[self.glViewController view]];
+        [self.secondaryWindow setHidden:NO];
+        [[self.glViewController view] setNeedsLayout];
+    }
+}
+
+- (void)screenDidDisconnect:(NSNotification *)note
+{
+    NSLog(@"Screen did disconnect: %@", [note object]);
+    UIScreen *screen = [note object];
+    if (self.secondaryScreen == screen)
+    {
+        [[self.glViewController view] removeFromSuperview];
+        [self.glViewController removeFromParentViewController];
+        [self addChildViewController:self.glViewController];
+        [self.view insertSubview:[self.glViewController view] belowSubview:[self.controllerViewController view]];
+        [[self.glViewController view] setNeedsLayout];
+        self.secondaryWindow = nil;
+        self.secondaryScreen = nil;
+    }
 }
 
 @end
