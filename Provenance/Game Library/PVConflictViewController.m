@@ -125,7 +125,7 @@
         if (!cell)
         {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
-
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
 
         cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -159,7 +159,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-    
+
+    if (![self.conflictedFiles count])
+    {
+        return;
+    }
+
     NSString *path = self.conflictedFiles[[indexPath row]];
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose a System"
