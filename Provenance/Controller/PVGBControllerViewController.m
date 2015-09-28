@@ -173,10 +173,12 @@
         if (xAxis > 0.5)
         {
             [gbCore pushGBButton:PVGBButtonRight];
+            [gbCore releaseGBButton:PVGBButtonLeft];
         }
         else if (xAxis < -0.5)
         {
             [gbCore pushGBButton:PVGBButtonLeft];
+            [gbCore releaseGBButton:PVGBButtonRight];
         }
     }
     else
@@ -190,10 +192,12 @@
         if (yAxis > 0.5)
         {
             [gbCore pushGBButton:PVGBButtonUp];
+            [gbCore releaseGBButton:PVGBButtonDown];
         }
         else if (yAxis < -0.5)
         {
             [gbCore pushGBButton:PVGBButtonDown];
+            [gbCore releaseGBButton:PVGBButtonUp];
         }
     }
     else

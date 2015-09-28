@@ -202,10 +202,12 @@
         if (xAxis > 0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
         }
         else if (xAxis < -0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
         }
     }
     else
@@ -219,10 +221,12 @@
         if (yAxis > 0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
         }
         else if (yAxis < -0.5)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
         }
     }
     else
