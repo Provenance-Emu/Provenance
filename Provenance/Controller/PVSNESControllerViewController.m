@@ -188,7 +188,7 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
 
@@ -227,16 +227,6 @@
         [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
         [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	[snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
 }
 
 @end

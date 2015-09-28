@@ -163,7 +163,7 @@
 }
 
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
 
@@ -207,16 +207,6 @@
         [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
         [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-    PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
-    
-    [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
 }
 
 @end

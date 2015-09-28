@@ -174,7 +174,7 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
 
@@ -213,16 +213,6 @@
         [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
         [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-    PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    
-    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
 }
 
 @end
