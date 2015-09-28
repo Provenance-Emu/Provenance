@@ -34,4 +34,8 @@
     _pressed = pressed;
 }
 
+-(BOOL) isPressed {
+    return _pressed;
+}
+
 @end
