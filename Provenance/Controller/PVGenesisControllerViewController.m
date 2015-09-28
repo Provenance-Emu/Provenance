@@ -191,7 +191,7 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
 
@@ -230,16 +230,6 @@
         [genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
         [genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
-	
-	[genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
-	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
 }
 
 @end

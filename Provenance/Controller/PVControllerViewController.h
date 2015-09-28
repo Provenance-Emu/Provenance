@@ -66,7 +66,6 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 - (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
 - (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
 
 @end

@@ -828,15 +828,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	}
     
     GCControllerDirectionPadValueChangedHandler dPadHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-        if ([[dpad up] isPressed] || [[dpad down] isPressed] ||
-            [[dpad left] isPressed] || [[dpad right] isPressed])
-        {
-            [weakSelf controllerPressedDirection:dpad forPlayer:player];
-        }
-        else
-        {
-            [weakSelf controllerReleasedDirection:dpad forPlayer:player];
-        }
+        [weakSelf controllerDirectionValueChanged:dpad forPlayer:player];
     };
     
     [pad setValueChangedHandler:dPadHandler];
@@ -867,12 +859,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self doesNotImplementOptionalSelector:_cmd];
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	[self doesNotImplementOptionalSelector:_cmd];
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	[self doesNotImplementOptionalSelector:_cmd];
 }

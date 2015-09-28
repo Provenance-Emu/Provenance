@@ -162,7 +162,7 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
 
@@ -201,16 +201,6 @@
         [gbCore releaseGBButton:PVGBButtonDown];
         [gbCore releaseGBButton:PVGBButtonUp];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-    PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
-    
-    [gbCore releaseGBButton:PVGBButtonUp];
-    [gbCore releaseGBButton:PVGBButtonDown];
-    [gbCore releaseGBButton:PVGBButtonLeft];
-    [gbCore releaseGBButton:PVGBButtonRight];
 }
 
 @end
