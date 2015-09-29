@@ -7,6 +7,7 @@
 //
 
 #import <Realm/Realm.h>
+#import "PVAppDelegate.h"
 #import "PVGameImporter.h"
 #import "PVGameLibraryViewController.h"
 #import "PVGameLibraryCollectionViewCell.h"
@@ -14,6 +15,7 @@
 #import "UIView+FrameAdditions.h"
 #import "PVDirectoryWatcher.h"
 #import "PVGame.h"
+#import "PVRecentGame.h"
 #import "PVMediaCache.h"
 #import "UIAlertView+BlockAdditions.h"
 #import "UIActionSheet+BlockAdditions.h"
@@ -36,6 +38,8 @@ NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
+
+NSInteger const PVMaxRecentsCount = 4;
 
 @interface PVGameLibraryViewController ()
 
@@ -106,6 +110,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     self.realm = nil;
 }
 
+- (void)handleAppDidBecomeActive:(NSNotification *)note
+{
+    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    if ([appDelegate shortcutItem])
+    {
+        [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
+        [appDelegate setShortcutItem:nil];
+    }
+}
+
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
@@ -130,6 +144,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleTextFieldDidChange:)
                                                  name:UITextFieldTextDidChangeNotification
                                                object:self.searchField];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAppDidBecomeActive:)
+                                                 name:UIApplicationDidBecomeActiveNotification
+                                               object:nil];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -167,6 +185,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     else
     {
         [self setUpGameLibrary];
+    }
+
+    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    if ([appDelegate shortcutItem])
+    {
+        [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
+        [appDelegate setShortcutItem:nil];
     }
 }
 
@@ -720,21 +745,92 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [self presentViewController:alertController animated:YES completion:NULL];
         }
     }
-    
+
+//    if ([self.presentedViewController isKindOfClass:[PVEmulatorViewController class]])
+//    {
+//        canLoad = NO;
+//    }
+
     return canLoad;
 }
 
 - (void)loadGame:(PVGame *)game
 {
-    if ([self canLoadGame:game])
+    void (^loadGame)(void) = ^void(void) {
+        if ([self canLoadGame:game])
+        {
+            PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
+            [emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
+            [emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
+            [emulatorViewController setBIOSPath:[self BIOSPathForSystemID:[game systemIdentifier]]];
+            [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+
+            [self presentViewController:emulatorViewController animated:YES completion:NULL];
+
+            [self updateRecentGames:game];
+        }
+    };
+
+    if (![[self presentedViewController] isKindOfClass:[PVEmulatorViewController class]])
     {
-        PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
-        [emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
-        [emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
-        [emulatorViewController setBIOSPath:[self BIOSPathForSystemID:[game systemIdentifier]]];
-        [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-        
-        [self presentViewController:emulatorViewController animated:YES completion:NULL];
+        loadGame();
+    }
+}
+
+- (void)updateRecentGames:(PVGame *)game
+{
+    RLMRealm *realm = [RLMRealm defaultRealm];
+    [realm refresh];
+
+    RLMResults *recents = [PVRecentGame allObjects];
+
+    PVRecentGame *recentToDelete = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", [game md5Hash]]] firstObject];
+    if (recentToDelete)
+    {
+        [realm beginWriteTransaction];
+        [realm deleteObject:recentToDelete];
+        [realm commitWriteTransaction];
+    }
+
+    if ([recents count] >= PVMaxRecentsCount)
+    {
+        PVRecentGame *oldestRecent = [[recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO] lastObject];
+        [realm beginWriteTransaction];
+        [realm deleteObject:oldestRecent];
+        [realm commitWriteTransaction];
+    }
+
+    PVRecentGame *newRecent = [[PVRecentGame alloc] initWithGame:game];
+    [realm beginWriteTransaction];
+    [realm addObject:newRecent];
+    [realm commitWriteTransaction];
+
+    [[UIApplication sharedApplication] setShortcutItems:nil];
+    NSMutableArray *shortcuts = [NSMutableArray array];
+    for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
+    {
+        UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
+                                                                               localizedTitle:[[recentGame game] title]
+                                                                            localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
+                                                                                         icon:nil
+                                                                                     userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
+        [shortcuts addObject:shortcut];
+    }
+
+    [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+}
+
+- (void)loadRecentGameFromShortcut:(UIApplicationShortcutItem *)shortcut
+{
+    if ([[shortcut type] isEqualToString:@"kRecentGameShortcut"])
+    {
+        NSString *md5 = (NSString *)[shortcut userInfo][@"PVGameHash"];
+        if ([md5 length])
+        {
+            PVRecentGame *recentGame = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", md5]] firstObject];
+            PVGame *game = [recentGame game];
+            [self loadGame:game];
+        }
     }
 }
 

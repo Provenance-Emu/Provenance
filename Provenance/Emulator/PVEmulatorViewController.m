@@ -392,22 +392,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
-		if ([[PVSettingsModel sharedInstance] autoSave])
-		{
-			NSString *saveStatePath = [weakSelf saveStatePath];
-			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[weakSelf.emulatorCore saveStateToFileAtPath:autoSavePath];
-		}
-		
-		[weakSelf.gameAudio stopAudio];
-		[weakSelf.emulatorCore stopEmulation];
-#if !TARGET_OS_TV
-		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-#endif
-		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
-#if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
-#endif
+        [weakSelf quit];
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -561,6 +546,31 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
 
      [self presentViewController:actionsheet animated:YES completion:NULL];
+}
+
+- (void)quit
+{
+    [self quit:NULL];
+}
+
+- (void)quit:(void(^)(void))completion
+{
+    if ([[PVSettingsModel sharedInstance] autoSave])
+    {
+        NSString *saveStatePath = [self saveStatePath];
+        NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+        [self.emulatorCore saveStateToFileAtPath:autoSavePath];
+    }
+
+    [self.gameAudio stopAudio];
+    [self.emulatorCore stopEmulation];
+#if !TARGET_OS_TV
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+#endif
+    [self dismissViewControllerAnimated:YES completion:completion];
+#if TARGET_OS_TV
+    self.controllerUserInteractionEnabled = NO;
+#endif
 }
 
 #pragma mark - PVControllerViewControllerDelegate

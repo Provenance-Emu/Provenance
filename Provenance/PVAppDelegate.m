@@ -16,11 +16,16 @@
 
 @implementation PVAppDelegate
 
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:[[PVSettingsModel sharedInstance] disableAutoLock]];
-	
+
+    UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
+    if (shortcut)
+    {
+        self.shortcutItem = shortcut;
+    }
+
 	return YES;
 }
 
@@ -51,6 +56,11 @@
 	return YES;
 }
 
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(nonnull void (^)(BOOL))completionHandler {
+    self.shortcutItem = shortcutItem;
+    completionHandler(YES);
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
 }
@@ -69,6 +79,7 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+
 }
 
 @end
