@@ -112,12 +112,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleAppDidBecomeActive:(NSNotification *)note
 {
+#if !TARGET_OS_TV
     PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     if ([appDelegate shortcutItem])
     {
         [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
         [appDelegate setShortcutItem:nil];
     }
+#endif
 }
 
 - (void)viewDidLoad
@@ -187,12 +189,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self setUpGameLibrary];
     }
 
+#if !TARGET_OS_TV
     PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     if ([appDelegate shortcutItem])
     {
         [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
         [appDelegate setShortcutItem:nil];
     }
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -779,6 +783,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)updateRecentGames:(PVGame *)game
 {
+#if !TARGET_OS_TV
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm refresh];
 
@@ -818,8 +823,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 
     [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+#endif
 }
 
+#if !TARGET_OS_TV
 - (void)loadRecentGameFromShortcut:(UIApplicationShortcutItem *)shortcut
 {
     if ([[shortcut type] isEqualToString:@"kRecentGameShortcut"])
@@ -833,6 +840,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }
     }
 }
+#endif
 
 - (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
 {

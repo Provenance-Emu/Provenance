@@ -19,13 +19,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:[[PVSettingsModel sharedInstance] disableAutoLock]];
-
+#if !TARGET_OS_TV
     UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
     if (shortcut)
     {
         self.shortcutItem = shortcut;
     }
-
+#endif
 	return YES;
 }
 
@@ -56,10 +56,12 @@
 	return YES;
 }
 
+#if !TARGET_OS_TV
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(nonnull void (^)(BOOL))completionHandler {
     self.shortcutItem = shortcutItem;
     completionHandler(YES);
 }
+#endif
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
