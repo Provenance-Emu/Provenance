@@ -86,6 +86,12 @@
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Select a controller for Player %zd", ([indexPath row] + 1)]
                                                                          message:@""
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    if ([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+    {
+        [[actionSheet popoverPresentationController] setSourceView:self.tableView];
+        [[actionSheet popoverPresentationController] setSourceRect:[self.tableView rectForRowAtIndexPath:indexPath]];
+    }
+
     for (GCController *controller in [GCController controllers])
     {
         NSString *title = [controller vendorName];
