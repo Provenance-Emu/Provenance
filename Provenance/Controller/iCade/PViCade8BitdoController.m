@@ -19,22 +19,22 @@
         self.reader.buttonDown = ^(iCadeState button) {
             switch (button) {
                 case iCadeButtonA:
-                    [[weakSelf.iCadeGamepad buttonA] buttonPressed];
+                    [[weakSelf.iCadeGamepad buttonX] buttonPressed];
                     break;
                 case iCadeButtonB:
-                    [[weakSelf.iCadeGamepad buttonB] buttonPressed];
+                    [[weakSelf.iCadeGamepad buttonA] buttonPressed];
                     break;
                 case iCadeButtonC:
-                    [[weakSelf.iCadeGamepad buttonX] buttonPressed];
+                    [[weakSelf.iCadeGamepad buttonB] buttonPressed];
                     break;
                 case iCadeButtonD:
                     [[weakSelf.iCadeGamepad buttonY] buttonPressed];
                     break;
                 case iCadeButtonE:
-                    [[weakSelf.iCadeGamepad leftShoulder] buttonPressed];
+                    [[weakSelf.iCadeGamepad rightShoulder] buttonPressed];
                     break;
                 case iCadeButtonF:
-                    [[weakSelf.iCadeGamepad rightShoulder] buttonPressed];
+                    [[weakSelf.iCadeGamepad leftShoulder] buttonPressed];
                     break;
                 case iCadeButtonG:
                     [[weakSelf.iCadeGamepad leftTrigger] buttonPressed];
