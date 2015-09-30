@@ -364,6 +364,59 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
         }]];
     }
+
+#if TARGET_OS_TV
+    PVControllerManager *controllerManager = [PVControllerManager sharedManager];
+    if ([[controllerManager player1] microGamepad] || [[controllerManager player2] microGamepad])
+    {
+        // left trigger bound to Start
+        // right trigger bound to Select
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:0];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:0];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:0];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:0];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:1];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:1];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:1];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:1];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+    }
+#endif
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSaveStateMenu)
@@ -388,7 +441,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		weakSelf.isShowingMenu = NO;
 
 #if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
+        weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
@@ -398,7 +451,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
+        weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
 

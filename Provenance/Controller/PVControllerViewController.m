@@ -751,11 +751,11 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [[[controller microGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
             }
         }];
     }
