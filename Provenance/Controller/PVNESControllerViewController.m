@@ -174,7 +174,7 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis != 0)
+    if (xAxis > 0.5 || xAxis < -0.5)
     {
         if (xAxis > 0.5)
         {
@@ -193,7 +193,7 @@
         [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
     }
     
-    if (yAxis != 0)
+    if (yAxis > 0.5 || yAxis < -0.5)
     {
         if (yAxis > 0.5)
         {
