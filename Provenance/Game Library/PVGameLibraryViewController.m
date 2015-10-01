@@ -814,12 +814,21 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSMutableArray *shortcuts = [NSMutableArray array];
     for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
     {
-        UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
-                                                                               localizedTitle:[[recentGame game] title]
-                                                                            localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
-                                                                                         icon:nil
-                                                                                     userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
-        [shortcuts addObject:shortcut];
+        if ([recentGame game])
+        {
+            UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
+                                                                                   localizedTitle:[[recentGame game] title]
+                                                                                localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
+                                                                                             icon:nil
+                                                                                         userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
+            [shortcuts addObject:shortcut];
+        }
+        else
+        {
+            [realm beginWriteTransaction];
+            [realm deleteObject:recentGame];
+            [realm commitWriteTransaction];
+        }
     }
 
     [[UIApplication sharedApplication] setShortcutItems:shortcuts];
