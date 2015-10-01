@@ -19,16 +19,16 @@
         self.reader.buttonDown = ^(iCadeState button) {
             switch (button) {
                 case iCadeButtonA:
-                    [[weakSelf.iCadeGamepad buttonX] buttonPressed];
+                    [[weakSelf.iCadeGamepad buttonY] buttonPressed];
                     break;
                 case iCadeButtonB:
-                    [[weakSelf.iCadeGamepad buttonA] buttonPressed];
-                    break;
-                case iCadeButtonC:
                     [[weakSelf.iCadeGamepad buttonB] buttonPressed];
                     break;
+                case iCadeButtonC:
+                    [[weakSelf.iCadeGamepad buttonA] buttonPressed];
+                    break;
                 case iCadeButtonD:
-                    [[weakSelf.iCadeGamepad buttonY] buttonPressed];
+                    [[weakSelf.iCadeGamepad buttonX] buttonPressed];
                     break;
                 case iCadeButtonE:
                     [[weakSelf.iCadeGamepad rightShoulder] buttonPressed];
@@ -59,16 +59,16 @@
         self.reader.buttonUp = ^(iCadeState button) {
             switch (button) {
                 case iCadeButtonA:
-                    [[weakSelf.iCadeGamepad buttonX] buttonReleased];
+                    [[weakSelf.iCadeGamepad buttonY] buttonReleased];
                     break;
                 case iCadeButtonB:
-                    [[weakSelf.iCadeGamepad buttonA] buttonReleased];
-                    break;
-                case iCadeButtonC:
                     [[weakSelf.iCadeGamepad buttonB] buttonReleased];
                     break;
+                case iCadeButtonC:
+                    [[weakSelf.iCadeGamepad buttonA] buttonReleased];
+                    break;
                 case iCadeButtonD:
-                    [[weakSelf.iCadeGamepad buttonY] buttonReleased];
+                    [[weakSelf.iCadeGamepad buttonX] buttonReleased];
                     break;
                 case iCadeButtonE:
                     [[weakSelf.iCadeGamepad rightShoulder] buttonReleased];
