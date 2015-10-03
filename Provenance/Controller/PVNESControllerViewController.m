@@ -116,10 +116,10 @@
 
     switch (button) {
         case PVControllerButtonA:
-            [nesCore pushNESButton:PVNESButtonA forPlayer:player];
+            [nesCore pushNESButton:PVNESButtonB forPlayer:player];
             break;
         case PVControllerButtonB:
-            [nesCore pushNESButton:PVNESButtonB forPlayer:player];
+            [nesCore pushNESButton:PVNESButtonA forPlayer:player];
             break;
         case PVControllerButtonX:
         case PVControllerButtonLeftShoulder:
@@ -142,10 +142,10 @@
     
     switch (button) {
         case PVControllerButtonA:
-            [nesCore releaseNESButton:PVNESButtonA forPlayer:player];
+            [nesCore releaseNESButton:PVNESButtonB forPlayer:player];
             break;
         case PVControllerButtonB:
-            [nesCore releaseNESButton:PVNESButtonB forPlayer:player];
+            [nesCore releaseNESButton:PVNESButtonA forPlayer:player];
             break;
         case PVControllerButtonX:
         case PVControllerButtonLeftShoulder:
