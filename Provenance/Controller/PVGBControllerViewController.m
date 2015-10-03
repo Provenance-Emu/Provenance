@@ -116,10 +116,10 @@
 
     switch (button) {
         case PVControllerButtonA:
-            [gbCore pushGBButton:PVGBButtonA];
+            [gbCore pushGBButton:PVGBButtonB];
             break;
         case PVControllerButtonB:
-            [gbCore pushGBButton:PVGBButtonB];
+            [gbCore pushGBButton:PVGBButtonA];
             break;
         case PVControllerButtonX:
         case PVControllerButtonLeftShoulder:

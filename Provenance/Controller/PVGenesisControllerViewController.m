@@ -130,19 +130,19 @@
 
     switch (button) {
         case PVControllerButtonX:
-            [genesisCore pushGenesisButton:PVGenesisButtonX forPlayer:player];
-            break;
-        case PVControllerButtonA:
             [genesisCore pushGenesisButton:PVGenesisButtonA forPlayer:player];
             break;
-        case PVControllerButtonB:
+        case PVControllerButtonA:
             [genesisCore pushGenesisButton:PVGenesisButtonB forPlayer:player];
             break;
+        case PVControllerButtonB:
+            [genesisCore pushGenesisButton:PVGenesisButtonC forPlayer:player];
+            break;
         case PVControllerButtonLeftShoulder:
-            [genesisCore pushGenesisButton:PVGenesisButtonY forPlayer:player];
+            [genesisCore pushGenesisButton:PVGenesisButtonX forPlayer:player];
             break;
         case PVControllerButtonY:
-            [genesisCore pushGenesisButton:PVGenesisButtonC forPlayer:player];
+            [genesisCore pushGenesisButton:PVGenesisButtonY forPlayer:player];
             break;
         case PVControllerButtonRightShoulder:
             [genesisCore pushGenesisButton:PVGenesisButtonZ forPlayer:player];
@@ -164,19 +164,19 @@
     
     switch (button) {
         case PVControllerButtonX:
-            [genesisCore releaseGenesisButton:PVGenesisButtonX forPlayer:player];
-            break;
-        case PVControllerButtonA:
             [genesisCore releaseGenesisButton:PVGenesisButtonA forPlayer:player];
             break;
-        case PVControllerButtonB:
+        case PVControllerButtonA:
             [genesisCore releaseGenesisButton:PVGenesisButtonB forPlayer:player];
             break;
+        case PVControllerButtonB:
+            [genesisCore releaseGenesisButton:PVGenesisButtonC forPlayer:player];
+            break;
         case PVControllerButtonLeftShoulder:
-            [genesisCore releaseGenesisButton:PVGenesisButtonY forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonX forPlayer:player];
             break;
         case PVControllerButtonY:
-            [genesisCore releaseGenesisButton:PVGenesisButtonC forPlayer:player];
+            [genesisCore releaseGenesisButton:PVGenesisButtonY forPlayer:player];
             break;
         case PVControllerButtonRightShoulder:
             [genesisCore releaseGenesisButton:PVGenesisButtonZ forPlayer:player];
