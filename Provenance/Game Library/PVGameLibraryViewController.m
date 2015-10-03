@@ -896,6 +896,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                       handler:^(UIAlertAction * _Nonnull action) {
                                                           [weakSelf chooseCustomArtworkForGame:game];
                                                       }]];
+        
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Paste Custom Artwork"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * _Nonnull action) {
+                                                          [weakSelf pasteCustomArtworkForGame:game];
+                                                      }]];
 
         if ([[game originalArtworkURL] length] &&
             [[game originalArtworkURL] isEqualToString:[game customArtworkURL]] == NO)
@@ -1209,6 +1215,33 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                           [imagePickerActionSheet showInView:self.view];
                                           weakSelf.assetsLibrary = nil;
                                       }];
+}
+
+- (void)pasteCustomArtworkForGame:(PVGame *)game
+{
+    UIPasteboard *pb = [UIPasteboard generalPasteboard];
+    UIImage *pastedImage = [pb image];
+    NSURL *pastedURL = [pb URL];
+    if (pastedURL != nil && pastedImage == nil) {
+        pastedImage = [UIImage imageWithData: [NSData dataWithContentsOfURL:pastedURL]];
+    }
+    
+    if (pastedImage != nil) {
+        NSString *key;
+        if (pastedURL != nil) {
+            key = pastedURL.lastPathComponent;
+        } else {
+            key = [NSUUID UUID].UUIDString;
+        }
+        [PVMediaCache writeImageToDisk:pastedImage
+                               withKey:key];
+        [self.realm beginWriteTransaction];
+        [game setCustomArtworkURL:key];
+        [self.realm commitWriteTransaction];
+        NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:[game md5Hash]];
+        [self fetchGames];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    }
 }
 #endif
 
