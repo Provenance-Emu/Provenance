@@ -16,182 +16,46 @@
 
 @interface PVTVSettingsViewController ()
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
+
+@property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
+
 
 @end
 
 @implementation PVTVSettingsViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 
-    self.title = @"Settings";
-}
+    self.splitViewController.title = @"Settings";
 
-#pragma mark - UITableViewDataSource
+    [self.tableView setBackgroundView:nil];
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 3;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    switch (section) {
-        case 0:
-            // Emu Settings
-            return 3;
-            break;
-        case 1:
-            // Library Settings
-            return 3;
-            break;
-        case 2:
-            // Info
-            return 2;
-        default:
-            return 0;
-            break;
-    }
-
-    return 0;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = nil;
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
-
-    switch ([indexPath section]) {
-        case 0:
-            // Emu settings
-            switch ([indexPath row]) {
-                case 0:
-                    // Auto Save
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"rightDetail"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Auto Save"];
-                    [[cell detailTextLabel] setText:([settings autoSave]) ? @"On" : @"Off"];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                case 1:
-                    // Auto Load Saves
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"rightDetail"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Automatically Load Saves"];
-                    [[cell detailTextLabel] setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                case 2:
-                    // Controllers
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"subtitle"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Controller Settings"];
-                    [[cell detailTextLabel] setText:@"Choose which controller players use"];
-                    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
-                    return cell;
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case 1:
-            // Library Settings
-            switch ([indexPath row]) {
-                case 0:
-                    // Refresh
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"subtitle"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Refresh Game Library"];
-                    [[cell detailTextLabel] setText:@"Reimport ROMs (warning: slow)"];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                case 1:
-                    // Empty Cache
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"subtitle"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Empty Image Cache"];
-                    [[cell detailTextLabel] setText:@"Images will redownload on demand"];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                case 2:
-                    // Conflicts
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"subtitle"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                    [[cell textLabel] setText:@"Manage Conflicts"];
-                    [[cell detailTextLabel] setText:@"Manually solve import conflicts"];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case 2:
-            // Info
-            switch ([indexPath row]) {
-                case 0:
-                    // Version
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"rightDetail"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-                    [[cell textLabel] setText:@"Version"];
-                    [[cell detailTextLabel] setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                case 1:
-                    // Mode
-                    cell = [tableView dequeueReusableCellWithIdentifier:@"rightDetail"];
-                    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-                    [[cell textLabel] setText:@"Mode"];
+    [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
+    [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
+    [self.versionValueLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 #if DEBUG
-                    [[cell detailTextLabel] setText:@"DEBUG"];
+    [self.modeValueLabel setText:@"DEBUG"];
 #else
-                    [[cell detailTextLabel] setText:@"RELEASE"];
+    [self.modeValueLabel setText:@"RELEASE"];
 #endif
-                    [cell setAccessoryType:UITableViewCellAccessoryNone];
-                    return cell;
-                    break;
-                default:
-                    break;
-            }
-        default:
-            break;
-    }
+}
 
-    return nil;
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    self.splitViewController.title = @"Settings";
 }
 
 #pragma mark - UITableViewDelegate
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 92;
-}
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    switch (section) {
-        case 0:
-            return @"EMULATOR SETTINGS";
-            break;
-        case 1:
-            return @"GAME LIBRARY SETTINGS";
-            break;
-        case 2:
-            return @"INFORMATION";
-            break;
-        default:
-            break;
-    }
-
-    return @"";
-}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
@@ -203,19 +67,12 @@
                 case 0:
                     // Auto save
                     [settings setAutoSave:![settings autoSave]];
-                    [tableView reloadData];
+                    [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
                     break;
                 case 1:
                     // auto load
                     [settings setAutoLoadAutoSaves:![settings autoLoadAutoSaves]];
-                    [tableView reloadData];
-                    break;
-                case 2:
-                {
-                    // controllers
-                    PVControllerSelectionViewController *controllerSelectionViewController = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:NSStringFromClass([PVControllerSelectionViewController class])];
-                    [self.navigationController pushViewController:controllerSelectionViewController animated:YES];
-                }
+                    [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
                     break;
                 default:
                     break;
@@ -251,8 +108,7 @@
                 }
                 case 2: {
                     PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-                    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-                    [self presentViewController:navController animated:YES completion:NULL];
+                    [self.navigationController pushViewController:conflictViewController animated:YES];
                     break;
                 }
                     

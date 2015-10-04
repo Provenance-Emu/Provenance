@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PVTVSettingsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
-
-
+@interface PVTVSettingsViewController : UITableViewController
 
 @end

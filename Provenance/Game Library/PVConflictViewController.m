@@ -32,11 +32,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
+#if TARGET_OS_TV
+    self.splitViewController.title = @"Solve Conflicts";
+#else
     self.title = @"Solve Conflicts";
-    
+
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
     [self.navigationItem setRightBarButtonItem:doneButton];
+#endif
  
     [self updateConflictedFiles];
 }
@@ -85,6 +89,18 @@
     return [documentsDirectoryPath stringByAppendingPathComponent:@"conflicts"];
 }
 
+#if TARGET_OS_TV
+- (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (![self.conflictedFiles count])
+    {
+        return NO;
+    }
+
+    return YES;
+}
+#endif
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -92,11 +108,40 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.conflictedFiles count];
+    if ([self.conflictedFiles count])
+    {
+        return [self.conflictedFiles count];
+    }
+
+    return 3;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (![self.conflictedFiles count])
+    {
+
+        UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"EmptyCell"];
+        if (!cell)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+
+        cell.textLabel.textAlignment = NSTextAlignmentCenter;
+
+        if ([indexPath row] == 0 || [indexPath row] == 1)
+        {
+            cell.textLabel.text = @"";
+        }
+        else
+        {
+            cell.textLabel.text = @"No Conflicts...";
+        }
+
+        return cell;
+    }
+
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (!cell)
     {
@@ -114,7 +159,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-    
+
+    if (![self.conflictedFiles count])
+    {
+        return;
+    }
+
     NSString *path = self.conflictedFiles[[indexPath row]];
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Choose a System"

@@ -17,7 +17,9 @@
 #if TARGET_OS_TV
 		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, [self bounds].size.width - 30, [self bounds].size.height)];
         [_titleLabel setTextAlignment:NSTextAlignmentLeft];
+        [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1]];
 #else
+        [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
         UIView *topSeparator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [self bounds].size.width, 0.5)];
         [topSeparator setBackgroundColor:[UIColor colorWithWhite:0.7 alpha:0.6]];
         [topSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
@@ -33,14 +35,6 @@
         [bottomSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [self addSubview:bottomSeparator];
 #endif
-        if (&UIFontTextStyleTitle1 != NULL)
-        {
-            [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1]];
-        }
-        else
-        {
-            [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
-        }
 		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setTextColor:[UIColor darkGrayColor]];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];

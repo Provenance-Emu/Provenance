@@ -207,11 +207,14 @@ static __weak PVGBEmulatorCore *_current;
 
 - (void)stopEmulation
 {
-    gb.saveSavedata();
+    if (isRunning)
+    {
+        gb.saveSavedata();
 
-    delete resampler;
+        delete resampler;
 
-    [super stopEmulation];
+        [super stopEmulation];
+    }
 }
 
 - (NSTimeInterval)frameInterval

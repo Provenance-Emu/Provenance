@@ -116,10 +116,10 @@
 
     switch (button) {
         case PVControllerButtonA:
-            [nesCore pushNESButton:PVNESButtonA forPlayer:player];
+            [nesCore pushNESButton:PVNESButtonB forPlayer:player];
             break;
         case PVControllerButtonB:
-            [nesCore pushNESButton:PVNESButtonB forPlayer:player];
+            [nesCore pushNESButton:PVNESButtonA forPlayer:player];
             break;
         case PVControllerButtonX:
         case PVControllerButtonLeftShoulder:
@@ -142,10 +142,10 @@
     
     switch (button) {
         case PVControllerButtonA:
-            [nesCore releaseNESButton:PVNESButtonA forPlayer:player];
+            [nesCore releaseNESButton:PVNESButtonB forPlayer:player];
             break;
         case PVControllerButtonB:
-            [nesCore releaseNESButton:PVNESButtonB forPlayer:player];
+            [nesCore releaseNESButton:PVNESButtonA forPlayer:player];
             break;
         case PVControllerButtonX:
         case PVControllerButtonLeftShoulder:
@@ -163,47 +163,54 @@
 }
 
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
+
+    [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
+    [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
+
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis != 0 && fabsf(xAxis) > fabsf(yAxis)) {
-        if (xAxis > 0)
+    if (xAxis > 0.5 || xAxis < -0.5)
+    {
+        if (xAxis > 0.5)
         {
             [nesCore pushNESButton:PVNESButtonRight forPlayer:player];
-        } else
-        if (xAxis < 0)
+            [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+        }
+        else if (xAxis < -0.5)
         {
             [nesCore pushNESButton:PVNESButtonLeft forPlayer:player];
-        }
-    } else  {
             [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
-            [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+        }
     }
-    if (yAxis != 0 && fabsf(xAxis) <= fabsf(yAxis)) {
-        if (yAxis > 0)
+    else
+    {
+        [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
+        [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
+    }
+    
+    if (yAxis > 0.5 || yAxis < -0.5)
+    {
+        if (yAxis > 0.5)
         {
             [nesCore pushNESButton:PVNESButtonUp forPlayer:player];
-        } else
-        if (yAxis < 0)
+            [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
+        }
+        else if (yAxis < -0.5)
         {
             [nesCore pushNESButton:PVNESButtonDown forPlayer:player];
+            [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
         }
-    } else  {
+    }
+    else
+    {
         [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
         [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
     }
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-    PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
-    
-    [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
-    [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
 }
 
 @end

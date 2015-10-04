@@ -139,6 +139,13 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     }
 }
 
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    [self resetControls:self];
+}
+
 # pragma mark - Controller Position And Size Editing
 
 - (void)setupTouchControls
@@ -527,6 +534,15 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
         [self setupGameController:[[PVControllerManager sharedManager] player1]];
         [self setupGameController:[[PVControllerManager sharedManager] player2]];
     }
+    else
+    {
+        [self.dPad setHidden:NO];
+        [self.buttonGroup setHidden:NO];
+        [self.leftShoulderButton setHidden:NO];
+        [self.rightShoulderButton setHidden:NO];
+        [self.startButton setHidden:NO];
+        [self.selectButton setHidden:NO];
+    }
 }
 
 - (void)controllerDidDisconnect:(NSNotification *)note
@@ -536,8 +552,17 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
         [self setupGameController:[[PVControllerManager sharedManager] player1]];
         [self setupGameController:[[PVControllerManager sharedManager] player2]];
     }
-     if (self.iCadeController) {
-        [self listenForICadeControllers];
+    else
+    {
+        [self.dPad setHidden:NO];
+        [self.buttonGroup setHidden:NO];
+        [self.leftShoulderButton setHidden:NO];
+        [self.rightShoulderButton setHidden:NO];
+        [self.startButton setHidden:NO];
+        [self.selectButton setHidden:NO];
+    }
+    if (self.iCadeController) {
+    	[self listenForICadeControllers];
     }
 }
 
@@ -617,8 +642,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	{
         pad = [[controller extendedGamepad] dpad];
         
-        [[[controller extendedGamepad] buttonA] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
             }
@@ -627,8 +652,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
             }
         }];
-        [[[controller extendedGamepad] buttonB] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
             }
@@ -637,8 +662,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
             }
         }];
-        [[[controller extendedGamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
             }
@@ -647,8 +672,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
             }
         }];
-        [[[controller extendedGamepad] buttonY] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
             }
@@ -661,8 +686,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 		leftAnalog = [[controller extendedGamepad] leftThumbstick];
         rightAnalog = [[controller extendedGamepad] rightThumbstick];
         
-        [[[controller extendedGamepad] leftShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] leftShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
             }
@@ -671,8 +696,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
             }
         }];
-        [[[controller extendedGamepad] rightShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
             }
@@ -682,8 +707,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
             }
         }];
 		
-        [[[controller extendedGamepad] leftTrigger] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] leftTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
             }
@@ -692,8 +717,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
             }
         }];
-        [[[controller extendedGamepad] rightTrigger] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller extendedGamepad] rightTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:player];
             }
@@ -711,8 +736,11 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
         pad = [[controller microGamepad] dpad];
 
-        [[[controller microGamepad] buttonA] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        // options are so limited here, mapping is so arbitrary. Most games need a start button, so just use A and Start? (Start is mapped to Left trigger for most pads) :/
+        // Siri-Remote != game controller. (Sorry Apple, but it's the truth and the sooner you realise it the sooner we can get on with our lives.)
+
+        [[[controller microGamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
             }
@@ -721,14 +749,14 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
             }
         }];
-        [[[controller microGamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller microGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
+                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
+                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
             }
         }];
     }
@@ -737,8 +765,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	{
         pad = [[controller gamepad] dpad];
         
-        [[[controller gamepad] buttonA] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller gamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
             }
@@ -747,8 +775,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
             }
         }];
-        [[[controller gamepad] buttonB] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller gamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
             }
@@ -758,7 +786,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
             }
         }];
         [[[controller gamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
             }
@@ -767,8 +795,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
             }
         }];
-        [[[controller gamepad] buttonY] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller gamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
             }
@@ -779,7 +807,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         }];
         
         [[[controller gamepad] leftShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
             }
@@ -788,8 +816,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
                 [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
             }
         }];
-        [[[controller gamepad] rightShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (value > 0)
+        [[[controller gamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
+            if (pressed)
             {
                 [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
             }
@@ -801,14 +829,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	}
     
     GCControllerDirectionPadValueChangedHandler dPadHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-        if ((xValue != 0) || (yValue != 0))
-        {
-            [weakSelf controllerPressedDirection:dpad forPlayer:player];
-        }
-        else
-        {
-            [weakSelf controllerReleasedDirection:dpad forPlayer:player];
-        }
+        [weakSelf controllerDirectionValueChanged:dpad forPlayer:player];
     };
     
     [pad setValueChangedHandler:dPadHandler];
@@ -839,12 +860,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self doesNotImplementOptionalSelector:_cmd];
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	[self doesNotImplementOptionalSelector:_cmd];
-}
-
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	[self doesNotImplementOptionalSelector:_cmd];
 }

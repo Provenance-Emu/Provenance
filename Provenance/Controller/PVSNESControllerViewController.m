@@ -188,41 +188,49 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	[snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
-	
-	if ([[dpad xAxis] value] > 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
-	}
-	if ([[dpad xAxis] value] < 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
-	}
-	if ([[dpad yAxis] value] > 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
-	}
-	if ([[dpad yAxis] value] < 0)
-	{
-		[snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
-	}
-}
+    PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
 
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-	[snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-	[snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis > 0.5 || xAxis < -0.5)
+    {
+        if (xAxis > 0.5)
+        {
+            [snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
+        }
+        else if (xAxis < -0.5)
+        {
+            [snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
+        }
+    }
+    else
+    {
+        [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
+        [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
+    }
+    
+    if (yAxis > 0.5 || yAxis < -0.5)
+    {
+        if (yAxis > 0.5)
+        {
+            [snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
+        }
+        else if (yAxis < -0.5)
+        {
+            [snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
+            [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
+        }
+    }
+    else
+    {
+        [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
+        [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
+    }
 }
 
 @end
