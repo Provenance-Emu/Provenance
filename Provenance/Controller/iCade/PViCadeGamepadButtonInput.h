@@ -10,6 +10,8 @@
 
 @interface PViCadeGamepadButtonInput : GCControllerButtonInput {
     GCControllerButtonValueChangedHandler _handler;
+
+    BOOL _pressed;
 }
 
 -(void) buttonPressed;

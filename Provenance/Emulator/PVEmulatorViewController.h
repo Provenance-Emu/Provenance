@@ -27,5 +27,7 @@
 @property (nonatomic, copy) NSString *BIOSPath;
 
 - (instancetype)initWithGame:(PVGame *)game;
+- (void)quit;
+- (void)quit:(void(^)(void))completion;
 
 @end

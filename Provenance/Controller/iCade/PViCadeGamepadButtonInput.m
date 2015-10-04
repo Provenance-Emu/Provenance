@@ -14,6 +14,10 @@
     _handler = handler;
 }
 
+-(void) setPressedChangedHandler:(GCControllerButtonValueChangedHandler) handler {
+    _handler = handler;
+}
+
 -(void) buttonPressed {
     if (_handler) {
         _handler(self, 1.0, YES);
@@ -24,6 +28,14 @@
     if (_handler) {
         _handler(self, 0.0, NO);
     }
+}
+
+-(void) setPressed:(BOOL)pressed {
+    _pressed = pressed;
+}
+
+-(BOOL) isPressed {
+    return _pressed;
 }
 
 @end

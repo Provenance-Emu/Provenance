@@ -174,41 +174,49 @@
     }
 }
 
-- (void)controllerPressedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    
-    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
-    
-    if ([[dpad xAxis] value] > 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
-    }
-    if ([[dpad xAxis] value] < 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
-    }
-    if ([[dpad yAxis] value] > 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
-    }
-    if ([[dpad yAxis] value] < 0)
-    {
-        [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
-    }
-}
 
-- (void)controllerReleasedDirection:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-    PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    if (xAxis > 0.5 || xAxis < -0.5)
+    {
+        if (xAxis > 0.5)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+        }
+        else if (xAxis < -0.5)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+        }
+    }
+    else
+    {
+        [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+    }
     
-    [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
-    [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+    if (yAxis > 0.5 || yAxis < -0.5)
+    {
+        if (yAxis > 0.5)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+        }
+        else if (yAxis < -0.5)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+        }
+    }
+    else
+    {
+        [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+    }
 }
 
 @end

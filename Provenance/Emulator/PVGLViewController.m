@@ -68,41 +68,61 @@
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
-    if (self.view.bounds.size.width > self.view.bounds.size.height)
+
+    if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
-        if (!CGRectIsEmpty([self.emulatorCore screenRect]))
+        CGSize aspectSize = [self.emulatorCore aspectSize];
+        CGFloat ratio = 0;
+        if (aspectSize.width > aspectSize.height) {
+            ratio = aspectSize.width / aspectSize.height;
+        } else {
+            ratio = aspectSize.height / aspectSize.width;
+        }
+
+        CGSize parentSize = CGSizeZero;
+        if ([self parentViewController])
         {
-            CGSize aspectSize = [self.emulatorCore aspectSize];
-            CGFloat ratio = 0;
-            if (aspectSize.width > aspectSize.height) {
-                ratio = aspectSize.width / aspectSize.height;
-            } else {
-                ratio = aspectSize.height / aspectSize.width;
-            }
+            parentSize = [[[self parentViewController] view] bounds].size;
+        }
+        else
+        {
+            parentSize = [[self.view window] bounds].size;
+        }
 
-            CGSize parentSize = [[[self parentViewController] view] bounds].size;
 
-            CGFloat height = 0;
-            CGFloat width = 0;
+        CGFloat height = 0;
+        CGFloat width = 0;
 
-            if (parentSize.width > parentSize.height) {
-                height = parentSize.height;
-                width = roundf(height * ratio);
-            } else {
+        if (parentSize.width > parentSize.height) {
+            height = parentSize.height;
+            width = roundf(height * ratio);
+            if (width > parentSize.width)
+            {
                 width = parentSize.width;
                 height = roundf(width / ratio);
             }
-
-            [[self view] setFrame:CGRectMake(roundf((parentSize.width - width) / 2.0), 0, width, height)];
+        } else {
+            width = parentSize.width;
+            height = roundf(width / ratio);
+            if (height > parentSize.height)
+            {
+                height = parentSize.width;
+                width = roundf(height / ratio);
+            }
         }
-    }
-    else
-    {
-        CGFloat newHeight = roundf(([self.emulatorCore screenRect].size.height / [self.emulatorCore screenRect].size.width) * [[self.parentViewController view] bounds].size.width);
-        [self.view setFrame:CGRectMake(0, 0, [[self.parentViewController view] bounds].size.width, newHeight)];
-    }
 
-    NSLog(@"GL View: %@", NSStringFromCGRect([[self view] frame]));
+        CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0);
+        if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
+        {
+            origin.y = roundf((parentSize.height - height) / 3.0); // top 3rd of screen
+        }
+        else
+        {
+            origin.y = roundf((parentSize.height - height) / 2.0); // centered
+        }
+
+        [[self view] setFrame:CGRectMake(origin.x, origin.y, width, height)];
+    }
 }
 
 - (void)setupTexture

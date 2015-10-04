@@ -11,8 +11,6 @@
 
 @interface PVControllerSelectionViewController ()
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @end
 
 @implementation PVControllerSelectionViewController
@@ -21,7 +19,13 @@
 {
     [super viewDidLoad];
 
+#if TARGET_OS_TV
+    [self.splitViewController setTitle:@"Controller Settings"];
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
+    [self.tableView setBackgroundView:nil];
+#else
     [self setTitle:@"Controller Settings"];
+#endif
 }
 
 #pragma mark - UITableViewDataSource
@@ -82,6 +86,12 @@
     UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Select a controller for Player %zd", ([indexPath row] + 1)]
                                                                          message:@""
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
+    if ([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+    {
+        [[actionSheet popoverPresentationController] setSourceView:self.tableView];
+        [[actionSheet popoverPresentationController] setSourceRect:[self.tableView rectForRowAtIndexPath:indexPath]];
+    }
+
     for (GCController *controller in [GCController controllers])
     {
         NSString *title = [controller vendorName];

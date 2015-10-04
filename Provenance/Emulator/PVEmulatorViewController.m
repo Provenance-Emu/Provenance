@@ -38,6 +38,10 @@
 @property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
+@property (nonatomic, strong) UIScreen *secondaryScreen;
+@property (nonatomic, strong) UIWindow *secondaryWindow;
+
+
 @end
 
 static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewController;
@@ -101,7 +105,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.title = [self.game title];
 	
 	[self.view setBackgroundColor:[UIColor blackColor]];
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(appWillEnterForeground:)
 												 name:UIApplicationWillEnterForegroundNotification
@@ -126,6 +130,14 @@ void uncaughtExceptionHandler(NSException *exception)
 											 selector:@selector(controllerDidDisconnect:)
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenDidConnect:)
+                                                 name:UIScreenDidConnectNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(screenDidDisconnect:)
+                                                 name:UIScreenDidDisconnectNotification
+                                               object:nil];
 	
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
@@ -158,9 +170,23 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.gameAudio startAudio];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
-	[self addChildViewController:self.glViewController];
-	[self.view addSubview:[self.glViewController view]];
-	[self.glViewController didMoveToParentViewController:self];
+
+    if ([[UIScreen screens] count] > 1)
+    {
+        self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
+        self.secondaryWindow = [[UIWindow alloc] initWithFrame:[self.secondaryScreen bounds]];
+        [self.secondaryWindow setScreen:self.secondaryScreen];
+        [self.secondaryWindow setRootViewController:self.glViewController];
+        [[self.glViewController view] setFrame:[self.secondaryWindow bounds]];
+        [self.secondaryWindow addSubview:[self.glViewController view]];
+        [self.secondaryWindow setHidden:NO];
+    }
+    else
+    {
+        [self addChildViewController:self.glViewController];
+        [self.view addSubview:[self.glViewController view]];
+        [self.glViewController didMoveToParentViewController:self];
+    }
 	
 	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
 	[self.controllerViewController setEmulatorCore:self.emulatorCore];
@@ -267,7 +293,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-	return UIInterfaceOrientationMaskLandscape;
+    return UIInterfaceOrientationMaskAll;
 }
 
 
@@ -309,8 +335,8 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.emulatorCore setPauseEmulation:YES];
 	self.isShowingMenu = YES;
 	
-    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -338,6 +364,59 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
         }]];
     }
+
+#if TARGET_OS_TV
+    PVControllerManager *controllerManager = [PVControllerManager sharedManager];
+    if ([[controllerManager player1] microGamepad] || [[controllerManager player2] microGamepad])
+    {
+        // left trigger bound to Start
+        // right trigger bound to Select
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:0];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:0];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:0];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:0];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:1];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:1];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.emulatorCore setPauseEmulation:NO];
+            weakSelf.isShowingMenu = NO;
+            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:1];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:1];
+            });
+#if TARGET_OS_TV
+            weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+        }]];
+    }
+#endif
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSaveStateMenu)
@@ -362,32 +441,17 @@ void uncaughtExceptionHandler(NSException *exception)
 		weakSelf.isShowingMenu = NO;
 
 #if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
+        weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		if ([[PVSettingsModel sharedInstance] autoSave])
-		{
-			NSString *saveStatePath = [weakSelf saveStatePath];
-			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[weakSelf.emulatorCore saveStateToFileAtPath:autoSavePath];
-		}
-		
-		[weakSelf.gameAudio stopAudio];
-		[weakSelf.emulatorCore stopEmulation];
-#if !TARGET_OS_TV
-		[[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-#endif
-		[weakSelf dismissViewControllerAnimated:YES completion:NULL];
-#if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
-#endif
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf quit];
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
+        weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
 
@@ -426,8 +490,8 @@ void uncaughtExceptionHandler(NSException *exception)
                                     @"Slot 5 (empty)"]];
 	}
 	
-	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+    UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -458,7 +522,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
 	}
 	
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
@@ -488,8 +552,8 @@ void uncaughtExceptionHandler(NSException *exception)
                                     @"Slot 5 (empty)"]];
 	}
 	
-	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:@""
-                                                                         message:@""
+	UIAlertController *actionsheet = [UIAlertController alertControllerWithTitle:nil
+                                                                         message:nil
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
@@ -526,7 +590,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
 	}
 	
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
@@ -535,6 +599,31 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
 
      [self presentViewController:actionsheet animated:YES completion:NULL];
+}
+
+- (void)quit
+{
+    [self quit:NULL];
+}
+
+- (void)quit:(void(^)(void))completion
+{
+    if ([[PVSettingsModel sharedInstance] autoSave])
+    {
+        NSString *saveStatePath = [self saveStatePath];
+        NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
+        [self.emulatorCore saveStateToFileAtPath:autoSavePath];
+    }
+
+    [self.gameAudio stopAudio];
+    [self.emulatorCore stopEmulation];
+#if !TARGET_OS_TV
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+#endif
+    [self dismissViewControllerAnimated:YES completion:completion];
+#if TARGET_OS_TV
+    self.controllerUserInteractionEnabled = NO;
+#endif
 }
 
 #pragma mark - PVControllerViewControllerDelegate
@@ -571,6 +660,42 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)controllerDidDisconnect:(NSNotification *)note
 {
 	[self.menuButton setHidden:NO];
+}
+
+#pragma mark - UIScreenNotifications
+
+- (void)screenDidConnect:(NSNotification *)note
+{
+    NSLog(@"Screen did connect: %@", [note object]);
+    if (!self.secondaryScreen)
+    {
+        self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
+        self.secondaryWindow = [[UIWindow alloc] initWithFrame:[self.secondaryScreen bounds]];
+        [self.secondaryWindow setScreen:self.secondaryScreen];
+        [[self.glViewController view] removeFromSuperview];
+        [self.glViewController removeFromParentViewController];
+        [self.secondaryWindow setRootViewController:self.glViewController];
+        [[self.glViewController view] setFrame:[self.secondaryWindow bounds]];
+        [self.secondaryWindow addSubview:[self.glViewController view]];
+        [self.secondaryWindow setHidden:NO];
+        [[self.glViewController view] setNeedsLayout];
+    }
+}
+
+- (void)screenDidDisconnect:(NSNotification *)note
+{
+    NSLog(@"Screen did disconnect: %@", [note object]);
+    UIScreen *screen = [note object];
+    if (self.secondaryScreen == screen)
+    {
+        [[self.glViewController view] removeFromSuperview];
+        [self.glViewController removeFromParentViewController];
+        [self addChildViewController:self.glViewController];
+        [self.view insertSubview:[self.glViewController view] belowSubview:[self.controllerViewController view]];
+        [[self.glViewController view] setNeedsLayout];
+        self.secondaryWindow = nil;
+        self.secondaryScreen = nil;
+    }
 }
 
 @end
