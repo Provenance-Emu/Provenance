@@ -1,5 +1,8 @@
 # Provenance
-### An iOS Frontend for multiple emulators
+An iOS Frontend for multiple emulators
+
+###Building Provenance
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance)
 
 ###Why 'Provenance'?
 
@@ -8,8 +11,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 > prov·e·nance  
 > */ˈprävənəns/*  
 > **Noun**  
-> > 1. The place of origin or earliest known history of something: "a rug of Iranian provenance".  
-> > 2. The beginning of something's existence; something's origin.
+> > The beginning of something's existence; something's origin.
 
 ###Currently Supported Emulators:
 
@@ -28,22 +30,24 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 - Very accurate & full speed emulation
 - Stereo sound
-- OpenGL based rendering, never drops below 60fps
 - Save States
-- Battery saves (native game saves, i.e. Sonic 3)
-- All current generation iOS devices supported with iOS 8
+- Battery saves (native game saves, i.e. Sonic 3, Pokémon, etc)
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
-    - iOS game controller support
+    - Portrait and landscape support
+- Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and iCade Controllers
+- Local multiplayer with external controllers
+- Built-in web server
+    - Import/Export game saves
+    - Import/Export ROMs
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
-- Uses OpenVGDB to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
+- Uses [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB) to look up game info and artwork. OpenVGDB is a database maintained by the OpenEmu Team.
 - Game library searching
-- Built-in web server for easy:
-    - Import/Export game saves
-    - Import/Export ROMs
+- Supports iOS 8+
+- 3D Touch shortcuts for recent games on iPhone 6S/Plus
 
 Feel free to suggest/request features using the Issues page.
 
@@ -52,9 +56,6 @@ Feel free to suggest/request features using the Issues page.
 
 ###Screenshots
 [Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
-
-###Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance)
 
 #Attributions
 
