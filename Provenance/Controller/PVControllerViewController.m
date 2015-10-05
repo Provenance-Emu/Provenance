@@ -870,9 +870,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     __weak PVControllerViewController* weakSelf = self;
     self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
         weakSelf.iCadeController.controllerPressedAnyKey = nil;
-        if (!weakSelf.gameController) {
-        	 [weakSelf setupGameController:weakSelf.iCadeController];
-        }
+        [weakSelf setupGameController:weakSelf.iCadeController];
     };
 }
 
