@@ -14,6 +14,8 @@
 @interface PViCadeController : GCController {
 }
 
+-(void) refreshListener;
+
 @property (readonly) PViCadeGamepad* iCadeGamepad;
 @property (readonly) PViCadeReader* reader;
 
