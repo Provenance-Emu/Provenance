@@ -346,19 +346,19 @@ void uncaughtExceptionHandler(NSException *exception)
 
     self.menuActionSheet = actionsheet;
 	
-	if (![[PVControllerManager sharedManager] player1] && ![[PVControllerManager sharedManager] player2])
+	if ([self.controllerViewController iCadeController])
 	{
-		[actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-			[weakSelf.controllerViewController editControls];
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
-		}]];
-    } else if ([self.controllerViewController iCadeController]) {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Disconnect iCade" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+            self.controllerUserInteractionEnabled = NO;
+#endif
+		}]];
+    } else if (![[PVControllerManager sharedManager] player1] && ![[PVControllerManager sharedManager] player2]) {
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf.controllerViewController editControls];
 #if TARGET_OS_TV
             self.controllerUserInteractionEnabled = NO;
 #endif
@@ -455,7 +455,9 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
 
-    [self presentViewController:actionsheet animated:YES completion:NULL];
+    [self presentViewController:actionsheet animated:YES completion:^{
+        [self.controllerViewController.iCadeController refreshListener];
+    }];
 }
 
 - (void)hideMenu
@@ -530,7 +532,9 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
 
-    [self presentViewController:actionsheet animated:YES completion:NULL];
+    [self presentViewController:actionsheet animated:YES completion:^{
+        [self.controllerViewController.iCadeController refreshListener];
+    }];
 }
 
 - (void)showLoadStateMenu
@@ -598,7 +602,9 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
 
-     [self presentViewController:actionsheet animated:YES completion:NULL];
+     [self presentViewController:actionsheet animated:YES completion:^{
+         [self.controllerViewController.iCadeController refreshListener];
+     }];
 }
 
 - (void)quit

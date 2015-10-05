@@ -50,12 +50,6 @@ static PViCadeReader* sharedReader = nil;
 
 #pragma mark - iCadeEventDelegate
 
-- (void)stateChanged:(iCadeState)state {
-    if (self.stateChanged) {
-        self.stateChanged(state);
-    }
-}
-
 - (void)buttonDown:(iCadeState)button {
     if (self.buttonDown) {
         self.buttonDown(button);
