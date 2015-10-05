@@ -40,6 +40,8 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 #endif
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
+- (void) listenForICadeControllers;
+
 @end
 
 @implementation PVControllerViewController
@@ -86,12 +88,8 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     {
         PVSettingsModel* settings = [PVSettingsModel sharedInstance];
         self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
-        if (self.iCadeController)
-        {
-            __weak PVControllerViewController* weakSelf = self;
-            self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
-                [weakSelf setupGameController:weakSelf.iCadeController];
-            };
+        if (self.iCadeController) {
+            [self listenForICadeControllers];
         }
     }
 }
@@ -563,6 +561,9 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
         [self.startButton setHidden:NO];
         [self.selectButton setHidden:NO];
     }
+    if (self.iCadeController) {
+    	[self listenForICadeControllers];
+    }
 }
 
 #pragma mark - Controller handling
@@ -862,6 +863,15 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 - (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
 	[self doesNotImplementOptionalSelector:_cmd];
+}
+
+-(void) listenForICadeControllers
+{
+    __weak PVControllerViewController* weakSelf = self;
+    self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
+        weakSelf.iCadeController.controllerPressedAnyKey = nil;
+        [weakSelf setupGameController:weakSelf.iCadeController];
+    };
 }
 
 @end
