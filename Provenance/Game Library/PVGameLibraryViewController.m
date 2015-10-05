@@ -332,6 +332,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
                                                                        message: @"Your device needs to be connected to a network to continue!"
                                                                 preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        }]];
         [self presentViewController:alert animated:YES completion:NULL];
     } else {
         // connected via wifi, let's continue
