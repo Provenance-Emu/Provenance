@@ -17,6 +17,11 @@
 
 @implementation PViCadeController
 
+-(void) refreshListener {
+    [_reader stopListening];
+    [_reader listenToKeyWindow];
+}
+
 -(void) dealloc {
     [_reader stopListening];
 }
