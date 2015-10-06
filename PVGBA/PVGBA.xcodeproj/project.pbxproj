@@ -726,7 +726,7 @@
 		1AD482FB1BA363F900FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -753,7 +753,7 @@
 		1AD482FC1BA363F900FDA50A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -780,7 +780,7 @@
 		1AD482FD1BA363F900FDA50A /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
+				ENABLE_BITCODE = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GBA/PVGBA-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
