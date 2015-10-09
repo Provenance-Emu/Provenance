@@ -444,7 +444,7 @@ void uncaughtExceptionHandler(NSException *exception)
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Quit" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
 	}]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
