@@ -65,7 +65,6 @@
 		1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.m */; };
 		1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */; };
 		1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */; };
-		1AACCAE11BB60D8200DC21AE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCADE1BB60D8200DC21AE /* Realm.framework */; };
 		1AACCAE31BB60D8E00DC21AE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */; };
@@ -74,6 +73,8 @@
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
 		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */; };
+		1AAE7D3E1BC86C33003066C0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AAE7D3D1BC86C33003066C0 /* Realm.framework */; };
+		1AAE7D401BC86C61003066C0 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AAE7D3D1BC86C33003066C0 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
@@ -247,6 +248,17 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AAE7D401BC86C61003066C0 /* Realm.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -337,7 +349,6 @@
 		1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGB.a; path = "PVGB/build/Debug-iphoneos/libPVGB.a"; sourceTree = "<group>"; };
 		1AABE0CE1ABE3E5900FF6AEF /* PVGBControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGBControllerViewController.h; sourceTree = "<group>"; };
 		1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGBControllerViewController.m; sourceTree = "<group>"; };
-		1AACCADE1BB60D8200DC21AE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1AACCAE01BB60D8200DC21AE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1AACCAE71BB615FE00DC21AE /* PVSynchronousURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSynchronousURLSession.h; sourceTree = "<group>"; };
 		1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSynchronousURLSession.m; sourceTree = "<group>"; };
@@ -349,6 +360,7 @@
 		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
 		1AADCDB617BD998A00F53CFE /* UIAlertView+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB717BD998A00F53CFE /* UIAlertView+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+BlockAdditions.m"; sourceTree = "<group>"; };
+		1AAE7D3D1BC86C33003066C0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
 		1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsViewController.h; sourceTree = "<group>"; };
@@ -494,7 +506,7 @@
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
-				1AACCAE11BB60D8200DC21AE /* Realm.framework in Frameworks */,
+				1AAE7D3E1BC86C33003066C0 /* Realm.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
@@ -836,7 +848,7 @@
 		1AACCADD1BB60D8200DC21AE /* Realm-iOS */ = {
 			isa = PBXGroup;
 			children = (
-				1AACCADE1BB60D8200DC21AE /* Realm.framework */,
+				1AAE7D3D1BC86C33003066C0 /* Realm.framework */,
 			);
 			path = "Realm-iOS";
 			sourceTree = "<group>";
@@ -1046,6 +1058,7 @@
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
+				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1448,7 +1461,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/Realm-tvOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1465,6 +1477,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
@@ -1493,7 +1506,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/Realm-tvOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1510,6 +1522,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
@@ -1885,7 +1898,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/Realm-tvOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1902,6 +1914,7 @@
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",

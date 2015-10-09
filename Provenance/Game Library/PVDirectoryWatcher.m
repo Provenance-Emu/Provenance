@@ -157,8 +157,8 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 
 - (void)watchFileAtPath:(NSString *)path
 {
-    if ([[path pathExtension] isEqualToString:@"zip"])
-    {
+//    if ([[path pathExtension] isEqualToString:@"zip"])
+//    {
         DLog(@"Start watching %@", [path lastPathComponent]);
         NSError *error = nil;
         NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
@@ -170,9 +170,9 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         unsigned long long filesize = [attributes fileSize];
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:1 target:weakSelf selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(filesize)} repeats:NO];
+            [NSTimer scheduledTimerWithTimeInterval:0.5 target:weakSelf selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(filesize)} repeats:NO];
         });
-    }
+//    }
 }
 
 - (void)checkFileProgress:(NSTimer *)timer
@@ -184,13 +184,25 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     NSUInteger currentFilesize = [attributes fileSize];
     if (previousFilesize == currentFilesize)
     {
-        dispatch_async(self.serialQueue, ^{
-            [self extractArchiveAtPath:path];
-        });
+        if ([[path pathExtension] isEqualToString:@"zip"])
+        {
+            dispatch_async(self.serialQueue, ^{
+                [self extractArchiveAtPath:path];
+            });
+        }
+        else
+        {
+            if (self.extractionCompleteHandler)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self.extractionCompleteHandler(@[[path lastPathComponent]]);
+                });
+            }
+        }
         return;
     }
-    
-    [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(currentFilesize)} repeats:NO];
+
+    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(currentFilesize)} repeats:NO];
 }
 
 - (void)extractArchiveAtPath:(NSString *)filePath
