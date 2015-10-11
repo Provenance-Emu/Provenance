@@ -42,6 +42,9 @@
     [self.navigationItem setRightBarButtonItem:doneButton];
 #endif
  
+    if (![[self conflictedFiles] count]) {
+        self.tableView.separatorColor = [UIColor clearColor];
+    }
     [self updateConflictedFiles];
 }
 
