@@ -44,15 +44,19 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     }
-    
+    if ([indexPath row] == [[PVSettingsModel sharedInstance] iCadeControllerSetting]) {
+        [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+    } else {
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+    }
     [[cell textLabel] setText:kIcadeControllerSettingToString((kICadeControllerSetting)[indexPath row])];
-    [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [[self.tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryCheckmark];
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [settings setICadeControllerSetting:[indexPath row]];
