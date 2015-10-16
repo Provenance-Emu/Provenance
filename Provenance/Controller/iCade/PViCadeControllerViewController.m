@@ -12,20 +12,22 @@
 
 @implementation PViCadeControllerViewController
 
+NSIndexPath *oldIndexPath;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.title = @"Supported iCade Controllers";
     
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
-    [self.navigationItem setLeftBarButtonItem:cancelButton];
+//    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
+//    [self.navigationItem setLeftBarButtonItem:cancelButton];
 }
 
-- (void)cancel:(id)sender
-{
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
-}
+//- (void)cancel:(id)sender
+//{
+//    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+//}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -46,6 +48,7 @@
     }
     if ([indexPath row] == [[PVSettingsModel sharedInstance] iCadeControllerSetting]) {
         [cell setAccessoryType:UITableViewCellAccessoryCheckmark];
+        oldIndexPath = indexPath;
     } else {
         [cell setAccessoryType:UITableViewCellAccessoryNone];
     }
@@ -56,11 +59,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [[self.tableView cellForRowAtIndexPath: oldIndexPath] setAccessoryType:UITableViewCellAccessoryNone];
     [[self.tableView cellForRowAtIndexPath:indexPath] setAccessoryType:UITableViewCellAccessoryCheckmark];
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [settings setICadeControllerSetting:[indexPath row]];
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+    oldIndexPath = indexPath;
+    //[self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end
