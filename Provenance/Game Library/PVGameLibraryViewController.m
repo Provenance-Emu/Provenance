@@ -812,28 +812,31 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [realm addObject:newRecent];
     [realm commitWriteTransaction];
 
-    [[UIApplication sharedApplication] setShortcutItems:nil];
-    NSMutableArray *shortcuts = [NSMutableArray array];
-    for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 9.0)
     {
-        if ([recentGame game])
+        [[UIApplication sharedApplication] setShortcutItems:nil];
+        NSMutableArray *shortcuts = [NSMutableArray array];
+        for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
         {
-            UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
+            if ([recentGame game])
+            {
+                UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
                                                                                    localizedTitle:[[recentGame game] title]
                                                                                 localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
                                                                                              icon:nil
                                                                                          userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
-            [shortcuts addObject:shortcut];
+                [shortcuts addObject:shortcut];
+            }
+            else
+            {
+                [realm beginWriteTransaction];
+                [realm deleteObject:recentGame];
+                [realm commitWriteTransaction];
+            }
         }
-        else
-        {
-            [realm beginWriteTransaction];
-            [realm deleteObject:recentGame];
-            [realm commitWriteTransaction];
-        }
-    }
 
-    [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+        [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+    }
 #endif
 }
 
