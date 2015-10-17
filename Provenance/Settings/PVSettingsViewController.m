@@ -92,8 +92,7 @@
     if (indexPath.section == 2 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [[self navigationController] pushViewController:iCadeControllerViewController animated:YES];
     }
     else if(indexPath.section == 3 && indexPath. row == 0) {
         // import/export roms and game saves button
