@@ -10,9 +10,9 @@
 #import "kICadeControllerSetting.h"
 #import "PVSettingsModel.h"
 
-@implementation PViCadeControllerViewController
-
 NSIndexPath *oldIndexPath;
+
+@implementation PViCadeControllerViewController
 
 - (void)viewDidLoad
 {
