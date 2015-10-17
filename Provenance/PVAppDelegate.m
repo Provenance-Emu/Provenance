@@ -20,10 +20,12 @@
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:[[PVSettingsModel sharedInstance] disableAutoLock]];
 #if !TARGET_OS_TV
-    UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
-    if (shortcut)
-    {
-        self.shortcutItem = shortcut;
+    if (NSClassFromString(@"UIApplicationShortcutItem")) {
+        UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
+        if (shortcut)
+        {
+            self.shortcutItem = shortcut;
+        }
     }
 #endif
 	return YES;
