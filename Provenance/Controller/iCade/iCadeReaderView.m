@@ -22,8 +22,8 @@
 
 #import "iCadeReaderView.h"
 
-static const char *ON_STATES  = "wdxayhujikol";
-static const char *OFF_STATES = "eczqtrfnmpgv";
+static const char *ON_STATES  = "zdxqyhujikol";
+static const char *OFF_STATES = "ecwatrfn,pgv";
 
 @interface iCadeReaderView()
 
