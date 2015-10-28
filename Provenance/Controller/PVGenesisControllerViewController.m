@@ -197,14 +197,14 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis > 0.5 || xAxis < -0.5)
+    if (xAxis != 0)
     {
-        if (xAxis > 0.5)
+        if (xAxis > 0)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonRight forPlayer:player];
             [genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
         }
-        else if (xAxis < -0.5)
+        else if (xAxis < 0)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonLeft forPlayer:player];
             [genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:player];
@@ -216,14 +216,14 @@
         [genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:player];
     }
 
-    if (yAxis > 0.5 || yAxis < -0.5)
+    if (yAxis != 0)
     {
-        if (yAxis > 0.5)
+        if (yAxis > 0)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonUp forPlayer:player];
             [genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:player];
         }
-        else if (yAxis < -0.5)
+        else if (yAxis < 0)
         {
             [genesisCore pushGenesisButton:PVGenesisButtonDown forPlayer:player];
             [genesisCore releaseGenesisButton:PVGenesisButtonUp forPlayer:player];
