@@ -450,7 +450,7 @@
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             charSet = [NSMutableCharacterSet punctuationCharacterSet];
-            [charSet removeCharactersInString:@"-+&"];
+            [charSet removeCharactersInString:@"-+&."];
         });
         
         NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
