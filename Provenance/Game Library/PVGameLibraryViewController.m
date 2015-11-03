@@ -524,7 +524,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     for (PVGame *game in [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES])
     {
         NSString *systemID = [game systemIdentifier];
-        NSMutableArray *games = [[tempSections objectForKey:systemID] mutableCopy];
+        NSMutableArray *games = [tempSections objectForKey:systemID];
         if (!games)
         {
             games = [NSMutableArray array];
