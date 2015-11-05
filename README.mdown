@@ -22,6 +22,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Game Gear
 - Nintendo
     - NES
+    - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
     - SNES
     - Gameboy / Gameboy Color
     - Gameboy Advance
@@ -35,7 +36,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Configurable on-screen controls
     - Position them how you like, and adjust their opacity so they don't get in your way
     - Portrait and landscape support
-- Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and iCade Controllers
+- Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and some iCade Controllers
 - Local multiplayer with external controllers
 - Built-in web server
     - Import/Export game saves
@@ -61,7 +62,7 @@ Feel free to suggest/request features using the Issues page.
 
 Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
 
-NES Emulation is provided by [FCEU](http://www.fceux.com/web/home.html).
+NES Emulation is provided by [FCEUX](http://www.fceux.com/web/home.html).
 
 SNES emulation is provided by [SNES9x](http://www.snes9x.com).
 
