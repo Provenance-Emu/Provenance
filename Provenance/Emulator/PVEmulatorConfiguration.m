@@ -55,6 +55,7 @@ NSString * const PVGBASystemIdentifier = @"com.provenance.gba";
 NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
 NSString * const PVGBCSystemIdentifier = @"com.provenance.gbc";
 NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
+NSString * const PVFDSSystemIdentifier = @"com.provenance.fds";
 
 @interface PVEmulatorConfiguration ()
 
@@ -118,7 +119,8 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
     {
         core = [[PVGBEmulatorCore alloc] init];
     }
-    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    else if ([systemID isEqualToString:PVNESSystemIdentifier] ||
+             [systemID isEqualToString:PVFDSSystemIdentifier])
     {
         core = [[PVNESEmulatorCore alloc] init];
     }
@@ -150,7 +152,8 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
     {
         controller = [[PVGBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
-    else if ([systemID isEqualToString:PVNESSystemIdentifier])
+    else if ([systemID isEqualToString:PVNESSystemIdentifier] ||
+             [systemID isEqualToString:PVFDSSystemIdentifier])
     {
         controller = [[PVNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }

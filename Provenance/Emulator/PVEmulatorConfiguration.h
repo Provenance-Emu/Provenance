@@ -42,6 +42,7 @@ extern NSString * const PVGBASystemIdentifier;
 extern NSString * const PVGBSystemIdentifier;
 extern NSString * const PVGBCSystemIdentifier;
 extern NSString * const PVNESSystemIdentifier;
+extern NSString * const PVFDSSystemIdentifier;
 
 @interface PVEmulatorConfiguration : NSObject
 
