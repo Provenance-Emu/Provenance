@@ -371,7 +371,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #if TARGET_OS_TV
     PVControllerManager *controllerManager = [PVControllerManager sharedManager];
-    if ([[controllerManager player1] microGamepad] || [[controllerManager player2] microGamepad])
+    if (![[controllerManager player1] extendedGamepad])
     {
         // left trigger bound to Start
         // right trigger bound to Select
@@ -397,6 +397,9 @@ void uncaughtExceptionHandler(NSException *exception)
             weakSelf.controllerUserInteractionEnabled = NO;
 #endif
         }]];
+    }
+    if (![[controllerManager player2] extendedGamepad])
+    {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
