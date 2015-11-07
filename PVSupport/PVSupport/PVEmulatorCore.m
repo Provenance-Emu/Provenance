@@ -51,12 +51,13 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)startEmulation
 {
-	if([self class] != PVEmulatorCoreClass)
+	if ([self class] != PVEmulatorCoreClass)
     {
 		if (!isRunning)
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+            framerateMultiplier = 1.0;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
@@ -93,7 +94,8 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    gameInterval = 1.0 / [self frameInterval];
+    NSLog(@"multiplier: %.1f", framerateMultiplier);
+    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
     NSTimeInterval gameTime = OEMonotonicTime();
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 
@@ -119,6 +121,23 @@ static NSTimeInterval defaultFrameInterval = 60.0;
         
         OEWaitUntil(gameTime);
     }
+}
+
+- (void)setFastForward:(BOOL)fastForward
+{
+    _fastForward = fastForward;
+
+    if (_fastForward)
+    {
+        framerateMultiplier = 5.0; // 5x speed
+    }
+    else
+    {
+        framerateMultiplier = 1.0; // normal speed
+    }
+
+    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
 
 - (void)executeFrame

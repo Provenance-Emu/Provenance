@@ -435,6 +435,11 @@ void uncaughtExceptionHandler(NSException *exception)
 					   withObject:nil
 					   afterDelay:0.1];
 	}]];
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Toggle Fast Forward" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.emulatorCore setFastForward:!weakSelf.emulatorCore.fastForward];
+        [weakSelf.emulatorCore setPauseEmulation:NO];
+        weakSelf.isShowingMenu = NO;
+    }]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{

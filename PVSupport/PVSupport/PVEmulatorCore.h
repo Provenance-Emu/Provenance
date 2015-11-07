@@ -19,13 +19,16 @@
 
     BOOL isRunning;
     BOOL shouldStop;
-	
+
+    double framerateMultiplier;
+
 }
 
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (atomic, assign) BOOL shouldResyncTime;
+@property (nonatomic, assign) BOOL fastForward;
 
 - (void)startEmulation;
 - (void)resetEmulation;
