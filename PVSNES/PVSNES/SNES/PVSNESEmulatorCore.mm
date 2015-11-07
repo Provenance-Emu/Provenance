@@ -67,9 +67,8 @@ static __weak PVSNESEmulatorCore *_current;
 bool8 S9xDeinitUpdate(int width, int height)
 {
     __strong PVSNESEmulatorCore *strongCurrent = _current;
-    
     [strongCurrent flipBuffers];
-    
+
     return true;
 }
 

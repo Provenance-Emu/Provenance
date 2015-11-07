@@ -138,16 +138,16 @@
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    @synchronized(self.emulatorCore) {
+    void (^renderBlock)() = ^() {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         CGSize screenSize = [self.emulatorCore screenRect].size;
         CGSize bufferSize = [self.emulatorCore bufferSize];
-        
+
         CGFloat texWidth = (screenSize.width / bufferSize.width);
         CGFloat texHeight = (screenSize.height / bufferSize.height);
-        
+
         vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
         vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
         vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
@@ -157,21 +157,21 @@
         textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
         textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
         textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
-        
+
         int vertexIndices[6] = {
             // Front
             0, 1, 2,
             0, 2, 3,
         };
-        
+
         for (int i = 0; i < 6; i++) {
             triangleVertices[i]  = vertices[vertexIndices[i]];
             triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
         }
-        
+
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-            
+
         if (texture)
         {
             self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
@@ -180,15 +180,15 @@
             self.effect.texture2d0.enabled = YES;
             self.effect.useConstantColor = YES;
         }
-        
+
         [self.effect prepareToDraw];
-        
+
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
-        
+
         glEnableVertexAttribArray(GLKVertexAttribPosition);
         glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
-        
+
         if (texture)
         {
             glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
@@ -203,6 +203,18 @@
         }
         
         glDisableVertexAttribArray(GLKVertexAttribPosition);
+    };
+
+    if (self.emulatorCore.fastForward)
+    {
+        renderBlock();
+    }
+    else
+    {
+        @synchronized(self.emulatorCore)
+        {
+            renderBlock();
+        }
     }
 }
 

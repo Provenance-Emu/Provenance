@@ -94,7 +94,6 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
     NSTimeInterval gameTime = OEMonotonicTime();
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
@@ -113,8 +112,16 @@ static NSTimeInterval defaultFrameInterval = 60.0;
         {
             if (isRunning)
             {
-                @synchronized(self) {
+                if (_fastForward)
+                {
                     [self executeFrame];
+                }
+                else
+                {
+                    @synchronized(self)
+                    {
+                        [self executeFrame];
+                    }
                 }
             }
         }
@@ -136,6 +143,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
         framerateMultiplier = 1.0; // normal speed
     }
 
+    NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
