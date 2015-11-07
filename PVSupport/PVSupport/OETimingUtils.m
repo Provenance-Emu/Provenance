@@ -31,12 +31,15 @@ static double mach_to_sec = 0;
 
 static void init_mach_time(void)
 {
-    if(mach_to_sec == 0.0)
-    {
-        struct mach_timebase_info base;
-        mach_timebase_info(&base);
-        mach_to_sec = 1e-9 * (base.numer / (double)base.denom);
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (mach_to_sec == 0.0)
+        {
+            struct mach_timebase_info base;
+            mach_timebase_info(&base);
+            mach_to_sec = 1e-9 * (base.numer / (double)base.denom);
+        }
+    });
 }
 
 NSTimeInterval OEMonotonicTime(void)
@@ -78,17 +81,17 @@ static void OEPerfMonitorRecordEvent(OEPerfMonitorObservation *observation, NSTi
     observation.totalTime += diff;
     observation.numTimesRun++;
 
-    if(diff >= observation->maximumTime)
+    if (diff >= observation->maximumTime)
         observation.numTimesOver++;
 
     NSTimeInterval avg = observation.totalTime / observation.numTimesRun;
 
-    if(observation->n == samplePeriod)
+    if (observation->n == samplePeriod)
     {
         NSTimeInterval variance = 0;
         NSTimeInterval worst    = DBL_MIN;
 
-        for(int i = 0; i < samplePeriod; i++)
+        for (int i = 0; i < samplePeriod; i++)
         {
             NSTimeInterval t,s;
             t = observation->sampledDiffs[i];
@@ -110,11 +113,11 @@ static void OEPerfMonitorRecordEvent(OEPerfMonitorObservation *observation, NSTi
 
 static OEPerfMonitorObservation *OEPerfMonitorGetObservation(NSString *name, NSTimeInterval maximumTime)
 {
-    if(observations == nil) observations = [NSMutableDictionary new];
+    if (observations == nil) observations = [NSMutableDictionary new];
 
     OEPerfMonitorObservation *observation = [observations objectForKey:name];
 
-    if(observation == nil)
+    if (observation == nil)
     {
         observation = [[OEPerfMonitorObservation alloc] init];
         observation->sampledDiffs = calloc(samplePeriod, sizeof(NSTimeInterval));
@@ -132,7 +135,7 @@ void OEPerfMonitorSignpost(NSString *name, NSTimeInterval maximumTime)
 
     NSTimeInterval time2 = OEMonotonicTime();
 
-    if(observation->lastTime == 0.0)
+    if (observation->lastTime == 0.0)
     {
         observation->lastTime = time2;
         return;
@@ -177,7 +180,7 @@ BOOL OESetThreadRealtime(NSTimeInterval period, NSTimeInterval computation, NSTi
     ttcpolicy.constraint  = constraint / mach_to_sec;
     ttcpolicy.preemptible = 1;
 
-    if(thread_policy_set(threadport,
+    if (thread_policy_set(threadport,
                          THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&ttcpolicy,
                          THREAD_TIME_CONSTRAINT_POLICY_COUNT) != KERN_SUCCESS)
     {
