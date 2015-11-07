@@ -194,14 +194,16 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis > 0.5 || xAxis < -0.5)
+    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+
+    if (xAxis > deadzone || xAxis < -deadzone)
     {
-        if (xAxis > 0.5)
+        if (xAxis > deadzone)
         {
             [snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
             [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
         }
-        else if (xAxis < -0.5)
+        else if (xAxis < -deadzone)
         {
             [snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
             [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
@@ -213,14 +215,14 @@
         [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
     }
     
-    if (yAxis > 0.5 || yAxis < -0.5)
+    if (yAxis > deadzone || yAxis < -deadzone)
     {
-        if (yAxis > 0.5)
+        if (yAxis > deadzone)
         {
             [snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
             [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
         }
-        else if (yAxis < -0.5)
+        else if (yAxis < -deadzone)
         {
             [snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
             [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];

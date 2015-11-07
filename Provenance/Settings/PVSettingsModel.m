@@ -15,6 +15,7 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
+NSString * const kDPadDeadzoneValueKey = @"kDPadDeadzoneValueKey";
 
 @implementation PVSettingsModel
 
@@ -42,7 +43,8 @@ NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
-                                                                  kICadeControllerSettingKey : @(kICadeControllerSettingDisabled)}];
+                                                                  kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
+                                                                  kDPadDeadzoneValueKey: @(0.5)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -51,6 +53,7 @@ NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
+        _dPadDeadzoneValue = [[NSUserDefaults standardUserDefaults] floatForKey:kDPadDeadzoneValueKey];
 	}
 	
 	return self;
@@ -83,6 +86,13 @@ NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 	_controllerOpacity = controllerOpacity;
 	[[NSUserDefaults standardUserDefaults] setFloat:_controllerOpacity forKey:kControllerOpacityKey];
 	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setDPadDeadzoneValue:(float)dPadDeadzoneValue
+{
+    _dPadDeadzoneValue = dPadDeadzoneValue;
+    [[NSUserDefaults standardUserDefaults] setFloat:_dPadDeadzoneValue forKey:kDPadDeadzoneValueKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)setDisableAutoLock:(BOOL)disableAutoLock

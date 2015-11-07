@@ -174,14 +174,16 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis > 0.5 || xAxis < -0.5)
+    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+
+    if (xAxis > deadzone || xAxis < -deadzone)
     {
-        if (xAxis > 0.5)
+        if (xAxis > deadzone)
         {
             [nesCore pushNESButton:PVNESButtonRight forPlayer:player];
             [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
         }
-        else if (xAxis < -0.5)
+        else if (xAxis < -deadzone)
         {
             [nesCore pushNESButton:PVNESButtonLeft forPlayer:player];
             [nesCore releaseNESButton:PVNESButtonRight forPlayer:player];
@@ -193,14 +195,14 @@
         [nesCore releaseNESButton:PVNESButtonLeft forPlayer:player];
     }
     
-    if (yAxis > 0.5 || yAxis < -0.5)
+    if (yAxis > deadzone || yAxis < -deadzone)
     {
-        if (yAxis > 0.5)
+        if (yAxis > deadzone)
         {
             [nesCore pushNESButton:PVNESButtonUp forPlayer:player];
             [nesCore releaseNESButton:PVNESButtonDown forPlayer:player];
         }
-        else if (yAxis < -0.5)
+        else if (yAxis < -deadzone)
         {
             [nesCore pushNESButton:PVNESButtonDown forPlayer:player];
             [nesCore releaseNESButton:PVNESButtonUp forPlayer:player];

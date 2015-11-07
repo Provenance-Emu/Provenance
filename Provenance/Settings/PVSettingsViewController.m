@@ -30,9 +30,11 @@
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
+    [self.dPadDeadzoneSlider setValue:[settings dPadDeadzoneValue]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+    [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
@@ -77,6 +79,13 @@
 	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
 }
 
+- (IBAction)dPadDeadzoneChanged:(id)sender {
+    self.dPadDeadzoneSlider.value = floor(self.dPadDeadzoneSlider.value / 0.1) * 0.1;
+    [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
+
+    [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:self.dPadDeadzoneSlider.value];
+}
+
 - (IBAction)toggleAutoLock:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
@@ -89,13 +98,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.section == 2 && indexPath.row == 0)
+    if (indexPath.section == 3 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
         [self presentViewController:navController animated:YES completion:NULL];
     }
-    else if(indexPath.section == 3 && indexPath. row == 0) {
+    else if(indexPath.section == 4 && indexPath. row == 0) {
         // import/export roms and game saves button
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         
@@ -137,7 +146,7 @@
         }
         
     }
-    else if (indexPath.section == 4 && indexPath.row == 0)
+    else if (indexPath.section == 5 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Refresh Game Library?"
@@ -150,7 +159,7 @@
         [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
         [self presentViewController:alert animated:YES completion:NULL];
     }
-	else if (indexPath.section == 4 && indexPath.row == 1)
+	else if (indexPath.section == 5 && indexPath.row == 1)
 	{
 		[tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Image Cache?"
@@ -162,7 +171,7 @@
         [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
         [self presentViewController:alert animated:YES completion:NULL];
 	}
-    else if (indexPath.section == 4 && indexPath.row == 2)
+    else if (indexPath.section == 5 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
         UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];

@@ -168,14 +168,16 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis > 0.5 || xAxis < -0.5)
+    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+
+    if (xAxis > deadzone || xAxis < -deadzone)
     {
-        if (xAxis > 0.5)
+        if (xAxis > deadzone)
         {
             [gbCore pushGBButton:PVGBButtonRight];
             [gbCore releaseGBButton:PVGBButtonLeft];
         }
-        else if (xAxis < -0.5)
+        else if (xAxis < -deadzone)
         {
             [gbCore pushGBButton:PVGBButtonLeft];
             [gbCore releaseGBButton:PVGBButtonRight];
@@ -187,14 +189,14 @@
         [gbCore releaseGBButton:PVGBButtonLeft];
     }
 
-    if (yAxis > 0.5 || yAxis < -0.5)
+    if (yAxis > deadzone || yAxis < -deadzone)
     {
-        if (yAxis > 0.5)
+        if (yAxis > deadzone)
         {
             [gbCore pushGBButton:PVGBButtonUp];
             [gbCore releaseGBButton:PVGBButtonDown];
         }
-        else if (yAxis < -0.5)
+        else if (yAxis < -deadzone)
         {
             [gbCore pushGBButton:PVGBButtonDown];
             [gbCore releaseGBButton:PVGBButtonUp];

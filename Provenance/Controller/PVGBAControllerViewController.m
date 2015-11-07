@@ -180,14 +180,16 @@
 
     float xAxis = [[dpad xAxis] value];
     float yAxis = [[dpad yAxis] value];
-    if (xAxis > 0.5 || xAxis < -0.5)
+    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+
+    if (xAxis > deadzone || xAxis < -deadzone)
     {
-        if (xAxis > 0.5)
+        if (xAxis > deadzone)
         {
             [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
             [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
         }
-        else if (xAxis < -0.5)
+        else if (xAxis < -deadzone)
         {
             [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
             [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
@@ -199,14 +201,14 @@
         [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
     }
     
-    if (yAxis > 0.5 || yAxis < -0.5)
+    if (yAxis > deadzone || yAxis < -deadzone)
     {
-        if (yAxis > 0.5)
+        if (yAxis > deadzone)
         {
             [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
             [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
         }
-        else if (yAxis < -0.5)
+        else if (yAxis < -deadzone)
         {
             [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
             [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
