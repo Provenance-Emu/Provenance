@@ -716,12 +716,7 @@ ECHO_CLOCK( 28 )
 inline void SPC_DSP::echo_write( int ch )
 {
 	if ( !(m.t_echo_enabled & 0x20) )
-	{
-		if ( m.t_echo_ptr >= 0xffc0 && rom_enabled )
-			SET_LE16A( &hi_ram [m.t_echo_ptr + ch * 2 - 0xffc0], m.t_echo_out [ch] );
-		else
-			SET_LE16A( ECHO_PTR( ch ), m.t_echo_out [ch] );
-	}
+		SET_LE16A( ECHO_PTR( ch ), m.t_echo_out [ch] );
 
 	m.t_echo_out [ch] = 0;
 }
