@@ -439,6 +439,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [weakSelf.emulatorCore setFastForward:!weakSelf.emulatorCore.fastForward];
         [weakSelf.emulatorCore setPauseEmulation:NO];
         weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+        weakSelf.controllerUserInteractionEnabled = NO;
+#endif
     }]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
