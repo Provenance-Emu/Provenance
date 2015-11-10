@@ -56,6 +56,8 @@ NSString * const PVGBSystemIdentifier = @"com.provenance.gb";
 NSString * const PVGBCSystemIdentifier = @"com.provenance.gbc";
 NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 NSString * const PVFDSSystemIdentifier = @"com.provenance.fds";
+NSString * const PVSG1000SystemIdentifier = @"com.provenance.sg1000";
+
 
 @interface PVEmulatorConfiguration ()
 
@@ -102,7 +104,8 @@ NSString * const PVFDSSystemIdentifier = @"com.provenance.fds";
 	if ([systemID isEqualToString:PVGenesisSystemIdentifier] ||
         [systemID isEqualToString:PVGameGearSystemIdentifier] ||
         [systemID isEqualToString:PVMasterSystemSystemIdentifier] ||
-        [systemID isEqualToString:PVSegaCDSystemIdentifier])
+        [systemID isEqualToString:PVSegaCDSystemIdentifier] ||
+        [systemID isEqualToString:PVSG1000SystemIdentifier])
 	{
 		core = [[PVGenesisEmulatorCore alloc] init];
 	}
@@ -135,7 +138,8 @@ NSString * const PVFDSSystemIdentifier = @"com.provenance.fds";
     if ([systemID isEqualToString:PVGenesisSystemIdentifier] ||
         [systemID isEqualToString:PVGameGearSystemIdentifier] ||
         [systemID isEqualToString:PVMasterSystemSystemIdentifier] ||
-        [systemID isEqualToString:PVSegaCDSystemIdentifier])
+        [systemID isEqualToString:PVSegaCDSystemIdentifier] ||
+        [systemID isEqualToString:PVSG1000SystemIdentifier])
 	{
 		controller = [[PVGenesisControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
 	}
