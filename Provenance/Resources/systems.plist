@@ -753,7 +753,7 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.sg1000</string>
 		<key>PVDatabaseID</key>
-		<string>33</string>
+		<string>34</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>sg</string>
