@@ -43,10 +43,22 @@
                                                    object:nil];
 
         // automatically assign the first connected controller to player 1
+        // prefer gamepad or extendedGamepad over a microGamepad
         if ([[GCController controllers] count])
         {
-            self.player1 = [[GCController controllers] firstObject];
-            [self.player1 setPlayerIndex:0];
+            GCController *firstController = [[GCController controllers] firstObject];
+#if TARGET_OS_TV
+            if (([[GCController controllers] count] > 1) && ([firstController microGamepad]))
+            {
+                self.player1 = [[GCController controllers] objectAtIndex:1];
+            }
+            else
+            {
+                self.player1 = firstController;
+            }
+#else
+            self.player1 = firstController;
+#endif
         }
     }
 
