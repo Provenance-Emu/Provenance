@@ -33,8 +33,6 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 
 @protocol PVControllerViewControllerDelegate <NSObject>
 
-- (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController;
-- (void)controllerViewControllerDidEndEditing:(PVControllerViewController *)controllerViewController;
 - (void)controllerViewControllerDidPressMenuButton:(PVControllerViewController *)controllerViewController;
 
 @end
@@ -56,7 +54,6 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 @property (nonatomic, strong) JSButton *selectButton;
 
 - (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
-- (void)editControls;
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction;
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad;

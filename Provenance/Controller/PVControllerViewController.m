@@ -17,27 +17,9 @@
 #import "kICadeControllerSetting.h"
 #import "PVControllerManager.h"
 
-NSString * const PVSavedDPadFrameKey = @"PVSavedDPadFrameKey";
-NSString * const PVSavedButtonFrameKey = @"PVSavedButtonFrameKey";
-NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
-
 @interface PVControllerViewController ()
 
 @property (nonatomic, strong) NSArray *controlLayout;
-
-#if !TARGET_OS_TV
-@property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
-@property (nonatomic, strong) UIPinchGestureRecognizer *dpadPinchRecognizer;
-
-@property (nonatomic, strong) UIPanGestureRecognizer *buttonPanRecognizer;
-@property (nonatomic, strong) UIPinchGestureRecognizer *buttonPinchRecognizer;
-
-@property (nonatomic, strong) UIButton *saveControlsButton;
-@property (nonatomic, strong) UIButton *resetControlsButton;
-@property (nonatomic, strong) UIToolbar *fakeBlurView;
-
-@property (nonatomic, assign, getter = isEditing) BOOL editing;
-#endif
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
 - (void) listenForICadeControllers;
@@ -73,10 +55,6 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
-#if !TARGET_OS_TV
-	self.saveControlsButton = nil;
-	self.resetControlsButton = nil;
-#endif
 	self.delegate = nil;
 }
 
@@ -139,13 +117,6 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
     }
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-{
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-
-    [self resetControls:self];
-}
-
 # pragma mark - Controller Position And Size Editing
 
 - (void)setupTouchControls
@@ -166,14 +137,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
                 CGFloat yPadding = 5;
                 CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
                 CGRect dPadFrame = CGRectMake(xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
-                
-                NSDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] objectForKey:self.systemIdentifier];
-                NSString *savedDPadFrame = [savedControllerFrames objectForKey:PVSavedDPadFrameKey];
-                if ([savedDPadFrame length])
-                {
-                    dPadFrame = CGRectFromString(savedDPadFrame);
-                }
-                
+
                 if (!self.dPad)
                 {
                     self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
@@ -193,14 +157,7 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
                 CGFloat yPadding = 5;
                 CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
                 CGRect buttonsFrame = CGRectMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
-                
-                NSDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] objectForKey:self.systemIdentifier];
-                NSString *savedButtonFrame = [savedControllerFrames objectForKey:PVSavedButtonFrameKey];
-                if ([savedButtonFrame length])
-                {
-                    buttonsFrame = CGRectFromString(savedButtonFrame);
-                }
-                
+
                 if (!self.buttonGroup)
                 {
                     self.buttonGroup = [[UIView alloc] initWithFrame:buttonsFrame];
@@ -325,203 +282,6 @@ NSString * const PVSavedControllerFramesKey = @"PVSavedControllerFramesKey";
             }
         }
     }
-#endif
-}
-
-- (void)editControls
-{
-#if !TARGET_OS_TV
-	self.editing = YES;
-	
-	if ([self.delegate respondsToSelector:@selector(controllerViewControllerDidBeginEditing:)])
-	{
-		[self.delegate controllerViewControllerDidBeginEditing:self];
-	}
-    
-    if (!self.fakeBlurView)
-    {
-        self.fakeBlurView = [[UIToolbar alloc] initWithFrame:[self.view bounds]];
-    }
-    [self.fakeBlurView setAutoresizingMask:[self.view autoresizingMask]];
-    [self.fakeBlurView setBarStyle:UIBarStyleBlack];
-    [self.fakeBlurView setTranslucent:YES];
-    [self.fakeBlurView setAlpha:0];
-    [self.view insertSubview:self.fakeBlurView atIndex:0];
-    
-	self.saveControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	[self.saveControlsButton setTitle:@"Save Controls" forState:UIControlStateNormal];
-    [self.saveControlsButton sizeToFit];
-    [self.saveControlsButton setWidth:[self.saveControlsButton bounds].size.width + 10];
-    [self.saveControlsButton setBackgroundColor:[UIColor whiteColor]];
-    [[self.saveControlsButton layer] setCornerRadius:[self.saveControlsButton bounds].size.height / 4];
-    [[self.saveControlsButton layer] setBorderColor:[[self.saveControlsButton tintColor] CGColor]];
-    [[self.saveControlsButton layer] setBorderWidth:1.0];
-	[self.saveControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.saveControlsButton bounds].size.width) / 2,
-												   ([self.view bounds].size.height / 2) - ([self.saveControlsButton bounds].size.height + 4))];
-	[self.saveControlsButton addTarget:self action:@selector(saveControls:) forControlEvents:UIControlEventTouchUpInside];
-	[self.view addSubview:self.saveControlsButton];
-	
-	self.resetControlsButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	[self.resetControlsButton setTitle:@"Reset Controls" forState:UIControlStateNormal];
-    [self.resetControlsButton sizeToFit];
-    [self.resetControlsButton setWidth:[self.resetControlsButton bounds].size.width + 10];
-    [self.resetControlsButton setBackgroundColor:[UIColor whiteColor]];
-    [[self.resetControlsButton layer] setCornerRadius:[self.resetControlsButton bounds].size.height / 4];
-    [[self.resetControlsButton layer] setBorderColor:[[self.resetControlsButton tintColor] CGColor]];
-    [[self.resetControlsButton layer] setBorderWidth:1.0];
-	[self.resetControlsButton setOrigin:CGPointMake(([self.view bounds].size.width - [self.resetControlsButton bounds].size.width) / 2,
-													([self.view bounds].size.height / 2) + 4)];//[self.resetControlsButton bounds].size.height)];
-	[self.resetControlsButton addTarget:self action:@selector(resetControls:) forControlEvents:UIControlEventTouchUpInside];
-	[self.view addSubview:self.resetControlsButton];
-	
-	[self.saveControlsButton setAlpha:0.0];
-	[self.resetControlsButton setAlpha:0.0];
-	
-	[UIView animateWithDuration:0.3
-						  delay:0.0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-                         [self.fakeBlurView setAlpha:1.0];
-						 [self.dPad setAlpha:1.0];
-						 [self.buttonGroup setAlpha:1.0];
-						 [self.saveControlsButton setAlpha:1.0];
-						 [self.resetControlsButton setAlpha:1.0];
-					 }
-					 completion:^(BOOL finished) {
-						 self.dPadPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-																						  action:@selector(panRecognized:)];
-						 self.buttonPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self
-																							action:@selector(panRecognized:)];
-						 [self.dPad addGestureRecognizer:self.dPadPanRecognizer];
-						 [self.buttonGroup addGestureRecognizer:self.buttonPanRecognizer];
-					 }];
-#endif
-}
-
-- (void)adjustAnchorPointForRecognizer:(UIGestureRecognizer *)recognizer
-{
-	if ([recognizer state] == UIGestureRecognizerStateBegan)
-	{
-		UIView *view = [recognizer view];
-		UIView *superview = [view superview];
-		
-        CGPoint locationInView = [recognizer locationInView:view];
-        CGPoint locationInSuperview = [recognizer locationInView:superview];
-		
-		view.layer.anchorPoint = CGPointMake(locationInView.x / view.bounds.size.width, locationInView.y / view.bounds.size.height);
-		view.center = locationInSuperview;
-    }
-}
-
-- (void)panRecognized:(UIPanGestureRecognizer *)recognizer
-{
-	[self adjustAnchorPointForRecognizer:recognizer];
-	
-	if ([recognizer state] == UIGestureRecognizerStateBegan || [recognizer state] == UIGestureRecognizerStateChanged)
-	{
-		UIView *view = [recognizer view];
-		UIView *superview = [view superview];
-		
-		CGPoint translation = [recognizer translationInView:superview];
-		CGFloat newX = roundf([view center].x + translation.x);
-		CGFloat newY = roundf([view center].y + translation.y);
-		[view setCenter:CGPointMake(newX, newY)];
-		[recognizer setTranslation:CGPointZero inView:superview];
-	}
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-	return YES;
-}
-
-- (void)resetControls:(id)sender
-{
-	CGFloat xPadding = 5;
-	CGFloat yPadding = 5;
-    
-    CGRect dPadFrame = CGRectZero;
-    CGRect buttonsFrame = CGRectZero;
-    
-    for (NSDictionary *control in self.controlLayout)
-    {
-        NSString *controlType = [control objectForKey:PVControlTypeKey];
-        
-        if ([controlType isEqualToString:PVDPad])
-        {
-            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-            dPadFrame = CGRectMake(xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
-        }
-        else if ([controlType isEqualToString:PVButtonGroup])
-        {
-            CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-            buttonsFrame = CGRectMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
-        }
-    }
-    
-	[UIView animateWithDuration:0.3
-						  delay:0.0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-						 [self.dPad setFrame:dPadFrame];
-						 [self.buttonGroup setFrame:buttonsFrame];
-					 }
-					 completion:^(BOOL finished) {
-					 }];
-}
-
-- (void)saveControls:(id)sender
-{
-#if !TARGET_OS_TV
-    CGRect dPadFrame = [self.dPad frame];
-    CGRect buttonsFrame = [self.buttonGroup frame];
-	
-    NSMutableDictionary *savedControllerFrames = [[[NSUserDefaults standardUserDefaults] objectForKey:PVSavedControllerFramesKey] mutableCopy];
-    
-    if (!savedControllerFrames)
-    {
-        savedControllerFrames = [NSMutableDictionary dictionary];
-    }
-    
-    NSMutableDictionary *savedControllerPositionsForSystem = [NSMutableDictionary dictionary];
-	[savedControllerPositionsForSystem setObject:NSStringFromCGRect(dPadFrame) forKey:PVSavedDPadFrameKey];
-	[savedControllerPositionsForSystem setObject:NSStringFromCGRect(buttonsFrame) forKey:PVSavedButtonFrameKey];
-    [savedControllerFrames setObject:[savedControllerPositionsForSystem copy] forKey:self.systemIdentifier];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:[savedControllerFrames copy] forKey:PVSavedControllerFramesKey];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-	
-	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
-	
-	[UIView animateWithDuration:0.3
-						  delay:0.0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-						 [self.dPad setAlpha:alpha];
-						 [self.buttonGroup setAlpha:alpha];
-						 [self.saveControlsButton setAlpha:0.0];
-						 [self.resetControlsButton setAlpha:0.0];
-                         [self.fakeBlurView setAlpha:0.0];
-					 }
-					 completion:^(BOOL finished) {
-						 [self.dPad removeGestureRecognizer:self.dPadPanRecognizer];
-						 [self.buttonGroup removeGestureRecognizer:self.buttonPanRecognizer];
-						 self.dPadPanRecognizer = nil;
-						 self.buttonPanRecognizer = nil;
-						 
-                         [self.fakeBlurView removeFromSuperview];
-						 [self.saveControlsButton removeFromSuperview];
-						 [self.resetControlsButton removeFromSuperview];
-						 self.saveControlsButton = nil;
-						 self.resetControlsButton = nil;
-						 
-						self.editing = NO;
-						 
-						 if ([self.delegate respondsToSelector:@selector(controllerViewControllerDidEndEditing:)])
-						 {
-							 [self.delegate controllerViewControllerDidEndEditing:self];
-						 }
-					 }];
 #endif
 }
 

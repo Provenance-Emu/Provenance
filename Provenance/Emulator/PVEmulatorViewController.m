@@ -30,11 +30,6 @@
 
 @property (nonatomic, strong) UIButton *menuButton;
 
-@property (nonatomic, strong) UIPanGestureRecognizer *dPadPanRecognizer;
-@property (nonatomic, strong) UIPanGestureRecognizer *buttonPanRecognizer;
-@property (nonatomic, strong) UIButton *saveControlsButton;
-@property (nonatomic, strong) UIButton *resetControlsButton;
-
 @property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
@@ -360,13 +355,6 @@ void uncaughtExceptionHandler(NSException *exception)
             self.controllerUserInteractionEnabled = NO;
 #endif
 		}]];
-    } else if (![[PVControllerManager sharedManager] player1] && ![[PVControllerManager sharedManager] player2]) {
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Edit Controls" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.controllerViewController editControls];
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
-        }]];
     }
 
 #if TARGET_OS_TV
@@ -659,18 +647,6 @@ void uncaughtExceptionHandler(NSException *exception)
     {
         [self hideMenu];
     }
-}
-
-- (void)controllerViewControllerDidBeginEditing:(PVControllerViewController *)controllerViewController
-{
-	[self.menuButton setEnabled:NO];
-}
-
-- (void)controllerViewControllerDidEndEditing:(PVControllerViewController *)controllerViewController
-{
-	[self.menuButton setEnabled:YES];
-	[self.emulatorCore setPauseEmulation:NO];
-	self.isShowingMenu = NO;
 }
 
 - (void)controllerDidConnect:(NSNotification *)note
