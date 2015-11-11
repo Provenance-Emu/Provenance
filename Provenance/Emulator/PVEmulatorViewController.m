@@ -412,7 +412,14 @@ void uncaughtExceptionHandler(NSException *exception)
         }]];
     }
 #endif
-	
+
+    if ([self.emulatorCore supportsDiskSwapping])
+    {
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disk" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[weakSelf emulatorCore] swapDisk];
+        }]];
+    }
+
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSaveStateMenu)
 					   withObject:nil

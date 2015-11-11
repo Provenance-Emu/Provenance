@@ -74,6 +74,26 @@ static __weak PVNESEmulatorCore *_current;
 
 # pragma mark - Execution
 
+- (BOOL)supportsDiskSwapping
+{
+    return YES;
+}
+
+- (void)swapDisk
+{
+    [self setPauseEmulation:NO];
+
+    FCEUI_FDSInsert();
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        FCEUI_FDSSelect();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            FCEUI_FDSInsert();
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            });
+        });
+    });
+}
+
 - (BOOL)loadFileAtPath:(NSString *)path
 {
     memset(pad, 0, sizeof(uint32_t) * PVNESButtonCount);

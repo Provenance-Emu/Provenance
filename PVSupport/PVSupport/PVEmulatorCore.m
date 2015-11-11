@@ -159,6 +159,17 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 	return NO;
 }
 
+- (BOOL)supportsDiskSwapping
+{
+    [self doesNotImplementOptionalSelector:_cmd];
+    return NO;
+}
+
+- (void)swapDisk
+{
+    [self doesNotImplementOptionalSelector:_cmd];
+}
+
 #pragma mark - Video
 
 - (const void *)videoBuffer

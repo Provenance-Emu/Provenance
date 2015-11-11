@@ -39,6 +39,9 @@
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
 
+- (BOOL)supportsDiskSwapping;
+- (void)swapDisk;
+
 - (const void *)videoBuffer;
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
