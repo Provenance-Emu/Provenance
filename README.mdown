@@ -16,8 +16,9 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 ###Currently Supported Emulators:
 
 - Sega
-    - Genesis / Mega Drive
+    - SG-1000
     - Master System
+    - Genesis / Mega Drive
     - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
     - Game Gear
 - Nintendo
