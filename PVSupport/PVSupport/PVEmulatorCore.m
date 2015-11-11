@@ -161,7 +161,6 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (BOOL)supportsDiskSwapping
 {
-    [self doesNotImplementOptionalSelector:_cmd];
     return NO;
 }
 
