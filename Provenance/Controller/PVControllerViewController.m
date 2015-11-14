@@ -22,6 +22,8 @@
 @property (nonatomic, strong) NSArray *controlLayout;
 @property (nonatomic, assign) BOOL touchControlsSetup;
 
+@property (nonatomic) BOOL bothPlayersUseSameController;
+
 - (void) listenForICadeControllers;
 
 @end
@@ -35,6 +37,7 @@
 		self.controlLayout = controlLayout;
         self.systemIdentifier = systemIdentifier;
         self.touchControlsSetup = NO;
+        self.bothPlayersUseSameController = NO;
 	}
 	
 	return self;
@@ -377,7 +380,10 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 - (void)setupGameController:(GCController *)controller
 {
     NSInteger player = -1;
-    if (controller == [[PVControllerManager sharedManager] player1] || controller == self.iCadeController)
+    if (controller == [[PVControllerManager sharedManager] player1] && controller == [[PVControllerManager sharedManager] player2]) {
+        self.bothPlayersUseSameController = YES;
+    }
+    else if (controller == [[PVControllerManager sharedManager] player1] || controller == self.iCadeController)
     {
         player = 0;
     }
@@ -405,41 +411,105 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [[[controller extendedGamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
+                }
             }
         }];
         [[[controller extendedGamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
+                }
             }
         }];
         [[[controller extendedGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
+                }
             }
         }];
         [[[controller extendedGamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
+                }
             }
         }];
         
@@ -449,42 +519,106 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [[[controller extendedGamepad] leftShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                }
             }
         }];
         [[[controller extendedGamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
+                }
             }
         }];
 		
         [[[controller extendedGamepad] leftTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
+                }
             }
         }];
         [[[controller extendedGamepad] rightTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:player];
+                }
             }
         }];
 	}
@@ -528,68 +662,172 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [[[controller gamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
+                }
             }
         }];
         [[[controller gamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
+                }
             }
         }];
         [[[controller gamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
+                }
             }
         }];
         [[[controller gamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
+                }
             }
         }];
         
         [[[controller gamepad] leftShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
+                }
             }
         }];
         [[[controller gamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
             if (pressed)
             {
-                [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:0];
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
+                }
             }
             else
             {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
+                if (weakSelf.bothPlayersUseSameController)
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:0];
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:1];
+                }
+                else
+                {
+                    [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
+                }
             }
         }];
 	}
     
     GCControllerDirectionPadValueChangedHandler dPadHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-        [weakSelf controllerDirectionValueChanged:dpad forPlayer:player];
+        if (weakSelf.bothPlayersUseSameController)
+        {
+            [weakSelf controllerDirectionValueChanged:dpad forPlayer:0];
+            [weakSelf controllerDirectionValueChanged:dpad forPlayer:1];
+        }
+        else
+        {
+            [weakSelf controllerDirectionValueChanged:dpad forPlayer:player];
+        }
     };
     
     [pad setValueChangedHandler:dPadHandler];
