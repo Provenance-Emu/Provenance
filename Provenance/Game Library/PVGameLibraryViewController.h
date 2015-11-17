@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <GameController/GameController.h>
 
 extern NSString * const PVGameLibraryHeaderView;
 extern NSString * const kRefreshLibraryNotification;
 
 @interface PVGameLibraryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout,
                                                             UITextFieldDelegate, UINavigationControllerDelegate>
-
 @end
 
 #if !TARGET_OS_TV

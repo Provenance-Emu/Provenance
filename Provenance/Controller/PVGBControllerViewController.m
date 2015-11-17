@@ -110,103 +110,28 @@
     [gbCore releaseGBButton:[button tag]];
 }
 
-- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
+- (void)pressStartForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
-
-    switch (button) {
-        case PVControllerButtonA:
-            [gbCore pushGBButton:PVGBButtonB];
-            break;
-        case PVControllerButtonB:
-            [gbCore pushGBButton:PVGBButtonA];
-            break;
-        case PVControllerButtonX:
-        case PVControllerButtonLeftShoulder:
-        case PVControllerButtonLeftTrigger:
-            [gbCore pushGBButton:PVGBButtonStart];
-            break;
-        case PVControllerButtonY:
-        case PVControllerButtonRightShoulder:
-        case PVControllerButtonRightTrigger:
-            [gbCore pushGBButton:PVGBButtonSelect];
-            break;
-        default:
-            break;
-    }
+    [gbCore pushGBButton:PVGBButtonStart];
 }
 
-- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
+- (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
-    
-    switch (button) {
-        case PVControllerButtonA:
-            [gbCore releaseGBButton:PVGBButtonB];
-            break;
-        case PVControllerButtonB:
-            [gbCore releaseGBButton:PVGBButtonA];
-            break;
-        case PVControllerButtonX:
-        case PVControllerButtonLeftShoulder:
-        case PVControllerButtonLeftTrigger:
-            [gbCore releaseGBButton:PVGBButtonStart];
-            break;
-        case PVControllerButtonY:
-        case PVControllerButtonRightShoulder:
-        case PVControllerButtonRightTrigger:
-            [gbCore releaseGBButton:PVGBButtonSelect];
-            break;
-        default:
-            break;
-    }
+    [gbCore releaseGBButton:PVGBButtonStart];
 }
 
-- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
+    [gbCore pushGBButton:PVGBButtonSelect];
+}
 
-    float xAxis = [[dpad xAxis] value];
-    float yAxis = [[dpad yAxis] value];
-    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
-
-    if (xAxis > deadzone || xAxis < -deadzone)
-    {
-        if (xAxis > deadzone)
-        {
-            [gbCore pushGBButton:PVGBButtonRight];
-            [gbCore releaseGBButton:PVGBButtonLeft];
-        }
-        else if (xAxis < -deadzone)
-        {
-            [gbCore pushGBButton:PVGBButtonLeft];
-            [gbCore releaseGBButton:PVGBButtonRight];
-        }
-    }
-    else
-    {
-        [gbCore releaseGBButton:PVGBButtonRight];
-        [gbCore releaseGBButton:PVGBButtonLeft];
-    }
-
-    if (yAxis > deadzone || yAxis < -deadzone)
-    {
-        if (yAxis > deadzone)
-        {
-            [gbCore pushGBButton:PVGBButtonUp];
-            [gbCore releaseGBButton:PVGBButtonDown];
-        }
-        else if (yAxis < -deadzone)
-        {
-            [gbCore pushGBButton:PVGBButtonDown];
-            [gbCore releaseGBButton:PVGBButtonUp];
-        }
-    }
-    else
-    {
-        [gbCore releaseGBButton:PVGBButtonDown];
-        [gbCore releaseGBButton:PVGBButtonUp];
-    }
+- (void)releaseSelectForPlayer:(NSUInteger)player
+{
+    PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
+    [gbCore releaseGBButton:PVGBButtonSelect];
 }
 
 @end

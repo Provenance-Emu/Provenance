@@ -120,119 +120,28 @@
     [snesCore releaseSNESButton:[button tag] forPlayer:0];
 }
 
-- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
-{
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-
-    switch (button) {
-        case PVControllerButtonX:
-            [snesCore pushSNESButton:PVSNESButtonY forPlayer:player];
-            break;
-        case PVControllerButtonA:
-            [snesCore pushSNESButton:PVSNESButtonB forPlayer:player];
-            break;
-        case PVControllerButtonB:
-            [snesCore pushSNESButton:PVSNESButtonA forPlayer:player];
-            break;
-        case PVControllerButtonY:
-            [snesCore pushSNESButton:PVSNESButtonX forPlayer:player];
-            break;
-        case PVControllerButtonLeftShoulder:
-            [snesCore pushSNESButton:PVSNESButtonTriggerLeft forPlayer:player];
-            break;
-        case PVControllerButtonRightShoulder:
-            [snesCore pushSNESButton:PVSNESButtonTriggerRight forPlayer:player];
-            break;
-        case PVControllerButtonLeftTrigger:
-            [snesCore pushSNESButton:PVSNESButtonStart forPlayer:player];
-            break;
-        case PVControllerButtonRightTrigger:
-            [snesCore pushSNESButton:PVSNESButtonSelect forPlayer:player];
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
-{
-	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
-	
-    switch (button) {
-        case PVControllerButtonX:
-            [snesCore releaseSNESButton:PVSNESButtonY forPlayer:player];
-            break;
-        case PVControllerButtonA:
-            [snesCore releaseSNESButton:PVSNESButtonB forPlayer:player];
-            break;
-        case PVControllerButtonB:
-            [snesCore releaseSNESButton:PVSNESButtonA forPlayer:player];
-            break;
-        case PVControllerButtonY:
-            [snesCore releaseSNESButton:PVSNESButtonX forPlayer:player];
-            break;
-        case PVControllerButtonLeftShoulder:
-            [snesCore releaseSNESButton:PVSNESButtonTriggerLeft forPlayer:player];
-            break;
-        case PVControllerButtonRightShoulder:
-            [snesCore releaseSNESButton:PVSNESButtonTriggerRight forPlayer:player];
-            break;
-        case PVControllerButtonLeftTrigger:
-            [snesCore releaseSNESButton:PVSNESButtonStart forPlayer:player];
-            break;
-        case PVControllerButtonRightTrigger:
-            [snesCore releaseSNESButton:PVSNESButtonSelect forPlayer:player];
-            break;
-        default:
-            break;
-    }
-}
-
-- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
+- (void)pressStartForPlayer:(NSUInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    [snesCore pushSNESButton:PVSNESButtonStart forPlayer:player];
+}
 
-    float xAxis = [[dpad xAxis] value];
-    float yAxis = [[dpad yAxis] value];
-    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+- (void)releaseStartForPlayer:(NSUInteger)player
+{
+    PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    [snesCore releaseSNESButton:PVSNESButtonStart forPlayer:player];
+}
 
-    if (xAxis > deadzone || xAxis < -deadzone)
-    {
-        if (xAxis > deadzone)
-        {
-            [snesCore pushSNESButton:PVSNESButtonRight forPlayer:player];
-            [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-        }
-        else if (xAxis < -deadzone)
-        {
-            [snesCore pushSNESButton:PVSNESButtonLeft forPlayer:player];
-            [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
-        }
-    }
-    else
-    {
-        [snesCore releaseSNESButton:PVSNESButtonRight forPlayer:player];
-        [snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:player];
-    }
-    
-    if (yAxis > deadzone || yAxis < -deadzone)
-    {
-        if (yAxis > deadzone)
-        {
-            [snesCore pushSNESButton:PVSNESButtonUp forPlayer:player];
-            [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-        }
-        else if (yAxis < -deadzone)
-        {
-            [snesCore pushSNESButton:PVSNESButtonDown forPlayer:player];
-            [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-        }
-    }
-    else
-    {
-        [snesCore releaseSNESButton:PVSNESButtonDown forPlayer:player];
-        [snesCore releaseSNESButton:PVSNESButtonUp forPlayer:player];
-    }
+- (void)pressSelectForPlayer:(NSUInteger)player
+{
+    PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    [snesCore pushSNESButton:PVSNESButtonSelect forPlayer:player];
+}
+
+- (void)releaseSelectForPlayer:(NSUInteger)player
+{
+    PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
+    [snesCore releaseSNESButton:PVSNESButtonSelect forPlayer:player];
 }
 
 @end

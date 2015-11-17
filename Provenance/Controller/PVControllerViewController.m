@@ -14,15 +14,13 @@
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "kICadeControllerSetting.h"
 #import "PVControllerManager.h"
+#import "PVEmulatorCore.h"
 
 @interface PVControllerViewController ()
 
 @property (nonatomic, strong) NSArray *controlLayout;
 @property (nonatomic, assign) BOOL touchControlsSetup;
-
-- (void) listenForICadeControllers;
 
 @end
 
@@ -42,34 +40,23 @@
 
 - (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     [[GCController controllers] makeObjectsPerformSelector:@selector(setControllerPausedHandler:) withObject:NULL];
     self.emulatorCore = nil;
     self.systemIdentifier = nil;
-    self.iCadeController = nil;
-	self.controlLayout = nil;
+    self.controlLayout = nil;
 	self.dPad = nil;
 	self.buttonGroup = nil;
 	self.leftShoulderButton = nil;
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
-	self.delegate = nil;
 }
 
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    if (!self.iCadeController)
-    {
-        PVSettingsModel* settings = [PVSettingsModel sharedInstance];
-        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
-        if (self.iCadeController) {
-            [self listenForICadeControllers];
-        }
-    }
 }
 
 - (void)viewDidLoad
@@ -87,8 +74,8 @@
 
     if ([[PVControllerManager sharedManager] hasControllers])
     {
-        [self setupGameController:[[PVControllerManager sharedManager] player1]];
-        [self setupGameController:[[PVControllerManager sharedManager] player2]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
     }
 }
 
@@ -112,8 +99,8 @@
 
     if ([[PVControllerManager sharedManager] hasControllers])
     {
-        [self setupGameController:[[PVControllerManager sharedManager] player1]];
-        [self setupGameController:[[PVControllerManager sharedManager] player2]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
     }
 }
 
@@ -291,8 +278,8 @@
 {
     if ([[PVControllerManager sharedManager] hasControllers])
     {
-        [self setupGameController:[[PVControllerManager sharedManager] player1]];
-        [self setupGameController:[[PVControllerManager sharedManager] player2]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
     }
     else
     {
@@ -309,8 +296,8 @@
 {
     if ([[PVControllerManager sharedManager] hasControllers])
     {
-        [self setupGameController:[[PVControllerManager sharedManager] player1]];
-        [self setupGameController:[[PVControllerManager sharedManager] player2]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
     }
     else
     {
@@ -320,9 +307,6 @@
         [self.rightShoulderButton setHidden:NO];
         [self.startButton setHidden:NO];
         [self.selectButton setHidden:NO];
-    }
-    if (self.iCadeController) {
-    	[self listenForICadeControllers];
     }
 }
 
@@ -346,6 +330,26 @@
 - (void)buttonReleased:(JSButton *)button
 {
 	[self doesNotImplementSelector:_cmd];
+}
+
+- (void)pressStartForPlayer:(NSUInteger)player
+{
+    [self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)releaseStartForPlayer:(NSUInteger)player
+{
+    [self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)pressSelectForPlayer:(NSUInteger)player
+{
+    [self doesNotImplementOptionalSelector:_cmd];
+}
+
+- (void)releaseSelectForPlayer:(NSUInteger)player
+{
+    [self doesNotImplementOptionalSelector:_cmd];
 }
 
 // These are private/undocumented API, so we need to expose them here
@@ -374,230 +378,8 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
 #pragma mark -
 
-- (void)setupGameController:(GCController *)controller
+- (void)hideTouchControlsForController:(GCController *)controller
 {
-    NSInteger player = -1;
-    if (controller == [[PVControllerManager sharedManager] player1] || controller == self.iCadeController)
-    {
-        player = 0;
-    }
-    else if (controller == [[PVControllerManager sharedManager] player2])
-    {
-        player = 1;
-    }
-
-    __weak PVControllerViewController *weakSelf = self;
-    [controller setControllerPausedHandler:^(GCController *controller) {
-        if ([weakSelf.delegate respondsToSelector:@selector(controllerViewControllerDidPressMenuButton:)])
-        {
-            [weakSelf.delegate controllerViewControllerDidPressMenuButton:weakSelf];
-        }
-    }];
-
-    GCControllerDirectionPad *pad;
-    GCControllerDirectionPad *leftAnalog;
-    GCControllerDirectionPad *rightAnalog;
-
-	if ([controller extendedGamepad])
-	{
-        pad = [[controller extendedGamepad] dpad];
-        
-        [[[controller extendedGamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
-            }
-        }];
-        [[[controller extendedGamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
-            }
-        }];
-        [[[controller extendedGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
-            }
-        }];
-        [[[controller extendedGamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
-            }
-        }];
-        
-		leftAnalog = [[controller extendedGamepad] leftThumbstick];
-        rightAnalog = [[controller extendedGamepad] rightThumbstick];
-        
-        [[[controller extendedGamepad] leftShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
-            }
-        }];
-        [[[controller extendedGamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
-            }
-        }];
-		
-        [[[controller extendedGamepad] leftTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:player];
-            }
-        }];
-        [[[controller extendedGamepad] rightTrigger] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonRightTrigger forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:player];
-            }
-        }];
-	}
-#if TARGET_OS_TV
-    else if ([controller microGamepad])
-    {
-        [[controller microGamepad] setAllowsRotation:YES];
-        [[controller microGamepad] setReportsAbsoluteDpadValues:YES];
-
-        pad = [[controller microGamepad] dpad];
-
-        // options are so limited here, mapping is so arbitrary. Most games need a start button, so just use A and Start? (Start is mapped to Left trigger for most pads) :/
-        // Siri-Remote != game controller. (Sorry Apple, but it's the truth and the sooner you realise it the sooner we can get on with our lives.)
-
-        [[[controller microGamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
-            }
-        }];
-        [[[controller microGamepad] buttonX] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
-            }
-        }];
-    }
-#endif
-	else
-	{
-        pad = [[controller gamepad] dpad];
-        
-        [[[controller gamepad] buttonA] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonA forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonA forPlayer:player];
-            }
-        }];
-        [[[controller gamepad] buttonB] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonB forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonB forPlayer:player];
-            }
-        }];
-        [[[controller gamepad] buttonX] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonX forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonX forPlayer:player];
-            }
-        }];
-        [[[controller gamepad] buttonY] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonY forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonY forPlayer:player];
-            }
-        }];
-        
-        [[[controller gamepad] leftShoulder] setValueChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonLeftShoulder forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonLeftShoulder forPlayer:player];
-            }
-        }];
-        [[[controller gamepad] rightShoulder] setPressedChangedHandler:^(GCControllerButtonInput *button, float value, BOOL pressed){
-            if (pressed)
-            {
-                [weakSelf controllerPressedButton:PVControllerButtonRightShoulder forPlayer:player];
-            }
-            else
-            {
-                [weakSelf controllerReleasedButton:PVControllerButtonRightShoulder forPlayer:player];
-            }
-        }];
-	}
-    
-    GCControllerDirectionPadValueChangedHandler dPadHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
-        [weakSelf controllerDirectionValueChanged:dpad forPlayer:player];
-    };
-    
-    [pad setValueChangedHandler:dPadHandler];
-    if (leftAnalog)
-    {
-        [leftAnalog setValueChangedHandler:dPadHandler];
-    }
-
     [self.dPad setHidden:YES];
     [self.buttonGroup setHidden:YES];
     [self.leftShoulderButton setHidden:YES];
@@ -608,30 +390,6 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [self.startButton setHidden:YES];
         [self.selectButton setHidden:YES];
     }
-}
-
-- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
-{
-    [self doesNotImplementOptionalSelector:_cmd];
-}
-
-- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
-{
-    [self doesNotImplementOptionalSelector:_cmd];
-}
-
-- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
-{
-	[self doesNotImplementOptionalSelector:_cmd];
-}
-
--(void) listenForICadeControllers
-{
-    __weak PVControllerViewController* weakSelf = self;
-    self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
-        weakSelf.iCadeController.controllerPressedAnyKey = nil;
-        [weakSelf setupGameController:weakSelf.iCadeController];
-    };
 }
 
 @end

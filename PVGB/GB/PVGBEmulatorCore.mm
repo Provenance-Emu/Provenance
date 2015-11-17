@@ -39,15 +39,6 @@ gambatte::GB gb;
 Resampler *resampler;
 uint32_t gb_pad[PVGBButtonCount];
 
-class GetInput : public gambatte::InputGetter
-{
-public:
-    unsigned operator()()
-    {
-        return gb_pad[0];
-    }
-} static GetInput;
-
 @interface PVGBEmulatorCore ()
 {
     uint32_t *videoBuffer;
@@ -59,11 +50,27 @@ public:
 - (void)outputAudio:(unsigned)frames;
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
+- (void)updateControllers;
 @end
 
 @implementation PVGBEmulatorCore
 
 static __weak PVGBEmulatorCore *_current;
+
+class GetInput : public gambatte::InputGetter
+{
+public:
+    unsigned operator()()
+    {
+        __strong PVGBEmulatorCore *strongCurrent = _current;
+        if (strongCurrent.controller1)
+        {
+            [strongCurrent updateControllers];
+        }
+
+        return gb_pad[0];
+    }
+} static GetInput;
 
 - (id)init
 {
@@ -240,6 +247,57 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 - (oneway void)releaseGBButton:(PVGBButton)button
 {
     gb_pad[0] &= ~GBMap[button];
+}
+
+- (void)updateControllers
+{
+    if ([self.controller1 extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [self.controller1 extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+
+        (dpad.up.isPressed || pad.leftThumbstick.up.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonUp] : gb_pad[0] &= ~GBMap[PVGBButtonUp];
+        (dpad.down.isPressed || pad.leftThumbstick.down.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonDown] : gb_pad[0] &= ~GBMap[PVGBButtonDown];
+        (dpad.left.isPressed || pad.leftThumbstick.left.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonLeft] : gb_pad[0] &= ~GBMap[PVGBButtonLeft];
+        (dpad.right.isPressed || pad.leftThumbstick.right.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonRight] : gb_pad[0] &= ~GBMap[PVGBButtonRight];
+
+        pad.buttonA.isPressed ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
+        pad.buttonB.isPressed ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
+
+        (pad.buttonX.isPressed || pad.leftShoulder.isPressed || pad.leftTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
+        (pad.buttonY.isPressed || pad.rightShoulder.isPressed || pad.rightTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+    }
+    else if ([self.controller1 gamepad])
+    {
+        GCGamepad *pad = [self.controller1 gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+
+        dpad.up.isPressed ? gb_pad[0] |= GBMap[PVGBButtonUp] : gb_pad[0] &= ~GBMap[PVGBButtonUp];
+        dpad.down.isPressed ? gb_pad[0] |= GBMap[PVGBButtonDown] : gb_pad[0] &= ~GBMap[PVGBButtonDown];
+        dpad.left.isPressed ? gb_pad[0] |= GBMap[PVGBButtonLeft] : gb_pad[0] &= ~GBMap[PVGBButtonLeft];
+        dpad.right.isPressed ? gb_pad[0] |= GBMap[PVGBButtonRight] : gb_pad[0] &= ~GBMap[PVGBButtonRight];
+
+        pad.buttonA.isPressed ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
+        pad.buttonB.isPressed ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
+
+        (pad.buttonX.isPressed || pad.leftShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
+        (pad.buttonY.isPressed || pad.rightShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+    }
+#if TARGET_OS_TV
+    else if ([self.controller1 microGamepad])
+    {
+        GCMicroGamepad *pad = [self.controller1 microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+
+        dpad.up.value > 0.5 ? gb_pad[0] |= GBMap[PVGBButtonUp] : gb_pad[0] &= ~GBMap[PVGBButtonUp];
+        dpad.down.value > 0.5 ? gb_pad[0] |= GBMap[PVGBButtonDown] : gb_pad[0] &= ~GBMap[PVGBButtonDown];
+        dpad.left.value > 0.5 ? gb_pad[0] |= GBMap[PVGBButtonLeft] : gb_pad[0] &= ~GBMap[PVGBButtonLeft];
+        dpad.right.value > 0.5 ? gb_pad[0] |= GBMap[PVGBButtonRight] : gb_pad[0] &= ~GBMap[PVGBButtonRight];
+
+        pad.buttonA.isPressed ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
+        pad.buttonX.isPressed ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
+    }
+#endif
 }
 
 #pragma mark - Cheats

@@ -7,6 +7,9 @@
 //
 
 #import "PVControllerManager.h"
+#import "PVSettingsModel.h"
+#import "PViCadeController.h"
+#import "kICadeControllerSetting.h"
 
 @interface PVControllerManager ()
 
@@ -56,9 +59,27 @@
             {
                 self.player1 = firstController;
             }
+
+            for (GCController *controller in [GCController controllers])
+            {
+                if ([controller microGamepad])
+                {
+                    [[controller microGamepad] setAllowsRotation:YES];
+                    [[controller microGamepad] setReportsAbsoluteDpadValues:YES];
+                }
+            }
 #else
             self.player1 = firstController;
 #endif
+        }
+
+        if (!self.iCadeController)
+        {
+            PVSettingsModel* settings = [PVSettingsModel sharedInstance];
+            self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+            if (self.iCadeController) {
+                [self listenForICadeControllers];
+            }
         }
     }
 
@@ -97,6 +118,14 @@
     {
         self.player2 = controller;
     }
+#if TARGET_OS_TV
+    if ([controller microGamepad])
+    {
+        [[controller microGamepad] setAllowsRotation:YES];
+        [[controller microGamepad] setReportsAbsoluteDpadValues:YES];
+    }
+#endif
+
 }
 
 - (void)handleControllerDidDisconnect:(NSNotification *)note
@@ -112,6 +141,22 @@
     {
         self.player2 = nil;
     }
+}
+
+- (void)listenForICadeControllers
+{
+    __weak PVControllerManager* weakSelf = self;
+    self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
+        weakSelf.iCadeController.controllerPressedAnyKey = nil;
+        if (!weakSelf.player1)
+        {
+            weakSelf.player1 = weakSelf.iCadeController;
+        }
+        else if (!weakSelf.player2)
+        {
+            weakSelf.player2 = weakSelf.iCadeController;
+        }
+    };
 }
 
 @end

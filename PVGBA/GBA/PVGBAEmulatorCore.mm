@@ -273,6 +273,84 @@ const int GBAMap[] = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BUTTON_A, KEY_B
     pad[player] &= ~GBAMap[button];
 }
 
+bool systemReadJoypads()
+{
+    __strong PVGBAEmulatorCore *strongCurrent = _current;
+
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
+    {
+        GCController *controller = nil;
+        if (strongCurrent.controller1 && playerIndex == 0)
+        {
+            controller = strongCurrent.controller1;
+        }
+        else if (strongCurrent.controller2 && playerIndex == 1)
+        {
+            controller = strongCurrent.controller2;
+            playerIndex = 1;
+        }
+
+        if (controller)
+        {
+            if ([controller extendedGamepad])
+            {
+                GCExtendedGamepad *gamepad = [controller extendedGamepad];
+                GCControllerDirectionPad *dpad = [gamepad dpad];
+
+                (gamepad.dpad.up.isPressed || gamepad.leftThumbstick.up.isPressed) ? pad[playerIndex] |= KEY_UP : pad[playerIndex] &= ~KEY_UP;
+                (gamepad.dpad.down.isPressed || gamepad.leftThumbstick.down.isPressed) ? pad[playerIndex] |= KEY_DOWN : pad[playerIndex] &= ~KEY_DOWN;
+                (gamepad.dpad.left.isPressed || gamepad.leftThumbstick.left.isPressed) ? pad[playerIndex] |= KEY_LEFT : pad[playerIndex] &= ~KEY_LEFT;
+                (gamepad.dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed) ? pad[playerIndex] |= KEY_RIGHT : pad[playerIndex] &= ~KEY_RIGHT;
+
+                gamepad.buttonA.isPressed ? pad[playerIndex] |= KEY_BUTTON_B : pad[playerIndex] &= ~KEY_BUTTON_B;
+                gamepad.buttonB.isPressed ? pad[playerIndex] |= KEY_BUTTON_A : pad[playerIndex] &= ~KEY_BUTTON_A;
+
+                gamepad.leftShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_L : pad[playerIndex] &= ~KEY_BUTTON_L;
+                gamepad.rightShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_R : pad[playerIndex] &= ~KEY_BUTTON_R;
+
+                (gamepad.buttonX.isPressed || gamepad.leftTrigger.isPressed) ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
+                (gamepad.buttonY.isPressed || gamepad.rightTrigger.isPressed) ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
+            }
+            else if ([controller gamepad])
+            {
+                GCGamepad *gamepad = [controller gamepad];
+                GCControllerDirectionPad *dpad = [gamepad dpad];
+
+                gamepad.dpad.up.isPressed ? pad[playerIndex] |= KEY_UP : pad[playerIndex] &= ~KEY_UP;
+                gamepad.dpad.down.isPressed ? pad[playerIndex] |= KEY_DOWN : pad[playerIndex] &= ~KEY_DOWN;
+                gamepad.dpad.left.isPressed ? pad[playerIndex] |= KEY_LEFT : pad[playerIndex] &= ~KEY_LEFT;
+                gamepad.dpad.right.isPressed ? pad[playerIndex] |= KEY_RIGHT : pad[playerIndex] &= ~KEY_RIGHT;
+
+                gamepad.buttonA.isPressed ? pad[playerIndex] |= KEY_BUTTON_B : pad[playerIndex] &= ~KEY_BUTTON_B;
+                gamepad.buttonB.isPressed ? pad[playerIndex] |= KEY_BUTTON_A : pad[playerIndex] &= ~KEY_BUTTON_A;
+
+                gamepad.leftShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_L : pad[playerIndex] &= ~KEY_BUTTON_L;
+                gamepad.rightShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_R : pad[playerIndex] &= ~KEY_BUTTON_R;
+
+                gamepad.buttonX.isPressed ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
+                gamepad.buttonY.isPressed ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
+            }
+#if TARGET_OS_TV
+            else if ([controller microGamepad])
+            {
+                GCMicroGamepad *gamepad = [controller microGamepad];
+                GCControllerDirectionPad *dpad = [gamepad dpad];
+
+                gamepad.dpad.up.value > 0.5 ? pad[playerIndex] |= KEY_UP : pad[playerIndex] &= ~KEY_UP;
+                gamepad.dpad.down.value > 0.5 ? pad[playerIndex] |= KEY_DOWN : pad[playerIndex] &= ~KEY_DOWN;
+                gamepad.dpad.left.value > 0.5 ? pad[playerIndex] |= KEY_LEFT : pad[playerIndex] &= ~KEY_LEFT;
+                gamepad.dpad.right.value > 0.5 ? pad[playerIndex] |= KEY_RIGHT : pad[playerIndex] &= ~KEY_RIGHT;
+                
+                gamepad.buttonA.isPressed ? pad[playerIndex] |= KEY_BUTTON_B : pad[playerIndex] &= ~KEY_BUTTON_B;
+                gamepad.buttonX.isPressed ? pad[playerIndex] |= KEY_BUTTON_A : pad[playerIndex] &= ~KEY_BUTTON_A;
+            }
+#endif
+        }
+    }
+
+    return true;
+}
+
 #pragma mark - Cheats
 
 NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
@@ -704,7 +782,6 @@ uint32_t systemGetClock()
 int systemGetSensorX(void) {return 0;}
 int systemGetSensorY(void) {return 0;}
 bool systemPauseOnFrame() {return false;}
-bool systemReadJoypads() {return true;}
 bool systemCanChangeSoundQuality() {return false;} // ?
 void (*dbgOutput)(const char *s, uint32_t addr);
 void systemFrame() {}

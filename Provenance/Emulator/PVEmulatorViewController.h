@@ -14,9 +14,9 @@
 @class PVEmulatorCore, PVGame;
 
 #if TARGET_OS_TV
-@interface PVEmulatorViewController : GCEventViewController <PVControllerViewControllerDelegate>
+@interface PVEmulatorViewController : GCEventViewController
 #else
-@interface PVEmulatorViewController : UIViewController <PVControllerViewControllerDelegate>
+@interface PVEmulatorViewController : UIViewController
 #endif
 
 

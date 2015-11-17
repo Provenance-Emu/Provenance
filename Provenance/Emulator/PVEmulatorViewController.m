@@ -91,6 +91,11 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.glViewController = nil;
 	self.controllerViewController = nil;
 	self.menuButton = nil;
+
+    for (GCController *controller in [GCController controllers])
+    {
+        [controller setControllerPausedHandler:nil];
+    }
 }
 
 - (void)viewDidLoad
@@ -133,36 +138,12 @@ void uncaughtExceptionHandler(NSException *exception)
                                              selector:@selector(screenDidDisconnect:)
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
-	
+
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
     [self.emulatorCore setBIOSPath:self.BIOSPath];
-    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
-    {
-        __weak typeof(self) weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DLog(@"Unable to load ROM at %@", [self.game romPath]);
-#if !TARGET_OS_TV
-            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
-#endif
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unable to load ROM"
-                                                                                     message:@"Maybe it's corrupt? Try deleting and reimporting it."
-                                                                              preferredStyle:UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [weakSelf dismissViewControllerAnimated:YES completion:NULL];
-            }]];
-            [weakSelf presentViewController:alertController animated:YES completion:NULL];
-        });
-        
-        return;
-    }
-    
-	[self.emulatorCore startEmulation];
-	
-	self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
-	[self.gameAudio setVolume:1.0];
-	[self.gameAudio setOutputDeviceID:0];
-	[self.gameAudio startAudio];
+    [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
+    [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
 
@@ -182,10 +163,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.view addSubview:[self.glViewController view]];
         [self.glViewController didMoveToParentViewController:self];
     }
-	
+
 	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
 	[self.controllerViewController setEmulatorCore:self.emulatorCore];
-	[self.controllerViewController setDelegate:self];
 	[self addChildViewController:self.controllerViewController];
 	[self.view addSubview:[self.controllerViewController view]];
 	[self.controllerViewController didMoveToParentViewController:self];
@@ -209,7 +189,34 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		[self.menuButton setHidden:YES];
 	}
-	
+
+    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
+    {
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            DLog(@"Unable to load ROM at %@", [self.game romPath]);
+#if !TARGET_OS_TV
+            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+#endif
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Unable to load ROM"
+                                                                                     message:@"Maybe it's corrupt? Try deleting and reimporting it."
+                                                                              preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [weakSelf dismissViewControllerAnimated:YES completion:NULL];
+            }]];
+            [weakSelf presentViewController:alertController animated:YES completion:NULL];
+        });
+
+        return;
+    }
+
+    [self.emulatorCore startEmulation];
+
+    self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
+    [self.gameAudio setVolume:1.0];
+    [self.gameAudio setOutputDeviceID:0];
+    [self.gameAudio startAudio];
+
 	NSString *saveStatePath = [self saveStatePath];
 	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:autoSavePath])
@@ -258,6 +265,14 @@ void uncaughtExceptionHandler(NSException *exception)
 			[self presentViewController:alert animated:YES completion:NULL];
 		}
 	}
+
+    __weak PVEmulatorViewController *weakSelf = self;
+    for (GCController *controller in [GCController controllers])
+    {
+        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+            [weakSelf controllerPauseButtonPressed];
+        }];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -345,10 +360,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
     self.menuActionSheet = actionsheet;
 	
-	if ([self.controllerViewController iCadeController])
+	if ([[PVControllerManager sharedManager] iCadeController])
 	{
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Disconnect iCade" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:weakSelf.controllerViewController.iCadeController];
+            [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:[[PVControllerManager sharedManager] iCadeController]];
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
@@ -366,9 +381,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:0];
+            [weakSelf.controllerViewController pressStartForPlayer:0];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:0];
+                [weakSelf.controllerViewController releaseStartForPlayer:0];
             });
 #if TARGET_OS_TV
             weakSelf.controllerUserInteractionEnabled = NO;
@@ -377,9 +392,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:0];
+            [weakSelf.controllerViewController pressSelectForPlayer:0];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:0];
+                [weakSelf.controllerViewController releaseSelectForPlayer:0];
             });
 #if TARGET_OS_TV
             weakSelf.controllerUserInteractionEnabled = NO;
@@ -391,9 +406,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonLeftTrigger forPlayer:1];
+            [weakSelf.controllerViewController pressStartForPlayer:1];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonLeftTrigger forPlayer:1];
+                [weakSelf.controllerViewController releaseStartForPlayer:1];
             });
 #if TARGET_OS_TV
             weakSelf.controllerUserInteractionEnabled = NO;
@@ -402,9 +417,9 @@ void uncaughtExceptionHandler(NSException *exception)
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController controllerPressedButton:PVControllerButtonRightTrigger forPlayer:1];
+            [weakSelf.controllerViewController pressSelectForPlayer:1];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController controllerReleasedButton:PVControllerButtonRightTrigger forPlayer:1];
+                [weakSelf.controllerViewController releaseSelectForPlayer:1];
             });
 #if TARGET_OS_TV
             weakSelf.controllerUserInteractionEnabled = NO;
@@ -466,7 +481,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
 
     [self presentViewController:actionsheet animated:YES completion:^{
-        [self.controllerViewController.iCadeController refreshListener];
+        [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
 }
 
@@ -543,7 +558,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
 
     [self presentViewController:actionsheet animated:YES completion:^{
-        [self.controllerViewController.iCadeController refreshListener];
+        [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
 }
 
@@ -613,7 +628,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
 
      [self presentViewController:actionsheet animated:YES completion:^{
-         [self.controllerViewController.iCadeController refreshListener];
+         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
      }];
 }
 
@@ -642,9 +657,9 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 }
 
-#pragma mark - PVControllerViewControllerDelegate
+#pragma mark - Controllers
 
-- (void)controllerViewControllerDidPressMenuButton:(PVControllerViewController *)controllerViewController
+- (void)controllerPauseButtonPressed
 {
 	if (![self isShowingMenu])
 	{

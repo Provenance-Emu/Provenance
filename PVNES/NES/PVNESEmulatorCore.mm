@@ -121,6 +121,7 @@ static __weak PVNESEmulatorCore *_current;
 
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
+    
 
     FCEU_ResetPalette();
 
@@ -148,6 +149,11 @@ static __weak PVNESEmulatorCore *_current;
         soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
 
     [[self ringBufferAtIndex:0] write:soundBuffer maxLength:soundSize << 2];
+
+    if (self.controller1 || self.controller2)
+    {
+        [self updateControllers];
+    }
 }
 
 - (void)resetEmulation
@@ -283,8 +289,73 @@ const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_S
     pad[player][0] &= ~NESMap[button] << playerShift;
 }
 
+- (void)updateControllers
+{
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
+    {
+        GCController *controller = nil;
+        int playerShift = playerIndex != 0 ? 8: 0;
 
-// FCEUX internal functions and stubs
+        if (self.controller1 && playerIndex == 0)
+        {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+
+        if ([controller extendedGamepad])
+        {
+            GCExtendedGamepad *gamepad = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            (dpad.up.isPressed || gamepad.leftThumbstick.up.isPressed) ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
+            (dpad.down.isPressed || gamepad.leftThumbstick.down.isPressed) ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
+            (dpad.left.isPressed || gamepad.leftThumbstick.left.isPressed) ? pad[playerIndex][0] |= JOY_LEFT << playerShift : pad[playerIndex][0] &= ~JOY_LEFT << playerShift;
+            (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed) ? pad[playerIndex][0] |= JOY_RIGHT << playerShift : pad[playerIndex][0] &= ~JOY_RIGHT << playerShift;
+
+            gamepad.buttonA.isPressed ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
+            gamepad.buttonB.isPressed ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;
+
+            (gamepad.buttonX.isPressed || gamepad.leftShoulder.isPressed || gamepad.leftTrigger.isPressed) ? pad[playerIndex][0] |= JOY_START << playerShift : pad[playerIndex][0] &= ~JOY_START << playerShift;
+            (gamepad.buttonY.isPressed || gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
+        }
+        else if ([controller gamepad])
+        {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            dpad.up.isPressed ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
+            dpad.down.isPressed ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
+            dpad.left.isPressed ? pad[playerIndex][0] |= JOY_LEFT << playerShift : pad[playerIndex][0] &= ~JOY_LEFT << playerShift;
+            dpad.right.isPressed ? pad[playerIndex][0] |= JOY_RIGHT << playerShift : pad[playerIndex][0] &= ~JOY_RIGHT << playerShift;
+
+            gamepad.buttonA.isPressed ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
+            gamepad.buttonB.isPressed ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;
+
+            (gamepad.buttonX.isPressed || gamepad.leftShoulder.isPressed) ? pad[playerIndex][0] |= JOY_START << playerShift : pad[playerIndex][0] &= ~JOY_START << playerShift;
+            (gamepad.buttonY.isPressed || gamepad.rightShoulder.isPressed) ? pad[playerIndex][0] |= JOY_SELECT << playerShift : pad[playerIndex][0] &= ~JOY_SELECT << playerShift;
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad])
+        {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+
+            (dpad.up.value > 0.5) ? pad[playerIndex][0] |= JOY_UP << playerShift : pad[playerIndex][0] &= ~JOY_UP << playerShift;
+            (dpad.down.value > 0.5) ? pad[playerIndex][0] |= JOY_DOWN << playerShift : pad[playerIndex][0] &= ~JOY_DOWN << playerShift;
+            (dpad.left.value > 0.5) ? pad[playerIndex][0] |= JOY_LEFT << playerShift : pad[playerIndex][0] &= ~JOY_LEFT << playerShift;
+            (dpad.right.value > 0.5) ? pad[playerIndex][0] |= JOY_RIGHT << playerShift : pad[playerIndex][0] &= ~JOY_RIGHT << playerShift;
+
+            gamepad.buttonA.isPressed ? pad[playerIndex][0] |= JOY_B << playerShift : pad[playerIndex][0] &= ~JOY_B << playerShift;
+            gamepad.buttonX.isPressed ? pad[playerIndex][0] |= JOY_A << playerShift : pad[playerIndex][0] &= ~JOY_A << playerShift;
+        }
+#endif
+    }
+}
+
+#pragma mark - FCEUX internal functions and stubs
 void FCEUD_SetPalette(unsigned char index, unsigned char r, unsigned char g, unsigned char b)
 {
     palette[index] = ( r << 16 ) | ( g << 8 ) | b;

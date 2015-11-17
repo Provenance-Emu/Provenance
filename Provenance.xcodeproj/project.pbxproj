@@ -739,12 +739,12 @@
 			isa = PBXGroup;
 			children = (
 				E41448871B3125D90056D80A /* iCade */,
-				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
-				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
 				1A5209861BADCBB500DAE6E3 /* PVControllerManager.h */,
 				1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */,
 				1A52098A1BADD4F900DAE6E3 /* PVControllerSelectionViewController.h */,
 				1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */,
+				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
+				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
 				1A9FBE1E1ABD28A1004E778B /* Genesis */,
 				1A9FBE1F1ABD28A9004E778B /* SNES */,
 				1A9FBE201ABD28B6004E778B /* GBA */,
@@ -1141,8 +1141,8 @@
 			projectRoot = "";
 			targets = (
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
-				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
+				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 			);
 		};
 /* End PBXProject section */

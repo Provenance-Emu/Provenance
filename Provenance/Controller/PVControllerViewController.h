@@ -31,21 +31,12 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
     PVControllerButtonRightTrigger
 };
 
-@protocol PVControllerViewControllerDelegate <NSObject>
-
-- (void)controllerViewControllerDidPressMenuButton:(PVControllerViewController *)controllerViewController;
-
-@end
-
 @interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate> {
 
 }
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, copy) NSString *systemIdentifier;
-@property (nonatomic, assign) id <PVControllerViewControllerDelegate> delegate;
-@property (nonatomic, strong) PViCadeController *iCadeController;
-
 @property (nonatomic, strong) JSDPad *dPad;
 @property (nonatomic, strong) UIView *buttonGroup;
 @property (nonatomic, strong) JSButton *leftShoulderButton;
@@ -59,11 +50,10 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad;
 - (void)buttonPressed:(JSButton *)button;
 - (void)buttonReleased:(JSButton *)button;
+- (void)pressStartForPlayer:(NSUInteger)player;
+- (void)releaseStartForPlayer:(NSUInteger)player;
+- (void)pressSelectForPlayer:(NSUInteger)player;
+- (void)releaseSelectForPlayer:(NSUInteger)player;
 - (void)vibrate;
-
-- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
-- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player;
-
-- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player;
 
 @end
