@@ -213,7 +213,7 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore startEmulation];
 
     self.gameAudio = [[OEGameAudio alloc] initWithCore:self.emulatorCore];
-    [self.gameAudio setVolume:1.0];
+    [self.gameAudio setVolume:[[NSUserDefaults standardUserDefaults] floatForKey:@"volume"]];
     [self.gameAudio setOutputDeviceID:0];
     [self.gameAudio startAudio];
 

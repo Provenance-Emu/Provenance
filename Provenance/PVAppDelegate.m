@@ -19,6 +19,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled:[[PVSettingsModel sharedInstance] disableAutoLock]];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"volume" : @1.0}];
 #if !TARGET_OS_TV
     if (NSClassFromString(@"UIApplicationShortcutItem")) {
         UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
