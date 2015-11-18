@@ -33,7 +33,7 @@
     [self.dPadDeadzoneSlider setValue:[settings dPadDeadzoneValue]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
-    [self.volumeSlider setValue:[[NSUserDefaults standardUserDefaults] floatForKey:@"volume"]];
+    [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
@@ -100,7 +100,7 @@
 
 - (IBAction)volumeChanged:(id)sender
 {
-    [[NSUserDefaults standardUserDefaults] setFloat:self.volumeSlider.value forKey:@"volume"];
+    [[PVSettingsModel sharedInstance] setVolume:self.volumeSlider.value];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
 }
 

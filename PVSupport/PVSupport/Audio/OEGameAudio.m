@@ -131,7 +131,7 @@ OSStatus RenderCallback(void                       *in,
         if(error) {
             NSLog(error);
         } else {
-            NSLog(@"Successfully set audio session to ambient");
+            //NSLog(@"Successfully set audio session to ambient");
         }
         
         gameCore = core;

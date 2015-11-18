@@ -17,6 +17,7 @@ extern NSString * const kDisableAutoLockKey;
 extern NSString * const kButtonVibrationKey;
 extern NSString * const kiCadeControllerSettingKey;
 extern NSString * const kDPadDeadzoneValueKey;
+extern NSString * const kVolumeSettingKey;
 
 @interface PVSettingsModel : NSObject
 
@@ -29,6 +30,7 @@ extern NSString * const kDPadDeadzoneValueKey;
 
 @property (nonatomic, assign) float dPadDeadzoneValue;
 @property (nonatomic, assign) CGFloat controllerOpacity;
+@property (nonatomic, assign) float volume;
 
 + (PVSettingsModel *)sharedInstance;
 
