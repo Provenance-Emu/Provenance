@@ -39,7 +39,6 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 {
 	if ((self = [super init]))
 	{
-        [[NSUserDefaults standardUserDefaults] registerDefaults:@{}];
 		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES),
                                                                   kAutoLoadAutoSavesKey : @(NO),
                                                                   kControllerOpacityKey : @(0.2),
