@@ -33,6 +33,8 @@
     [self.dPadDeadzoneSlider setValue:[settings dPadDeadzoneValue]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+    [self.volumeSlider setValue:[settings volume]];
+    [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
     [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
@@ -95,6 +97,13 @@
 {
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
+
+- (IBAction)volumeChanged:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setVolume:self.volumeSlider.value];
+    [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
