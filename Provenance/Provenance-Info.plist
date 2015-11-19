@@ -12,10 +12,10 @@
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
 			<key>CFBundleTypeName</key>
-			<string>Genesis ROM</string>
+			<string>ROM</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.pkware.zip-archive</string>
+				<string>public.data</string>
 			</array>
 		</dict>
 	</array>
@@ -72,54 +72,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Genesis ROM</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.jamsoftonline.provenance</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>smd</string>
-					<string>bin</string>
-					<string>md</string>
-					<string>gen</string>
-					<string>SMD</string>
-					<string>BIN</string>
-					<string>MD</string>
-					<string>GEN</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>SNES ROM</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.jamsoftonline.provenance</string>
-			<key>public.filename-extension</key>
-			<array>
-				<string>smc</string>
-				<string>snes</string>
-				<string>fig</string>
-				<string>sfc</string>
-				<string>SMC</string>
-				<string>SNES</string>
-				<string>FIG</string>
-				<string>SFC</string>
-			</array>
-		</dict>
 	</array>
 </dict>
 </plist>
