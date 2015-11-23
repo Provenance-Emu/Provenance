@@ -22,8 +22,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
-@property (weak, nonatomic) IBOutlet UILabel *dPadDeadzoneLabel;
-
 
 @end
 
@@ -42,7 +40,6 @@
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
     [self.versionValueLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
-    [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", [settings dPadDeadzoneValue] * 100]];
 #if DEBUG
     [self.modeValueLabel setText:@"DEBUG"];
 #else
@@ -81,44 +78,6 @@
             }
             break;
         case 1:
-            switch ([indexPath row]) {
-                case 0: {
-                    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"D-Pad/Analogue Deadzone" message:@"Select a value for the D-Pad/Analogue deadzone. The higher the value, the harder you will need to push the dpad. Lower values may cause unpredicted input on certain controllers." preferredStyle:UIAlertControllerStyleAlert];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"0%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.0];
-                        [self.dPadDeadzoneLabel setText:@"0%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"10%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.1];
-                        [self.dPadDeadzoneLabel setText:@"10%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"20%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.2];
-                        [self.dPadDeadzoneLabel setText:@"20%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"30%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.3];
-                        [self.dPadDeadzoneLabel setText:@"30%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"40%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.4];
-                        [self.dPadDeadzoneLabel setText:@"40%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"50%" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                        [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:0.5];
-                        [self.dPadDeadzoneLabel setText:@"50%"];
-                    }]];
-                    [alert addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                        //nop
-                    }]];
-                    [self presentViewController:alert animated:YES completion:nil];
-                    break;
-                }
-                    
-                default:
-                    break;
-            }
-        case 2:
             // library settings
             switch ([indexPath row]) {
                 case 0: {
