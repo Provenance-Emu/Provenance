@@ -226,6 +226,7 @@
 		E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F936991B50829F009403C5 /* PViCade8BitdoController.m */; };
 		E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */; };
 		E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */; };
+		F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -491,6 +492,8 @@
 		E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeControllerViewController.m; sourceTree = "<group>"; };
 		E4F9369E1B50C0D8009403C5 /* kICadeControllerSetting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kICadeControllerSetting.h; sourceTree = "<group>"; };
 		E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = kICadeControllerSetting.m; sourceTree = "<group>"; };
+		F43211981BFB6AB300387909 /* PViCadeSteelSeriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeSteelSeriesController.h; sourceTree = "<group>"; };
+		F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeSteelSeriesController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1042,6 +1045,8 @@
 				E41448901B34B9600056D80A /* PViCadeController.m */,
 				E4F936981B50829F009403C5 /* PViCade8BitdoController.h */,
 				E4F936991B50829F009403C5 /* PViCade8BitdoController.m */,
+				F43211981BFB6AB300387909 /* PViCadeSteelSeriesController.h */,
+				F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */,
 				E41448921B34BBAB0056D80A /* PViCadeReader.h */,
 				E41448931B34BBAB0056D80A /* PViCadeReader.m */,
 				E41448951B34C4080056D80A /* PViCadeGamepadButtonInput.h */,
@@ -1211,6 +1216,7 @@
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
+				F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
