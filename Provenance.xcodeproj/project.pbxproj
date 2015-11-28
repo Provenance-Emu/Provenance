@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
+		1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 		1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D517F74D410031B1C9 /* libPVSupport.a */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
@@ -1300,6 +1301,7 @@
 				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.m in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
 				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */,
+				1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */,
 				1AD481CD1BA353FC00FDA50A /* PVGameImporter.m in Sources */,
 				1AD481FE1BA354B100FDA50A /* PViCadeGamepadButtonInput.m in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.m in Sources */,
