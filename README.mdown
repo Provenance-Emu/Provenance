@@ -2,7 +2,7 @@
 An iOS Frontend for multiple emulators
 
 ###Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance)
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) And follow them _to the letter_. Any issues raised that cearly demonstrate that the instructions haven't been followed will be closed.
 
 ###Why 'Provenance'?
 
@@ -51,7 +51,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Supports iOS 8+
 - 3D Touch shortcuts for recent games on iPhone 6S/Plus
 
-Feel free to suggest/request features using the Issues page.
+Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
 
 ###Importing ROMs
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
@@ -73,7 +73,7 @@ Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.source
 
 The specific implementations used in Provenance are based on [OpenEmu](http://openemu.org), [(source)](http://github.com/OpenEmu).
 
-#Provenance License (Simplified BSD)
+#Provenance License
 
 Copyright (c) 2015, James Addyman (JamSoft). All rights reserved.
 
@@ -82,6 +82,7 @@ permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY JAMES ADDYMAN (JAMSOFT) "AS IS" AND ANY EXPRESS OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
