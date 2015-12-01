@@ -9,14 +9,12 @@
 /* Begin PBXBuildFile section */
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
-		1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D517F74D410031B1C9 /* libPVSupport.a */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
 		1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2B1AD9FFBF004EA30B /* mztools.c */; };
 		1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2D1AD9FFBF004EA30B /* unzip.c */; };
 		1A26EE361AD9FFBF004EA30B /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2F1AD9FFBF004EA30B /* zip.c */; };
 		1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
-		1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A517F7627E00F1CB0D /* libPVSNES.a */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E881AD1842A005FB77C /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
@@ -24,7 +22,6 @@
 		1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
 		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
-		1A35A85B1ABF3EDE00D6DDAF /* libPVGBA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */; };
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
@@ -51,6 +48,11 @@
 		1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DA17C8D60C0019F6D2 /* MobileCoreServices.framework */; };
 		1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
+		1A4DF9F31C0E401000DDBC20 /* libPVGBA.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4820D1BA3557900FDA50A /* libPVGBA.a */; };
+		1A4DF9F41C0E401E00DDBC20 /* libPVGB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4820C1BA3557900FDA50A /* libPVGB.a */; };
+		1A4DF9F51C0E402B00DDBC20 /* libPVSNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4820F1BA3557900FDA50A /* libPVSNES.a */; };
+		1A4DF9F61C0E405700DDBC20 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD9AA4C1ACC9BDC00EC87A0 /* libPVSupport.a */; };
+		1A4DF9F71C0E405900DDBC20 /* libPVGenesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4820E1BA3557900FDA50A /* libPVGenesis.a */; };
 		1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */; };
 		1A5209891BADCBB500DAE6E3 /* PVControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */; };
 		1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
@@ -64,7 +66,6 @@
 		1A9938A31BBB02590050A2B7 /* PVRecentGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9938A11BBB02590050A2B7 /* PVRecentGame.m */; };
 		1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
 		1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.m */; };
-		1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */; };
 		1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */; };
 		1AACCAE31BB60D8E00DC21AE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -82,7 +83,6 @@
 		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */; };
-		1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */; };
 		1AD481B81BA350A400FDA50A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD481B71BA350A400FDA50A /* main.m */; };
 		1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Main.storyboard */; };
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
@@ -281,14 +281,12 @@
 		1A26EE301AD9FFBF004EA30B /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
 		1A26EE311AD9FFBF004EA30B /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
 		1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
-		1A2A95A517F7627E00F1CB0D /* libPVSNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNES.a; path = "PVSNES/build/Debug-iphoneos/libPVSNES.a"; sourceTree = "<group>"; };
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E8A1AD187F4005FB77C /* testdata.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testdata.txt; sourceTree = "<group>"; };
 		1A2B0E8D1AD18961005FB77C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		1A34C58517D517760058E7D1 /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConfiguration.h; sourceTree = "<group>"; };
 		1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConfiguration.m; sourceTree = "<group>"; };
-		1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "PVGBA/build/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
 		1A3D409417B2DCE4004DFFFC /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A3D409717B2DCE4004DFFFC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A3D409917B2DCE4004DFFFC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -305,7 +303,6 @@
 		1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGLViewController.m; sourceTree = "<group>"; };
 		1A3FD78C1AC7744100F8C23C /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		1A47C94017BC1BBE00C27644 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1A47C94217BC1BC400C27644 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		1A47C96117BC310700C27644 /* JSButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSButton.h; sourceTree = "<group>"; };
 		1A47C96217BC310700C27644 /* JSButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSButton.m; sourceTree = "<group>"; };
@@ -347,10 +344,8 @@
 		1A9938A01BBB02590050A2B7 /* PVRecentGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRecentGame.h; sourceTree = "<group>"; };
 		1A9938A11BBB02590050A2B7 /* PVRecentGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRecentGame.m; sourceTree = "<group>"; };
 		1A9FBE1A1ABD23DD004E778B /* vba-over.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "vba-over.ini"; sourceTree = "<group>"; };
-		1A9FBE1C1ABD268B004E778B /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "PVGBA/build/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
 		1A9FBE211ABD28DA004E778B /* PVGBAControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGBAControllerViewController.h; sourceTree = "<group>"; };
 		1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGBAControllerViewController.m; sourceTree = "<group>"; };
-		1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGB.a; path = "PVGB/build/Debug-iphoneos/libPVGB.a"; sourceTree = "<group>"; };
 		1AABE0CE1ABE3E5900FF6AEF /* PVGBControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGBControllerViewController.h; sourceTree = "<group>"; };
 		1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGBControllerViewController.m; sourceTree = "<group>"; };
 		1AACCAE01BB60D8200DC21AE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
@@ -376,8 +371,6 @@
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVTVSettingsViewController.h; sourceTree = "<group>"; };
 		1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVTVSettingsViewController.m; sourceTree = "<group>"; };
-		1ACEA6D517F74D410031B1C9 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "ProvenanceSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
-		1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "PVGenesis/build/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
 		1AD481B41BA350A400FDA50A /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD481B71BA350A400FDA50A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		1AD481C01BA350A400FDA50A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -387,7 +380,6 @@
 		1AD4820D1BA3557900FDA50A /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
 		1AD4820E1BA3557900FDA50A /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
 		1AD4820F1BA3557900FDA50A /* libPVSNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVSNES.a"; sourceTree = "<group>"; };
-		1AD482101BA3557900FDA50A /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1AD482161BA3592D00FDA50A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		1AD482181BA3593900FDA50A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		1AD4821A1BA3594300FDA50A /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/usr/lib/libstdc++.tbd"; sourceTree = DEVELOPER_DIR; };
@@ -502,31 +494,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
-				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
+				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
+				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
-				1A1EC5CD1A979D0E00565A99 /* libPVSupport.a in Frameworks */,
-				1A2A95A617F7627E00F1CB0D /* libPVSNES.a in Frameworks */,
-				1ACEA8DA17F75EBC0031B1C9 /* libPVGenesis.a in Frameworks */,
-				1A35A85B1ABF3EDE00D6DDAF /* libPVGBA.a in Frameworks */,
-				1AABE0CC1ABE3D9200FF6AEF /* libPVGB.a in Frameworks */,
+				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
+				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
+				1A4DF9F61C0E405700DDBC20 /* libPVSupport.a in Frameworks */,
+				1A4DF9F71C0E405900DDBC20 /* libPVGenesis.a in Frameworks */,
+				1A4DF9F51C0E402B00DDBC20 /* libPVSNES.a in Frameworks */,
+				1A4DF9F41C0E401E00DDBC20 /* libPVGB.a in Frameworks */,
+				1A4DF9F31C0E401000DDBC20 /* libPVGBA.a in Frameworks */,
 				1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */,
+				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
-				1AAE7D421BC870A2003066C0 /* Realm.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
-				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
-				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
+				1AAE7D421BC870A2003066C0 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,30 +526,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
+				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
+				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
+				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
+				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
+				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
+				1AD484121BA36C8C00FDA50A /* libPVSupportTV.a in Frameworks */,
+				1AD4840F1BA36C8C00FDA50A /* libPVGenesisTV.a in Frameworks */,
+				1AD484111BA36C8C00FDA50A /* libPVSNESTV.a in Frameworks */,
 				1AD4840D1BA36C8C00FDA50A /* libPVGBATV.a in Frameworks */,
 				1AD4840E1BA36C8C00FDA50A /* libPVGBTV.a in Frameworks */,
-				1AD4840F1BA36C8C00FDA50A /* libPVGenesisTV.a in Frameworks */,
 				1AD484101BA36C8C00FDA50A /* libPVNESTV.a in Frameworks */,
-				1AD484111BA36C8C00FDA50A /* libPVSNESTV.a in Frameworks */,
-				1AD484121BA36C8C00FDA50A /* libPVSupportTV.a in Frameworks */,
+				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
 				1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */,
 				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
 				1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */,
 				1AD4822F1BA359DA00FDA50A /* OpenGLES.framework in Frameworks */,
-				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
 				1AACCAE31BB60D8E00DC21AE /* Realm.framework in Frameworks */,
 				1AD4822B1BA359C800FDA50A /* GLKit.framework in Frameworks */,
 				1AD482291BA359BA00FDA50A /* AudioToolbox.framework in Frameworks */,
 				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
-				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
 				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
 				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
-				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
-				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
-				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,61 +648,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */,
-				1AD4BC6C1BFD3896007D6C7C /* AVFoundation.framework */,
-				1AD484071BA36C8B00FDA50A /* libPVGBATV.a */,
-				1AD484081BA36C8B00FDA50A /* libPVGBTV.a */,
-				1AD484091BA36C8B00FDA50A /* libPVGenesisTV.a */,
-				1AD4840A1BA36C8B00FDA50A /* libPVNESTV.a */,
-				1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */,
-				1AD4840C1BA36C8B00FDA50A /* libPVSupportTV.a */,
-				1AD482341BA35A0B00FDA50A /* CoreGraphics.framework */,
-				1AD482321BA35A0500FDA50A /* Foundation.framework */,
-				1AD482301BA359FF00FDA50A /* UIKit.framework */,
-				1AD4822E1BA359DA00FDA50A /* OpenGLES.framework */,
-				1AD4822C1BA359D300FDA50A /* libz.tbd */,
-				1AD4822A1BA359C800FDA50A /* GLKit.framework */,
-				1AD482281BA359BA00FDA50A /* AudioToolbox.framework */,
-				1AD482261BA3599400FDA50A /* CoreData.framework */,
-				1AD482241BA3598C00FDA50A /* libxml2.tbd */,
-				1AD482221BA3598100FDA50A /* SystemConfiguration.framework */,
-				1AD482201BA3597500FDA50A /* Security.framework */,
-				1AD4821E1BA3596D00FDA50A /* MobileCoreServices.framework */,
-				1AD4821C1BA3596200FDA50A /* CFNetwork.framework */,
-				1AD4821A1BA3594300FDA50A /* libstdc++.tbd */,
-				1AD482181BA3593900FDA50A /* libc++.tbd */,
-				1AD482161BA3592D00FDA50A /* libsqlite3.tbd */,
-				1AD4820C1BA3557900FDA50A /* libPVGB.a */,
-				1AD4820D1BA3557900FDA50A /* libPVGBA.a */,
-				1AD4820E1BA3557900FDA50A /* libPVGenesis.a */,
-				1AD4820F1BA3557900FDA50A /* libPVSNES.a */,
-				1AD482101BA3557900FDA50A /* libPVSupport.a */,
-				1A2B0E8D1AD18961005FB77C /* libc++.dylib */,
-				1AD9AA4C1ACC9BDC00EC87A0 /* libPVSupport.a */,
-				1A35A85A1ABF3EDE00D6DDAF /* libPVGBA.a */,
-				1A7417181ABF215B00F3CD3C /* libPVNES.a */,
-				1AABE0CB1ABE3D9200FF6AEF /* libPVGB.a */,
-				1A9FBE1C1ABD268B004E778B /* libPVGBA.a */,
-				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
-				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
-				1A2A95A517F7627E00F1CB0D /* libPVSNES.a */,
-				1ACEA8D917F75EBC0031B1C9 /* libPVGenesis.a */,
-				1ACEA6D517F74D410031B1C9 /* libPVSupport.a */,
-				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
-				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
-				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
-				1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */,
-				1A4869DA17C8D60C0019F6D2 /* MobileCoreServices.framework */,
-				1A4869DB17C8D60C0019F6D2 /* Security.framework */,
-				1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */,
-				1A4869D517C8D5450019F6D2 /* CoreData.framework */,
-				1A47C94217BC1BC400C27644 /* AudioToolbox.framework */,
-				1A47C94017BC1BBE00C27644 /* CoreAudio.framework */,
-				1ADDA5B317B30CD7008A7ADD /* GLKit.framework */,
-				1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */,
-				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
-				1A3D409917B2DCE4004DFFFC /* Foundation.framework */,
-				1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */,
+				1A4DF9F91C0E411500DDBC20 /* iOS */,
+				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -810,6 +749,67 @@
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		1A4DF9F81C0E40FE00DDBC20 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				1AD4840C1BA36C8B00FDA50A /* libPVSupportTV.a */,
+				1AD484091BA36C8B00FDA50A /* libPVGenesisTV.a */,
+				1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */,
+				1AD484071BA36C8B00FDA50A /* libPVGBATV.a */,
+				1AD484081BA36C8B00FDA50A /* libPVGBTV.a */,
+				1AD4840A1BA36C8B00FDA50A /* libPVNESTV.a */,
+				1AD4BC6C1BFD3896007D6C7C /* AVFoundation.framework */,
+				1AD482341BA35A0B00FDA50A /* CoreGraphics.framework */,
+				1AD482321BA35A0500FDA50A /* Foundation.framework */,
+				1AD482301BA359FF00FDA50A /* UIKit.framework */,
+				1AD4822E1BA359DA00FDA50A /* OpenGLES.framework */,
+				1AD4822A1BA359C800FDA50A /* GLKit.framework */,
+				1AD482281BA359BA00FDA50A /* AudioToolbox.framework */,
+				1AD482261BA3599400FDA50A /* CoreData.framework */,
+				1AD482221BA3598100FDA50A /* SystemConfiguration.framework */,
+				1AD482201BA3597500FDA50A /* Security.framework */,
+				1AD4821E1BA3596D00FDA50A /* MobileCoreServices.framework */,
+				1AD4821C1BA3596200FDA50A /* CFNetwork.framework */,
+				1AD4821A1BA3594300FDA50A /* libstdc++.tbd */,
+				1AD482181BA3593900FDA50A /* libc++.tbd */,
+				1AD482161BA3592D00FDA50A /* libsqlite3.tbd */,
+				1AD482241BA3598C00FDA50A /* libxml2.tbd */,
+				1AD4822C1BA359D300FDA50A /* libz.tbd */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+		1A4DF9F91C0E411500DDBC20 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				1AD9AA4C1ACC9BDC00EC87A0 /* libPVSupport.a */,
+				1AD4820E1BA3557900FDA50A /* libPVGenesis.a */,
+				1AD4820F1BA3557900FDA50A /* libPVSNES.a */,
+				1AD4820C1BA3557900FDA50A /* libPVGB.a */,
+				1AD4820D1BA3557900FDA50A /* libPVGBA.a */,
+				1A7417181ABF215B00F3CD3C /* libPVNES.a */,
+				1A4869D717C8D54D0019F6D2 /* libxml2.dylib */,
+				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
+				1A2A95A917F7682400F1CB0D /* libstdc++.dylib */,
+				1A2B0E8D1AD18961005FB77C /* libc++.dylib */,
+				1AECF4A81966D76100F8704E /* libsqlite3.dylib */,
+				1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */,
+				423BB97A17DD35B10048F457 /* AssetsLibrary.framework */,
+				1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */,
+				1A4869DA17C8D60C0019F6D2 /* MobileCoreServices.framework */,
+				1A4869DB17C8D60C0019F6D2 /* Security.framework */,
+				1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */,
+				1A4869D517C8D5450019F6D2 /* CoreData.framework */,
+				1A47C94217BC1BC400C27644 /* AudioToolbox.framework */,
+				1ADDA5B317B30CD7008A7ADD /* GLKit.framework */,
+				1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */,
+				1A3D409717B2DCE4004DFFFC /* UIKit.framework */,
+				1A3D409917B2DCE4004DFFFC /* Foundation.framework */,
+				1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		1A74171A1ABF22FD00F3CD3C /* NES */ = {
@@ -1483,12 +1483,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -1528,12 +1528,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -1585,12 +1585,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -1640,12 +1640,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -1695,12 +1695,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
@@ -1920,12 +1920,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/include/libxml2,
 					"$(SRCROOT)/PVSupport/**",
 					"$(SRCROOT)/PVGenesis/**",
 					"$(SRCROOT)/PVSNES/**",
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
-					/usr/include/libxml2,
 					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
