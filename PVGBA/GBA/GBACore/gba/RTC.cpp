@@ -33,11 +33,11 @@ typedef struct {
 } RTCCLOCKDATA;
 
 static RTCCLOCKDATA rtcClockData;
-static bool rtcEnabled = false;
+static bool rtcEnabled = true;
 
 void rtcEnable(bool e)
 {
-  rtcEnabled = e;
+  rtcEnabled = true;
 }
 
 bool rtcIsEnabled()
