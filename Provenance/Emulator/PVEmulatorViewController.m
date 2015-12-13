@@ -45,9 +45,7 @@ static __unsafe_unretained PVEmulatorViewController *_staticEmulatorViewControll
 
 void uncaughtExceptionHandler(NSException *exception)
 {
-	NSString *saveStatePath = [_staticEmulatorViewController saveStatePath];
-	NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-	[_staticEmulatorViewController.emulatorCore saveStateToFileAtPath:autoSavePath];
+	[_staticEmulatorViewController.emulatorCore autoSaveState];
 }
 
 + (void)initialize
@@ -140,6 +138,7 @@ void uncaughtExceptionHandler(NSException *exception)
                                                object:nil];
 
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+    [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
     [self.emulatorCore setBIOSPath:self.BIOSPath];
     [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
@@ -318,12 +317,14 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
+    [self.emulatorCore autoSaveState];
 	[self.emulatorCore setPauseEmulation:YES];
     [self.gameAudio pauseAudio];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
 {
+    [self.emulatorCore autoSaveState];
 	[self.emulatorCore setPauseEmulation:YES];
     [self.gameAudio pauseAudio];
 }
@@ -456,9 +457,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
-			NSString *saveStatePath = [self saveStatePath];
-			NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-			[weakSelf.emulatorCore saveStateToFileAtPath:autoSavePath];
+			[weakSelf.emulatorCore autoSaveState];
 		}
 		
 		[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -641,9 +640,7 @@ void uncaughtExceptionHandler(NSException *exception)
 {
     if ([[PVSettingsModel sharedInstance] autoSave])
     {
-        NSString *saveStatePath = [self saveStatePath];
-        NSString *autoSavePath = [saveStatePath stringByAppendingPathComponent:@"auto.svs"];
-        [self.emulatorCore saveStateToFileAtPath:autoSavePath];
+        [self.emulatorCore autoSaveState];
     }
 
     [self.gameAudio stopAudio];

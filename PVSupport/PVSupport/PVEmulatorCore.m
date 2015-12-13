@@ -294,6 +294,12 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 #pragma mark - Save States
 
+- (BOOL)autoSaveState
+{
+    NSString *autoSavePath = [[self saveStatesPath] stringByAppendingPathComponent:@"auto.svs"];
+    return [self saveStateToFileAtPath:autoSavePath];
+}
+
 - (BOOL)saveStateToFileAtPath:(NSString *)path
 {
 	[self doesNotImplementSelector:_cmd];

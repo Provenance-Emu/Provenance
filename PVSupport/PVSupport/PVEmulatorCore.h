@@ -26,6 +26,7 @@
 }
 
 @property (nonatomic, copy) NSString *romName;
+@property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (atomic, assign) BOOL shouldResyncTime;
@@ -68,6 +69,7 @@
 - (void)loadSaveFile:(NSString *)path forType:(int)type;
 - (void)writeSaveFile:(NSString *)path forType:(int)type;
 
+- (BOOL)autoSaveState;
 - (BOOL)saveStateToFileAtPath:(NSString *)path;
 - (BOOL)loadStateFromFileAtPath:(NSString *)path;
 
