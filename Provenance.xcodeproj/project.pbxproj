@@ -217,6 +217,13 @@
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
+		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
+		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.m */; };
+		BE9FDCC11C210B9F0046DF0E /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */; };
+		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
+		BE9FDCCB1C210CED0046DF0E /* PVRecentGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9938A11BBB02590050A2B7 /* PVRecentGame.m */; };
+		BE9FDCCE1C211A220046DF0E /* PVGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697117C8C0DE0019F6D2 /* PVGame.m */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -237,6 +244,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
+		};
+		BE9FDCBF1C210B9F0046DF0E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -261,6 +275,17 @@
 				1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE9FDCC61C210B9F0046DF0E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BE9FDCC11C210B9F0046DF0E /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -464,6 +489,15 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
+		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE9FDCB81C210B9E0046DF0E /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
+		BE9FDCBB1C210B9F0046DF0E /* ServiceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceProvider.h; sourceTree = "<group>"; };
+		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ServiceProvider.m; sourceTree = "<group>"; };
+		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BE9FDCC71C210C470046DF0E /* PVRecentGame+TopShelf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRecentGame+TopShelf.h"; sourceTree = "<group>"; };
+		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRecentGame+TopShelf.m"; sourceTree = "<group>"; };
+		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
+		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -560,6 +594,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE9FDCB41C210B9E0046DF0E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */,
+				BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -628,6 +671,7 @@
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
+				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1AACCADD1BB60D8200DC21AE /* Realm-iOS */,
 				1AACCADF1BB60D8200DC21AE /* Realm-tvOS */,
@@ -641,6 +685,7 @@
 				1A3D409417B2DCE4004DFFFC /* Provenance.app */,
 				1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */,
 				1AD481B41BA350A400FDA50A /* Provenance.app */,
+				BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -650,6 +695,7 @@
 			children = (
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
+				BE9FDCB81C210B9E0046DF0E /* TVServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -903,6 +949,7 @@
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
 			isa = PBXGroup;
 			children = (
+				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
 				1AACCAEB1BB61D5600DC21AE /* PVTVSplitViewController.h */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.m */,
 				1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */,
@@ -1032,6 +1079,19 @@
 			path = Reachability;
 			sourceTree = "<group>";
 		};
+		BE9FDCBA1C210B9E0046DF0E /* TopShelf */ = {
+			isa = PBXGroup;
+			children = (
+				BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */,
+				BE9FDCBB1C210B9F0046DF0E /* ServiceProvider.h */,
+				BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.m */,
+				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
+				BE9FDCC71C210C470046DF0E /* PVRecentGame+TopShelf.h */,
+				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */,
+			);
+			path = TopShelf;
+			sourceTree = "<group>";
+		};
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
@@ -1091,10 +1151,12 @@
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
+				BE9FDCC61C210B9F0046DF0E /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BE9FDCC01C210B9F0046DF0E /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
@@ -1119,6 +1181,23 @@
 			productReference = 1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		BE9FDCB61C210B9E0046DF0E /* TopShelf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE9FDCC51C210B9F0046DF0E /* Build configuration list for PBXNativeTarget "TopShelf" */;
+			buildPhases = (
+				BE9FDCB31C210B9E0046DF0E /* Sources */,
+				BE9FDCB41C210B9E0046DF0E /* Frameworks */,
+				BE9FDCB51C210B9E0046DF0E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TopShelf;
+			productName = TopShelf;
+			productReference = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */;
+			productType = "com.apple.product-type.tv-app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1134,10 +1213,25 @@
 					};
 					1AD481B31BA350A400FDA50A = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = HWU4UAU436;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					1AD9AA341ACC988F00EC87A0 = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
+					};
+					BE9FDCB61C210B9E0046DF0E = {
+						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = HWU4UAU436;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -1157,6 +1251,7 @@
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
+				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 			);
 		};
 /* End PBXProject section */
@@ -1198,6 +1293,13 @@
 			files = (
 				1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */,
 				1AD9AA411ACC98A200EC87A0 /* systems.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE9FDCB51C210B9E0046DF0E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1377,6 +1479,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BE9FDCB31C210B9E0046DF0E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.m in Sources */,
+				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.m in Sources */,
+				BE9FDCCB1C210CED0046DF0E /* PVRecentGame.m in Sources */,
+				BE9FDCCE1C211A220046DF0E /* PVGame.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1384,6 +1497,11 @@
 			isa = PBXTargetDependency;
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
+		};
+		BE9FDCC01C210B9F0046DF0E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = BE9FDCBF1C210B9F0046DF0E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1567,6 +1685,9 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1602,6 +1723,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -1620,6 +1742,9 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1657,6 +1782,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -1675,6 +1801,9 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = ProvenanceTV/Provenance.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1712,6 +1841,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
+				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -1947,6 +2077,118 @@
 			};
 			name = AdHoc;
 		};
+		BE9FDCC21C210B9F0046DF0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Realm-tvOS",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = TopShelf/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Debug;
+		};
+		BE9FDCC31C210B9F0046DF0E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Realm-tvOS",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = TopShelf/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = Release;
+		};
+		BE9FDCC41C210B9F0046DF0E /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = TopShelf/TopShelf.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Realm-tvOS",
+				);
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = TopShelf/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.1;
+			};
+			name = AdHoc;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1989,6 +2231,15 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		BE9FDCC51C210B9F0046DF0E /* Build configuration list for PBXNativeTarget "TopShelf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE9FDCC21C210B9F0046DF0E /* Debug */,
+				BE9FDCC31C210B9F0046DF0E /* Release */,
+				BE9FDCC41C210B9F0046DF0E /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
