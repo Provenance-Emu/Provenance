@@ -8,6 +8,7 @@
 
 #import "ServiceProvider.h"
 #import "PVRecentGame+TopShelf.h"
+#import "RLMRealmConfiguration+GroupConfig.h"
 @import Realm;
 
 @interface ServiceProvider ()
@@ -19,10 +20,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        NSURL *container = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.muzi.provenance"];
-        RLMRealmConfiguration *config = [RLMRealmConfiguration defaultConfiguration];
-        config.path = [container.path stringByAppendingPathComponent:@"Library/Caches/default.realm"];
-        [RLMRealmConfiguration setDefaultConfiguration:config];
+        if ([RLMRealmConfiguration supportsAppGroups]) {
+            [RLMRealmConfiguration setDefaultConfiguration:[RLMRealmConfiguration appGroupConfig]];
+        }
     }
     return self;
 }
@@ -36,22 +36,29 @@
 
 - (NSArray *)topShelfItems {
     
-    TVContentIdentifier *identifier = [[TVContentIdentifier alloc] initWithIdentifier:@"id" container:nil];
-    TVContentItem *recentItems = [[TVContentItem alloc] initWithContentIdentifier:identifier];
-    recentItems.title = @"Recently Played";
+    NSMutableArray *topShelfItems = [[NSMutableArray alloc] init];
     
-    RLMResults *recents = [PVRecentGame allObjects];
-    id <NSFastEnumeration> recentGames = [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO];
-
-    NSMutableArray *items = [[NSMutableArray alloc] init];
-    
-    for (PVRecentGame *game in recentGames) {
-        [items addObject:[game contentItemWithIdentifier:identifier]];
+    if ([RLMRealmConfiguration supportsAppGroups]) {
+        
+        TVContentIdentifier *identifier = [[TVContentIdentifier alloc] initWithIdentifier:@"id" container:nil];
+        TVContentItem *recentItems = [[TVContentItem alloc] initWithContentIdentifier:identifier];
+        recentItems.title = @"Recently Played";
+        
+        RLMResults *recents = [PVRecentGame allObjects];
+        id <NSFastEnumeration> recentGames = [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO];
+        
+        NSMutableArray *items = [[NSMutableArray alloc] init];
+        
+        for (PVRecentGame *game in recentGames) {
+            [items addObject:[game contentItemWithIdentifier:identifier]];
+        }
+        
+        recentItems.topShelfItems = items;
+        
+        [topShelfItems addObject:recentItems];
     }
     
-    recentItems.topShelfItems = items;
-    
-    return @[recentItems];
+    return topShelfItems;
 }
 
 @end

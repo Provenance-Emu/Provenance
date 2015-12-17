@@ -217,6 +217,12 @@
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
+		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
+		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
+		BE1E26691C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
+		BE1E266A1C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
+		BE1E266D1C22552800499BA0 /* PVAppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.m */; };
+		BE1E266E1C22552800499BA0 /* PVAppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.m */; };
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.m */; };
 		BE9FDCC11C210B9F0046DF0E /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -224,6 +230,8 @@
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		BE9FDCCB1C210CED0046DF0E /* PVRecentGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9938A11BBB02590050A2B7 /* PVRecentGame.m */; };
 		BE9FDCCE1C211A220046DF0E /* PVGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697117C8C0DE0019F6D2 /* PVGame.m */; };
+		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
+		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -489,6 +497,10 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
+		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
+		BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConstants.m; sourceTree = "<group>"; };
+		BE1E266B1C22552800499BA0 /* PVAppConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppConstants.h; sourceTree = "<group>"; };
+		BE1E266C1C22552800499BA0 /* PVAppConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAppConstants.m; sourceTree = "<group>"; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCB81C210B9E0046DF0E /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		BE9FDCBB1C210B9F0046DF0E /* ServiceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceProvider.h; sourceTree = "<group>"; };
@@ -498,6 +510,8 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRecentGame+TopShelf.m"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+GroupConfig.h"; sourceTree = "<group>"; };
+		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+GroupConfig.m"; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -635,6 +649,8 @@
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
 				1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */,
 				1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */,
+				BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */,
+				BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */,
 			);
 			path = Emulator;
 			sourceTree = "<group>";
@@ -942,6 +958,8 @@
 				1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */,
 				1A9442551AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.h */,
 				1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */,
+				BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */,
+				BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -958,6 +976,8 @@
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
 				1AD481B61BA350A400FDA50A /* Supporting Files */,
+				BE1E266B1C22552800499BA0 /* PVAppConstants.h */,
+				BE1E266C1C22552800499BA0 /* PVAppConstants.m */,
 			);
 			path = ProvenanceTV;
 			sourceTree = "<group>";
@@ -1370,6 +1390,7 @@
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
+				BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
@@ -1446,12 +1467,15 @@
 				1AD481B81BA350A400FDA50A /* main.m in Sources */,
 				1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */,
 				1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
+				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
+				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
 				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				1A9938A31BBB02590050A2B7 /* PVRecentGame.m in Sources */,
+				BE1E266D1C22552800499BA0 /* PVAppConstants.m in Sources */,
 				1AD481F41BA3549A00FDA50A /* NSData+Hashing.m in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.m in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
@@ -1465,6 +1489,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE1E26691C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				1AD9AA3A1ACC988F00EC87A0 /* Provenance_Tests.m in Sources */,
 				1AD9AA481ACC99C900EC87A0 /* PVSNESControllerViewController.m in Sources */,
 				1AD9AA441ACC999000EC87A0 /* PVGameImporter.m in Sources */,
@@ -1483,9 +1508,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE1E266A1C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.m in Sources */,
+				BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.m in Sources */,
 				BE9FDCCB1C210CED0046DF0E /* PVRecentGame.m in Sources */,
+				BE1E266E1C22552800499BA0 /* PVAppConstants.m in Sources */,
 				BE9FDCCE1C211A220046DF0E /* PVGame.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2240,6 +2268,7 @@
 				BE9FDCC41C210B9F0046DF0E /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

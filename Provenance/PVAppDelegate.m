@@ -10,6 +10,10 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 
+#if TARGET_OS_TV
+#import "PVAppConstants.h"
+#endif
+
 @interface PVAppDelegate ()
 
 @end
@@ -57,7 +61,9 @@
             DLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
         }
     }
-    else if ([components.path isEqualToString:@"PlayController"] && [components.queryItems.firstObject.name isEqualToString:@"md5"]) {
+    else if ([components.path isEqualToString:PVGameControllerKey] &&
+             [components.queryItems.firstObject.name isEqualToString:PVGameMDSKey])
+    {
         self.shortcutItemMD5 = components.queryItems.firstObject.value;
     }
     

@@ -33,6 +33,8 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "PVControllerManager.h"
+#import "RLMRealmConfiguration+GroupConfig.h"
+#import "PVEmulatorConstants.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -81,8 +83,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
         RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
 #if TARGET_OS_TV
-        NSURL *container = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:@"group.muzi.provenance"];
-        NSString *path = [container.path stringByAppendingPathComponent:@"Library/Caches"];
+        NSString *path = nil;
+        if ([RLMRealmConfiguration supportsAppGroups]) {
+            path = [RLMRealmConfiguration appGroupPath];
+        }
+        else {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            path = paths.firstObject;
+        }
 #else
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *path = paths.firstObject;

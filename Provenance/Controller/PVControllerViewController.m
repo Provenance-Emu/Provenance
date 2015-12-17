@@ -16,6 +16,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "PVControllerManager.h"
 #import "PVEmulatorCore.h"
+#import "PVEmulatorConstants.h"
 
 @interface PVControllerViewController ()
 

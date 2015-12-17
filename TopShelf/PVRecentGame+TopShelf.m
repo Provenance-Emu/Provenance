@@ -7,12 +7,8 @@
 //
 
 #import "PVRecentGame+TopShelf.h"
-
-/* TODO
-- [ ] migrate DB to group container
-- [ ] test different emulators
-- [ ] gracefull fallback if no app group is specified
-*/
+#import "PVEmulatorConstants.h"
+#import "PVAppConstants.h"
 
 @implementation PVRecentGame (TopShelf)
 
@@ -23,7 +19,7 @@
     
     item.title = self.game.title;
     item.imageURL = [NSURL URLWithString:self.game.originalArtworkURL];
-    item.imageShape = TVContentItemImageShapeHDTV;
+    item.imageShape = self.imageType;
     item.displayURL = self.displayURL;
     item.lastAccessedDate = self.lastPlayedDate;
     
@@ -33,10 +29,25 @@
 - (NSURL *)displayURL
 {
     NSURLComponents *components = [[NSURLComponents alloc] init];
-    components.scheme = @"provenance";
-    components.path = @"PlayController";
-    components.queryItems = @[[[NSURLQueryItem alloc] initWithName:@"md5" value:self.game.md5Hash]];
+    components.scheme = PVAppURLKey;
+    components.path = PVGameControllerKey;
+    components.queryItems = @[[[NSURLQueryItem alloc] initWithName:PVGameMDSKey value:self.game.md5Hash]];
     
     return components.URL;
 }
+
+- (TVContentItemImageShape)imageType
+{
+    if ([self.game.systemIdentifier isEqualToString:PVNESSystemIdentifier] ||
+        [self.game.systemIdentifier isEqualToString:PVGenesisSystemIdentifier] ||
+        [self.game.systemIdentifier isEqualToString:PVMasterSystemSystemIdentifier]) {
+        return TVContentItemImageShapePoster;
+    }
+    else if ([self.game.systemIdentifier isEqualToString:PVGameGearSystemIdentifier]) {
+        return TVContentItemImageShapeSquare;
+    }
+
+    return TVContentItemImageShapeHDTV;
+}
+
 @end
