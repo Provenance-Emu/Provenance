@@ -8,7 +8,7 @@
 
 #import "PVAppConstants.h"
 
-NSString *const PVAppGroupId = @"group.muzi.provenance";
+NSString *const PVAppGroupId = @"";
 
 NSString *const PVGameControllerKey = @"PlayController";
 NSString *const PVGameMDSKey = @"md5";
