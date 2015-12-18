@@ -31,7 +31,7 @@
     NSURLComponents *components = [[NSURLComponents alloc] init];
     components.scheme = PVAppURLKey;
     components.path = PVGameControllerKey;
-    components.queryItems = @[[[NSURLQueryItem alloc] initWithName:PVGameMDSKey value:self.game.md5Hash]];
+    components.queryItems = @[[[NSURLQueryItem alloc] initWithName:PVGameMD5Key value:self.game.md5Hash]];
     
     return components.URL;
 }

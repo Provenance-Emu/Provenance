@@ -61,11 +61,13 @@
             DLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
         }
     }
+#if TARGET_OS_TV
     else if ([components.path isEqualToString:PVGameControllerKey] &&
-             [components.queryItems.firstObject.name isEqualToString:PVGameMDSKey])
+             [components.queryItems.firstObject.name isEqualToString:PVGameMD5Key])
     {
         self.shortcutItemMD5 = components.queryItems.firstObject.value;
     }
+#endif
     
     return YES;
 }
