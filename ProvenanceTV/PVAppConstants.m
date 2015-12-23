@@ -11,5 +11,5 @@
 NSString *const PVAppGroupId = @"";
 
 NSString *const PVGameControllerKey = @"PlayController";
-NSString *const PVGameMDSKey = @"md5";
+NSString *const PVGameMD5Key = @"md5";
 NSString *const PVAppURLKey = @"provenance";
