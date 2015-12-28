@@ -2,7 +2,7 @@
 An iOS Frontend for multiple emulators
 
 ###Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) And follow them _to the letter_. Any issues raised that cearly demonstrate that the instructions haven't been followed will be closed.
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) And follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
 ###Why 'Provenance'?
 
