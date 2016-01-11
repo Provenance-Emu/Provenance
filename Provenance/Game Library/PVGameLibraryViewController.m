@@ -33,6 +33,8 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "PVControllerManager.h"
+#import "RLMRealmConfiguration+GroupConfig.h"
+#import "PVEmulatorConstants.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -81,11 +83,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
         RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
 #if TARGET_OS_TV
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *path = nil;
+        if ([RLMRealmConfiguration supportsAppGroups]) {
+            path = [RLMRealmConfiguration appGroupPath];
+        }
+        else {
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            path = paths.firstObject;
+        }
 #else
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *path = paths.firstObject;
 #endif
-        [config setPath:[[paths firstObject] stringByAppendingPathComponent:@"default.realm"]];
+        [config setPath:[path stringByAppendingPathComponent:@"default.realm"]];
         [RLMRealmConfiguration setDefaultConfiguration:config];
         self.realm = [RLMRealm defaultRealm];
     }
@@ -112,14 +122,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleAppDidBecomeActive:(NSNotification *)note
 {
-#if !TARGET_OS_TV
-    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    if ([appDelegate shortcutItem])
-    {
-        [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
-        [appDelegate setShortcutItem:nil];
-    }
-#endif
+    [self loadGameFromShortcut];
 }
 
 - (void)viewDidLoad
@@ -189,14 +192,18 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [self setUpGameLibrary];
     }
 
-#if !TARGET_OS_TV
+    [self loadGameFromShortcut];
+}
+
+- (void)loadGameFromShortcut
+{
     PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-    if ([appDelegate shortcutItem])
+    
+    if ([appDelegate shortcutItemMD5])
     {
-        [self loadRecentGameFromShortcut:[appDelegate shortcutItem]];
-        [appDelegate setShortcutItem:nil];
+        [self loadRecentGameFromShortcut:[appDelegate shortcutItemMD5]];
+        [appDelegate setShortcutItemMD5:nil];
     }
-#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -785,7 +792,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)updateRecentGames:(PVGame *)game
 {
-#if !TARGET_OS_TV
     if (NSClassFromString(@"UIApplicationShortcutItem")) {
         RLMRealm *realm = [RLMRealm defaultRealm];
         [realm refresh];
@@ -813,48 +819,50 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [realm addObject:newRecent];
         [realm commitWriteTransaction];
 
-
-        [[UIApplication sharedApplication] setShortcutItems:nil];
-        NSMutableArray *shortcuts = [NSMutableArray array];
-        for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
-        {
-            if ([recentGame game])
-            {
-                UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
-                                                                                       localizedTitle:[[recentGame game] title]
-                                                                                    localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
-                                                                                                 icon:nil
-                                                                                             userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
-                [shortcuts addObject:shortcut];
-            }
-            else
-            {
-                [realm beginWriteTransaction];
-                [realm deleteObject:recentGame];
-                [realm commitWriteTransaction];
-            }
-        }
-        
-        [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+        [self registerRecentGames:recents];
     }
-#endif
 }
 
-#if !TARGET_OS_TV
-- (void)loadRecentGameFromShortcut:(UIApplicationShortcutItem *)shortcut
+- (void)registerRecentGames:(RLMResults *)recents
 {
-    if ([[shortcut type] isEqualToString:@"kRecentGameShortcut"])
+#if !TARGET_OS_TV
+
+    NSMutableArray *shortcuts = [NSMutableArray array];
+    RLMRealm *realm = [RLMRealm defaultRealm];
+
+    for (PVRecentGame *recentGame in [recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO])
     {
-        NSString *md5 = (NSString *)[shortcut userInfo][@"PVGameHash"];
-        if ([md5 length])
+        if ([recentGame game])
         {
-            PVRecentGame *recentGame = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", md5]] firstObject];
-            PVGame *game = [recentGame game];
-            [self loadGame:game];
+            UIApplicationShortcutItem *shortcut = [[UIApplicationShortcutItem alloc] initWithType:@"kRecentGameShortcut"
+                                                                                   localizedTitle:[[recentGame game] title]
+                                                                                localizedSubtitle:[[PVEmulatorConfiguration sharedInstance] nameForSystemIdentifier:[[recentGame game] systemIdentifier]]
+                                                                                             icon:nil
+                                                                                         userInfo:@{@"PVGameHash": [[recentGame game] md5Hash]}];
+            [shortcuts addObject:shortcut];
+        }
+        else
+        {
+            [realm beginWriteTransaction];
+            [realm deleteObject:recentGame];
+            [realm commitWriteTransaction];
         }
     }
-}
+    
+    [[UIApplication sharedApplication] setShortcutItems:shortcuts];
+    
 #endif
+}
+
+- (void)loadRecentGameFromShortcut:(NSString *)md5
+{
+    if ([md5 length])
+    {
+        PVRecentGame *recentGame = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", md5]] firstObject];
+        PVGame *game = [recentGame game];
+        [self loadGame:game];
+    }
+}
 
 - (void)longPressRecognized:(UILongPressGestureRecognizer *)recognizer
 {
