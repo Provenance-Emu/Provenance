@@ -658,14 +658,16 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)controllerPauseButtonPressed
 {
-	if (![self isShowingMenu])
-	{
-		[self showMenu:self];
-	}
-    else
-    {
-        [self hideMenu];
-    }
+	dispatch_async(dispatch_get_main_queue(), ^{
+		if (![self isShowingMenu])
+		{
+			[self showMenu:self];
+		}
+		else
+		{
+			[self hideMenu];
+		}
+	});
 }
 
 - (void)controllerDidConnect:(NSNotification *)note
