@@ -219,6 +219,8 @@
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
 		B3A849571C711507008A4D89 /* libPVStella.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849561C711507008A4D89 /* libPVStella.a */; };
 		B3C102401C71201200DD066C /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */; };
+		B3C1028B1C7141BE00DD066C /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */; };
+		B3C1028E1C71428500DD066C /* libPVStellaTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C1028C1C71427B00DD066C /* libPVStellaTV.a */; };
 		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26691C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
@@ -503,6 +505,7 @@
 		B3A849561C711507008A4D89 /* libPVStella.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVStella.a; path = "PVStella/build/Debug-iphoneos/libPVStella.a"; sourceTree = "<group>"; };
 		B3C1023E1C71201200DD066C /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
 		B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
+		B3C1028C1C71427B00DD066C /* libPVStellaTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVStellaTV.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/libPVStellaTV.a"; sourceTree = "<group>"; };
 		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
 		BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConstants.m; sourceTree = "<group>"; };
 		BE1E266B1C22552800499BA0 /* PVAppConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppConstants.h; sourceTree = "<group>"; };
@@ -592,6 +595,7 @@
 				1AD4840D1BA36C8C00FDA50A /* libPVGBATV.a in Frameworks */,
 				1AD4840E1BA36C8C00FDA50A /* libPVGBTV.a in Frameworks */,
 				1AD484101BA36C8C00FDA50A /* libPVNESTV.a in Frameworks */,
+				B3C1028E1C71428500DD066C /* libPVStellaTV.a in Frameworks */,
 				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
 				1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */,
 				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
@@ -716,6 +720,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C1028C1C71427B00DD066C /* libPVStellaTV.a */,
 				B3A849561C711507008A4D89 /* libPVStella.a */,
 				B3A849541C710DCC008A4D89 /* libPVStella.a */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
@@ -1468,6 +1473,7 @@
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				1AD482081BA354C400FDA50A /* PVButtonGroupOverlayView.m in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
+				B3C1028B1C7141BE00DD066C /* PVStellaControllerViewController.m in Sources */,
 				1AD4820A1BA354C400FDA50A /* JSDPad.m in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
@@ -1762,6 +1768,7 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					"$(SRCROOT)/PVNES/**",
+					"$(SRCROOT)/PVStella/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1820,6 +1827,7 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					"$(SRCROOT)/PVNES/**",
+					"$(SRCROOT)/PVStella/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1878,6 +1886,7 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					"$(SRCROOT)/PVNES/**",
+					"$(SRCROOT)/PVStella/**",
 				);
 				INFOPLIST_FILE = ProvenanceTV/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
