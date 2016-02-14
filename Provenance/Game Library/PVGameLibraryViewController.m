@@ -1034,11 +1034,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                          [self.renameOverlay removeFromSuperview];
                          self.renameOverlay = nil;
                      }];
-    
+#if !TARGET_OS_TV
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+#endif
     [self.renameTextField resignFirstResponder];
 }
 
