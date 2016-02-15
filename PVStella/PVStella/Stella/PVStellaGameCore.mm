@@ -38,7 +38,6 @@
 typedef                         uint32_t     stellabuffer_t;
 #define STELLA_WIDTH            160
 #define STELLA_HEIGHT           210
-#define STELLA_ASPECT           12,7
 #define STELLA_PITCH_SHIFT      2
 #define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
 #define STELLA_PIXEL_FORMAT     GL_RGBA
@@ -375,7 +374,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (CGSize)aspectSize
 {
-    return CGSizeMake(STELLA_ASPECT);
+    return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
 }
 
 //- (void)setupEmulation
