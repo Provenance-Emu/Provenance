@@ -35,14 +35,14 @@
 #include "libretro.h"
 
 // Size and screen buffer consants
-typedef                         uint32_t     stellabuffer_t;
+typedef                         uint16_t     stellabuffer_t;
 #define STELLA_WIDTH            320
 #define STELLA_HEIGHT           210
-#define STELLA_ASPECT           12,7
+#define STELLA_ASPECT           7,12
 #define STELLA_PITCH_SHIFT      2
-#define STELLA_PIXEL_TYPE       GL_UNSIGNED_INT
+#define STELLA_PIXEL_TYPE       GL_UNSIGNED_SHORT_5_6_5
 #define STELLA_PIXEL_FORMAT     GL_RGB
-#define STELLA_INTERNAL_FORMAT  GL_RGB8
+#define STELLA_INTERNAL_FORMAT  GL_RGB
 
 @interface PVStellaGameCore ()
 {
@@ -104,41 +104,67 @@ static void input_poll_callback(void)
 	//DLog(@"poll callback");
 }
 
-static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned id)
+static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
+    //DLog(@"polled input: port: %d device: %d id: %d", port, device, id);
+    
     __strong PVStellaGameCore *strongCurrent = _current;
-
-    if (port == 0 & device == RETRO_DEVICE_JOYPAD) {
-        return strongCurrent->_pad[0][id];
+    int16_t value = 0;
+    
+    if (port == 0 & device == RETRO_DEVICE_JOYPAD)
+    {
+//        if (strongCurrent.controller1)
+//        {
+//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+//        }
+        
+        if (value == 0)
+        {
+            value = strongCurrent->_pad[0][_id];
+        }
     }
-    else if(port == 1 & device == RETRO_DEVICE_JOYPAD) {
-        return strongCurrent->_pad[1][id];
+    else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
+    {
+//        if (strongCurrent.controller2)
+//        {
+//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
+//        }
+        
+        if (value == 0)
+        {
+            value = strongCurrent->_pad[1][_id];
+        }
     }
     
     strongCurrent = nil;
     
-    return 0;
+    return value;
 }
 
 static bool environment_callback(unsigned cmd, void *data)
 {
-    switch (cmd)
+    __strong PVStellaGameCore *strongCurrent = _current;
+    
+    switch(cmd)
     {
-        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY:
+        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
         {
-            // FIXME: Build a path in a more appropriate place
-            NSString *appSupportPath = [NSString pathWithComponents:@[
-                                        [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) lastObject],
-                                        @"OpenEmu", @"BIOS"]];
+            NSString *appSupportPath = [strongCurrent BIOSPath];
             
             *(const char **)data = [appSupportPath UTF8String];
             DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
-        default:
+        case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
+        {
+            break;
+        }
+        default :
             DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
     }
+    
+    strongCurrent = nil;
     
     return true;
 }
@@ -154,8 +180,8 @@ static void loadSaveFile(const char* path, int type)
         return;
     }
     
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
+    size_t size = stella_retro_get_memory_size(type);
+    void *data = stella_retro_get_memory_data(type);
     
     if (size == 0 || !data)
     {
@@ -176,8 +202,8 @@ static void loadSaveFile(const char* path, int type)
 
 static void writeSaveFile(const char* path, int type)
 {
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
+    size_t size = stella_retro_get_memory_size(type);
+    void *data = stella_retro_get_memory_data(type);
     
     if ( data && size > 0 )
     {
@@ -185,7 +211,7 @@ static void writeSaveFile(const char* path, int type)
         if ( file != NULL )
         {
             DLog(@"Saving state %s. Size: %d bytes.", path, (int)size);
-            retro_serialize(data, size);
+            stella_retro_serialize(data, size);
             if ( fwrite(data, sizeof(uint8_t), size, file) != size )
                 DLog(@"Did not save state properly.");
             fclose(file);
@@ -209,7 +235,7 @@ static void writeSaveFile(const char* path, int type)
     {
         if(_videoBuffer)
             free(_videoBuffer);
-        _videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * 2);
+        _videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * sizeof(stellabuffer_t));
     }
     
 	_current = self;
@@ -221,12 +247,12 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)executeFrame
 {
-    retro_run();
+    stella_retro_run();
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip
 {
-    retro_run();
+    stella_retro_run();
 }
 
 - (BOOL)loadFileAtPath: (NSString*) path
@@ -245,14 +271,14 @@ static void writeSaveFile(const char* path, int type)
     const char *meta = NULL;
     
     //memory.copy(data, size);
-    retro_set_environment(environment_callback);
-	retro_init();
+    stella_retro_set_environment(environment_callback);
+	stella_retro_init();
 	
-    retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    retro_set_video_refresh(video_callback);
-    retro_set_input_poll(input_poll_callback);
-    retro_set_input_state(input_state_callback);
+    stella_retro_set_audio_sample(audio_callback);
+    stella_retro_set_audio_sample_batch(audio_batch_callback);
+    stella_retro_set_video_refresh(video_callback);
+    stella_retro_set_input_poll(input_poll_callback);
+    stella_retro_set_input_state(input_state_callback);
     
     
     const char *fullPath = [path UTF8String];
@@ -263,7 +289,7 @@ static void writeSaveFile(const char* path, int type)
     info.size = size;
     info.meta = meta;
     
-    if (retro_load_game(&info))
+    if (stella_retro_load_game(&info))
     {
         if ([self.batterySavesPath length])
         {
@@ -275,13 +301,13 @@ static void writeSaveFile(const char* path, int type)
         }
         
         struct retro_system_av_info info;
-        retro_get_system_av_info(&info);
+        stella_retro_get_system_av_info(&info);
         
         _frameInterval = info.timing.fps;
         _sampleRate = info.timing.sample_rate;
         
-        retro_get_region();
-        retro_run();
+        stella_retro_get_region();
+        stella_retro_run();
         
         return YES;
     }
@@ -291,8 +317,8 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)loadSaveFile:(NSString *)path forType:(int)type
 {
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
+    size_t size = stella_retro_get_memory_size(type);
+    void *ramData = stella_retro_get_memory_data(type);
     
     if (size == 0 || !ramData)
     {
@@ -310,12 +336,12 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)writeSaveFile:(NSString *)path forType:(int)type
 {
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
+    size_t size = stella_retro_get_memory_size(type);
+    void *ramData = stella_retro_get_memory_data(type);
     
     if (ramData && (size > 0))
     {
-        retro_serialize(ramData, size);
+        stella_retro_serialize(ramData, size);
         NSData *data = [NSData dataWithBytes:ramData length:size];
         BOOL success = [data writeToFile:path atomically:YES];
         if (!success)
@@ -358,7 +384,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)resetEmulation
 {
-    retro_reset();
+    stella_retro_reset();
 }
 
 - (void)stopEmulation
@@ -375,8 +401,8 @@ static void writeSaveFile(const char* path, int type)
     double delayInSeconds = 0.1;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        retro_unload_game();
-        retro_deinit();
+        stella_retro_unload_game();
+        stella_retro_deinit();
     });
 }
 
@@ -412,7 +438,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (NSUInteger)channelCount
 {
-    return 2;
+    return 1;
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName

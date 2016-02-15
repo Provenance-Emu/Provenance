@@ -259,33 +259,33 @@ extern "C" {
     
     // Sets callbacks. retro_set_environment() is guaranteed to be called before retro_init().
     // The rest of the set_* functions are guaranteed to have been called before the first call to retro_run() is made.
-    void retro_set_environment(retro_environment_t);
-    void retro_set_video_refresh(retro_video_refresh_t);
-    void retro_set_audio_sample(retro_audio_sample_t);
-    void retro_set_audio_sample_batch(retro_audio_sample_batch_t);
-    void retro_set_input_poll(retro_input_poll_t);
-    void retro_set_input_state(retro_input_state_t);
+    void stella_retro_set_environment(retro_environment_t);
+    void stella_retro_set_video_refresh(retro_video_refresh_t);
+    void stella_retro_set_audio_sample(retro_audio_sample_t);
+    void stella_retro_set_audio_sample_batch(retro_audio_sample_batch_t);
+    void stella_retro_set_input_poll(retro_input_poll_t);
+    void stella_retro_set_input_state(retro_input_state_t);
     
     // Library global initialization/deinitialization.
-    void retro_init(void);
-    void retro_deinit(void);
+    void stella_retro_init(void);
+    void stella_retro_deinit(void);
     
     // Must return RETRO_API_VERSION. Used to validate ABI compatibility when the API is revised.
-    unsigned retro_api_version(void);
+    unsigned stella_retro_api_version(void);
     
     // Gets statically known system info. Pointers provided in *info must be statically allocated.
     // Can be called at any time, even before retro_init().
-    void retro_get_system_info(struct retro_system_info *info);
+    void stella_retro_get_system_info(struct retro_system_info *info);
     
     // Gets information about system audio/video timings and geometry.
     // Can be called only after retro_load_game() has successfully completed.
-    void retro_get_system_av_info(struct retro_system_av_info *info);
+    void stella_retro_get_system_av_info(struct retro_system_av_info *info);
     
     // Sets device to be used for player 'port'.
-    void retro_set_controller_port_device(unsigned port, unsigned device);
+    void stella_retro_set_controller_port_device(unsigned port, unsigned device);
     
     // Resets the current game.
-    void retro_reset(void);
+    void stella_retro_reset(void);
     
     // Runs the game for one video frame.
     // During retro_run(), input_poll callback must be called at least once.
@@ -293,38 +293,38 @@ extern "C" {
     // If a frame is not rendered for reasons where a game "dropped" a frame,
     // this still counts as a frame, and retro_run() should explicitly dupe a frame if GET_CAN_DUPE returns true.
     // In this case, the video callback can take a NULL argument for data.
-    void retro_run(void);
+    void stella_retro_run(void);
     
     // Returns the amount of data the implementation requires to serialize internal state (save states).
     // Beetween calls to retro_load_game() and retro_unload_game(), the returned size is never allowed to be larger than a previous returned value, to
     // ensure that the frontend can allocate a save state buffer once.
-    size_t retro_serialize_size(void);
+    size_t stella_retro_serialize_size(void);
     
     // Serializes internal state. If failed, or size is lower than retro_serialize_size(), it should return false, true otherwise.
-    bool retro_serialize(void *data, size_t size);
-    bool retro_unserialize(const void *data, size_t size);
+    bool stella_retro_serialize(void *data, size_t size);
+    bool stella_retro_unserialize(const void *data, size_t size);
     
-    void retro_cheat_reset(void);
-    void retro_cheat_set(unsigned index, bool enabled, const char *code);
+    void stella_retro_cheat_reset(void);
+    void stella_retro_cheat_set(unsigned index, bool enabled, const char *code);
     
     // Loads a game.
-    bool retro_load_game(const struct retro_game_info *game);
+    bool stella_retro_load_game(const struct retro_game_info *game);
     
     // Loads a "special" kind of game. Should not be used except in extreme cases.
-    bool retro_load_game_special(
+    bool stella_retro_load_game_special(
                                  unsigned game_type,
                                  const struct retro_game_info *info, size_t num_info
                                  );
     
     // Unloads a currently loaded game.
-    void retro_unload_game(void);
+    void stella_retro_unload_game(void);
     
     // Gets region of game.
-    unsigned retro_get_region(void);
+    unsigned stella_retro_get_region(void);
     
     // Gets region of memory.
-    void *retro_get_memory_data(unsigned id);
-    size_t retro_get_memory_size(unsigned id);
+    void *stella_retro_get_memory_data(unsigned id);
+    size_t stella_retro_get_memory_size(unsigned id);
     
 #ifdef __cplusplus
 }

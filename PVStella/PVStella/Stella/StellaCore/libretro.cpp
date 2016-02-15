@@ -73,14 +73,14 @@ static retro_environment_t environ_cb;
 static retro_audio_sample_t audio_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
 
-void retro_set_environment(retro_environment_t cb) { environ_cb = cb; }
-void retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
-void retro_set_audio_sample(retro_audio_sample_t cb) { audio_cb = cb; }
-void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_batch_cb = cb; }
-void retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
-void retro_set_input_state(retro_input_state_t cb) { input_state_cb = cb; }
+void stella_retro_set_environment(retro_environment_t cb) { environ_cb = cb; }
+void stella_retro_set_video_refresh(retro_video_refresh_t cb) { video_cb = cb; }
+void stella_retro_set_audio_sample(retro_audio_sample_t cb) { audio_cb = cb; }
+void stella_retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_batch_cb = cb; }
+void stella_retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
+void stella_retro_set_input_state(retro_input_state_t cb) { input_state_cb = cb; }
 
-static void update_input()
+static void stella_update_input()
 {
 
     if (!input_poll_cb)
@@ -127,7 +127,7 @@ static void update_input()
 
 static struct retro_system_av_info g_av_info;
 
-void retro_get_system_info(struct retro_system_info *info)
+void stella_retro_get_system_info(struct retro_system_info *info)
 {
     memset(info, 0, sizeof(*info));
 	info->library_name = "Stella";
@@ -136,7 +136,7 @@ void retro_get_system_info(struct retro_system_info *info)
 	info->valid_extensions = "a26|A26";
 }
 
-void retro_get_system_av_info(struct retro_system_av_info *info)
+void stella_retro_get_system_av_info(struct retro_system_av_info *info)
 {
     memset(info, 0, sizeof(*info));
     // Just assume NTSC for now. TODO: Verify FPS.
@@ -149,19 +149,19 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
     info->geometry.aspect_ratio = 4.0 / 3.0;
 }
 
-void retro_set_controller_port_device(unsigned port, unsigned device)
+void stella_retro_set_controller_port_device(unsigned port, unsigned device)
 {
    (void)port;
    (void)device;
 }
 
-size_t retro_serialize_size(void) 
+size_t stella_retro_serialize_size(void)
 { 
 	return 0xfc080;
 	//return 0;
 }
 
-bool retro_serialize(void *data, size_t size)
+bool stella_retro_serialize(void *data, size_t size)
 { 
     //if (size != STATE_SIZE)
     //    return false;
@@ -178,7 +178,7 @@ bool retro_serialize(void *data, size_t size)
     return false;
 }
 
-bool retro_unserialize(const void *data, size_t size)
+bool stella_retro_unserialize(const void *data, size_t size)
 {
     //if (size != STATE_SIZE)
     //    return false;
@@ -195,17 +195,17 @@ bool retro_unserialize(const void *data, size_t size)
     return true;
 }
 
-void retro_cheat_reset(void)
+void stella_retro_cheat_reset(void)
 {}
 
-void retro_cheat_set(unsigned index, bool enabled, const char *code)
+void stella_retro_cheat_set(unsigned index, bool enabled, const char *code)
 {
    (void)index;
    (void)enabled;
    (void)code;
 }
 
-bool retro_load_game(const struct retro_game_info *info)
+bool stella_retro_load_game(const struct retro_game_info *info)
 {
     stella = new Stella();
     const char *full_path;
@@ -245,7 +245,7 @@ bool retro_load_game(const struct retro_game_info *info)
    return true;
 }
 
-bool retro_load_game_special(unsigned game_type, const struct retro_game_info *info, size_t num_info)
+bool stella_retro_load_game_special(unsigned game_type, const struct stella_retro_game_info *info, size_t num_info)
 {
    (void)game_type;
    (void)info;
@@ -253,54 +253,54 @@ bool retro_load_game_special(unsigned game_type, const struct retro_game_info *i
    return false;
 }
 
-void retro_unload_game(void) 
+void stella_retro_unload_game(void)
 {
 
 }
 
-unsigned retro_get_region(void)
+unsigned stella_retro_get_region(void)
 {
     //stella->GameConsole->getFramerate();
     return RETRO_REGION_NTSC;
 }
 
-unsigned retro_api_version(void)
+unsigned stella_retro_api_version(void)
 {
     return RETRO_API_VERSION;
 }
 
-void *retro_get_memory_data(unsigned id)
+void *stella_retro_get_memory_data(unsigned id)
 {
     return NULL;
 }
 
-size_t retro_get_memory_size(unsigned id)
+size_t stella_retro_get_memory_size(unsigned id)
 {
     return 0;
 }
 
-void retro_init(void)
+void stella_retro_init(void)
 {
     unsigned level = 3;
     environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 }
 
-void retro_deinit(void)
+void stella_retro_deinit(void)
 {
     delete stella;
     stella = 0;
 	//free(frame_buffer);
 }
 
-void retro_reset(void)
+void stella_retro_reset(void)
 {
 	stella->GameConsole->system().reset();
 }
 
-void retro_run(void)
+void stella_retro_run(void)
 {
     //INPUT
-    update_input();
+    stella_update_input();
     
     //EMULATE
     stella->GameConsole->tia().update();
