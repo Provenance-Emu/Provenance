@@ -35,14 +35,14 @@
 #include "libretro.h"
 
 // Size and screen buffer consants
-typedef                         uint16_t     stellabuffer_t;
-#define STELLA_WIDTH            320
+typedef                         uint32_t     stellabuffer_t;
+#define STELLA_WIDTH            160
 #define STELLA_HEIGHT           210
-#define STELLA_ASPECT           7,12
+#define STELLA_ASPECT           12,7
 #define STELLA_PITCH_SHIFT      2
-#define STELLA_PIXEL_TYPE       GL_UNSIGNED_SHORT_5_6_5
-#define STELLA_PIXEL_FORMAT     GL_RGB
-#define STELLA_INTERNAL_FORMAT  GL_RGB
+#define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
+#define STELLA_PIXEL_FORMAT     GL_RGBA
+#define STELLA_INTERNAL_FORMAT  GL_RGBA
 
 @interface PVStellaGameCore ()
 {
