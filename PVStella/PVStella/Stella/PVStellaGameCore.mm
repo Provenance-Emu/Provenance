@@ -437,7 +437,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (NSUInteger)channelCount
 {
-    return 1;
+    return 2;
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName
