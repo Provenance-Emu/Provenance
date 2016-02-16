@@ -52,17 +52,17 @@
 {
 	[super viewDidLoad];
 	
-	[self setPreferredFramesPerSecond:60];
-	
-	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-	[EAGLContext setCurrentContext:self.glContext];
-	
-	GLKView *view = (GLKView *)self.view;
-    view.context = self.glContext;
-	
-	self.effect = [[GLKBaseEffect alloc] init];
-	
-	[self setupTexture];
+//	[self setPreferredFramesPerSecond:60];
+//	
+//	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+//	[EAGLContext setCurrentContext:self.glContext];
+//	
+//	GLKView *view = (GLKView *)self.view;
+//    view.context = self.glContext;
+//	
+//	self.effect = [[GLKBaseEffect alloc] init];
+//	
+//	[self setupTexture];
 }
 
 - (void)viewWillLayoutSubviews

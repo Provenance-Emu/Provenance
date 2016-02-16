@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\module.c" />
+    <ClCompile Include="..\..\osal_dynamiclib_win32.c" />
+    <ClCompile Include="..\..\su.c" />
+    <ClCompile Include="..\..\vu\add.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vu\divide.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vu\logical.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vu\multiply.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vu\select.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\vu\vu.c">
+      <Filter>vu</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\module.h" />
+    <ClInclude Include="..\..\osal_dynamiclib.h" />
+    <ClInclude Include="..\..\rsp.h" />
+    <ClInclude Include="..\..\su.h" />
+    <ClInclude Include="..\..\vu\add.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\divide.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\logical.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\pack.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\select.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\vu.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\vu\multiply.h">
+      <Filter>vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\my_types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="vu">
+      <UniqueIdentifier>{5367992e-d5b9-48af-a0ba-f72accc42921}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

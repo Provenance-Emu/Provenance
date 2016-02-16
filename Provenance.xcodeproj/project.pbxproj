@@ -221,6 +221,8 @@
 		B33115831C72FC7700E9AD14 /* mupen64plusRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33115851C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */; };
 		B33115861C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3584CBF1C730C200031EC77 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */; };
+		B3584CC01C730C200031EC77 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26691C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
@@ -285,6 +287,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */,
+				B3584CC01C730C200031EC77 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33115861C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Embed Frameworks */,
 				B33115831C72FC7700E9AD14 /* mupen64plusRice.framework in Embed Frameworks */,
 			);
@@ -505,7 +508,7 @@
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
 		B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = mupen64plusRice.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/mupen64plusRice.framework"; sourceTree = "<absolute>"; };
 		B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVMupen64PlusDynamic.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMupen64PlusDynamic.framework"; sourceTree = "<absolute>"; };
-		B3C102D41C72A3E700DD066C /* libPVMupen64Plus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVMupen64Plus.a; path = "PVMupen64Plus/build/Debug-iphoneos/libPVMupen64Plus.a"; sourceTree = "<group>"; };
+		B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVRSPCXD4.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVRSPCXD4.framework"; sourceTree = "<absolute>"; };
 		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
 		BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConstants.m; sourceTree = "<group>"; };
 		BE1E266B1C22552800499BA0 /* PVAppConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppConstants.h; sourceTree = "<group>"; };
@@ -568,6 +571,7 @@
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
+				B3584CBF1C730C200031EC77 /* PVRSPCXD4.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
@@ -695,8 +699,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */,
-				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
+				B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -722,7 +725,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3C102D41C72A3E700DD066C /* libPVMupen64Plus.a */,
+				B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */,
+				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 				BE9FDCB81C210B9E0046DF0E /* TVServices.framework */,

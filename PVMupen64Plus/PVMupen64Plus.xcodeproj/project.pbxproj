@@ -143,6 +143,28 @@
 		94D58CAC16BE5DAD0093CD72 /* Glide64mk2.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94D58BE716BE33EC0093CD72 /* Glide64mk2.ini */; };
 		B33115771C72F67800E9AD14 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103131C72AA3200DD066C /* libz.tbd */; };
 		B33115791C72F6E500E9AD14 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33115781C72F6E500E9AD14 /* libPVSupport.a */; };
+		B331158F1C7309C200E9AD14 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B33115BB1C730A2B00E9AD14 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115991C730A2B00E9AD14 /* module.c */; };
+		B33115BC1C730A2B00E9AD14 /* module.h in Headers */ = {isa = PBXBuildFile; fileRef = B331159A1C730A2B00E9AD14 /* module.h */; };
+		B33115BD1C730A2B00E9AD14 /* my_types.h in Headers */ = {isa = PBXBuildFile; fileRef = B331159B1C730A2B00E9AD14 /* my_types.h */; };
+		B33115BE1C730A2B00E9AD14 /* osal_dynamiclib.h in Headers */ = {isa = PBXBuildFile; fileRef = B331159C1C730A2B00E9AD14 /* osal_dynamiclib.h */; };
+		B33115BF1C730A2B00E9AD14 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B331159D1C730A2B00E9AD14 /* osal_dynamiclib_unix.c */; };
+		B33115C51C730A2B00E9AD14 /* rsp.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115A61C730A2B00E9AD14 /* rsp.h */; };
+		B33115C61C730A2B00E9AD14 /* su.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115A71C730A2B00E9AD14 /* su.c */; };
+		B33115C71C730A2B00E9AD14 /* su.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115A81C730A2B00E9AD14 /* su.h */; };
+		B33115C81C730A2B00E9AD14 /* add.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115AA1C730A2B00E9AD14 /* add.c */; };
+		B33115C91C730A2B00E9AD14 /* add.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115AB1C730A2B00E9AD14 /* add.h */; };
+		B33115CA1C730A2B00E9AD14 /* divide.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115AC1C730A2B00E9AD14 /* divide.c */; };
+		B33115CB1C730A2B00E9AD14 /* divide.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115AD1C730A2B00E9AD14 /* divide.h */; };
+		B33115CC1C730A2B00E9AD14 /* logical.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115AE1C730A2B00E9AD14 /* logical.c */; };
+		B33115CD1C730A2B00E9AD14 /* logical.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115AF1C730A2B00E9AD14 /* logical.h */; };
+		B33115CE1C730A2B00E9AD14 /* multiply.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115B01C730A2B00E9AD14 /* multiply.c */; };
+		B33115CF1C730A2B00E9AD14 /* multiply.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B11C730A2B00E9AD14 /* multiply.h */; };
+		B33115D01C730A2B00E9AD14 /* pack.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B21C730A2B00E9AD14 /* pack.h */; };
+		B33115D11C730A2B00E9AD14 /* select.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115B31C730A2B00E9AD14 /* select.c */; };
+		B33115D21C730A2B00E9AD14 /* select.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B41C730A2B00E9AD14 /* select.h */; };
+		B33115D31C730A2B00E9AD14 /* vu.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115B51C730A2B00E9AD14 /* vu.c */; };
+		B33115D41C730A2B00E9AD14 /* vu.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B61C730A2B00E9AD14 /* vu.h */; };
 		B37EFEF91C72E6CD00857158 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
 		B37EFEFA1C72E6CD00857158 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
 		B37EFEFB1C72E6CD00857158 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
@@ -920,6 +942,39 @@
 		B331157E1C72FBE100E9AD14 /* interpreter_special.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter_special.def; sourceTree = "<group>"; };
 		B331157F1C72FBE100E9AD14 /* interpreter_tlb.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter_tlb.def; sourceTree = "<group>"; };
 		B33115801C72FBE100E9AD14 /* interpreter.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter.def; sourceTree = "<group>"; };
+		B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRSPCXD4.h; sourceTree = "<group>"; };
+		B33115901C7309C200E9AD14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B33115951C730A2B00E9AD14 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		B33115961C730A2B00E9AD14 /* make.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = make.sh; sourceTree = "<group>"; };
+		B33115971C730A2B00E9AD14 /* make_w32.cmd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = make_w32.cmd; sourceTree = "<group>"; };
+		B33115981C730A2B00E9AD14 /* make_w64.cmd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = make_w64.cmd; sourceTree = "<group>"; };
+		B33115991C730A2B00E9AD14 /* module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = module.c; sourceTree = "<group>"; };
+		B331159A1C730A2B00E9AD14 /* module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = module.h; sourceTree = "<group>"; };
+		B331159B1C730A2B00E9AD14 /* my_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = my_types.h; sourceTree = "<group>"; };
+		B331159C1C730A2B00E9AD14 /* osal_dynamiclib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osal_dynamiclib.h; sourceTree = "<group>"; };
+		B331159D1C730A2B00E9AD14 /* osal_dynamiclib_unix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_unix.c; sourceTree = "<group>"; };
+		B331159E1C730A2B00E9AD14 /* osal_dynamiclib_win32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_win32.c; sourceTree = "<group>"; };
+		B33115A11C730A2B00E9AD14 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B33115A31C730A2B00E9AD14 /* mupen64plus-rsp-cxd4.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "mupen64plus-rsp-cxd4.vcxproj"; sourceTree = "<group>"; };
+		B33115A41C730A2B00E9AD14 /* mupen64plus-rsp-cxd4.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "mupen64plus-rsp-cxd4.vcxproj.filters"; sourceTree = "<group>"; };
+		B33115A51C730A2B00E9AD14 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		B33115A61C730A2B00E9AD14 /* rsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rsp.h; sourceTree = "<group>"; };
+		B33115A71C730A2B00E9AD14 /* su.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = su.c; sourceTree = "<group>"; };
+		B33115A81C730A2B00E9AD14 /* su.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = su.h; sourceTree = "<group>"; };
+		B33115AA1C730A2B00E9AD14 /* add.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = add.c; sourceTree = "<group>"; };
+		B33115AB1C730A2B00E9AD14 /* add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = add.h; sourceTree = "<group>"; };
+		B33115AC1C730A2B00E9AD14 /* divide.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = divide.c; sourceTree = "<group>"; };
+		B33115AD1C730A2B00E9AD14 /* divide.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = divide.h; sourceTree = "<group>"; };
+		B33115AE1C730A2B00E9AD14 /* logical.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = logical.c; sourceTree = "<group>"; };
+		B33115AF1C730A2B00E9AD14 /* logical.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = logical.h; sourceTree = "<group>"; };
+		B33115B01C730A2B00E9AD14 /* multiply.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = multiply.c; sourceTree = "<group>"; };
+		B33115B11C730A2B00E9AD14 /* multiply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = multiply.h; sourceTree = "<group>"; };
+		B33115B21C730A2B00E9AD14 /* pack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pack.h; sourceTree = "<group>"; };
+		B33115B31C730A2B00E9AD14 /* select.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = select.c; sourceTree = "<group>"; };
+		B33115B41C730A2B00E9AD14 /* select.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = select.h; sourceTree = "<group>"; };
+		B33115B51C730A2B00E9AD14 /* vu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vu.c; sourceTree = "<group>"; };
+		B33115B61C730A2B00E9AD14 /* vu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vu.h; sourceTree = "<group>"; };
 		B37EFEF01C72E63300857158 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mupen64plusRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFEF21C72E63300857158 /* mupen64plus-video-rice-dynamic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mupen64plus-video-rice-dynamic.h"; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1092,6 +1147,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B33115881C7309C200E9AD14 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B37EFEEC1C72E63300857158 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1138,6 +1200,7 @@
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				B37EFEF11C72E63300857158 /* mupen64plus-video-rice-dynamic */,
 				B37EFF391C72F43400857158 /* PVMupen64PlusDynamic */,
+				B331158D1C7309C200E9AD14 /* PVRSPCXD4 */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				3D208CB511824B5E00BEAA42 /* mupen64plus-Info.plist */,
 			);
@@ -1205,6 +1268,7 @@
 				B3C102931C729B4200DD066C /* libPVMupen64Plus.a */,
 				B37EFEF01C72E63300857158 /* mupen64plusRice.framework */,
 				B37EFF381C72F43300857158 /* PVMupen64PlusDynamic.framework */,
+				B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1216,6 +1280,7 @@
 				94E6B83D166C2A0A00082F27 /* mupen64plus-audio-sdl */,
 				94E6B84F166C2A0A00082F27 /* mupen64plus-input-sdl */,
 				94E6B869166C2A0A00082F27 /* mupen64plus-rsp-hle */,
+				B33115941C730A2B00E9AD14 /* mupen64plus-rsp-cxd4 */,
 				94D58BE516BE33EC0093CD72 /* mupen64plus-video-glide64mk2 */,
 				94E6B87C166C2A0A00082F27 /* mupen64plus-video-rice */,
 				3D208CC611824C2200BEAA42 /* mupen64plus-core */,
@@ -2286,6 +2351,84 @@
 			path = liblinux;
 			sourceTree = "<group>";
 		};
+		B331158D1C7309C200E9AD14 /* PVRSPCXD4 */ = {
+			isa = PBXGroup;
+			children = (
+				B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */,
+				B33115901C7309C200E9AD14 /* Info.plist */,
+			);
+			path = PVRSPCXD4;
+			sourceTree = "<group>";
+		};
+		B33115941C730A2B00E9AD14 /* mupen64plus-rsp-cxd4 */ = {
+			isa = PBXGroup;
+			children = (
+				B33115951C730A2B00E9AD14 /* COPYING */,
+				B33115961C730A2B00E9AD14 /* make.sh */,
+				B33115971C730A2B00E9AD14 /* make_w32.cmd */,
+				B33115981C730A2B00E9AD14 /* make_w64.cmd */,
+				B33115991C730A2B00E9AD14 /* module.c */,
+				B331159A1C730A2B00E9AD14 /* module.h */,
+				B331159B1C730A2B00E9AD14 /* my_types.h */,
+				B331159C1C730A2B00E9AD14 /* osal_dynamiclib.h */,
+				B331159D1C730A2B00E9AD14 /* osal_dynamiclib_unix.c */,
+				B331159E1C730A2B00E9AD14 /* osal_dynamiclib_win32.c */,
+				B331159F1C730A2B00E9AD14 /* projects */,
+				B33115A51C730A2B00E9AD14 /* README.md */,
+				B33115A61C730A2B00E9AD14 /* rsp.h */,
+				B33115A71C730A2B00E9AD14 /* su.c */,
+				B33115A81C730A2B00E9AD14 /* su.h */,
+				B33115A91C730A2B00E9AD14 /* vu */,
+			);
+			path = "mupen64plus-rsp-cxd4";
+			sourceTree = "<group>";
+		};
+		B331159F1C730A2B00E9AD14 /* projects */ = {
+			isa = PBXGroup;
+			children = (
+				B33115A01C730A2B00E9AD14 /* unix */,
+				B33115A21C730A2B00E9AD14 /* VisualStudio2013 */,
+			);
+			path = projects;
+			sourceTree = "<group>";
+		};
+		B33115A01C730A2B00E9AD14 /* unix */ = {
+			isa = PBXGroup;
+			children = (
+				B33115A11C730A2B00E9AD14 /* Makefile */,
+			);
+			path = unix;
+			sourceTree = "<group>";
+		};
+		B33115A21C730A2B00E9AD14 /* VisualStudio2013 */ = {
+			isa = PBXGroup;
+			children = (
+				B33115A31C730A2B00E9AD14 /* mupen64plus-rsp-cxd4.vcxproj */,
+				B33115A41C730A2B00E9AD14 /* mupen64plus-rsp-cxd4.vcxproj.filters */,
+			);
+			path = VisualStudio2013;
+			sourceTree = "<group>";
+		};
+		B33115A91C730A2B00E9AD14 /* vu */ = {
+			isa = PBXGroup;
+			children = (
+				B33115AA1C730A2B00E9AD14 /* add.c */,
+				B33115AB1C730A2B00E9AD14 /* add.h */,
+				B33115AC1C730A2B00E9AD14 /* divide.c */,
+				B33115AD1C730A2B00E9AD14 /* divide.h */,
+				B33115AE1C730A2B00E9AD14 /* logical.c */,
+				B33115AF1C730A2B00E9AD14 /* logical.h */,
+				B33115B01C730A2B00E9AD14 /* multiply.c */,
+				B33115B11C730A2B00E9AD14 /* multiply.h */,
+				B33115B21C730A2B00E9AD14 /* pack.h */,
+				B33115B31C730A2B00E9AD14 /* select.c */,
+				B33115B41C730A2B00E9AD14 /* select.h */,
+				B33115B51C730A2B00E9AD14 /* vu.c */,
+				B33115B61C730A2B00E9AD14 /* vu.h */,
+			);
+			path = vu;
+			sourceTree = "<group>";
+		};
 		B37EFEF11C72E63300857158 /* mupen64plus-video-rice-dynamic */ = {
 			isa = PBXGroup;
 			children = (
@@ -2431,6 +2574,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		B33115891C7309C200E9AD14 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B33115C71C730A2B00E9AD14 /* su.h in Headers */,
+				B33115BD1C730A2B00E9AD14 /* my_types.h in Headers */,
+				B33115BE1C730A2B00E9AD14 /* osal_dynamiclib.h in Headers */,
+				B33115D01C730A2B00E9AD14 /* pack.h in Headers */,
+				B33115CB1C730A2B00E9AD14 /* divide.h in Headers */,
+				B33115CF1C730A2B00E9AD14 /* multiply.h in Headers */,
+				B33115CD1C730A2B00E9AD14 /* logical.h in Headers */,
+				B33115BC1C730A2B00E9AD14 /* module.h in Headers */,
+				B331158F1C7309C200E9AD14 /* PVRSPCXD4.h in Headers */,
+				B33115C91C730A2B00E9AD14 /* add.h in Headers */,
+				B33115D21C730A2B00E9AD14 /* select.h in Headers */,
+				B33115D41C730A2B00E9AD14 /* vu.h in Headers */,
+				B33115C51C730A2B00E9AD14 /* rsp.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B37EFEED1C72E63300857158 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -2518,6 +2681,24 @@
 			productReference = 94D58BE416BE327A0093CD72 /* mupen64plus-video-glide64mk2.so */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		B331158B1C7309C200E9AD14 /* PVRSPCXD4 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B33115911C7309C200E9AD14 /* Build configuration list for PBXNativeTarget "PVRSPCXD4" */;
+			buildPhases = (
+				B33115871C7309C200E9AD14 /* Sources */,
+				B33115881C7309C200E9AD14 /* Frameworks */,
+				B33115891C7309C200E9AD14 /* Headers */,
+				B331158A1C7309C200E9AD14 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVRSPCXD4;
+			productName = PVRSPCXD4;
+			productReference = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		B37EFEEF1C72E63300857158 /* mupen64plusRice */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "mupen64plusRice" */;
@@ -2581,6 +2762,10 @@
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
+					B331158B1C7309C200E9AD14 = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 9DSA2J9CHZ;
+					};
 					B37EFEEF1C72E63300857158 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = 9DSA2J9CHZ;
@@ -2612,6 +2797,7 @@
 				94D58BAD16BE327A0093CD72 /* mupen64plus-video-glide64mk2 */,
 				B3C102921C729B4200DD066C /* PVMupen64Plus */,
 				B37EFF371C72F43300857158 /* PVMupen64PlusDynamic */,
+				B331158B1C7309C200E9AD14 /* PVRSPCXD4 */,
 			);
 		};
 /* End PBXProject section */
@@ -2631,6 +2817,13 @@
 				94D58CAC16BE5DAD0093CD72 /* Glide64mk2.ini in Resources */,
 				3D208E4B11824D7A00BEAA42 /* lgpl-license in Resources */,
 				3D208E4C11824D7B00BEAA42 /* gpl-license in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B331158A1C7309C200E9AD14 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2790,6 +2983,22 @@
 				94D58C8816BE33EC0093CD72 /* osal_dynamiclib_unix.c in Sources */,
 				94D58BDB16BE327A0093CD72 /* SDLStubs.m in Sources */,
 				942130D91793E96600E57482 /* glitchmain.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B33115871C7309C200E9AD14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B33115D11C730A2B00E9AD14 /* select.c in Sources */,
+				B33115C81C730A2B00E9AD14 /* add.c in Sources */,
+				B33115BF1C730A2B00E9AD14 /* osal_dynamiclib_unix.c in Sources */,
+				B33115CC1C730A2B00E9AD14 /* logical.c in Sources */,
+				B33115BB1C730A2B00E9AD14 /* module.c in Sources */,
+				B33115D31C730A2B00E9AD14 /* vu.c in Sources */,
+				B33115CA1C730A2B00E9AD14 /* divide.c in Sources */,
+				B33115C61C730A2B00E9AD14 /* su.c in Sources */,
+				B33115CE1C730A2B00E9AD14 /* multiply.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3401,6 +3610,123 @@
 			};
 			name = Release;
 		};
+		B33115921C7309C200E9AD14 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-mmmx",
+					"-msse2",
+					"-fPIC",
+					"-D__unix__",
+					"-DM64P_PLUGIN_API",
+					"-DARCH_MIN_SSE2",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B33115931C7309C200E9AD14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-mmmx",
+					"-msse2",
+					"-fPIC",
+					"-D__unix__",
+					"-DM64P_PLUGIN_API",
+					"-DARCH_MIN_SSE2",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		B37EFEF51C72E63300857158 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3839,6 +4165,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B33115911C7309C200E9AD14 /* Build configuration list for PBXNativeTarget "PVRSPCXD4" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B33115921C7309C200E9AD14 /* Debug */,
+				B33115931C7309C200E9AD14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "mupen64plusRice" */ = {
 			isa = XCConfigurationList;
