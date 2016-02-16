@@ -1,0 +1,5 @@
+= Mupen64Plus v2.0 API =
+
+The interface between Mupen64Plus and its compatible plugins is (slightly) different from other N64 emulators. The new API is described in detail in the documentation here
+
+[[Mupen64Plus v2.0 Core API v1.0|Mupen64Plus v2.0 API]]

@@ -45,4 +45,4 @@ NSString * const PVSG1000SystemIdentifier       = @"com.provenance.sg1000";
 NSString * const PV2600SystemIdentifier         = @"com.provenance.2600";
 NSString * const PV7800SystemIdentifier         = @"com.provenance.7800";
 NSString * const PV32XSystemIdentifier 			= @"com.provenance.32X";
-
+NSString * const PVN64SystemIdentifier          = @"com.provenance.n64";

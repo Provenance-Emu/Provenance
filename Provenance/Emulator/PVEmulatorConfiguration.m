@@ -33,6 +33,8 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import "MupenGameCore.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -114,6 +116,11 @@
         core = [[PicodriveGameCore alloc] init];
     }
     
+    else if ([systemID isEqualToString:PVN64SystemIdentifier])
+    {
+        core = [[MupenGameCore alloc] init];
+    }
+
 	return core;
 }
 
@@ -158,6 +165,10 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVN64SystemIdentifier])
+    {
+        controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;

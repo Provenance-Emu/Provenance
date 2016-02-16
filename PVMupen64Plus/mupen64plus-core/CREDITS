@@ -1,0 +1,189 @@
+===================================================================================================
+| Mupen64Plus 2.5 credits                                                        April 26th, 2015 |
+===================================================================================================
+
+bentley
+ - video-glide64mk2:
+   - bugfix: use memmove() instead of memcpy() for overlapping buffers
+
+bsmiles32
+ - core:
+   - refactor profiling: move from r4300 to main folder
+   - major r4300 cpu core refactoring to improve code quality and organization
+ - rsp-hle:
+   - Game-specific fixes: Bottom of the 9th, Goldeneye
+   - Support for MusyX microcodes (v1 and v2)
+   - Huge quantity of code cleanup and refactorings in audio microcode and processing logic
+   - Improve audio microcode identification
+   - Add support for additional audio commands: #16, POLEF, RESAMPLE_ZOH
+   - Move global variables into a struct so code is re-entrant
+   - bugfix: microcode detection could sometimes fail after reset
+
+Conchur Navid
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-rice)
+   - C header includes and forward declarations clean-ups
+ - core:
+   - fixes for minor issues revealed by coverity static analysis
+ - input:
+   - support for new SDL2 generic XInput device name
+ - video-rice:
+   - build fixes
+
+ecsv
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-glide64mk2, video-rice)
+   - fix all line endings, convert SCM metadata files from Hg to Git
+ - core:
+   - pif_ram fix for Banjo Tooie
+   - SDL2 fixes
+   - game-specific override for # of clock cycles per cpu instruction
+ - input:
+   - convert SDL2 keycodes to sdl1.2 keysyms so that input section parameters in mupen64plus.cfg will work with sdl1.2 keysyms
+   - SDL2: support for mapping mouse to controller analog x/y
+   - use prioritization to decide among multiple matching auto-config sections (for SDL2 / XInput)
+ - rsp-hle:
+   - Huge quantity of code cleanups and refactoring to improve organization
+ - video-glide64mk2
+   - fix colors in compressed fxt1 textures by importing mesa code
+   - replace patented S3TC algorithm with S2TC
+   - Enable the dump_cache to allow loading of dat files
+   - bugfix: work around problem in OSD callback whereby core code doesn't re-activate shader
+   - bugfix: Resident Evil II hang
+   - allow user override of game-specific settings via mupen64plus.cfg
+
+fayvel
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-glide64mk2, video-rice)
+   - Travis CI config file
+ - core:
+   - OpenGL ES support
+   - wiki documentation fixes
+ - input:
+   - fix SDL2 build regression
+ - video-glide64mk2:
+   - remove unused #ifdef sections
+   - various build fixes
+ - video-rice:
+   - fix for INI file loading under Windows
+   - minor OpenGL ES fixes
+
+Gillou68310
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-glide64mk2, video-rice)
+   - MSVC2010 project file
+ - core:
+   - new_dynarec: fixes for various MIPS instructions
+   - new_dynarec: port asm code to Intel format, add MSVC build support
+ - video-rice:
+   - OpenGL ES fixes
+   - Add hack-fix to show last heart and map arrows in Zelda OoT & MM
+   - Support screenshots with OpenGL ES
+
+gizmo98
+ - core:
+   - raspberry pi fixes and build system improvements
+ - input:
+   - auto-configs for multiple devices
+ - video-rice:
+   - makefile build support for Raspberry Pi
+   - OpenGL ES build fixes
+
+kode54
+ - rsp-hle:
+   - Implement IIR filter for nAudio (for Conker's Bad Fur Day)
+
+krnlyng
+ - audio:
+   - implement audioresource support for integration with Linux-based Nemo Mobile OS
+ - core:
+   - add render callback to input plugin
+ - video-glide64mk2:
+   - add OpenGL ES support (2.0) (from mupen64plus-ae)
+   - bugfix: chroma_color uniform variable name was not being set (from Themaister)
+ - video-rice:
+   - integrate OpenGL ES code into build system
+   - support Rotate option in OpenGL ES
+
+littleguy77
+ - android makefile and project history (for: audio, core, rsp-hle)
+ - core:
+   - fix config parameter name for savestate slot
+   - fixes to MD5 values in mupen64plus.ini
+ - ui-console:
+   - compile-time flag to support building ui-console as a library (used by Android frontend)
+ - video-glide64mk2:
+   - add config option to force polygon offset values (fixes artifacts on certains games / renderers)
+   - Implement optional frameskip feature, which drops frames instead of rendering if game is going slow
+ - video-rice:
+   - Android build fix
+   - opengl es minor fixes and cleanups
+   - add config option to force polygon offset values (fixes artifacts on certains games / renderers)
+
+Narann
+ - core:
+   - implement ConfigSetParameterHelp
+ - ui-console:
+   - add support for loading savestate immediately on emulator startup
+ - video-rice:
+   - Lots of code cleanup, removal of deprecated code, and simplifications
+   - Add config parameter versioning
+   - Modernize OpenGL interfaces, remove code for supporting very old opengl versions
+   - Graphics fixes for: fog, RDP InsertMatrix
+
+Nebuleon
+ - simplify makefiles (for: audio, input)
+ - core:
+   - floating-point optimizations (don't set rounding modes when not needed)
+   - compatibility fixes regarding FPU rounding modes
+   - decouple pure interpreter from cached interpreter
+   - use stdint.h types
+
+Paulscode
+ - core:
+   - fix bug in speed limiter
+
+Richard42
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-glide64mk2, video-rice)
+   - Visual Studio 2013 project/solution files
+   - fix and maintain OSX builds
+ - core:
+   - regression test improvements
+ - input:
+   - merge new auto-configurations from users
+   - When Mouse=True but pointer is un-grabbed, fall back to joystick settings for analog x/y
+ - video-glide64mk2:
+   - use SDL threads instead of C++11 threads, which are not currntly supported in Apple's clang compiler
+   - fix texture pack read failure on some 64-bit platforms, found by EndoplasmaticReticulum on github
+   - bugfix: memory bugs found by coverity in fxt1 code
+
+ricrpi
+ - core:
+   - rewrite speed limiter code to improve performance on Raspberry Pi
+   - ARM build fixes and optimizations
+
+rlabrecque
+ - video-glide64mk2:
+   - on Win32, don't set gamma table because it breaks monitor calibration
+ - video-rice:
+   - bugfix: crash if RiceVideoLinux.ini not found
+
+s-verma
+ - input:
+   - Prevent mouse/trackpad auto-centering behavior by pressing left-Windows key
+
+twinaphex
+ - glide64mk2:
+   - Fix broken C version of MulMatricesC
+   - correct N64 ROM header analysis for PAL/NTSC detection, to get proper frequency for frame skipper
+
+Ursula Abendroth
+ - All Modules (audio, core, input, rsp-hle, ui-console, video-glide64mk2, video-rice)
+   - makefile: use SDL2 by default if present
+ - video-glide64mk2:
+   - patch to clean up antialiasing patches from willrandship
+
+willrandship
+ - video-glide64mk2:
+   - add option to enable full-scene antialiasing
+
+wnayes
+ - core:
+   - code cleanups in debugger
+

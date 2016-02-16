@@ -214,6 +214,10 @@
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
+		B33115821C72FC7700E9AD14 /* mupen64plusRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */; };
+		B33115831C72FC7700E9AD14 /* mupen64plusRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B33115851C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */; };
+		B33115861C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -344,6 +348,8 @@
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */,
+				B33115861C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Embed Frameworks */,
+				B33115831C72FC7700E9AD14 /* mupen64plusRice.framework in Embed Frameworks */,
 				B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -561,6 +567,9 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
+		B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = mupen64plusRice.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/mupen64plusRice.framework"; sourceTree = "<absolute>"; };
+		B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVMupen64PlusDynamic.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMupen64PlusDynamic.framework"; sourceTree = "<absolute>"; };
+		B3C102D41C72A3E700DD066C /* libPVMupen64Plus.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVMupen64Plus.a; path = "PVMupen64Plus/build/Debug-iphoneos/libPVMupen64Plus.a"; sourceTree = "<group>"; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
@@ -653,10 +662,12 @@
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
+				B33115851C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
 				1AAE7D421BC870A2003066C0 /* Realm.framework in Frameworks */,
+				B33115821C72FC7700E9AD14 /* mupen64plusRice.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +795,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */,
+				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -809,6 +822,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C102D41C72A3E700DD066C /* libPVMupen64Plus.a */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 				B3AD689A1D6EA6180021B949 /* PicoDrive.framework */,
@@ -1836,6 +1850,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
@@ -1856,6 +1871,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Provenance;
@@ -1881,6 +1897,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
@@ -1901,6 +1918,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
@@ -2273,6 +2291,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
@@ -2293,6 +2312,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(BUILD_DIR)/**",
+					"$(PROJECT_DIR)/PVMupen64Plus/build/Debug-iphoneos",
 				);
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1 ";
 				OTHER_LDFLAGS = "-ObjC";
