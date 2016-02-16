@@ -44,6 +44,8 @@
 #import <OERingBuffer.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/EAGL.h>
+#import <GLKit/GLKit.h>
 
 #import "mupen64plus-core/src/plugin/plugin.h"
 
@@ -55,8 +57,12 @@ NSString *MupenControlNames[] = {
     @"N64_B", @"N64_A", @"N64_R", @"N64_L", @"N64_Z", @"N64_Start"
 }; // FIXME: missing: joypad X, joypad Y, mempak switch, rumble switch
 
-@interface MupenGameCore () <OEN64SystemResponderClient>
+@interface MupenGameCore () <OEN64SystemResponderClient, GLKViewDelegate>
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
+// GL Hack
+@property (nonatomic, strong) EAGLContext *glContext;
+@property (nonatomic, strong) GLKBaseEffect *effect;
+
 @end
 
 __weak MupenGameCore *_current = 0;
@@ -85,6 +91,16 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
+    
+    // GL Hack
+    GLKVector3 vertices[8];
+    GLKVector2 textureCoordinates[8];
+    GLKVector3 triangleVertices[6];
+    GLKVector2 triangleTexCoords[6];
+    
+    GLuint texture;
+
+    GLKView *glview;
 }
 
 - (instancetype)init
@@ -337,18 +353,26 @@ static void MupenSetAudioSpeed(int percent)
     
     // Load Audio
 //TODO :Fix auido and input
-    //    audio.aiDacrateChanged = MupenAudioSampleRateChanged;
-//    audio.aiLenChanged = MupenAudioLenChanged;
-//    audio.initiateAudio = MupenOpenAudio;
-//    audio.setSpeedFactor = MupenSetAudioSpeed;
-//    plugin_start(M64PLUGIN_AUDIO);
-//    
+    audio.aiDacrateChanged = MupenAudioSampleRateChanged;
+    audio.aiLenChanged = MupenAudioLenChanged;
+    audio.initiateAudio = MupenOpenAudio;
+    audio.setSpeedFactor = MupenSetAudioSpeed;
+    plugin_start(M64PLUGIN_AUDIO);
+//
 //    // Load Input
 //    input.getKeys = MupenGetKeys;
 //    input.initiateControllers = MupenInitiateControllers;
 //    plugin_start(M64PLUGIN_INPUT);
     // Load RSP
 //    LoadPlugin(M64PLUGIN_RSP, @"mupen64plus-rsp-hle.so");
+    
+    // Configure if using rsp-cxd4 plugin
+    m64p_handle configRSP;
+    ConfigOpenSection("rsp-cxd4", &configRSP);
+    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
+    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
+    
+    LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
     
     return YES;
 }
@@ -367,10 +391,46 @@ static void MupenSetAudioSpeed(int percent)
 {
     @autoreleasepool
     {
+        // Create an OpenGL ES context and assign it to the view loaded from storyboard
+        if (!glview) {
+            EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+            [EAGLContext setCurrentContext:context];
+
+            self.effect = [[GLKBaseEffect alloc] init];
+
+            glview = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, videoWidth, videoHeight)];
+            glview.context = context;
+
+            glview.delegate = self;
+
+            [[UIApplication sharedApplication].keyWindow addSubview:glview];
+
+            [self setupTexture];
+            // Configure renderbuffers created by the view
+//                glview.drawableColorFormat = GLKViewDrawableColorFormatRGBA8888;
+            //            glview.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+            //            glview.drawableStencilFormat = GLKViewDrawableStencilFormat8;
+            
+            // Enable multisampling
+//            glview.drawableMultisample = GLKViewDrawableMultisample4X;
+        }
+        
+        //        [[UIScreen mainScreen].focusedView addSubview:glview];
 //        [self.renderDelegate startRenderingOnAlternateThread];
         CoreDoCommand(M64CMD_EXECUTE, 0, NULL);
         [super stopEmulation];
     }
+}
+
+- (void)setupTexture
+{
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, [self internalPixelFormat], self.bufferSize.width, self.bufferSize.height, 0, [self pixelFormat], [self pixelType], self.videoBuffer);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 - (void)videoInterrupt
@@ -384,6 +444,87 @@ static void MupenSetAudioSpeed(int percent)
 - (void)swapBuffers
 {
 //    [self.renderDelegate didRenderFrameOnAldidRternateThread];
+}
+
+- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
+    void (^renderBlock)() = ^() {
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
+        CGSize screenSize = [self screenRect].size;
+        CGSize bufferSize = [self bufferSize];
+        
+        CGFloat texWidth = (screenSize.width / bufferSize.width);
+        CGFloat texHeight = (screenSize.height / bufferSize.height);
+        
+        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+        
+        textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+        textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
+        textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+        textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+        
+        int vertexIndices[6] = {
+            // Front
+            0, 1, 2,
+            0, 2, 3,
+        };
+        
+        for (int i = 0; i < 6; i++) {
+            triangleVertices[i]  = vertices[vertexIndices[i]];
+            triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
+        }
+        
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.bufferSize.width, self.bufferSize.height, [self pixelFormat], [self pixelType], self.videoBuffer);
+        
+        if (texture)
+        {
+            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+            self.effect.texture2d0.target = GLKTextureTarget2D;
+            self.effect.texture2d0.name = texture;
+            self.effect.texture2d0.enabled = YES;
+            self.effect.useConstantColor = YES;
+        }
+        
+        [self.effect prepareToDraw];
+        
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        
+        glEnableVertexAttribArray(GLKVertexAttribPosition);
+        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
+        
+        if (texture)
+        {
+            glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+            glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
+        }
+        
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+        if (texture)
+        {
+            glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+        }
+        
+        glDisableVertexAttribArray(GLKVertexAttribPosition);
+    };
+    
+    if (self.fastForward)
+    {
+        renderBlock();
+    }
+    else
+    {
+        @synchronized(self)
+        {
+            renderBlock();
+        }
+    }
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip
@@ -514,6 +655,16 @@ static void MupenSetAudioSpeed(int percent)
     return CGSizeMake(videoWidth, videoHeight);
 }
 
+- (CGRect)screenRect
+{
+    return CGRectMake(0, 0, videoWidth, videoHeight);
+}
+
+- (CGSize)aspectSize
+{
+    return CGSizeMake(4, 3);
+}
+
 - (void) tryToResizeVideoTo:(CGSize)size
 {
     VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_WINDOWED, 0);
@@ -532,7 +683,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (GLenum)pixelFormat
 {
-    return GL_RGB;
+    return GL_RGBA;
 }
 
 - (GLenum)pixelType
@@ -647,5 +798,6 @@ static void MupenSetAudioSpeed(int percent)
 //        enabled ? CoreAddCheat([code UTF8String], gsCode, codeCounter+1) : CoreCheatEnabled([code UTF8String], 0);
 //    }
 }
+
 
 @end

@@ -168,7 +168,7 @@
     }
     else if ([systemID isEqualToString:PVN64SystemIdentifier])
     {
-        controller = [[PVSNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+        controller = [[PVN64ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;
