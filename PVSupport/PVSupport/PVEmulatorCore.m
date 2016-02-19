@@ -78,6 +78,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	[self doesNotImplementSelector:_cmd];
 }
 
+// GameCores that render direct to OpenGL rather than a buffer should override this and return YES
+// If the GameCore subclass returns YES, the renderDelegate will set the appropriate GL Context
+// So the GameCore subclass can just draw to OpenGL
+- (BOOL)rendersToOpenGL
+{
+    return NO;
+}
+
 - (void)setPauseEmulation:(BOOL)flag
 {
     if (flag)
@@ -126,7 +134,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         {
             if (isRunning)
             {
-				if (self.isSpeedModified)
+                [_renderDelegate willExecute];
+
+                if (self.isSpeedModified)
                 {
                     [self executeFrame];
                 }
@@ -137,6 +147,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
                         [self executeFrame];
                     }
                 }
+                [_renderDelegate didExecute];
             }
         }
         
@@ -181,6 +192,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 
     NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    [_renderDelegate setEnableVSync:!fastForward];
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
 
