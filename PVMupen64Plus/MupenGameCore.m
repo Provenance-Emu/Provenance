@@ -42,9 +42,8 @@
 //#import "mupen64plus-core/src/main/main.h"
 
 #import <OERingBuffer.h>
-#import <OpenGLES/EAGL.h>
+#import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
-#import <OpenGLES/EAGL.h>
 #import <GLKit/GLKit.h>
 
 #import "mupen64plus-core/src/plugin/plugin.h"
@@ -59,9 +58,6 @@ NSString *MupenControlNames[] = {
 
 @interface MupenGameCore () <OEN64SystemResponderClient, GLKViewDelegate>
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
-// GL Hack
-@property (nonatomic, strong) EAGLContext *glContext;
-@property (nonatomic, strong) GLKBaseEffect *effect;
 
 @end
 
@@ -181,7 +177,7 @@ static void *dlopen_myself()
     
     dladdr(dlopen_myself, &info);
     
-    return dlopen(info.dli_fname, RTLD_GLOBAL);
+    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 }
 
 static void MupenGetKeys(int Control, BUTTONS *Keys)
@@ -382,7 +378,7 @@ static void MupenSetAudioSpeed(int percent)
     if(!isRunning)
     {
         [super startEmulation];
-//        [self.renderDelegate willRenderOnAlternateThread];
+        [self.renderDelegate willRenderOnAlternateThread];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
 }
@@ -391,140 +387,23 @@ static void MupenSetAudioSpeed(int percent)
 {
     @autoreleasepool
     {
-        // Create an OpenGL ES context and assign it to the view loaded from storyboard
-        if (!glview) {
-            EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-            [EAGLContext setCurrentContext:context];
-
-            self.effect = [[GLKBaseEffect alloc] init];
-
-            glview = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, videoWidth, videoHeight)];
-            glview.context = context;
-
-            glview.delegate = self;
-
-            [[UIApplication sharedApplication].keyWindow addSubview:glview];
-
-            [self setupTexture];
-            // Configure renderbuffers created by the view
-//                glview.drawableColorFormat = GLKViewDrawableColorFormatRGBA8888;
-            //            glview.drawableDepthFormat = GLKViewDrawableDepthFormat24;
-            //            glview.drawableStencilFormat = GLKViewDrawableStencilFormat8;
-            
-            // Enable multisampling
-//            glview.drawableMultisample = GLKViewDrawableMultisample4X;
-        }
-        
-        //        [[UIScreen mainScreen].focusedView addSubview:glview];
-//        [self.renderDelegate startRenderingOnAlternateThread];
+        [self.renderDelegate startRenderingOnAlternateThread];
         CoreDoCommand(M64CMD_EXECUTE, 0, NULL);
         [super stopEmulation];
     }
-}
-
-- (void)setupTexture
-{
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, [self internalPixelFormat], self.bufferSize.width, self.bufferSize.height, 0, [self pixelFormat], [self pixelType], self.videoBuffer);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 - (void)videoInterrupt
 {
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
     
-//    [self.renderDelegate willRenderFrameOnAlternateThread];
+    [self.renderDelegate willRenderFrameOnAlternateThread];
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, DISPATCH_TIME_FOREVER);
 }
 
 - (void)swapBuffers
 {
-//    [self.renderDelegate didRenderFrameOnAldidRternateThread];
-}
-
-- (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
-    void (^renderBlock)() = ^() {
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        CGSize screenSize = [self screenRect].size;
-        CGSize bufferSize = [self bufferSize];
-        
-        CGFloat texWidth = (screenSize.width / bufferSize.width);
-        CGFloat texHeight = (screenSize.height / bufferSize.height);
-        
-        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
-        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
-        
-        textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-        textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
-        textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
-        textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
-        
-        int vertexIndices[6] = {
-            // Front
-            0, 1, 2,
-            0, 2, 3,
-        };
-        
-        for (int i = 0; i < 6; i++) {
-            triangleVertices[i]  = vertices[vertexIndices[i]];
-            triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
-        }
-        
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.bufferSize.width, self.bufferSize.height, [self pixelFormat], [self pixelType], self.videoBuffer);
-        
-        if (texture)
-        {
-            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
-            self.effect.texture2d0.target = GLKTextureTarget2D;
-            self.effect.texture2d0.name = texture;
-            self.effect.texture2d0.enabled = YES;
-            self.effect.useConstantColor = YES;
-        }
-        
-        [self.effect prepareToDraw];
-        
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        
-        glEnableVertexAttribArray(GLKVertexAttribPosition);
-        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
-        
-        if (texture)
-        {
-            glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
-            glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
-        }
-        
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        
-        if (texture)
-        {
-            glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
-        }
-        
-        glDisableVertexAttribArray(GLKVertexAttribPosition);
-    };
-    
-    if (self.fastForward)
-    {
-        renderBlock();
-    }
-    else
-    {
-        @synchronized(self)
-        {
-            renderBlock();
-        }
-    }
+    [self.renderDelegate didRenderFrameOnAlternateThread];
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip
@@ -688,12 +567,12 @@ static void MupenSetAudioSpeed(int percent)
 
 - (GLenum)pixelType
 {
-    return GL_UNSIGNED_INT;
+    return GL_UNSIGNED_BYTE;
 }
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB8;
+    return GL_RGBA;
 }
 
 #pragma mark Mupen Audio

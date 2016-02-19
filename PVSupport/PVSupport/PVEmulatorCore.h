@@ -10,6 +10,22 @@
 #import "OERingBuffer.h"
 #import <GameController/GameController.h>
 
+@protocol PVRenderDelegate
+
+@required
+- (void)willExecute;
+- (void)didExecute;
+
+- (void)willRenderOnAlternateThread;
+- (void)startRenderingOnAlternateThread;
+
+- (void)willRenderFrameOnAlternateThread;
+- (void)didRenderFrameOnAlternateThread;
+
+- (void)setEnableVSync:(BOOL)flag;
+
+@end
+
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
@@ -25,6 +41,8 @@
 
 }
 
+@property(weak)     id<PVRenderDelegate>   renderDelegate;
+
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;
@@ -35,6 +53,7 @@
 @property (nonatomic, strong) GCController *controller1;
 @property (nonatomic, strong) GCController *controller2;
 
+- (BOOL)rendersToOpenGL;
 - (void)startEmulation;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag;

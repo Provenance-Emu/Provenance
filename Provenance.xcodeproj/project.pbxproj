@@ -699,7 +699,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -725,8 +724,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */,
-				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
+				B3EFD10F1C76D5A1000DD650 /* Cores */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 				BE9FDCB81C210B9E0046DF0E /* TVServices.framework */,
@@ -1115,6 +1113,16 @@
 				378F4A141B63F2240065FA39 /* Reachability.m */,
 			);
 			path = Reachability;
+			sourceTree = "<group>";
+		};
+		B3EFD10F1C76D5A1000DD650 /* Cores */ = {
+			isa = PBXGroup;
+			children = (
+				B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */,
+				B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */,
+				B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */,
+			);
+			name = Cores;
 			sourceTree = "<group>";
 		};
 		BE9FDCBA1C210B9E0046DF0E /* TopShelf */ = {

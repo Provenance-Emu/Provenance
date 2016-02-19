@@ -10,7 +10,10 @@
 #import "PVEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
-@interface PVGLViewController ()
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
+
+@interface PVGLViewController() <PVRenderDelegate>
 {
 	GLKVector3 vertices[8];
 	GLKVector2 textureCoordinates[8];
@@ -18,6 +21,10 @@
 	GLKVector2 triangleTexCoords[6];
 	
 	GLuint texture;
+    
+    // Alternate-thread rendering
+    GLuint RenderBuffer;
+    EAGLContext*          _alternateContext;
 }
 
 @property (nonatomic, strong) EAGLContext *glContext;
@@ -25,6 +32,15 @@
 @end
 
 @implementation PVGLViewController
+
+EAGLContext* CreateBestEAGLContext()
+{
+    EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    if (context == nil) {
+        context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    }
+    return context;
+}
 
 + (void)initialize
 {
@@ -36,6 +52,7 @@
 	self.effect = nil;
 	self.glContext = nil;
 	self.emulatorCore = nil;
+    _alternateContext = nil;
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
@@ -43,6 +60,9 @@
 	if ((self = [super init]))
 	{
 		self.emulatorCore = emulatorCore;
+        if([emulatorCore rendersToOpenGL]) {
+            emulatorCore.renderDelegate = self;
+        }
 	}
 	
 	return self;
@@ -52,17 +72,17 @@
 {
 	[super viewDidLoad];
 	
-//	[self setPreferredFramesPerSecond:60];
-//	
-//	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-//	[EAGLContext setCurrentContext:self.glContext];
-//	
-//	GLKView *view = (GLKView *)self.view;
-//    view.context = self.glContext;
-//	
-//	self.effect = [[GLKBaseEffect alloc] init];
-//	
-//	[self setupTexture];
+	[self setPreferredFramesPerSecond:60];
+	
+    self.glContext = CreateBestEAGLContext();
+	[EAGLContext setCurrentContext:self.glContext];
+	
+	GLKView *view = (GLKView *)self.view;
+    view.context = self.glContext;
+	
+	self.effect = [[GLKBaseEffect alloc] init];
+	
+	[self setupTexture];
 }
 
 - (void)viewWillLayoutSubviews
@@ -172,14 +192,14 @@
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
 
-        if (texture)
-        {
-            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
-            self.effect.texture2d0.target = GLKTextureTarget2D;
-            self.effect.texture2d0.name = texture;
-            self.effect.texture2d0.enabled = YES;
-            self.effect.useConstantColor = YES;
-        }
+//        if (texture)
+//        {
+//            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+//            self.effect.texture2d0.target = GLKTextureTarget2D;
+//            self.effect.texture2d0.name = texture;
+//            self.effect.texture2d0.enabled = YES;
+//            self.effect.useConstantColor = YES;
+//        }
 
         [self.effect prepareToDraw];
 
@@ -213,9 +233,119 @@
     {
         @synchronized(self.emulatorCore)
         {
-            renderBlock();
+//            renderBlock();
         }
     }
 }
 
+#pragma mark - PVRenderDelegate protocol methods
+
+- (void)setEnableVSync:(BOOL)flag
+{
+//    [self updateEnableVSync:flag];
+}
+
+- (void)willExecute
+{
+    if([_emulatorCore rendersToOpenGL]) {
+        [self beginDrawToIOSurface];
+    }
+}
+
+- (void)didExecute
+{
+    [self endDrawToIOSurface];
+}
+
+- (void)willRenderOnAlternateThread
+{
+    if(_alternateContext == NULL) {
+        _alternateContext = [[EAGLContext alloc] initWithAPI:_glContext.API sharegroup:[_glContext sharegroup]];
+
+        if (!_alternateContext || ![EAGLContext setCurrentContext:_alternateContext]) {
+            // Handle errors here
+            NSLog(@"Failed to create alternate context");
+        }
+    }
+}
+
+- (void)startRenderingOnAlternateThread
+{
+    [self renderStart];
+    
+    
+}
+
+- (void)willRenderFrameOnAlternateThread
+{
+
+}
+
+- (void)didRenderFrameOnAlternateThread
+{
+    [self renderEnd];
+    
+    if([_alternateContext presentRenderbuffer:GL_RENDERBUFFER] == NO)
+    {
+        NSLog(@"SwapBuffers: [_alternateContext presentRenderbuffer:GL_RENDERBUFFER_OES] failed");
+    }
+}
+
+#pragma mark - gl
+
+- (void)renderStart {
+//    @synchronized(self.emulatorCore) {
+        // 1. Ensure context A is not bound to the texture
+        [EAGLContext setCurrentContext:_glContext];
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+        // 2. Call flush on context A
+        glFlush();
+        
+        // 3. Modify the texture on context B
+        [EAGLContext setCurrentContext:_alternateContext];
+        glBindTexture(GL_TEXTURE_2D, texture);
+//    }
+}
+
+-(void)renderEnd {
+//    @synchronized(self.emulatorCore) {
+    // 4. Call flush on context B
+        glFlush();
+        
+        // 5. Rebind the texture on context A
+        [EAGLContext setCurrentContext:_glContext];
+        glBindTexture(GL_TEXTURE_2D, texture);
+//    }
+}
+
+- (void)beginDrawToIOSurface
+{
+
+    [self renderStart];
+//    [EAGLContext setCurrentContext:_glContext];
+    
+    GLenum status = glGetError();
+    if(status)
+    {
+        NSLog(@"drawIntoIOSurface: OpenGL error %04X", status);
+//        glDeleteTextures(1, &texture);
+//        texture = 0;
+//        
+//        glDeleteRenderbuffers(1, &_depthStencilRB);
+//        _depthStencilRB = 0;
+    }
+    
+}
+
+- (void)endDrawToIOSurface
+{
+
+    [self renderEnd];
+    [_glContext presentRenderbuffer:GL_RENDERBUFFER];
+//    GLKView *view = (GLKView *)self.view;
+//    dispatch_sync(dispatch_get_main_queue(), ^{
+//        [view display];
+//    });
+}
 @end
