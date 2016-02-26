@@ -35,6 +35,7 @@
 #import "PVControllerManager.h"
 #import "RLMRealmConfiguration+GroupConfig.h"
 #import "PVEmulatorConstants.h"
+#import "PVCloudSavesViewController.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -369,6 +370,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (NSString *)BIOSPathForSystemID:(NSString *)systemID
 {
     return [[[self documentsPath] stringByAppendingPathComponent:@"BIOS"] stringByAppendingPathComponent:systemID];
+}
+
+- (IBAction)openCloudSaves:(id)sender
+{
+    PVCloudSavesViewController *pvc = [self.storyboard instantiateViewControllerWithIdentifier:@"PVCloudSavesViewController"];
+    pvc.gamesInSections = self.gamesInSections;
+    pvc.gameLibraryVC = self;
+    [self.navigationController pushViewController:pvc animated:YES];
 }
 
 #pragma mark - Game Library Management

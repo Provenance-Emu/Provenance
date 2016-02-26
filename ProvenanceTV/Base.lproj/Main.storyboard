@@ -3,6 +3,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Library-->
@@ -41,16 +42,23 @@
                             </connections>
                         </barButtonItem>
                         <textField key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" id="iSF-Vk-sqk">
-                            <rect key="frame" x="460" y="65" width="1000" height="66"/>
+                            <rect key="frame" x="708" y="65" width="504" height="66"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                             <textInputTraits key="textInputTraits"/>
                         </textField>
-                        <barButtonItem key="rightBarButtonItem" title="Import ROMs" id="Aya-k0-hgo">
-                            <connections>
-                                <action selector="getMoreROMs" destination="In9-6L-5FX" id="Duj-Cy-Pvs"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Import ROMs" id="Aya-k0-hgo">
+                                <connections>
+                                    <action selector="getMoreROMs" destination="In9-6L-5FX" id="Duj-Cy-Pvs"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="organize" id="27z-40-fhm">
+                                <connections>
+                                    <action selector="openCloudSaves:" destination="In9-6L-5FX" id="M7P-Yn-2gG"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="searchField" destination="iSF-Vk-sqk" id="u9r-wg-jIh"/>
@@ -60,6 +68,51 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OIn-Ga-USI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3263" y="-1380"/>
+        </scene>
+        <!--Cloud Saves-->
+        <scene sceneID="zH4-br-pm5">
+            <objects>
+                <tableViewController storyboardIdentifier="PVCloudSavesViewController" title="Cloud Saves" useStoryboardIdentifierAsRestorationIdentifier="YES" id="iVm-uk-QiT" customClass="PVCloudSavesViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="100" sectionHeaderHeight="40" sectionFooterHeight="40" id="I2R-jE-337">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="saveCell" textLabel="5Gp-Xd-PVT" detailTextLabel="NQN-OW-kzC" style="IBUITableViewCellStyleSubtitle" id="Ypq-vx-zdk">
+                                <rect key="frame" x="0.0" y="209" width="1920" height="100"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Ypq-vx-zdk" id="Dti-aq-dJ9">
+                                    <rect key="frame" x="0.0" y="0.0" width="1904" height="99"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5Gp-Xd-PVT">
+                                            <rect key="frame" x="20" y="4" width="72" height="46"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="38"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="NQN-OW-kzC">
+                                            <rect key="frame" x="20" y="50" width="128" height="46"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="38"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.40000000000000002" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="iVm-uk-QiT" id="Rry-T0-fWU"/>
+                            <outlet property="delegate" destination="iVm-uk-QiT" id="AvK-q7-6UJ"/>
+                        </connections>
+                    </tableView>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oKh-ar-jdt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3263" y="-185"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="FmV-8E-kTS">
@@ -120,6 +173,7 @@
         <!--Settings View Controller-->
         <scene sceneID="YH6-Ht-HEo">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="N58-vR-pyo" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="Byn-yn-0f6" customClass="PVTVSettingsViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="UtW-MP-SZ2">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1500"/>
@@ -333,34 +387,6 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Actions" id="RNt-5m-Dxo" userLabel="Actions">
-                                <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" textLabel="Qge-1X-Xwr" detailTextLabel="Ach-9i-jTq" rowHeight="100" style="IBUITableViewCellStyleSubtitle" id="asv-fa-KAq">
-                                        <rect key="frame" x="0.0" y="1246" width="1285" height="100"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="asv-fa-KAq" id="JYa-6l-pL0">
-                                            <rect key="frame" x="0.0" y="0.0" width="1269" height="99"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Battery Saves in the Cloud" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Qge-1X-Xwr">
-                                                    <rect key="frame" x="20" y="4" width="439" height="46"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="38"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Copy saves to/from local storage &amp; iCloud" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ach-9i-jTq">
-                                                    <rect key="frame" x="20" y="50" width="698" height="46"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="38"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.40000000000000002" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
-                                </cells>
-                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="Byn-yn-0f6" id="V83-Pf-9Al"/>
@@ -377,7 +403,6 @@
                         <outlet property="versionValueLabel" destination="lbO-r2-5RW" id="X31-zh-UUc"/>
                     </connections>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="N58-vR-pyo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="8565.5" y="-820"/>
         </scene>
