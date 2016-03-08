@@ -119,13 +119,18 @@
         {
             NSString *controlType = [control objectForKey:PVControlTypeKey];
             
+            BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
+            CGFloat kDPadTopMargin = 16.0f;
+            CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + kDPadTopMargin;
+			
             if ([controlType isEqualToString:PVDPad])
             {
                 CGFloat xPadding = 5;
-                CGFloat yPadding = 5;
+                CGFloat bottomPadding = 16;
                 CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-                CGRect dPadFrame = CGRectMake(xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
-
+                CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
+                CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, size.width, size.height);
+                
                 if (!self.dPad)
                 {
                     self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
@@ -142,9 +147,11 @@
             else if ([controlType isEqualToString:PVButtonGroup])
             {
                 CGFloat xPadding = 5;
-                CGFloat yPadding = 5;
+                CGFloat bottomPadding = 32;
                 CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-                CGRect buttonsFrame = CGRectMake([[self view] bounds].size.width - size.width - xPadding, [[self view] bounds].size.height - size.height - yPadding, size.width, size.height);
+				
+                CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
+                CGRect buttonsFrame = CGRectMake(CGRectGetMaxX(self.view.bounds) - size.width - xPadding, buttonsOriginY, size.width, size.height);
 
                 if (!self.buttonGroup)
                 {
