@@ -205,7 +205,7 @@
         glDisableVertexAttribArray(GLKVertexAttribPosition);
     };
 
-    if (self.emulatorCore.fastForward)
+    if (self.emulatorCore.isSpeedModified)
     {
         renderBlock();
     }
