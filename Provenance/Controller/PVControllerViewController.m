@@ -115,8 +115,8 @@
 		NSString *controlType = [control objectForKey:PVControlTypeKey];
 		
 		BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
-		CGFloat kDPadTopMargin = 32.0;
-		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + kDPadTopMargin;
+		CGFloat kDPadTopMargin = 64.0;
+		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
 		
 		if ([controlType isEqualToString:PVDPad])
 		{
