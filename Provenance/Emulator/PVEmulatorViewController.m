@@ -446,13 +446,10 @@ void uncaughtExceptionHandler(NSException *exception)
 					   withObject:nil
 					   afterDelay:0.1];
 	}]];
-    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Toggle Fast Forward" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [weakSelf.emulatorCore setFastForward:!weakSelf.emulatorCore.fastForward];
-        [weakSelf.emulatorCore setPauseEmulation:NO];
-        weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-        weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Speed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+		[weakSelf performSelector:@selector(showSpeedMenu)
+					   withObject:nil
+					   afterDelay:0.1];
     }]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
@@ -629,6 +626,30 @@ void uncaughtExceptionHandler(NSException *exception)
      [self presentViewController:actionsheet animated:YES completion:^{
          [[[PVControllerManager sharedManager] iCadeController] refreshListener];
      }];
+}
+
+- (void)showSpeedMenu
+{
+	__block PVEmulatorViewController *weakSelf = self;
+
+	UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
+																		 message:nil
+																  preferredStyle:UIAlertControllerStyleActionSheet];
+	NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
+	[speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[actionSheet addAction:[UIAlertAction actionWithTitle:obj style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+			weakSelf.emulatorCore.gameSpeed = idx;
+			[weakSelf.emulatorCore setPauseEmulation:NO];
+			weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+			weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+		}]];
+	}];
+	
+	[self presentViewController:actionSheet animated:YES completion:^{
+		[[[PVControllerManager sharedManager] iCadeController] refreshListener];
+	}];
 }
 
 - (void)quit
