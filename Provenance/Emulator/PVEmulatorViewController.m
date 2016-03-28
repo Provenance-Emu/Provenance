@@ -89,11 +89,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.glViewController = nil;
 	self.controllerViewController = nil;
 	self.menuButton = nil;
-
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:nil];
-    }
 }
 
 - (void)viewDidLoad
@@ -265,13 +260,10 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 	}
 
-    __weak PVEmulatorViewController *weakSelf = self;
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed];
-        }];
-    }
+    // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
+    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
+    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    [self.view addGestureRecognizer:menuGestureRecognizer];
 }
 
 - (void)viewWillAppear:(BOOL)animated
