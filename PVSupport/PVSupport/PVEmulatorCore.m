@@ -14,6 +14,10 @@
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
+@interface PVEmulatorCore()
+@property (nonatomic, assign) CGFloat framerateMultiplier;
+@end
+
 @implementation PVEmulatorCore
 
 + (void)initialize
@@ -122,7 +126,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
             {
                 [_renderDelegate willExecute];
 
-                if (_fastForward)
+                if (self.isSpeedModified)
                 {
                     [self executeFrame];
                 }
@@ -141,22 +145,35 @@ static NSTimeInterval defaultFrameInterval = 60.0;
     }
 }
 
-- (void)setFastForward:(BOOL)fastForward
+- (void)setGameSpeed:(GameSpeed)gameSpeed
 {
-    _fastForward = fastForward;
+    _gameSpeed = gameSpeed;
+    
+    switch (gameSpeed) {
+        case GameSpeedSlow:
+            self.framerateMultiplier = 0.2;
+            break;
+        case GameSpeedNormal:
+            self.framerateMultiplier = 1.0;
+            break;
+        case GameSpeedFast:
+            self.framerateMultiplier = 5.0;
+            break;
+    }
+}
 
-    if (_fastForward)
-    {
-        framerateMultiplier = 5.0; // 5x speed
-    }
-    else
-    {
-        framerateMultiplier = 1.0; // normal speed
-    }
+- (BOOL)isSpeedModified
+{
+	return self.gameSpeed != GameSpeedNormal;
+}
+
+- (void)setFramerateMultiplier:(CGFloat)framerateMultiplier
+{
+	_framerateMultiplier = framerateMultiplier;
 
     NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
-    [_renderDelegate setEnableVSync:!fastForward];
+    [_renderDelegate setEnableVSync:!self.isSpeedModified];
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
 

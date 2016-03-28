@@ -134,7 +134,7 @@ EAGLContext* CreateBestEAGLContext()
         CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0);
         if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
         {
-            origin.y = roundf((parentSize.height - height) / 3.0); // top 3rd of screen
+            origin.y = 40.0f; // directly below menu button at top of screen
         }
         else
         {
@@ -225,7 +225,7 @@ EAGLContext* CreateBestEAGLContext()
         glDisableVertexAttribArray(GLKVertexAttribPosition);
     };
 
-    if (self.emulatorCore.fastForward)
+    if (self.emulatorCore.isSpeedModified)
     {
         renderBlock();
     }
