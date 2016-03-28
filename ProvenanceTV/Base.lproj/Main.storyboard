@@ -37,7 +37,7 @@
                     <navigationItem key="navigationItem" id="nB5-Si-oVS">
                         <barButtonItem key="leftBarButtonItem" title="Settings" id="jjJ-ED-yPA">
                             <connections>
-                                <segue destination="0as-LN-cS4" kind="show" id="qlf-TU-yyP"/>
+                                <segue destination="0as-LN-cS4" kind="show" identifier="SettingsSegue" id="qlf-TU-yyP"/>
                             </connections>
                         </barButtonItem>
                         <textField key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" id="iSF-Vk-sqk">
@@ -279,12 +279,36 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" textLabel="XES-ht-Utu" detailTextLabel="rL6-bw-vAF" style="IBUITableViewCellStyleValue1" id="z6v-XC-AJx">
+                                        <rect key="frame" x="0.0" y="926" width="1285" height="66"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z6v-XC-AJx" id="zza-em-A3l">
+                                            <rect key="frame" x="0.0" y="0.0" width="1269" height="65"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Show recently played games" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XES-ht-Utu" userLabel="Show recently played games">
+                                                    <rect key="frame" x="20" y="10" width="478" height="46"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="38"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="On" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="rL6-bw-vAF">
+                                                    <rect key="frame" x="1200" y="10" width="49" height="46"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="38"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.40000000000000002" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Information" id="fB9-bK-2Y3">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" textLabel="gSK-XH-gOo" detailTextLabel="lbO-r2-5RW" style="IBUITableViewCellStyleValue1" id="Hco-Uv-7c7">
-                                        <rect key="frame" x="0.0" y="1027" width="1285" height="66"/>
+                                        <rect key="frame" x="0.0" y="1107" width="1285" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Hco-Uv-7c7" id="hFT-zO-8md">
                                             <rect key="frame" x="0.0" y="0.0" width="1269" height="65"/>
@@ -308,7 +332,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" misplaced="YES" selectionStyle="none" indentationWidth="10" textLabel="rl8-1l-zmc" detailTextLabel="evc-5F-U0R" style="IBUITableViewCellStyleValue1" id="QsU-AU-2dP">
-                                        <rect key="frame" x="0.0" y="1107" width="1285" height="66"/>
+                                        <rect key="frame" x="0.0" y="1187" width="1285" height="66"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QsU-AU-2dP" id="AGs-Qc-Whz">
                                             <rect key="frame" x="0.0" y="0.0" width="1269" height="65"/>
@@ -344,6 +368,7 @@
                         <outlet property="autoLoadValueLabel" destination="Sun-9n-Dbp" id="6RG-xq-wzC"/>
                         <outlet property="autoSaveValueLabel" destination="dMQ-FI-TAq" id="e5m-dV-C00"/>
                         <outlet property="modeValueLabel" destination="evc-5F-U0R" id="Cl1-98-k4P"/>
+                        <outlet property="recentGamesValueLabel" destination="rL6-bw-vAF" id="IpF-Vi-XoQ"/>
                         <outlet property="versionValueLabel" destination="lbO-r2-5RW" id="X31-zh-UUc"/>
                     </connections>
                 </tableViewController>
