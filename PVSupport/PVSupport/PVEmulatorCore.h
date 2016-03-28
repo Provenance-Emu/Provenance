@@ -30,7 +30,14 @@
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (atomic, assign) BOOL shouldResyncTime;
-@property (nonatomic, assign) BOOL fastForward;
+
+typedef NS_ENUM(NSInteger, GameSpeed) {
+	GameSpeedSlow = 0,
+	GameSpeedNormal,
+	GameSpeedFast
+};
+@property (nonatomic, assign) GameSpeed gameSpeed;
+@property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
 @property (nonatomic, strong) GCController *controller1;
 @property (nonatomic, strong) GCController *controller2;

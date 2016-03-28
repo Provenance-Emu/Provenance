@@ -1007,6 +1007,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
+#if !TARGET_OS_TV
 - (void)doneRenaming:(id)sender
 {
     NSString *newTitle = [self.renameTextField text];
@@ -1034,14 +1035,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                          [self.renameOverlay removeFromSuperview];
                          self.renameOverlay = nil;
                      }];
-#if !TARGET_OS_TV
+    
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
-#endif
+
     [self.renameTextField resignFirstResponder];
 }
+#endif
 
 - (void)deleteGame:(PVGame *)game
 {
@@ -1459,6 +1461,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 #pragma mark - Text Field and Keyboard Delegate
 
+#if !TARGET_OS_TV
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField != self.searchField)
@@ -1484,6 +1487,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     return YES;
 }
+#endif
 
 - (void)handleTextFieldDidChange:(NSNotification *)notification
 {
@@ -1497,9 +1501,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
+#if !TARGET_OS_TV
 - (void)keyboardWillShow:(NSNotification *)note
 {
-#if !TARGET_OS_TV
 	NSDictionary *userInfo = [note userInfo];
 	
 	CGRect keyboardEndFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
@@ -1515,13 +1519,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 					 }
 					 completion:^(BOOL finished) {
 					 }];
-#endif
 }
+#endif
 
-
+#if !TARGET_OS_TV
 - (void)keyboardWillHide:(NSNotification *)note
 {
-#if !TARGET_OS_TV
 	NSDictionary *userInfo = [note userInfo];
 	
 	CGFloat animationDuration = [[userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
@@ -1545,8 +1548,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[[NSNotificationCenter defaultCenter] removeObserver:self
 													name:UIKeyboardWillHideNotification
 												  object:nil];
-#endif
 }
+#endif
 
 #pragma mark - Image Picker Deleate
 
