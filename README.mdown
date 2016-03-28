@@ -34,9 +34,8 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Stereo sound
 - Save States
 - Battery saves (native game saves, i.e. Sonic 3, Pokémon, etc)
-- Configurable on-screen controls
-    - Position them how you like, and adjust their opacity so they don't get in your way
-    - Portrait and landscape support
+- Adjust onscreen control opacity so they don't get in your way
+- Portrait and landscape support
 - Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and some iCade Controllers
 - Local multiplayer with external controllers
 - Built-in web server
