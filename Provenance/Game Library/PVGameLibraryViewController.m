@@ -779,7 +779,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
             [self presentViewController:emulatorViewController animated:YES completion:NULL];
-
+             [[[PVControllerManager sharedManager] iCadeController] refreshListener];
             [self updateRecentGames:game];
         }
     };
