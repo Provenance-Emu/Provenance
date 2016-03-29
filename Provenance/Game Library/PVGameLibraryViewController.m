@@ -1316,41 +1316,22 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 	PVGameLibraryCollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:_reuseIdentifier forIndexPath:indexPath];
-	
-    PVGame *game = nil;
-    
-    if (self.searchResults)
-    {
-        game = [self.searchResults objectAtIndex:[indexPath item]];
-    }
-    else
-    {
-        NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-        game = games[[indexPath item]];
-    }
-	
-	NSString *artworkURL = [game customArtworkURL];
-	NSString *originalArtworkURL = [game originalArtworkURL];
-    __block UIImage *artwork = nil;
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([artworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:artworkURL];
-        }
-        else if ([originalArtworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:originalArtworkURL];
-        }
-        
-        if (artwork)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[cell imageView] setImage:artwork];
+    PVGame *game = [self gameAtIndexPath:indexPath];
+	
+    NSString *artworkURL = [game originalArtworkURL] ?: [game customArtworkURL];
+
+    if (artworkURL.length) {
+        [PVMediaCache imageForKey:artworkURL callback:^(UIImage *image) {
+            if (image) {
+                [[cell imageView] setImage:image];
                 [cell setNeedsLayout];
-            });
-        }
-    });
+            }
+        }];
+    }
+    else {
+        [cell sizeImageViews:[game boxartSize]];
+    }
     
 	[[cell titleLabel] setText:[game title]];
 	[[cell missingLabel] setText:[game title]];

@@ -15,5 +15,6 @@
 @property (nonatomic, readonly) UILabel *missingLabel;
 
 + (CGSize)cellSizeForImageSize:(CGSize)imageSize;
+- (void)sizeImageViews:(CGSize)size;
 
 @end

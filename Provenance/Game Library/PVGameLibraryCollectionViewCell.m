@@ -78,9 +78,15 @@ static const CGFloat LabelHeight = 80.0;
 - (void)prepareForReuse
 {
 	[super prepareForReuse];
-	
+
 	[self.imageView setImage:nil];
 	[self.titleLabel setText:nil];
+}
+
+- (void)sizeImageViews:(CGSize)size
+{
+    self.missingArtworkView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), size.height);
+    self.missingLabel.frame = self.missingArtworkView.bounds;
 }
 
 - (void)layoutSubviews
@@ -90,10 +96,12 @@ static const CGFloat LabelHeight = 80.0;
 	if (![_imageView image])
 	{
 		[self addSubview:self.missingArtworkView];
+        self.titleLabel.alpha = 0.0;
 	}
 	else
 	{
 		[self.missingArtworkView removeFromSuperview];
+        self.titleLabel.alpha = (self.focused) ? 1.0 : 0.0;
 	}
 
 #if TARGET_OS_TV

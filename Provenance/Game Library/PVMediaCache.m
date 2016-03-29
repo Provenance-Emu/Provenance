@@ -141,4 +141,16 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 	[[NSNotificationCenter defaultCenter] postNotificationName:PVMediaCacheWasEmptiedNotification object:nil];
 }
 
++ (void)imageForKey:(NSString *)key callback:(void (^)(UIImage *image))block;
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        UIImage *artwork = [self imageForKey:key];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (block) block(artwork);
+        });
+    });
+}
+
 @end
