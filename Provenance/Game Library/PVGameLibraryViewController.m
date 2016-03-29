@@ -23,6 +23,8 @@
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
     #import "PVSettingsViewController.h"
+#else
+#import "PVGame+Sizing.h"
 #endif
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
@@ -1375,7 +1377,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 #if TARGET_OS_TV
-    return CGSizeMake(250, 360);
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    return [PVGameLibraryCollectionViewCell cellSizeForImageSize:[game boxartSize]];
 #else
 	return CGSizeMake(100, 144);
 #endif
@@ -1408,6 +1411,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    [self loadGame:game];
+}
+
+- (PVGame *)gameAtIndexPath:(NSIndexPath *)indexPath
+{
     PVGame *game = nil;
     if (self.searchResults)
     {
@@ -1419,7 +1428,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
     
-    [self loadGame:game];
+    return game;
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -1551,7 +1560,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
-#pragma mark - Image Picker Deleate
+#pragma mark - Image Picker Delegate
 
 #if !TARGET_OS_TV
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
