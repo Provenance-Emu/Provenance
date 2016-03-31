@@ -30,6 +30,7 @@
 #import "OETimingUtils.h"
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
+#import "GCExtendedGamepad+AxisDirections.h"
 
 #include "memmap.h"
 #include "pixform.h"
@@ -399,10 +400,12 @@ static void FinalizeSamplesAudioCallback(void *)
             GCExtendedGamepad *pad = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [pad dpad];
 
-            S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.pressed?:pad.leftThumbstick.up.pressed);
-            S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.pressed?:pad.leftThumbstick.down.pressed);
-            S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.pressed?:pad.leftThumbstick.left.pressed);
-            S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.pressed?:pad.leftThumbstick.right.pressed);
+            PVControllerAxisDirection axisDirection = [pad currentAxisDirectionForLeftThumbstick];
+
+            S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.pressed ?: axisDirection == PVControllerAxisDirectionUp);
+            S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.pressed ?: axisDirection == PVControllerAxisDirectionDown);
+            S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.pressed ?: axisDirection == PVControllerAxisDirectionLeft);
+            S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.pressed ?: axisDirection == PVControllerAxisDirectionRight);
 
             S9xReportButton(playerMask | PVSNESButtonB, pad.buttonA.pressed);
             S9xReportButton(playerMask | PVSNESButtonA, pad.buttonB.pressed);
