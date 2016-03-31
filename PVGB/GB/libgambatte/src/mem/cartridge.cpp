@@ -609,7 +609,28 @@ LoadRes Cartridge::loadROM(std::string const &romfile,
 		default: return -1;
 		}*/
 
-		rambanks = numRambanksFromH14x(header[0x147], header[0x149]);
+		//rambanks = numRambanksFromH14x(header[0x147], header[0x149]);
+        
+        switch (header[0x0149]) {
+            case 0x00: /*std::puts("No RAM");*/ rambanks = type == type_mbc2; break;
+            case 0x01: /*std::puts("2kB RAM");*/ /*rambankrom=1; break;*/
+            case 0x02: /*std::puts("8kB RAM");*/
+                rambanks = 1;
+                break;
+            case 0x03: /*std::puts("32kB RAM");*/
+                rambanks = 4;
+                break;
+            case 0x04: /*std::puts("128kB RAM");*/
+                rambanks = 16;
+                break;
+            case 0x05: /*std::puts("undocumented kB RAM");*/
+                rambanks = 16;
+                break;
+            default: /*std::puts("Wrong data-format, corrupt or unsupported ROM loaded.");*/
+                rambanks = 16;
+                break;
+        }
+        
 		cgb = header[0x0143] >> 7 & (1 ^ forceDmg);
 	}
 
