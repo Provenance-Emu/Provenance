@@ -115,7 +115,7 @@
 		NSString *controlType = [control objectForKey:PVControlTypeKey];
 		
 		BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
-		CGFloat kDPadTopMargin = 64.0;
+		CGFloat kDPadTopMargin = 96.0;
 		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
 		
 		if ([controlType isEqualToString:PVDPad])
@@ -142,7 +142,7 @@
 		else if ([controlType isEqualToString:PVButtonGroup])
 		{
 			CGFloat xPadding = 5;
-			CGFloat bottomPadding = 32;
+			CGFloat bottomPadding = 16;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			
 			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
@@ -181,6 +181,7 @@
 			CGFloat xPadding = 10;
 			CGFloat yPadding = 10;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+
 			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, size.width, size.height);
 			
 			if (!self.leftShoulderButton)
