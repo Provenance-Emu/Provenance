@@ -1350,7 +1350,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }
     });
     
-	[[cell titleLabel] setText:[game title]];
+	[cell setText:[game title]];
 	[[cell missingLabel] setText:[game title]];
 	
     [cell setNeedsLayout];
@@ -1400,7 +1400,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    	return UIEdgeInsetsMake(40, 40, 40, 40);
+    	return UIEdgeInsetsMake(40, 40, 120, 40);
 #else
     	return UIEdgeInsetsMake(5, 5, 5, 5);
 #endif
