@@ -90,10 +90,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.controllerViewController = nil;
 	self.menuButton = nil;
 
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:nil];
-    }
+#if !TARGET_OS_TV
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:nil];
+	}
+#endif
 }
 
 - (void)viewDidLoad
@@ -265,13 +267,27 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 	}
 
-    __weak PVEmulatorViewController *weakSelf = self;
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed];
-        }];
-    }
+	// stupid bug in tvOS 9.2
+	// the controller paused handler (if implemented) seems to cause a 'back' navigation action
+	// as well as calling the pause handler itself. Which breaks the menu functionality.
+	// But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
+
+	// Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
+
+#if TARGET_OS_TV
+    // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
+    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
+    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    [self.view addGestureRecognizer:menuGestureRecognizer];
+#else
+	__weak PVEmulatorViewController *weakSelf = self;
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+			[weakSelf controllerPauseButtonPressed];
+		}];
+	}
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
