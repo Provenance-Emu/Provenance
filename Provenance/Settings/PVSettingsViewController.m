@@ -146,6 +146,12 @@
         }
         
     }
+    else if (indexPath.section == 4 && indexPath.row == 1) {
+        // access the cloud battery saves screen
+        
+        NSLog(@"accessed cloud battery saves screen");
+        
+    }
     else if (indexPath.section == 5 && indexPath.row == 0)
     {
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];

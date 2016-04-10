@@ -115,6 +115,10 @@
                     break;
             }
             break;
+        case 3:
+            //
+            NSLog(@"tapped cloud button");
+            break;
         default:
             break;
     }

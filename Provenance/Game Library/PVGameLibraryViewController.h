@@ -14,6 +14,9 @@ extern NSString * const kRefreshLibraryNotification;
 
 @interface PVGameLibraryViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout,
                                                             UITextFieldDelegate, UINavigationControllerDelegate>
+
+- (NSString *)batterySavesPathForROM:(NSString *)romPath;
+
 @end
 
 #if !TARGET_OS_TV
