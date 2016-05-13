@@ -90,10 +90,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.controllerViewController = nil;
 	self.menuButton = nil;
 
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:nil];
-    }
+#if !TARGET_OS_TV
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:nil];
+	}
+#endif
 }
 
 - (void)viewDidLoad
@@ -265,13 +267,27 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 	}
 
-    __weak PVEmulatorViewController *weakSelf = self;
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed];
-        }];
-    }
+	// stupid bug in tvOS 9.2
+	// the controller paused handler (if implemented) seems to cause a 'back' navigation action
+	// as well as calling the pause handler itself. Which breaks the menu functionality.
+	// But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
+
+	// Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
+
+#if TARGET_OS_TV
+    // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
+    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
+    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    [self.view addGestureRecognizer:menuGestureRecognizer];
+#else
+	__weak PVEmulatorViewController *weakSelf = self;
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+			[weakSelf controllerPauseButtonPressed];
+		}];
+	}
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -446,13 +462,10 @@ void uncaughtExceptionHandler(NSException *exception)
 					   withObject:nil
 					   afterDelay:0.1];
 	}]];
-    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Toggle Fast Forward" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [weakSelf.emulatorCore setFastForward:!weakSelf.emulatorCore.fastForward];
-        [weakSelf.emulatorCore setPauseEmulation:NO];
-        weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-        weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Speed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+		[weakSelf performSelector:@selector(showSpeedMenu)
+					   withObject:nil
+					   afterDelay:0.1];
     }]];
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
@@ -629,6 +642,30 @@ void uncaughtExceptionHandler(NSException *exception)
      [self presentViewController:actionsheet animated:YES completion:^{
          [[[PVControllerManager sharedManager] iCadeController] refreshListener];
      }];
+}
+
+- (void)showSpeedMenu
+{
+	__block PVEmulatorViewController *weakSelf = self;
+
+	UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
+																		 message:nil
+																  preferredStyle:UIAlertControllerStyleActionSheet];
+	NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
+	[speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+		[actionSheet addAction:[UIAlertAction actionWithTitle:obj style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+			weakSelf.emulatorCore.gameSpeed = idx;
+			[weakSelf.emulatorCore setPauseEmulation:NO];
+			weakSelf.isShowingMenu = NO;
+#if TARGET_OS_TV
+			weakSelf.controllerUserInteractionEnabled = NO;
+#endif
+		}]];
+	}];
+	
+	[self presentViewController:actionSheet animated:YES completion:^{
+		[[[PVControllerManager sharedManager] iCadeController] refreshListener];
+	}];
 }
 
 - (void)quit
