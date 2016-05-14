@@ -654,8 +654,8 @@ void uncaughtExceptionHandler(NSException *exception)
     
     if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
     {
-        [[actionsheet popoverPresentationController] setSourceView:self.menuButton];
-        [[actionsheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+        [[actionSheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionSheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
     }
     
     NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
