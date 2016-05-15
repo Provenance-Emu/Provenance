@@ -52,8 +52,6 @@ typedef                         uint32_t     stellabuffer_t;
 
 @end
 
-NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVICE_ID_JOYPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_B, RETRO_DEVICE_ID_JOYPAD_L, RETRO_DEVICE_ID_JOYPAD_L2, RETRO_DEVICE_ID_JOYPAD_R, RETRO_DEVICE_ID_JOYPAD_R2, RETRO_DEVICE_ID_JOYPAD_START, RETRO_DEVICE_ID_JOYPAD_SELECT };
-
 __weak PVStellaGameCore *_current;
 
 @implementation PVStellaGameCore
@@ -218,16 +216,6 @@ static void writeSaveFile(const char* path, int type)
     }
 }
 
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-{
-    _pad[player-1][A2600EmulatorValues[button]] = 1;
-}
-
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-{
-    _pad[player-1][A2600EmulatorValues[button]] = 0;
-}
-
 - (id)init
 {
     if((self = [super init]))
@@ -247,6 +235,10 @@ static void writeSaveFile(const char* path, int type)
 - (void)executeFrame
 {
     stella_retro_run();
+    if (self.controller1 || self.controller2)
+    {
+        [self pollControllers];
+    }
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip
@@ -349,6 +341,87 @@ static void writeSaveFile(const char* path, int type)
         }
     }
 }
+
+#pragma mark Input
+const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVICE_ID_JOYPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_B, RETRO_DEVICE_ID_JOYPAD_L, RETRO_DEVICE_ID_JOYPAD_L2, RETRO_DEVICE_ID_JOYPAD_R, RETRO_DEVICE_ID_JOYPAD_R2, RETRO_DEVICE_ID_JOYPAD_START, RETRO_DEVICE_ID_JOYPAD_SELECT };
+
+- (void)pollControllers
+{
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
+    {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0)
+        {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad])
+        {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            /* TODO: To support paddles we would need to circumvent libRatre's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed || gamepad.buttonY.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed || gamepad.buttonB.isPressed);
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = (gamepad.leftShoulder.isPressed  || gamepad.leftTrigger.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed);
+        }
+        else if ([controller gamepad])
+        {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed || gamepad.buttonY.isPressed);
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed || gamepad.buttonB.isPressed);
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed;
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad])
+        {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.value > 0.5;
+
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+        }
+#endif
+    }
+}
+
+- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+{
+    _pad[player-1][A2600EmulatorValues[button]] = 1;
+}
+
+- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+{
+    _pad[player-1][A2600EmulatorValues[button]] = 0;
+}
+
 
 #pragma mark Video
 - (const void *)videoBuffer
