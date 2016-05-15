@@ -646,13 +646,20 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)showSpeedMenu
 {
-	__block PVEmulatorViewController *weakSelf = self;
-
-	UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
-																		 message:nil
-																  preferredStyle:UIAlertControllerStyleActionSheet];
-	NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
-	[speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block PVEmulatorViewController *weakSelf = self;
+    
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+    {
+        [[actionSheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionSheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+    }
+    
+    NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
+    [speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[actionSheet addAction:[UIAlertAction actionWithTitle:obj style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			weakSelf.emulatorCore.gameSpeed = idx;
 			[weakSelf.emulatorCore setPauseEmulation:NO];
