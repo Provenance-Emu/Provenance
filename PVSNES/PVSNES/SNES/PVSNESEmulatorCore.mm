@@ -402,10 +402,17 @@ static void FinalizeSamplesAudioCallback(void *)
 
             PVControllerAxisDirection axisDirection = [PVGameControllerUtilities axisDirectionForThumbstick:pad.leftThumbstick];
 
-            S9xReportButton(playerMask | PVSNESButtonUp, dpad.up.pressed ?: axisDirection == PVControllerAxisDirectionUp);
-            S9xReportButton(playerMask | PVSNESButtonDown, dpad.down.pressed ?: axisDirection == PVControllerAxisDirectionDown);
-            S9xReportButton(playerMask | PVSNESButtonLeft, dpad.left.pressed ?: axisDirection == PVControllerAxisDirectionLeft);
-            S9xReportButton(playerMask | PVSNESButtonRight, dpad.right.pressed ?: axisDirection == PVControllerAxisDirectionRight);
+            BOOL upPressed = dpad.up.pressed || axisDirection == PVControllerAxisDirectionUp || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionUpRight;
+            S9xReportButton(playerMask | PVSNESButtonUp, upPressed);
+            
+            BOOL downPressed = dpad.down.pressed || axisDirection == PVControllerAxisDirectionDown || axisDirection == PVControllerAxisDirectionDownLeft || axisDirection == PVControllerAxisDirectionDownRight;
+            S9xReportButton(playerMask | PVSNESButtonDown, downPressed);
+            
+            BOOL leftPressed = dpad.left.pressed || axisDirection == PVControllerAxisDirectionLeft || axisDirection == PVControllerAxisDirectionUpLeft || axisDirection == PVControllerAxisDirectionDownLeft;
+            S9xReportButton(playerMask | PVSNESButtonLeft, leftPressed);
+            
+            BOOL rightPressed = dpad.right.pressed || axisDirection == PVControllerAxisDirectionRight || axisDirection == PVControllerAxisDirectionUpRight || axisDirection == PVControllerAxisDirectionDownRight;
+            S9xReportButton(playerMask | PVSNESButtonRight, rightPressed);
 
             S9xReportButton(playerMask | PVSNESButtonB, pad.buttonA.pressed);
             S9xReportButton(playerMask | PVSNESButtonA, pad.buttonB.pressed);

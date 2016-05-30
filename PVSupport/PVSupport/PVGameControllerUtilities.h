@@ -13,7 +13,11 @@ typedef NS_ENUM(NSUInteger, PVControllerAxisDirection) {
     PVControllerAxisDirectionUp,
     PVControllerAxisDirectionDown,
     PVControllerAxisDirectionLeft,
-    PVControllerAxisDirectionRight
+    PVControllerAxisDirectionRight,
+    PVControllerAxisDirectionUpRight,
+    PVControllerAxisDirectionUpLeft,
+    PVControllerAxisDirectionDownRight,
+    PVControllerAxisDirectionDownLeft
 };
 
 @interface PVGameControllerUtilities : NSObject
