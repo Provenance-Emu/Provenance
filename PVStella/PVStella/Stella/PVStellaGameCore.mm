@@ -234,11 +234,10 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)executeFrame
 {
-    stella_retro_run();
-    if (self.controller1 || self.controller2)
-    {
+    if (self.controller1 || self.controller2) {
         [self pollControllers];
     }
+    stella_retro_run();
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip
