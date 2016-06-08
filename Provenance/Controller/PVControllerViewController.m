@@ -388,7 +388,9 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self.leftShoulderButton setHidden:YES];
     [self.rightShoulderButton setHidden:YES];
     
-    if ([controller extendedGamepad])
+    //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
+    NSArray *useStandardGamepad = [NSArray arrayWithObjects: PVGBSystemIdentifier, PVGBCSystemIdentifier, PVGBASystemIdentifier, nil];
+    if ([controller extendedGamepad] || [useStandardGamepad containsObject:self.systemIdentifier])
     {
         [self.startButton setHidden:YES];
         [self.selectButton setHidden:YES];
