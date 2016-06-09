@@ -132,11 +132,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 - (void)executeFrame
 {
     IPPU.RenderThisFrame = YES;
-    S9xMainLoop();
     if (self.controller1 || self.controller2)
     {
         [self pollControllers];
     }
+    S9xMainLoop();
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path
