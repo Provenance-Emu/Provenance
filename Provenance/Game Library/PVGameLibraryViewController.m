@@ -1053,13 +1053,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [game setTitle:title];
         [self.realm commitWriteTransaction];
         
-        NSArray *indexPaths = [self indexPathsForGameWithMD5Hash:[game md5Hash]];
         [self fetchGames];
-        if (indexPaths.count>0) {
-            [self.collectionView reloadItemsAtIndexPaths:indexPaths];
-        } else {
-            [self.collectionView reloadData];
-        }
+        [self.collectionView reloadData];
     }
 }
 
