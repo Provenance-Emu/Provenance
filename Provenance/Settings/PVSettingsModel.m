@@ -14,6 +14,7 @@ NSString * const kControllerOpacityKey = @"kControllerOpacityKey";
 NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
+NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 
@@ -43,6 +44,7 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
+                                                                  kShowRecentGamesKey : @YES,
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
                                                                   kVolumeSettingKey : @(1.0)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
@@ -52,6 +54,7 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
+        _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
 	}
@@ -101,6 +104,13 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 {
     _buttonVibration = buttonVibration;
     [[NSUserDefaults standardUserDefaults] setBool:_buttonVibration forKey:kButtonVibrationKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setShowRecentGames:(BOOL)showRecentGames
+{
+    _showRecentGames = showRecentGames;
+    [[NSUserDefaults standardUserDefaults] setBool:_showRecentGames forKey:kShowRecentGamesKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
