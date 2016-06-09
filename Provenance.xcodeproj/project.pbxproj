@@ -193,6 +193,8 @@
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
+		25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
+		25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
@@ -452,6 +454,8 @@
 		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
+		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
+		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -952,6 +956,8 @@
 				1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */,
 				423BB97D17DD46BC0048F457 /* NSData+Hashing.h */,
 				423BB97E17DD46BC0048F457 /* NSData+Hashing.m */,
+				25A64E151CB1C41100EDD19D /* UIImage+Color.h */,
+				25A64E161CB1C41100EDD19D /* UIImage+Color.m */,
 				42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */,
 				42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */,
 				1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */,
@@ -1376,6 +1382,7 @@
 				1A9938A21BBB02590050A2B7 /* PVRecentGame.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
+				25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
@@ -1470,6 +1477,7 @@
 				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
+				25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,

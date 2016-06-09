@@ -8,16 +8,39 @@
 
 #import "PVGameLibraryCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIImage+Color.h"
 #import "UIView+FrameAdditions.h"
 
-//static UIColor * rgb(CGFloat r, CGFloat g, CGFloat b)
-//{
-//	return [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
-//}
+CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
+    CGFloat width = originalSize.width;
+    CGFloat height = originalSize.height;
+    
+    CGFloat multiplier = 0.f;
+    
+    if (height > maximumSize.height) {
+        multiplier = maximumSize.height / height;
+    }
+    
+    if (width > maximumSize.width) {
+        CGFloat provisionalMultiplier = maximumSize.width / width;
+        BOOL validMultiplier = provisionalMultiplier > 0;
+        if (validMultiplier && (provisionalMultiplier < multiplier || multiplier == 0)) {
+            multiplier = provisionalMultiplier;
+        }
+    }
+    
+    if (multiplier > 0) {
+        // CGRectIntegral does floorf() on origin and ceilf() on size
+        height = ceilf(height * multiplier);
+        width = ceilf(width * multiplier);
+    }
+    
+    return CGSizeMake(width, height);
+}
 
 @interface PVGameLibraryCollectionViewCell ()
 
-@property (nonatomic, strong) UIView *missingArtworkView;
+@property (nonatomic, strong) UIImageView *missingArtworkView;
 
 @end
 
@@ -29,64 +52,59 @@
 	{
 		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
-//        [_imageView setAdjustsImageWhenAncestorFocused:YES];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
-
-#if TARGET_OS_TV
-        [_titleLabel setLineBreakMode:NSLineBreakByWordWrapping];
-#else
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
+        UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
+        UIImage *missingArtworkImage = [UIImage imageWithSize:CGSizeMake(CGRectGetWidth(frame), CGRectGetHeight(frame) - 44)
+                                                        color:backgroundColor
+                                                         text:nil];
+        self.missingArtworkView = [[UIImageView alloc] initWithImage:missingArtworkImage];
+#if TARGET_OS_TV
+        // The label's alpha will get set to 1 on focus
+        _titleLabel.alpha = 0;
+        [_imageView setAdjustsImageWhenAncestorFocused:YES];
+        [self.missingArtworkView setAdjustsImageWhenAncestorFocused:YES];
+        [_titleLabel setTextColor:[UIColor whiteColor]];
+        [[_titleLabel layer] setMasksToBounds:NO];
+        [_titleLabel setShadowColor:[[UIColor blackColor] colorWithAlphaComponent:0.8]];
+        [_titleLabel setShadowOffset:CGSizeMake(-1, 1)];
+#else
+        [_titleLabel setTextColor:[UIColor blackColor]];
+        [_titleLabel setNumberOfLines:0];
 #endif
+        [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin];
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
-		[_titleLabel setTextColor:[UIColor blackColor]];
 		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleBody]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
-		[_titleLabel setNumberOfLines:0];
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
 		[_titleLabel setMinimumScaleFactor:0.75];
 
 		[[self contentView] addSubview:_titleLabel];
         [[self contentView] addSubview:_imageView];
-		
-//		NSArray *backgroundColors = @[rgb(26, 188, 156),
-//									  rgb(46, 204, 113),
-//									  rgb(52, 152, 219),
-//									  rgb(155, 89, 182),
-//									  rgb(52, 73, 94),
-//									  rgb(22, 160, 133),
-//									  rgb(39, 174, 96),
-//									  rgb(41, 128, 185),
-//									  rgb(142, 68, 173),
-//									  rgb(44, 62, 80),
-//									  rgb(241, 196, 15),
-//									  rgb(230, 126, 34),
-//									  rgb(231, 76, 60),
-//									  rgb(243, 156, 18),
-//									  rgb(211, 84, 0),
-//									  rgb(192, 57, 43)];
-//		
-//		UIColor *backgroundColor = backgroundColors[(arc4random() % [backgroundColors count])];
-		UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.6];
-		
-		self.missingArtworkView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
-		[self.missingArtworkView setBackgroundColor:backgroundColor];
-		[[self.missingArtworkView layer] setBorderColor:[[UIColor colorWithWhite:0.7 alpha:0.6] CGColor]];
-		[[self.missingArtworkView layer] setBorderWidth:0.5];
-		_missingLabel = [[UILabel alloc] initWithFrame:[_missingArtworkView bounds]];
-		[self.missingArtworkView addSubview:_missingLabel];
-		[_missingLabel setText:@"Missing Artwork"];
-		[_missingLabel setNumberOfLines:0];
-		[_missingLabel setTextAlignment:NSTextAlignmentCenter];
-		[_missingLabel setTextColor:[UIColor grayColor]];
-		[_missingLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline]];
-//		[_missingLabel setAdjustsFontSizeToFitWidth:YES];
-//		[_missingLabel setMinimumScaleFactor:0.75];
-	}
-	
+    }
 	return self;
+}
+
+- (void)setText:(NSString *)text {
+    [_titleLabel setText:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
+                                                                         attributes:@{
+                                                                                      NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline],
+                                                                                      NSParagraphStyleAttributeName: paragraphStyle,
+                                                                                      NSForegroundColorAttributeName: [UIColor grayColor]
+                                                                                      }];
+    UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.9];
+    UIImage *missingArtworkImage = [UIImage imageWithSize:self.missingArtworkView.bounds.size
+                                                    color:backgroundColor
+                                                     text:attributedText];
+    self.missingArtworkView.image = missingArtworkImage;
+    [self setNeedsLayout];
+    [self setNeedsFocusUpdate];
 }
 
 - (void)dealloc
@@ -110,72 +128,52 @@
 	
 	if (![_imageView image])
 	{
-		[self addSubview:self.missingArtworkView];
-	}
-	else
-	{
-		[self.missingArtworkView removeFromSuperview];
-	}
+		[self.contentView addSubview:self.missingArtworkView];
+        [_imageView removeFromSuperview];
+    }
+    else
+    {
+        [self.missingArtworkView removeFromSuperview];
+        [self.contentView addSubview:_imageView];
+    }
 
 #if TARGET_OS_TV
+    CGAffineTransform titleTransform = _titleLabel.transform;
+    if (self.focused) {
+        _titleLabel.transform = CGAffineTransformIdentity;
+    }
+    [self.contentView bringSubviewToFront:_titleLabel];
     [_titleLabel sizeToFit];
     [_titleLabel setWidth:[[self contentView] bounds].size.width];
+    [_titleLabel setOriginX:0];
+    CGSize imageSize = pv_CGSizeAspectFittingSize(_imageView.image.size, self.contentView.bounds.size);
+    [_imageView setSize:imageSize];
+    _imageView.center = CGPointMake(CGRectGetMidX(self.contentView.bounds),
+                                    CGRectGetMidY(self.contentView.bounds));
+    if (_imageView.image) {
+        [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
+    } else {
+        [_titleLabel setOriginY:CGRectGetMaxY(self.missingArtworkView.frame)];
+    }
+    _titleLabel.transform = titleTransform;
 #endif
 }
 
 #if TARGET_OS_TV
-- (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
+- (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context
+       withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
 {
-    if (self.focused)
-    {
-        [self setHighlighted:YES];
-    }
-    else
-    {
-        [self setHighlighted:NO];
-    }
-}
-
-- (BOOL)shouldUpdateFocusInContext:(UIFocusUpdateContext *)context
-{
-    if ([context nextFocusedView] == self)
-    {
-        [self setHighlighted:YES];
-    }
-    else if ([context previouslyFocusedView] == self)
-    {
-        [self setHighlighted:NO];
-    }
-
-    return YES;
-}
-
-- (void)setHighlighted:(BOOL)highlighted
-{
-	[super setHighlighted:highlighted];
-	
-	if (highlighted)
-	{
-		[UIView animateWithDuration:0.3
-							  delay:0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-                             [self.imageView setTransform:CGAffineTransformMakeScale(1.33, 1.33)];
-                             [self.missingArtworkView setTransform:CGAffineTransformMakeScale(1.33, 1.33)];
-						 }
-						 completion:NULL];
-	}
-	else
-	{
-		[UIView animateWithDuration:0.3
-							  delay:0
-							options:UIViewAnimationOptionBeginFromCurrentState
-						 animations:^{
-                             [self.imageView setTransform:CGAffineTransformIdentity];
-                             [self.missingArtworkView setTransform:CGAffineTransformIdentity];
-						 }
-						 completion:NULL];
-	}
+    [coordinator addCoordinatedAnimations:^{
+        if (self.focused) {
+            CGAffineTransform transform = CGAffineTransformMakeScale(1.25, 1.25);
+            transform = CGAffineTransformTranslate(transform, 0, 40);
+            self.titleLabel.alpha = 1;
+            self.titleLabel.transform = transform;
+        } else {
+            self.titleLabel.alpha = 0;
+            self.titleLabel.transform = CGAffineTransformIdentity;
+        }
+    } completion:nil];
 }
 #endif
 
