@@ -8,6 +8,8 @@
 
 #import "PVAppConstants.h"
 
+NSInteger const PVMaxRecentsShortcutCount = 4;
+
 NSString *const PVAppGroupId = @"";
 
 NSString *const PVGameControllerKey = @"PlayController";

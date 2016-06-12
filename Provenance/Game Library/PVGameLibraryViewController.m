@@ -35,18 +35,12 @@
 #import "PVControllerManager.h"
 #import "RLMRealmConfiguration+GroupConfig.h"
 #import "PVEmulatorConstants.h"
+#import "PVAppConstants.h"
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
-
-#if TARGET_OS_TV
-#define PVMaxRecentsCount 12
-#else
-#define PVMaxRecentsCount (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone ? 6 : 9)
-#endif
-NSInteger const PVMaxRecentsShortcutCount = 4;
 
 @interface PVGameLibraryViewController ()
 
@@ -221,11 +215,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[indexPaths enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 		[self.collectionView deselectItemAtIndexPath:obj animated:YES];
 	}];
-    
-    if (self.mustRefreshDataSource) {
+
+//    if (self.mustRefreshDataSource) {
         [self fetchGames];
         [self.collectionView reloadData];
-    }
+//    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
