@@ -104,7 +104,9 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
                                                      text:attributedText];
     self.missingArtworkView.image = missingArtworkImage;
     [self setNeedsLayout];
-    [self setNeedsFocusUpdate];
+    if ([self respondsToSelector:@selector(setNeedsFocusUpdate)]) {
+        [self setNeedsFocusUpdate];
+    }
 }
 
 - (void)dealloc
