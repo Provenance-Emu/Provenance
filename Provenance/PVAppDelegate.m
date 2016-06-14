@@ -61,7 +61,10 @@
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+#pragma clang diagnostic pop
 
     if (url && [url isFileURL])
     {
