@@ -15,6 +15,25 @@
 
 @implementation PVControllerSelectionViewController
 
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [super viewWillAppear:animated];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleControllerReassigned:)
+                                                 name:PVControllerManagerControllerReassignedNotification
+                                               object:nil];
+}
+
+- (void)viewDidDisappear:(BOOL)animated;
+{
+    [super viewDidDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:PVControllerManagerControllerReassignedNotification
+                                                  object:nil];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -26,6 +45,11 @@
 #else
     [self setTitle:@"Controller Settings"];
 #endif
+}
+
+- (void)handleControllerReassigned:(NSNotification *)notification;
+{
+    [self.tableView reloadData];
 }
 
 #pragma mark - UITableViewDataSource
