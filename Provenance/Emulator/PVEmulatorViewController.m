@@ -138,6 +138,10 @@ void uncaughtExceptionHandler(NSException *exception)
                                              selector:@selector(screenDidDisconnect:)
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(handleControllerManagerControllerReassigned:)
+												 name:PVControllerManagerControllerReassignedNotification
+											   object:nil];
 
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
@@ -722,6 +726,12 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)controllerDidDisconnect:(NSNotification *)note
 {
 	[self.menuButton setHidden:NO];
+}
+
+- (void)handleControllerManagerControllerReassigned:(NSNotification *)notification
+{
+	self.emulatorCore.controller1 = [[PVControllerManager sharedManager] player1];
+	self.emulatorCore.controller2 = [[PVControllerManager sharedManager] player2];
 }
 
 #pragma mark - UIScreenNotifications
