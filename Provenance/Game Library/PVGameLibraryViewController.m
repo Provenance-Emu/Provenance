@@ -175,7 +175,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                    withReuseIdentifier:PVGameLibraryHeaderView];
 #if TARGET_OS_TV
-    [self.collectionView setContentInset:UIEdgeInsetsMake(40, 20, 40, 20)];
+    [self.collectionView setContentInset:UIEdgeInsetsMake(40, 80, 40, 80)];
 #endif
 	[[self view] addSubview:self.collectionView];
     

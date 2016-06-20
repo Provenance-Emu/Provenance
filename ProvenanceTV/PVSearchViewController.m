@@ -40,7 +40,7 @@
 
 	[(UICollectionViewFlowLayout *)self.collectionViewLayout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
 	[self.collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:@"SearchResultCell"];
-	[self.collectionView setContentInset:UIEdgeInsetsMake(40, 20, 40, 20)];
+	[self.collectionView setContentInset:UIEdgeInsetsMake(40, 80, 40, 80)];
 }
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
