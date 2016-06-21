@@ -2,7 +2,7 @@
 An iOS & tvOS Frontend for multiple emulators
 
 ###Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) And follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
 ###Why 'Provenance'?
 
@@ -22,7 +22,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
     - Game Gear
 - Nintendo
-    - NES
+    - NES (Nintendo Entertainment System) / Famicom
     - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
@@ -50,14 +50,17 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Custom artwork is also supported
 - Game library searching
 - Supports iOS 8+
-    - 3D Touch shortcuts for recent games on iPhone 6S/Plus
+    - 3D Touch shortcuts for recent games on newer iPhones (like 6s/6s Plus)
 - Supports Apple TV tvOS 9+
-    - TopShelf support
+    - TopShelf support [See instructions](https://github.com/jasarien/Provenance/pull/242)
 
 Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
 
-Please note that this is an open source project done in the free time of the author and contributors and new features and new emulator cores may take time.
-Adding a comment to an existing issue does not help speed up the development in any way.
+This is an open source project done in the free time of the author and contributors.
+
+New features or emulator cores may take time.
+
+Adding a comment to an existing issue does not speed up development.
 
 ###Importing ROMs
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
