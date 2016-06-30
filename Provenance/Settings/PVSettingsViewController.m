@@ -32,10 +32,13 @@
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+    [self.recentGamesSwitch setOn:[settings showRecentGames]];
     [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
-    [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+	[self.versionLabel setText:versionText];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
 #else
@@ -87,6 +90,11 @@
 - (IBAction)toggleVibration:(id)sender
 {
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
+}
+
+- (IBAction)toggleRecentGamesSwitch:(id)sender;
+{
+    [[PVSettingsModel sharedInstance] setShowRecentGames:[self.recentGamesSwitch isOn]];
 }
 
 - (IBAction)volumeChanged:(id)sender

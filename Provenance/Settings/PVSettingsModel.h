@@ -15,6 +15,7 @@ extern NSString * const kAutoLoadAutoSavesKey;
 extern NSString * const kControllerOpacityKey;
 extern NSString * const kDisableAutoLockKey;
 extern NSString * const kButtonVibrationKey;
+extern NSString * const kShowRecentGamesKey;
 extern NSString * const kiCadeControllerSettingKey;
 extern NSString * const kVolumeSettingKey;
 
@@ -25,6 +26,7 @@ extern NSString * const kVolumeSettingKey;
 @property (nonatomic, assign) BOOL autoLoadAutoSaves;
 @property (nonatomic, assign) BOOL disableAutoLock;
 @property (nonatomic, assign) BOOL buttonVibration;
+@property (nonatomic, assign) BOOL showRecentGames;
 @property (nonatomic, assign) kICadeControllerSetting iCadeControllerSetting;
 
 @property (nonatomic, assign) CGFloat controllerOpacity;

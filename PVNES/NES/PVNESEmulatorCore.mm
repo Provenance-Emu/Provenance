@@ -138,6 +138,11 @@ static __weak PVNESEmulatorCore *_current;
     pXBuf = 0;
     soundSize = 0;
 
+	if (self.controller1 || self.controller2)
+	{
+		[self updateControllers];
+	}
+
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
 
     pXBuf = XBuf;
@@ -149,11 +154,6 @@ static __weak PVNESEmulatorCore *_current;
         soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
 
     [[self ringBufferAtIndex:0] write:soundBuffer maxLength:soundSize << 2];
-
-    if (self.controller1 || self.controller2)
-    {
-        [self updateControllers];
-    }
 }
 
 - (void)resetEmulation

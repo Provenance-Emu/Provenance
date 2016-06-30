@@ -31,6 +31,8 @@
 		1AD482481BA363A400FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		1AD4BC6B1BFD381C007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */; };
 		1AD4BC711BFD3920007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */; };
+		25A64E131CB1BBEB00EDD19D /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */; };
+		25A64E141CB1BDBA00EDD19D /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -79,6 +81,8 @@
 		1AD4824E1BA363A400FDA50A /* libPVSupportTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSupportTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		25A64E111CB1BBEB00EDD19D /* PVGameControllerUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerUtilities.h; sourceTree = "<group>"; };
+		25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerUtilities.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,12 +161,14 @@
 		1ACEA64917F7467D0031B1C9 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
+				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
+				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
 				1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */,
 				1ACEA69717F748F80031B1C9 /* OETimingUtils.m */,
 				1ACEA68F17F748F80031B1C9 /* PVEmulatorCore.h */,
 				1ACEA69817F748F80031B1C9 /* PVEmulatorCore.m */,
-				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
-				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
+				25A64E111CB1BBEB00EDD19D /* PVGameControllerUtilities.h */,
+				25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
 			);
 			path = PVSupport;
@@ -264,6 +270,7 @@
 				1ACEA69A17F748F80031B1C9 /* OERingBuffer.m in Sources */,
 				1ACEA6A217F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m in Sources */,
 				1ACEA69C17F748F80031B1C9 /* OETimingUtils.m in Sources */,
+				25A64E131CB1BBEB00EDD19D /* PVGameControllerUtilities.m in Sources */,
 				1ACEA69D17F748F80031B1C9 /* PVEmulatorCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,6 +280,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AD4823D1BA363A400FDA50A /* TPCircularBuffer.c in Sources */,
+				25A64E141CB1BDBA00EDD19D /* PVGameControllerUtilities.m in Sources */,
 				1AD4823E1BA363A400FDA50A /* OEGameAudio.m in Sources */,
 				1AD4823F1BA363A400FDA50A /* OERingBuffer.m in Sources */,
 				1AD482401BA363A400FDA50A /* NSObject+PVAbstractAdditions.m in Sources */,

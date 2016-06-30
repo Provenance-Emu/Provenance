@@ -13,6 +13,8 @@
 #import "PVMediaCache.h"
 #import "PVConflictViewController.h"
 #import "PVControllerSelectionViewController.h"
+#import "Reachability.h"
+#import "PVWebServer.h"
 
 @interface PVTVSettingsViewController ()
 
@@ -22,6 +24,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *recentGamesValueLabel;
 
 @end
 
@@ -39,7 +42,10 @@
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
-    [self.versionValueLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
+    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
+	[self.versionValueLabel setText:versionText];
 #if DEBUG
     [self.modeValueLabel setText:@"DEBUG"];
 #else
@@ -80,7 +86,46 @@
         case 1:
             // library settings
             switch ([indexPath row]) {
-                case 0: {
+				case 0: {
+					// start webserver
+					// Check to see if we are connected to WiFi. Cannot continue otherwise.
+					Reachability *reachability = [Reachability reachabilityForInternetConnection];
+					[reachability startNotifier];
+
+					NetworkStatus status = [reachability currentReachabilityStatus];
+
+					if (status != ReachableViaWiFi)
+					{
+						UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+																					   message: @"Your device needs to be connected to a WiFi network to continue!"
+																				preferredStyle:UIAlertControllerStyleAlert];
+						[alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+						}]];
+						[self presentViewController:alert animated:YES completion:NULL];
+					} else {
+						// connected via wifi, let's continue
+
+						// start web transfer service
+						[[PVWebServer sharedInstance] startServer];
+
+						// get the IP address of the device
+						NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
+
+#if TARGET_IPHONE_SIMULATOR
+						ipAddress = [ipAddress stringByAppendingString:@":8080"];
+#endif
+
+						NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
+						UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
+																					   message: message
+																				preferredStyle:UIAlertControllerStyleAlert];
+						[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+							[[PVWebServer sharedInstance] stopServer];
+						}]];
+						[self presentViewController:alert animated:YES completion:NULL];
+					}
+				}
+                case 1: {
                     // refresh
                     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Refresh Game Library?"
                                                                                    message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
@@ -93,7 +138,7 @@
                     [self presentViewController:alert animated:YES completion:NULL];
                     break;
                 }
-                case 1: {
+                case 2: {
                     // empty cache
                     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Empty Image Cache?"
                                                                                    message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
@@ -105,12 +150,16 @@
                     [self presentViewController:alert animated:YES completion:NULL];
                     break;
                 }
-                case 2: {
+                case 3: {
                     PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
                     [self.navigationController pushViewController:conflictViewController animated:YES];
                     break;
                 }
-                    
+                case 4: {
+                    [settings setShowRecentGames:![settings showRecentGames]];
+                    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+                    break;
+                }
                 default:
                     break;
             }
