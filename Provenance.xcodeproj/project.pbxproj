@@ -20,6 +20,7 @@
 		1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
 		1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
 		1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
+		1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.m */; };
 		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
 		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
@@ -193,6 +194,9 @@
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
+		1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.m */; };
+		25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
+		25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
@@ -326,6 +330,8 @@
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E8A1AD187F4005FB77C /* testdata.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testdata.txt; sourceTree = "<group>"; };
 		1A2B0E8D1AD18961005FB77C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		1A2B13CB1D0DFF5100D0B863 /* PVSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSearchViewController.h; sourceTree = "<group>"; };
+		1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSearchViewController.m; sourceTree = "<group>"; };
 		1A34C58517D517760058E7D1 /* systems.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = systems.plist; sourceTree = "<group>"; };
 		1A34C58817D53C9B0058E7D1 /* PVEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConfiguration.h; sourceTree = "<group>"; };
 		1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConfiguration.m; sourceTree = "<group>"; };
@@ -461,6 +467,8 @@
 		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
+		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
+		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
 		378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
 		378F49E01B63D7CD0065FA39 /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
@@ -968,6 +976,8 @@
 				1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */,
 				423BB97D17DD46BC0048F457 /* NSData+Hashing.h */,
 				423BB97E17DD46BC0048F457 /* NSData+Hashing.m */,
+				25A64E151CB1C41100EDD19D /* UIImage+Color.h */,
+				25A64E161CB1C41100EDD19D /* UIImage+Color.m */,
 				42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */,
 				42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */,
 				1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */,
@@ -988,6 +998,8 @@
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.m */,
 				1ACE9A081BACBC9E00C72AA5 /* PVTVSettingsViewController.h */,
 				1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.m */,
+				1A2B13CB1D0DFF5100D0B863 /* PVSearchViewController.h */,
+				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.m */,
 				1AD481BF1BA350A400FDA50A /* Main.storyboard */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
 				1AD481C41BA350A400FDA50A /* Info.plist */,
@@ -1177,6 +1189,7 @@
 			buildPhases = (
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
+				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 			);
@@ -1195,6 +1208,7 @@
 			buildPhases = (
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
+				1A44C0AE1D0A1E730018751A /* Set Build Number */,
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				BE9FDCC61C210B9F0046DF0E /* Embed App Extensions */,
@@ -1351,6 +1365,37 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1A44C0AD1D0A1DE80018751A /* Set Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
+		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1A3D409017B2DCE4004DFFFC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1383,6 +1428,7 @@
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */,
+				1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
@@ -1402,6 +1448,7 @@
 				1A9938A21BBB02590050A2B7 /* PVRecentGame.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
+				25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
@@ -1444,6 +1491,7 @@
 				1AD481F31BA3549700FDA50A /* NSFileManager+Hashing.m in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */,
+				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.m in Sources */,
 				1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */,
 				1AD481DC1BA3544500FDA50A /* GCDWebServerDataRequest.m in Sources */,
 				1AD481FB1BA354B100FDA50A /* PViCadeController.m in Sources */,
@@ -1496,6 +1544,7 @@
 				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
+				25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,

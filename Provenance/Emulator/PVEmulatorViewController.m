@@ -90,10 +90,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.controllerViewController = nil;
 	self.menuButton = nil;
 
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:nil];
-    }
+#if !TARGET_OS_TV
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:nil];
+	}
+#endif
 }
 
 - (void)viewDidLoad
@@ -136,6 +138,10 @@ void uncaughtExceptionHandler(NSException *exception)
                                              selector:@selector(screenDidDisconnect:)
                                                  name:UIScreenDidDisconnectNotification
                                                object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(handleControllerManagerControllerReassigned:)
+												 name:PVControllerManagerControllerReassignedNotification
+											   object:nil];
 
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
@@ -265,13 +271,27 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 	}
 
-    __weak PVEmulatorViewController *weakSelf = self;
-    for (GCController *controller in [GCController controllers])
-    {
-        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed];
-        }];
-    }
+	// stupid bug in tvOS 9.2
+	// the controller paused handler (if implemented) seems to cause a 'back' navigation action
+	// as well as calling the pause handler itself. Which breaks the menu functionality.
+	// But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
+
+	// Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
+
+#if TARGET_OS_TV
+    // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
+    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
+    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    [self.view addGestureRecognizer:menuGestureRecognizer];
+#else
+	__weak PVEmulatorViewController *weakSelf = self;
+	for (GCController *controller in [GCController controllers])
+	{
+		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+			[weakSelf controllerPauseButtonPressed];
+		}];
+	}
+#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -630,13 +650,20 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)showSpeedMenu
 {
-	__block PVEmulatorViewController *weakSelf = self;
-
-	UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
-																		 message:nil
-																  preferredStyle:UIAlertControllerStyleActionSheet];
-	NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
-	[speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block PVEmulatorViewController *weakSelf = self;
+    
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@"Game Speed"
+                                                                         message:nil
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
+    {
+        [[actionSheet popoverPresentationController] setSourceView:self.menuButton];
+        [[actionSheet popoverPresentationController] setSourceRect:[self.menuButton bounds]];
+    }
+    
+    NSArray<NSString *> *speeds = @[@"Slow", @"Normal", @"Fast"];
+    [speeds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 		[actionSheet addAction:[UIAlertAction actionWithTitle:obj style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 			weakSelf.emulatorCore.gameSpeed = idx;
 			[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -699,6 +726,12 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)controllerDidDisconnect:(NSNotification *)note
 {
 	[self.menuButton setHidden:NO];
+}
+
+- (void)handleControllerManagerControllerReassigned:(NSNotification *)notification
+{
+	self.emulatorCore.controller1 = [[PVControllerManager sharedManager] player1];
+	self.emulatorCore.controller2 = [[PVControllerManager sharedManager] player2];
 }
 
 #pragma mark - UIScreenNotifications

@@ -123,8 +123,18 @@
     return nil;
 }
 
--(PViCadeGamepad*) extendedGamepad {
+-(GCExtendedGamepad*) extendedGamepad {
     return _iCadeGamepad;
 }
+
+-(GCControllerPlayerIndex) playerIndex {
+    return GCControllerPlayerIndex1;
+}
+
+-(void) setPlayerIndex:(GCControllerPlayerIndex) playerIndex {
+    return;
+}
+
+
 
 @end

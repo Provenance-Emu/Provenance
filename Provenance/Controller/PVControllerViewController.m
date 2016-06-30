@@ -115,7 +115,7 @@
 		NSString *controlType = [control objectForKey:PVControlTypeKey];
 		
 		BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
-		CGFloat kDPadTopMargin = 64.0;
+		CGFloat kDPadTopMargin = 96.0;
 		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
 		
 		if ([controlType isEqualToString:PVDPad])
@@ -142,7 +142,7 @@
 		else if ([controlType isEqualToString:PVButtonGroup])
 		{
 			CGFloat xPadding = 5;
-			CGFloat bottomPadding = 32;
+			CGFloat bottomPadding = 16;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			
 			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
@@ -181,6 +181,7 @@
 			CGFloat xPadding = 10;
 			CGFloat yPadding = 10;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+
 			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, size.width, size.height);
 			
 			if (!self.leftShoulderButton)
@@ -387,7 +388,9 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self.leftShoulderButton setHidden:YES];
     [self.rightShoulderButton setHidden:YES];
     
-    if ([controller extendedGamepad])
+    //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
+    NSArray *useStandardGamepad = [NSArray arrayWithObjects: PVGBSystemIdentifier, PVGBCSystemIdentifier, PVGBASystemIdentifier, nil];
+    if ([controller extendedGamepad] || [useStandardGamepad containsObject:self.systemIdentifier])
     {
         [self.startButton setHidden:YES];
         [self.selectButton setHidden:YES];

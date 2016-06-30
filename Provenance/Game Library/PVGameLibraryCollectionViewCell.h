@@ -14,4 +14,6 @@
 @property (nonatomic, readonly) UILabel *titleLabel;
 @property (nonatomic, readonly) UILabel *missingLabel;
 
+- (void)setText:(NSString *)text;
+
 @end

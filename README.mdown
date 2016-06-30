@@ -65,6 +65,9 @@ Adding a comment to an existing issue does not help speed up the development in 
 ###Screenshots
 [Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
 
+#Contributor Discussion
+If you're a contributor, or would like to contribute, there is a developer-focussed Slack at [provenance-dev.slack.com](http://provenance-dev.slack.com). Request an invite to join the conversation.
+
 #Attributions
 
 Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.

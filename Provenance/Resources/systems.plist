@@ -210,7 +210,7 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{212,92}</string>
+				<string>{180, 180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
@@ -219,7 +219,7 @@
 						<key>PVControlTitle</key>
 						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{76,16},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -227,7 +227,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{144,8},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -266,7 +266,7 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{212,92}</string>
+				<string>{180, 180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
@@ -275,7 +275,7 @@
 						<key>PVControlTitle</key>
 						<string>1</string>
 						<key>PVControlFrame</key>
-						<string>{{76,16},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -283,7 +283,7 @@
 						<key>PVControlTitle</key>
 						<string>2</string>
 						<key>PVControlFrame</key>
-						<string>{{144,8},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -764,24 +764,24 @@
 				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
-				<string>{212,160}</string>
+				<string>{180, 180}</string>
 				<key>PVGroupedButtons</key>
 				<array>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>1</string>
+						<string>A</string>
 						<key>PVControlFrame</key>
-						<string>{{76,84},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>2</string>
+						<string>B</string>
 						<key>PVControlFrame</key>
-						<string>{{144,76},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>

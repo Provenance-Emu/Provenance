@@ -9,6 +9,7 @@
 #import "PVAppDelegate.h"
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
+#import "PVSearchViewController.h"
 
 #if TARGET_OS_TV
 #import "PVAppConstants.h"
@@ -32,13 +33,38 @@
         }
     }
 #endif
-    
+
+#if TARGET_OS_TV
+	if ([[self.window rootViewController] isKindOfClass:[UITabBarController class]]) {
+		UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+
+		UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
+		[flowLayout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
+		PVSearchViewController *searchViewController = [[PVSearchViewController alloc] initWithCollectionViewLayout:flowLayout];
+
+		UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:searchViewController];
+		searchController.searchResultsUpdater = searchViewController;
+
+		UISearchContainerViewController *searchContainerController = [[UISearchContainerViewController alloc] initWithSearchController:searchController];
+		[searchContainerController setTitle:@"Search"];
+
+		UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:searchContainerController];
+
+		NSMutableArray *viewControllers = [[tabBarController viewControllers] mutableCopy];
+		[viewControllers insertObject:navController atIndex:1];
+		[tabBarController setViewControllers:viewControllers];
+	}
+#endif
+
 	return YES;
 }
 
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
+#pragma clang diagnostic pop
 
     if (url && [url isFileURL])
     {
