@@ -1394,33 +1394,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
 	
-	NSString *artworkURL = [game customArtworkURL];
-	NSString *originalArtworkURL = [game originalArtworkURL];
-    __block UIImage *artwork = nil;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([artworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:artworkURL];
-        }
-        else if ([originalArtworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:originalArtworkURL];
-        }
-        
-        if (artwork)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[cell imageView] setImage:artwork];
-                [cell setNeedsLayout];
-            });
-        }
-    });
-    
-	[cell setText:[game title]];
-	[[cell missingLabel] setText:[game title]];
-	
-    [cell setNeedsLayout];
+    [cell setupWithGame:game];
     
 	return cell;
 }
@@ -1625,11 +1599,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self dismissViewControllerAnimated:YES completion:NULL];
 	
 	UIImage *image = info[UIImagePickerControllerOriginalImage];
-	image = [image scaledImageWithMaxResolution:200];
+	image = [image scaledImageWithMaxResolution:PVThumbnailMaxResolution];
 	
 	if (image)
 	{
-		NSData *imageData = UIImagePNGRepresentation(image);
+		NSData *imageData = UIImageJPEGRepresentation(image, PVThumbnailQuality);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
         [self.realm beginWriteTransaction];

@@ -11,6 +11,10 @@
 #import "UIImage+Color.h"
 #import "UIView+FrameAdditions.h"
 
+#import "PVGame.h"
+#import "PVMediaCache.h"
+#import "PVAppConstants.h"
+
 CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     CGFloat width = originalSize.width;
     CGFloat height = originalSize.height;
@@ -40,7 +44,9 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 
 @interface PVGameLibraryCollectionViewCell ()
 
-@property (nonatomic, strong) UIImageView *missingArtworkView;
+@property (nonatomic, readonly) UIImageView *imageView;
+@property (nonatomic, readonly) UILabel *titleLabel;
+@property (strong, nonatomic) NSBlockOperation *operation;
 
 @end
 
@@ -56,16 +62,10 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
-        UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        UIImage *missingArtworkImage = [UIImage imageWithSize:CGSizeMake(CGRectGetWidth(frame), CGRectGetHeight(frame) - 44)
-                                                        color:backgroundColor
-                                                         text:nil];
-        self.missingArtworkView = [[UIImageView alloc] initWithImage:missingArtworkImage];
 #if TARGET_OS_TV
         // The label's alpha will get set to 1 on focus
         _titleLabel.alpha = 0;
         [_imageView setAdjustsImageWhenAncestorFocused:YES];
-        [self.missingArtworkView setAdjustsImageWhenAncestorFocused:YES];
         [_titleLabel setTextColor:[UIColor whiteColor]];
         [[_titleLabel layer] setMasksToBounds:NO];
         [_titleLabel setShadowColor:[[UIColor blackColor] colorWithAlphaComponent:0.8]];
@@ -88,32 +88,70 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 	return self;
 }
 
-- (void)setText:(NSString *)text {
-    [_titleLabel setText:text];
+- (UIImage *)imageWithText:(NSString *)text {
+    
+    // TODO: To be replaced with the correct system placeholder
+    
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
                                                                          attributes:@{
-                                                                                      NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline],
+                                                                                      NSFontAttributeName: [UIFont systemFontOfSize:30.0],
                                                                                       NSParagraphStyleAttributeName: paragraphStyle,
                                                                                       NSForegroundColorAttributeName: [UIColor grayColor]
                                                                                       }];
+    
     UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.9];
-    UIImage *missingArtworkImage = [UIImage imageWithSize:self.missingArtworkView.bounds.size
+    UIImage *missingArtworkImage = [UIImage imageWithSize:CGSizeMake(PVThumbnailMaxResolution, PVThumbnailMaxResolution)
                                                     color:backgroundColor
                                                      text:attributedText];
-    self.missingArtworkView.image = missingArtworkImage;
+    
+    return missingArtworkImage;
+}
+
+- (void)setupWithGame:(PVGame *)game {
+    
+    NSString *artworkURL = [game customArtworkURL];
+    NSString *originalArtworkURL = [game originalArtworkURL];
+    
+    [_titleLabel setText:[game title]];
+
+    if ([artworkURL isEqualToString:@""] &&
+        [originalArtworkURL isEqualToString:@""]) {
+        self.imageView.image = [self imageWithText:[game placeholderImageName]];
+    } else {
+        NSString *key = [artworkURL length] ? artworkURL : nil;
+        
+        if (!key) {
+            key = [originalArtworkURL length] ? originalArtworkURL : nil;
+        }
+        
+        if (key) {
+            self.operation = [[PVMediaCache shareInstance] imageForKey:key
+                                                            completion:^(UIImage *image) {
+                                                                
+                                                                UIImage *artwork = image ?: [self imageWithText:[game placeholderImageName]];
+                                                                
+                                                                self.imageView.image = artwork;
+                                                                [self setNeedsLayout];
+                                                            }];
+        }
+    }
+    
     [self setNeedsLayout];
     if ([self respondsToSelector:@selector(setNeedsFocusUpdate)]) {
         [self setNeedsFocusUpdate];
     }
+    
+    [self setNeedsLayout];
 }
 
 - (void)dealloc
 {
+    [self.operation cancel];
+    
     _imageView = nil;
 	_titleLabel = nil;
-	self.missingArtworkView = nil;
 }
 
 - (void)prepareForReuse
@@ -127,17 +165,6 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-	
-	if (![_imageView image])
-	{
-		[self.contentView addSubview:self.missingArtworkView];
-        [_imageView removeFromSuperview];
-    }
-    else
-    {
-        [self.missingArtworkView removeFromSuperview];
-        [self.contentView addSubview:_imageView];
-    }
 
 #if TARGET_OS_TV
     CGAffineTransform titleTransform = _titleLabel.transform;
@@ -152,11 +179,7 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     [_imageView setSize:imageSize];
     _imageView.center = CGPointMake(CGRectGetMidX(self.contentView.bounds),
                                     CGRectGetMidY(self.contentView.bounds));
-    if (_imageView.image) {
-        [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
-    } else {
-        [_titleLabel setOriginY:CGRectGetMaxY(self.missingArtworkView.frame)];
-    }
+    [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
     _titleLabel.transform = titleTransform;
 #endif
 }
@@ -178,34 +201,5 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     } completion:nil];
 }
 #endif
-
-- (void)setSelected:(BOOL)selected
-{
-    [super setSelected:selected];
-
-    if (selected)
-    {
-        [UIView animateWithDuration:0.1
-                              delay:0
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             [_imageView setAlpha:0.6];
-                             [self.missingArtworkView setAlpha:0.6];
-                         }
-                         completion:NULL];
-    }
-    else
-    {
-        [UIView animateWithDuration:0.3
-                              delay:0
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             [_imageView setAlpha:1];
-                             [self.missingArtworkView setAlpha:1];
-                         }
-                         completion:NULL];
-    }
-}
-
 
 @end

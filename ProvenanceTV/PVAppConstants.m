@@ -15,3 +15,11 @@ NSString *const PVAppGroupId = @"";
 NSString *const PVGameControllerKey = @"PlayController";
 NSString *const PVGameMD5Key = @"md5";
 NSString *const PVAppURLKey = @"provenance";
+
+#if TARGET_OS_TV
+    float const PVThumbnailMaxResolution = 400.0;
+#else
+    float const PVThumbnailMaxResolution = 200.0;
+#endif
+
+float const PVThumbnailQuality = 0.7;

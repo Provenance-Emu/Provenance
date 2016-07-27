@@ -21,3 +21,6 @@ extern NSString *const PVAppGroupId;
 extern NSString *const PVGameControllerKey;
 extern NSString *const PVGameMD5Key;
 extern NSString *const PVAppURLKey;
+
+extern float const PVThumbnailMaxResolution;
+extern float const PVThumbnailQuality;
