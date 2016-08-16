@@ -20,9 +20,6 @@
 
     BOOL isRunning;
     BOOL shouldStop;
-
-    double framerateMultiplier;
-
 }
 
 @property (nonatomic, copy) NSString *romName;
