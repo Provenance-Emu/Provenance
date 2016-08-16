@@ -11,13 +11,26 @@
             buildForRunning = "YES"
             buildForProfiling = "YES"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES"
-            hideIssues = "NO">
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3DDB7241C70F87D007D1CDE"
-               BuildableName = "libPVStella.a"
-               BlueprintName = "PVStella"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+               BuildableName = "Stella.framework"
+               BlueprintName = "Stella"
                ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,6 +43,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+            BuildableName = "Stella.framework"
+            BlueprintName = "Stella"
+            ReferencedContainer = "container:PVStella.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -46,9 +68,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3DDB7241C70F87D007D1CDE"
-            BuildableName = "libPVStella.a"
-            BlueprintName = "PVStella"
+            BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+            BuildableName = "Stella.framework"
+            BlueprintName = "Stella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -64,9 +86,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3DDB7241C70F87D007D1CDE"
-            BuildableName = "libPVStella.a"
-            BlueprintName = "PVStella"
+            BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+            BuildableName = "Stella.framework"
+            BlueprintName = "Stella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

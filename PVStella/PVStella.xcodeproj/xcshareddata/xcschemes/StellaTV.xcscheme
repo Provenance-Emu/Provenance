@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A9FBC191ABD0DA7004E778B"
-               BuildableName = "libPVGBA.a"
-               BlueprintName = "PVGBA"
-               ReferencedContainer = "container:PVGBA.xcodeproj">
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupportTV.framework"
+               BlueprintName = "PVSupportTV"
+               ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+               BuildableName = "StellaTV.framework"
+               BlueprintName = "StellaTV"
+               ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +46,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A9FBC191ABD0DA7004E778B"
-            BuildableName = "libPVGBA.a"
-            BlueprintName = "PVGBA"
-            ReferencedContainer = "container:PVGBA.xcodeproj">
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "StellaTV.framework"
+            BlueprintName = "StellaTV"
+            ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -54,10 +68,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A9FBC191ABD0DA7004E778B"
-            BuildableName = "libPVGBA.a"
-            BlueprintName = "PVGBA"
-            ReferencedContainer = "container:PVGBA.xcodeproj">
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "StellaTV.framework"
+            BlueprintName = "StellaTV"
+            ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -72,10 +86,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1A9FBC191ABD0DA7004E778B"
-            BuildableName = "libPVGBA.a"
-            BlueprintName = "PVGBA"
-            ReferencedContainer = "container:PVGBA.xcodeproj">
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "StellaTV.framework"
+            BlueprintName = "StellaTV"
+            ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -61,7 +61,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		{
 			isRunning  = YES;
 			shouldStop = NO;
-            framerateMultiplier = 1.0;
+            _framerateMultiplier = 1.0;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
@@ -98,7 +98,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    gameInterval = 1.0 / ([self frameInterval] * _framerateMultiplier);
     NSTimeInterval gameTime = OEMonotonicTime();
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 

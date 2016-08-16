@@ -8,160 +8,146 @@
 
 /* Begin PBXBuildFile section */
 		B38FB4C31C839BE500CD73BE /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A849091C70FC4A008A4D89 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2415B632E000C6552F /* libretro.cpp */; };
-		B3A8490A1C70FC51008A4D89 /* Cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5C15B4C9A100C6552F /* Cart.cpp */; };
-		B3A8490B1C70FC51008A4D89 /* Cart0840.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5E15B4C9A100C6552F /* Cart0840.cpp */; };
-		B3A8490C1C70FC51008A4D89 /* Cart2K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6015B4C9A100C6552F /* Cart2K.cpp */; };
-		B3A8490D1C70FC51008A4D89 /* Cart3E.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6215B4C9A100C6552F /* Cart3E.cpp */; };
-		B3A8490E1C70FC51008A4D89 /* Cart3F.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6415B4C9A100C6552F /* Cart3F.cpp */; };
-		B3A8490F1C70FC51008A4D89 /* Cart4A50.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6615B4C9A100C6552F /* Cart4A50.cpp */; };
-		B3A849101C70FC51008A4D89 /* Cart4K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6815B4C9A100C6552F /* Cart4K.cpp */; };
-		B3A849111C70FC51008A4D89 /* CartAR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6A15B4C9A100C6552F /* CartAR.cpp */; };
-		B3A849121C70FC51008A4D89 /* CartCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6C15B4C9A100C6552F /* CartCV.cpp */; };
-		B3A849131C70FC51008A4D89 /* CartDPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6E15B4C9A100C6552F /* CartDPC.cpp */; };
-		B3A849141C70FC51008A4D89 /* CartDPCPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7015B4C9A100C6552F /* CartDPCPlus.cpp */; };
-		B3A849151C70FC51008A4D89 /* CartE0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7215B4C9A100C6552F /* CartE0.cpp */; };
-		B3A849161C70FC51008A4D89 /* CartE7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7415B4C9A100C6552F /* CartE7.cpp */; };
-		B3A849171C70FC51008A4D89 /* CartEF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7615B4C9A100C6552F /* CartEF.cpp */; };
-		B3A849181C70FC51008A4D89 /* CartEFSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7815B4C9A100C6552F /* CartEFSC.cpp */; };
-		B3A849191C70FC51008A4D89 /* CartF0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7A15B4C9A100C6552F /* CartF0.cpp */; };
-		B3A8491A1C70FC51008A4D89 /* CartF4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7C15B4C9A100C6552F /* CartF4.cpp */; };
-		B3A8491B1C70FC51008A4D89 /* CartF4SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7E15B4C9A100C6552F /* CartF4SC.cpp */; };
-		B3A8491C1C70FC51008A4D89 /* CartF6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8015B4C9A100C6552F /* CartF6.cpp */; };
-		B3A8491D1C70FC51008A4D89 /* CartF6SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8215B4C9A100C6552F /* CartF6SC.cpp */; };
-		B3A8491E1C70FC51008A4D89 /* CartF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8415B4C9A100C6552F /* CartF8.cpp */; };
-		B3A8491F1C70FC51008A4D89 /* CartF8SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8615B4C9A100C6552F /* CartF8SC.cpp */; };
-		B3A849201C70FC51008A4D89 /* CartFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8815B4C9A100C6552F /* CartFA.cpp */; };
-		B3A849211C70FC51008A4D89 /* CartFE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8A15B4C9A100C6552F /* CartFE.cpp */; };
-		B3A849221C70FC51008A4D89 /* CartMC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8C15B4C9A100C6552F /* CartMC.cpp */; };
-		B3A849231C70FC51008A4D89 /* CartSB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8E15B4C9A100C6552F /* CartSB.cpp */; };
-		B3A849241C70FC51008A4D89 /* CartUA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9015B4C9A100C6552F /* CartUA.cpp */; };
-		B3A849251C70FC51008A4D89 /* CartX07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9215B4C9A100C6552F /* CartX07.cpp */; };
-		B3A849261C70FC51008A4D89 /* Thumbulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9415B4C9A100C6552F /* Thumbulator.cpp */; };
-		B3A849271C70FC51008A4D89 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9615B4C9A100C6552F /* Console.cpp */; };
-		B3A849281C70FC56008A4D89 /* AtariVox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9915B4C9A100C6552F /* AtariVox.cpp */; };
-		B3A849291C70FC56008A4D89 /* Booster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9B15B4C9A100C6552F /* Booster.cpp */; };
-		B3A8492A1C70FC56008A4D89 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9D15B4C9A100C6552F /* Control.cpp */; };
-		B3A8492B1C70FC56008A4D89 /* Driving.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9F15B4C9A100C6552F /* Driving.cpp */; };
-		B3A8492C1C70FC56008A4D89 /* Genesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA215B4C9A100C6552F /* Genesis.cpp */; };
-		B3A8492D1C70FC56008A4D89 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA415B4C9A100C6552F /* Joystick.cpp */; };
-		B3A8492E1C70FC56008A4D89 /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA615B4C9A100C6552F /* Keyboard.cpp */; };
-		B3A8492F1C70FC56008A4D89 /* KidVid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA815B4C9A100C6552F /* KidVid.cpp */; };
-		B3A849301C70FC56008A4D89 /* MT24LC256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAA15B4C9A100C6552F /* MT24LC256.cpp */; };
-		B3A849311C70FC56008A4D89 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
-		B3A849321C70FC56008A4D89 /* SaveKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAE15B4C9A100C6552F /* SaveKey.cpp */; };
-		B3A849331C70FC56008A4D89 /* Switches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB115B4C9A100C6552F /* Switches.cpp */; };
-		B3A849341C70FC56008A4D89 /* TrackBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB315B4C9A100C6552F /* TrackBall.cpp */; };
-		B3A849351C70FC56008A4D89 /* FSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD91B15B9D3C300542C50 /* FSNode.cpp */; };
-		B3A849361C70FC56008A4D89 /* FSNodePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD92015B9D59200542C50 /* FSNodePOSIX.cpp */; };
-		B3A849371C70FC66008A4D89 /* Props.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB815B4C9A100C6552F /* Props.cpp */; };
-		B3A849381C70FC66008A4D89 /* PropsSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABA15B4C9A100C6552F /* PropsSet.cpp */; };
-		B3A849391C70FC66008A4D89 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABC15B4C9A100C6552F /* Settings.cpp */; };
-		B3A8493A1C70FC66008A4D89 /* SoundSDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABF15B4C9A100C6552F /* SoundSDL.cpp */; };
-		B3A8493B1C70FC76008A4D89 /* M6502.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC515B4C9A100C6552F /* M6502.cpp */; };
-		B3A8493C1C70FC76008A4D89 /* M6532.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC815B4C9A100C6552F /* M6532.cpp */; };
-		B3A8493D1C70FC76008A4D89 /* NullDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACA15B4C9A100C6552F /* NullDev.cpp */; };
-		B3A8493E1C70FC76008A4D89 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACC15B4C9A100C6552F /* System.cpp */; };
-		B3A8493F1C70FC76008A4D89 /* TIA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACE15B4C9A100C6552F /* TIA.cpp */; };
-		B3A849401C70FC76008A4D89 /* TIASnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD015B4C9A100C6552F /* TIASnd.cpp */; };
-		B3A849411C70FC76008A4D89 /* TIATables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD215B4C9A100C6552F /* TIATables.cpp */; };
-		B3A849421C70FC7A008A4D89 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD715B4C9A100C6552F /* MD5.cpp */; };
-		B3A849431C70FC7A008A4D89 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD915B4C9A100C6552F /* Random.cpp */; };
-		B3A849441C70FC7A008A4D89 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFADC15B4C9A100C6552F /* Serializer.cpp */; };
-		B3A849451C70FC83008A4D89 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
-		B3A849481C70FD53008A4D89 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849471C70FD53008A4D89 /* CoreGraphics.framework */; };
-		B3A8494A1C70FD5E008A4D89 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849491C70FD5E008A4D89 /* AudioToolbox.framework */; };
-		B3A8494C1C70FD63008A4D89 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; };
-		B3A8494E1C70FD67008A4D89 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494D1C70FD67008A4D89 /* UIKit.framework */; };
-		B3A849501C70FD6C008A4D89 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494F1C70FD6C008A4D89 /* Foundation.framework */; };
-		B3C102431C71406D00DD066C /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
-		B3C102441C71406D00DD066C /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
-		B3C102451C71406D00DD066C /* KidVid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA815B4C9A100C6552F /* KidVid.cpp */; };
-		B3C102461C71406D00DD066C /* CartAR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6A15B4C9A100C6552F /* CartAR.cpp */; };
-		B3C102471C71406D00DD066C /* SoundSDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABF15B4C9A100C6552F /* SoundSDL.cpp */; };
-		B3C102481C71406D00DD066C /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2415B632E000C6552F /* libretro.cpp */; };
-		B3C102491C71406D00DD066C /* CartFE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8A15B4C9A100C6552F /* CartFE.cpp */; };
-		B3C1024A1C71406D00DD066C /* CartUA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9015B4C9A100C6552F /* CartUA.cpp */; };
-		B3C1024B1C71406D00DD066C /* CartCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6C15B4C9A100C6552F /* CartCV.cpp */; };
-		B3C1024C1C71406D00DD066C /* CartF0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7A15B4C9A100C6552F /* CartF0.cpp */; };
-		B3C1024D1C71406D00DD066C /* CartFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8815B4C9A100C6552F /* CartFA.cpp */; };
-		B3C1024E1C71406D00DD066C /* Props.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB815B4C9A100C6552F /* Props.cpp */; };
-		B3C1024F1C71406D00DD066C /* Cart0840.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5E15B4C9A100C6552F /* Cart0840.cpp */; };
-		B3C102501C71406D00DD066C /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACC15B4C9A100C6552F /* System.cpp */; };
-		B3C102511C71406D00DD066C /* CartE0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7215B4C9A100C6552F /* CartE0.cpp */; };
-		B3C102521C71406D00DD066C /* CartF4SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7E15B4C9A100C6552F /* CartF4SC.cpp */; };
-		B3C102531C71406D00DD066C /* PropsSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABA15B4C9A100C6552F /* PropsSet.cpp */; };
-		B3C102541C71406D00DD066C /* Genesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA215B4C9A100C6552F /* Genesis.cpp */; };
-		B3C102551C71406D00DD066C /* Cart3E.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6215B4C9A100C6552F /* Cart3E.cpp */; };
-		B3C102561C71406D00DD066C /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD915B4C9A100C6552F /* Random.cpp */; };
-		B3C102571C71406D00DD066C /* TrackBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB315B4C9A100C6552F /* TrackBall.cpp */; };
-		B3C102581C71406D00DD066C /* AtariVox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9915B4C9A100C6552F /* AtariVox.cpp */; };
-		B3C102591C71406D00DD066C /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABC15B4C9A100C6552F /* Settings.cpp */; };
-		B3C1025A1C71406D00DD066C /* Cart4A50.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6615B4C9A100C6552F /* Cart4A50.cpp */; };
-		B3C1025B1C71406D00DD066C /* CartEF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7615B4C9A100C6552F /* CartEF.cpp */; };
-		B3C1025C1C71406D00DD066C /* Thumbulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9415B4C9A100C6552F /* Thumbulator.cpp */; };
-		B3C1025D1C71406D00DD066C /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFADC15B4C9A100C6552F /* Serializer.cpp */; };
-		B3C1025E1C71406D00DD066C /* MT24LC256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAA15B4C9A100C6552F /* MT24LC256.cpp */; };
-		B3C1025F1C71406D00DD066C /* CartEFSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7815B4C9A100C6552F /* CartEFSC.cpp */; };
-		B3C102601C71406D00DD066C /* Driving.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9F15B4C9A100C6552F /* Driving.cpp */; };
-		B3C102611C71406D00DD066C /* Cart4K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6815B4C9A100C6552F /* Cart4K.cpp */; };
-		B3C102621C71406D00DD066C /* NullDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACA15B4C9A100C6552F /* NullDev.cpp */; };
-		B3C102631C71406D00DD066C /* CartF4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7C15B4C9A100C6552F /* CartF4.cpp */; };
-		B3C102641C71406D00DD066C /* Switches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB115B4C9A100C6552F /* Switches.cpp */; };
-		B3C102651C71406D00DD066C /* CartF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8415B4C9A100C6552F /* CartF8.cpp */; };
-		B3C102661C71406D00DD066C /* CartF8SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8615B4C9A100C6552F /* CartF8SC.cpp */; };
-		B3C102671C71406D00DD066C /* M6532.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC815B4C9A100C6552F /* M6532.cpp */; };
-		B3C102681C71406D00DD066C /* FSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD91B15B9D3C300542C50 /* FSNode.cpp */; };
-		B3C102691C71406D00DD066C /* CartF6SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8215B4C9A100C6552F /* CartF6SC.cpp */; };
-		B3C1026A1C71406D00DD066C /* Cart2K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6015B4C9A100C6552F /* Cart2K.cpp */; };
-		B3C1026B1C71406D00DD066C /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA615B4C9A100C6552F /* Keyboard.cpp */; };
-		B3C1026C1C71406D00DD066C /* TIATables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD215B4C9A100C6552F /* TIATables.cpp */; };
-		B3C1026D1C71406D00DD066C /* CartX07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9215B4C9A100C6552F /* CartX07.cpp */; };
-		B3C1026E1C71406D00DD066C /* CartSB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8E15B4C9A100C6552F /* CartSB.cpp */; };
-		B3C1026F1C71406D00DD066C /* CartE7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7415B4C9A100C6552F /* CartE7.cpp */; };
-		B3C102701C71406D00DD066C /* Cart3F.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6415B4C9A100C6552F /* Cart3F.cpp */; };
-		B3C102711C71406D00DD066C /* CartMC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8C15B4C9A100C6552F /* CartMC.cpp */; };
-		B3C102721C71406D00DD066C /* FSNodePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD92015B9D59200542C50 /* FSNodePOSIX.cpp */; };
-		B3C102731C71406D00DD066C /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9D15B4C9A100C6552F /* Control.cpp */; };
-		B3C102741C71406D00DD066C /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD715B4C9A100C6552F /* MD5.cpp */; };
-		B3C102751C71406D00DD066C /* SaveKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAE15B4C9A100C6552F /* SaveKey.cpp */; };
-		B3C102761C71406D00DD066C /* TIASnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD015B4C9A100C6552F /* TIASnd.cpp */; };
-		B3C102771C71406D00DD066C /* CartDPCPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7015B4C9A100C6552F /* CartDPCPlus.cpp */; };
-		B3C102781C71406D00DD066C /* M6502.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC515B4C9A100C6552F /* M6502.cpp */; };
-		B3C102791C71406D00DD066C /* CartF6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8015B4C9A100C6552F /* CartF6.cpp */; };
-		B3C1027A1C71406D00DD066C /* Cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5C15B4C9A100C6552F /* Cart.cpp */; };
-		B3C1027B1C71406D00DD066C /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9615B4C9A100C6552F /* Console.cpp */; };
-		B3C1027C1C71406D00DD066C /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA415B4C9A100C6552F /* Joystick.cpp */; };
-		B3C1027D1C71406D00DD066C /* CartDPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6E15B4C9A100C6552F /* CartDPC.cpp */; };
-		B3C1027E1C71406D00DD066C /* TIA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACE15B4C9A100C6552F /* TIA.cpp */; };
-		B3C1027F1C71406D00DD066C /* Booster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9B15B4C9A100C6552F /* Booster.cpp */; };
-		B3C102811C71406D00DD066C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494F1C70FD6C008A4D89 /* Foundation.framework */; };
-		B3C102821C71406D00DD066C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494D1C70FD67008A4D89 /* UIKit.framework */; };
-		B3C102831C71406D00DD066C /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; };
-		B3C102841C71406D00DD066C /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849491C70FD5E008A4D89 /* AudioToolbox.framework */; };
-		B3C102851C71406D00DD066C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849471C70FD53008A4D89 /* CoreGraphics.framework */; };
+		B3C96E071D62C00C003F1E93 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
+		B3C96E081D62C00C003F1E93 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
+		B3C96E091D62C00C003F1E93 /* KidVid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA815B4C9A100C6552F /* KidVid.cpp */; };
+		B3C96E0A1D62C00C003F1E93 /* CartAR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6A15B4C9A100C6552F /* CartAR.cpp */; };
+		B3C96E0B1D62C00C003F1E93 /* SoundSDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABF15B4C9A100C6552F /* SoundSDL.cpp */; };
+		B3C96E0C1D62C00C003F1E93 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2415B632E000C6552F /* libretro.cpp */; };
+		B3C96E0D1D62C00C003F1E93 /* CartFE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8A15B4C9A100C6552F /* CartFE.cpp */; };
+		B3C96E0E1D62C00C003F1E93 /* CartUA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9015B4C9A100C6552F /* CartUA.cpp */; };
+		B3C96E0F1D62C00C003F1E93 /* CartCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6C15B4C9A100C6552F /* CartCV.cpp */; };
+		B3C96E101D62C00C003F1E93 /* CartF0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7A15B4C9A100C6552F /* CartF0.cpp */; };
+		B3C96E111D62C00C003F1E93 /* CartFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8815B4C9A100C6552F /* CartFA.cpp */; };
+		B3C96E121D62C00C003F1E93 /* Props.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB815B4C9A100C6552F /* Props.cpp */; };
+		B3C96E131D62C00C003F1E93 /* Cart0840.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5E15B4C9A100C6552F /* Cart0840.cpp */; };
+		B3C96E141D62C00C003F1E93 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACC15B4C9A100C6552F /* System.cpp */; };
+		B3C96E151D62C00C003F1E93 /* CartE0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7215B4C9A100C6552F /* CartE0.cpp */; };
+		B3C96E161D62C00C003F1E93 /* CartF4SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7E15B4C9A100C6552F /* CartF4SC.cpp */; };
+		B3C96E171D62C00C003F1E93 /* PropsSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABA15B4C9A100C6552F /* PropsSet.cpp */; };
+		B3C96E181D62C00C003F1E93 /* Genesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA215B4C9A100C6552F /* Genesis.cpp */; };
+		B3C96E191D62C00C003F1E93 /* Cart3E.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6215B4C9A100C6552F /* Cart3E.cpp */; };
+		B3C96E1A1D62C00C003F1E93 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD915B4C9A100C6552F /* Random.cpp */; };
+		B3C96E1B1D62C00C003F1E93 /* TrackBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB315B4C9A100C6552F /* TrackBall.cpp */; };
+		B3C96E1C1D62C00C003F1E93 /* AtariVox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9915B4C9A100C6552F /* AtariVox.cpp */; };
+		B3C96E1D1D62C00C003F1E93 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABC15B4C9A100C6552F /* Settings.cpp */; };
+		B3C96E1E1D62C00C003F1E93 /* Cart4A50.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6615B4C9A100C6552F /* Cart4A50.cpp */; };
+		B3C96E1F1D62C00C003F1E93 /* CartEF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7615B4C9A100C6552F /* CartEF.cpp */; };
+		B3C96E201D62C00C003F1E93 /* Thumbulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9415B4C9A100C6552F /* Thumbulator.cpp */; };
+		B3C96E211D62C00C003F1E93 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFADC15B4C9A100C6552F /* Serializer.cpp */; };
+		B3C96E221D62C00C003F1E93 /* MT24LC256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAA15B4C9A100C6552F /* MT24LC256.cpp */; };
+		B3C96E231D62C00C003F1E93 /* CartEFSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7815B4C9A100C6552F /* CartEFSC.cpp */; };
+		B3C96E241D62C00C003F1E93 /* Driving.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9F15B4C9A100C6552F /* Driving.cpp */; };
+		B3C96E251D62C00C003F1E93 /* Cart4K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6815B4C9A100C6552F /* Cart4K.cpp */; };
+		B3C96E261D62C00C003F1E93 /* NullDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACA15B4C9A100C6552F /* NullDev.cpp */; };
+		B3C96E271D62C00C003F1E93 /* CartF4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7C15B4C9A100C6552F /* CartF4.cpp */; };
+		B3C96E281D62C00C003F1E93 /* Switches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB115B4C9A100C6552F /* Switches.cpp */; };
+		B3C96E291D62C00C003F1E93 /* CartF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8415B4C9A100C6552F /* CartF8.cpp */; };
+		B3C96E2A1D62C00C003F1E93 /* CartF8SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8615B4C9A100C6552F /* CartF8SC.cpp */; };
+		B3C96E2B1D62C00C003F1E93 /* M6532.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC815B4C9A100C6552F /* M6532.cpp */; };
+		B3C96E2C1D62C00C003F1E93 /* FSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD91B15B9D3C300542C50 /* FSNode.cpp */; };
+		B3C96E2D1D62C00C003F1E93 /* CartF6SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8215B4C9A100C6552F /* CartF6SC.cpp */; };
+		B3C96E2E1D62C00C003F1E93 /* Cart2K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6015B4C9A100C6552F /* Cart2K.cpp */; };
+		B3C96E2F1D62C00C003F1E93 /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA615B4C9A100C6552F /* Keyboard.cpp */; };
+		B3C96E301D62C00C003F1E93 /* TIATables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD215B4C9A100C6552F /* TIATables.cpp */; };
+		B3C96E311D62C00C003F1E93 /* CartX07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9215B4C9A100C6552F /* CartX07.cpp */; };
+		B3C96E321D62C00C003F1E93 /* CartSB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8E15B4C9A100C6552F /* CartSB.cpp */; };
+		B3C96E331D62C00C003F1E93 /* CartE7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7415B4C9A100C6552F /* CartE7.cpp */; };
+		B3C96E341D62C00C003F1E93 /* Cart3F.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6415B4C9A100C6552F /* Cart3F.cpp */; };
+		B3C96E351D62C00C003F1E93 /* CartMC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8C15B4C9A100C6552F /* CartMC.cpp */; };
+		B3C96E361D62C00C003F1E93 /* FSNodePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD92015B9D59200542C50 /* FSNodePOSIX.cpp */; };
+		B3C96E371D62C00C003F1E93 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9D15B4C9A100C6552F /* Control.cpp */; };
+		B3C96E381D62C00C003F1E93 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD715B4C9A100C6552F /* MD5.cpp */; };
+		B3C96E391D62C00C003F1E93 /* SaveKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAE15B4C9A100C6552F /* SaveKey.cpp */; };
+		B3C96E3A1D62C00C003F1E93 /* TIASnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD015B4C9A100C6552F /* TIASnd.cpp */; };
+		B3C96E3B1D62C00C003F1E93 /* CartDPCPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7015B4C9A100C6552F /* CartDPCPlus.cpp */; };
+		B3C96E3C1D62C00C003F1E93 /* M6502.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC515B4C9A100C6552F /* M6502.cpp */; };
+		B3C96E3D1D62C00C003F1E93 /* CartF6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8015B4C9A100C6552F /* CartF6.cpp */; };
+		B3C96E3E1D62C00C003F1E93 /* Cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5C15B4C9A100C6552F /* Cart.cpp */; };
+		B3C96E3F1D62C00C003F1E93 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9615B4C9A100C6552F /* Console.cpp */; };
+		B3C96E401D62C00C003F1E93 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA415B4C9A100C6552F /* Joystick.cpp */; };
+		B3C96E411D62C00C003F1E93 /* CartDPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6E15B4C9A100C6552F /* CartDPC.cpp */; };
+		B3C96E421D62C00C003F1E93 /* TIA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACE15B4C9A100C6552F /* TIA.cpp */; };
+		B3C96E431D62C00C003F1E93 /* Booster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9B15B4C9A100C6552F /* Booster.cpp */; };
+		B3C96E451D62C02D003F1E93 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
+		B3C96E461D62C02D003F1E93 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
+		B3C96E471D62C02D003F1E93 /* KidVid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA815B4C9A100C6552F /* KidVid.cpp */; };
+		B3C96E481D62C02D003F1E93 /* CartAR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6A15B4C9A100C6552F /* CartAR.cpp */; };
+		B3C96E491D62C02D003F1E93 /* SoundSDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABF15B4C9A100C6552F /* SoundSDL.cpp */; };
+		B3C96E4A1D62C02D003F1E93 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2415B632E000C6552F /* libretro.cpp */; };
+		B3C96E4B1D62C02D003F1E93 /* CartFE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8A15B4C9A100C6552F /* CartFE.cpp */; };
+		B3C96E4C1D62C02D003F1E93 /* CartUA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9015B4C9A100C6552F /* CartUA.cpp */; };
+		B3C96E4D1D62C02D003F1E93 /* CartCV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6C15B4C9A100C6552F /* CartCV.cpp */; };
+		B3C96E4E1D62C02D003F1E93 /* CartF0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7A15B4C9A100C6552F /* CartF0.cpp */; };
+		B3C96E4F1D62C02D003F1E93 /* CartFA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8815B4C9A100C6552F /* CartFA.cpp */; };
+		B3C96E501D62C02D003F1E93 /* Props.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB815B4C9A100C6552F /* Props.cpp */; };
+		B3C96E511D62C02D003F1E93 /* Cart0840.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5E15B4C9A100C6552F /* Cart0840.cpp */; };
+		B3C96E521D62C02D003F1E93 /* System.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACC15B4C9A100C6552F /* System.cpp */; };
+		B3C96E531D62C02D003F1E93 /* CartE0.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7215B4C9A100C6552F /* CartE0.cpp */; };
+		B3C96E541D62C02D003F1E93 /* CartF4SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7E15B4C9A100C6552F /* CartF4SC.cpp */; };
+		B3C96E551D62C02D003F1E93 /* PropsSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABA15B4C9A100C6552F /* PropsSet.cpp */; };
+		B3C96E561D62C02D003F1E93 /* Genesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA215B4C9A100C6552F /* Genesis.cpp */; };
+		B3C96E571D62C02D003F1E93 /* Cart3E.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6215B4C9A100C6552F /* Cart3E.cpp */; };
+		B3C96E581D62C02D003F1E93 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD915B4C9A100C6552F /* Random.cpp */; };
+		B3C96E591D62C02D003F1E93 /* TrackBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB315B4C9A100C6552F /* TrackBall.cpp */; };
+		B3C96E5A1D62C02D003F1E93 /* AtariVox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9915B4C9A100C6552F /* AtariVox.cpp */; };
+		B3C96E5B1D62C02D003F1E93 /* Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFABC15B4C9A100C6552F /* Settings.cpp */; };
+		B3C96E5C1D62C02D003F1E93 /* Cart4A50.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6615B4C9A100C6552F /* Cart4A50.cpp */; };
+		B3C96E5D1D62C02D003F1E93 /* CartEF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7615B4C9A100C6552F /* CartEF.cpp */; };
+		B3C96E5E1D62C02D003F1E93 /* Thumbulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9415B4C9A100C6552F /* Thumbulator.cpp */; };
+		B3C96E5F1D62C02D003F1E93 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFADC15B4C9A100C6552F /* Serializer.cpp */; };
+		B3C96E601D62C02D003F1E93 /* MT24LC256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAA15B4C9A100C6552F /* MT24LC256.cpp */; };
+		B3C96E611D62C02D003F1E93 /* CartEFSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7815B4C9A100C6552F /* CartEFSC.cpp */; };
+		B3C96E621D62C02D003F1E93 /* Driving.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9F15B4C9A100C6552F /* Driving.cpp */; };
+		B3C96E631D62C02D003F1E93 /* Cart4K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6815B4C9A100C6552F /* Cart4K.cpp */; };
+		B3C96E641D62C02D003F1E93 /* NullDev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACA15B4C9A100C6552F /* NullDev.cpp */; };
+		B3C96E651D62C02D003F1E93 /* CartF4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7C15B4C9A100C6552F /* CartF4.cpp */; };
+		B3C96E661D62C02D003F1E93 /* Switches.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAB115B4C9A100C6552F /* Switches.cpp */; };
+		B3C96E671D62C02D003F1E93 /* CartF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8415B4C9A100C6552F /* CartF8.cpp */; };
+		B3C96E681D62C02D003F1E93 /* CartF8SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8615B4C9A100C6552F /* CartF8SC.cpp */; };
+		B3C96E691D62C02D003F1E93 /* M6532.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC815B4C9A100C6552F /* M6532.cpp */; };
+		B3C96E6A1D62C02D003F1E93 /* FSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD91B15B9D3C300542C50 /* FSNode.cpp */; };
+		B3C96E6B1D62C02D003F1E93 /* CartF6SC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8215B4C9A100C6552F /* CartF6SC.cpp */; };
+		B3C96E6C1D62C02D003F1E93 /* Cart2K.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6015B4C9A100C6552F /* Cart2K.cpp */; };
+		B3C96E6D1D62C02D003F1E93 /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA615B4C9A100C6552F /* Keyboard.cpp */; };
+		B3C96E6E1D62C02D003F1E93 /* TIATables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD215B4C9A100C6552F /* TIATables.cpp */; };
+		B3C96E6F1D62C02D003F1E93 /* CartX07.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9215B4C9A100C6552F /* CartX07.cpp */; };
+		B3C96E701D62C02D003F1E93 /* CartSB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8E15B4C9A100C6552F /* CartSB.cpp */; };
+		B3C96E711D62C02D003F1E93 /* CartE7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7415B4C9A100C6552F /* CartE7.cpp */; };
+		B3C96E721D62C02D003F1E93 /* Cart3F.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6415B4C9A100C6552F /* Cart3F.cpp */; };
+		B3C96E731D62C02D003F1E93 /* CartMC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8C15B4C9A100C6552F /* CartMC.cpp */; };
+		B3C96E741D62C02D003F1E93 /* FSNodePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 940DD92015B9D59200542C50 /* FSNodePOSIX.cpp */; };
+		B3C96E751D62C02D003F1E93 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9D15B4C9A100C6552F /* Control.cpp */; };
+		B3C96E761D62C02D003F1E93 /* MD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD715B4C9A100C6552F /* MD5.cpp */; };
+		B3C96E771D62C02D003F1E93 /* SaveKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAE15B4C9A100C6552F /* SaveKey.cpp */; };
+		B3C96E781D62C02D003F1E93 /* TIASnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAD015B4C9A100C6552F /* TIASnd.cpp */; };
+		B3C96E791D62C02D003F1E93 /* CartDPCPlus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA7015B4C9A100C6552F /* CartDPCPlus.cpp */; };
+		B3C96E7A1D62C02D003F1E93 /* M6502.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAC515B4C9A100C6552F /* M6502.cpp */; };
+		B3C96E7B1D62C02D003F1E93 /* CartF6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA8015B4C9A100C6552F /* CartF6.cpp */; };
+		B3C96E7C1D62C02D003F1E93 /* Cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA5C15B4C9A100C6552F /* Cart.cpp */; };
+		B3C96E7D1D62C02D003F1E93 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9615B4C9A100C6552F /* Console.cpp */; };
+		B3C96E7E1D62C02D003F1E93 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAA415B4C9A100C6552F /* Joystick.cpp */; };
+		B3C96E7F1D62C02D003F1E93 /* CartDPC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA6E15B4C9A100C6552F /* CartDPC.cpp */; };
+		B3C96E801D62C02D003F1E93 /* TIA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFACE15B4C9A100C6552F /* TIA.cpp */; };
+		B3C96E811D62C02D003F1E93 /* Booster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFA9B15B4C9A100C6552F /* Booster.cpp */; };
+		B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494F1C70FD6C008A4D89 /* Foundation.framework */; };
+		B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; };
+		B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494D1C70FD67008A4D89 /* UIKit.framework */; };
+		B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849491C70FD5E008A4D89 /* AudioToolbox.framework */; };
+		B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849471C70FD53008A4D89 /* CoreGraphics.framework */; };
+		B3C96E8C1D62C227003F1E93 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E8B1D62C227003F1E93 /* Foundation.framework */; };
+		B3C96E8E1D62C22A003F1E93 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E8D1D62C22A003F1E93 /* UIKit.framework */; };
+		B3C96E901D62C233003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */; };
+		B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */; };
+		B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E931D62C245003F1E93 /* CoreGraphics.framework */; };
+		B3C96E951D62C2F3003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; };
+		B3C96E961D62C2F4003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; };
+		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
+		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
+		B3C96EDE1D62C6A8003F1E93 /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96EE01D62C6F7003F1E93 /* PVSupportTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */; };
+		B3C96EE21D62C6FF003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		B3C102861C71406D00DD066C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3DDB7231C70F87D007D1CDE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -309,8 +295,16 @@
 		B3A8494D1C70FD67008A4D89 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3A8494F1C70FD6C008A4D89 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3A849521C710C03008A4D89 /* PVStella-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PVStella-Prefix.pch"; path = "PVStella/PVStella-Prefix.pch"; sourceTree = "<group>"; };
-		B3C1028A1C71406D00DD066C /* libPVStellaTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVStellaTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3DDB7251C70F87D007D1CDE /* libPVStella.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVStella.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellaTV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C96E8B1D62C227003F1E93 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3C96E8D1D62C22A003F1E93 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B3C96E931D62C245003F1E93 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3C96EB61D62C3E4003F1E93 /* PVSupportTV Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "PVSupportTV Framework.framework"; path = "../PVSupport/build/Debug-appletvos/PVSupportTV Framework.framework"; sourceTree = "<group>"; };
+		B3C96EB81D62C3EE003F1E93 /* PVSupportTV Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "PVSupportTV Framework.framework"; path = "../PVSupport/build/Debug-appletvos/PVSupportTV Framework.framework"; sourceTree = "<group>"; };
+		B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
+		B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaGameCore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -319,30 +313,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C96EE21D62C6FF003F1E93 /* PVSupport.framework in Frameworks */,
+				B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */,
+				B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */,
+				B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */,
+				B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */,
+				B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C102801C71406D00DD066C /* Frameworks */ = {
+		B3C96DFA1D62BE5A003F1E93 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C102811C71406D00DD066C /* Foundation.framework in Frameworks */,
-				B3C102821C71406D00DD066C /* UIKit.framework in Frameworks */,
-				B3C102831C71406D00DD066C /* OpenGLES.framework in Frameworks */,
-				B3C102841C71406D00DD066C /* AudioToolbox.framework in Frameworks */,
-				B3C102851C71406D00DD066C /* CoreGraphics.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3DDB7221C70F87D007D1CDE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3A849501C70FD6C008A4D89 /* Foundation.framework in Frameworks */,
-				B3A8494E1C70FD67008A4D89 /* UIKit.framework in Frameworks */,
-				B3A8494C1C70FD63008A4D89 /* OpenGLES.framework in Frameworks */,
-				B3A8494A1C70FD5E008A4D89 /* AudioToolbox.framework in Frameworks */,
-				B3A849481C70FD53008A4D89 /* CoreGraphics.framework in Frameworks */,
+				B3C96EE01D62C6F7003F1E93 /* PVSupportTV.framework in Frameworks */,
+				B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */,
+				B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */,
+				B3C96E901D62C233003F1E93 /* OpenGLES.framework in Frameworks */,
+				B3C96E8E1D62C22A003F1E93 /* UIKit.framework in Frameworks */,
+				B3C96E8C1D62C227003F1E93 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +352,15 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */,
+				B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */,
+				B3C96EB81D62C3EE003F1E93 /* PVSupportTV Framework.framework */,
+				B3C96EB61D62C3E4003F1E93 /* PVSupportTV Framework.framework */,
+				B3C96E931D62C245003F1E93 /* CoreGraphics.framework */,
+				B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */,
+				B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */,
+				B3C96E8D1D62C22A003F1E93 /* UIKit.framework */,
+				B3C96E8B1D62C227003F1E93 /* Foundation.framework */,
 				B3A8494F1C70FD6C008A4D89 /* Foundation.framework */,
 				B3A8494D1C70FD67008A4D89 /* UIKit.framework */,
 				B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */,
@@ -387,9 +385,8 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3DDB7251C70F87D007D1CDE /* libPVStella.a */,
-				B3C1028A1C71406D00DD066C /* libPVStellaTV.a */,
 				B38FB4C01C839BE500CD73BE /* Stella.framework */,
+				B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -626,6 +623,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				B38FB4C31C839BE500CD73BE /* Stella.h in Headers */,
+				B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */,
+				B3C96E951D62C2F3003F1E93 /* OE2600SystemResponderClient.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C96DFB1D62BE5A003F1E93 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C96EDE1D62C6A8003F1E93 /* Stella.h in Headers */,
+				B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */,
+				B3C96E961D62C2F4003F1E93 /* OE2600SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,39 +659,23 @@
 			productReference = B38FB4C01C839BE500CD73BE /* Stella.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C102411C71406D00DD066C /* PVStellaTV */ = {
+		B3C96DFD1D62BE5A003F1E93 /* StellaTV */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C102871C71406D00DD066C /* Build configuration list for PBXNativeTarget "PVStellaTV" */;
+			buildConfigurationList = B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "StellaTV" */;
 			buildPhases = (
-				B3C102421C71406D00DD066C /* Sources */,
-				B3C102801C71406D00DD066C /* Frameworks */,
-				B3C102861C71406D00DD066C /* CopyFiles */,
+				B3C96DF91D62BE5A003F1E93 /* Sources */,
+				B3C96DFA1D62BE5A003F1E93 /* Frameworks */,
+				B3C96DFB1D62BE5A003F1E93 /* Headers */,
+				B3C96DFC1D62BE5A003F1E93 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = PVStellaTV;
-			productName = PVStella;
-			productReference = B3C1028A1C71406D00DD066C /* libPVStellaTV.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B3DDB7241C70F87D007D1CDE /* PVStella */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B3DDB72B1C70F87D007D1CDE /* Build configuration list for PBXNativeTarget "PVStella" */;
-			buildPhases = (
-				B3DDB7211C70F87D007D1CDE /* Sources */,
-				B3DDB7221C70F87D007D1CDE /* Frameworks */,
-				B3DDB7231C70F87D007D1CDE /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PVStella;
-			productName = PVStella;
-			productReference = B3DDB7251C70F87D007D1CDE /* libPVStella.a */;
-			productType = "com.apple.product-type.library.static";
+			name = StellaTV;
+			productName = StellaTV;
+			productReference = B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -691,14 +684,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = JamSoft;
 				TargetAttributes = {
 					B38FB4BF1C839BE500CD73BE = {
 						CreatedOnToolsVersion = 7.2.1;
 					};
-					B3DDB7241C70F87D007D1CDE = {
-						CreatedOnToolsVersion = 7.3;
+					B3C96DFD1D62BE5A003F1E93 = {
+						CreatedOnToolsVersion = 7.3.1;
 					};
 				};
 			};
@@ -713,15 +706,21 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3DDB7241C70F87D007D1CDE /* PVStella */,
-				B3C102411C71406D00DD066C /* PVStellaTV */,
 				B38FB4BF1C839BE500CD73BE /* Stella */,
+				B3C96DFD1D62BE5A003F1E93 /* StellaTV */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B38FB4BE1C839BE500CD73BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C96DFC1D62BE5A003F1E93 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -735,142 +734,135 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C96E071D62C00C003F1E93 /* Paddles.cpp in Sources */,
+				B3C96E081D62C00C003F1E93 /* PVStellaGameCore.mm in Sources */,
+				B3C96E091D62C00C003F1E93 /* KidVid.cpp in Sources */,
+				B3C96E0A1D62C00C003F1E93 /* CartAR.cpp in Sources */,
+				B3C96E0B1D62C00C003F1E93 /* SoundSDL.cpp in Sources */,
+				B3C96E0C1D62C00C003F1E93 /* libretro.cpp in Sources */,
+				B3C96E0D1D62C00C003F1E93 /* CartFE.cpp in Sources */,
+				B3C96E0E1D62C00C003F1E93 /* CartUA.cpp in Sources */,
+				B3C96E0F1D62C00C003F1E93 /* CartCV.cpp in Sources */,
+				B3C96E101D62C00C003F1E93 /* CartF0.cpp in Sources */,
+				B3C96E111D62C00C003F1E93 /* CartFA.cpp in Sources */,
+				B3C96E121D62C00C003F1E93 /* Props.cpp in Sources */,
+				B3C96E131D62C00C003F1E93 /* Cart0840.cpp in Sources */,
+				B3C96E141D62C00C003F1E93 /* System.cpp in Sources */,
+				B3C96E151D62C00C003F1E93 /* CartE0.cpp in Sources */,
+				B3C96E161D62C00C003F1E93 /* CartF4SC.cpp in Sources */,
+				B3C96E171D62C00C003F1E93 /* PropsSet.cpp in Sources */,
+				B3C96E181D62C00C003F1E93 /* Genesis.cpp in Sources */,
+				B3C96E191D62C00C003F1E93 /* Cart3E.cpp in Sources */,
+				B3C96E1A1D62C00C003F1E93 /* Random.cpp in Sources */,
+				B3C96E1B1D62C00C003F1E93 /* TrackBall.cpp in Sources */,
+				B3C96E1C1D62C00C003F1E93 /* AtariVox.cpp in Sources */,
+				B3C96E1D1D62C00C003F1E93 /* Settings.cpp in Sources */,
+				B3C96E1E1D62C00C003F1E93 /* Cart4A50.cpp in Sources */,
+				B3C96E1F1D62C00C003F1E93 /* CartEF.cpp in Sources */,
+				B3C96E201D62C00C003F1E93 /* Thumbulator.cpp in Sources */,
+				B3C96E211D62C00C003F1E93 /* Serializer.cpp in Sources */,
+				B3C96E221D62C00C003F1E93 /* MT24LC256.cpp in Sources */,
+				B3C96E231D62C00C003F1E93 /* CartEFSC.cpp in Sources */,
+				B3C96E241D62C00C003F1E93 /* Driving.cpp in Sources */,
+				B3C96E251D62C00C003F1E93 /* Cart4K.cpp in Sources */,
+				B3C96E261D62C00C003F1E93 /* NullDev.cpp in Sources */,
+				B3C96E271D62C00C003F1E93 /* CartF4.cpp in Sources */,
+				B3C96E281D62C00C003F1E93 /* Switches.cpp in Sources */,
+				B3C96E291D62C00C003F1E93 /* CartF8.cpp in Sources */,
+				B3C96E2A1D62C00C003F1E93 /* CartF8SC.cpp in Sources */,
+				B3C96E2B1D62C00C003F1E93 /* M6532.cpp in Sources */,
+				B3C96E2C1D62C00C003F1E93 /* FSNode.cpp in Sources */,
+				B3C96E2D1D62C00C003F1E93 /* CartF6SC.cpp in Sources */,
+				B3C96E2E1D62C00C003F1E93 /* Cart2K.cpp in Sources */,
+				B3C96E2F1D62C00C003F1E93 /* Keyboard.cpp in Sources */,
+				B3C96E301D62C00C003F1E93 /* TIATables.cpp in Sources */,
+				B3C96E311D62C00C003F1E93 /* CartX07.cpp in Sources */,
+				B3C96E321D62C00C003F1E93 /* CartSB.cpp in Sources */,
+				B3C96E331D62C00C003F1E93 /* CartE7.cpp in Sources */,
+				B3C96E341D62C00C003F1E93 /* Cart3F.cpp in Sources */,
+				B3C96E351D62C00C003F1E93 /* CartMC.cpp in Sources */,
+				B3C96E361D62C00C003F1E93 /* FSNodePOSIX.cpp in Sources */,
+				B3C96E371D62C00C003F1E93 /* Control.cpp in Sources */,
+				B3C96E381D62C00C003F1E93 /* MD5.cpp in Sources */,
+				B3C96E391D62C00C003F1E93 /* SaveKey.cpp in Sources */,
+				B3C96E3A1D62C00C003F1E93 /* TIASnd.cpp in Sources */,
+				B3C96E3B1D62C00C003F1E93 /* CartDPCPlus.cpp in Sources */,
+				B3C96E3C1D62C00C003F1E93 /* M6502.cpp in Sources */,
+				B3C96E3D1D62C00C003F1E93 /* CartF6.cpp in Sources */,
+				B3C96E3E1D62C00C003F1E93 /* Cart.cpp in Sources */,
+				B3C96E3F1D62C00C003F1E93 /* Console.cpp in Sources */,
+				B3C96E401D62C00C003F1E93 /* Joystick.cpp in Sources */,
+				B3C96E411D62C00C003F1E93 /* CartDPC.cpp in Sources */,
+				B3C96E421D62C00C003F1E93 /* TIA.cpp in Sources */,
+				B3C96E431D62C00C003F1E93 /* Booster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C102421C71406D00DD066C /* Sources */ = {
+		B3C96DF91D62BE5A003F1E93 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C102431C71406D00DD066C /* Paddles.cpp in Sources */,
-				B3C102441C71406D00DD066C /* PVStellaGameCore.mm in Sources */,
-				B3C102451C71406D00DD066C /* KidVid.cpp in Sources */,
-				B3C102461C71406D00DD066C /* CartAR.cpp in Sources */,
-				B3C102471C71406D00DD066C /* SoundSDL.cpp in Sources */,
-				B3C102481C71406D00DD066C /* libretro.cpp in Sources */,
-				B3C102491C71406D00DD066C /* CartFE.cpp in Sources */,
-				B3C1024A1C71406D00DD066C /* CartUA.cpp in Sources */,
-				B3C1024B1C71406D00DD066C /* CartCV.cpp in Sources */,
-				B3C1024C1C71406D00DD066C /* CartF0.cpp in Sources */,
-				B3C1024D1C71406D00DD066C /* CartFA.cpp in Sources */,
-				B3C1024E1C71406D00DD066C /* Props.cpp in Sources */,
-				B3C1024F1C71406D00DD066C /* Cart0840.cpp in Sources */,
-				B3C102501C71406D00DD066C /* System.cpp in Sources */,
-				B3C102511C71406D00DD066C /* CartE0.cpp in Sources */,
-				B3C102521C71406D00DD066C /* CartF4SC.cpp in Sources */,
-				B3C102531C71406D00DD066C /* PropsSet.cpp in Sources */,
-				B3C102541C71406D00DD066C /* Genesis.cpp in Sources */,
-				B3C102551C71406D00DD066C /* Cart3E.cpp in Sources */,
-				B3C102561C71406D00DD066C /* Random.cpp in Sources */,
-				B3C102571C71406D00DD066C /* TrackBall.cpp in Sources */,
-				B3C102581C71406D00DD066C /* AtariVox.cpp in Sources */,
-				B3C102591C71406D00DD066C /* Settings.cpp in Sources */,
-				B3C1025A1C71406D00DD066C /* Cart4A50.cpp in Sources */,
-				B3C1025B1C71406D00DD066C /* CartEF.cpp in Sources */,
-				B3C1025C1C71406D00DD066C /* Thumbulator.cpp in Sources */,
-				B3C1025D1C71406D00DD066C /* Serializer.cpp in Sources */,
-				B3C1025E1C71406D00DD066C /* MT24LC256.cpp in Sources */,
-				B3C1025F1C71406D00DD066C /* CartEFSC.cpp in Sources */,
-				B3C102601C71406D00DD066C /* Driving.cpp in Sources */,
-				B3C102611C71406D00DD066C /* Cart4K.cpp in Sources */,
-				B3C102621C71406D00DD066C /* NullDev.cpp in Sources */,
-				B3C102631C71406D00DD066C /* CartF4.cpp in Sources */,
-				B3C102641C71406D00DD066C /* Switches.cpp in Sources */,
-				B3C102651C71406D00DD066C /* CartF8.cpp in Sources */,
-				B3C102661C71406D00DD066C /* CartF8SC.cpp in Sources */,
-				B3C102671C71406D00DD066C /* M6532.cpp in Sources */,
-				B3C102681C71406D00DD066C /* FSNode.cpp in Sources */,
-				B3C102691C71406D00DD066C /* CartF6SC.cpp in Sources */,
-				B3C1026A1C71406D00DD066C /* Cart2K.cpp in Sources */,
-				B3C1026B1C71406D00DD066C /* Keyboard.cpp in Sources */,
-				B3C1026C1C71406D00DD066C /* TIATables.cpp in Sources */,
-				B3C1026D1C71406D00DD066C /* CartX07.cpp in Sources */,
-				B3C1026E1C71406D00DD066C /* CartSB.cpp in Sources */,
-				B3C1026F1C71406D00DD066C /* CartE7.cpp in Sources */,
-				B3C102701C71406D00DD066C /* Cart3F.cpp in Sources */,
-				B3C102711C71406D00DD066C /* CartMC.cpp in Sources */,
-				B3C102721C71406D00DD066C /* FSNodePOSIX.cpp in Sources */,
-				B3C102731C71406D00DD066C /* Control.cpp in Sources */,
-				B3C102741C71406D00DD066C /* MD5.cpp in Sources */,
-				B3C102751C71406D00DD066C /* SaveKey.cpp in Sources */,
-				B3C102761C71406D00DD066C /* TIASnd.cpp in Sources */,
-				B3C102771C71406D00DD066C /* CartDPCPlus.cpp in Sources */,
-				B3C102781C71406D00DD066C /* M6502.cpp in Sources */,
-				B3C102791C71406D00DD066C /* CartF6.cpp in Sources */,
-				B3C1027A1C71406D00DD066C /* Cart.cpp in Sources */,
-				B3C1027B1C71406D00DD066C /* Console.cpp in Sources */,
-				B3C1027C1C71406D00DD066C /* Joystick.cpp in Sources */,
-				B3C1027D1C71406D00DD066C /* CartDPC.cpp in Sources */,
-				B3C1027E1C71406D00DD066C /* TIA.cpp in Sources */,
-				B3C1027F1C71406D00DD066C /* Booster.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3DDB7211C70F87D007D1CDE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3A849311C70FC56008A4D89 /* Paddles.cpp in Sources */,
-				B3A849451C70FC83008A4D89 /* PVStellaGameCore.mm in Sources */,
-				B3A8492F1C70FC56008A4D89 /* KidVid.cpp in Sources */,
-				B3A849111C70FC51008A4D89 /* CartAR.cpp in Sources */,
-				B3A8493A1C70FC66008A4D89 /* SoundSDL.cpp in Sources */,
-				B3A849091C70FC4A008A4D89 /* libretro.cpp in Sources */,
-				B3A849211C70FC51008A4D89 /* CartFE.cpp in Sources */,
-				B3A849241C70FC51008A4D89 /* CartUA.cpp in Sources */,
-				B3A849121C70FC51008A4D89 /* CartCV.cpp in Sources */,
-				B3A849191C70FC51008A4D89 /* CartF0.cpp in Sources */,
-				B3A849201C70FC51008A4D89 /* CartFA.cpp in Sources */,
-				B3A849371C70FC66008A4D89 /* Props.cpp in Sources */,
-				B3A8490B1C70FC51008A4D89 /* Cart0840.cpp in Sources */,
-				B3A8493E1C70FC76008A4D89 /* System.cpp in Sources */,
-				B3A849151C70FC51008A4D89 /* CartE0.cpp in Sources */,
-				B3A8491B1C70FC51008A4D89 /* CartF4SC.cpp in Sources */,
-				B3A849381C70FC66008A4D89 /* PropsSet.cpp in Sources */,
-				B3A8492C1C70FC56008A4D89 /* Genesis.cpp in Sources */,
-				B3A8490D1C70FC51008A4D89 /* Cart3E.cpp in Sources */,
-				B3A849431C70FC7A008A4D89 /* Random.cpp in Sources */,
-				B3A849341C70FC56008A4D89 /* TrackBall.cpp in Sources */,
-				B3A849281C70FC56008A4D89 /* AtariVox.cpp in Sources */,
-				B3A849391C70FC66008A4D89 /* Settings.cpp in Sources */,
-				B3A8490F1C70FC51008A4D89 /* Cart4A50.cpp in Sources */,
-				B3A849171C70FC51008A4D89 /* CartEF.cpp in Sources */,
-				B3A849261C70FC51008A4D89 /* Thumbulator.cpp in Sources */,
-				B3A849441C70FC7A008A4D89 /* Serializer.cpp in Sources */,
-				B3A849301C70FC56008A4D89 /* MT24LC256.cpp in Sources */,
-				B3A849181C70FC51008A4D89 /* CartEFSC.cpp in Sources */,
-				B3A8492B1C70FC56008A4D89 /* Driving.cpp in Sources */,
-				B3A849101C70FC51008A4D89 /* Cart4K.cpp in Sources */,
-				B3A8493D1C70FC76008A4D89 /* NullDev.cpp in Sources */,
-				B3A8491A1C70FC51008A4D89 /* CartF4.cpp in Sources */,
-				B3A849331C70FC56008A4D89 /* Switches.cpp in Sources */,
-				B3A8491E1C70FC51008A4D89 /* CartF8.cpp in Sources */,
-				B3A8491F1C70FC51008A4D89 /* CartF8SC.cpp in Sources */,
-				B3A8493C1C70FC76008A4D89 /* M6532.cpp in Sources */,
-				B3A849351C70FC56008A4D89 /* FSNode.cpp in Sources */,
-				B3A8491D1C70FC51008A4D89 /* CartF6SC.cpp in Sources */,
-				B3A8490C1C70FC51008A4D89 /* Cart2K.cpp in Sources */,
-				B3A8492E1C70FC56008A4D89 /* Keyboard.cpp in Sources */,
-				B3A849411C70FC76008A4D89 /* TIATables.cpp in Sources */,
-				B3A849251C70FC51008A4D89 /* CartX07.cpp in Sources */,
-				B3A849231C70FC51008A4D89 /* CartSB.cpp in Sources */,
-				B3A849161C70FC51008A4D89 /* CartE7.cpp in Sources */,
-				B3A8490E1C70FC51008A4D89 /* Cart3F.cpp in Sources */,
-				B3A849221C70FC51008A4D89 /* CartMC.cpp in Sources */,
-				B3A849361C70FC56008A4D89 /* FSNodePOSIX.cpp in Sources */,
-				B3A8492A1C70FC56008A4D89 /* Control.cpp in Sources */,
-				B3A849421C70FC7A008A4D89 /* MD5.cpp in Sources */,
-				B3A849321C70FC56008A4D89 /* SaveKey.cpp in Sources */,
-				B3A849401C70FC76008A4D89 /* TIASnd.cpp in Sources */,
-				B3A849141C70FC51008A4D89 /* CartDPCPlus.cpp in Sources */,
-				B3A8493B1C70FC76008A4D89 /* M6502.cpp in Sources */,
-				B3A8491C1C70FC51008A4D89 /* CartF6.cpp in Sources */,
-				B3A8490A1C70FC51008A4D89 /* Cart.cpp in Sources */,
-				B3A849271C70FC51008A4D89 /* Console.cpp in Sources */,
-				B3A8492D1C70FC56008A4D89 /* Joystick.cpp in Sources */,
-				B3A849131C70FC51008A4D89 /* CartDPC.cpp in Sources */,
-				B3A8493F1C70FC76008A4D89 /* TIA.cpp in Sources */,
-				B3A849291C70FC56008A4D89 /* Booster.cpp in Sources */,
+				B3C96E451D62C02D003F1E93 /* Paddles.cpp in Sources */,
+				B3C96E461D62C02D003F1E93 /* PVStellaGameCore.mm in Sources */,
+				B3C96E471D62C02D003F1E93 /* KidVid.cpp in Sources */,
+				B3C96E481D62C02D003F1E93 /* CartAR.cpp in Sources */,
+				B3C96E491D62C02D003F1E93 /* SoundSDL.cpp in Sources */,
+				B3C96E4A1D62C02D003F1E93 /* libretro.cpp in Sources */,
+				B3C96E4B1D62C02D003F1E93 /* CartFE.cpp in Sources */,
+				B3C96E4C1D62C02D003F1E93 /* CartUA.cpp in Sources */,
+				B3C96E4D1D62C02D003F1E93 /* CartCV.cpp in Sources */,
+				B3C96E4E1D62C02D003F1E93 /* CartF0.cpp in Sources */,
+				B3C96E4F1D62C02D003F1E93 /* CartFA.cpp in Sources */,
+				B3C96E501D62C02D003F1E93 /* Props.cpp in Sources */,
+				B3C96E511D62C02D003F1E93 /* Cart0840.cpp in Sources */,
+				B3C96E521D62C02D003F1E93 /* System.cpp in Sources */,
+				B3C96E531D62C02D003F1E93 /* CartE0.cpp in Sources */,
+				B3C96E541D62C02D003F1E93 /* CartF4SC.cpp in Sources */,
+				B3C96E551D62C02D003F1E93 /* PropsSet.cpp in Sources */,
+				B3C96E561D62C02D003F1E93 /* Genesis.cpp in Sources */,
+				B3C96E571D62C02D003F1E93 /* Cart3E.cpp in Sources */,
+				B3C96E581D62C02D003F1E93 /* Random.cpp in Sources */,
+				B3C96E591D62C02D003F1E93 /* TrackBall.cpp in Sources */,
+				B3C96E5A1D62C02D003F1E93 /* AtariVox.cpp in Sources */,
+				B3C96E5B1D62C02D003F1E93 /* Settings.cpp in Sources */,
+				B3C96E5C1D62C02D003F1E93 /* Cart4A50.cpp in Sources */,
+				B3C96E5D1D62C02D003F1E93 /* CartEF.cpp in Sources */,
+				B3C96E5E1D62C02D003F1E93 /* Thumbulator.cpp in Sources */,
+				B3C96E5F1D62C02D003F1E93 /* Serializer.cpp in Sources */,
+				B3C96E601D62C02D003F1E93 /* MT24LC256.cpp in Sources */,
+				B3C96E611D62C02D003F1E93 /* CartEFSC.cpp in Sources */,
+				B3C96E621D62C02D003F1E93 /* Driving.cpp in Sources */,
+				B3C96E631D62C02D003F1E93 /* Cart4K.cpp in Sources */,
+				B3C96E641D62C02D003F1E93 /* NullDev.cpp in Sources */,
+				B3C96E651D62C02D003F1E93 /* CartF4.cpp in Sources */,
+				B3C96E661D62C02D003F1E93 /* Switches.cpp in Sources */,
+				B3C96E671D62C02D003F1E93 /* CartF8.cpp in Sources */,
+				B3C96E681D62C02D003F1E93 /* CartF8SC.cpp in Sources */,
+				B3C96E691D62C02D003F1E93 /* M6532.cpp in Sources */,
+				B3C96E6A1D62C02D003F1E93 /* FSNode.cpp in Sources */,
+				B3C96E6B1D62C02D003F1E93 /* CartF6SC.cpp in Sources */,
+				B3C96E6C1D62C02D003F1E93 /* Cart2K.cpp in Sources */,
+				B3C96E6D1D62C02D003F1E93 /* Keyboard.cpp in Sources */,
+				B3C96E6E1D62C02D003F1E93 /* TIATables.cpp in Sources */,
+				B3C96E6F1D62C02D003F1E93 /* CartX07.cpp in Sources */,
+				B3C96E701D62C02D003F1E93 /* CartSB.cpp in Sources */,
+				B3C96E711D62C02D003F1E93 /* CartE7.cpp in Sources */,
+				B3C96E721D62C02D003F1E93 /* Cart3F.cpp in Sources */,
+				B3C96E731D62C02D003F1E93 /* CartMC.cpp in Sources */,
+				B3C96E741D62C02D003F1E93 /* FSNodePOSIX.cpp in Sources */,
+				B3C96E751D62C02D003F1E93 /* Control.cpp in Sources */,
+				B3C96E761D62C02D003F1E93 /* MD5.cpp in Sources */,
+				B3C96E771D62C02D003F1E93 /* SaveKey.cpp in Sources */,
+				B3C96E781D62C02D003F1E93 /* TIASnd.cpp in Sources */,
+				B3C96E791D62C02D003F1E93 /* CartDPCPlus.cpp in Sources */,
+				B3C96E7A1D62C02D003F1E93 /* M6502.cpp in Sources */,
+				B3C96E7B1D62C02D003F1E93 /* CartF6.cpp in Sources */,
+				B3C96E7C1D62C02D003F1E93 /* Cart.cpp in Sources */,
+				B3C96E7D1D62C02D003F1E93 /* Console.cpp in Sources */,
+				B3C96E7E1D62C02D003F1E93 /* Joystick.cpp in Sources */,
+				B3C96E7F1D62C02D003F1E93 /* CartDPC.cpp in Sources */,
+				B3C96E801D62C02D003F1E93 /* TIA.cpp in Sources */,
+				B3C96E811D62C02D003F1E93 /* Booster.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -880,7 +872,6 @@
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_EXPERIMENTAL = YES;
@@ -893,7 +884,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -902,7 +893,6 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_EXPERIMENTAL = YES;
@@ -913,7 +903,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -957,7 +947,25 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.Stella;
+				OTHER_CFLAGS = (
+					"-fno-strict-overflow",
+					"-ffast-math",
+					"-msse",
+					"-msse2",
+					"-funroll-loops",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_MKDIR",
+					"-DSIZEOF_DOUBLE=8",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DARCH_X86",
+					"-DWANT_STELLA_EMU",
+					"-DSTDC_HEADERS",
+					"-DHAVE_INTTYPES",
+					"-DKeyboard=StellaKeyboard",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -999,7 +1007,25 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.Stella;
+				OTHER_CFLAGS = (
+					"-fno-strict-overflow",
+					"-ffast-math",
+					"-msse",
+					"-msse2",
+					"-funroll-loops",
+					"-fPIC",
+					"-DLSB_FIRST",
+					"-DHAVE_MKDIR",
+					"-DSIZEOF_DOUBLE=8",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DARCH_X86",
+					"-DWANT_STELLA_EMU",
+					"-DSTDC_HEADERS",
+					"-DHAVE_INTTYPES",
+					"-DKeyboard=StellaKeyboard",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1008,15 +1034,13 @@
 			};
 			name = Release;
 		};
-		B3C102881C71406D00DD066C /* Debug */ = {
+		B3C96E031D62BE5A003F1E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1026,14 +1050,15 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "PVStella/PVStella-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1043,12 +1068,9 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../PVSupport/**",
-					"$(SRCROOT)/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				INFOPLIST_FILE = "$(SRCROOT)/Stella/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
 					"-fno-strict-overflow",
@@ -1068,22 +1090,24 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.2;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		B3C102891C71406D00DD066C /* Release */ = {
+		B3C96E041D62BE5A003F1E93 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -1093,23 +1117,22 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "PVStella/PVStella-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../PVSupport/**",
-					"$(SRCROOT)/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				INFOPLIST_FILE = "$(SRCROOT)/Stella/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"-fno-strict-overflow",
@@ -1129,140 +1152,14 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		B3DDB72C1C70F87D007D1CDE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "PVStella/PVStella-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../PVSupport/**",
-					"$(SRCROOT)/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CFLAGS = (
-					"-fno-strict-overflow",
-					"-ffast-math",
-					"-msse",
-					"-msse2",
-					"-funroll-loops",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_X86",
-					"-DWANT_STELLA_EMU",
-					"-DSTDC_HEADERS",
-					"-DHAVE_INTTYPES",
-					"-DKeyboard=StellaKeyboard",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		B3DDB72D1C70F87D007D1CDE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "PVStella/PVStella-Prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SRCROOT)/../PVSupport/**",
-					"$(SRCROOT)/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"-fno-strict-overflow",
-					"-ffast-math",
-					"-msse",
-					"-msse2",
-					"-funroll-loops",
-					"-fPIC",
-					"-DLSB_FIRST",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_X86",
-					"-DWANT_STELLA_EMU",
-					"-DSTDC_HEADERS",
-					"-DHAVE_INTTYPES",
-					"-DKeyboard=StellaKeyboard",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				VALIDATE_PRODUCT = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.2;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -1285,21 +1182,13 @@
 				B38FB4C71C839BE500CD73BE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-		};
-		B3C102871C71406D00DD066C /* Build configuration list for PBXNativeTarget "PVStellaTV" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3C102881C71406D00DD066C /* Debug */,
-				B3C102891C71406D00DD066C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3DDB72B1C70F87D007D1CDE /* Build configuration list for PBXNativeTarget "PVStella" */ = {
+		B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "StellaTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3DDB72C1C70F87D007D1CDE /* Debug */,
-				B3DDB72D1C70F87D007D1CDE /* Release */,
+				B3C96E031D62BE5A003F1E93 /* Debug */,
+				B3C96E041D62BE5A003F1E93 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
