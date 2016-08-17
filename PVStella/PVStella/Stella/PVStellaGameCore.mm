@@ -77,6 +77,7 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames){
     return frames;
 }
 
+static dispatch_queue_t memcpy_queue = dispatch_queue_create("stella memcpy queue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0));
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
 {
     __strong PVStellaGameCore *strongCurrent = _current;
@@ -84,9 +85,9 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
     
-    dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    //dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
-    dispatch_apply(height, the_queue, ^(size_t y){
+    dispatch_apply(height, memcpy_queue, ^(size_t y) {
         const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
         //uint16_t *dst = current->videoBuffer + y * current->videoWidth;
         stellabuffer_t *dst = strongCurrent->_videoBuffer + y * STELLA_WIDTH;
