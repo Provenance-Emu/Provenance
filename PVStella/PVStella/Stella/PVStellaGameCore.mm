@@ -415,12 +415,12 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
 
 - (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
 {
-    _pad[player-1][A2600EmulatorValues[button]] = 1;
+    _pad[player][A2600EmulatorValues[button]] = 1;
 }
 
 - (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
 {
-    _pad[player-1][A2600EmulatorValues[button]] = 0;
+    _pad[player][A2600EmulatorValues[button]] = 0;
 }
 
 

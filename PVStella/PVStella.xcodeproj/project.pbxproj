@@ -301,8 +301,6 @@
 		B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E931D62C245003F1E93 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		B3C96EB61D62C3E4003F1E93 /* PVSupportTV Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "PVSupportTV Framework.framework"; path = "../PVSupport/build/Debug-appletvos/PVSupportTV Framework.framework"; sourceTree = "<group>"; };
-		B3C96EB81D62C3EE003F1E93 /* PVSupportTV Framework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "PVSupportTV Framework.framework"; path = "../PVSupport/build/Debug-appletvos/PVSupportTV Framework.framework"; sourceTree = "<group>"; };
 		B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
 		B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaGameCore.h; sourceTree = "<group>"; };
@@ -354,8 +352,6 @@
 			children = (
 				B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */,
 				B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */,
-				B3C96EB81D62C3EE003F1E93 /* PVSupportTV Framework.framework */,
-				B3C96EB61D62C3E4003F1E93 /* PVSupportTV Framework.framework */,
 				B3C96E931D62C245003F1E93 /* CoreGraphics.framework */,
 				B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */,
 				B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */,
