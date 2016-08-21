@@ -26,33 +26,18 @@
             continue; // skip over the PVButtonGroupOverlayView
         }
         
-        if ([[[button titleLabel] text] isEqualToString:@"A"])
+        if ([[[button titleLabel] text] isEqualToString:@"Fire"])
         {
             [button setTag:OE2600ButtonFire1];
-        }
-        else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
-        {
-            [button setTag:OE2600ButtonFire1];
-        }
-        else if ([[[button titleLabel] text] isEqualToString:@"C"] || [[[button titleLabel] text] isEqualToString:@"2"])
-        {
-            [button setTag:OE2600ButtonFire1];
-        }
-        else if ([[[button titleLabel] text] isEqualToString:@"X"])
-        {
-            [button setTag:OE2600ButtonFire1];
-        }
-        else if ([[[button titleLabel] text] isEqualToString:@"Y"])
-        {
-            [button setTag:OE2600ButtonFire1];
-        }
-        else if ([[[button titleLabel] text] isEqualToString:@"Z"])
-        {
-            [button setTag:OE2600ButtonFire1];
+        } else if ([[[button titleLabel] text] isEqualToString:@"Select"]) {
+            [button setTag:OE2600ButtonSelect];
+        } else if ([[[button titleLabel] text] isEqualToString:@"Reset"]) {
+            [button setTag:OE2600ButtonReset];
         }
     }
     
-    [self.startButton setTag:OE2600ButtonReset];
+    self.startButton.tag  = OE2600ButtonReset;
+    self.selectButton.tag = OE2600ButtonSelect;
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
@@ -114,14 +99,16 @@
 - (void)buttonPressed:(JSButton *)button
 {
     PVStellaGameCore *stellaCore = (PVStellaGameCore *)self.emulatorCore;
-    [stellaCore didPush2600Button:[button tag] forPlayer:0];
+    NSInteger tag = button.tag;
+    [stellaCore didPush2600Button:tag forPlayer:0];
     [self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
     PVStellaGameCore *stellaCore = (PVStellaGameCore *)self.emulatorCore;
-    [stellaCore didPush2600Button:[button tag] forPlayer:0];
+    NSInteger tag = button.tag;
+    [stellaCore didPush2600Button:tag forPlayer:0];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
