@@ -46,19 +46,15 @@ Stella*				stella;
 static uint32_t frame_buffer[256*160];
 uint8_t samplebuffer[2048];
 //Set the palette for the current stella instance
-void stellaMDFNSetPalette (const uInt32* palette)
-{
-	if(stella)
-	{
+void stellaMDFNSetPalette (const uInt32* palette) {
+	if(stella) {
 		stella->Palette = palette;
 	}
 }
 
 //Get the settings from the current stella instance
-Settings& stellaMDFNSettings ()
-{
-	if(stella)
-	{
+Settings& stellaMDFNSettings () {
+	if(stella) {
 		return stella->GameSettings;
 	}
     
@@ -80,11 +76,11 @@ void stella_retro_set_audio_sample_batch(retro_audio_sample_batch_t cb) { audio_
 void stella_retro_set_input_poll(retro_input_poll_t cb) { input_poll_cb = cb; }
 void stella_retro_set_input_state(retro_input_state_t cb) { input_state_cb = cb; }
 
-static void stella_update_input()
-{
+static void stella_update_input() {
 
-    if (!input_poll_cb)
+    if (!input_poll_cb) {
         return;
+    }
     
     input_poll_cb();
     
@@ -96,12 +92,14 @@ static void stella_update_input()
     stella->GameConsole->event().set(Event::JoystickZeroFire1, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B));
     stella->GameConsole->event().set(Event::JoystickZeroFire2, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A));
     stella->GameConsole->event().set(Event::JoystickZeroFire3, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X));
+    
     stella->GameConsole->event().set(Event::ConsoleLeftDiffA, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L));
     stella->GameConsole->event().set(Event::ConsoleLeftDiffB, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2));
     stella->GameConsole->event().set(Event::ConsoleColor, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3));
     stella->GameConsole->event().set(Event::ConsoleRightDiffA, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R));
     stella->GameConsole->event().set(Event::ConsoleRightDiffB, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2));
     stella->GameConsole->event().set(Event::ConsoleBlackWhite, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R3));
+    
     stella->GameConsole->event().set(Event::ConsoleSelect, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT));
     stella->GameConsole->event().set(Event::ConsoleReset, input_state_cb(Controller::Left, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START));
     
@@ -116,9 +114,9 @@ static void stella_update_input()
     
     //stella->GameConsole->fry();
     //Tell all input devices to read their state from the event structure
-    stella->GameConsole->switches().update();
     stella->GameConsole->controller(Controller::Left).update();
     stella->GameConsole->controller(Controller::Right).update();
+    stella->GameConsole->switches().update();
 }
 
 /************************************
@@ -336,6 +334,7 @@ void stella_retro_run(void)
         //audio_batch_cb((const int16_t *)sample, soundFrameSize);
         //memcpy(&final_samplebuffer, &sample, 2 * 2);
     }
+    
     //TODO: fix
     //The array you pass in batch callback has to be interleaved signed 16-bit stereo
     //audio_batch_cb((const int16_t *)samplebuffer, soundFrameSize);

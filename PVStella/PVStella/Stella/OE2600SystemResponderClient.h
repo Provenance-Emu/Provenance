@@ -28,8 +28,7 @@
 
 @protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OE2600Button)
-{
+typedef NS_ENUM(NSUInteger, OE2600Button) {
 	OE2600ButtonUp,
 	OE2600ButtonDown,
 	OE2600ButtonLeft,

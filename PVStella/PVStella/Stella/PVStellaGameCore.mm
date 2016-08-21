@@ -26,13 +26,14 @@
  */
 
 #import "PVStellaGameCore.h"
+
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/OETimingUtils.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
-#import "OE2600SystemResponderClient.h"
 
+#import "OE2600SystemResponderClient.h"
 #include "libretro.h"
 
 // Size and screen buffer consants
@@ -44,8 +45,21 @@ typedef                         uint32_t     stellabuffer_t;
 #define STELLA_PIXEL_FORMAT     GL_RGBA
 #define STELLA_INTERNAL_FORMAT  GL_RGBA
 
-@interface PVStellaGameCore ()
-{
+const NSUInteger A2600EmulatorValues[] = {
+    RETRO_DEVICE_ID_JOYPAD_UP,
+    RETRO_DEVICE_ID_JOYPAD_DOWN,
+    RETRO_DEVICE_ID_JOYPAD_LEFT,
+    RETRO_DEVICE_ID_JOYPAD_RIGHT,
+    RETRO_DEVICE_ID_JOYPAD_B,
+    RETRO_DEVICE_ID_JOYPAD_L,
+    RETRO_DEVICE_ID_JOYPAD_L2,
+    RETRO_DEVICE_ID_JOYPAD_R,
+    RETRO_DEVICE_ID_JOYPAD_R2,
+    RETRO_DEVICE_ID_JOYPAD_START,
+    RETRO_DEVICE_ID_JOYPAD_SELECT
+};
+
+@interface PVStellaGameCore () {
     stellabuffer_t *_videoBuffer;
     int _videoWidth, _videoHeight;
     int16_t _pad[2][12];
@@ -57,8 +71,8 @@ __weak PVStellaGameCore *_current;
 
 @implementation PVStellaGameCore
 
-static void audio_callback(int16_t left, int16_t right)
-{
+#pragma mark - Static callbacks
+static void audio_callback(int16_t left, int16_t right) {
     __strong PVStellaGameCore *strongCurrent = _current;
 
 	[[strongCurrent ringBufferAtIndex:0] write:&left maxLength:2];
@@ -67,7 +81,7 @@ static void audio_callback(int16_t left, int16_t right)
     strongCurrent = nil;
 }
 
-static size_t audio_batch_callback(const int16_t *data, size_t frames){
+static size_t audio_batch_callback(const int16_t *data, size_t frames) {
     __strong PVStellaGameCore *strongCurrent = _current;
 
     [[strongCurrent ringBufferAtIndex:0] write:data maxLength:frames << 2];
@@ -77,15 +91,14 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames){
     return frames;
 }
 
-static dispatch_queue_t memcpy_queue = dispatch_queue_create("stella memcpy queue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0));
-static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch)
-{
+static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch) {
     __strong PVStellaGameCore *strongCurrent = _current;
 
     strongCurrent->_videoWidth  = width;
     strongCurrent->_videoHeight = height;
     
-    //dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    static dispatch_queue_t memcpy_queue =
+    dispatch_queue_create("stella memcpy queue", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_USER_INTERACTIVE, 0));
     
     dispatch_apply(height, memcpy_queue, ^(size_t y) {
         const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
@@ -98,8 +111,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     strongCurrent = nil;
 }
 
-static void input_poll_callback(void)
-{
+static void input_poll_callback(void) {
 	//DLog(@"poll callback");
 }
 
@@ -140,27 +152,24 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     return value;
 }
 
-static bool environment_callback(unsigned cmd, void *data)
-{
+static bool environment_callback(unsigned cmd, void *data) {
     __strong PVStellaGameCore *strongCurrent = _current;
     
-    switch(cmd)
-    {
-        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
-        {
+    switch(cmd) {
+        case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY : {
             NSString *appSupportPath = [strongCurrent BIOSPath];
             
             *(const char **)data = [appSupportPath UTF8String];
             DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
-        case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
-        {
+        case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
             break;
         }
-        default :
+        default : {
             DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
+        }
     }
     
     strongCurrent = nil;
@@ -169,33 +178,28 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 
-static void loadSaveFile(const char* path, int type)
-{
+static void loadSaveFile(const char* path, int type) {
     FILE *file;
     
     file = fopen(path, "rb");
-    if ( !file )
-    {
+    if ( !file ) {
         return;
     }
     
     size_t size = stella_retro_get_memory_size(type);
-    void *data = stella_retro_get_memory_data(type);
+    void *data  = stella_retro_get_memory_data(type);
     
-    if (size == 0 || !data)
-    {
+    if (size == 0 || !data) {
         fclose(file);
         return;
     }
     
     int rc = fread(data, sizeof(uint8_t), size, file);
-    if ( rc != size )
-    {
+    if ( rc != size ) {
         DLog(@"Couldn't load save file.");
     }
     
     DLog(@"Loaded save file: %s", path);
-    
     fclose(file);
 }
 
@@ -344,16 +348,11 @@ static void writeSaveFile(const char* path, int type)
 }
 
 #pragma mark Input
-const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVICE_ID_JOYPAD_DOWN, RETRO_DEVICE_ID_JOYPAD_LEFT, RETRO_DEVICE_ID_JOYPAD_RIGHT, RETRO_DEVICE_ID_JOYPAD_B, RETRO_DEVICE_ID_JOYPAD_L, RETRO_DEVICE_ID_JOYPAD_L2, RETRO_DEVICE_ID_JOYPAD_R, RETRO_DEVICE_ID_JOYPAD_R2, RETRO_DEVICE_ID_JOYPAD_START, RETRO_DEVICE_ID_JOYPAD_SELECT };
-
-- (void)pollControllers
-{
-    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
-    {
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
         
-        if (self.controller1 && playerIndex == 0)
-        {
+        if (self.controller1 && playerIndex == 0) {
             controller = self.controller1;
         }
         else if (self.controller2 && playerIndex == 1)
@@ -361,8 +360,7 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
             controller = self.controller2;
         }
         
-        if ([controller extendedGamepad])
-        {
+        if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
@@ -378,9 +376,7 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
             
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = (gamepad.leftShoulder.isPressed  || gamepad.leftTrigger.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed);
-        }
-        else if ([controller gamepad])
-        {
+        } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
@@ -396,8 +392,7 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed;
         }
 #if TARGET_OS_TV
-        else if ([controller microGamepad])
-        {
+        else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
@@ -413,13 +408,11 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
     }
 }
 
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-{
+- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 1;
 }
 
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-{
+- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
 
@@ -430,24 +423,21 @@ const NSUInteger A2600EmulatorValues[] = { RETRO_DEVICE_ID_JOYPAD_UP, RETRO_DEVI
     return _videoBuffer;
 }
 
-- (CGRect)screenRect
-{
+- (CGRect)screenRect {
 //    __strong PVStellaGameCore *strongCurrent = _current;
 
     //return OEIntRectMake(0, 0, strongCurrent->_videoWidth, strongCurrent->_videoHeight);
     return CGRectMake(0, 0, STELLA_WIDTH, STELLA_HEIGHT);
 }
 
-- (CGSize)bufferSize
-{
+- (CGSize)bufferSize {
     return CGSizeMake(STELLA_WIDTH, STELLA_HEIGHT);
     
 //    __strong PVStellaGameCore *strongCurrent = _current;
     //return CGSizeMake(strongCurrent->_videoWidth, strongCurrent->_videoHeight);
 }
 
-- (CGSize)aspectSize
-{
+- (CGSize)aspectSize {
     return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
 }
 
