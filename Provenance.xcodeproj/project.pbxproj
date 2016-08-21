@@ -219,12 +219,13 @@
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
-		B3C102401C71201200DD066C /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */; };
-		B3C1028B1C7141BE00DD066C /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */; };
 		B3C96E831D62C16C003F1E93 /* StellaTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E821D62C16C003F1E93 /* StellaTV.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96E851D62C17E003F1E93 /* Stella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E841D62C17E003F1E93 /* Stella.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96EDB1D62C65B003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */; };
 		B3C96EDD1D62C669003F1E93 /* PVSupportTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDC1D62C669003F1E93 /* PVSupportTV.framework */; };
+		B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
+		B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
+		B3DF87671D6A5A5C00D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
 		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26691C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
@@ -509,15 +510,12 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
-		B3A849541C710DCC008A4D89 /* libPVStella.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVStella.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/libPVStella.a"; sourceTree = "<group>"; };
-		B3A849561C711507008A4D89 /* libPVStella.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVStella.a; path = "PVStella/build/Debug-iphoneos/libPVStella.a"; sourceTree = "<group>"; };
-		B3C1023E1C71201200DD066C /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
-		B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
-		B3C1028C1C71427B00DD066C /* libPVStellaTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVStellaTV.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/libPVStellaTV.a"; sourceTree = "<group>"; };
 		B3C96E821D62C16C003F1E93 /* StellaTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StellaTV.framework; path = "PVStella/build/Debug-appletvos/StellaTV.framework"; sourceTree = "<group>"; };
 		B3C96E841D62C17E003F1E93 /* Stella.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Stella.framework; path = "PVStella/build/Debug-iphoneos/Stella.framework"; sourceTree = "<group>"; };
 		B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3C96EDC1D62C669003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
+		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
+		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
 		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
 		BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConstants.m; sourceTree = "<group>"; };
 		BE1E266B1C22552800499BA0 /* PVAppConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppConstants.h; sourceTree = "<group>"; };
@@ -732,16 +730,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3C96EDC1D62C669003F1E93 /* PVSupportTV.framework */,
-				B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */,
-				B3C96E841D62C17E003F1E93 /* Stella.framework */,
-				B3C96E821D62C16C003F1E93 /* StellaTV.framework */,
-				B3C1028C1C71427B00DD066C /* libPVStellaTV.a */,
-				B3A849561C711507008A4D89 /* libPVStella.a */,
-				B3A849541C710DCC008A4D89 /* libPVStella.a */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
-				BE9FDCB81C210B9E0046DF0E /* TVServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -781,25 +771,25 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				1AABE0CD1ABE3E4000FF6AEF /* GB */,
+				1A9FBE201ABD28B6004E778B /* GBA */,
+				1A9FBE1E1ABD28A1004E778B /* Genesis */,
 				E41448871B3125D90056D80A /* iCade */,
+				1A74171A1ABF22FD00F3CD3C /* NES */,
+				1A9FBE1F1ABD28A9004E778B /* SNES */,
+				B3DF87681D6A5A6200D216D4 /* Stella */,
+				1A47C96117BC310700C27644 /* JSButton.h */,
+				1A47C96217BC310700C27644 /* JSButton.m */,
+				1A47C96317BC310700C27644 /* JSDPad.h */,
+				1A47C96417BC310700C27644 /* JSDPad.m */,
+				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
+				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
 				1A5209861BADCBB500DAE6E3 /* PVControllerManager.h */,
 				1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */,
 				1A52098A1BADD4F900DAE6E3 /* PVControllerSelectionViewController.h */,
 				1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */,
 				1A9647AF17D6864300A55612 /* PVControllerViewController.h */,
 				1A9647B017D6864300A55612 /* PVControllerViewController.m */,
-				1A9FBE1E1ABD28A1004E778B /* Genesis */,
-				1A9FBE1F1ABD28A9004E778B /* SNES */,
-				1A9FBE201ABD28B6004E778B /* GBA */,
-				1AABE0CD1ABE3E4000FF6AEF /* GB */,
-				1A74171A1ABF22FD00F3CD3C /* NES */,
-				1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */,
-				B3C1023D1C711FFC00DD066C /* Stella */,
-				1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */,
-				1A47C96117BC310700C27644 /* JSButton.h */,
-				1A47C96217BC310700C27644 /* JSButton.m */,
-				1A47C96317BC310700C27644 /* JSDPad.h */,
-				1A47C96417BC310700C27644 /* JSDPad.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -847,6 +837,8 @@
 		1A4DF9F81C0E40FE00DDBC20 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				B3C96E821D62C16C003F1E93 /* StellaTV.framework */,
+				B3C96EDC1D62C669003F1E93 /* PVSupportTV.framework */,
 				1AD4840C1BA36C8B00FDA50A /* libPVSupportTV.a */,
 				1AD484091BA36C8B00FDA50A /* libPVGenesisTV.a */,
 				1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */,
@@ -865,6 +857,7 @@
 				1AD482201BA3597500FDA50A /* Security.framework */,
 				1AD4821E1BA3596D00FDA50A /* MobileCoreServices.framework */,
 				1AD4821C1BA3596200FDA50A /* CFNetwork.framework */,
+				BE9FDCB81C210B9E0046DF0E /* TVServices.framework */,
 				1AD4821A1BA3594300FDA50A /* libstdc++.tbd */,
 				1AD482181BA3593900FDA50A /* libc++.tbd */,
 				1AD482161BA3592D00FDA50A /* libsqlite3.tbd */,
@@ -877,6 +870,8 @@
 		1A4DF9F91C0E411500DDBC20 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */,
+				B3C96E841D62C17E003F1E93 /* Stella.framework */,
 				1AD9AA4C1ACC9BDC00EC87A0 /* libPVSupport.a */,
 				1AD4820E1BA3557900FDA50A /* libPVGenesis.a */,
 				1AD4820F1BA3557900FDA50A /* libPVSNES.a */,
@@ -1134,11 +1129,11 @@
 			path = Reachability;
 			sourceTree = "<group>";
 		};
-		B3C1023D1C711FFC00DD066C /* Stella */ = {
+		B3DF87681D6A5A6200D216D4 /* Stella */ = {
 			isa = PBXGroup;
 			children = (
-				B3C1023E1C71201200DD066C /* PVStellaControllerViewController.h */,
-				B3C1023F1C71201200DD066C /* PVStellaControllerViewController.m */,
+				B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */,
+				B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */,
 			);
 			name = Stella;
 			sourceTree = "<group>";
@@ -1427,7 +1422,6 @@
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
-				B3C102401C71201200DD066C /* PVStellaControllerViewController.m in Sources */,
 				1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
@@ -1478,6 +1472,7 @@
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
+				B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
@@ -1529,7 +1524,6 @@
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				1AD482081BA354C400FDA50A /* PVButtonGroupOverlayView.m in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
-				B3C1028B1C7141BE00DD066C /* PVStellaControllerViewController.m in Sources */,
 				1AD4820A1BA354C400FDA50A /* JSDPad.m in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
@@ -1537,6 +1531,7 @@
 				1AD482051BA354C400FDA50A /* PVGBAControllerViewController.m in Sources */,
 				1AD481EC1BA3548200FDA50A /* unzip.c in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
+				B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -1576,6 +1571,7 @@
 				1AD9AA3A1ACC988F00EC87A0 /* Provenance_Tests.m in Sources */,
 				1AD9AA481ACC99C900EC87A0 /* PVSNESControllerViewController.m in Sources */,
 				1AD9AA441ACC999000EC87A0 /* PVGameImporter.m in Sources */,
+				B3DF87671D6A5A5C00D216D4 /* PVStellaControllerViewController.m in Sources */,
 				1AD9AA431ACC98F500EC87A0 /* PVGameImporterTests.m in Sources */,
 				1AD9AA471ACC99BD00EC87A0 /* PVGenesisControllerViewController.m in Sources */,
 				1AD9AA491ACC99C900EC87A0 /* PVGBAControllerViewController.m in Sources */,
