@@ -133,6 +133,11 @@
 }
 
 - (void)executeFrame {
+    
+    if (self.controller1 || self.controller2) {
+        [self pollControllers];
+    }
+    
 	prosystem_ExecuteFrame(_inputState);
 
     _videoWidth  = maria_visibleArea.GetLength();
@@ -286,6 +291,96 @@
 // | 16       | Console      | Right Difficulty
 // +----------+--------------+-------------------------------------------------
 const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 15, 16};
+
+#pragma mark Input
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // Up
+            _inputState[03] = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+            // Down
+            _inputState[02] = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+            // Left
+            _inputState[01] = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+            // Right
+            _inputState[00] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
+            
+            // Button 1
+            _inputState[04] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
+            // Button 2
+            _inputState[05] = (gamepad.buttonB.isPressed || gamepad.buttonB.isPressed);
+           
+            // Reset
+            _inputState[12] = (gamepad.rightShoulder.isPressed);
+            // Select
+            _inputState[13]  = (gamepad.leftShoulder.isPressed);
+            // Pause
+//            _inputState[14] = (gamepad.buttonY.isPressed);
+            // Left Difficulty
+            _inputState[15] = (gamepad.leftTrigger.isPressed);
+            // Right Difficulty
+            _inputState[16] = (gamepad.rightTrigger.isPressed);
+
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // Up
+            _inputState[03] = (dpad.up.isPressed);
+            // Down
+            _inputState[02] = (dpad.down.isPressed);
+            // Left
+            _inputState[01] = (dpad.left.isPressed);
+            // Right
+            _inputState[00] = (dpad.right.isPressed);
+            
+            // Button 1
+            _inputState[04] = (gamepad.buttonA.isPressed);
+            // Button 2
+            _inputState[05] = (gamepad.buttonB.isPressed);
+            
+            // Reset
+            _inputState[12] = (gamepad.rightShoulder.isPressed);
+            // Select
+            _inputState[13]  = (gamepad.leftShoulder.isPressed);
+            // Pause
+            //            _inputState[14] = (gamepad.buttonY.isPressed);
+            // Left Difficulty
+            _inputState[15] = (gamepad.buttonX.isPressed);
+            // Right Difficulty
+            _inputState[16] = (gamepad.buttonY.isPressed);
+            
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            _inputState[03]    = dpad.up.value > 0.5;
+            _inputState[02]  = dpad.down.value > 0.5;
+            _inputState[01]  = dpad.left.value > 0.5;
+            _inputState[00] = dpad.right.value > 0.5;
+            
+            _inputState[04] = gamepad.buttonX.isPressed;
+            _inputState[05] = gamepad.buttonA.isPressed;
+        }
+#endif
+    }
+}
+
 - (oneway void)didPush7800Button:(OE7800Button)button forPlayer:(NSUInteger)player {
     int playerShift = player != 1 ? 6 : 0;
 
