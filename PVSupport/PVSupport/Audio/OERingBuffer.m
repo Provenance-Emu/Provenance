@@ -25,7 +25,6 @@
  */
 
 #import "OERingBuffer.h"
-#import "TPCircularBuffer.h"
 
 @implementation OERingBuffer
 @synthesize bytesWritten;

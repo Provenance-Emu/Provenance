@@ -15,7 +15,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "PVControllerManager.h"
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
 #import "PVEmulatorConstants.h"
 
 @interface PVControllerViewController ()

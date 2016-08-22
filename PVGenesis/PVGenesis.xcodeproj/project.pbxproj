@@ -115,6 +115,8 @@
 		1AD482851BA363CC00FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */; };
 		1AD482861BA363CC00FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6D917F7512B0031B1C9 /* UIKit.framework */; };
 		1AD482871BA363CC00FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
+		B3FA5D571D6B8BDD00060D71 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FA5D551D6B89F300060D71 /* PVSupport.framework */; };
+		B3FA5D581D6B8BE500060D71 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FA5D531D6B89ED00060D71 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -273,6 +275,8 @@
 		1ACEA8D717F75B8A0031B1C9 /* fileio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
 		1AD4828D1BA363CC00FDA50A /* libPVGenesisTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGenesisTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3FA5D531D6B89ED00060D71 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3FA5D551D6B89F300060D71 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,6 +284,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FA5D571D6B8BDD00060D71 /* PVSupport.framework in Frameworks */,
 				1ACEA6E217F751590031B1C9 /* CoreGraphics.framework in Frameworks */,
 				1ACEA6DF17F751380031B1C9 /* AudioToolbox.framework in Frameworks */,
 				1ACEA6DC17F751320031B1C9 /* OpenGLES.framework in Frameworks */,
@@ -292,6 +297,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FA5D581D6B8BE500060D71 /* PVSupport.framework in Frameworks */,
 				1AD482831BA363CC00FDA50A /* CoreGraphics.framework in Frameworks */,
 				1AD482841BA363CC00FDA50A /* AudioToolbox.framework in Frameworks */,
 				1AD482851BA363CC00FDA50A /* OpenGLES.framework in Frameworks */,
@@ -324,6 +330,8 @@
 		1ACEA6AE17F74D150031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FA5D551D6B89F300060D71 /* PVSupport.framework */,
+				B3FA5D531D6B89ED00060D71 /* PVSupport.framework */,
 				1ACEA6E317F751650031B1C9 /* libPVSupport.a */,
 				1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */,
 				1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */,

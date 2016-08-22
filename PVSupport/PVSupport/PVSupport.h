@@ -7,16 +7,23 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <GameController/GameController.h>
+#include <libkern/OSAtomic.h>
+#include <string.h>
 
-//! Project version number for PVSupportTV Framework.
-FOUNDATION_EXPORT double PVSupportTV_FrameworkVersionNumber;
 
-//! Project version string for PVSupportTV Framework.
-FOUNDATION_EXPORT const unsigned char PVSupportTV_FrameworkVersionString[];
+//! Project version number for PVSupport Framework.
+FOUNDATION_EXPORT double PVSupport_FrameworkVersionNumber;
+
+//! Project version string for PVSupport Framework.
+FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVSupport/PublicHeader.h>
-#import <PVSupport/DebutUtils.h>
+#import <PVSupport/DebugUtils.h>
+#import <PVSupport/TPCircularBuffer.h>
+#import <PVSupport/OERingBuffer.h>
+#import <PVSupport/OETimingUtils.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVGameControllerUtilities.h>
-#import <PVSupport/OERingBufer.h>
 #import <PVSupport/OEGameAudio.h>

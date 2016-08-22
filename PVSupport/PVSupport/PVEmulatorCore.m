@@ -10,9 +10,12 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import <mach/mach_time.h>
 #import "OETimingUtils.h"
+#import "OERingBuffer.h"
 
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
+
+NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat framerateMultiplier;

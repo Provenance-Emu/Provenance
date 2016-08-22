@@ -7,8 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <PVSupport/OERingBuffer.h>
 #import <GameController/GameController.h>
+#import <PVSupport/OERingBuffer.h>
+
+#pragma mark -
+
+@class OERingBuffer;
+extern NSString *const PVEmulatorCoreErrorDomain;
+
+typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
+    PVEmulatorCoreErrorCodeCouldNotStart            = -1,
+    PVEmulatorCoreErrorCodeCouldNotLoadRom          = -2,
+    PVEmulatorCoreErrorCodeCouldNotLoadState        = -3,
+    PVEmulatorCoreErrorCodeStateHasWrongSize        = -4,
+    PVEmulatorCoreErrorCodeCouldNotSaveState        = -5,
+    PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
+};
 
 @interface PVEmulatorCore : NSObject {
 	

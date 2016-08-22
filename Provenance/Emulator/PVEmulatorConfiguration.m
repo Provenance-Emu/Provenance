@@ -27,6 +27,9 @@
 #import "PVStellaGameCore.h"
 #import "PVStellaControllerViewController.h"
 
+#import <ProSystem/ProSystemGameCore.h>
+#import "PVAtari7800ControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -99,6 +102,10 @@
     {
         core = [[PVStellaGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PV7800SystemIdentifier])
+    {
+        core = [[PVProSystemGameCore alloc] init];
+    }
     
 	return core;
 }
@@ -136,6 +143,10 @@
     else if ([systemID isEqualToString:PV2600SystemIdentifier])
     {
         controller = [[PVStellaControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV7800SystemIdentifier])
+    {
+        controller = [[PVAtari7800ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;

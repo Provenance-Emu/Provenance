@@ -6,7 +6,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-@class GCControllerDirectionPad;
+#import <GameController/GameController.h>
 
 typedef NS_ENUM(NSUInteger, PVControllerAxisDirection) {
     PVControllerAxisDirectionNone,
