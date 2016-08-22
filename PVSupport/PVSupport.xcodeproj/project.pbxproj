@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B36DE78F1D6AB797002EE3ED /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78E1D6AB797002EE3ED /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36DE7901D6AB797002EE3ED /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78E1D6AB797002EE3ED /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
@@ -22,7 +24,7 @@
 		B3C96EB31D62C3C7003F1E93 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69817F748F80031B1C9 /* PVEmulatorCore.m */; };
 		B3C96EB41D62C3C7003F1E93 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 25A64E111CB1BBEB00EDD19D /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EB51D62C3C7003F1E93 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */; };
-		B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; };
+		B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
 		B3C96EC11D62C5E7003F1E93 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */; };
 		B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
@@ -32,7 +34,7 @@
 		B3C96EC61D62C5E7003F1E93 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69417F748F80031B1C9 /* OERingBuffer.m */; };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; };
+		B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; };
 		B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECE1D62C5E7003F1E93 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 25A64E111CB1BBEB00EDD19D /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -40,6 +42,23 @@
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED11D62C5E7003F1E93 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68F17F748F80031B1C9 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B32F463E1D6AB0200085BA9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B32F46391D6AB0200085BA9F /* PVAtari800.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02695361143169EB003A07D4;
+			remoteInfo = Atari800;
+		};
+		B36DE7931D6AB797002EE3ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B32F46391D6AB0200085BA9F /* PVAtari800.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B36DE7481D6AB19C002EE3ED;
+			remoteInfo = PVAtari800;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1A4E718C1A6C699F005CA80F /* DebugUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
@@ -66,6 +85,8 @@
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		25A64E111CB1BBEB00EDD19D /* PVGameControllerUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameControllerUtilities.h; sourceTree = "<group>"; };
 		25A64E121CB1BBEB00EDD19D /* PVGameControllerUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameControllerUtilities.m; sourceTree = "<group>"; };
+		B32F46391D6AB0200085BA9F /* PVAtari800.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVAtari800.xcodeproj; path = ../PVAtari800/PVAtari800.xcodeproj; sourceTree = "<group>"; };
+		B36DE78E1D6AB797002EE3ED /* OEGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGeometry.h; sourceTree = "<group>"; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -106,6 +127,7 @@
 				1ACEA64917F7467D0031B1C9 /* PVSupport */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
+				B32F46391D6AB0200085BA9F /* PVAtari800.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -139,6 +161,7 @@
 				B3C96EBB1D62C54D003F1E93 /* PVSupport.h */,
 				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
+				B36DE78E1D6AB797002EE3ED /* OEGeometry.h */,
 				1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */,
 				1ACEA69717F748F80031B1C9 /* OETimingUtils.m */,
 				1ACEA68F17F748F80031B1C9 /* PVEmulatorCore.h */,
@@ -173,6 +196,15 @@
 			path = PVSupport/Audio;
 			sourceTree = "<group>";
 		};
+		B32F463A1D6AB0200085BA9F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B32F463F1D6AB0200085BA9F /* Atari800.oecoreplugin */,
+				B36DE7941D6AB797002EE3ED /* PVAtari800.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -186,6 +218,7 @@
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* OETimingUtils.h in Headers */,
 				B3C96EB41D62C3C7003F1E93 /* PVGameControllerUtilities.h in Headers */,
+				B36DE7901D6AB797002EE3ED /* OEGeometry.h in Headers */,
 				B3C96EAA1D62C3C3003F1E93 /* OERingBuffer.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
 				B3C96EB21D62C3C7003F1E93 /* PVEmulatorCore.h in Headers */,
@@ -202,6 +235,7 @@
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */,
 				B3C96ECE1D62C5E7003F1E93 /* PVGameControllerUtilities.h in Headers */,
+				B36DE78F1D6AB797002EE3ED /* OEGeometry.h in Headers */,
 				B3C96ECF1D62C5E7003F1E93 /* OERingBuffer.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 				B3C96ED11D62C5E7003F1E93 /* PVEmulatorCore.h in Headers */,
@@ -271,6 +305,12 @@
 			mainGroup = 1ACEA63B17F7467D0031B1C9;
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B32F463A1D6AB0200085BA9F /* Products */;
+					ProjectRef = B32F46391D6AB0200085BA9F /* PVAtari800.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C96EBE1D62C5E7003F1E93 /* PVSupport */,
@@ -278,6 +318,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B32F463F1D6AB0200085BA9F /* Atari800.oecoreplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Atari800.oecoreplugin;
+			remoteRef = B32F463E1D6AB0200085BA9F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B36DE7941D6AB797002EE3ED /* PVAtari800.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PVAtari800.framework;
+			remoteRef = B36DE7931D6AB797002EE3ED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3C96E9C1D62C3A3003F1E93 /* Resources */ = {
