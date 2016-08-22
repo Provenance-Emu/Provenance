@@ -108,7 +108,7 @@
 {
     PVStellaGameCore *stellaCore = (PVStellaGameCore *)self.emulatorCore;
     NSInteger tag = button.tag;
-    [stellaCore didPush2600Button:tag forPlayer:0];
+    [stellaCore didRelease2600Button:tag forPlayer:0];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player

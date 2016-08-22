@@ -416,7 +416,6 @@ static void writeSaveFile(const char* path, int type)
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
 
-
 #pragma mark Video
 - (const void *)videoBuffer
 {
