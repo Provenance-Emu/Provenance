@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B32F46301D6A86EA0085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462F1D6A86EA0085BA9F /* PVSupport.framework */; };
 		B38FB4C31C839BE500CD73BE /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96E071D62C00C003F1E93 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
 		B3C96E081D62C00C003F1E93 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
@@ -145,7 +146,6 @@
 		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
 		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
 		B3C96EDE1D62C6A8003F1E93 /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EE01D62C6F7003F1E93 /* PVSupportTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */; };
 		B3C96EE21D62C6FF003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
@@ -286,6 +286,7 @@
 		941DFB2615B6425200C6552F /* PVStellaGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVStellaGameCore.mm; sourceTree = "<group>"; };
 		941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OE2600SystemResponderClient.h; sourceTree = "<group>"; };
 		94A9E281157D637B0083A7DC /* libretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
+		B32F462F1D6A86EA0085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B38FB4C01C839BE500CD73BE /* Stella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38FB4C21C839BE500CD73BE /* Stella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stella.h; sourceTree = "<group>"; };
 		B38FB4C41C839BE500CD73BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -324,7 +325,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C96EE01D62C6F7003F1E93 /* PVSupportTV.framework in Frameworks */,
+				B32F46301D6A86EA0085BA9F /* PVSupport.framework in Frameworks */,
 				B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3C96E901D62C233003F1E93 /* OpenGLES.framework in Frameworks */,
@@ -350,6 +351,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B32F462F1D6A86EA0085BA9F /* PVSupport.framework */,
 				B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */,
 				B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */,
 				B3C96E931D62C245003F1E93 /* CoreGraphics.framework */,
