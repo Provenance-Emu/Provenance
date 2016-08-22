@@ -1,6 +1,6 @@
 /*
- Copyright (c) 2012, OpenEmu Team
- 
+ Copyright (c) 2015, OpenEmu Team
+
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
      * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
      * Neither the name of the OpenEmu Team nor the
        names of its contributors may be used to endorse or promote products
        derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,27 +25,28 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
 
-@protocol OESystemResponderClient;
+//@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OE2600Button) {
-	OE2600ButtonUp,
-	OE2600ButtonDown,
-	OE2600ButtonLeft,
-	OE2600ButtonRight,
-	OE2600ButtonFire1,
-    OE2600ButtonLeftDiffA,
-    OE2600ButtonLeftDiffB,
-	OE2600ButtonRightDiffA,
-    OE2600ButtonRightDiffB,
-    OE2600ButtonReset,
-	OE2600ButtonSelect,
-	OE2600ButtonCount
+typedef NS_ENUM(NSUInteger, OEA8Button) {
+    OEA8JoystickUp,
+    OEA8JoystickDown,
+    OEA8JoystickLeft,
+    OEA8JoystickRight,
+    OEA8ButtonFire,
+    OEA8ButtonCount
 };
 
-@protocol OE2600SystemResponderClient <NSObject>
-
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+@protocol OEA8SystemResponderClient  <NSObject>
+- (oneway void)mouseMovedAtPoint:(OEIntPoint)point;
+- (oneway void)leftMouseDownAtPoint:(OEIntPoint)point;
+- (oneway void)leftMouseUp;
+- (oneway void)rightMouseDownAtPoint:(OEIntPoint)point;
+- (oneway void)rightMouseUp;
+//- (oneway void)keyDown:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;
+//- (oneway void)keyUp:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;
+- (oneway void)didPushA8Button:(OEA8Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseA8Button:(OEA8Button)button forPlayer:(NSUInteger)player;
 
 @end

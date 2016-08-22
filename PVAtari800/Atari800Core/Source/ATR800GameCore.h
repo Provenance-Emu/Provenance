@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012, OpenEmu Team
+ Copyright (c) 2011, OpenEmu Team
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,27 +25,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <PVSupport/PVEmulatorCore.h>
 
-@protocol OESystemResponderClient;
+@class OERingBuffer;
 
-typedef NS_ENUM(NSUInteger, OE2600Button) {
-	OE2600ButtonUp,
-	OE2600ButtonDown,
-	OE2600ButtonLeft,
-	OE2600ButtonRight,
-	OE2600ButtonFire1,
-    OE2600ButtonLeftDiffA,
-    OE2600ButtonLeftDiffB,
-	OE2600ButtonRightDiffA,
-    OE2600ButtonRightDiffB,
-    OE2600ButtonReset,
-	OE2600ButtonSelect,
-	OE2600ButtonCount
-};
-
-@protocol OE2600SystemResponderClient <NSObject>
-
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-
+__attribute__((visibility("default")))
+@interface ATR800GameCore : PVEmulatorCore
 @end

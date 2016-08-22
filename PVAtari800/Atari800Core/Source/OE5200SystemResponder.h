@@ -24,28 +24,12 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import <OpenEmuSystem/OpenEmuSystem.h>
+#import "OE5200SystemResponderClient.h"
 
-@protocol OESystemResponderClient;
+OE_EXPORTED_CLASS
+@interface OE5200SystemResponder : OESystemResponder
 
-typedef NS_ENUM(NSUInteger, OE2600Button) {
-	OE2600ButtonUp,
-	OE2600ButtonDown,
-	OE2600ButtonLeft,
-	OE2600ButtonRight,
-	OE2600ButtonFire1,
-    OE2600ButtonLeftDiffA,
-    OE2600ButtonLeftDiffB,
-	OE2600ButtonRightDiffA,
-    OE2600ButtonRightDiffB,
-    OE2600ButtonReset,
-	OE2600ButtonSelect,
-	OE2600ButtonCount
-};
-
-@protocol OE2600SystemResponderClient <NSObject>
-
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+@property(nonatomic, weak) id<OE5200SystemResponderClient> client;
 
 @end

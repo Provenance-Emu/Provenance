@@ -24,28 +24,25 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
+#import "OE5200SystemResponder.h"
+#import "OE5200SystemResponderClient.h"
 
-@protocol OESystemResponderClient;
+@implementation OE5200SystemResponder
+@dynamic client;
 
-typedef NS_ENUM(NSUInteger, OE2600Button) {
-	OE2600ButtonUp,
-	OE2600ButtonDown,
-	OE2600ButtonLeft,
-	OE2600ButtonRight,
-	OE2600ButtonFire1,
-    OE2600ButtonLeftDiffA,
-    OE2600ButtonLeftDiffB,
-	OE2600ButtonRightDiffA,
-    OE2600ButtonRightDiffB,
-    OE2600ButtonReset,
-	OE2600ButtonSelect,
-	OE2600ButtonCount
-};
++ (Protocol *)gameSystemResponderClientProtocol;
+{
+    return @protocol(OE5200SystemResponderClient);
+}
 
-@protocol OE2600SystemResponderClient <NSObject>
+- (void)pressEmulatorKey:(OESystemKey *)aKey
+{
+    [[self client] didPush5200Button:(OE5200Button)[aKey key] forPlayer:[aKey player]];
+}
 
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+- (void)releaseEmulatorKey:(OESystemKey *)aKey
+{
+    [[self client] didRelease5200Button:(OE5200Button)[aKey key] forPlayer:[aKey player]];
+}
 
 @end
