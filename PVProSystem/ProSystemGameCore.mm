@@ -75,7 +75,7 @@
 
 #pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
+- (BOOL)loadFileAtPath:(NSString *)path {
     const int LEFT_DIFF_SWITCH  = 15;
     const int RIGHT_DIFF_SWITCH = 16;
     const int LEFT_POSITION  = 1; // also know as "B"
@@ -97,8 +97,9 @@
 
         // BIOS is optional
         NSString *biosROM = [[self biosDirectoryPath] stringByAppendingPathComponent:@"7800 BIOS (U).rom"];
-        if (bios_Load([biosROM UTF8String]))
+        if (bios_Load([biosROM UTF8String])) {
 		    bios_enabled = true;
+        }
 
         NSLog(@"Headerless MD5 hash: %s", cartridge_digest.c_str());
         NSLog(@"Header info (often wrong):\ntitle: %s\ntype: %d\nregion: %s\npokey: %s", cartridge_title.c_str(), cartridge_type, cartridge_region == REGION_NTSC ? "NTSC" : "PAL", cartridge_pokey ? "true" : "false");
@@ -109,13 +110,14 @@
         std::string title = common_Trim(cartridge_title);
         NSLog(@"Database info:\ntitle: %@\ntype: %d\nregion: %s\npokey: %s", [NSString stringWithUTF8String:title.c_str()], cartridge_type, cartridge_region == REGION_NTSC ? "NTSC" : "PAL", cartridge_pokey ? "true" : "false");
 
-        //sound_SetSampleRate(48000);
+        sound_SetSampleRate([self audioSampleRate]);
         [self setPalette32];
 
         _isLightgunEnabled = (cartridge_controller[0] & CARTRIDGE_CONTROLLER_LIGHTGUN);
         // The light gun 'trigger' is a press on the 'up' button (0x3) and needs the bit toggled
-        if(_isLightgunEnabled)
+        if(_isLightgunEnabled) {
             _inputState[3] = 1;
+        }
 
         // Set defaults for Bentley Bear (homebrew) so button 1 = run/shoot and button 2 = jump
         if(cartridge_digest == "ad35a98040a2facb10ecb120bf83bcc3")
@@ -182,7 +184,7 @@
 }
 
 - (GLenum)pixelFormat {
-    return GL_BGRA;
+    return GL_RGBA;
 }
 
 - (GLenum)pixelType {
@@ -190,7 +192,7 @@
 }
 
 - (GLenum)internalPixelFormat {
-    return GL_RGB8;
+    return GL_RGBA;
 }
 
 #pragma mark - Audio
@@ -209,12 +211,12 @@
 
 #pragma mark - Save States
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(prosystem_Save(fileName.fileSystemRepresentation, false) ? YES : NO, nil);
+- (void)saveStateToFileAtPath:(NSString *)fileName {
+    prosystem_Save(fileName.fileSystemRepresentation, false);
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-    block(prosystem_Load(fileName.fileSystemRepresentation) ? YES : NO, nil);
+- (void)loadStateFromFileAtPath:(NSString *)fileName  {
+    prosystem_Load(fileName.fileSystemRepresentation);
 }
 
 - (NSData *)serializeStateWithError:(NSError **)outError {
