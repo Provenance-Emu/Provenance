@@ -227,6 +227,8 @@
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CC1D6B80D4002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
+		B379379D1D6BAF8300EBAE81 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B379379C1D6BAF8300EBAE81 /* ProSystem.framework */; };
+		B379379E1D6BAF8300EBAE81 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B379379C1D6BAF8300EBAE81 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C96E831D62C16C003F1E93 /* StellaTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E821D62C16C003F1E93 /* StellaTV.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96E851D62C17E003F1E93 /* Stella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E841D62C17E003F1E93 /* Stella.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96EDB1D62C65B003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */; };
@@ -290,6 +292,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
+				B379379E1D6BAF8300EBAE81 /* ProSystem.framework in Embed Frameworks */,
 				1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */,
 				B32F46381D6A8D8B0085BA9F /* StellaTV.framework in Embed Frameworks */,
 			);
@@ -531,6 +534,7 @@
 		B36DE7C61D6B79FE002EE3ED /* ProSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProSystem.framework; path = "PVProSystem/build/Debug-iphoneos/ProSystem.framework"; sourceTree = "<group>"; };
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
+		B379379C1D6BAF8300EBAE81 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96E821D62C16C003F1E93 /* StellaTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StellaTV.framework; path = "PVStella/build/Debug-appletvos/StellaTV.framework"; sourceTree = "<group>"; };
 		B3C96E841D62C17E003F1E93 /* Stella.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Stella.framework; path = "PVStella/build/Debug-iphoneos/Stella.framework"; sourceTree = "<group>"; };
 		B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
@@ -539,6 +543,7 @@
 		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
 		B3FA5D4E1D6B85DA00060D71 /* Stella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Stella.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/Stella.framework"; sourceTree = "<absolute>"; };
 		B3FA5D6B1D6B92DD00060D71 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = ProSystem.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/ProSystem.framework"; sourceTree = "<absolute>"; };
+		B3FA5D941D6BADB500060D71 /* ProSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProSystem.framework; path = "PVProSystem/build/Debug-appletvos/ProSystem.framework"; sourceTree = "<group>"; };
 		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
 		BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorConstants.m; sourceTree = "<group>"; };
 		BE1E266B1C22552800499BA0 /* PVAppConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppConstants.h; sourceTree = "<group>"; };
@@ -644,6 +649,7 @@
 				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
+				B379379D1D6BAF8300EBAE81 /* ProSystem.framework in Frameworks */,
 				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
 				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
 			);
@@ -732,10 +738,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B3FA5D6B1D6B92DD00060D71 /* ProSystem.framework */,
-				B3FA5D4E1D6B85DA00060D71 /* Stella.framework */,
-				B32F46361D6A8D8B0085BA9F /* StellaTV.framework */,
-				B32F46331D6A8BD70085BA9F /* PVSupport.framework */,
+				B379379C1D6BAF8300EBAE81 /* ProSystem.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -761,7 +764,12 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3FA5D6B1D6B92DD00060D71 /* ProSystem.framework */,
+				B3FA5D4E1D6B85DA00060D71 /* Stella.framework */,
+				B32F46361D6A8D8B0085BA9F /* StellaTV.framework */,
+				B3FA5D941D6BADB500060D71 /* ProSystem.framework */,
 				B36DE7C61D6B79FE002EE3ED /* ProSystem.framework */,
+				B32F46331D6A8BD70085BA9F /* PVSupport.framework */,
 				B32F46311D6A873B0085BA9F /* PVSupport.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
@@ -1856,6 +1864,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1917,6 +1926,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1978,6 +1988,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
