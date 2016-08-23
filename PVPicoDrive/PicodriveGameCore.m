@@ -347,10 +347,10 @@ static void writeSaveFile(const char* path, int type)
             
             /* TODO: To support paddles we would need to circumvent libRatre's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
             
-            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
-            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
-            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
-            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  =  (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
             
             pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed);
             pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed);
