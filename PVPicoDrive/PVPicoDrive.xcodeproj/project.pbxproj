@@ -145,6 +145,7 @@
 		B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
 		B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
 		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; };
+		B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1515,7 +1516,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0730;
 				TargetAttributes = {
 					B37937AB1D6BCF8100EBAE81 = {
 						CreatedOnToolsVersion = 8.0;
@@ -1654,6 +1655,7 @@
 				B37937E61D6BDE1B00EBAE81 /* ym2612.c in Sources */,
 				B37937F61D6BDF3100EBAE81 /* zutil.c in Sources */,
 				B37937C61D6BD0B000EBAE81 /* cdd.c in Sources */,
+				B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */,
 				B37937C21D6BD08B00EBAE81 /* ssp16.c in Sources */,
 				B37937D31D6BDDB000EBAE81 /* draw2.c in Sources */,
 				B37937B71D6BD04600EBAE81 /* famec.c in Sources */,
@@ -1792,9 +1794,10 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1805,6 +1808,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = macosx;
 			};
@@ -1828,6 +1832,7 @@
 				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -1848,8 +1853,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -1883,7 +1886,7 @@
 				);
 				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1898,6 +1901,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -1908,8 +1912,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -1937,7 +1939,7 @@
 				);
 				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
@@ -1951,6 +1953,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

@@ -140,7 +140,7 @@ static bool environment_callback(unsigned cmd, void *data)
         }
         case RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY :
         {
-            NSString *appSupportPath = current.biosDirectoryPath;
+            NSString *appSupportPath = current.BIOSPath;
             
             *(const char **)data = [appSupportPath UTF8String];
             NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
@@ -397,7 +397,7 @@ static void writeSaveFile(const char* path, int type)
         return [NSData dataWithBytesNoCopy:bytes length:length];
 
     if(outError) {
-        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
+        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
@@ -411,7 +411,7 @@ static void writeSaveFile(const char* path, int type)
     size_t serial_size = retro_serialize_size();
     if(serial_size != [state length]) {
         if(outError) {
-            *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreStateHasWrongSizeError userInfo:@{
+            *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
                 NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The save state does not have the right size, %ld expected, got: %ld.", serial_size, [state length]]
             }];
@@ -424,7 +424,7 @@ static void writeSaveFile(const char* path, int type)
         return YES;
 
     if(outError) {
-        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:@{
+        *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read"
         }];
     }
@@ -438,7 +438,7 @@ static void writeSaveFile(const char* path, int type)
     NSMutableData *stateData = [NSMutableData dataWithLength:serial_size];
 
     if(!retro_serialize([stateData mutableBytes], serial_size)) {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError userInfo:@{
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
@@ -462,7 +462,7 @@ static void writeSaveFile(const char* path, int type)
 
     int serial_size = 678514;
     if(serial_size != [data length]) {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreStateHasWrongSizeError userInfo:@{
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
             NSLocalizedDescriptionKey : @"Save state has wrong file size.",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
         }];
@@ -471,7 +471,7 @@ static void writeSaveFile(const char* path, int type)
     }
 
     if(!retro_unserialize([data bytes], serial_size)) {
-        NSError *error = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotLoadStateError userInfo:@{
+        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
         }];
