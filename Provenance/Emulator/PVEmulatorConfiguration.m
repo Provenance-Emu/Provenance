@@ -27,6 +27,9 @@
 #import "PVStellaGameCore.h"
 #import "PVStellaControllerViewController.h"
 
+#import <PicoDrive/PicodriveGameCore.h>
+#import "PV32XControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -99,6 +102,10 @@
     {
         core = [[PVStellaGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PV32XSystemIdentifier])
+    {
+        core = [[PicodriveGameCore alloc] init];
+    }
     
 	return core;
 }
@@ -136,6 +143,10 @@
     else if ([systemID isEqualToString:PV2600SystemIdentifier])
     {
         controller = [[PVStellaControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV32XSystemIdentifier])
+    {
+        controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;

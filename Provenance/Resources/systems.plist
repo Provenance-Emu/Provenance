@@ -849,5 +849,61 @@
 			</dict>
 		</array>
 	</dict>
+	<dict>
+		<key>PVSystemName</key>
+		<string>Sega 32X</string>
+		<key>PVShortSystemName</key>
+		<string>32X</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.32X</string>
+		<key>PVDatabaseID</key>
+		<string>29</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>32X</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>Fire</string>
+						<key>PVControlFrame</key>
+						<string>{{76,84},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Reset</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+		</array>
+	</dict>
 </array>
 </plist>

@@ -6,89 +6,9 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		B3A3E9741D6BE79A00CCD7C8 /* pico */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = B3A3E9751D6BE79A00CCD7C8 /* Build configuration list for PBXAggregateTarget "pico" */;
-			buildPhases = (
-			);
-			dependencies = (
-				B3A3E9791D6BE79F00CCD7C8 /* PBXTargetDependency */,
-			);
-			name = pico;
-			productName = pico;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
-		82287C09101E9C2C0072172D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82287C08101E9C2C0072172D /* libz.dylib */; };
-		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
-		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		946B977017829BD600A212AC /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B95DE17829B4600A212AC /* libretro.c */; };
-		946B977117829C0500A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
-		946B977217829C0500A212AC /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
-		946B977317829C0E00A212AC /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
-		946B977417829C4F00A212AC /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
-		946B977517829C4F00A212AC /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
-		946B977617829C4F00A212AC /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
-		946B977717829C4F00A212AC /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
-		946B977817829C4F00A212AC /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
-		946B977917829C4F00A212AC /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
-		946B977A17829C4F00A212AC /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
-		946B977B17829C4F00A212AC /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
-		946B977C17829C4F00A212AC /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
-		946B977D17829C4F00A212AC /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
-		946B977E17829CE200A212AC /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
-		946B978217829D3B00A212AC /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
-		946B978517829D3B00A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
-		946B978617829D3B00A212AC /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
-		946B978717829D3B00A212AC /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
-		946B978917829D3B00A212AC /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
-		946B978A17829DDB00A212AC /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
-		946B978B17829DDB00A212AC /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
-		946B978D17829DDB00A212AC /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
-		946B978E17829E1700A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
-		946B978F17829E1700A212AC /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
-		946B979017829E1700A212AC /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
-		946B979117829E7600A212AC /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
-		946B979217829E7600A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
-		946B979317829E7600A212AC /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
-		946B979417829E7600A212AC /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
-		946B979517829EB200A212AC /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
-		946B979617829EB200A212AC /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
-		946B979717829EB200A212AC /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
-		946B979817829EB200A212AC /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
-		946B979917829EE200A212AC /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
-		946B979A17829EF100A212AC /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
-		946B979B17829F0200A212AC /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
-		946B979C17829F0D00A212AC /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
-		946B979D17829F1800A212AC /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
-		946B979E1782A91100A212AC /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
-		946B979F1782A92A00A212AC /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
-		946B97A01782A93D00A212AC /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
-		946B97A11782A94900A212AC /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
-		946B97A21782A94D00A212AC /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
-		946B97A31782A95700A212AC /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
-		946B97A41782A95A00A212AC /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
-		946B97A51782A96200A212AC /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
-		946B97A61782A96A00A212AC /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
-		946B97A71782A97500A212AC /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
-		946B97A81782A97900A212AC /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
-		946B97A91782A99700A212AC /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
-		946B97AA1782A99B00A212AC /* unzip_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963217829B4600A212AC /* unzip_stream.c */; };
-		946B97AB1782A9C900A212AC /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
-		946B97AC1782A9FD00A212AC /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
-		946B97AD1782AA5500A212AC /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
-		94AFF4E3178C9436009D157E /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
-		94B3AAC5183C815E009F8B71 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
-		94B3AAC6183C815E009F8B71 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
-		94B3AAC7183C815E009F8B71 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
-		94B3AACB183C81BA009F8B71 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
-		94B3AACC183C81BB009F8B71 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
-		94E45B9D17E67B560079D59E /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
-		94E45B9F17E67C630079D59E /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
-		B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; };
+		B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */; };
+		B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37937B51D6BD01300EBAE81 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
 		B37937B61D6BD02D00EBAE81 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
 		B37937B71D6BD04600EBAE81 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
@@ -155,21 +75,10 @@
 		B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
 		B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
 		B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
-		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; };
+		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
-		B3A3E97A1D6BE85500CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 		B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B3A3E9781D6BE79F00CCD7C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
-			remoteInfo = lPicodrive;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -180,7 +89,6 @@
 		82287C33101E9DB40072172D /* PicodriveGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PicodriveGameCore.h; sourceTree = "<group>"; };
 		82287C34101E9DB40072172D /* PicodriveGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PicodriveGameCore.m; sourceTree = "<group>"; };
 		825C7E44101FAB7F0072187B /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
-		8D5B49B6048680CD000E48DA /* Picodrive.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Picodrive.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		946B948E17829B4400A212AC /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		946B948F17829B4400A212AC /* app.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = app.h; sourceTree = "<group>"; };
 		946B949017829B4400A212AC /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -601,15 +509,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8D5B49B3048680CD000E48DA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				82287C09101E9C2C0072172D /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B37937A81D6BCF8100EBAE81 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -688,7 +587,6 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D5B49B6048680CD000E48DA /* Picodrive.oecoreplugin */,
 				B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */,
 			);
 			name = Products;
@@ -1496,24 +1394,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* lPicodrive */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "lPicodrive" */;
-			buildPhases = (
-				8D5B49AF048680CD000E48DA /* Resources */,
-				8D5B49B1048680CD000E48DA /* Sources */,
-				8D5B49B3048680CD000E48DA /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = lPicodrive;
-			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = GenesisPlus;
-			productReference = 8D5B49B6048680CD000E48DA /* Picodrive.oecoreplugin */;
-			productType = "com.apple.product-type.bundle";
-		};
 		B37937AB1D6BCF8100EBAE81 /* PicoDrive */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B37937B11D6BCF8100EBAE81 /* Build configuration list for PBXNativeTarget "PicoDrive" */;
@@ -1546,9 +1426,6 @@
 						DevelopmentTeam = V78REPMQFZ;
 						ProvisioningStyle = Automatic;
 					};
-					B3A3E9741D6BE79A00CCD7C8 = {
-						CreatedOnToolsVersion = 7.3.1;
-					};
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVPicoDrive" */;
@@ -1562,22 +1439,12 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* lPicodrive */,
 				B37937AB1D6BCF8100EBAE81 /* PicoDrive */,
-				B3A3E9741D6BE79A00CCD7C8 /* pico */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		8D5B49AF048680CD000E48DA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B37937AA1D6BCF8100EBAE81 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1588,77 +1455,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		8D5B49B1048680CD000E48DA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				946B977017829BD600A212AC /* libretro.c in Sources */,
-				946B979E1782A91100A212AC /* mp3_dummy.c in Sources */,
-				946B979F1782A92A00A212AC /* gzio.c in Sources */,
-				946B97A01782A93D00A212AC /* inffast.c in Sources */,
-				946B97A11782A94900A212AC /* inflate.c in Sources */,
-				946B97A21782A94D00A212AC /* inftrees.c in Sources */,
-				946B97AD1782AA5500A212AC /* trees.c in Sources */,
-				946B97A31782A95700A212AC /* deflate.c in Sources */,
-				946B97A41782A95A00A212AC /* crc32.c in Sources */,
-				946B97A51782A96200A212AC /* adler32.c in Sources */,
-				946B97A61782A96A00A212AC /* zutil.c in Sources */,
-				946B97A71782A97500A212AC /* compress.c in Sources */,
-				946B97A81782A97900A212AC /* uncompr.c in Sources */,
-				946B97A91782A99700A212AC /* unzip.c in Sources */,
-				946B97AA1782A99B00A212AC /* unzip_stream.c in Sources */,
-				946B97AB1782A9C900A212AC /* pico.c in Sources */,
-				946B97AC1782A9FD00A212AC /* cart.c in Sources */,
-				946B977117829C0500A212AC /* memory.c in Sources */,
-				946B977217829C0500A212AC /* state.c in Sources */,
-				946B977317829C0E00A212AC /* sek.c in Sources */,
-				946B977D17829C4F00A212AC /* z80if.c in Sources */,
-				946B977C17829C4F00A212AC /* videoport.c in Sources */,
-				946B977617829C4F00A212AC /* draw2.c in Sources */,
-				946B977517829C4F00A212AC /* draw.c in Sources */,
-				946B977A17829C4F00A212AC /* mode4.c in Sources */,
-				94B3AAC6183C815E009F8B71 /* cdc.c in Sources */,
-				946B977917829C4F00A212AC /* misc.c in Sources */,
-				946B977717829C4F00A212AC /* eeprom.c in Sources */,
-				946B977B17829C4F00A212AC /* patch.c in Sources */,
-				946B977417829C4F00A212AC /* debug.c in Sources */,
-				946B977817829C4F00A212AC /* media.c in Sources */,
-				946B977E17829CE200A212AC /* sms.c in Sources */,
-				94E45B9D17E67B560079D59E /* mcd.c in Sources */,
-				946B978517829D3B00A212AC /* memory.c in Sources */,
-				946B978917829D3B00A212AC /* sek.c in Sources */,
-				94B3AAC7183C815E009F8B71 /* cdd.c in Sources */,
-				946B978217829D3B00A212AC /* cue.c in Sources */,
-				946B978617829D3B00A212AC /* misc.c in Sources */,
-				946B978717829D3B00A212AC /* pcm.c in Sources */,
-				946B978A17829DDB00A212AC /* 32x.c in Sources */,
-				946B978B17829DDB00A212AC /* draw.c in Sources */,
-				946B978D17829DDB00A212AC /* pwm.c in Sources */,
-				94E45B9F17E67C630079D59E /* sh2soc.c in Sources */,
-				94B3AACC183C81BB009F8B71 /* gfx.c in Sources */,
-				946B978F17829E1700A212AC /* pico.c in Sources */,
-				946B978E17829E1700A212AC /* memory.c in Sources */,
-				946B979017829E1700A212AC /* xpcm.c in Sources */,
-				94B3AACB183C81BA009F8B71 /* gfx_dma.c in Sources */,
-				946B979117829E7600A212AC /* carthw.c in Sources */,
-				946B979417829E7600A212AC /* svp.c in Sources */,
-				B3A3E97A1D6BE85500CCD7C8 /* memory.c in Sources */,
-				946B979217829E7600A212AC /* memory.c in Sources */,
-				946B979317829E7600A212AC /* ssp16.c in Sources */,
-				946B979617829EB200A212AC /* sn76496.c in Sources */,
-				946B979717829EB200A212AC /* sound.c in Sources */,
-				946B979817829EB200A212AC /* ym2612.c in Sources */,
-				946B979517829EB200A212AC /* mix.c in Sources */,
-				946B979917829EE200A212AC /* famec.c in Sources */,
-				94B3AAC5183C815E009F8B71 /* cd_image.c in Sources */,
-				946B979A17829EF100A212AC /* cz80.c in Sources */,
-				946B979B17829F0200A212AC /* cmn.c in Sources */,
-				946B979C17829F0D00A212AC /* sh2.c in Sources */,
-				946B979D17829F1800A212AC /* sh2pico.c in Sources */,
-				94AFF4E3178C9436009D157E /* mp3.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B37937A71D6BCF8100EBAE81 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1733,14 +1529,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		B3A3E9791D6BE79F00CCD7C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8D5B49AC048680CD000E48DA /* lPicodrive */;
-			targetProxy = B3A3E9781D6BE79F00CCD7C8 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -1753,62 +1541,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB913B08733D840010E9CD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/platform/linux\"",
-					"\"$(SRCROOT)/pico\"",
-					"\"$(SRCROOT)\"",
-				);
-				INFOPLIST_FILE = PicoDrive/Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				OTHER_CFLAGS = (
-					"-fPIC",
-					"-DNDEBUG",
-					"-DEMU_F68K",
-					"-D_USE_CZ80",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
-				PRODUCT_NAME = Picodrive;
-				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
-				WRAPPER_EXTENSION = oecoreplugin;
-			};
-			name = Debug;
-		};
-		1DEB913C08733D840010E9CD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/platform/linux\"",
-					"\"$(SRCROOT)/pico\"",
-					"\"$(SRCROOT)\"",
-				);
-				INFOPLIST_FILE = PicoDrive/Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				OTHER_CFLAGS = (
-					"-fPIC",
-					"-DNDEBUG",
-					"-DEMU_F68K",
-					"-D_USE_CZ80",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.openemu.${PRODUCT_NAME:identifier}";
-				PRODUCT_NAME = Picodrive;
-				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
-				WRAPPER_EXTENSION = oecoreplugin;
-			};
-			name = Release;
-		};
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1990,32 +1722,9 @@
 			};
 			name = Release;
 		};
-		B3A3E9761D6BE79A00CCD7C8 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		B3A3E9771D6BE79A00CCD7C8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "lPicodrive" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1DEB913B08733D840010E9CD /* Debug */,
-				1DEB913C08733D840010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVPicoDrive" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2033,14 +1742,6 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
-		};
-		B3A3E9751D6BE79A00CCD7C8 /* Build configuration list for PBXAggregateTarget "pico" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B3A3E9761D6BE79A00CCD7C8 /* Debug */,
-				B3A3E9771D6BE79A00CCD7C8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

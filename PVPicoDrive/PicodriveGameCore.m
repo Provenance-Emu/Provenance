@@ -237,7 +237,7 @@ static void writeSaveFile(const char* path, int type)
     retro_run();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+- (BOOL)loadFileAtPath:(NSString *)path //error:(NSError **)error
 {
 	memset(pad, 0, sizeof(int16_t) * 10);
     
@@ -358,17 +358,17 @@ static void writeSaveFile(const char* path, int type)
 
 - (GLenum)pixelFormat
 {
-    return GL_RGB;
+    return GL_RGB; // GL_RGB
 }
 
 - (GLenum)pixelType
 {
-    return GL_UNSIGNED_SHORT_5_6_5;
+    return GL_UNSIGNED_SHORT_5_6_5; //GL_UNSIGNED_SHORT_5_6_5;
 }
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB565; //GL_RGB5
+    return GL_RGB; //GL_RGB5
 }
 
 - (double)audioSampleRate
@@ -384,6 +384,11 @@ static void writeSaveFile(const char* path, int type)
 - (NSUInteger)channelCount
 {
     return 2;
+}
+
+- (CGSize)aspectSize
+{
+    return CGSizeMake(4, 3);
 }
 
 #pragma mark - Save States

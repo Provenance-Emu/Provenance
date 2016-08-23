@@ -43,4 +43,4 @@ NSString * const PVNESSystemIdentifier = @"com.provenance.nes";
 NSString * const PVFDSSystemIdentifier = @"com.provenance.fds";
 NSString * const PVSG1000SystemIdentifier = @"com.provenance.sg1000";
 NSString * const PV2600SystemIdentifier = @"com.provenance.2600";
-
+NSString * const PV32XSystemIdentifier = @"com.provenance.32X";

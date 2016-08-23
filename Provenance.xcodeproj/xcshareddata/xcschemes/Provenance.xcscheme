@@ -28,6 +28,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
+               BuildableName = "PicoDrive.framework"
+               BlueprintName = "PicoDrive"
+               ReferencedContainer = "container:PVPicoDrive/PVPicoDrive.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1ACEA6AB17F74D150031B1C9"
                BuildableName = "libPVGenesis.a"
                BlueprintName = "PVGenesis"

@@ -25,10 +25,19 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PicoDrive/OESega32XSystemResponderClient.h>
+#elif TARGET_OS_MAC
+#import <Cocoa/Cocoa.h>
+#import <OpenEmuBase/OEGameCore.h>
+#endif
 
 @class OERingBuffer;
 
-@interface PicodriveGameCore : PVEmulatorCore
+@interface PicodriveGameCore : PVEmulatorCore <OESega32XSystemResponderClient>
+- (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 @end
