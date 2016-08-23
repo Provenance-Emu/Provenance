@@ -86,6 +86,9 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
 static void input_poll_callback(void)
 {
+    GET_CURRENT_OR_RETURN();
+
+    [current pollControllers];
 	//NSLog(@"poll callback");
 }
 
@@ -208,6 +211,8 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
+#pragma mark - Input
+
 - (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player-1][Sega32XEmulatorValues[button]] = 1;
@@ -216,6 +221,182 @@ static void writeSaveFile(const char* path, int type)
 - (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player-1][Sega32XEmulatorValues[button]] = 0;
+}
+
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
+{
+    GCController *controller = nil;
+    
+    if (player == 0)
+    {
+        controller = self.controller1;
+    }
+    else
+    {
+        controller = self.controller2;
+    }
+    
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *gamePad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [gamePad dpad];
+        switch (buttonID) {
+            case OESega32XButtonUp:
+                return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] isPressed];
+            case OESega32XButtonDown:
+                return [[dpad down] isPressed]?:[[[gamePad leftThumbstick] down] isPressed];
+            case OESega32XButtonLeft:
+                return [[dpad left] isPressed]?:[[[gamePad leftThumbstick] left] isPressed];
+            case OESega32XButtonRight:
+                return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] isPressed];
+            case OESega32XButtonA:
+                return [[gamePad buttonX] isPressed];
+            case OESega32XButtonB:
+                return [[gamePad buttonA] isPressed];
+            case OESega32XButtonC:
+                return [[gamePad buttonB] isPressed];
+            case OESega32XButtonX:
+                return [[gamePad leftShoulder] isPressed];
+            case OESega32XButtonY:
+                return [[gamePad buttonY] isPressed];
+            case OESega32XButtonZ:
+                return [[gamePad rightShoulder] isPressed];
+            case OESega32XButtonStart:
+                return [[gamePad leftTrigger] isPressed];
+            default:
+                break;
+        }
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *gamePad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [gamePad dpad];
+        switch (buttonID) {
+            case OESega32XButtonUp:
+                return [[dpad up] isPressed];
+            case OESega32XButtonDown:
+                return [[dpad down] isPressed];
+            case OESega32XButtonLeft:
+                return [[dpad left] isPressed];
+            case OESega32XButtonRight:
+                return [[dpad right] isPressed];
+            case OESega32XButtonA:
+                return [[gamePad buttonX] isPressed];
+            case OESega32XButtonB:
+                return [[gamePad buttonA] isPressed];
+            case OESega32XButtonC:
+                return [[gamePad buttonB] isPressed];
+            case OESega32XButtonX:
+                return [[gamePad leftShoulder] isPressed];
+            case OESega32XButtonY:
+                return [[gamePad buttonY] isPressed];
+            case OESega32XButtonZ:
+                return [[gamePad rightShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *gamePad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [gamePad dpad];
+        switch (buttonID) {
+            case OESega32XButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case OESega32XButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case OESega32XButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case OESega32XButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case OESega32XButtonA:
+                return [[gamePad buttonA] isPressed];
+                break;
+            case OESega32XButtonB:
+                return [[gamePad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+    
+    return 0;
+}
+
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            /* TODO: To support paddles we would need to circumvent libRatre's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_L] = (gamepad.buttonB.isPressed);
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = (gamepad.leftShoulder.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_Y] = (gamepad.buttonY.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_R] = (gamepad.rightShoulder.isPressed);
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftTrigger.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightTrigger.isPressed;
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
+
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_L] = (gamepad.buttonB.isPressed);
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = (gamepad.leftShoulder.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_Y] = (gamepad.buttonY.isPressed);
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_R] = (gamepad.rightShoulder.isPressed);
+            
+//            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed;
+//            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed;
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.value > 0.5;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.value > 0.5;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.value > 0.5;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.value > 0.5;
+            
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonX.isPressed;
+            pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonA.isPressed;
+        }
+#endif
+    }
 }
 
 - (id)init
