@@ -78,6 +78,77 @@
 		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
 		B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
+		B3A3E9871D6BFF6F00CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
+		B3A3E9881D6BFF6F00CCD7C8 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B95DE17829B4600A212AC /* libretro.c */; };
+		B3A3E9891D6BFF6F00CCD7C8 /* mp3_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954717829B4500A212AC /* mp3_dummy.c */; };
+		B3A3E98A1D6BFF6F00CCD7C8 /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963D17829B4600A212AC /* gzio.c */; };
+		B3A3E98B1D6BFF6F00CCD7C8 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964117829B4600A212AC /* inffast.c */; };
+		B3A3E98C1D6BFF6F00CCD7C8 /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964417829B4600A212AC /* inflate.c */; };
+		B3A3E98D1D6BFF6F00CCD7C8 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964617829B4600A212AC /* inftrees.c */; };
+		B3A3E98E1D6BFF6F00CCD7C8 /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964B17829B4600A212AC /* trees.c */; };
+		B3A3E98F1D6BFF6F00CCD7C8 /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963A17829B4600A212AC /* deflate.c */; };
+		B3A3E9901D6BFF6F00CCD7C8 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963817829B4600A212AC /* crc32.c */; };
+		B3A3E9911D6BFF6F00CCD7C8 /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963517829B4600A212AC /* adler32.c */; };
+		B3A3E9921D6BFF6F00CCD7C8 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B965017829B4600A212AC /* zutil.c */; };
+		B3A3E9931D6BFF6F00CCD7C8 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963717829B4600A212AC /* compress.c */; };
+		B3A3E9941D6BFF6F00CCD7C8 /* uncompr.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B964D17829B4600A212AC /* uncompr.c */; };
+		B3A3E9951D6BFF6F00CCD7C8 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963017829B4600A212AC /* unzip.c */; };
+		B3A3E9961D6BFF6F00CCD7C8 /* unzip_stream.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B963217829B4600A212AC /* unzip_stream.c */; };
+		B3A3E9971D6BFF6F00CCD7C8 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952417829B4500A212AC /* pico.c */; };
+		B3A3E9981D6BFF6F00CCD7C8 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
+		B3A3E9991D6BFF6F00CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951617829B4500A212AC /* memory.c */; };
+		B3A3E99A1D6BFF6F00CCD7C8 /* state.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953417829B4500A212AC /* state.c */; };
+		B3A3E99B1D6BFF6F00CCD7C8 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952817829B4500A212AC /* sek.c */; };
+		B3A3E99C1D6BFF6F00CCD7C8 /* z80if.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953617829B4500A212AC /* z80if.c */; };
+		B3A3E99D1D6BFF6F00CCD7C8 /* videoport.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953517829B4500A212AC /* videoport.c */; };
+		B3A3E99E1D6BFF6F00CCD7C8 /* draw2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950F17829B4500A212AC /* draw2.c */; };
+		B3A3E99F1D6BFF6F00CCD7C8 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950E17829B4500A212AC /* draw.c */; };
+		B3A3E9A01D6BFF6F00CCD7C8 /* mode4.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951D17829B4500A212AC /* mode4.c */; };
+		B3A3E9A11D6BFF6F00CCD7C8 /* cdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC2183C815E009F8B71 /* cdc.c */; };
+		B3A3E9A21D6BFF6F00CCD7C8 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951A17829B4500A212AC /* misc.c */; };
+		B3A3E9A31D6BFF6F00CCD7C8 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951317829B4500A212AC /* eeprom.c */; };
+		B3A3E9A41D6BFF6F00CCD7C8 /* patch.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951E17829B4500A212AC /* patch.c */; };
+		B3A3E9A51D6BFF6F00CCD7C8 /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950B17829B4500A212AC /* debug.c */; };
+		B3A3E9A61D6BFF6F00CCD7C8 /* media.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B951517829B4500A212AC /* media.c */; };
+		B3A3E9A71D6BFF6F00CCD7C8 /* sms.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952917829B4500A212AC /* sms.c */; };
+		B3A3E9A81D6BFF6F00CCD7C8 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
+		B3A3E9A91D6BFF6F00CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
+		B3A3E9AA1D6BFF6F00CCD7C8 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
+		B3A3E9AB1D6BFF6F00CCD7C8 /* cdd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC3183C815E009F8B71 /* cdd.c */; };
+		B3A3E9AC1D6BFF6F00CCD7C8 /* cue.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94FC17829B4400A212AC /* cue.c */; };
+		B3A3E9AD1D6BFF6F00CCD7C8 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
+		B3A3E9AE1D6BFF6F00CCD7C8 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
+		B3A3E9AF1D6BFF6F00CCD7C8 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
+		B3A3E9B01D6BFF6F00CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
+		B3A3E9B11D6BFF6F00CCD7C8 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
+		B3A3E9B21D6BFF6F00CCD7C8 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
+		B3A3E9B31D6BFF6F00CCD7C8 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
+		B3A3E9B41D6BFF6F00CCD7C8 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
+		B3A3E9B51D6BFF6F00CCD7C8 /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
+		B3A3E9B61D6BFF6F00CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
+		B3A3E9B71D6BFF6F00CCD7C8 /* xpcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952317829B4500A212AC /* xpcm.c */; };
+		B3A3E9B81D6BFF6F00CCD7C8 /* gfx_dma.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC9183C81BA009F8B71 /* gfx_dma.c */; };
+		B3A3E9B91D6BFF6F00CCD7C8 /* carthw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E817829B4400A212AC /* carthw.c */; };
+		B3A3E9BA1D6BFF6F00CCD7C8 /* svp.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F217829B4400A212AC /* svp.c */; };
+		B3A3E9BB1D6BFF6F00CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EE17829B4400A212AC /* memory.c */; };
+		B3A3E9BC1D6BFF6F00CCD7C8 /* ssp16.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EF17829B4400A212AC /* ssp16.c */; };
+		B3A3E9BD1D6BFF6F00CCD7C8 /* sn76496.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952E17829B4500A212AC /* sn76496.c */; };
+		B3A3E9BE1D6BFF6F00CCD7C8 /* sound.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953017829B4500A212AC /* sound.c */; };
+		B3A3E9BF1D6BFF6F00CCD7C8 /* ym2612.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B953117829B4500A212AC /* ym2612.c */; };
+		B3A3E9C01D6BFF6F00CCD7C8 /* mix.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952B17829B4500A212AC /* mix.c */; };
+		B3A3E9C11D6BFF6F00CCD7C8 /* famec.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94C817829B4400A212AC /* famec.c */; };
+		B3A3E9C21D6BFF6F00CCD7C8 /* cd_image.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AAC1183C815E009F8B71 /* cd_image.c */; };
+		B3A3E9C31D6BFF6F00CCD7C8 /* cz80.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94B017829B4400A212AC /* cz80.c */; };
+		B3A3E9C41D6BFF6F00CCD7C8 /* cmn.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94BE17829B4400A212AC /* cmn.c */; };
+		B3A3E9C51D6BFF6F00CCD7C8 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
+		B3A3E9C61D6BFF6F00CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
+		B3A3E9C71D6BFF6F00CCD7C8 /* mp3.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B954517829B4500A212AC /* mp3.c */; };
+		B3A3E9C91D6BFF6F00CCD7C8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
+		B3A3E9CA1D6BFF6F00CCD7C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
+		B3A3E9CD1D6BFF6F00CCD7C8 /* PicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */; };
+		B3A3E9CE1D6BFF6F00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A3E9CF1D6BFF6F00CCD7C8 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A3E9D71D6BFFEC00CCD7C8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -505,6 +576,8 @@
 		B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B37937FC1D6BDF5F00EBAE81 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESega32XSystemResponderClient.h; sourceTree = "<group>"; };
+		B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -516,6 +589,16 @@
 				B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */,
 				B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */,
 				B37937F91D6BDF4E00EBAE81 /* PVSupport.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A3E9C81D6BFF6F00CCD7C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A3E9D71D6BFFEC00CCD7C8 /* PVSupport.framework in Frameworks */,
+				B3A3E9C91D6BFF6F00CCD7C8 /* libz.tbd in Frameworks */,
+				B3A3E9CA1D6BFF6F00CCD7C8 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +671,7 @@
 			isa = PBXGroup;
 			children = (
 				B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */,
+				B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1371,6 +1455,7 @@
 		B37937F71D6BDF4E00EBAE81 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */,
 				B37937FC1D6BDF5F00EBAE81 /* libz.tbd */,
 				B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */,
 				B37937F81D6BDF4E00EBAE81 /* PVSupport.framework */,
@@ -1388,6 +1473,16 @@
 				B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */,
 				B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */,
 				B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A3E9CD1D6BFF6F00CCD7C8 /* PicoDrive.h in Headers */,
+				B3A3E9CE1D6BFF6F00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */,
+				B3A3E9CF1D6BFF6F00CCD7C8 /* PicodriveGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1412,6 +1507,24 @@
 			productReference = B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive tvOS" */;
+			buildPhases = (
+				B3A3E9861D6BFF6F00CCD7C8 /* Sources */,
+				B3A3E9C81D6BFF6F00CCD7C8 /* Frameworks */,
+				B3A3E9CC1D6BFF6F00CCD7C8 /* Headers */,
+				B3A3E9D01D6BFF6F00CCD7C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "PicoDrive tvOS";
+			productName = PicoDrive;
+			productReference = B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1425,6 +1538,9 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = V78REPMQFZ;
 						ProvisioningStyle = Automatic;
+					};
+					B3A3E9851D6BFF6F00CCD7C8 = {
+						DevelopmentTeam = V78REPMQFZ;
 					};
 				};
 			};
@@ -1440,12 +1556,20 @@
 			projectRoot = "";
 			targets = (
 				B37937AB1D6BCF8100EBAE81 /* PicoDrive */,
+				B3A3E9851D6BFF6F00CCD7C8 /* PicoDrive tvOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B37937AA1D6BCF8100EBAE81 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A3E9D01D6BFF6F00CCD7C8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1524,6 +1648,78 @@
 				B37937B91D6BD05C00EBAE81 /* sh2.c in Sources */,
 				B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */,
 				B37937E71D6BDE3800EBAE81 /* mp3.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3A3E9861D6BFF6F00CCD7C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3A3E9871D6BFF6F00CCD7C8 /* PicodriveGameCore.m in Sources */,
+				B3A3E9881D6BFF6F00CCD7C8 /* libretro.c in Sources */,
+				B3A3E9891D6BFF6F00CCD7C8 /* mp3_dummy.c in Sources */,
+				B3A3E98A1D6BFF6F00CCD7C8 /* gzio.c in Sources */,
+				B3A3E98B1D6BFF6F00CCD7C8 /* inffast.c in Sources */,
+				B3A3E98C1D6BFF6F00CCD7C8 /* inflate.c in Sources */,
+				B3A3E98D1D6BFF6F00CCD7C8 /* inftrees.c in Sources */,
+				B3A3E98E1D6BFF6F00CCD7C8 /* trees.c in Sources */,
+				B3A3E98F1D6BFF6F00CCD7C8 /* deflate.c in Sources */,
+				B3A3E9901D6BFF6F00CCD7C8 /* crc32.c in Sources */,
+				B3A3E9911D6BFF6F00CCD7C8 /* adler32.c in Sources */,
+				B3A3E9921D6BFF6F00CCD7C8 /* zutil.c in Sources */,
+				B3A3E9931D6BFF6F00CCD7C8 /* compress.c in Sources */,
+				B3A3E9941D6BFF6F00CCD7C8 /* uncompr.c in Sources */,
+				B3A3E9951D6BFF6F00CCD7C8 /* unzip.c in Sources */,
+				B3A3E9961D6BFF6F00CCD7C8 /* unzip_stream.c in Sources */,
+				B3A3E9971D6BFF6F00CCD7C8 /* pico.c in Sources */,
+				B3A3E9981D6BFF6F00CCD7C8 /* cart.c in Sources */,
+				B3A3E9991D6BFF6F00CCD7C8 /* memory.c in Sources */,
+				B3A3E99A1D6BFF6F00CCD7C8 /* state.c in Sources */,
+				B3A3E99B1D6BFF6F00CCD7C8 /* sek.c in Sources */,
+				B3A3E99C1D6BFF6F00CCD7C8 /* z80if.c in Sources */,
+				B3A3E99D1D6BFF6F00CCD7C8 /* videoport.c in Sources */,
+				B3A3E99E1D6BFF6F00CCD7C8 /* draw2.c in Sources */,
+				B3A3E99F1D6BFF6F00CCD7C8 /* draw.c in Sources */,
+				B3A3E9A01D6BFF6F00CCD7C8 /* mode4.c in Sources */,
+				B3A3E9A11D6BFF6F00CCD7C8 /* cdc.c in Sources */,
+				B3A3E9A21D6BFF6F00CCD7C8 /* misc.c in Sources */,
+				B3A3E9A31D6BFF6F00CCD7C8 /* eeprom.c in Sources */,
+				B3A3E9A41D6BFF6F00CCD7C8 /* patch.c in Sources */,
+				B3A3E9A51D6BFF6F00CCD7C8 /* debug.c in Sources */,
+				B3A3E9A61D6BFF6F00CCD7C8 /* media.c in Sources */,
+				B3A3E9A71D6BFF6F00CCD7C8 /* sms.c in Sources */,
+				B3A3E9A81D6BFF6F00CCD7C8 /* mcd.c in Sources */,
+				B3A3E9A91D6BFF6F00CCD7C8 /* memory.c in Sources */,
+				B3A3E9AA1D6BFF6F00CCD7C8 /* sek.c in Sources */,
+				B3A3E9AB1D6BFF6F00CCD7C8 /* cdd.c in Sources */,
+				B3A3E9AC1D6BFF6F00CCD7C8 /* cue.c in Sources */,
+				B3A3E9AD1D6BFF6F00CCD7C8 /* misc.c in Sources */,
+				B3A3E9AE1D6BFF6F00CCD7C8 /* pcm.c in Sources */,
+				B3A3E9AF1D6BFF6F00CCD7C8 /* 32x.c in Sources */,
+				B3A3E9B01D6BFF6F00CCD7C8 /* memory.c in Sources */,
+				B3A3E9B11D6BFF6F00CCD7C8 /* draw.c in Sources */,
+				B3A3E9B21D6BFF6F00CCD7C8 /* pwm.c in Sources */,
+				B3A3E9B31D6BFF6F00CCD7C8 /* sh2soc.c in Sources */,
+				B3A3E9B41D6BFF6F00CCD7C8 /* gfx.c in Sources */,
+				B3A3E9B51D6BFF6F00CCD7C8 /* pico.c in Sources */,
+				B3A3E9B61D6BFF6F00CCD7C8 /* memory.c in Sources */,
+				B3A3E9B71D6BFF6F00CCD7C8 /* xpcm.c in Sources */,
+				B3A3E9B81D6BFF6F00CCD7C8 /* gfx_dma.c in Sources */,
+				B3A3E9B91D6BFF6F00CCD7C8 /* carthw.c in Sources */,
+				B3A3E9BA1D6BFF6F00CCD7C8 /* svp.c in Sources */,
+				B3A3E9BB1D6BFF6F00CCD7C8 /* memory.c in Sources */,
+				B3A3E9BC1D6BFF6F00CCD7C8 /* ssp16.c in Sources */,
+				B3A3E9BD1D6BFF6F00CCD7C8 /* sn76496.c in Sources */,
+				B3A3E9BE1D6BFF6F00CCD7C8 /* sound.c in Sources */,
+				B3A3E9BF1D6BFF6F00CCD7C8 /* ym2612.c in Sources */,
+				B3A3E9C01D6BFF6F00CCD7C8 /* mix.c in Sources */,
+				B3A3E9C11D6BFF6F00CCD7C8 /* famec.c in Sources */,
+				B3A3E9C21D6BFF6F00CCD7C8 /* cd_image.c in Sources */,
+				B3A3E9C31D6BFF6F00CCD7C8 /* cz80.c in Sources */,
+				B3A3E9C41D6BFF6F00CCD7C8 /* cmn.c in Sources */,
+				B3A3E9C51D6BFF6F00CCD7C8 /* sh2.c in Sources */,
+				B3A3E9C61D6BFF6F00CCD7C8 /* sh2pico.c in Sources */,
+				B3A3E9C71D6BFF6F00CCD7C8 /* mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1657,8 +1853,9 @@
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
+					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PicoDrive;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1709,12 +1906,129 @@
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
+					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PicoDrive;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3A3E9D21D6BFF6F00CCD7C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = PicoDrive/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-DHAVE_GLES",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
+				PRODUCT_NAME = PicoDrive;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.2;
+				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3A3E9D31D6BFF6F00CCD7C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../OpenEmu\"/**",
+					"\"$(SRCROOT)/openemu\"/**",
+					"\"$(SRCROOT)/platform/linux\"",
+					"\"$(SRCROOT)/pico\"",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = PicoDrive/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+					"-DHAVE_GLES",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
+				PRODUCT_NAME = PicoDrive;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 9.2;
 				USER_HEADER_SEARCH_PATHS = "\"$(PROJECT_DIR)\"";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1739,6 +2053,15 @@
 			buildConfigurations = (
 				B37937B21D6BCF8100EBAE81 /* Debug */,
 				B37937B31D6BCF8100EBAE81 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A3E9D11D6BFF6F00CCD7C8 /* Build configuration list for PBXNativeTarget "PicoDrive tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A3E9D21D6BFF6F00CCD7C8 /* Debug */,
+				B3A3E9D31D6BFF6F00CCD7C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

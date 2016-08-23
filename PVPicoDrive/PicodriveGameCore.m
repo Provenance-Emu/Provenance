@@ -437,7 +437,7 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName //completionHandler:(void (^)(BOOL, NSError *))block
 {
     size_t serial_size = retro_serialize_size();
     NSMutableData *stateData = [NSMutableData dataWithLength:serial_size];
@@ -447,22 +447,23 @@ static void writeSaveFile(const char* path, int type)
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
-        block(NO, error);
-        return;
+//        block(NO, error);
+        return NO;
     }
 
     NSError *error = nil;
     BOOL success = [stateData writeToFile:fileName options:NSDataWritingAtomic error:&error];
-    block(success, success ? nil : error);
+//    block(success, success ? nil : error);
+    return success;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName //completionHandler:(void (^)(BOOL, NSError *))block
 {
     NSError *error = nil;
     NSData *data = [NSData dataWithContentsOfFile:fileName options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
     if(data == nil)  {
-        block(NO, error);
-        return;
+//        block(NO, error);
+        return NO;
     }
 
     int serial_size = 678514;
@@ -471,8 +472,8 @@ static void writeSaveFile(const char* path, int type)
             NSLocalizedDescriptionKey : @"Save state has wrong file size.",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
         }];
-        block(NO, error);
-        return;
+//        block(NO, error);
+        return NO;
     }
 
     if(!retro_unserialize([data bytes], serial_size)) {
@@ -480,11 +481,12 @@ static void writeSaveFile(const char* path, int type)
             NSLocalizedDescriptionKey : @"The save state data could not be read",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
         }];
-        block(NO, error);
-        return;
+//        block(NO, error);
+        return NO;
     }
     
-    block(YES, nil);
+//    block(YES, nil);
+    return YES;
 }
 
 @end

@@ -229,6 +229,9 @@
 		B3A3E9801D6BF2C800CCD7C8 /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A3E97D1D6BF2C800CCD7C8 /* PV32XControllerViewController.m */; };
 		B3A3E9831D6BF44200CCD7C8 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9821D6BF44200CCD7C8 /* PicoDrive.framework */; };
 		B3A3E9841D6BF44200CCD7C8 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9821D6BF44200CCD7C8 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A3E9D91D6C004C00CCD7C8 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D81D6C004C00CCD7C8 /* PicoDrive.framework */; };
+		B3A3E9DA1D6C005D00CCD7C8 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D81D6C004C00CCD7C8 /* PicoDrive.framework */; };
+		B3A3E9DB1D6C005D00CCD7C8 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D81D6C004C00CCD7C8 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C96E831D62C16C003F1E93 /* StellaTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E821D62C16C003F1E93 /* StellaTV.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96E851D62C17E003F1E93 /* Stella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E841D62C17E003F1E93 /* Stella.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C96EDB1D62C65B003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */; };
@@ -287,6 +290,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B3A3E9DB1D6C005D00CCD7C8 /* PicoDrive.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
 				1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */,
 				B32F46381D6A8D8B0085BA9F /* StellaTV.framework in Embed Frameworks */,
@@ -528,6 +532,7 @@
 		B3A3E97C1D6BF2C800CCD7C8 /* PV32XControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PV32XControllerViewController.h; sourceTree = "<group>"; };
 		B3A3E97D1D6BF2C800CCD7C8 /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
 		B3A3E9821D6BF44200CCD7C8 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PicoDrive.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PicoDrive.framework"; sourceTree = "<absolute>"; };
+		B3A3E9D81D6C004C00CCD7C8 /* PicoDrive.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PicoDrive.framework; path = "PVPicoDrive/build/Debug-appletvos/PicoDrive.framework"; sourceTree = "<group>"; };
 		B3C96E821D62C16C003F1E93 /* StellaTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StellaTV.framework; path = "PVStella/build/Debug-appletvos/StellaTV.framework"; sourceTree = "<group>"; };
 		B3C96E841D62C17E003F1E93 /* Stella.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Stella.framework; path = "PVStella/build/Debug-iphoneos/Stella.framework"; sourceTree = "<group>"; };
 		B3C96EDA1D62C65B003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
@@ -613,6 +618,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A3E9D91D6C004C00CCD7C8 /* PicoDrive.framework in Frameworks */,
 				B32F46321D6A873B0085BA9F /* PVSupport.framework in Frameworks */,
 				B3C96E831D62C16C003F1E93 /* StellaTV.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
@@ -638,6 +644,7 @@
 				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
+				B3A3E9DA1D6C005D00CCD7C8 /* PicoDrive.framework in Frameworks */,
 				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
 				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
 			);
@@ -751,6 +758,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A3E9D81D6C004C00CCD7C8 /* PicoDrive.framework */,
 				B3A3E9821D6BF44200CCD7C8 /* PicoDrive.framework */,
 				B32F46361D6A8D8B0085BA9F /* StellaTV.framework */,
 				B32F46331D6A8BD70085BA9F /* PVSupport.framework */,
@@ -1849,6 +1857,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVPicoDrive/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1911,6 +1920,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVPicoDrive/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1973,6 +1983,7 @@
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
 					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
+					"$(PROJECT_DIR)/PVPicoDrive/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
