@@ -6,9 +6,22 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3A3E9741D6BE79A00CCD7C8 /* pico */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3A3E9751D6BE79A00CCD7C8 /* Build configuration list for PBXAggregateTarget "pico" */;
+			buildPhases = (
+			);
+			dependencies = (
+				B3A3E9791D6BE79F00CCD7C8 /* PBXTargetDependency */,
+			);
+			name = pico;
+			productName = pico;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		82287C09101E9C2C0072172D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82287C08101E9C2C0072172D /* libz.dylib */; };
-		82287C39101E9DB40072172D /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
 		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		946B977017829BD600A212AC /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B95DE17829B4600A212AC /* libretro.c */; };
@@ -33,7 +46,6 @@
 		946B978917829D3B00A212AC /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
 		946B978A17829DDB00A212AC /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
 		946B978B17829DDB00A212AC /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
-		946B978C17829DDB00A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 		946B978D17829DDB00A212AC /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
 		946B978E17829E1700A212AC /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952117829B4500A212AC /* memory.c */; };
 		946B978F17829E1700A212AC /* pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B952217829B4500A212AC /* pico.c */; };
@@ -83,7 +95,6 @@
 		B37937B91D6BD05C00EBAE81 /* sh2.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DC17829B4400A212AC /* sh2.c */; };
 		B37937BA1D6BD06700EBAE81 /* 32x.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E017829B4400A212AC /* 32x.c */; };
 		B37937BB1D6BD06700EBAE81 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E117829B4400A212AC /* draw.c */; };
-		B37937BC1D6BD06D00EBAE81 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 		B37937BD1D6BD06D00EBAE81 /* pwm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E417829B4400A212AC /* pwm.c */; };
 		B37937BE1D6BD06D00EBAE81 /* sh2soc.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9E17E67C630079D59E /* sh2soc.c */; };
 		B37937BF1D6BD07B00EBAE81 /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E617829B4400A212AC /* cart.c */; };
@@ -146,7 +157,19 @@
 		B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
 		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; };
 		B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
+		B3A3E97A1D6BE85500CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
+		B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B3A3E9781D6BE79F00CCD7C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D5B49AC048680CD000E48DA;
+			remoteInfo = lPicodrive;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -1523,6 +1546,9 @@
 						DevelopmentTeam = V78REPMQFZ;
 						ProvisioningStyle = Automatic;
 					};
+					B3A3E9741D6BE79A00CCD7C8 = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVPicoDrive" */;
@@ -1538,6 +1564,7 @@
 			targets = (
 				8D5B49AC048680CD000E48DA /* lPicodrive */,
 				B37937AB1D6BCF8100EBAE81 /* PicoDrive */,
+				B3A3E9741D6BE79A00CCD7C8 /* pico */,
 			);
 		};
 /* End PBXProject section */
@@ -1565,7 +1592,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				82287C39101E9DB40072172D /* PicodriveGameCore.m in Sources */,
 				946B977017829BD600A212AC /* libretro.c in Sources */,
 				946B979E1782A91100A212AC /* mp3_dummy.c in Sources */,
 				946B979F1782A92A00A212AC /* gzio.c in Sources */,
@@ -1606,7 +1632,6 @@
 				946B978617829D3B00A212AC /* misc.c in Sources */,
 				946B978717829D3B00A212AC /* pcm.c in Sources */,
 				946B978A17829DDB00A212AC /* 32x.c in Sources */,
-				946B978C17829DDB00A212AC /* memory.c in Sources */,
 				946B978B17829DDB00A212AC /* draw.c in Sources */,
 				946B978D17829DDB00A212AC /* pwm.c in Sources */,
 				94E45B9F17E67C630079D59E /* sh2soc.c in Sources */,
@@ -1617,6 +1642,7 @@
 				94B3AACB183C81BA009F8B71 /* gfx_dma.c in Sources */,
 				946B979117829E7600A212AC /* carthw.c in Sources */,
 				946B979417829E7600A212AC /* svp.c in Sources */,
+				B3A3E97A1D6BE85500CCD7C8 /* memory.c in Sources */,
 				946B979217829E7600A212AC /* memory.c in Sources */,
 				946B979317829E7600A212AC /* ssp16.c in Sources */,
 				946B979617829EB200A212AC /* sn76496.c in Sources */,
@@ -1637,75 +1663,83 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37937E31D6BDE1B00EBAE81 /* mix.c in Sources */,
-				B37937CA1D6BDCB900EBAE81 /* mcd.c in Sources */,
-				B37937DE1D6BDE0F00EBAE81 /* sek.c in Sources */,
-				B37937C51D6BD0B000EBAE81 /* cdc.c in Sources */,
-				B37937ED1D6BDF3100EBAE81 /* compress.c in Sources */,
-				B37937EE1D6BDF3100EBAE81 /* crc32.c in Sources */,
-				B37937C41D6BD0B000EBAE81 /* cd_image.c in Sources */,
-				B37937EF1D6BDF3100EBAE81 /* deflate.c in Sources */,
-				B37937CE1D6BDD9A00EBAE81 /* misc.c in Sources */,
-				B37937DF1D6BDE0F00EBAE81 /* sms.c in Sources */,
-				B37937BC1D6BD06D00EBAE81 /* memory.c in Sources */,
-				B37937D01D6BDDA100EBAE81 /* sek.c in Sources */,
-				B37937E51D6BDE1B00EBAE81 /* sound.c in Sources */,
-				B37937E91D6BDEC000EBAE81 /* libretro.c in Sources */,
-				B37937F01D6BDF3100EBAE81 /* gzio.c in Sources */,
-				B37937E61D6BDE1B00EBAE81 /* ym2612.c in Sources */,
-				B37937F61D6BDF3100EBAE81 /* zutil.c in Sources */,
-				B37937C61D6BD0B000EBAE81 /* cdd.c in Sources */,
-				B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */,
-				B37937C21D6BD08B00EBAE81 /* ssp16.c in Sources */,
-				B37937D31D6BDDB000EBAE81 /* draw2.c in Sources */,
-				B37937B71D6BD04600EBAE81 /* famec.c in Sources */,
-				B37937BD1D6BD06D00EBAE81 /* pwm.c in Sources */,
-				B37937DC1D6BDDFD00EBAE81 /* xpcm.c in Sources */,
-				B37937F11D6BDF3100EBAE81 /* inffast.c in Sources */,
-				B37937CB1D6BDCB900EBAE81 /* memory.c in Sources */,
-				B37937F51D6BDF3100EBAE81 /* uncompr.c in Sources */,
-				B37937C01D6BD08000EBAE81 /* carthw.c in Sources */,
-				B37937E71D6BDE3800EBAE81 /* mp3.c in Sources */,
-				B37937D41D6BDDB800EBAE81 /* eeprom.c in Sources */,
-				B37937E21D6BDE0F00EBAE81 /* z80if.c in Sources */,
-				B37937D11D6BDDA500EBAE81 /* debug.c in Sources */,
-				B37937F21D6BDF3100EBAE81 /* inflate.c in Sources */,
-				B37937E81D6BDE3C00EBAE81 /* mp3_dummy.c in Sources */,
-				B37937F41D6BDF3100EBAE81 /* trees.c in Sources */,
-				B37937D71D6BDDEB00EBAE81 /* misc.c in Sources */,
-				B37937D51D6BDDD400EBAE81 /* media.c in Sources */,
 				B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */,
-				B37937E01D6BDE0F00EBAE81 /* state.c in Sources */,
-				B37937BB1D6BD06700EBAE81 /* draw.c in Sources */,
-				B37937EA1D6BDF0900EBAE81 /* unzip.c in Sources */,
-				B37937D61D6BDDDE00EBAE81 /* memory.c in Sources */,
-				B37937DB1D6BDDFD00EBAE81 /* pico.c in Sources */,
-				B37937BA1D6BD06700EBAE81 /* 32x.c in Sources */,
-				B37937D81D6BDDF000EBAE81 /* mode4.c in Sources */,
-				B37937DA1D6BDDFD00EBAE81 /* memory.c in Sources */,
-				B37937BF1D6BD07B00EBAE81 /* cart.c in Sources */,
-				B37937DD1D6BDE0F00EBAE81 /* pico.c in Sources */,
-				B37937D21D6BDDAC00EBAE81 /* draw.c in Sources */,
+				B37937E91D6BDEC000EBAE81 /* libretro.c in Sources */,
+				B37937E81D6BDE3C00EBAE81 /* mp3_dummy.c in Sources */,
+				B37937F01D6BDF3100EBAE81 /* gzio.c in Sources */,
+				B37937F11D6BDF3100EBAE81 /* inffast.c in Sources */,
+				B37937F21D6BDF3100EBAE81 /* inflate.c in Sources */,
 				B37937F31D6BDF3100EBAE81 /* inftrees.c in Sources */,
-				B37937E11D6BDE0F00EBAE81 /* videoport.c in Sources */,
-				B37937BE1D6BD06D00EBAE81 /* sh2soc.c in Sources */,
-				B37937C31D6BD09A00EBAE81 /* svp.c in Sources */,
-				B37937EB1D6BDF0E00EBAE81 /* unzip_stream.c in Sources */,
-				B37937B61D6BD02D00EBAE81 /* cmn.c in Sources */,
-				B37937B51D6BD01300EBAE81 /* cz80.c in Sources */,
-				B37937D91D6BDDF300EBAE81 /* patch.c in Sources */,
-				B37937C91D6BD0B000EBAE81 /* gfx.c in Sources */,
+				B37937F41D6BDF3100EBAE81 /* trees.c in Sources */,
+				B37937EF1D6BDF3100EBAE81 /* deflate.c in Sources */,
+				B37937EE1D6BDF3100EBAE81 /* crc32.c in Sources */,
 				B37937EC1D6BDF3100EBAE81 /* adler32.c in Sources */,
+				B37937F61D6BDF3100EBAE81 /* zutil.c in Sources */,
+				B37937ED1D6BDF3100EBAE81 /* compress.c in Sources */,
+				B37937F51D6BDF3100EBAE81 /* uncompr.c in Sources */,
+				B37937EA1D6BDF0900EBAE81 /* unzip.c in Sources */,
+				B37937EB1D6BDF0E00EBAE81 /* unzip_stream.c in Sources */,
+				B37937DD1D6BDE0F00EBAE81 /* pico.c in Sources */,
+				B37937BF1D6BD07B00EBAE81 /* cart.c in Sources */,
+				B37937D61D6BDDDE00EBAE81 /* memory.c in Sources */,
+				B37937E01D6BDE0F00EBAE81 /* state.c in Sources */,
+				B37937DE1D6BDE0F00EBAE81 /* sek.c in Sources */,
+				B37937E21D6BDE0F00EBAE81 /* z80if.c in Sources */,
+				B37937E11D6BDE0F00EBAE81 /* videoport.c in Sources */,
+				B37937D31D6BDDB000EBAE81 /* draw2.c in Sources */,
+				B37937D21D6BDDAC00EBAE81 /* draw.c in Sources */,
+				B37937D81D6BDDF000EBAE81 /* mode4.c in Sources */,
+				B37937C51D6BD0B000EBAE81 /* cdc.c in Sources */,
+				B37937D71D6BDDEB00EBAE81 /* misc.c in Sources */,
+				B37937D41D6BDDB800EBAE81 /* eeprom.c in Sources */,
+				B37937D91D6BDDF300EBAE81 /* patch.c in Sources */,
+				B37937D11D6BDDA500EBAE81 /* debug.c in Sources */,
+				B37937D51D6BDDD400EBAE81 /* media.c in Sources */,
+				B37937DF1D6BDE0F00EBAE81 /* sms.c in Sources */,
+				B37937CA1D6BDCB900EBAE81 /* mcd.c in Sources */,
+				B37937CB1D6BDCB900EBAE81 /* memory.c in Sources */,
+				B37937D01D6BDDA100EBAE81 /* sek.c in Sources */,
+				B37937C61D6BD0B000EBAE81 /* cdd.c in Sources */,
 				B37937C71D6BD0B000EBAE81 /* cue.c in Sources */,
-				B37937E41D6BDE1B00EBAE81 /* sn76496.c in Sources */,
-				B37937C11D6BD08700EBAE81 /* memory.c in Sources */,
-				B37937C81D6BD0B000EBAE81 /* gfx_dma.c in Sources */,
+				B37937CE1D6BDD9A00EBAE81 /* misc.c in Sources */,
 				B37937CF1D6BDDA100EBAE81 /* pcm.c in Sources */,
+				B37937BA1D6BD06700EBAE81 /* 32x.c in Sources */,
+				B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */,
+				B37937BB1D6BD06700EBAE81 /* draw.c in Sources */,
+				B37937BD1D6BD06D00EBAE81 /* pwm.c in Sources */,
+				B37937BE1D6BD06D00EBAE81 /* sh2soc.c in Sources */,
+				B37937C91D6BD0B000EBAE81 /* gfx.c in Sources */,
+				B37937DB1D6BDDFD00EBAE81 /* pico.c in Sources */,
+				B37937DA1D6BDDFD00EBAE81 /* memory.c in Sources */,
+				B37937DC1D6BDDFD00EBAE81 /* xpcm.c in Sources */,
+				B37937C81D6BD0B000EBAE81 /* gfx_dma.c in Sources */,
+				B37937C01D6BD08000EBAE81 /* carthw.c in Sources */,
+				B37937C31D6BD09A00EBAE81 /* svp.c in Sources */,
+				B37937C11D6BD08700EBAE81 /* memory.c in Sources */,
+				B37937C21D6BD08B00EBAE81 /* ssp16.c in Sources */,
+				B37937E41D6BDE1B00EBAE81 /* sn76496.c in Sources */,
+				B37937E51D6BDE1B00EBAE81 /* sound.c in Sources */,
+				B37937E61D6BDE1B00EBAE81 /* ym2612.c in Sources */,
+				B37937E31D6BDE1B00EBAE81 /* mix.c in Sources */,
+				B37937B71D6BD04600EBAE81 /* famec.c in Sources */,
+				B37937C41D6BD0B000EBAE81 /* cd_image.c in Sources */,
+				B37937B51D6BD01300EBAE81 /* cz80.c in Sources */,
+				B37937B61D6BD02D00EBAE81 /* cmn.c in Sources */,
 				B37937B91D6BD05C00EBAE81 /* sh2.c in Sources */,
+				B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */,
+				B37937E71D6BDE3800EBAE81 /* mp3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B3A3E9791D6BE79F00CCD7C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D5B49AC048680CD000E48DA /* lPicodrive */;
+			targetProxy = B3A3E9781D6BE79F00CCD7C8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
@@ -1727,13 +1761,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../OpenEmu\"/**",
-					"\"$(SRCROOT)/openemu\"/**",
 					"\"$(SRCROOT)/platform/linux\"",
 					"\"$(SRCROOT)/pico\"",
 					"\"$(SRCROOT)\"",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -1757,13 +1789,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/../OpenEmu\"/**",
-					"\"$(SRCROOT)/openemu\"/**",
 					"\"$(SRCROOT)/platform/linux\"",
 					"\"$(SRCROOT)/pico\"",
 					"\"$(SRCROOT)\"",
 				);
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = PicoDrive/Info.plist;
 				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
 				OTHER_CFLAGS = (
 					"-fPIC",
@@ -1960,6 +1990,20 @@
 			};
 			name = Release;
 		};
+		B3A3E9761D6BE79A00CCD7C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3A3E9771D6BE79A00CCD7C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1989,6 +2033,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B3A3E9751D6BE79A00CCD7C8 /* Build configuration list for PBXAggregateTarget "pico" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A3E9761D6BE79A00CCD7C8 /* Debug */,
+				B3A3E9771D6BE79A00CCD7C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
