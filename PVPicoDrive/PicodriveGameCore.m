@@ -411,6 +411,27 @@ static void writeSaveFile(const char* path, int type)
 	return self;
 }
 
+-(void)copyCartHWCFG {
+    NSBundle *myBundle = [NSBundle bundleForClass:[self class]];
+    NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
+    
+    NSString *systemPath = self.BIOSPath;
+    NSString *destinationPath = [systemPath stringByAppendingPathComponent:@"carthw.cfg"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if(![fm fileExistsAtPath:destinationPath]) {
+        NSError *error;
+        BOOL success = [fm copyItemAtPath:cartPath
+                                   toPath:destinationPath
+                                    error:&error];
+        if(!success) {
+            NSLog(@"Error copying carthw.cfg:\n %@", error.localizedDescription);
+        } else {
+            NSLog(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
+        }
+    }
+}
+
 #pragma mark Exectuion
 
 - (void)executeFrame
@@ -420,6 +441,9 @@ static void writeSaveFile(const char* path, int type)
 
 - (BOOL)loadFileAtPath:(NSString *)path //error:(NSError **)error
 {
+        // Copy default cartHW.cfg if need be
+    [self copyCartHWCFG];
+
 	memset(pad, 0, sizeof(int16_t) * 10);
     
     const void *data;
