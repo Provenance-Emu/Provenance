@@ -112,9 +112,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C102411C71406D00DD066C"
-               BuildableName = "libPVStellaTV.a"
-               BlueprintName = "PVStellaTV"
+               BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+               BuildableName = "StellaTV.framework"
+               BlueprintName = "StellaTV"
                ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
