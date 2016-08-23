@@ -1,7 +1,6 @@
 /*
  Copyright (c) 2013, OpenEmu Team
  
- 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
      * Redistributions of source code must retain the above copyright
@@ -26,9 +25,26 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVEmulatorCore.h>
 
-@class OERingBuffer;
+//@protocol OESystemResponderClient;
 
-@interface PicodriveGameCore : PVEmulatorCore
+typedef NS_ENUM(NSUInteger, OESega32XButton) {
+    OESega32XButtonUp,
+    OESega32XButtonDown,
+    OESega32XButtonLeft,
+    OESega32XButtonRight,
+    OESega32XButtonA,
+    OESega32XButtonB,
+    OESega32XButtonC,
+    OESega32XButtonX,
+    OESega32XButtonY,
+    OESega32XButtonZ,
+    OESega32XButtonStart,
+    OESega32XButtonMode,
+    OESega32XButtonCount,
+};
+
+@protocol OESega32XSystemResponderClient <NSObject>
+- (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 @end

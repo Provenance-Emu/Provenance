@@ -26,7 +26,7 @@
  */
 
 #import "PicodriveGameCore.h"
-#import <OpenEmuBase/OERingBuffer.h>
+#import <PVSupport/OERingBuffer.h>
 #import "OESega32XSystemResponderClient.h"
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -275,7 +275,7 @@ static void writeSaveFile(const char* path, int type)
         NSString *path = romName;
         NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
         
-        NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
+        NSString *batterySavesDirectory = [self batterySavesPath];
         
         if([batterySavesDirectory length] != 0)
         {
@@ -310,14 +310,14 @@ static void writeSaveFile(const char* path, int type)
     return videoBuffer;
 }
 
-- (OEIntRect)screenRect
+- (CGRect)screenRect
 {
-    return OEIntRectMake(0, 0, videoWidth, videoHeight);
+    return CGRectMake(0, 0, videoWidth, videoHeight);
 }
 
-- (OEIntSize)bufferSize
+- (CGSize)bufferSize
 {
-    return OEIntSizeMake(320, 240);
+    return CGSizeMake(320, 240);
     //return OEIntSizeMake(current->videoWidth, current->videoHeight);
 }
 
@@ -331,7 +331,7 @@ static void writeSaveFile(const char* path, int type)
     NSString *path = romName;
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
     
-    NSString *batterySavesDirectory = [self batterySavesDirectoryPath];
+    NSString *batterySavesDirectory = [self batterySavesPath];
     
     if([batterySavesDirectory length] != 0)
     {
@@ -368,7 +368,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB5;
+    return GL_RGB565; //GL_RGB5
 }
 
 - (double)audioSampleRate

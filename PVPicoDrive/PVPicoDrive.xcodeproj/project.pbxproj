@@ -99,7 +99,6 @@
 		B37937C91D6BD0B000EBAE81 /* gfx.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B3AACA183C81BA009F8B71 /* gfx.c */; };
 		B37937CA1D6BDCB900EBAE81 /* mcd.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E45B9B17E67B560079D59E /* mcd.c */; };
 		B37937CB1D6BDCB900EBAE81 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950217829B4400A212AC /* memory.c */; };
-		B37937CD1D6BDCD100EBAE81 /* misc_arm.s in Sources */ = {isa = PBXBuildFile; fileRef = 946B950517829B4400A212AC /* misc_arm.s */; };
 		B37937CE1D6BDD9A00EBAE81 /* misc.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950417829B4400A212AC /* misc.c */; };
 		B37937CF1D6BDDA100EBAE81 /* pcm.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950617829B4500A212AC /* pcm.c */; };
 		B37937D01D6BDDA100EBAE81 /* sek.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B950A17829B4500A212AC /* sek.c */; };
@@ -1673,7 +1672,6 @@
 				B37937F41D6BDF3100EBAE81 /* trees.c in Sources */,
 				B37937D71D6BDDEB00EBAE81 /* misc.c in Sources */,
 				B37937D51D6BDDD400EBAE81 /* media.c in Sources */,
-				B37937CD1D6BDCD100EBAE81 /* misc_arm.s in Sources */,
 				B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */,
 				B37937E01D6BDE0F00EBAE81 /* state.c in Sources */,
 				B37937BB1D6BD06700EBAE81 /* draw.c in Sources */,
@@ -1889,6 +1887,12 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PicoDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -1936,6 +1940,12 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-fPIC",
+					"-DNDEBUG",
+					"-DEMU_F68K",
+					"-D_USE_CZ80",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PicoDrive;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
