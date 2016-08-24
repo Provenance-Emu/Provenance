@@ -230,12 +230,12 @@ static void writeSaveFile(const char* path, int type)
 
 - (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 {
-    pad[player-1][Sega32XEmulatorValues[button]] = 1;
+    pad[player][Sega32XEmulatorValues[button]] = 1;
 }
 
 - (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
 {
-    pad[player-1][Sega32XEmulatorValues[button]] = 0;
+    pad[player][Sega32XEmulatorValues[button]] = 0;
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player

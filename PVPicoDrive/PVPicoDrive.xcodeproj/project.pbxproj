@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B368C2461D6D873900FE9EF8 /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
 		B36EE5131D6D3B5F000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
 		B36EE5141D6D3BF0000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94D517829B4400A212AC /* compiler.c */; };
 		B36EE5151D6D3BF1000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94D517829B4400A212AC /* compiler.c */; };
@@ -1643,6 +1644,7 @@
 				B37937C81D6BD0B000EBAE81 /* gfx_dma.c in Sources */,
 				B37937C01D6BD08000EBAE81 /* carthw.c in Sources */,
 				B37937C31D6BD09A00EBAE81 /* svp.c in Sources */,
+				B368C2461D6D873900FE9EF8 /* compiler.c in Sources */,
 				B37937C11D6BD08700EBAE81 /* memory.c in Sources */,
 				B37937C21D6BD08B00EBAE81 /* ssp16.c in Sources */,
 				B37937E41D6BDE1B00EBAE81 /* sn76496.c in Sources */,
