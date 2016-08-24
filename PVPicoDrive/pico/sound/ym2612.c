@@ -135,9 +135,10 @@ void memset32(int *dest, int c, int count);
 #pragma warning (disable:4018) // signed/unsigned
 #endif
 
-#ifndef INLINE
+// Joe M - I changed this because it causes linking errors in XCode / iOS
+//#ifndef INLINE
 #define INLINE static __inline
-#endif
+//#endif
 
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
