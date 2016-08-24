@@ -1856,11 +1856,15 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fPIC",
+					"-ffunction-sections",
+					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 					"-DHAVE_GLES",
-					"-ObjC",
+					"-DIOS",
+					"-DNO_ZLIB",
+					"-DINLINE=inline",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1912,11 +1916,15 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fPIC",
+					"-ffunction-sections",
+					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 					"-DHAVE_GLES",
-					"-ObjC",
+					"-DIOS",
+					"-DNO_ZLIB",
+					"-DINLINE=inline",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1976,11 +1984,15 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fPIC",
+					"-ffunction-sections",
+					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 					"-DHAVE_GLES",
-					"-ObjC",
+					"-DIOS",
+					"-DNO_ZLIB",
+					"-DINLINE=inline",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = PicoDrive;
@@ -2033,11 +2045,15 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-fPIC",
+					"-ffunction-sections",
+					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
 					"-D_USE_CZ80",
 					"-DHAVE_GLES",
-					"-ObjC",
+					"-DIOS",
+					"-DNO_ZLIB",
+					"-DINLINE=inline",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = PicoDrive;
