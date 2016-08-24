@@ -149,6 +149,21 @@ static bool environment_callback(unsigned cmd, void *data)
             NSLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
+        case RETRO_ENVIRONMENT_SET_VARIABLES:
+        {
+            // We could potentionally ask the user what options they want
+            const struct retro_variable* envs = (const struct retro_variable*)data;
+            int i=0;
+            const struct retro_variable *currentEnv;
+            do {
+                currentEnv = &envs[i];
+                NSLog(@"Environ SET_VARIABLES: {\"%s\",\"%s\"}.\n", currentEnv->key, currentEnv->value);
+                i++;
+            } while(currentEnv->key != NULL && currentEnv->value != NULL);
+
+            break;
+
+        }
         default :
             NSLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
