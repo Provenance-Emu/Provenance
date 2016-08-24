@@ -1871,7 +1871,7 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					DRC_SH2,
+					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1932,7 +1932,7 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					DRC_SH2,
+					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
