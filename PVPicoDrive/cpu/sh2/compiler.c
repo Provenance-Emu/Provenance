@@ -267,7 +267,7 @@ typedef struct {
 
 // note: reg_temp[] must have at least the amount of
 // registers used by handlers in worst case (currently 4)
-#ifdef __arm__
+#if defined(__arm__) || defined(__arm64__)
 #include "../drc/emit_arm.c"
 
 #ifndef __MACH__
