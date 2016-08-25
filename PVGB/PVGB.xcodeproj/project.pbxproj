@@ -90,7 +90,7 @@
 		1AD483291BA3640500FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		1AD4832A1BA3640500FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C11ABE378800FF6AEF /* UIKit.framework */; };
 		B3C96EE41D6365F9003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE31D6365F9003F1E93 /* PVSupport.framework */; };
-		B3C96EE61D6365FE003F1E93 /* PVSupportTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */; };
+		B3D2E3811D6E7E030058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3801D6E7E030058544D /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -260,6 +260,7 @@
 		1AD483301BA3640500FDA50A /* libPVGBTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGBTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EE31D6365F9003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
+		B3D2E3801D6E7E030058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,7 +279,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C96EE61D6365FE003F1E93 /* PVSupportTV.framework in Frameworks */,
+				B3D2E3811D6E7E030058544D /* PVSupport.framework in Frameworks */,
 				1AD483281BA3640500FDA50A /* OpenGLES.framework in Frameworks */,
 				1AD483291BA3640500FDA50A /* Foundation.framework in Frameworks */,
 				1AD4832A1BA3640500FDA50A /* UIKit.framework in Frameworks */,
@@ -566,6 +567,7 @@
 		1AABE0C71ABE37A400FF6AEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D2E3801D6E7E030058544D /* PVSupport.framework */,
 				B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */,
 				B3C96EE31D6365F9003F1E93 /* PVSupport.framework */,
 				1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */,

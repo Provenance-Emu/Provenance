@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PXML xmlns="http://openpandora.org/namespaces/PXML" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="PXML_schema.xsd">
+<package id="package.picodrive.notaz">
+  <titles>
+    <title lang="en_US">PicoDrive</title>
+  </titles>
+  <version major="@major@" minor="@minor@" release="0" build="@build@"/>
+  <author name="notaz" website="http://notaz.gp2x.de/"/>
+</package>
+<application id="picodrive.notaz.@major@.@minor@" appdata="picodrive">
+  <titles>
+    <title lang="en_US">PicoDrive @major@.@minor@</title>
+  </titles>
+  <title lang="en_US">PicoDrive @major@.@minor@</title>
+ 
+  <descriptions>
+    <description lang="en_US">Genesis/MegaDrive/SegaCD/32x Emulator.</description>
+    <description lang="de_DE">Ein MegaDrive/SegaCD/32x Emulator</description>
+  </descriptions>
+ 
+  <exec command="PicoDrive.sh"/>
+ 
+  <previewpics>
+   <pic src="PicoDrive_p.png"/>
+  </previewpics>
+ 
+  <icon src="PicoDrive.png"/>
+ 
+  <author name="notaz" website="http://notaz.gp2x.de/"/>
+ 
+  <licenses>
+    <license name="other"/>
+  </licenses>
+ 
+  <version major="@major@" minor="@minor@" release="0" build="@build@"/>
+  <info name="PicoDrive @major@.@minor@ readme" type="text/plain" src="readme.txt"/>
+ 
+  <categories>
+    <category name="Game">
+    <subcategory name="Emulator"/>
+    </category>
+  </categories>
+</application>
+</PXML>

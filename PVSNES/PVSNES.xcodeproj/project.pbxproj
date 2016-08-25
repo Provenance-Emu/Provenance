@@ -123,6 +123,8 @@
 		1AD482C81BA363E900FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; };
 		1AD482C91BA363E900FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */; };
 		1AD482CA1BA363E900FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
+		B3D2E3861D6E7E3D0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3851D6E7E3D0058544D /* PVSupport.framework */; };
+		B3D2E3881D6E7E4A0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3871D6E7E4A0058544D /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -275,6 +277,8 @@
 		1ACEA98E17F760390031B1C9 /* tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
 		1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
 		1AD482D01BA363E900FDA50A /* libPVSNESTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSNESTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D2E3851D6E7E3D0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3D2E3871D6E7E4A0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +286,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D2E3861D6E7E3D0058544D /* PVSupport.framework in Frameworks */,
 				1ACEA91517F75FAF0031B1C9 /* AudioToolbox.framework in Frameworks */,
 				1ACEA91217F75FA80031B1C9 /* CoreGraphics.framework in Frameworks */,
 				1ACEA91017F75FA10031B1C9 /* OpenGLES.framework in Frameworks */,
@@ -294,6 +299,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3D2E3881D6E7E4A0058544D /* PVSupport.framework in Frameworks */,
 				1AD482C61BA363E900FDA50A /* AudioToolbox.framework in Frameworks */,
 				1AD482C71BA363E900FDA50A /* CoreGraphics.framework in Frameworks */,
 				1AD482C81BA363E900FDA50A /* OpenGLES.framework in Frameworks */,
@@ -326,6 +332,8 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D2E3871D6E7E4A0058544D /* PVSupport.framework */,
+				B3D2E3851D6E7E3D0058544D /* PVSupport.framework */,
 				1A2A95A317F761A100F1CB0D /* libPVSupport.a */,
 				1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */,
 				1ACEA91417F75FAF0031B1C9 /* CoreAudio.framework */,

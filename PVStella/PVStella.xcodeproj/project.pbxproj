@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B32F46301D6A86EA0085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462F1D6A86EA0085BA9F /* PVSupport.framework */; };
 		B38FB4C31C839BE500CD73BE /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96E071D62C00C003F1E93 /* Paddles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941DFAAC15B4C9A100C6552F /* Paddles.cpp */; };
 		B3C96E081D62C00C003F1E93 /* PVStellaGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVStellaGameCore.mm */; };
@@ -146,7 +145,8 @@
 		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
 		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
 		B3C96EDE1D62C6A8003F1E93 /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EE21D62C6FF003F1E93 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */; };
+		B3D2E3831D6E7E1B0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3821D6E7E1B0058544D /* PVSupport.framework */; };
+		B3D2E3841D6E7E260058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462F1D6A86EA0085BA9F /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -304,6 +304,7 @@
 		B3C96E931D62C245003F1E93 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
 		B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
+		B3D2E3821D6E7E1B0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaGameCore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -312,7 +313,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C96EE21D62C6FF003F1E93 /* PVSupport.framework in Frameworks */,
+				B3D2E3831D6E7E1B0058544D /* PVSupport.framework in Frameworks */,
 				B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3C96E881D62C20C003F1E93 /* UIKit.framework in Frameworks */,
@@ -325,7 +326,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B32F46301D6A86EA0085BA9F /* PVSupport.framework in Frameworks */,
+				B3D2E3841D6E7E260058544D /* PVSupport.framework in Frameworks */,
 				B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3C96E901D62C233003F1E93 /* OpenGLES.framework in Frameworks */,
@@ -351,6 +352,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D2E3821D6E7E1B0058544D /* PVSupport.framework */,
 				B32F462F1D6A86EA0085BA9F /* PVSupport.framework */,
 				B3C96EE11D62C6FF003F1E93 /* PVSupport.framework */,
 				B3C96EDF1D62C6F7003F1E93 /* PVSupportTV.framework */,

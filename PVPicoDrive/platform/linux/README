@@ -1,0 +1,4 @@
+This port tries to emulate gp2x environment on a standard linux box for testing
+(i.e. to be able to use things like valgrind and efence, gcc runtime
+optimizations, etc.).
+

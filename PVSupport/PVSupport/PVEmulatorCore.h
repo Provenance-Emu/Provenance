@@ -12,6 +12,12 @@
 
 #pragma mark -
 
+/*!
+ * @function GET_CURRENT_OR_RETURN
+ * @abstract Fetch the current game core, or fail with given return code if there is none.
+ */
+#define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
+
 @class OERingBuffer;
 extern NSString *const PVEmulatorCoreErrorDomain;
 
