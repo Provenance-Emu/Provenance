@@ -26,6 +26,12 @@ static int32 IRQCount, CycleCount;
 static uint8 *WRAM = NULL;
 static uint32 WRAMSIZE;
 
+#include "emu2413.h"
+
+static int32 dwave = 0;
+static OPLL *VRC7Sound = NULL;
+static OPLL **VRC7Sound_saveptr = &VRC7Sound;
+
 static SFORMAT StateRegs[] =
 {
 	{ &vrc7idx, 1, "VRCI" },
@@ -37,15 +43,11 @@ static SFORMAT StateRegs[] =
 	{ &IRQLatch, 1, "IRQL" },
 	{ &IRQCount, 4, "IRQC" },
 	{ &CycleCount, 4, "CYCC" },
-	{ 0 }
+	{ (void**)VRC7Sound_saveptr, sizeof(*VRC7Sound) | FCEUSTATE_INDIRECT, "VRC7"  },
+	{0}
 };
 
 // VRC7 Sound
-
-#include "emu2413.h"
-
-static int32 dwave = 0;
-static OPLL *VRC7Sound = NULL;
 
 void DoVRC7Sound(void) {
 	int32 z, a;
@@ -151,6 +153,7 @@ static void VRC7Power(void) {
 	SetWriteHandler(0x6000, 0x7FFF, CartBW);
 	SetReadHandler(0x6000, 0xFFFF, CartBR);
 	SetWriteHandler(0x8000, 0xFFFF, VRC7Write);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void VRC7Close(void)

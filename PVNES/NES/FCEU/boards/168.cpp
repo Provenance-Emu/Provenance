@@ -55,7 +55,7 @@ static void M168Power(void) {
 	SetReadHandler(0x8000, 0xFFFF, CartBR);
 }
 
-static void MNNNClose(void) {
+static void M168Close(void) {
 	if (CHRRAM)
 		FCEU_gfree(CHRRAM);
 	CHRRAM = NULL;
@@ -67,7 +67,7 @@ static void StateRestore(int version) {
 
 void Mapper168_Init(CartInfo *info) {
 	info->Power = M168Power;
-	info->Close = MNNNClose;
+	info->Close = M168Close;
 	GameStateRestore = StateRestore;
 	AddExState(&StateRegs, ~0, 0, 0);
 

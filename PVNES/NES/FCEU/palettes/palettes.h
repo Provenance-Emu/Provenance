@@ -1,19 +1,30 @@
-pal rp2c04001[64] = {
+#define EMPTY_PALETTE_1 {0,0,0},
+#define EMPTY_PALETTE_4 EMPTY_PALETTE_1 EMPTY_PALETTE_1 EMPTY_PALETTE_1 EMPTY_PALETTE_1
+#define EMPTY_PALETTE_16 EMPTY_PALETTE_4 EMPTY_PALETTE_4 EMPTY_PALETTE_4 EMPTY_PALETTE_4
+#define EMPTY_PALETTE_64 EMPTY_PALETTE_16 EMPTY_PALETTE_16 EMPTY_PALETTE_16 EMPTY_PALETTE_16
+#define EMPTY_PALETTE_DEEMPH_X_7 EMPTY_PALETTE_64 EMPTY_PALETTE_64 EMPTY_PALETTE_64 EMPTY_PALETTE_64 EMPTY_PALETTE_64 EMPTY_PALETTE_64 EMPTY_PALETTE_64
+
+pal rp2c04001[512] = {
  #include "rp2c04001.h"
+	EMPTY_PALETTE_DEEMPH_X_7
 };
 
-pal rp2c04002[64] = {
+pal rp2c04002[512] = {
  #include "rp2c04002.h"
+	EMPTY_PALETTE_DEEMPH_X_7
 };
 
-pal rp2c04003[64] = {
+pal rp2c04003[512] = {
  #include "rp2c04003.h"
+	EMPTY_PALETTE_DEEMPH_X_7
 };
-pal rp2c05004[64] = {
+pal rp2c05004[512] = {
  #include "rp2c05004.h"
+	EMPTY_PALETTE_DEEMPH_X_7
 };
 
-pal unvpalette[7] = {
+//I think these are used for 'unvarying' palette entries, for the gui
+pal palette_unvarying[7] = {
 { 0x00<<2,0x00<<2,0x00<<2}, // Black
 { 0x3F<<2,0x3F<<2,0x34<<2}, // White
 { 0x00<<2,0x00<<2,0x00<<2}, // Black
@@ -25,7 +36,7 @@ pal unvpalette[7] = {
 
 
 // Default palette 
-pal palette[64] = {
+pal palette[512] = {
 
         { 0x1D<<2, 0x1D<<2, 0x1D<<2 }, /* Value 0 */
         { 0x09<<2, 0x06<<2, 0x23<<2 }, /* Value 1 */
@@ -291,5 +302,7 @@ slightly better but too dark:
 0xFF, 0x10, 0x10
 
 */
+
+EMPTY_PALETTE_DEEMPH_X_7
 
 };

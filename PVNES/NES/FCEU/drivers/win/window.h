@@ -32,7 +32,6 @@ void ByebyeWindow();
 void DoTimingConfigFix();
 int CreateMainWindow();
 void UpdateCheckedMenuItems();
-bool ALoad(const char* nameo, char* innerFilename = 0, bool silent = false);
 void LoadNewGamey(HWND hParent, const char *initialdir);
 int BrowseForFolder(HWND hParent, const char *htext, char *buf);
 void SetMainWindowStuff();

@@ -48,8 +48,8 @@ using namespace std;
 
 #include "debuggersp.h"
 
-extern Name* lastBankNames;
-extern Name* loadedBankNames;
+extern Name* pageNames[32];
+extern int pageNumbersLoaded[32];
 extern Name* ramBankNames;
 
 // ################################## End of SP CODE ###########################
@@ -840,8 +840,8 @@ void FCEUD_TraceInstruction(uint8 *opcode, int size)
 				}
 				
 				replaceNames(ramBankNames, a, &tempAddressesLog);
-				replaceNames(loadedBankNames, a, &tempAddressesLog);
-				replaceNames(lastBankNames, a, &tempAddressesLog);
+				for(int i=0;i<ARRAY_SIZE(pageNames);i++)
+					replaceNames(pageNames[i], a, &tempAddressesLog);
 			}
 			strncpy(str_disassembly, a, LOG_DISASSEMBLY_MAX_LEN);
 			str_disassembly[LOG_DISASSEMBLY_MAX_LEN - 1] = 0;

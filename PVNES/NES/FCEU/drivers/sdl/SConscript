@@ -2,8 +2,6 @@
 # Thanks Antonio Ospite!
 Import('env')
 config_string = 'pkg-config --cflags --libs x11'
-if env['PLATFORM'] == 'darwin':
-  config_string = 'PKG_CONFIG_PATH=/opt/X11/lib/pkgconfig/ ' + config_string
 env.ParseConfig(config_string)
 Export('env')
 

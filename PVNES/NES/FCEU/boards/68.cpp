@@ -134,6 +134,7 @@ static void M68Power(void) {
 	SetWriteHandler(0xF000, 0xFFFF, M68WriteROM);
 	SetWriteHandler(0x6000, 0x6000, M68WriteLo);
 	SetWriteHandler(0x6001, 0x7FFF, CartBW);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M68Close(void) {

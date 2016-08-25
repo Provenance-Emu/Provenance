@@ -13,6 +13,8 @@
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
+    NSThread *_gameThread;
+
 	double _sampleRate;
 	
 	NSTimeInterval gameInterval;
@@ -50,6 +52,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString*)path;
+- (void)updateControllers;
 
 - (BOOL)supportsDiskSwapping;
 - (void)swapDisk;
