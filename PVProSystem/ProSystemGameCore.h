@@ -29,6 +29,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <ProSystem/OE7800SystemResponderClient.h>
 
+__attribute__((visibility("default")))
 @interface PVProSystemGameCore : PVEmulatorCore <OE7800SystemResponderClient>
 
 #pragma mark - OE7800SystemResponderClient
