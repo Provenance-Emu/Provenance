@@ -41,7 +41,7 @@ static SFORMAT StateRegs[] =
 static void Sync(void) {
 	uint8 i;
 	if ((preg[3] & 0xC0) == 0xC0)
-		setprg8r(0x10, 0x6000, 0);
+		setprg8r(0x10, 0x6000, preg[3] & 0x3F);
 	else
 		setprg8(0x6000, preg[3] & 0x3F);
 	setprg8(0x8000, preg[0]);
@@ -90,8 +90,8 @@ static DECLFW(M69Write1) {
 	case 0xB: preg[2] = V; Sync(); break;
 	case 0xC: mirr = V & 3; Sync();break;
 	case 0xD: IRQa = V; X6502_IRQEnd(FCEU_IQEXT); break;
-	case 0xE: IRQCount &= 0xFF00; IRQCount |= V; X6502_IRQEnd(FCEU_IQEXT); break;
-	case 0xF: IRQCount &= 0x00FF; IRQCount |= V << 8; X6502_IRQEnd(FCEU_IQEXT); break;
+	case 0xE: IRQCount &= 0xFF00; IRQCount |= V; break;
+	case 0xF: IRQCount &= 0x00FF; IRQCount |= V << 8; break;
 	}
 }
 
@@ -232,6 +232,7 @@ static void M69Power(void) {
 	SetWriteHandler(0xA000, 0xBFFF, M69Write1);
 	SetWriteHandler(0xC000, 0xDFFF, M69SWrite0);
 	SetWriteHandler(0xE000, 0xFFFF, M69SWrite1);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M69Close(void) {
@@ -257,7 +258,10 @@ void Mapper69_Init(CartInfo *info) {
 	info->Power = M69Power;
 	info->Close = M69Close;
 	MapIRQHook = M69IRQHook;
-	WRAMSIZE = 8192;
+	if(info->ines2)
+		WRAMSIZE = info->wram_size + info->battery_wram_size;
+	else
+		WRAMSIZE = 8192;
 	WRAM = (uint8*)FCEU_gmalloc(WRAMSIZE);
 	SetupCartPRGMapping(0x10, WRAM, WRAMSIZE, 1);
 	AddExState(WRAM, WRAMSIZE, 0, "WRAM");
