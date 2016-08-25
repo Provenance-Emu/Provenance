@@ -1,2 +1,2 @@
-void RefreshThrottleFPS(void);
+void RefreshThrottleFPS();
 int SpeedThrottle(void);
