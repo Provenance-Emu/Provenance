@@ -836,7 +836,7 @@ void MovieData::dumpSavestateTo(std::vector<uint8>* buf, int compressionLevel)
 //begin playing an existing movie
 bool FCEUI_LoadMovie(const char *fname, bool _read_only, int _pauseframe)
 {
-#if 0
+#if 0 //Provenance
 	if(!FCEU_IsValidUI(FCEUI_PLAYMOVIE))
 		return true;	//adelikat: file did not fail to load, so let's return true here, just do nothing
 

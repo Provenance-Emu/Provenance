@@ -755,7 +755,7 @@ static void TaseditorRewindOff(void);
 static void TaseditorCommand(void);
 extern void FCEUI_ToggleShowFPS();
 
-#if 0
+#if 0 //Provenance
 struct EMUCMDTABLE FCEUI_CommandTable[]=
 {
 	{ EMUCMD_POWER,							EMUCMDTYPE_MISC,	FCEUI_PowerNES,					0, 0, "Power", EMUCMDFLAG_TASEDITOR },
@@ -898,7 +898,7 @@ struct EMUCMDTABLE FCEUI_CommandTable[]=
 
 static int execcmd, i;
 
-#if 0
+#if 0 //Provenance
 void FCEUI_HandleEmuCommands(TestCommandState* testfn)
 {
 	bool taseditor = FCEUMOV_Mode(MOVIEMODE_TASEDITOR);
