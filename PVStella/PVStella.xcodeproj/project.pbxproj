@@ -296,7 +296,7 @@
 		B3A8494D1C70FD67008A4D89 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3A8494F1C70FD6C008A4D89 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3A849521C710C03008A4D89 /* PVStella-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PVStella-Prefix.pch"; path = "PVStella/PVStella-Prefix.pch"; sourceTree = "<group>"; };
-		B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellaTV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C96DFE1D62BE5A003F1E93 /* Stella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Stella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96E8B1D62C227003F1E93 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E8D1D62C22A003F1E93 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
@@ -386,7 +386,7 @@
 			isa = PBXGroup;
 			children = (
 				B38FB4C01C839BE500CD73BE /* Stella.framework */,
-				B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */,
+				B3C96DFE1D62BE5A003F1E93 /* Stella.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -659,9 +659,9 @@
 			productReference = B38FB4C01C839BE500CD73BE /* Stella.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C96DFD1D62BE5A003F1E93 /* StellaTV */ = {
+		B3C96DFD1D62BE5A003F1E93 /* Stella tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "StellaTV" */;
+			buildConfigurationList = B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "Stella tvOS" */;
 			buildPhases = (
 				B3C96DF91D62BE5A003F1E93 /* Sources */,
 				B3C96DFA1D62BE5A003F1E93 /* Frameworks */,
@@ -672,9 +672,9 @@
 			);
 			dependencies = (
 			);
-			name = StellaTV;
+			name = "Stella tvOS";
 			productName = StellaTV;
-			productReference = B3C96DFE1D62BE5A003F1E93 /* StellaTV.framework */;
+			productReference = B3C96DFE1D62BE5A003F1E93 /* Stella.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -707,7 +707,7 @@
 			projectRoot = "";
 			targets = (
 				B38FB4BF1C839BE500CD73BE /* Stella */,
-				B3C96DFD1D62BE5A003F1E93 /* StellaTV */,
+				B3C96DFD1D62BE5A003F1E93 /* Stella tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1091,7 +1091,7 @@
 					"-DKeyboard=StellaKeyboard",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Stella;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1153,7 +1153,7 @@
 					"-DKeyboard=StellaKeyboard",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.Stella;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Stella;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -1184,7 +1184,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "StellaTV" */ = {
+		B3C96E051D62BE5A003F1E93 /* Build configuration list for PBXNativeTarget "Stella tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C96E031D62BE5A003F1E93 /* Debug */,

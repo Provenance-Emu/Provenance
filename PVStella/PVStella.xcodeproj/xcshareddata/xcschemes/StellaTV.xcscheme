@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
-               BuildableName = "StellaTV.framework"
-               BlueprintName = "StellaTV"
+               BuildableName = "Stella tvOS.framework"
+               BlueprintName = "Stella tvOS"
                ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
-            BuildableName = "StellaTV.framework"
-            BlueprintName = "StellaTV"
+            BuildableName = "Stella tvOS.framework"
+            BlueprintName = "Stella tvOS"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
-            BuildableName = "StellaTV.framework"
-            BlueprintName = "StellaTV"
+            BuildableName = "Stella tvOS.framework"
+            BlueprintName = "Stella tvOS"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -87,8 +87,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
-            BuildableName = "StellaTV.framework"
-            BlueprintName = "StellaTV"
+            BuildableName = "Stella tvOS.framework"
+            BlueprintName = "Stella tvOS"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
