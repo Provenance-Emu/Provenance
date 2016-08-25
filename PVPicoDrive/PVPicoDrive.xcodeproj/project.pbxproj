@@ -585,6 +585,7 @@
 		B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E3891D6E7E5C0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3D2E39D1D6E8E960058544D /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -615,6 +616,7 @@
 		089C166AFE841209C02AAC07 /* GenesisPlus */ = {
 			isa = PBXGroup;
 			children = (
+				B3D2E39D1D6E8E960058544D /* Config.xcconfig */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
@@ -1822,6 +1824,7 @@
 		};
 		B37937B21D6BCF8100EBAE81 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3D2E39D1D6E8E960058544D /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1875,7 +1878,6 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1890,6 +1892,7 @@
 		};
 		B37937B31D6BCF8100EBAE81 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3D2E39D1D6E8E960058544D /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1936,7 +1939,6 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1952,6 +1954,7 @@
 		};
 		B3A3E9D21D6BFF6F00CCD7C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3D2E39D1D6E8E960058544D /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2005,7 +2008,6 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = PicoDrive;
@@ -2021,6 +2023,7 @@
 		};
 		B3A3E9D31D6BFF6F00CCD7C8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3D2E39D1D6E8E960058544D /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2067,7 +2070,6 @@
 					"-DINLINE=inline",
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
-					"-DDRC_SH2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jamsoftonline.$(PRODUCT_NAME)";
 				PRODUCT_NAME = PicoDrive;

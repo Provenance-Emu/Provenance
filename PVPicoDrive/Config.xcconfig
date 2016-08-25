@@ -1,0 +1,15 @@
+//
+//  Config.xcconfig
+//  PVPicoDrive
+//
+//  Created by Joseph Mattiello on 8/24/16.
+//
+//
+
+// iOS
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DDRC_SH2
+OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited)
+
+// tv OS
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2
+OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited)

@@ -755,8 +755,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B3D2E3981D6E8BBA0058544D /* Stella.framework */,
-				B3D2E3951D6E8BAC0058544D /* PicoDrive.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -782,6 +780,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3D2E3981D6E8BBA0058544D /* Stella.framework */,
+				B3D2E3951D6E8BAC0058544D /* PicoDrive.framework */,
 				B3D2E38C1D6E7F370058544D /* PicoDrive.framework */,
 				B3FA5D6B1D6B92DD00060D71 /* ProSystem.framework */,
 				B3FA5D4E1D6B85DA00060D71 /* Stella.framework */,
