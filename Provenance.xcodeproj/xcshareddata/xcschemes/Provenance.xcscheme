@@ -42,6 +42,34 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+               BuildableName = "Stella.framework"
+               BlueprintName = "Stella"
+               ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
+               BuildableName = "ProSystem.framework"
+               BlueprintName = "ProSystem"
+               ReferencedContainer = "container:PVProSystem/PVProSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1ACEA6AB17F74D150031B1C9"
                BuildableName = "libPVGenesis.a"
                BlueprintName = "PVGenesis"
@@ -102,34 +130,6 @@
                BuildableName = "libPVNES.a"
                BlueprintName = "PVNES"
                ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-               BuildableName = "Stella.framework"
-               BlueprintName = "Stella"
-               ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-               BuildableName = "ProSystem.framework"
-               BlueprintName = "ProSystem"
-               ReferencedContainer = "container:PVProSystem/PVProSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
