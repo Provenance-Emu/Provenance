@@ -524,6 +524,42 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
+- (void)loadSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (size == 0 || !ramData)
+    {
+        return;
+    }
+    
+    NSData *data = [NSData dataWithContentsOfFile:path];
+    if (!data || ![data length])
+    {
+        NSLog(@"Couldn't load save file.");
+    }
+    
+    [data getBytes:ramData length:size];
+}
+
+- (void)writeSaveFile:(NSString *)path forType:(int)type
+{
+    size_t size = retro_get_memory_size(type);
+    void *ramData = retro_get_memory_data(type);
+    
+    if (ramData && (size > 0))
+    {
+        retro_serialize(ramData, size);
+        NSData *data = [NSData dataWithBytes:ramData length:size];
+        BOOL success = [data writeToFile:path atomically:YES];
+        if (!success)
+        {
+            NSLog(@"Error writing save file");
+        }
+    }
+}
+
 #pragma mark Video
 - (const void *)videoBuffer
 {
