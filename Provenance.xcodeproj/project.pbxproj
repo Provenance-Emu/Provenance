@@ -1870,9 +1870,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1932,9 +1929,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1994,9 +1988,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-appletvos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
