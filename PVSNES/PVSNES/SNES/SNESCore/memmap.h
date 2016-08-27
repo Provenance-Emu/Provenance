@@ -273,12 +273,18 @@ struct CMemory
 
 	int		ScoreHiROM (bool8, int32 romoff = 0);
 	int		ScoreLoROM (bool8, int32 romoff = 0);
-	uint32	HeaderRemove (uint32, int32 &, uint8 *);
-	uint32	FileLoader (uint8 *, const char *, int32);
+	uint32	HeaderRemove (uint32, uint8 *);
+	uint32	FileLoader (uint8 *, const char *, uint32);
+    uint32  MemLoader (uint8 *, const char*, uint32);
+    bool8   LoadROMMem (const uint8 *, uint32);
 	bool8	LoadROM (const char *);
+    bool8	LoadROMInt (int32);
+    bool8   LoadMultiCartMem (const uint8 *, uint32, const uint8 *, uint32, const uint8 *, uint32);
 	bool8	LoadMultiCart (const char *, const char *);
-	bool8	LoadSufamiTurbo (const char *, const char *);
-	bool8	LoadSameGame (const char *, const char *);
+    bool8	LoadMultiCartInt ();
+	bool8	LoadSufamiTurbo ();
+	bool8	LoadSameGame ();
+	bool8	LoadGNEXT ();
 	bool8	LoadSRAM (const char *);
 	bool8	SaveSRAM (const char *);
 	void	ClearSRAM (bool8 onlyNonSavedSRAM = 0);
@@ -319,6 +325,7 @@ struct CMemory
 	void	Map_SetaDSPLoROMMap (void);
 	void	Map_SDD1LoROMMap (void);
 	void	Map_SA1LoROMMap (void);
+	void	Map_GNEXTSA1LoROMMap (void);
 	void	Map_HiROMMap (void);
 	void	Map_ExtendedHiROMMap (void);
 	void	Map_SameGameHiROMMap (void);
@@ -361,7 +368,7 @@ extern CMemory	Memory;
 extern SMulti	Multi;
 
 void S9xAutoSaveSRAM (void);
-bool8 LoadZip(const char *, int32 *, int32 *, uint8 *);
+bool8 LoadZip(const char *, uint32 *, uint8 *);
 
 enum s9xwrap_t
 {
