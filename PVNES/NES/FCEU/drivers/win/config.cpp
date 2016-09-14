@@ -18,14 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/****************************************************************/
-/*			FCE Ultra				*/
-/*								*/
-/*	This file contains code to interface to the standard    */
-/*	FCE Ultra configuration file saving/loading code.	*/
-/*								*/
-/****************************************************************/
-
 #include "config.h"
 #include "common.h"
 #include "main.h"
@@ -74,6 +66,13 @@ extern bool fullSaveStateLoads;
 extern int frameSkipAmt;
 extern int32 fps_scale_frameadvance;
 extern bool symbDebugEnabled;
+extern bool symbRegNames;
+extern int palnotch;
+extern int palsaturation;
+extern int palsharpness;
+extern int palcontrast;
+extern int palbrightness;
+extern bool paldeemphswap;
 
 extern TASEDITOR_CONFIG taseditorConfig;
 extern char* recentProjectsArray[];
@@ -95,6 +94,7 @@ extern int NTViewPosX,NTViewPosY;
 extern int PPUViewPosX, PPUViewPosY;
 extern bool PPUView_maskUnusedGraphics;
 extern bool PPUView_invertTheMask;
+extern int PPUView_sprite16Mode;
 extern int MainWindow_wndx, MainWindow_wndy;
 extern int MemWatch_wndx, MemWatch_wndy;
 extern int Monitor_wndx, Monitor_wndy;
@@ -180,8 +180,19 @@ static CFGSTRUCT fceuconfig[] =
 	ACS(ResumeROM),
 
 	AC(gNoBGFillColor),
-	AC(ntsccol),AC(ntsctint),AC(ntschue),
+	AC(ntsccol_enable),AC(ntsctint),AC(ntschue),
 	AC(force_grayscale),
+	AC(dendy),
+	AC(postrenderscanlines),
+	AC(vblankscanlines),
+	AC(overclock_enabled),
+	AC(skip_7bit_overclocking),
+	AC(palnotch),
+	AC(palsaturation),
+	AC(palsharpness),
+	AC(palcontrast),
+	AC(palbrightness),
+	AC(paldeemphswap),
 
 	NAC("palyo",pal_emulation),
 	NAC("genie",genie),
@@ -224,10 +235,12 @@ static CFGSTRUCT fceuconfig[] =
 	AC(soundNoisevol),
 	AC(soundPCMvol),
 	AC(muteTurbo),
+	AC(swapDuty),
 
 	AC(goptions),
 	NAC("eoptions",eoptions),
 	NACA("cpalette",cpalette),
+	NAC("cpalette_count",cpalette_count),
 
 	NACA("InputType",InputType),
 
@@ -276,10 +289,14 @@ static CFGSTRUCT fceuconfig[] =
 	AC(debuggerAutoload),
 	AC(allowUDLR),
 	AC(symbDebugEnabled),
+	AC(symbRegNames),
 	AC(debuggerSaveLoadDEBFiles),
 	AC(debuggerDisplayROMoffsets),
 	AC(debuggerFontSize),
-	AC(hexeditorFontSize),
+	AC(debuggerPageSize),
+	AC(hexeditorFontWidth),
+	AC(hexeditorFontHeight),
+	ACS(hexeditorFontName),
 	AC(fullSaveStateLoads),
 	AC(frameSkipAmt),
 	AC(fps_scale_frameadvance),
@@ -306,6 +323,7 @@ static CFGSTRUCT fceuconfig[] =
 	AC(PPUViewPosY),
 	AC(PPUView_maskUnusedGraphics),
 	AC(PPUView_invertTheMask),
+	AC(PPUView_sprite16Mode),
 	AC(MainWindow_wndx),
 	AC(MainWindow_wndy),
 	AC(MemWatch_wndx),
@@ -466,7 +484,7 @@ void LoadConfig(const char *filename)
 
 	LoadFCEUConfig(filename, fceuconfig);
 
-	FCEUI_SetNTSCTH(ntsccol, ntsctint, ntschue);
+	FCEUI_SetNTSCTH(ntsccol_enable, ntsctint, ntschue);
 
 	//adelikat:Hacky fix for Ram Watch recent menu
 	for (int x = 0; x < 5; x++)

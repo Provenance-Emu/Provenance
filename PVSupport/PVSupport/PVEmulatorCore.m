@@ -63,7 +63,8 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 			shouldStop = NO;
             framerateMultiplier = 1.0;
 			
-			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
+            _gameThread = [[NSThread alloc] initWithTarget:self selector:@selector(frameRefreshThread:) object:nil];
+            [_gameThread start];
 		}
 	}
 }
@@ -94,6 +95,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 {
 	shouldStop = YES;
     isRunning  = NO;
+}
+
+- (void)updateControllers
+{
+    //subclasses may implement for polling
 }
 
 - (void)frameRefreshThread:(id)anArgument
@@ -131,6 +137,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
         }
         
         OEWaitUntil(gameTime);
+        
+        // Service the event loop
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+        
+        [self updateControllers];
     }
 }
 

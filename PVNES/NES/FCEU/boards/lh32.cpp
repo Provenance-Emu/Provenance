@@ -52,6 +52,7 @@ static void LH32Power(void) {
 	SetReadHandler(0x6000, 0xFFFF, CartBR);
 	SetWriteHandler(0xC000, 0xDFFF, CartBW);
 	SetWriteHandler(0x6000, 0x6000, LH32Write);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void LH32Close(void) {

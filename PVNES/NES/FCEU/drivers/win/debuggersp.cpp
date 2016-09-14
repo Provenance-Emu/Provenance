@@ -32,21 +32,75 @@
 
 int GetNesFileAddress(int A);
 
-Name* lastBankNames = 0;
-Name* loadedBankNames = 0;
+inline int RomPageIndexForAddress(int addr) { return (addr-0x8000)>>(debuggerPageSize); }
+
+//old
+//Name* lastBankNames = 0;
+//Name* loadedBankNames = 0;
+
+//new
+Name* pageNames[32] = {0}; //the maximum number of pages we could have is 32, based on 1KB debuggerPageSize
+
+//old
+//int lastBank = -1;
+//int loadedBank = -1;
+
+//new
+int pageNumbersLoaded[32] = {
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+	-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+};
+
 Name* ramBankNames = 0;
 bool ramBankNamesLoaded = false;
-int lastBank = -1;
-int loadedBank = -1;
+
 extern char LoadedRomFName[2048];
 char NLfilename[2048];
 bool symbDebugEnabled = true;
+bool symbRegNames = true;
 int debuggerWasActive = 0;
 char temp_chr[40] = {0};
 char delimiterChar[2] = "#";
 
 extern BOOL CALLBACK nameBookmarkCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 extern char bookmarkDescription[];
+
+MemoryMappedRegister RegNames[] = {
+	{"$2000", "PPU_CTRL"},
+	{"$2001", "PPU_MASK"},
+	{"$2002", "PPU_STATUS"},
+	{"$2003", "PPU_OAM_ADDR"},
+	{"$2004", "PPU_OAM_DATA"},
+	{"$2005", "PPU_SCROLL"},
+	{"$2006", "PPU_ADDRESS"},
+	{"$2007", "PPU_DATA"},
+	{"$4000", "SQ1_VOL"},
+	{"$4001", "SQ1_SWEEP"},
+	{"$4002", "SQ1_LO"},
+	{"$4003", "SQ1_HI"},
+	{"$4004", "SQ2_VOL"},
+	{"$4005", "SQ2_SWEEP"},
+	{"$4006", "SQ2_LO"},
+	{"$4007", "SQ2_HI"},
+	{"$4008", "TRI_LINEAR"},
+//	{"$4009", "UNUSED"},
+	{"$400A", "TRI_LO"},
+	{"$400B", "TRI_HI"},
+	{"$400C", "NOISE_VOL"},
+//	{"$400D", "UNUSED"},
+	{"$400E", "NOISE_LO"},
+	{"$400F", "NOISE_HI"},
+	{"$4010", "DMC_FREQ"},
+	{"$4011", "DMC_RAW"},
+	{"$4012", "DMC_START"},
+	{"$4013", "DMC_LEN"},
+	{"$4014", "OAM_DMA"},
+	{"$4015", "APU_STATUS"},
+	{"$4016", "JOY1"},
+	{"$4017", "JOY2_FRAME"}
+};
+
+int RegNameCount = sizeof(RegNames)/sizeof(MemoryMappedRegister);
 
 /**
 * Tests whether a char is a valid hexadecimal character.
@@ -479,7 +533,7 @@ void replaceNames(Name* list, char* str, std::vector<uint16>* addressesLog)
 			*buff = 0;
 			src = str;
 
-			while ((pos = strstr(src, list->offset)))
+			while (pos = strstr(src, list->offset))
 			{
 				*pos = 0;
 				strcat(buff, src);
@@ -497,6 +551,24 @@ void replaceNames(Name* list, char* str, std::vector<uint16>* addressesLog)
 			}
 		}
 		list = list->next;
+	}
+
+	for (int i = 0; i < RegNameCount; i++) {
+		if (!symbRegNames) break;
+		// copypaste, because Name* is too complex to abstract
+		*buff = 0;
+		src = str;
+
+		while (pos = strstr(src, RegNames[i].offset)) {
+			*pos = 0;
+			strcat(buff, src);
+			strcat(buff, RegNames[i].name);
+			src = pos + 5;
+		}
+		if (*buff) {
+			strcat(buff, src);
+			strcpy(str, buff);
+		}
 	}
 }
 
@@ -541,35 +613,35 @@ char* generateNLFilenameForAddress(uint16 address)
 		strcat(NLfilename, ".ram.nl");
 	} else
 	{
-		sprintf(NLfilename, "%s.%X.nl", mass_replace(LoadedRomFName, "|", ".").c_str(), getBank(address));
+		int bank = getBank(address);
+		#ifdef DW3_NL_0F_1F_HACK
+		if(bank == 0x0F)
+			bank = 0x1F;
+		#endif
+		sprintf(NLfilename, "%s.%X.nl", mass_replace(LoadedRomFName, "|", ".").c_str(), bank);
 	}
 	return NLfilename;
 }
 Name* getNamesPointerForAddress(uint16 address)
 {
-	// this function is called very often (when using "Symbolic trace"), so this is sorted by frequency
-	if (address >= 0xC000)
+	if(address >= 0x8000)
 	{
-		return lastBankNames;
-	} else if (address >= 0x8000)
-	{
-		return loadedBankNames;
-	} else
+		return pageNames[RomPageIndexForAddress(address)];
+	}
+	else
 	{
 		return ramBankNames;
 	}
 }
 void setNamesPointerForAddress(uint16 address, Name* newNode)
 {
-	if (address < 0x8000)
+	if (address >= 0x8000)
+	{
+		pageNames[RomPageIndexForAddress(address)] = newNode;
+	}
+	else
 	{
 		ramBankNames = newNode;
-	} else if (address < 0xC000)
-	{
-		loadedBankNames = newNode;
-	} else
-	{
-		lastBankNames = newNode;
 	}
 }
 
@@ -592,44 +664,32 @@ void loadNameFiles()
 		ramBankNames = parseNameFile(generateNLFilenameForAddress(0x0000));
 	}
 
-	// Find out which bank is loaded at 0xC000
-	cb = getBank(0xC000);
-	if (cb == -1) // No bank was loaded at that offset
-	{
-		free(lastBankNames);
-		lastBankNames = 0;
-	} else if (cb != lastBank)
-	{
-		// If the bank changed since loading the NL files the last time it's necessary
-		// to load the address descriptions of the new bank.
-		lastBank = cb;
+	int nPages = 1<<(15-debuggerPageSize);
 
-		if (lastBankNames)
-			freeList(lastBankNames);
+	for(int i=0;i<nPages;i++)
+	{
+		int pageIndexAddress = 0x8000 + (1<<debuggerPageSize)*i;
 
-		// Load new address definitions
-		lastBankNames = parseNameFile(generateNLFilenameForAddress(0xC000));
-	}
-	
-	// Find out which bank is loaded at 0x8000
-	cb = getBank(0x8000);
-	if (cb == -1) // No bank is loaded at that offset
-	{
-		free(loadedBankNames);
-		loadedBankNames = 0;
-	} else if (cb != loadedBank)
-	{
-		// If the bank changed since loading the NL files the last time it's necessary
-		// to load the address descriptions of the new bank.
-		
-		loadedBank = cb;
-		
-		if (loadedBankNames)
-			freeList(loadedBankNames);
-			
-		// Load new address definitions
-		loadedBankNames = parseNameFile(generateNLFilenameForAddress(0x8000));
-	}
+		// Find out which bank is loaded at the page index
+		cb = getBank(pageIndexAddress);
+		if (cb == -1) // No bank was loaded at that offset
+		{
+			free(pageNames[i]);
+			pageNames[i] = 0;
+		}
+		else if (cb != pageNumbersLoaded[i])
+		{
+			// If the bank changed since loading the NL files the last time it's necessary
+			// to load the address descriptions of the new bank.
+			pageNumbersLoaded[i] = cb;
+
+			if (pageNames[i])
+				freeList(pageNames[i]);
+
+			// Load new address definitions
+			pageNames[i] = parseNameFile(generateNLFilenameForAddress(pageIndexAddress));
+		}
+	} //loop across pages
 }
 
 // bookmarks
@@ -817,15 +877,16 @@ BOOL CALLBACK SymbolicNamingCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 			Name* node = findNode(getNamesPointerForAddress(newAddress), newAddress);
 			if (node)
 			{
-				SendDlgItemMessage(hwndDlg, IDC_SYMBOLIC_NAME, EM_SETLIMITTEXT, NL_MAX_NAME_LEN, 0);
 				if (node->name && node->name[0])
 					SetDlgItemText(hwndDlg, IDC_SYMBOLIC_NAME, node->name);
-				SendDlgItemMessage(hwndDlg, IDC_SYMBOLIC_COMMENT, EM_SETLIMITTEXT, NL_MAX_MULTILINE_COMMENT_LEN, 0);
 				if (node->comment && node->comment[0])
 					SetDlgItemText(hwndDlg, IDC_SYMBOLIC_COMMENT, node->comment);
 			}
 			// set focus to IDC_SYMBOLIC_NAME
 			SendMessage(hwndDlg, WM_NEXTDLGCTL, (WPARAM)GetDlgItem(hwndDlg, IDC_SYMBOLIC_NAME), true);
+			//always set the limits
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOLIC_NAME, EM_SETLIMITTEXT, NL_MAX_NAME_LEN, 0);
+			SendDlgItemMessage(hwndDlg, IDC_SYMBOLIC_COMMENT, EM_SETLIMITTEXT, NL_MAX_MULTILINE_COMMENT_LEN, 0);
 			break;
 		}
 		case WM_CLOSE:

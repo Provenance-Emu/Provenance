@@ -36,8 +36,10 @@ enum ESI
 	SI_POWERPADB	= 4,
 	SI_ARKANOID		= 5,
 	SI_MOUSE		= 6,
+	SI_SNES			= 7,
+	SI_SNES_MOUSE	= 8,
 
-	SI_COUNT = SI_MOUSE
+	SI_COUNT = SI_SNES_MOUSE
 };
 
 inline const char* ESI_Name(ESI esi)
@@ -50,7 +52,9 @@ inline const char* ESI_Name(ESI esi)
 		"Power Pad A",
 		"Power Pad B",
 		"Arkanoid Paddle",
-		"Mouse"
+		"Subor Mouse",
+		"SNES Pad",
+		"SNES Mouse"
 	};
 
 	if(esi >= SI_NONE && esi <= SI_COUNT)
@@ -69,14 +73,15 @@ enum ESIFC
 	SIFC_4PLAYER	= 3,
 	SIFC_FKB		= 4,
 	SIFC_SUBORKB	= 5,
-	SIFC_HYPERSHOT	= 6,
-	SIFC_MAHJONG	= 7,
-	SIFC_QUIZKING	= 8,
-	SIFC_FTRAINERA	= 9,
-	SIFC_FTRAINERB	= 10,
-	SIFC_OEKAKIDS	= 11,
-	SIFC_BWORLD		= 12,
-	SIFC_TOPRIDER	= 13,
+	SIFC_PEC586KB	= 6,
+	SIFC_HYPERSHOT	= 7,
+	SIFC_MAHJONG	= 8,
+	SIFC_QUIZKING	= 9,
+	SIFC_FTRAINERA	= 10,
+	SIFC_FTRAINERB	= 11,
+	SIFC_OEKAKIDS	= 12,
+	SIFC_BWORLD		= 13,
+	SIFC_TOPRIDER	= 14,
 
 	SIFC_COUNT = SIFC_TOPRIDER
 };
@@ -92,6 +97,7 @@ inline const char* ESIFC_Name(ESIFC esifc)
 		"4-Player Adapter",
 		"Family Keyboard",
 		"Subor Keyboard",
+		"PEC586 Keyboard",
 		"HyperShot Pads",
 		"Mahjong",
 		"Quiz King Buzzers",

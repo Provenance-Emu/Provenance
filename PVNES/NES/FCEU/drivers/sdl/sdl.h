@@ -4,7 +4,7 @@
 #if _SDL2
 #include <SDL2/SDL.h>
 #else
-//#include <SDL.h>
+#include <SDL.h>
 #endif
 
 #include "main.h"
@@ -19,6 +19,10 @@ const int INVALID_STATE = 99;
 
 extern int noGui;
 extern int isloaded;
+
+extern int dendy;
+extern int pal_emulation;
+extern bool swapDuty;
 
 int LoadGame(const char *path);
 int CloseGame(void);

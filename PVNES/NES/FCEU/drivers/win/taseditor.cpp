@@ -881,6 +881,8 @@ void applyMovieInputConfig()
 	FCEUD_SetInput(currMovieData.fourscore, currMovieData.microphone, (ESI)currMovieData.ports[0], (ESI)currMovieData.ports[1], (ESIFC)currMovieData.ports[2]);
 	// update PAL flag
 	pal_emulation = currMovieData.palFlag;
+	if (pal_emulation)
+		dendy = 0;
 	FCEUI_SetVidSystem(pal_emulation);
 	RefreshThrottleFPS();
 	PushCurrentVideoSettings();
