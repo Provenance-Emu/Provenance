@@ -453,6 +453,7 @@ void uncaughtExceptionHandler(NSException *exception)
     {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disk" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [[weakSelf emulatorCore] swapDisk];
+            weakSelf.isShowingMenu = NO;
         }]];
     }
 
