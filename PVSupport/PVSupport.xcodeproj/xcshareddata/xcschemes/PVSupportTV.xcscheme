@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0730"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD4823B1BA363A400FDA50A"
-               BuildableName = "libPVSupportTV.a"
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupportTV.framework"
                BlueprintName = "PVSupportTV"
                ReferencedContainer = "container:PVSupport.xcodeproj">
             </BuildableReference>
@@ -45,8 +45,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD4823B1BA363A400FDA50A"
-            BuildableName = "libPVSupportTV.a"
+            BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+            BuildableName = "PVSupportTV.framework"
             BlueprintName = "PVSupportTV"
             ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>
@@ -63,8 +63,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD4823B1BA363A400FDA50A"
-            BuildableName = "libPVSupportTV.a"
+            BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+            BuildableName = "PVSupportTV.framework"
             BlueprintName = "PVSupportTV"
             ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>

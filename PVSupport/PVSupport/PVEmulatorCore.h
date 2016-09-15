@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OERingBuffer.h"
+#import <PVSupport/OERingBuffer.h>
 #import <GameController/GameController.h>
 
 @interface PVEmulatorCore : NSObject {
@@ -20,9 +20,6 @@
 
     BOOL isRunning;
     BOOL shouldStop;
-
-    double framerateMultiplier;
-
 }
 
 @property (nonatomic, copy) NSString *romName;

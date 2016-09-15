@@ -25,7 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "TPCircularBuffer.h"
+#import <PVSupport/TPCircularBuffer.h>
 
 @interface OERingBuffer : NSObject
 {

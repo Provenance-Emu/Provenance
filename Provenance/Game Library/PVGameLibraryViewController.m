@@ -195,6 +195,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 
     [self loadGameFromShortcut];
+    
+    [self becomeFirstResponder];
 }
 
 - (void)loadGameFromShortcut
@@ -1649,4 +1651,47 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
+#pragma mark - Keyboard actions
+
+- (NSArray<UIKeyCommand *>*)keyCommands {
+    NSMutableArray<UIKeyCommand*> *sectionCommands = [NSMutableArray arrayWithCapacity:self.sectionInfo.count+2];
+    
+    for (int i=0; i<self.sectionInfo.count; i++) {
+        NSString *input = [NSString stringWithFormat:@"%i", i];
+        NSString *title = [self nameForSectionAtIndex:i];
+        
+        // Simulator Command + number has shorcuts already
+#if TARGET_OS_SIMULATOR
+        UIKeyModifierFlags flags = UIKeyModifierControl | UIKeyModifierCommand;
+#else
+        UIKeyModifierFlags flags = UIKeyModifierCommand;
+#endif
+        
+        UIKeyCommand* command = [UIKeyCommand keyCommandWithInput:input modifierFlags:flags action:@selector(selectSection:) discoverabilityTitle:title];
+        [sectionCommands addObject:command];
+    }
+
+    UIKeyCommand *findCommand =
+    [UIKeyCommand keyCommandWithInput:@"f"
+                        modifierFlags:UIKeyModifierCommand | UIKeyModifierAlternate
+                               action:@selector(selectSearch:)
+                 discoverabilityTitle:@"Find…"];
+    [sectionCommands addObject:findCommand];
+    
+    return sectionCommands;
+}
+
+- (void)selectSearch:(UIKeyCommand *)sender {
+    [self.searchField becomeFirstResponder];
+}
+
+- (void)selectSection:(UIKeyCommand *)sender {
+    NSInteger section = [sender.input integerValue];
+   
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section] atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+}
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
 @end

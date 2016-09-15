@@ -81,6 +81,8 @@
 		1AD482F61BA363F900FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE161ABD1B46004E778B /* OpenGLES.framework */; };
 		1AD482F71BA363F900FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE141ABD1B41004E778B /* UIKit.framework */; };
 		1AD482F81BA363F900FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
+		B32F462C1D6A86AD0085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462B1D6A86AD0085BA9F /* PVSupport.framework */; };
+		B32F462E1D6A86B30085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462D1D6A86B30085BA9F /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -191,6 +193,8 @@
 		1A9FBE141ABD1B41004E778B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A9FBE161ABD1B46004E778B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1AD482FE1BA363F900FDA50A /* libPVGBATV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVGBATV.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32F462B1D6A86AD0085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B32F462D1D6A86B30085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +202,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32F462C1D6A86AD0085BA9F /* PVSupport.framework in Frameworks */,
 				1A9FBE171ABD1B46004E778B /* OpenGLES.framework in Frameworks */,
 				1A9FBE151ABD1B41004E778B /* UIKit.framework in Frameworks */,
 				1A9FBE0E1ABD12C6004E778B /* Foundation.framework in Frameworks */,
@@ -208,6 +213,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32F462E1D6A86B30085BA9F /* PVSupport.framework in Frameworks */,
 				1AD482F61BA363F900FDA50A /* OpenGLES.framework in Frameworks */,
 				1AD482F71BA363F900FDA50A /* UIKit.framework in Frameworks */,
 				1AD482F81BA363F900FDA50A /* Foundation.framework in Frameworks */,
@@ -374,6 +380,8 @@
 		1A9FBE131ABD133E004E778B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B32F462D1D6A86B30085BA9F /* PVSupport.framework */,
+				B32F462B1D6A86AD0085BA9F /* PVSupport.framework */,
 				1A9FBE161ABD1B46004E778B /* OpenGLES.framework */,
 				1A9FBE141ABD1B41004E778B /* UIKit.framework */,
 				1A9FBE0A1ABD1289004E778B /* Foundation.framework */,

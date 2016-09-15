@@ -24,6 +24,9 @@
 #import "PVNESEmulatorCore.h"
 #import "PVNESControllerViewController.h"
 
+#import "PVStellaGameCore.h"
+#import "PVStellaControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -92,7 +95,11 @@
     {
         core = [[PVNESEmulatorCore alloc] init];
     }
-	
+    else if ([systemID isEqualToString:PV2600SystemIdentifier])
+    {
+        core = [[PVStellaGameCore alloc] init];
+    }
+    
 	return core;
 }
 
@@ -125,6 +132,10 @@
              [systemID isEqualToString:PVFDSSystemIdentifier])
     {
         controller = [[PVNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV2600SystemIdentifier])
+    {
+        controller = [[PVStellaControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;
