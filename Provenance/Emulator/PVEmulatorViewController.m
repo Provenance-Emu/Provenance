@@ -21,8 +21,9 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PVEmulatorConfiguration.h"
 #import "PVControllerManager.h"
+#import <ReplayKit/ReplayKit.h>
 
-@interface PVEmulatorViewController ()
+@interface PVEmulatorViewController () <RPPreviewViewControllerDelegate>
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
@@ -380,6 +381,46 @@ void uncaughtExceptionHandler(NSException *exception)
     }
 
     self.menuActionSheet = actionsheet;
+    
+    if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+        RPScreenRecorder *recorder = [RPScreenRecorder sharedRecorder];
+        if (recorder.available && !recorder.recording) {
+            [actionsheet addAction:[UIAlertAction actionWithTitle:@"Record" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+                [recorder startRecordingWithMicrophoneEnabled:NO handler:^(NSError * _Nullable error) {
+                    if (error) {
+                        NSLog(@"%@", error.localizedDescription);
+                        
+                        UIAlertController *alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Error %@", error.domain] message:error.localizedDescription preferredStyle:UIAlertControllerStyleAlert];
+                        
+                        [alert addAction:[UIAlertAction actionWithTitle:nil
+                                                                  style:UIAlertActionStyleDefault handler:nil]];
+                    } else {
+                        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+                        [self.emulatorCore setPauseEmulation:NO];
+                        self.isShowingMenu = NO;
+                    }
+                }];
+                
+            }]];
+        } else if (recorder.available && recorder.recording) {
+            [actionsheet addAction:[UIAlertAction actionWithTitle:@"Stop Recording" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                
+                [recorder stopRecordingWithHandler:^(RPPreviewViewController * _Nullable previewViewController,
+                                                     NSError * _Nullable error) {
+                    
+                    if (!error) {
+                        previewViewController.previewControllerDelegate = self;
+                        [self presentViewController:previewViewController animated:YES completion:^{
+                            
+                        }];
+                    }
+                    
+                }];
+                
+            }]];
+        }
+    }
 	
 	if ([[PVControllerManager sharedManager] iCadeController])
 	{
@@ -770,5 +811,19 @@ void uncaughtExceptionHandler(NSException *exception)
         self.secondaryScreen = nil;
     }
 }
+
+#pragma mark - RPPreviewViewControllerDelegate
+
+- (void)previewControllerDidFinish:(RPPreviewViewController *)previewController
+{
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+    
+    [previewController dismissViewControllerAnimated:YES completion:^{
+        [self.emulatorCore setPauseEmulation:NO];
+        self.isShowingMenu = NO;
+    }];
+}
+
+
 
 @end
