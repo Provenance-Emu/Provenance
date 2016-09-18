@@ -23,7 +23,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 @property (nonatomic, strong) dispatch_queue_t serialQueue;
 @property (nonatomic, strong) NSArray *previousContents;
 
-
 @end
 
 @implementation PVDirectoryWatcher

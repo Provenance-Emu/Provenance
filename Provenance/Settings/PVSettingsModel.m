@@ -18,7 +18,6 @@ NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 NSString * const kDarkModeKey = @"kDarkModeKey";
-NSString * const kFPSCountKey = @"kFPSCountKey";
 
 
 @implementation PVSettingsModel
@@ -50,7 +49,6 @@ NSString * const kFPSCountKey = @"kFPSCountKey";
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
                                                                   kShowRecentGamesKey : @YES,
-                                                                  kDarkModeKey: @(NO),
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
                                                                   kVolumeSettingKey : @(1.0),
                                                                   kFPSCountKey: @(NO)}
@@ -62,7 +60,6 @@ NSString * const kFPSCountKey = @"kFPSCountKey";
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
-        _darkModeActive = [[NSUserDefaults standardUserDefaults] boolForKey:kDarkModeKey];
         _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
@@ -77,14 +74,6 @@ NSString * const kFPSCountKey = @"kFPSCountKey";
     _showFPSCount = showFPSCount;
     
     [[NSUserDefaults standardUserDefaults] setBool:_showFPSCount forKey:kFPSCountKey];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)setDarkModeActive:(BOOL)darkModeActive
-{
-    _darkModeActive = darkModeActive;
-    
-    [[NSUserDefaults standardUserDefaults] setBool:_darkModeActive forKey:kDarkModeKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

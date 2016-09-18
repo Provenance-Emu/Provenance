@@ -107,11 +107,6 @@
     [[PVSettingsModel sharedInstance] setShowRecentGames:[self.recentGamesSwitch isOn]];
 }
 
-- (IBAction)toggleDarkInterface:(id)sender
-{
-    [[PVSettingsModel sharedInstance] setDarkModeActive:[self.darkInterfaceSwitch isOn]];
-}
-
 - (IBAction)volumeChanged:(id)sender
 {
     [[PVSettingsModel sharedInstance] setVolume:self.volumeSlider.value];
