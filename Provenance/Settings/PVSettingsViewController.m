@@ -59,6 +59,11 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+- (IBAction)help:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
 - (IBAction)done:(id)sender
 {
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];
@@ -92,9 +97,14 @@
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
 
-- (IBAction)toggleRecentGamesSwitch:(id)sender;
+- (IBAction)toggleRecentGamesSwitch:(id)sender
 {
     [[PVSettingsModel sharedInstance] setShowRecentGames:[self.recentGamesSwitch isOn]];
+}
+
+- (IBAction)toggleDarkInterface:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setDarkModeActive:[self.darkInterfaceSwitch isOn]];
 }
 
 - (IBAction)volumeChanged:(id)sender
@@ -109,8 +119,7 @@
     if (indexPath.section == 3 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:iCadeControllerViewController animated:YES];
     }
     else if(indexPath.section == 4 && indexPath. row == 0) {
         // import/export roms and game saves button
