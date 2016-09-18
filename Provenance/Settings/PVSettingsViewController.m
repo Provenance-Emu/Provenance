@@ -13,6 +13,7 @@
 #import "PVGameLibraryViewController.h"
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
+#import "PVAcknowledgementsViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -192,6 +193,10 @@
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
         [self.navigationController pushViewController:conflictViewController animated:YES];
+    }
+    else if (indexPath.section == 7 && indexPath.row == 0) {
+        PVAcknowledgementsViewController *acknowledgementsViewController = [[PVAcknowledgementsViewController alloc] init];
+        [self.navigationController pushViewController:acknowledgementsViewController animated:YES];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated: YES];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)] animated:NO];
