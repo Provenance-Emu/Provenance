@@ -17,6 +17,8 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
+NSString * const kDarkModeKey = @"kDarkModeKey";
+
 
 @implementation PVSettingsModel
 
@@ -39,14 +41,18 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 {
 	if ((self = [super init]))
 	{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES),
+		[[NSUserDefaults standardUserDefaults] registerDefaults:@{
+                                                                  kAutoSaveKey : @(YES),
+                                                                  kAskToAutoLoadKey: @(YES),
                                                                   kAutoLoadAutoSavesKey : @(NO),
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
                                                                   kShowRecentGamesKey : @YES,
+                                                                  kDarkModeKey: @(NO),
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
-                                                                  kVolumeSettingKey : @(1.0)}];
+                                                                  kVolumeSettingKey : @(1.0)}
+        ];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -54,12 +60,21 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
+        _darkModeActive = [[NSUserDefaults standardUserDefaults] boolForKey:kDarkModeKey];
         _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
 	}
 	
 	return self;
+}
+
+- (void)setDarkModeActive:(BOOL)darkModeActive
+{
+    _darkModeActive = darkModeActive;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:_darkModeActive forKey:kDarkModeKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)setAutoSave:(BOOL)autoSave
