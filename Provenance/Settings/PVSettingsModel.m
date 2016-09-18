@@ -17,7 +17,7 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
-NSString * const kDarkModeKey = @"kDarkModeKey";
+NSString * const kFPSCountKey = @"kFPSCountKey";
 
 
 @implementation PVSettingsModel
