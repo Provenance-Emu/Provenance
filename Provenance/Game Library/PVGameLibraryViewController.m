@@ -199,7 +199,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)loadGameFromShortcut
 {
-    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    PVAppDelegate *appDelegate = (PVAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if ([appDelegate shortcutItemMD5])
     {
