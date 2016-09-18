@@ -31,6 +31,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 @property (weak, nonatomic) IBOutlet UISlider *volumeSlider;
 @property (weak, nonatomic) IBOutlet UILabel *volumeValueLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *darkInterfaceSwitch;
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 
