@@ -213,7 +213,7 @@ void uncaughtExceptionHandler(NSException *exception)
             // Block-based NSTimer method is only available on iOS 10 and later
             _fpsTimer = [NSTimer timerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
 #if DEBUG
-                NSLog(@"%li", _glViewController.framesPerSecond);
+                NSLog(@"FPS: %li", _glViewController.framesPerSecond);
 #endif
                 _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
             }];
@@ -333,7 +333,7 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)updateFPSLabel
 {
 #if DEBUG
-    NSLog(@"%li", _glViewController.framesPerSecond);
+    NSLog(@"FPS: %li", _glViewController.framesPerSecond);
 #endif
     _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
 }
