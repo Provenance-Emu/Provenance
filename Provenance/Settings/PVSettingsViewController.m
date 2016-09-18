@@ -196,8 +196,7 @@
     else if (indexPath.section == 5 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:conflictViewController animated:YES];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated: YES];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)] animated:NO];

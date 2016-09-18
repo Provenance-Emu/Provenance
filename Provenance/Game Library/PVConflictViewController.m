@@ -64,7 +64,7 @@
 
 - (void)done:(id)sender
 {
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (NSString *)documentsPath
