@@ -19,6 +19,7 @@ extern NSString * const kShowRecentGamesKey;
 extern NSString * const kiCadeControllerSettingKey;
 extern NSString * const kVolumeSettingKey;
 extern NSString * const kDarkModeKey;
+extern NSString * const kFPSCountKey;
 
 @interface PVSettingsModel : NSObject
 
@@ -29,6 +30,7 @@ extern NSString * const kDarkModeKey;
 @property (nonatomic, assign) BOOL buttonVibration;
 @property (nonatomic, assign) BOOL showRecentGames;
 @property (nonatomic, assign) BOOL darkModeActive;
+@property (nonatomic, assign) BOOL showFPSCount;
 @property (nonatomic, assign) kICadeControllerSetting iCadeControllerSetting;
 
 @property (nonatomic, assign) CGFloat controllerOpacity;

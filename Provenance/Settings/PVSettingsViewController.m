@@ -69,6 +69,11 @@
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];
 }
 
+- (IBAction)toggleFPSCount:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setShowFPSCount:[self.fpsSwitch isOn]];
+}
+
 - (IBAction)toggleAutoSave:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setAutoSave:[self.autoSaveSwitch isOn]];
