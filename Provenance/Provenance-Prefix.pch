@@ -8,4 +8,5 @@
 	#import <UIKit/UIKit.h>
 	#import <Foundation/Foundation.h>
     #import "DebugUtils.h"
+    #import "PVAvailability.h"
 #endif
