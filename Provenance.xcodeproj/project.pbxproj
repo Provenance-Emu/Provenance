@@ -195,6 +195,8 @@
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
 		1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.m */; };
+		1F6B79381D8F1309008A535C /* PVAcknowledgementsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F6B79371D8F1309008A535C /* PVAcknowledgementsViewController.m */; };
+		1F6B793C1D8F1415008A535C /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F6B793B1D8F1415008A535C /* licenses.html */; };
 		25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
@@ -458,6 +460,10 @@
 		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
+		1F6B79331D8EFCD3008A535C /* PVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAvailability.h; sourceTree = "<group>"; };
+		1F6B79361D8F1309008A535C /* PVAcknowledgementsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAcknowledgementsViewController.h; sourceTree = "<group>"; };
+		1F6B79371D8F1309008A535C /* PVAcknowledgementsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAcknowledgementsViewController.m; sourceTree = "<group>"; };
+		1F6B793B1D8F1415008A535C /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
@@ -642,6 +648,8 @@
 			children = (
 				1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */,
 				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */,
+				1F6B79361D8F1309008A535C /* PVAcknowledgementsViewController.h */,
+				1F6B79371D8F1309008A535C /* PVAcknowledgementsViewController.m */,
 				1AB9600117C572B400D3E392 /* PVSettingsModel.h */,
 				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
 			);
@@ -731,6 +739,7 @@
 				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
+				1F6B79331D8EFCD3008A535C /* PVAvailability.h */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
@@ -752,6 +761,7 @@
 				1A3D40A317B2DCE4004DFFFC /* main.m */,
 				1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */,
 				1A0938B917CD45D400029021 /* README.mdown */,
+				1F6B793B1D8F1415008A535C /* licenses.html */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1301,6 +1311,7 @@
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
+				1F6B793C1D8F1415008A535C /* licenses.html in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
@@ -1381,6 +1392,7 @@
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
 				1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
+				1F6B79381D8F1309008A535C /* PVAcknowledgementsViewController.m in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,

@@ -921,8 +921,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
         PVGame *game = games[[indexPath item]];
         
-        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@""
-                                                                             message:@""
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                             message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
         if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
         {
