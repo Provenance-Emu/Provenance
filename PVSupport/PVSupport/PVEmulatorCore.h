@@ -13,7 +13,6 @@
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
-    NSThread *_gameThread;
 
 	double _sampleRate;
 	

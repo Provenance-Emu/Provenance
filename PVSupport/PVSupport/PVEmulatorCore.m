@@ -63,8 +63,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 			shouldStop = NO;
             framerateMultiplier = 1.0;
 			
-            _gameThread = [[NSThread alloc] initWithTarget:self selector:@selector(frameRefreshThread:) object:nil];
-            [_gameThread start];
+			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
 	}
 }
