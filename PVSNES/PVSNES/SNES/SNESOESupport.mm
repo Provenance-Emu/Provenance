@@ -194,17 +194,17 @@ bool8 S9xDoScreenshot(int width, int height)
 
 bool8 S9xOpenSnapshotFile (const char *base, bool8 read_only, STREAM *file)
 {
-    FILE* stream;
-    stream = fopen(base, (read_only ? "r" : "w"));
-    *file = stream;
-    return true;
+    if((*file = OPEN_STREAM(base, (read_only ? "r" : "w"))) != 0)
+        return true;
+    
+    return false;
 }
 
 void S9xCloseSnapshotFile (STREAM file)
 {
-    //fclose(file);
     CLOSE_STREAM(file);
 }
+
 bool S9xPollButton(uint32 id, bool *pressed)
 {
     DLog(@"Poll button");

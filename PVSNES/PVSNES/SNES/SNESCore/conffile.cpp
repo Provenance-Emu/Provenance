@@ -209,16 +209,16 @@ void ConfigFile::Clear(void){
 }
 
 bool ConfigFile::LoadFile(const char *filename){
-    STREAM s;
+    FSTREAM s;
     bool ret=false;
     const char *n, *n2;
 
-    if((s=OPEN_STREAM(filename, "r"))){
+    if((s=OPEN_FSTREAM(filename, "r"))){
         n=filename;
         n2=strrchr(n, '/'); if(n2!=NULL) n=n2+1;
         n2=strrchr(n, '\\'); if(n2!=NULL) n=n2+1;
-        LoadFile(new fReader(s), n);
-        CLOSE_STREAM(s);
+        LoadFile(new fStream(s), n);
+        CLOSE_FSTREAM(s);
         ret = true;
     } else {
         fprintf(stderr, "Couldn't open conffile ");
@@ -228,7 +228,7 @@ bool ConfigFile::LoadFile(const char *filename){
 }
 
 
-void ConfigFile::LoadFile(Reader *r, const char *name){
+void ConfigFile::LoadFile(Stream *r, const char *name){
 	curConfigFile = this;
     string l, key, val;
     string section;
@@ -280,7 +280,7 @@ void ConfigFile::LoadFile(Reader *r, const char *name){
         }
         key=l.substr(0,i); ConfigEntry::trim(key);
 		val=l.substr(i+1); comment = ConfigEntry::trimCommented(val);
-        if(val[0]=='"' && *val.rbegin()=='"') val=val.substr(1, val.size()-2);
+		if(val.size() > 0 && val[0]=='"' && *val.rbegin()=='"') val=val.substr(1, val.size()-2);
 
         ConfigEntry e(line, section, key, val);
 		e.comment = comment;

@@ -68,6 +68,7 @@ static void M82Power(void) {
 	SetReadHandler(0x6000, 0xffff, CartBR);
 	SetWriteHandler(0x6000, 0x7fff, CartBW);
 	SetWriteHandler(0x7ef0, 0x7efc, M82Write);  // external WRAM might end at $73FF
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M82Close(void) {

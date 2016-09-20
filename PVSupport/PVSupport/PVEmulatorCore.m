@@ -96,6 +96,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
     isRunning  = NO;
 }
 
+- (void)updateControllers
+{
+    //subclasses may implement for polling
+}
+
 - (void)frameRefreshThread:(id)anArgument
 {
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
@@ -131,6 +136,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
         }
         
         OEWaitUntil(gameTime);
+        
+        // Service the event loop
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+        
+        [self updateControllers];
     }
 }
 

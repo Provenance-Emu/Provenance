@@ -29,6 +29,8 @@ char* ConfigToLoad = 0;		//Loads a specific .cfg file (loads before any other co
 char* LuaToLoad = 0;		//Loads a specific lua file
 char* PaletteToLoad = 0;	//Loads a specific palette file
 char* AviToLoad = 0;		//Starts an avi capture at startup
+char* DumpInput = 0; //Dumps all polled input to a binary file. Probably only useful with -playmovie. This is a rickety system, only useful in limited cases.
+char* PlayInput = 0; //Replays all polled input from a binary file. Useful without playmovie.  This is a rickety system, only useful in limited cases.
 
 extern bool turbo;
 
@@ -41,6 +43,7 @@ char *ParseArgies(int argc, char *argv[])
 {         
         static ARGPSTRUCT FCEUArgs[]={
          {"-pal",&pal_setting_specified,&pal_emulation,0},
+		 {"-dendy",0,&dendy,0},
          {"-noicon",0,&status_icon,0},
          {"-gg",0,&genie,0},
          {"-no8lim",0,&eoptions,0x8000|EO_NOSPRLIM},
@@ -64,6 +67,8 @@ char *ParseArgies(int argc, char *argv[])
 		 {"-cfg",0,&ConfigToLoad,0x4001},
 		 {"-avi",0,&AviToLoad,0x4001},
 		 {"-avicapture",0,&AVICapture,0},
+				 {"-dumpinput",0,&DumpInput,0x4001},
+				 {"-playinput",0,&PlayInput,0x4001},
          {0, 0, 0, 0},
 	};
 

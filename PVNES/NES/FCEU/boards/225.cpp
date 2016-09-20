@@ -39,7 +39,7 @@ static void Sync(void) {
 	} else
 		setprg32(0x8000, prg >> 1);
 	setchr8(chr);
-	setmirror(mirr);
+	setmirror(mirr ^ 1);
 }
 
 static DECLFW(M225Write) {

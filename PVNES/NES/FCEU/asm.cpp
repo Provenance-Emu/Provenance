@@ -276,16 +276,23 @@ char *Disassemble(int addr, uint8 *opcode) {
 		}
 		#define indirectX(a) { \
 			(a) = (opcode[1]+RX)&0xFF; \
-			(a) = GetMem((a)) | (GetMem((a)+1))<<8; \
+			(a) = GetMem((a)) | (GetMem(((a)+1)&0xff))<<8; \
 		}
 		#define indirectY(a) { \
-			(a) = GetMem(opcode[1]) | (GetMem(opcode[1]+1))<<8; \
+			(a) = GetMem(opcode[1]) | (GetMem((opcode[1]+1)&0xff))<<8; \
 			(a) += RY; \
 		}
 
 
+		#ifdef BRK_3BYTE_HACK
+			case 0x00:
+			sprintf(str,"BRK %02X %02X", opcode[1], opcode[2]);
+			break;
+		#else
+			case 0x00: strcpy(str,"BRK"); break;
+		#endif
+
 		//odd, 1-byte opcodes
-		case 0x00: strcpy(str,"BRK"); break;
 		case 0x08: strcpy(str,"PHP"); break;
 		case 0x0A: strcpy(str,"ASL"); break;
 		case 0x18: strcpy(str,"CLC"); break;

@@ -32,6 +32,7 @@
 #include "vsuni.h"
 #include "drawing.h"
 #include "driver.h"
+#include "drivers/common/vidblit.h"
 #ifdef _S9XLUA_H
 #include "fceulua.h"
 #endif
@@ -56,10 +57,17 @@
 #include <cstdarg>
 #include <zlib.h>
 
-uint8 *XBuf=NULL;
-uint8 *XBackBuf=NULL;
+//XBuf:
+//0-63 is reserved for 7 special colours used by FCEUX (overlay, etc.)
+//64-127 is the most-used emphasis setting per frame
+//128-195 is the palette with no emphasis
+//196-255 is the palette with all emphasis bits on
+u8 *XBuf=NULL; //used for current display
+u8 *XBackBuf=NULL; //ppu output is stashed here before drawing happens
+u8 *XDBuf=NULL; //corresponding to XBuf but with deemph bits
+u8 *XDBackBuf=NULL; //corresponding to XBackBuf but with deemph bits
 int ClipSidesOffset=0;	//Used to move displayed messages when Clips left and right sides is checked
-static uint8 *xbsave=NULL;
+static u8 *xbsave=NULL;
 
 GUIMESSAGE guiMessage;
 GUIMESSAGE subtitleMessage;
@@ -105,29 +113,35 @@ void FCEU_KillVirtualVideo(void)
 **/
 int FCEU_InitVirtualVideo(void)
 {
-	if(!XBuf)		/* Some driver code may allocate XBuf externally. */
-		/* 256 bytes per scanline, * 240 scanline maximum, +16 for alignment,
-		*/
-
-		if(!(XBuf= (uint8*) (FCEU_malloc(256 * 256 + 16))) ||
-			!(XBackBuf= (uint8*) (FCEU_malloc(256 * 256 + 16))))
-		{
-			return 0;
-		}
-
-		xbsave = XBuf;
-
-		if( sizeof(uint8*) == 4 )
-		{
-			uintptr_t m = (uintptr_t)XBuf;
-			m = ( 8 - m) & 7;
-			XBuf+=m;
-		}
-
-		memset(XBuf,128,256*256); //*240);
-		memset(XBackBuf,128,256*256);
-
+	//Some driver code may allocate XBuf externally.
+	//256 bytes per scanline, * 240 scanline maximum, +16 for alignment,
+	if(XBuf)
 		return 1;
+	
+	XBuf = (u8*)FCEU_malloc(256 * 256 + 16);
+	XBackBuf = (u8*)FCEU_malloc(256 * 256 + 16);
+	XDBuf = (u8*)FCEU_malloc(256 * 256 + 16);
+	XDBackBuf = (u8*)FCEU_malloc(256 * 256 + 16);
+	if(!XBuf || !XBackBuf || !XDBuf || !XDBackBuf)
+	{
+		return 0;
+	}
+
+	xbsave = XBuf;
+
+	if( sizeof(uint8*) == 4 )
+	{
+		uintptr_t m = (uintptr_t)XBuf;
+		m = ( 8 - m) & 7;
+		XBuf+=m;
+	}
+
+	memset(XBuf,128,256*256);
+	memset(XBackBuf,128,256*256);
+	memset(XBuf,128,256*256);
+	memset(XBackBuf,128,256*256);
+
+	return 1;
 }
 
 #ifdef FRAMESKIP
@@ -180,6 +194,10 @@ void FCEU_PutImage(void)
 	if(GameInfo->type==GIT_NSF)
 	{
 		DrawNSF(XBuf);
+
+#ifdef _S9XLUA_H
+		FCEU_LuaGui(XBuf);
+#endif
 
 		//Save snapshot after NSF screen is drawn.  Why would we want to do it before?
 		if(dosnapsave==1)
@@ -444,7 +462,6 @@ void FCEU_DispMessageOnMovie(char *format, ...)
 
 void FCEU_DispMessage(char *format, int disppos=0, ...)
 {
-//    return;
 	va_list ap;
 
 	va_start(ap,disppos);
@@ -552,7 +569,7 @@ int SaveSnapshot(void)
 	int x,u,y;
 	FILE *pp=NULL;
 	uint8 *compmem=NULL;
-	uLongf compmemsize=totallines*263+12;
+	uLongf compmemsize=(totallines*263+12)*3;
 
 	if(!(compmem=(uint8 *)FCEU_malloc(compmemsize)))
 		return 0;
@@ -572,7 +589,7 @@ int SaveSnapshot(void)
 	}
 
 	{
-		static uint8 header[8]={137,80,78,71,13,10,26,10};
+		static const uint8 header[8]={137,80,78,71,13,10,26,10};
 		if(fwrite(header,8,1,pp)!=1)
 			goto PNGerr;
 	}
@@ -586,8 +603,8 @@ int SaveSnapshot(void)
 		chunko[4]=chunko[5]=chunko[6]=0;
 		chunko[7]=totallines;			// Height
 
-		chunko[8]=8;				// bit depth
-		chunko[9]=3;				// Color type; indexed 8-bit
+		chunko[8]=8;				// 8 bits per sample(24 bits per pixel)
+		chunko[9]=2;				// Color type; RGB triplet
 		chunko[10]=0;				// compression: deflate
 		chunko[11]=0;				// Basic adapative filter set(though none are used).
 		chunko[12]=0;				// No interlace.
@@ -597,18 +614,11 @@ int SaveSnapshot(void)
 	}
 
 	{
-		uint8 pdata[256*3];
-		for(x=0;x<256;x++)
-			FCEUD_GetPalette(x,pdata+x*3,pdata+x*3+1,pdata+x*3+2);
-		if(!WritePNGChunk(pp,256*3,"PLTE",pdata))
-			goto PNGerr;
-	}
-
-	{
 		uint8 *tmp=XBuf+FSettings.FirstSLine*256;
 		uint8 *dest,*mal,*mork;
 
-		if(!(mal=mork=dest=(uint8 *)FCEU_dmalloc((totallines<<8)+totallines)))
+		int bufsize = (256*3+1)*totallines;
+		if(!(mal=mork=dest=(uint8 *)FCEU_dmalloc(bufsize)))
 			goto PNGerr;
 		//   mork=dest=XBuf;
 
@@ -616,11 +626,17 @@ int SaveSnapshot(void)
 		{
 			*dest=0;			// No filter.
 			dest++;
-			for(x=256;x;x--,tmp++,dest++)
-				*dest=*tmp;
+			for(x=256;x;x--)
+			{
+				u32 color = ModernDeemphColorMap(tmp,XBuf,1,1);
+				*dest++=(color>>0x10)&0xFF;
+				*dest++=(color>>0x08)&0xFF;
+				*dest++=(color>>0x00)&0xFF;
+				tmp++;
+			}
 		}
 
-		if(compress(compmem,&compmemsize,mork,(totallines<<8)+totallines)!=Z_OK)
+		if(compress(compmem,&compmemsize,mork,bufsize)!=Z_OK)
 		{
 			if(mal) free(mal);
 			goto PNGerr;

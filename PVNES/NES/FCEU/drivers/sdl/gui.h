@@ -38,39 +38,17 @@ void showGui(bool b);
 bool checkGTKVersion(int major_required, int minor_required);
 
 int configHotkey(char* hotkeyString);
-int configGamepadButton(GtkButton* button, gpointer p);
 
 void resetVideo();
-void closeVideoWin(GtkWidget* w, GdkEvent* e, gpointer p);
-void closeDialog(GtkWidget* w, GdkEvent* e, gpointer p);
-
-void toggleLowPass(GtkWidget* w, gpointer p);
-void toggleOption(GtkWidget* w, gpointer p);
-
-int setTint(GtkWidget* w, gpointer p);
-int setHue(GtkWidget* w, gpointer p);
-void loadPalette (GtkWidget* w, gpointer p);
-void clearPalette(GtkWidget* w, gpointer p);
 void openPaletteConfig();
 
-void launchNet(GtkWidget* w, gpointer p);
-void setUsername(GtkWidget* w, gpointer p);
-void netResponse(GtkWidget* w, gint response_id, gpointer p);
 void openNetworkConfig();
 void flushGtkEvents();
 
 void openHotkeyConfig();
-int setInputDevice(GtkWidget* w, gpointer p);
-void updateGamepadConfig(GtkWidget* w, gpointer p);
 void openGamepadConfig();
 
-int setBufSize(GtkWidget* w, gpointer p);
-void setRate(GtkWidget* w, gpointer p);
-void setQuality(GtkWidget* w, gpointer p);
 void resizeGtkWindow();
-void setScaler(GtkWidget* w, gpointer p);
-int setXscale(GtkWidget* w, gpointer p);
-int setYscale(GtkWidget* w, gpointer p);
 
 #ifdef OPENGL
 void setGl(GtkWidget* w, gpointer p);
@@ -78,16 +56,13 @@ void setDoubleBuffering(GtkWidget* w, gpointer p);
 #endif
 
 void openVideoConfig();
-int mixerChanged(GtkWidget* w, gpointer p);
 void openSoundConfig();
 void quit ();
 void openAbout ();
-void toggleSound(GtkWidget* check, gpointer data);
 
 void emuReset ();
 void hardReset ();
 void enableFullscreen ();
-void toggleAutoResume (GtkToggleAction *action);
 
 void recordMovie();
 void recordMovieAs ();
@@ -98,8 +73,6 @@ void loadLua ();
 void loadFdsBios ();
 
 void enableGameGenie(int enabled);
-void toggleGameGenie(GtkToggleAction *action);
-void togglePause(GtkAction *action);
 void loadGameGenie ();
 
 void loadNSF ();
@@ -109,11 +82,7 @@ void saveStateAs();
 void loadStateFrom();
 void quickLoad();
 void quickSave();
-void changeState(GtkAction *action, GtkRadioAction *current, gpointer data);
 unsigned short GDKToSDLKeyval(int gdk_key);
-gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data);
-gint handleMouseClick(GtkWidget* widget, GdkEvent *event, gpointer callback_data);
-void handle_resize(GtkWindow* win, GdkEvent* event, gpointer data);
 int InitGTKSubsystem(int argc, char** argv);
 
 #endif // ifndef FCEUX_GUI_H

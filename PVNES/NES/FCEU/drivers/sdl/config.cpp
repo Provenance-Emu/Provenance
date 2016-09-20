@@ -50,7 +50,7 @@ LoadCPalette(const std::string &file)
 		FCEUD_PrintError(errorMsg);
 		return 0;
 	}
-	FCEUI_SetPaletteArray(tmpp);
+	FCEUI_SetUserPalette(tmpp, result/3);
 	fclose(fp);
 	return 1;
 }
@@ -145,6 +145,7 @@ InitConfig()
 	config->addOption("frameskip", "SDL.Frameskip", 0);
 	config->addOption("clipsides", "SDL.ClipSides", 0);
 	config->addOption("nospritelim", "SDL.DisableSpriteLimit", 1);
+	config->addOption("swapduty", "SDL.SwapDuty", 0);
 
 	// color control
 	config->addOption('p', "palette", "SDL.Palette", "");
@@ -175,6 +176,7 @@ InitConfig()
 	config->addOption("noframe", "SDL.NoFrame", 0);
 	config->addOption("special", "SDL.SpecialFilter", 0);
 	config->addOption("showfps", "SDL.ShowFPS", 0);
+	config->addOption("togglemenu", "SDL.ToggleMenu", 0);
 
 	// OpenGL options
 	config->addOption("opengl", "SDL.OpenGL", 0);
@@ -250,7 +252,7 @@ InitConfig()
 	config->addOption("_laststatefrom", "SDL.LastLoadStateFrom", home_dir);
 	config->addOption("_lastopennsf", "SDL.LastOpenNSF", home_dir);
 	config->addOption("_lastsavestateas", "SDL.LastSaveStateAs", home_dir);
-	config->addOption("_lastloadlua", "SDL.LastLoadLua", home_dir);
+	config->addOption("_lastloadlua", "SDL.LastLoadLua", "");
     #endif
     
 	// fcm -> fm2 conversion
@@ -401,7 +403,7 @@ InitConfig()
 void
 UpdateEMUCore(Config *config)
 {
-	int ntsccol, ntsctint, ntschue, flag, start, end;
+	int ntsccol, ntsctint, ntschue, flag, region, start, end;
 	std::string cpalette;
 
 	config->getOption("SDL.NTSCpalette", &ntsccol);
@@ -414,8 +416,8 @@ UpdateEMUCore(Config *config)
 		LoadCPalette(cpalette);
 	}
 
-	config->getOption("SDL.PAL", &flag);
-	FCEUI_SetVidSystem(flag ? 1 : 0);
+	config->getOption("SDL.PAL", &region);
+	FCEUI_SetRegion(region);
 
 	config->getOption("SDL.GameGenie", &flag);
 	FCEUI_SetGameGenie(flag ? 1 : 0);
