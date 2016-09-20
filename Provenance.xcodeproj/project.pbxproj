@@ -458,6 +458,7 @@
 		1AECF4A81966D76100F8704E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
+		1F8D523E1D9190E900C29F90 /* PVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAvailability.h; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
@@ -731,6 +732,7 @@
 				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.m */,
+				1F8D523E1D9190E900C29F90 /* PVAvailability.h */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,

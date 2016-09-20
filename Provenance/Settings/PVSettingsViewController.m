@@ -59,9 +59,19 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+- (IBAction)help:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
 - (IBAction)done:(id)sender
 {
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (IBAction)toggleFPSCount:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setShowFPSCount:[self.fpsCountSwitch isOn]];
 }
 
 - (IBAction)toggleAutoSave:(id)sender
@@ -109,8 +119,7 @@
     if (indexPath.section == 3 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:iCadeControllerViewController animated:YES];
     }
     else if(indexPath.section == 4 && indexPath. row == 0) {
         // import/export roms and game saves button
@@ -182,8 +191,7 @@
     else if (indexPath.section == 5 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:conflictViewController animated:YES];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated: YES];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)] animated:NO];
