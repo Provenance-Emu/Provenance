@@ -232,31 +232,8 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
 	PVGameLibraryCollectionViewCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:@"SearchResultCell" forIndexPath:indexPath];
 	PVGame *game = [self.searchResults objectAtIndex:[indexPath item]];
-	NSString *artworkURL = [game customArtworkURL];
-	NSString *originalArtworkURL = [game originalArtworkURL];
-	__block UIImage *artwork = nil;
 
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		if ([artworkURL length])
-		{
-			artwork = [PVMediaCache imageForKey:artworkURL];
-		}
-		else if ([originalArtworkURL length])
-		{
-			artwork = [PVMediaCache imageForKey:originalArtworkURL];
-		}
-
-		if (artwork)
-		{
-			dispatch_async(dispatch_get_main_queue(), ^{
-				[[cell imageView] setImage:artwork];
-				[cell setNeedsLayout];
-			});
-		}
-	});
-
-	[cell setText:[game title]];
-	[[cell missingLabel] setText:[game title]];
+    [cell setupWithGame:game];
 
 	[cell setNeedsLayout];
 
