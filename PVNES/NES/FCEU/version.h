@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define PUBLIC_RELEASE		// uncomment this when making a public release, but comment back before committing
+//#define PUBLIC_RELEASE		// uncomment this when making a public release, but comment back before committing
 
 #ifndef __FCEU_VERSION
 #define __FCEU_VERSION
@@ -61,7 +61,7 @@
 #endif
 
 #define FCEU_VERSION_NUMERIC 22020
-#define FCEU_VERSION_STRING "2.2.2" FCEU_SUBVERSION_STRING FCEU_FEATURE_STRING FCEU_COMPILER
+#define FCEU_VERSION_STRING "2.2.3" FCEU_SUBVERSION_STRING FCEU_FEATURE_STRING FCEU_COMPILER
 #define FCEU_NAME_AND_VERSION FCEU_NAME " " FCEU_VERSION_STRING
 
 #endif

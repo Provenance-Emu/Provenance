@@ -82,6 +82,7 @@ static void LH10Power(void) {
 	SetWriteHandler(0x8000, 0xBFFF, UNLKS7037Write);
 	SetWriteHandler(0xC000, 0xDFFF, CartBW);
 	SetWriteHandler(0xE000, 0xFFFF, UNLKS7037Write);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void Close(void) {

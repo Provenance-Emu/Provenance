@@ -20,6 +20,7 @@
 
 #include "common.h"
 #include "ppuview.h"
+#include "../../debug.h"
 #include "../../palette.h"
 #include "../../fceu.h"
 #include "../../cart.h"
@@ -32,6 +33,7 @@ extern uint8 PALRAM[0x20];
 int PPUViewPosX, PPUViewPosY;
 bool PPUView_maskUnusedGraphics = true;
 bool PPUView_invertTheMask = false;
+int PPUView_sprite16Mode = 0;
 
 uint8 palcache[32] = { 0xFF }; //palette cache
 uint8 chrcache0[0x1000], chrcache1[0x1000], logcache0[0x1000], logcache1[0x1000]; //cache CHR, fixes a refresh problem when right-clicking
@@ -98,58 +100,44 @@ extern unsigned int cdloggerVideoDataSize;
 
 void DrawPatternTable(uint8 *bitmap, uint8 *table, uint8 *log, uint8 pal)
 {
-    int i,j,x,y,index=0;
+    int i,j,k,x,y,index=0;
     int p=0,tmp;
-    uint8 chr0,chr1,logs;
+    uint8 chr0,chr1,logs,shift;
     uint8 *pbitmap = bitmap;
 
     pal <<= 2;
-    for (i = 0; i < 16; i++)		//Columns
-	{				
-        for (j = 0; j < 16; j++) //Rows
-		{		
+    for (i = 0; i < (16 >> PPUView_sprite16Mode); i++)		//Columns
+	{
+        for (j = 0; j < 16; j++)	//Rows
+		{
             //-----------------------------------------------
-			// 8x8 sprite
-			for (y = 0; y < 8; y++) 
-			{
-                chr0 = table[index];
-                chr1 = table[index + 8];
-				logs = log[index] & log[index + 8];
-                tmp = 7;
-				if (PPUView_maskUnusedGraphics && cdloggerVideoDataSize && (((logs & 3) != 0) == PPUView_invertTheMask))
+			for (k = 0; k < (PPUView_sprite16Mode + 1); k++) {
+				for (y = 0; y < 8; y++)
 				{
-					// draw pixel ~8x darker
-					for (x = 0; x < 8; x++) 
+			        chr0 = table[index];
+					chr1 = table[index + 8];
+					logs = log[index] & log[index + 8];
+	                tmp = 7;
+					shift=(PPUView_maskUnusedGraphics && debug_loggingCD && (((logs & 3) != 0) == PPUView_invertTheMask))?3:0;
+					for (x = 0; x < 8; x++)
 					{
 						p  =  (chr0 >> tmp) & 1;
 						p |= ((chr1 >> tmp) & 1) << 1;
 						p = palcache[p | pal];
 						tmp--;
-						*(uint8*)(pbitmap++) = palo[p].b >> 3;
-						*(uint8*)(pbitmap++) = palo[p].g >> 3;
-						*(uint8*)(pbitmap++) = palo[p].r >> 3;
+						*(uint8*)(pbitmap++) = palo[p].b >> shift;
+						*(uint8*)(pbitmap++) = palo[p].g >> shift;
+						*(uint8*)(pbitmap++) = palo[p].r >> shift;
 					}
-				} else
-				{
-					for (x = 0; x < 8; x++) 
-					{
-						p  =  (chr0 >> tmp) & 1;
-						p |= ((chr1 >> tmp) & 1) << 1;
-						p = palcache[p | pal];
-						tmp--;
-						*(uint8*)(pbitmap++) = palo[p].b;
-						*(uint8*)(pbitmap++) = palo[p].g;
-						*(uint8*)(pbitmap++) = palo[p].r;
-		            }
+					index++;
+					pbitmap += (PATTERNBITWIDTH-24);
 				}
-                index++;
-                pbitmap += ((PALETTEBITWIDTH>>2)-24);
+	            index+=8;
 			}
+			pbitmap -= ((PATTERNBITWIDTH<<(3+PPUView_sprite16Mode))-24);
 			//------------------------------------------------
-            index+=8;
-            pbitmap -= (((PALETTEBITWIDTH>>2)<<3)-24);
         }
-        pbitmap += ((PALETTEBITWIDTH>>2)*7);
+		pbitmap += (PATTERNBITWIDTH*((8<<PPUView_sprite16Mode)-1));
     }
 }
 
@@ -170,19 +158,20 @@ void FCEUD_UpdatePPUView(int scanline, int refreshchr)
 		{
             chrcache0[i] = VPage[i>>10][i];
             chrcache1[i] = VPage[x>>10][x];
-			if (cdloggerVideoDataSize)
-			{
-				int addr;
-				addr = &VPage[i >> 10][i] - CHRptr[0];
-				if ((addr >= 0) && (addr < (int)cdloggerVideoDataSize))
-					logcache0[i] = cdloggervdata[addr];
-				addr = &VPage[x >> 10][x] - CHRptr[0];
-				if ((addr >= 0) && (addr < (int)cdloggerVideoDataSize))
-					logcache1[i] = cdloggervdata[addr];
-			} else
-			{
-				logcache0[i] = 0;
-				logcache1[i] = 0;
+			if (debug_loggingCD) {
+				if (cdloggerVideoDataSize)
+				{
+					int addr;
+					addr = &VPage[i >> 10][i] - CHRptr[0];
+					if ((addr >= 0) && (addr < (int)cdloggerVideoDataSize))
+						logcache0[i] = cdloggervdata[addr];
+					addr = &VPage[x >> 10][x] - CHRptr[0];
+					if ((addr >= 0) && (addr < (int)cdloggerVideoDataSize))
+						logcache1[i] = cdloggervdata[addr];
+				} else {
+					logcache0[i] = cdloggervdata[i];
+					logcache1[i] = cdloggervdata[x];
+				}
 			}
         }
     }
@@ -288,7 +277,7 @@ BOOL CALLBACK PPUViewCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 			ScreenToClient(hwndDlg, &pt);
 			paletteDestX = pt.x + PALETTEDESTX_BASE;
 			paletteDestY = pt.y + PALETTEDESTY_BASE;
-			
+
             //prepare the bitmap attributes
             //pattern tables
             memset(&bmInfo.bmiHeader,0,sizeof(BITMAPINFOHEADER));
@@ -326,6 +315,9 @@ BOOL CALLBACK PPUViewCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 			CheckDlgButton(hwndDlg, IDC_MASK_UNUSED_GRAPHICS, PPUView_maskUnusedGraphics ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg, IDC_INVERT_THE_MASK, PPUView_invertTheMask ? BST_CHECKED : BST_UNCHECKED);
+
+			CheckDlgButton(hwndDlg, IDC_SPRITE16_MODE, PPUView_sprite16Mode ? BST_CHECKED : BST_UNCHECKED);
+
 			EnableWindow(GetDlgItem(hwndDlg, IDC_INVERT_THE_MASK), PPUView_maskUnusedGraphics ?  true : false);
 
             //Set Text Limit
@@ -402,16 +394,32 @@ BOOL CALLBACK PPUViewCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
                 mouse_y = GET_Y_LPARAM(lParam);
                 if (((mouse_x >= patternDestX) && (mouse_x < (patternDestX + (PATTERNWIDTH * ZOOM)))) && (mouse_y >= patternDestY) && (mouse_y < (patternDestY + (PATTERNHEIGHT * ZOOM))))
 				{
-                    mouse_x = (mouse_x - patternDestX) / (8 * ZOOM);
-                    mouse_y = (mouse_y - patternDestY) / (8 * ZOOM);
+					int A = (mouse_x - patternDestX) / (8 * ZOOM);
+					int B = (mouse_y - patternDestY) / (8 * ZOOM);
+                    if(PPUView_sprite16Mode) {
+						A *= 2;
+						mouse_x = (A & 0xE) + (B & 1);
+						mouse_y = (B & 0xE) + ((A >> 4) & 1);
+					} else {
+						mouse_x = A;
+						mouse_y = B;
+					}
                     sprintf(str,"Tile: $%X%X",mouse_y,mouse_x);
                     SetDlgItemText(hwndDlg,LBL_PPUVIEW_TILE1,str);
                     SetDlgItemText(hwndDlg,LBL_PPUVIEW_TILE2,"Tile:");
                     SetDlgItemText(hwndDlg,LBL_PPUVIEW_PALETTES,"Palettes");
                 } else if (((mouse_x >= patternDestX + (PATTERNWIDTH * ZOOM) + 1) && (mouse_x < (patternDestX + (PATTERNWIDTH * ZOOM) * 2 + 1))) && (mouse_y >= patternDestY) && (mouse_y < (patternDestY + (PATTERNHEIGHT * ZOOM))))
 				{
-                    mouse_x = (mouse_x - (patternDestX + (PATTERNWIDTH * ZOOM) + 1)) / (8 * ZOOM);
-                    mouse_y = (mouse_y - patternDestY) / (8 * ZOOM);
+					int A = (mouse_x - (patternDestX + (PATTERNWIDTH * ZOOM) + 1)) / (8 * ZOOM);
+					int B = (mouse_y - patternDestY) / (8 * ZOOM);
+                    if(PPUView_sprite16Mode) {
+						A *= 2;
+						mouse_x = (A & 0xE) + (B & 1);
+						mouse_y = (B & 0xE) + ((A >> 4) & 1);
+					} else {
+						mouse_x = A;
+						mouse_y = B;
+					}
                     sprintf(str,"Tile: $%X%X",mouse_y,mouse_x);
                     SetDlgItemText(hwndDlg,LBL_PPUVIEW_TILE2,str);
                     SetDlgItemText(hwndDlg,LBL_PPUVIEW_TILE1,"Tile:");
@@ -466,6 +474,16 @@ BOOL CALLBACK PPUViewCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam
 						{
 							PPUView_invertTheMask ^= 1;
 							CheckDlgButton(hwndDlg, IDC_INVERT_THE_MASK, PPUView_invertTheMask ? BST_CHECKED : BST_UNCHECKED);
+							// redraw now
+							PPUViewSkip = PPUViewRefresh;
+							FCEUD_UpdatePPUView(-1, 0);
+							PPUViewDoBlit();
+							break;
+						}
+						case IDC_SPRITE16_MODE:
+						{
+							PPUView_sprite16Mode ^= 1;
+							CheckDlgButton(hwndDlg, IDC_SPRITE16_MODE, PPUView_sprite16Mode ? BST_CHECKED : BST_UNCHECKED);
 							// redraw now
 							PPUViewSkip = PPUViewRefresh;
 							FCEUD_UpdatePPUView(-1, 0);

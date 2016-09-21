@@ -183,37 +183,47 @@
 #define VERSION	"1.53"
 #endif
 
-//#include <stdio.h>
-//#include <stdlib.h>
-
 #include "port.h"
 #include "65c816.h"
 #include "messages.h"
 
 #ifdef ZLIB
 #include <zlib.h>
-#define STREAM					gzFile
-#define READ_STREAM(p, l, s)	gzread(s, p, l)
-#define WRITE_STREAM(p, l, s)	gzwrite(s, p, l)
-#define GETS_STREAM(p, l, s)	gzgets(s, p, l)
-#define GETC_STREAM(s)			gzgetc(s)
-#define OPEN_STREAM(f, m)		gzopen(f, m)
-#define REOPEN_STREAM(f, m)		gzdopen(f, m)
-#define FIND_STREAM(f)			gztell(f)
-#define REVERT_STREAM(f, o, s)	gzseek(f, o, s)
-#define CLOSE_STREAM(s)			gzclose(s)
+#define FSTREAM					gzFile
+#define READ_FSTREAM(p, l, s)	gzread(s, p, l)
+#define WRITE_FSTREAM(p, l, s)	gzwrite(s, p, l)
+#define GETS_FSTREAM(p, l, s)	gzgets(s, p, l)
+#define GETC_FSTREAM(s)			gzgetc(s)
+#define OPEN_FSTREAM(f, m)		gzopen(f, m)
+#define REOPEN_FSTREAM(f, m)		gzdopen(f, m)
+#define FIND_FSTREAM(f)			gztell(f)
+#define REVERT_FSTREAM(s, o, p)	gzseek(s, o, p)
+#define CLOSE_FSTREAM(s)			gzclose(s)
 #else
-#define STREAM					FILE *
-#define READ_STREAM(p, l, s)	fread(p, 1, l, s)
-#define WRITE_STREAM(p, l, s)	fwrite(p, 1, l, s)
-#define GETS_STREAM(p, l, s)	fgets(p, l, s)
-#define GETC_STREAM(s)			fgetc(s)
-#define OPEN_STREAM(f, m)		fopen(f, m)
-#define REOPEN_STREAM(f, m)		fdopen(f, m)
-#define FIND_STREAM(f)			ftell(f)
-#define REVERT_STREAM(f, o, s)	fseek(f, o, s)
-#define CLOSE_STREAM(s)			fclose(s)
+#define FSTREAM					FILE *
+#define READ_FSTREAM(p, l, s)	fread(p, 1, l, s)
+#define WRITE_FSTREAM(p, l, s)	fwrite(p, 1, l, s)
+#define GETS_FSTREAM(p, l, s)	fgets(p, l, s)
+#define GETC_FSTREAM(s)			fgetc(s)
+#define OPEN_FSTREAM(f, m)		fopen(f, m)
+#define REOPEN_FSTREAM(f, m)		fdopen(f, m)
+#define FIND_FSTREAM(s)			ftell(s)
+#define REVERT_FSTREAM(s, o, p)	fseek(s, o, p)
+#define CLOSE_FSTREAM(s)			fclose(s)
 #endif
+
+#include "stream.h"
+
+#define STREAM					Stream *
+#define READ_STREAM(p, l, s)	s->read(p,l)
+#define WRITE_STREAM(p, l, s)	s->write(p,l)
+#define GETS_STREAM(p, l, s)	s->gets(p,l)
+#define GETC_STREAM(s)			s->get_char()
+#define OPEN_STREAM(f, m)		openStreamFromFSTREAM(f, m)
+#define REOPEN_STREAM(f, m)		reopenStreamFromFd(f, m)
+#define FIND_STREAM(s)			s->pos()
+#define REVERT_STREAM(s, o, p)	s->revert(p, o)
+#define CLOSE_STREAM(s)			s->closeStream()
 
 #define SNES_WIDTH					256
 #define SNES_HEIGHT					224

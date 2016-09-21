@@ -709,7 +709,7 @@ void S9xUpdateScreen (void)
 				IPPU.RenderedScreenWidth = 512;
 			}
 
-			if (!IPPU.DoubleHeightPixels && IPPU.Interlace)
+			if (!IPPU.DoubleHeightPixels && IPPU.Interlace && (PPU.BGMode == 5 || PPU.BGMode == 6))
 			{
 				IPPU.DoubleHeightPixels = TRUE;
 				IPPU.RenderedScreenHeight = PPU.ScreenHeight << 1;
@@ -718,16 +718,6 @@ void S9xUpdateScreen (void)
 
 				for (register int32 y = (int32) GFX.StartY - 1; y >= 0; y--)
 					memmove(GFX.Screen + y * GFX.PPL, GFX.Screen + y * GFX.RealPPL, IPPU.RenderedScreenWidth * sizeof(uint16));
-			}
-			else if (IPPU.DoubleHeightPixels && !IPPU.Interlace)
-			{
-				for (register int32 y = 0; y < (int32) GFX.StartY; y++)
-					memmove(GFX.Screen + y * GFX.RealPPL, GFX.Screen + y * GFX.PPL, IPPU.RenderedScreenWidth * sizeof(uint16));
-
-				IPPU.DoubleHeightPixels = FALSE;
-				IPPU.RenderedScreenHeight = PPU.ScreenHeight;
-				GFX.PPL = GFX.RealPPL;
-				GFX.DoInterlace = 0;
 			}
 		}
 
@@ -2237,7 +2227,7 @@ static uint16 get_crosshair_color (uint8 color)
 
 void S9xDrawCrosshair (const char *crosshair, uint8 fgcolor, uint8 bgcolor, int16 x, int16 y)
 {
-	if (!crosshair)
+	//if (!crosshair)
 		return;
 
 	int16	r, rx = 1, c, cx = 1, W = SNES_WIDTH, H = PPU.ScreenHeight;
@@ -2252,43 +2242,37 @@ void S9xDrawCrosshair (const char *crosshair, uint8 fgcolor, uint8 bgcolor, int1
 	fg = get_crosshair_color(fgcolor);
 	bg = get_crosshair_color(bgcolor);
 
-	// XXX: FIXME: why does it crash without this on Linux port? There are no out-of-bound writes without it...
-#if (defined(__unix) || defined(__linux) || defined(__sun) || defined(__DJGPP))
-	if (x >= 0 && y >= 0)
-#endif
+	uint16	*s = GFX.Screen + y * (int32)GFX.RealPPL + x;
+
+	for (r = 0; r < 15 * rx; r++, s += GFX.RealPPL - 15 * cx)
 	{
-		uint16	*s = GFX.Screen + y * GFX.RealPPL + x;
-
-		for (r = 0; r < 15 * rx; r++, s += GFX.RealPPL - 15 * cx)
+		if (y + r < 0)
 		{
-			if (y + r < 0)
-			{
-				s += 15 * cx;
+			s += 15 * cx;
+			continue;
+		}
+
+		if (y + r >= H)
+			break;
+
+		for (c = 0; c < 15 * cx; c++, s++)
+		{
+			if (x + c < 0 || s < GFX.Screen)
 				continue;
-			}
 
-			if (y + r >= H)
-				break;
-
-			for (c = 0; c < 15 * cx; c++, s++)
+			if (x + c >= W)
 			{
-				if (x + c < 0 || s < GFX.Screen)
-					continue;
-
-				if (x + c >= W)
-				{
-					s += 15 * cx - c;
-					break;
-				}
-
-				uint8	p = crosshair[(r / rx) * 15 + (c / cx)];
-
-				if (p == '#' && fgcolor)
-					*s = (fgcolor & 0x10) ? COLOR_ADD1_2(fg, *s) : fg;
-				else
-				if (p == '.' && bgcolor)
-					*s = (bgcolor & 0x10) ? COLOR_ADD1_2(*s, bg) : bg;
+				s += 15 * cx - c;
+				break;
 			}
+
+			uint8	p = crosshair[(r / rx) * 15 + (c / cx)];
+
+			if (p == '#' && fgcolor)
+				*s = (fgcolor & 0x10) ? COLOR_ADD1_2(fg, *s) : fg;
+			else
+			if (p == '.' && bgcolor)
+				*s = (bgcolor & 0x10) ? COLOR_ADD1_2(*s, bg) : bg;
 		}
 	}
 }

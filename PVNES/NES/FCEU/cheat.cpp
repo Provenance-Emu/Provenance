@@ -931,12 +931,14 @@ void FCEUI_CheatSearchEnd(int type, uint8 v1, uint8 v2)
 
 int FCEU_CheatGetByte(uint32 A)
 {
- //  if(CheatRPtrs[A>>10])
- //   return CheatRPtrs[A>>10][A]; //adelikat-commenting this stuff out so that lua can see frozen addresses, I hope this doesn't bork stuff.
-   /*else*/ if(A < 0x10000)
-    return ARead[A](A);
-   else
-    return 0;
+	if(A < 0x10000) {
+		uint32 ret;
+		fceuindbg=1;
+		ret = ARead[A](A);
+		fceuindbg=0;
+		return ret;
+	} else
+		return 0;
 }
 
 void FCEU_CheatSetByte(uint32 A, uint8 V)

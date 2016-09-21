@@ -33,7 +33,14 @@ struct Name
 	char* comment;
 };
 
+struct MemoryMappedRegister
+{
+	char* offset;
+	char* name;
+};
+
 extern bool symbDebugEnabled;
+extern bool symbRegNames;
 extern std::vector<unsigned int> bookmarks_addr;
 extern std::vector<std::string> bookmarks_name;
 extern int debuggerWasActive;

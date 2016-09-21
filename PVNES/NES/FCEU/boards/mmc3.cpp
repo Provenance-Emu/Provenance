@@ -28,6 +28,7 @@
 #include "mmc3.h"
 
 uint8 MMC3_cmd;
+uint8 kt_extra;
 uint8 *WRAM;
 uint32 WRAMSIZE;
 uint8 *CHRRAM;
@@ -182,6 +183,17 @@ DECLFW(MMC3_IRQWrite) {
 	}
 }
 
+// KT-008 boards hack 2-in-1, TODO assign to new ines mapper, most dump of KT-boards on the net are mapper 4, so need database or goodnes fix support
+DECLFW(KT008HackWrite) {
+//	FCEU_printf("%04x:%04x\n",A,V);
+	switch (A & 3) {
+	case 0: kt_extra = V; FixMMC3PRG(MMC3_cmd); break;
+	case 1: break;	// unk
+	case 2: break;	// unk
+	case 3: break;	// unk
+	}
+}
+
 static void ClockMMC3Counter(void) {
 	int count = IRQCount;
 	if (!count || IRQReload) {
@@ -220,7 +232,10 @@ static void GENCWRAP(uint32 A, uint8 V) {
 }
 
 static void GENPWRAP(uint32 A, uint8 V) {
-	setprg8(A, V & 0x7F);	// [NJ102] Mo Dao Jie (C) has 1024Mb MMC3 BOARD, maybe something other will be broken
+// [NJ102] Mo Dao Jie (C) has 1024Mb MMC3 BOARD, maybe something other will be broken
+// also HengGe BBC-2x boards enables this mode as default board mode at boot up
+	setprg8(A, (V & 0x7F) | ((kt_extra & 4) << 4));
+// KT-008 boards hack 2-in-1, TODO assign to new ines mapper, most dump of KT-boards on the net are mapper 4, so need database or goodnes fix support
 }
 
 static void GENMWRAP(uint8 V) {
@@ -246,6 +261,10 @@ void GenMMC3Power(void) {
 	SetWriteHandler(0x8000, 0xBFFF, MMC3_CMDWrite);
 	SetWriteHandler(0xC000, 0xFFFF, MMC3_IRQWrite);
 	SetReadHandler(0x8000, 0xFFFF, CartBR);
+
+// KT-008 boards hack 2-in-1, TODO assign to new ines mapper, most dump of KT-boards on the net are mapper 4, so need database or goodnes fix support
+	SetWriteHandler(0x5000,0x5FFF, KT008HackWrite);
+
 	A001B = A000B = 0;
 	setmirror(1);
 	if (mmc3opts & 1) {
@@ -254,7 +273,7 @@ void GenMMC3Power(void) {
 			SetReadHandler(0x7000, 0x7FFF, MAWRAMMMC6);
 			SetWriteHandler(0x7000, 0x7FFF, MBWRAMMMC6);
 		} else {
-			FCEU_CheatAddRAM((WRAMSIZE & 0x1fff) >> 10, 0x6000, WRAM);
+			FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 			SetWriteHandler(0x6000, 0x6000 + ((WRAMSIZE - 1) & 0x1fff), CartBW);
 			SetReadHandler(0x6000, 0x6000 + ((WRAMSIZE - 1) & 0x1fff), CartBR);
 			setprg8r(0x10, 0x6000, 0);
@@ -299,6 +318,8 @@ void GenMMC3_Init(CartInfo *info, int prg, int chr, int wram, int battery) {
 		info->SaveGameLen[0] = WRAMSIZE;
 	}
 
+// KT-008 boards hack 2-in-1, TODO assign to new ines mapper, most dump of KT-boards on the net are mapper 4, so need database or goodnes fix support
+	AddExState(&kt_extra, 1, 0, "KTEX");
 	AddExState(MMC3_StateRegs, ~0, 0, 0);
 
 	info->Power = GenMMC3Power;
@@ -477,13 +498,18 @@ static void M45CW(uint32 A, uint8 V) {
 			NV &= 0;	// hack ;( don't know exactly how it should be
 		NV |= EXPREGS[0] | ((EXPREGS[2] & 0xF0) << 4);
 		setchr1(A, NV);
-	}
+	} else
+//		setchr8(0);		// i don't know what cart need this, but a new one need other lol
+		setchr1(A, V);
 }
 
 static void M45PW(uint32 A, uint8 V) {
-	V &= (EXPREGS[3] & 0x3F) ^ 0x3F;
-	V |= EXPREGS[1];
-	setprg8(A, V);
+	uint32 MV = V & ((EXPREGS[3] & 0x3F) ^ 0x3F);
+	MV |= EXPREGS[1];
+	if(UNIFchrrama)
+		MV |= ((EXPREGS[2] & 0x40) << 2);
+	setprg8(A, MV);
+//	FCEU_printf("1:%02x 2:%02x 3:%02x A=%04x V=%03x\n",EXPREGS[1],EXPREGS[2],EXPREGS[3],A,MV);
 }
 
 static DECLFW(M45Write) {
@@ -513,7 +539,6 @@ static void M45Reset(void) {
 }
 
 static void M45Power(void) {
-	setchr8(0);
 	GenMMC3Power();
 	EXPREGS[0] = EXPREGS[1] = EXPREGS[2] = EXPREGS[3] = EXPREGS[4] = EXPREGS[5] = 0;
 	SetWriteHandler(0x5000, 0x7FFF, M45Write);
@@ -820,6 +845,7 @@ void Mapper119_Init(CartInfo *info) {
 	CHRRAMSIZE = 8192;
 	CHRRAM = (uint8*)FCEU_gmalloc(CHRRAMSIZE);
 	SetupCartCHRMapping(0x10, CHRRAM, CHRRAMSIZE, 1);
+	AddExState(CHRRAM, CHRRAMSIZE, 0, "CHRR");
 }
 
 // ---------------------------- Mapper 134 ------------------------------
@@ -1017,8 +1043,8 @@ static DECLFW(Mapper196Write) {
 }
 
 static DECLFW(Mapper196WriteLo) {
-	EXPREGS[0] = 1;
-	EXPREGS[1] = (V & 0xf) | (V >> 4);
+	EXPREGS[0] = 1;						// hacky
+	EXPREGS[1] = (V & 0xf) | (V >> 4);	// this is the same as 189 mapper, but with addr permutations
 	FixMMC3PRG(MMC3_cmd);
 }
 
@@ -1321,6 +1347,7 @@ void TQROM_Init(CartInfo *info) {
 	CHRRAMSIZE = 8192;
 	CHRRAM = (uint8*)FCEU_gmalloc(CHRRAMSIZE);
 	SetupCartCHRMapping(0x10, CHRRAM, CHRRAMSIZE, 1);
+	AddExState(CHRRAM, CHRRAMSIZE, 0, "CHRR");
 }
 
 void HKROM_Init(CartInfo *info) {

@@ -80,6 +80,7 @@ static void LH53Power(void) {
 	SetWriteHandler(0xB800, 0xD7FF, LH53RamWrite);
 	SetWriteHandler(0xE000, 0xEFFF, LH53IRQaWrite);
 	SetWriteHandler(0xF000, 0xFFFF, LH53Write);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void LH53Close(void) {

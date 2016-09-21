@@ -46,16 +46,20 @@ static uint8 TriMode=0;
 
 static int32 tristep=0;
 
-static int32 wlcount[4]={0,0,0,0};	/* Wave length counters.	*/
+static int32 wlcount[4]={0,0,0,0};	// Wave length counters.
 
-static uint8 IRQFrameMode=0;	/* $4017 / xx000000 */
-/*static*/ uint8 PSG[0x10];
-static uint8 RawDALatch=0;	/* $4011 0xxxxxxx */
-/*static*/ uint8 InitialRawDALatch=0; // used only for lua
+// APU registers:
+uint8 PSG[0x10];			// $4000-$400F / Channels 1-4
+uint8 DMCFormat=0;			// $4010 / Play mode and frequency
+uint8 RawDALatch=0;			// $4011 / 7-bit DAC / 0xxxxxxx
+uint8 DMCAddressLatch=0;	// $4012 / Start of DMC waveform is at address $C000 + $40*$xx
+uint8 DMCSizeLatch=0;		// $4013 / Length of DMC waveform is $10*$xx + 1 bytes (128*$xx + 8 samples)
+uint8 EnabledChannels=0;	// $4015 / Sound channels enable and status
+uint8 IRQFrameMode=0;		// $4017 / Frame counter control / xx000000
 
-uint8 EnabledChannels=0;		/* Byte written to $4015 */
-
-/*static*/ ENVUNIT EnvUnits[3];
+uint8 InitialRawDALatch=0; // used only for lua
+bool DMC_7bit = 0; // used to skip overclocking
+ENVUNIT EnvUnits[3];
 
 static const int RectDuties[4]={1,2,4,6};
 
@@ -87,19 +91,18 @@ static const uint8 lengthtable[0x20]=
 };
 
 
-static const uint32 NoiseFreqTableNTSC[0x10] =
+extern const uint32 NoiseFreqTableNTSC[0x10] =
 {
 	4, 8, 16, 32, 64, 96, 128, 160, 202,
 	254, 380, 508, 762, 1016, 2034, 4068
 };
 
-static const uint32 NoiseFreqTablePAL[0x10] =
+extern const uint32 NoiseFreqTablePAL[0x10] =
 {
 	4, 7, 14, 30, 60, 88, 118, 148, 188,
 	236, 354, 472, 708,  944, 1890, 3778
 };
 
-const uint32 *NoiseFreqTable = NoiseFreqTableNTSC; // for lua only
 
 static const uint32 NTSCDMCTable[0x10]=
 {
@@ -119,17 +122,9 @@ static const uint32 PALDMCTable[0x10]=
 	176, 148, 132, 118,  98,  78,  66,  50
 };
 
-// $4010        -        Frequency
-// $4011        -        Actual data outputted
-// $4012        -        Address register: $c000 + V*64
-// $4013        -        Size register:  Size in bytes = (V+1)*64
-
 /*static*/ int32 DMCacc=1;
 /*static*/ int32 DMCPeriod=0;
 /*static*/ uint8 DMCBitCount=0;
-
-/*static*/ uint8 DMCAddressLatch=0,DMCSizeLatch=0; /* writes to 4012 and 4013 */
-/*static*/ uint8 DMCFormat=0;	/* Write to $4010 */
 
 static uint32 DMCAddress=0;
 static int32 DMCSize=0;
@@ -231,130 +226,150 @@ static void SQReload(int x, uint8 V)
 
 static DECLFW(Write_PSG)
 {
- A&=0x1F;
- switch(A)
- {
-  case 0x0:DoSQ1();
-	   EnvUnits[0].Mode=(V&0x30)>>4;
-	   EnvUnits[0].Speed=(V&0xF);
-           break;
-  case 0x1:
-           sweepon[0]=V&0x80;
-           break;
-  case 0x2:
-           DoSQ1();
-           curfreq[0]&=0xFF00;
-           curfreq[0]|=V;
-           break;
-  case 0x3:
-           SQReload(0,V);
-           break;
-  case 0x4:
-	   DoSQ2();
-           EnvUnits[1].Mode=(V&0x30)>>4;
-           EnvUnits[1].Speed=(V&0xF);
-	   break;
-  case 0x5:
-          sweepon[1]=V&0x80;
-          break;
-  case 0x6:DoSQ2();
-          curfreq[1]&=0xFF00;
-          curfreq[1]|=V;
-          break;
-  case 0x7:
-          SQReload(1,V);
-          break;
-  case 0xa:DoTriangle();
-	   break;
-  case 0xb:
-          DoTriangle();
-	  if(EnabledChannels&0x4)
-           lengthcount[2]=lengthtable[(V>>3)&0x1f];
-	  TriMode=1;	// Load mode
-          break;
-  case 0xC:DoNoise();
-           EnvUnits[2].Mode=(V&0x30)>>4;
-           EnvUnits[2].Speed=(V&0xF);
-           break;
-  case 0xE:DoNoise();
-           break;
-  case 0xF:
-	   DoNoise();
-           if(EnabledChannels&0x8)
-	    lengthcount[3]=lengthtable[(V>>3)&0x1f];
-	   EnvUnits[2].reloaddec=1;
-           break;
- case 0x10:DoPCM();
-	   LoadDMCPeriod(V&0xF);
-
-	   if(SIRQStat&0x80)
-	   {
-	    if(!(V&0x80))
-	    {
-	     X6502_IRQEnd(FCEU_IQDPCM);
- 	     SIRQStat&=~0x80;
-	    }
-            else X6502_IRQBegin(FCEU_IQDPCM);
-	   }
-	   break;
- }
- PSG[A]=V;
+	A&=0x1F;
+	switch(A)
+	{
+	case 0x0:
+		DoSQ1();
+		EnvUnits[0].Mode=(V&0x30)>>4;
+		EnvUnits[0].Speed=(V&0xF);
+		if (swapDuty)
+			V = (V&0x3F)|((V&0x80)>>1)|((V&0x40)<<1);
+		break;
+	case 0x1:
+		sweepon[0]=V&0x80;
+		break;
+	case 0x2:
+		DoSQ1();
+		curfreq[0]&=0xFF00;
+		curfreq[0]|=V;
+		break;
+	case 0x3:
+		SQReload(0,V);
+		break;
+	case 0x4:
+		DoSQ2();
+		EnvUnits[1].Mode=(V&0x30)>>4;
+		EnvUnits[1].Speed=(V&0xF);
+		if (swapDuty)
+			V = (V&0x3F)|((V&0x80)>>1)|((V&0x40)<<1);
+		break;
+	case 0x5:
+		sweepon[1]=V&0x80;
+		break;
+	case 0x6:
+		DoSQ2();
+		curfreq[1]&=0xFF00;
+		curfreq[1]|=V;
+		break;
+	case 0x7:
+		SQReload(1,V);
+		break;
+	case 0xa:
+		DoTriangle();
+		break;
+	case 0xb:
+		DoTriangle();
+		if(EnabledChannels&0x4)
+			lengthcount[2]=lengthtable[(V>>3)&0x1f];
+		TriMode=1;	// Load mode
+		break;
+	case 0xC:
+		DoNoise();
+		EnvUnits[2].Mode=(V&0x30)>>4;
+		EnvUnits[2].Speed=(V&0xF);
+		break;
+	case 0xE:
+		DoNoise();
+		break;
+	case 0xF:
+		DoNoise();
+		if(EnabledChannels&0x8)
+			lengthcount[3]=lengthtable[(V>>3)&0x1f];
+		EnvUnits[2].reloaddec=1;
+		break;
+	case 0x10:
+		DoPCM();
+		LoadDMCPeriod(V&0xF);
+		if(SIRQStat&0x80)
+		{
+			if(!(V&0x80))
+			{
+				X6502_IRQEnd(FCEU_IQDPCM);
+				SIRQStat&=~0x80;
+			}
+			else X6502_IRQBegin(FCEU_IQDPCM);
+		}
+		break;
+	}
+	PSG[A]=V;
 }
 
 static DECLFW(Write_DMCRegs)
 {
- A&=0xF;
-
- switch(A)
- {
-  case 0x00:DoPCM();
-            LoadDMCPeriod(V&0xF);
-
-            if(SIRQStat&0x80)
-            {
-             if(!(V&0x80))
-             {
-              X6502_IRQEnd(FCEU_IQDPCM);
-              SIRQStat&=~0x80;
-             }
-             else X6502_IRQBegin(FCEU_IQDPCM);
-            }
-	    DMCFormat=V;
-	    break;
-  case 0x01:DoPCM();
-	    InitialRawDALatch=V&0x7F;
-	    RawDALatch=InitialRawDALatch;
-	    break;
-  case 0x02:DMCAddressLatch=V;break;
-  case 0x03:DMCSizeLatch=V;break;
- }
-
-
+	A&=0xF;
+	
+	switch(A)
+	{
+	case 0x00:
+		DoPCM();
+	    LoadDMCPeriod(V&0xF);
+	
+	    if(SIRQStat&0x80)
+	    {
+			if(!(V&0x80))
+			{
+				X6502_IRQEnd(FCEU_IQDPCM);
+				SIRQStat&=~0x80;
+			}
+			else X6502_IRQBegin(FCEU_IQDPCM);
+	    }
+		DMCFormat=V;
+		break;
+	case 0x01:
+		DoPCM();
+		InitialRawDALatch=V&0x7F;
+		RawDALatch=InitialRawDALatch;
+		if (RawDALatch)
+			DMC_7bit = 1;
+		break;
+	case 0x02:
+		DMCAddressLatch=V;
+		if (V)
+			DMC_7bit = 0;
+		break;
+	case 0x03:
+		DMCSizeLatch=V;
+		if (V)
+			DMC_7bit = 0;
+		break;
+	}
 }
 
 static DECLFW(StatusWrite)
 {
 	int x;
 
-        DoSQ1();
-        DoSQ2();
-        DoTriangle();
-        DoNoise();
-        DoPCM();
-        for(x=0;x<4;x++)
-         if(!(V&(1<<x))) lengthcount[x]=0;   /* Force length counters to 0. */
+    DoSQ1();
+    DoSQ2();
+    DoTriangle();
+    DoNoise();
+    DoPCM();
 
-        if(V&0x10)
-        {
-         if(!DMCSize)
-          PrepDPCM();
-        }
+    for(x=0;x<4;x++)
+		if(!(V&(1<<x))) lengthcount[x]=0;   /* Force length counters to 0. */
+
+    if(V&0x10)
+    {
+		if(!DMCSize)
+			PrepDPCM();
+    }
 	else
 	{
-	 DMCSize=0;
+		DMCSize=0;
 	}
 	SIRQStat&=~0x80;
-        X6502_IRQEnd(FCEU_IQDPCM);
+	X6502_IRQEnd(FCEU_IQDPCM);
 	EnabledChannels=V&0x1F;
 }
 
@@ -544,7 +559,7 @@ static INLINE void DMCDMA(void)
 
 void FCEU_SoundCPUHook(int cycles)
 {
-fhcnt-=cycles*48;
+ fhcnt-=cycles*48;
  if(fhcnt<=0)
  {
   FrameSoundUpdate();
@@ -1037,7 +1052,7 @@ int FlushEmulateSound(void)
   int x;
   int32 end,left;
 
-  if(!timestamp) return(0);
+  if(!soundtimestamp) return(0);
 
   if(!FSettings.SndRate)
   {
@@ -1058,7 +1073,7 @@ int FlushEmulateSound(void)
 
    if(GameExpSound.HiFill) GameExpSound.HiFill();
 
-   for(x=timestamp;x;x--)
+   for(x=soundtimestamp;x;x--)
    {
     uint32 b=*tmpo;
     *tmpo=(b&65535)+wlookup2[(b>>16)&255]+wlookup1[b>>24];

@@ -68,7 +68,7 @@ void FCEUI_NTSCSELTINT(void);
 void FCEUI_NTSCDEC(void);
 void FCEUI_NTSCINC(void);
 void FCEUI_GetNTSCTH(int *tint, int *hue);
-void FCEUI_SetNTSCTH(int n, int tint, int hue);
+void FCEUI_SetNTSCTH(bool en, int tint, int hue);
 
 void FCEUI_SetInput(int port, ESI type, void *ptr, int attrib);
 void FCEUI_SetInputFC(ESIFC type, void *ptr, int attrib);
@@ -120,6 +120,10 @@ void FCEUI_SetGameGenie(bool a);
 //Set video system a=0 NTSC, a=1 PAL
 void FCEUI_SetVidSystem(int a);
 
+//Set variables for NTSC(0) / PAL(1) / Dendy(2)
+//Dendy has PAL framerate and resolution, but ~NTSC timings, and has 50 dummy scanlines to force 50 fps
+void FCEUI_SetRegion(int region);
+
 //Convenience function; returns currently emulated video system(0=NTSC, 1=PAL).
 int FCEUI_GetCurrentVidSystem(int *slstart, int *slend);
 
@@ -137,9 +141,7 @@ void FCEUI_SetRenderedLines(int ntscf, int ntscl, int palf, int pall);
 //Sets the base directory(save states, snapshots, etc. are saved in directories below this directory.
 void FCEUI_SetBaseDirectory(std::string const & dir);
 
-//Tells FCE Ultra to copy the palette data pointed to by pal and use it.
-//Data pointed to by pal needs to be 64*3 bytes in length.
-void FCEUI_SetPaletteArray(uint8 *pal);
+void FCEUI_SetUserPalette(uint8 *pal, int nEntries);
 
 //Sets up sound code to render sound at the specified rate, in samples
 //per second.  Only sample rates of 44100, 48000, and 96000 are currently supported.

@@ -784,6 +784,16 @@ static void KeyboardCommands ()
 		movieSubtitles ? "n" : "ff");
 	}
 
+	if (_keyonly (Hotkeys[HK_VOLUME_DOWN]))
+	{
+		FCEUD_SoundVolumeAdjust(-1);
+	}
+
+	if (_keyonly (Hotkeys[HK_VOLUME_UP]))
+	{
+		FCEUD_SoundVolumeAdjust(1);
+	}
+
 	// VS Unisystem games
 	if (gametype == GIT_VSUNI)
 	{
@@ -1268,6 +1278,7 @@ void FCEUD_UpdateInput ()
 		switch (CurInputType[x])
 		{
 			case SI_GAMEPAD:
+			case SI_SNES:
 				t |= 1;
 				break;
 			case SI_ARKANOID:
@@ -1279,6 +1290,10 @@ void FCEUD_UpdateInput ()
 			case SI_POWERPADA:
 			case SI_POWERPADB:
 				powerpadbuf[x] = UpdatePPadData (x);
+				break;
+			case SI_MOUSE:
+			case SI_SNES_MOUSE:
+				t |= 2;
 				break;
 		}
 	}
@@ -1376,6 +1391,7 @@ void InitInputInterface ()
 				InputDPtr = &powerpadbuf[x];
 				break;
 			case SI_GAMEPAD:
+			case SI_SNES:
 				InputDPtr = &JSreturn;
 				break;
 			case SI_ARKANOID:
@@ -1386,6 +1402,11 @@ void InitInputInterface ()
 				InputDPtr = MouseData;
 				t |= 1;
 				attrib = 1;
+				break;
+			case SI_MOUSE:
+			case SI_SNES_MOUSE:
+				InputDPtr = MouseData;
+				t |= 1;
 				break;
 		}
 		FCEUI_SetInput (x, (ESI) CurInputType[x], InputDPtr, attrib);
