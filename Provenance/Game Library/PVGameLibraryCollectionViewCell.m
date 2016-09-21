@@ -14,6 +14,7 @@
 #import "PVGame.h"
 #import "PVMediaCache.h"
 #import "PVAppConstants.h"
+#import "PVEmulatorConfiguration.h"
 
 CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     CGFloat width = originalSize.width;
@@ -115,10 +116,12 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     NSString *originalArtworkURL = [game originalArtworkURL];
     
     [_titleLabel setText:[game title]];
+    
+    NSString *placeholderImageText = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:game.systemIdentifier];
 
     if ([artworkURL isEqualToString:@""] &&
         [originalArtworkURL isEqualToString:@""]) {
-        self.imageView.image = [self imageWithText:[game placeholderImageName]];
+        self.imageView.image = [self imageWithText:placeholderImageText];
     } else {
         NSString *key = [artworkURL length] ? artworkURL : nil;
         
@@ -130,7 +133,7 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
             self.operation = [[PVMediaCache shareInstance] imageForKey:key
                                                             completion:^(UIImage *image) {
                                                                 
-                                                                UIImage *artwork = image ?: [self imageWithText:[game placeholderImageName]];
+                                                                UIImage *artwork = image ?: [self imageWithText:placeholderImageText];
                                                                 
                                                                 self.imageView.image = artwork;
                                                                 [self setNeedsLayout];

@@ -21,6 +21,4 @@
 @property BOOL requiresSync;
 @property NSString *systemIdentifier;
 
-- (NSString *)placeholderImageName;
-
 @end
