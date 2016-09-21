@@ -190,6 +190,8 @@
 	#include <strings.h>
 #endif
 
+#include "snes9x.h"
+
 #ifdef __WIN32__
 
 	#include <winsock.h>
@@ -219,7 +221,6 @@
 
 #endif // !__WIN32__
 
-#include "snes9x.h"
 #include "memmap.h"
 #include "snapshot.h"
 #include "netplay.h"

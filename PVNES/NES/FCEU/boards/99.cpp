@@ -51,6 +51,7 @@ static void M99Power(void) {
 	SetWriteHandler(0x4016, 0x4016, M99Write);
 	SetReadHandler(0x6000, 0xFFFF, CartBR);
 	SetWriteHandler(0x6000, 0x7FFF, CartBW);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M99Close(void)
