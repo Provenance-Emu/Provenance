@@ -47,7 +47,8 @@ NSString * const kFPSCountKey = @"kFPSCountKey";
                                                                   kButtonVibrationKey : @(YES),
                                                                   kShowRecentGamesKey : @YES,
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
-                                                                  kVolumeSettingKey : @(1.0)}];
+                                                                  kVolumeSettingKey : @(1.0),
+																  kFPSCountKey : @(NO)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];

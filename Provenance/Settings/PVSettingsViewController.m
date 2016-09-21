@@ -33,6 +33,7 @@
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
+	[self.fpsCountSwitch setOn:[settings showFPSCount]];
     [self.recentGamesSwitch setOn:[settings showRecentGames]];
     [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
