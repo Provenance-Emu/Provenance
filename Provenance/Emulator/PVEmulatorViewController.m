@@ -30,8 +30,8 @@
 
 @property (nonatomic, strong) UIButton *menuButton;
 
-@property (nonatomic) NSTimer *fpsTimer;
-@property (nonatomic) UILabel *fpsLabel;
+@property (nonatomic, assign) NSTimer *fpsTimer;
+@property (nonatomic, strong) UILabel *fpsLabel;
 
 @property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
@@ -92,8 +92,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.glViewController = nil;
 	self.controllerViewController = nil;
 	self.menuButton = nil;
-    
-    [self.fpsTimer invalidate];
+
     self.fpsTimer = nil;
 
 #if !TARGET_OS_TV
@@ -214,11 +213,12 @@ void uncaughtExceptionHandler(NSException *exception)
         
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
             // Block-based NSTimer method is only available on iOS 10 and later
+			__weak typeof(self) weakSelf = self;
             _fpsTimer = [NSTimer timerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
 #if DEBUG
                 NSLog(@"FPS: %li", _glViewController.framesPerSecond);
 #endif
-                _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
+                _fpsLabel.text = [NSNumber numberWithInteger:weakSelf.glViewController.framesPerSecond].stringValue;
             }];
 			[[NSRunLoop currentRunLoop] addTimer:_fpsTimer forMode:NSDefaultRunLoopMode];
             [_fpsTimer fire];
@@ -742,6 +742,8 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.emulatorCore autoSaveState];
     }
 
+	[self.fpsTimer invalidate];
+	self.fpsTimer = nil;
     [self.gameAudio stopAudio];
     [self.emulatorCore stopEmulation];
 #if !TARGET_OS_TV
