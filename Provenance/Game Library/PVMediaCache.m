@@ -129,7 +129,7 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
     
     UIImage *newImage = [image scaledImageWithMaxResolution:PVThumbnailMaxResolution];
     
-	NSData *imageData = UIImageJPEGRepresentation(newImage, PVThumbnailQuality);
+    NSData *imageData = UIImagePNGRepresentation(newImage);
 	
 	return [self writeDataToDisk:imageData withKey:key];
 }

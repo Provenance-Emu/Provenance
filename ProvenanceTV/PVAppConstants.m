@@ -21,5 +21,3 @@ NSString *const PVAppURLKey = @"provenance";
 #else
     float const PVThumbnailMaxResolution = 200.0;
 #endif
-
-float const PVThumbnailQuality = 0.7;

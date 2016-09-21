@@ -1603,7 +1603,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	
 	if (image)
 	{
-		NSData *imageData = UIImageJPEGRepresentation(image, PVThumbnailQuality);
+        NSData *imageData = UIImagePNGRepresentation(image);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
         [self.realm beginWriteTransaction];
