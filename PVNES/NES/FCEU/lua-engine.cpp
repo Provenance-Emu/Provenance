@@ -23,10 +23,12 @@
 #include "x6502.h"
 #include "utils/xstring.h"
 #include "utils/memory.h"
+#include "utils/crc32.h"
 #include "fceulua.h"
 
 #ifdef WIN32
 #include "drivers/win/common.h"
+#include "drivers/win/main.h"
 #include "drivers/win/taseditor/selection.h"
 #include "drivers/win/taseditor/laglog.h"
 #include "drivers/win/taseditor/markers.h"
@@ -119,6 +121,7 @@ extern void AddRecentLuaFile(const char *filename);
 #endif
 
 extern bool turbo;
+extern int32 fps_scale;
 
 struct LuaSaveState {
 	std::string filename;
@@ -273,8 +276,14 @@ static void FCEU_LuaOnStop()
 	gui_used = GUI_CLEAR;
 	//if (wasPaused && !FCEUI_EmulationPaused())
 	//	FCEUI_ToggleEmulationPause();
-	FCEUD_SetEmulationSpeed(EMUSPEED_NORMAL);		//TODO: Ideally lua returns the speed to the speed the user set before running the script
+
+	//zero 21-nov-2014 - this variable doesnt exist outside windows so it cant have this feature
+	#ifdef _MSC_VER
+	if (fps_scale != 256)							//thanks, we already know it's on normal speed
+		FCEUD_SetEmulationSpeed(EMUSPEED_NORMAL);	//TODO: Ideally lua returns the speed to the speed the user set before running the script
 													//rather than returning it to normal, and turbo off.  Perhaps some flags and a FCEUD_GetEmulationSpeed function
+	#endif
+
 	turbo = false;
 	//FCEUD_TurboOff();
 #ifdef WIN32
@@ -454,7 +463,44 @@ static int emu_message(lua_State *L) {
 	FCEU_DispMessage("%s",0, msg);
 
 	return 0;
+}
 
+// emu.getdir()
+//
+//  Returns the path of fceux.exe as a string.
+static int emu_getdir(lua_State *L) {
+#ifdef WIN32
+	TCHAR fullPath[2048];
+	TCHAR driveLetter[3];
+	TCHAR directory[2048];
+	TCHAR finalPath[2048];
+
+	GetModuleFileName(NULL, fullPath, 2048);
+	_splitpath(fullPath, driveLetter, directory, NULL, NULL);
+	snprintf(finalPath, sizeof(finalPath), "%s%s", driveLetter, directory);
+	lua_pushstring(L, finalPath);
+
+	return 1;
+#endif
+}
+
+// emu.loadrom(string filename)
+//
+//  Loads the rom from the directory relative to the lua script or from the absolute path.
+//  If the rom can't e loaded, loads the most recent one.
+static int emu_loadrom(lua_State *L) {
+#ifdef WIN32
+	const char *nameo2 = luaL_checkstring(L,1);
+	char nameo[2048];
+	strncpy(nameo, nameo2, sizeof(nameo));
+	if (!ALoad(nameo)) {
+		extern void LoadRecentRom(int slot);
+		LoadRecentRom(0);
+		return 0;
+	} else {
+		return 1;
+	}
+#endif
 }
 
 
@@ -1251,6 +1297,19 @@ static int rom_readbytesigned(lua_State *L) {
 	return 1;
 }
 
+// doesn't keep backups to allow maximum speed (for automatic rom corruptors and stuff)
+// keeping them might be an option though, just need to use memview's ApplyPatch()
+// that'd also highlight the edits in hex editor
+static int rom_writebyte(lua_State *L) 
+{
+	uint32 address = luaL_checkinteger(L,1);
+	if (address < 16)
+		luaL_error(L,"rom.writebyte() can't edit the ROM header.");
+	else
+		FCEU_WriteRomByte(address, luaL_checkinteger(L,2));
+	return 1;
+}
+
 static int rom_gethash(lua_State *L) {
 	const char *type = luaL_checkstring(L, 1);
 	if(!type) lua_pushstring(L, "");
@@ -1581,6 +1640,17 @@ static int print(lua_State *L)
 
 	//worry(L, 100);
 	return 0;
+}
+
+// gethash()
+//
+//  Returns the crc32 hashsum of an arbitrary buffer
+static int gethash(lua_State *L) {
+	uint8 *buffer = (uint8 *)luaL_checkstring(L, 1);
+	int size = luaL_checkinteger(L,2);
+	int hash = CalcCRC32(0, buffer, size);
+	lua_pushinteger(L, hash);
+	return 1;
 }
 
 // provides an easy way to copy a table from Lua
@@ -3579,8 +3649,8 @@ static int gui_gdscreenshot(lua_State *L) {
 	*ptr++ = (65534     ) & 0xFF;
 	*ptr++ = (width >> 8) & 0xFF;
 	*ptr++ = (width     ) & 0xFF;
-	*ptr++ = (height >> 8) & 0xFF;
-	*ptr++ = (height     ) & 0xFF;
+	*ptr++ = (height>> 8) & 0xFF;
+	*ptr++ = (height    ) & 0xFF;
 	*ptr++ = 1;
 	*ptr++ = 255;
 	*ptr++ = 255;
@@ -4034,13 +4104,17 @@ void LuaDrawTextTransWH(const char *str, size_t l, int &x, int y, uint32 color, 
 					gui_drawpixel_internal(x+x2, y+y2, backcolor);
 			}
 		}
-		/*
-		// shadows :P
-		if (diffy >= 7) for(int x2 = 0; x2 < wid; x2++)
-			gui_drawpixel_internal(x+x2, y+7, LUA_BUILD_PIXEL(defaultAlpha, 0, 0, 0));
-		if (*str == '\0' || *str == '\n') for(int y2 = 0; y2 < diffy; y2++)
-			gui_drawpixel_internal(x+wid, y+y2, LUA_BUILD_PIXEL(defaultAlpha, 0, 0, 0));
-		*/
+		
+		// halo
+		if(diffy >= 7)
+			for(int x2 = -1; x2 < wid; x2++)
+			{
+				gui_drawpixel_internal(x+x2, y-1, backcolor);
+				gui_drawpixel_internal(x+x2, y+7, backcolor);
+			}
+		if(x == origX)
+			for(int y2 = 0; y2 < diffy; y2++)
+				gui_drawpixel_internal(x-1, y+y2, backcolor);
 
 		x += wid;
 		len--;
@@ -4268,7 +4342,8 @@ static int sound_get(lua_State *L)
 	extern uint8 PSG[0x10];
 	extern int32 lengthcount[4];
 	extern uint8 TriCount;
-	extern const uint32 *NoiseFreqTable;
+	extern const uint32 NoiseFreqTableNTSC[0x10];
+	extern const uint32 NoiseFreqTablePAL[0x10];
 	extern int32 DMCPeriod;
 	extern uint8 DMCAddressLatch, DMCSizeLatch;
 	extern uint8 DMCFormat;
@@ -4277,6 +4352,7 @@ static int sound_get(lua_State *L)
 
 	int freqReg;
 	double freq;
+	bool shortMode;
 
 	lua_newtable(L);
 
@@ -4301,7 +4377,7 @@ static int sound_get(lua_State *L)
 	else
 		lua_pushnumber(L, nesVolumes[0]);
 	lua_setfield(L, -2, "volume");
-	freq = (39375000.0/352.0) / (curfreq[0] + 1);
+	freq = ((PAL?PAL_CPU:NTSC_CPU)/16.0) / (curfreq[0] + 1);
 	lua_pushnumber(L, freq);
 	lua_setfield(L, -2, "frequency");
 	lua_pushnumber(L, (log(freq / 440.0) * 12 / log(2.0)) + 69);
@@ -4322,7 +4398,7 @@ static int sound_get(lua_State *L)
 	else
 		lua_pushnumber(L, nesVolumes[1]);
 	lua_setfield(L, -2, "volume");
-	freq = (39375000.0/352.0) / (curfreq[1] + 1);
+	freq = ((PAL?PAL_CPU:NTSC_CPU)/16.0) / (curfreq[1] + 1);
 	lua_pushnumber(L, freq);
 	lua_setfield(L, -2, "frequency");
 	lua_pushnumber(L, (log(freq / 440.0) * 12 / log(2.0)) + 69);
@@ -4342,7 +4418,7 @@ static int sound_get(lua_State *L)
 		lua_pushnumber(L, 1.0);
 	lua_setfield(L, -2, "volume");
 	freqReg = PSG[0xa] | ((PSG[0xb] & 7) << 8);
-	freq = (39375000.0/704.0) / (freqReg + 1);
+	freq = ((PAL?PAL_CPU:NTSC_CPU)/32.0) / (freqReg + 1);
 	lua_pushnumber(L, freq);
 	lua_setfield(L, -2, "frequency");
 	lua_pushnumber(L, (log(freq / 440.0) * 12 / log(2.0)) + 69);
@@ -4360,9 +4436,12 @@ static int sound_get(lua_State *L)
 		lua_pushnumber(L, nesVolumes[2]);
 	lua_setfield(L, -2, "volume");
 	freqReg = PSG[0xE] & 0xF;
-	lua_pushboolean(L, (PSG[0xE] & 0x80) != 0);
+	shortMode = ((PSG[0xE] & 0x80) != 0);
+	lua_pushboolean(L, shortMode);
 	lua_setfield(L, -2, "short");
-	freq = (39375000.0/44.0) / NoiseFreqTable[freqReg]; // probably wrong
+	freq = PAL? PAL_CPU/NoiseFreqTablePAL[freqReg] : NTSC_CPU/NoiseFreqTableNTSC[freqReg] ;  // rate
+	if(shortMode)
+		freq /= 93.0;  // pitch
 	lua_pushnumber(L, freq);
 	lua_setfield(L, -2, "frequency");
 	lua_pushnumber(L, (log(freq / 440.0) * 12 / log(2.0)) + 69);
@@ -4379,7 +4458,7 @@ static int sound_get(lua_State *L)
 	else
 		lua_pushnumber(L, 1.0);
 	lua_setfield(L, -2, "volume");
-	freq = (39375000.0/2.0) / DMCPeriod;
+	freq = (PAL?PAL_CPU:NTSC_CPU) / DMCPeriod;  // rate
 	lua_pushnumber(L, freq);
 	lua_setfield(L, -2, "frequency");
 	lua_pushnumber(L, (log(freq / 440.0) * 12 / log(2.0)) + 69);
@@ -5355,6 +5434,8 @@ static const struct luaL_reg emulib [] = {
 	{"getscreenpixel", emu_getscreenpixel},
 	{"readonly", movie_getreadonly},
 	{"setreadonly", movie_setreadonly},
+    {"getdir", emu_getdir},
+    {"loadrom", emu_loadrom},
 	{"print", print}, // sure, why not
 	{NULL,NULL}
 };
@@ -5364,7 +5445,7 @@ static const struct luaL_reg romlib [] = {
 	{"readbytesigned", rom_readbytesigned},
 	// alternate naming scheme for unsigned
 	{"readbyteunsigned", rom_readbyte},
-
+	{"writebyte", rom_writebyte},
 	{"gethash", rom_gethash},
 	{NULL,NULL}
 };
@@ -5607,7 +5688,10 @@ void FCEU_LuaFrameBoundary()
 
 	} else {
 		FCEU_LuaOnStop();
-		FCEU_DispMessage("Script died of natural causes.\n",0);
+		//FCEU_DispMessage("Script died of natural causes.\n",0);
+		// weird sequence of functions calls the above message each time the script starts or stops,
+		// then this message is overrided by "emu speed" within the same frame, which hides this bug
+		// uncomment onse solution is found
 	}
 
 	// Past here, the nes actually runs, so any Lua code is called mid-frame. We must
@@ -5689,6 +5773,7 @@ int FCEU_LoadLuaCode(const char *filename, const char *arg) {
 
 		// register a few utility functions outside of libraries (in the global namespace)
 		lua_register(L, "print", print);
+		lua_register(L, "gethash", gethash),
 		lua_register(L, "tostring", tostring);
 		lua_register(L, "tobitstring", tobitstring);
 		lua_register(L, "addressof", addressof);

@@ -26,6 +26,7 @@
 #include "../../fceu.h"
 #include "../../debug.h"
 #include "../../nsf.h"
+#include "../../ppu.h"
 #include "../../cart.h"
 #include "../../ines.h"
 #include "../../asm.h"
@@ -41,12 +42,10 @@
 
 #include "debuggersp.h"
 
-extern Name* lastBankNames;
-extern Name* loadedBankNames;
+extern Name* pageNames[32];
 extern Name* ramBankNames;
 extern bool ramBankNamesLoaded;
-extern int lastBank;
-extern int loadedBank;
+extern int pageNumbersLoaded[32];
 extern int myNumWPs;
 
 // ################################## End of SP CODE ###########################
@@ -111,7 +110,7 @@ void RestoreSize(HWND hwndDlg)
 {
 	//If the dialog dimensions are changed those changes need to be reflected here.  - adelikat
 	const int DEFAULT_WIDTH = 820;	//Original width
-	const int DEFAULT_HEIGHT = 560;	//Original height
+	const int DEFAULT_HEIGHT = 570;	//Original height
 	
 	SetWindowPos(hwndDlg,HWND_TOP,DbgPosX,DbgPosY,DEFAULT_WIDTH,DEFAULT_HEIGHT,SWP_SHOWWINDOW);
 }
@@ -525,8 +524,9 @@ void Disassemble(HWND hWnd, int id, int scrollid, unsigned int addr)
 			if (symbDebugEnabled)
 			{
 				replaceNames(ramBankNames, a, &disassembly_operands[i]);
-				replaceNames(loadedBankNames, a, &disassembly_operands[i]);
-				replaceNames(lastBankNames, a, &disassembly_operands[i]);
+				for(int p=0;p<ARRAY_SIZE(pageNames);p++)
+					if(pageNames[p] != NULL)
+						replaceNames(pageNames[p], a, &disassembly_operands[i]);
 			}
 
 			// special case: an RTS opcode
@@ -856,7 +856,7 @@ void UpdateDebugger(bool jump_to_pc)
 	sprintf(str, "%04X", (int)X.PC);
 	SetDlgItemText(hDebug, IDC_DEBUGGER_VAL_PC, str);
 
-	sprintf(str, "%04X", (int)RefreshAddr);
+	sprintf(str, "%04X", (int)FCEUPPU_PeekAddress());
 	SetDlgItemText(hDebug, IDC_DEBUGGER_VAL_PPU, str);
 	sprintf(str, "%02X", PPU[3]);
 	SetDlgItemText(hDebug, IDC_DEBUGGER_VAL_SPR, str);
@@ -892,6 +892,13 @@ void UpdateDebugger(bool jump_to_pc)
 		sprintf(str, "%d", scanline);
 		sprintf(str2, "%d", ppupixel);
 	}
+
+	if(newppu)
+	{
+		sprintf(str,"%d",newppu_get_scanline());
+		sprintf(str2,"%d",newppu_get_dot());
+	}
+
 	SetDlgItemText(hDebug, IDC_DEBUGGER_VAL_SLINE, str);
 	SetDlgItemText(hDebug, IDC_DEBUGGER_VAL_PPUPIXEL, str2);
 
@@ -1614,6 +1621,7 @@ BOOL CALLBACK DebuggerCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 			CheckDlgButton(hwndDlg, DEBUGAUTOLOAD, debuggerAutoload ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg, IDC_DEBUGGER_ROM_OFFSETS, debuggerDisplayROMoffsets ? BST_CHECKED : BST_UNCHECKED);
 			CheckDlgButton(hwndDlg, IDC_DEBUGGER_ENABLE_SYMBOLIC, symbDebugEnabled ? BST_CHECKED : BST_UNCHECKED);
+			CheckDlgButton(hwndDlg, IDC_DEBUGGER_PREDEFINED_REGS, symbRegNames ? BST_CHECKED : BST_UNCHECKED);
 
 			if (DbgPosX==-32000) DbgPosX=0; //Just in case
 			if (DbgPosY==-32000) DbgPosY=0;
@@ -2083,7 +2091,15 @@ BOOL CALLBACK DebuggerCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 								//mbg merge 7/18/06 changed pausing check and set
 								if (FCEUI_EmulationPaused()) {
 									UpdateRegs(hwndDlg);
-									if (GetMem(tmp=X.PC) == 0x20) {
+									uint8 opcode = GetMem(tmp=X.PC);
+									bool jsr = opcode==0x20;
+									bool call = jsr;
+									#ifdef BRK_3BYTE_HACK
+									//with this hack, treat BRK similar to JSR
+									if(opcode == 0x00)
+										call = true;
+									#endif
+									if (call) {
 										if ((watchpoint[64].flags) && (MessageBox(hwndDlg,"Step Over is currently in process. Cancel it and setup a new Step Over watch?","Step Over Already Active",MB_YESNO|MB_ICONINFORMATION) != IDYES)) break;
 										watchpoint[64].address = (tmp+3);
 										watchpoint[64].flags = WP_E|WP_X;
@@ -2152,7 +2168,8 @@ BOOL CALLBACK DebuggerCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 							case IDC_DEBUGGER_RELOAD_SYMS:
 							{
 								ramBankNamesLoaded = false;
-								lastBank = loadedBank = -1;
+								for(int i=0;i<ARRAYSIZE(pageNumbersLoaded);i++)
+									pageNumbersLoaded[i] = -1;
 								loadNameFiles();
 								UpdateDebugger(false);
 								break;
@@ -2164,6 +2181,13 @@ BOOL CALLBACK DebuggerCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 							{
 								symbDebugEnabled ^= 1;
 								CheckDlgButton(hwndDlg, IDC_DEBUGGER_ENABLE_SYMBOLIC, symbDebugEnabled ? BST_CHECKED : BST_UNCHECKED);
+								UpdateDebugger(false);
+								break;
+							}
+							case IDC_DEBUGGER_PREDEFINED_REGS:
+							{
+								symbRegNames ^= 1;
+								CheckDlgButton(hwndDlg, IDC_DEBUGGER_PREDEFINED_REGS, symbRegNames ? BST_CHECKED : BST_UNCHECKED);
 								UpdateDebugger(false);
 								break;
 							}
@@ -2229,6 +2253,13 @@ BOOL CALLBACK DebuggerCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 }
 
 extern void iNESGI(GI h);
+
+void DoDebuggerStepInto()
+{
+	if (!hDebug)
+		return;
+	DebuggerCallB(hDebug, WM_COMMAND, IDC_DEBUGGER_STEP_IN, 0);
+}
 
 void DoPatcher(int address, HWND hParent)
 {
@@ -2307,7 +2338,9 @@ void DoDebug(uint8 halt)
 //-----------------------------------------
 DebugSystem* debugSystem;
 unsigned int debuggerFontSize = 15;
-unsigned int hexeditorFontSize = 15;
+unsigned int hexeditorFontHeight = 15;
+unsigned int hexeditorFontWidth = 7;
+char* hexeditorFontName = 0;
 
 DebugSystem::DebugSystem()
 {
@@ -2322,12 +2355,20 @@ void DebugSystem::init()
 		DEFAULT_QUALITY, DEFAULT_PITCH, /*quality, and pitch*/
 		"Courier New"); /*font name*/
 
-	hHexeditorFont = CreateFont(hexeditorFontSize, hexeditorFontSize / 2, /*Height,Width*/
+	//if the user provided his own courier font, use that
+	extern std::string BaseDirectory;
+	std::string courefon_path = BaseDirectory + "\\coure.fon";
+	AddFontResourceEx(courefon_path.c_str(), FR_PRIVATE, NULL);
+
+	char* hexfn = hexeditorFontName;
+	if(!hexfn) hexfn = "Courier";
+
+	hHexeditorFont = CreateFont(hexeditorFontHeight, hexeditorFontWidth, /*Height,Width*/
 		0,0, /*escapement,orientation*/
 		FW_REGULAR,FALSE,FALSE,FALSE, /*weight, italic, underline, strikeout*/
 		ANSI_CHARSET,OUT_DEVICE_PRECIS,CLIP_MASK, /*charset, precision, clipping*/
 		DEFAULT_QUALITY, DEFAULT_PITCH, /*quality, and pitch*/
-		"Courier"); /*font name*/
+		hexfn); /*font name*/
 
 	HDC hdc = GetDC(GetDesktopWindow());
 	HGDIOBJ old = SelectObject(hdc,hFixedFont);

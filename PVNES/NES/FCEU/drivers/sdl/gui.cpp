@@ -20,7 +20,9 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
+#ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
+#endif
 
 #ifdef _GTK3
 #include <gdk/gdkkeysyms-compat.h>
@@ -48,8 +50,10 @@ GtkWidget* evbox = NULL;
 GtkWidget* padNoCombo = NULL;
 GtkWidget* configNoCombo = NULL;
 GtkWidget* buttonMappings[10];
+GtkWidget* Menubar;
 GtkRadioAction* stateSlot = NULL;
 bool gtkIsStarted = false;
+bool menuTogglingEnabled;
 
 // check to see if a particular GTK version is available
 // 2.24 is required for most of the dialogs -- ie: checkGTKVersion(2,24);
@@ -77,23 +81,31 @@ bool checkGTKVersion(int major_required, int minor_required)
 	}
 }
 
+void setCheckbox(GtkWidget* w, const char* configName)
+{
+	int buf;
+	g_config->getOption(configName, &buf);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), buf);
+}
+
 // This function configures a single hotkey
 int configHotkey(char* hotkeyString)
 {
-	SDL_Surface *screen;
-	SDL_Event event;
-	KillVideo();
+	// This is broken right now
+	//SDL_Surface *screen;
+//	SDL_Event event;
+//	KillVideo();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	return 0; // TODO - SDL 2.0
 #else
-	screen = SDL_SetVideoMode(420, 200, 8, 0);
+	//screen = SDL_SetVideoMode(420, 200, 8, 0);
 	//SDL_WM_SetCaption("Press a key to bind...", 0);
-
+/*
 	int newkey = 0;
 	while(1)
 	{
 		SDL_WaitEvent(&event);
-	
+
 		switch (event.type)
 		{
 			case SDL_KEYDOWN:
@@ -105,7 +117,7 @@ int configHotkey(char* hotkeyString)
 		}
 	}	
 	
-	return 0;
+	return 0;*/
 #endif
 }
 // This function configures a single button on a gamepad
@@ -157,10 +169,13 @@ void resetVideo()
 	InitVideo(GameInfo);
 }
 
-void closeVideoWin(GtkWidget* w, GdkEvent* e, gpointer p)
+void closeVideoWin(GtkWidget* w, gint response, gpointer p)
 {
 	resetVideo();
-	gtk_widget_destroy(w);
+	if(response != GTK_RESPONSE_APPLY)
+	{
+		gtk_widget_destroy(w);
+	}
 }
 
 void closeDialog(GtkWidget* w, GdkEvent* e, gpointer p)
@@ -178,6 +193,21 @@ void toggleLowPass(GtkWidget* w, gpointer p)
 	{
 		g_config->setOption("SDL.Sound.LowPass", 0);
 		FCEUI_SetLowPass(0);
+	}
+	g_config->save();
+}
+
+void toggleSwapDuty(GtkWidget* w, gpointer p)
+{
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
+	{
+		g_config->setOption("SDL.SwapDuty", 1);
+		swapDuty = 1;
+	}
+	else
+	{
+		g_config->setOption("SDL.SwapDuty", 0);
+		swapDuty = 0;
 	}
 	g_config->save();
 }
@@ -303,15 +333,8 @@ void openPaletteConfig()
 	ntscColorChk = gtk_check_button_new_with_label("Use NTSC palette");
 	
 	g_signal_connect(ntscColorChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.NTSCpalette");
+	setCheckbox(ntscColorChk, "SDL.NTSCpalette");
 	
-	int b;
-	// sync with config
-	g_config->getOption("SDL.NTSCpalette", &b);
-	if(b)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ntscColorChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ntscColorChk), 0);
-
 	// color / tint / hue sliders
 	slidersFrame = gtk_frame_new("NTSC palette controls");
 	slidersVbox = gtk_vbox_new(FALSE, 2);
@@ -498,18 +521,17 @@ void openHotkeyConfig()
 	GtkTreeStore *hotkey_store = gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
 
 	std::string prefix = "SDL.Hotkeys.";
-    GtkTreeIter iter; // parent
-    GtkTreeIter iter2; // child
+    GtkTreeIter iter;
     
     gtk_tree_store_append(hotkey_store, &iter, NULL); // aquire iter
      
     int keycode;
     for(int i=0; i<HK_MAX; i++)
     {
-        const char* optionName = (prefix + HotkeyStrings[i]).c_str();
-        g_config->getOption(optionName, &keycode);
+        std::string optionName = prefix + HotkeyStrings[i];
+        g_config->getOption(optionName.c_str(), &keycode);
         gtk_tree_store_set(hotkey_store, &iter, 
-                COMMAND_COLUMN, optionName,
+                COMMAND_COLUMN, optionName.c_str(),
                 KEY_COLUMN,
 #if SDL_VERSION_ATLEAST(2, 0, 0)                                                    
 				SDL_GetKeyName(keycode),
@@ -631,7 +653,7 @@ void openGamepadConfig()
 	GtkWidget* vbox;
 	GtkWidget* hboxPadNo;
 	GtkWidget* padNoLabel;
-	GtkWidget* configNoLabel;
+	//GtkWidget* configNoLabel;
 	GtkWidget* fourScoreChk;
 	GtkWidget* oppositeDirChk;
 	GtkWidget* buttonFrame;
@@ -652,7 +674,7 @@ void openGamepadConfig()
 	
 	hboxPadNo = gtk_hbox_new(FALSE, 0);
 	padNoLabel = gtk_label_new("Port:");
-	configNoLabel = gtk_label_new("Config Number:");
+	//configNoLabel = gtk_label_new("Config Number:");
 	fourScoreChk = gtk_check_button_new_with_label("Enable Four Score");
 	oppositeDirChk = gtk_check_button_new_with_label("Allow Up+Down / Left+Right");
 	
@@ -686,21 +708,11 @@ void openGamepadConfig()
 	g_signal_connect(typeCombo, "changed", G_CALLBACK(setInputDevice), 
 		gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(typeCombo)));
 	
-	// sync with config
-	int buf = 0;
-	g_config->getOption("SDL.FourScore", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fourScoreChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(fourScoreChk), 0);
-	g_config->getOption("SDL.Input.EnableOppositeDirectionals", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(oppositeDirChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(oppositeDirChk), 0);
-	
+	setCheckbox(fourScoreChk, "SDL.FourScore");
 	g_signal_connect(fourScoreChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.FourScore");
+	setCheckbox(oppositeDirChk, "SDL.Input.EnableOppositeDirectionals");
 	g_signal_connect(oppositeDirChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.Input.EnableOppositeDirectionals");
+	
 	
 	gtk_box_pack_start(GTK_BOX(hboxPadNo), padNoLabel, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(hboxPadNo), padNoCombo, TRUE, TRUE, 5);
@@ -812,26 +824,51 @@ void resizeGtkWindow()
 
 void setScaler(GtkWidget* w, gpointer p)
 {
-	int x = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
-	g_config->setOption("SDL.SpecialFilter", x);
+	int scaler = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+	int opengl;
+	g_config->getOption("SDL.OpenGL", &opengl);
+	if(opengl && scaler)
+	{
+		FCEUD_PrintError("Scalers not supported in OpenGL mode.");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(w), 0);
+		return;
+	}
+
+	g_config->setOption("SDL.SpecialFilter", scaler);
 	
-	// 1 - hq2x 2 - Scale2x 3 - NTSC2x 4 - hq3x  5 - Scale3x
-	if (x >= 1 && x <= 3)
+	// 1=hq2x 2=Scale2x 3=NTSC2x 4=hq3x  5=Scale3x 6=Prescale2x 7=Prescale3x 8=Prescale4x 9=pal
+	switch(scaler)
 	{
-		g_config->setOption("SDL.XScale", 2.0);
-		g_config->setOption("SDL.YScale", 2.0);
-		resizeGtkWindow();
+		case 4:	// hq3x
+		case 5:	// scale3x
+		case 7:	// prescale3x
+			g_config->setOption("SDL.XScale", 3.0);
+			g_config->setOption("SDL.YScale", 3.0);
+			resizeGtkWindow();
+			break;
+		case 8: // prescale4x
+			g_config->setOption("SDL.XScale", 4.0);
+			g_config->setOption("SDL.YScale", 4.0);
+			break;
+		default:
+			g_config->setOption("SDL.XScale", 2.0);
+			g_config->setOption("SDL.YScale", 2.0);
+			resizeGtkWindow();
+			break;
 	}
-	if (x >= 4 && x < 6)
-	{
-		g_config->setOption("SDL.XScale", 3.0);
-		g_config->setOption("SDL.YScale", 3.0);
-		resizeGtkWindow();
-	}
+
+	g_config->save();
+}
+
+void setRegion(GtkWidget* w, gpointer p)
+{
+	int region = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+	g_config->setOption("SDL.PAL", region);
+	FCEUI_SetRegion(region);
+	
 	g_config->save();
 	
 }
-
 
 int setXscale(GtkWidget* w, gpointer p)
 {
@@ -854,6 +891,15 @@ int setYscale(GtkWidget* w, gpointer p)
 #ifdef OPENGL
 void setGl(GtkWidget* w, gpointer p)
 {
+	int scaler;
+	int opengl = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+	g_config->getOption("SDL.SpecialFilter", &scaler);
+	if(scaler && opengl)
+	{
+		FCEUD_PrintError("Scalers not supported in OpenGL mode.");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w), 0);
+		return;
+	}
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
 		g_config->setOption("SDL.OpenGL", 1);
 	else
@@ -882,7 +928,9 @@ void openVideoConfig()
 	GtkWidget* glChk;
 	GtkWidget* linearChk;
 	GtkWidget* dbChk;
-	GtkWidget* palChk;
+	GtkWidget* palHbox;
+	GtkWidget* palLbl;
+	GtkWidget* palCombo;
 	GtkWidget* ppuChk;
 	GtkWidget* spriteLimitChk;
 	GtkWidget* frameskipChk;
@@ -894,11 +942,12 @@ void openVideoConfig()
 	GtkWidget* xscaleHbox;
 	GtkWidget* yscaleHbox;
 	GtkWidget* showFpsChk;
-		
+	
 	win = gtk_dialog_new_with_buttons("Video Preferences",
 				GTK_WINDOW(MainWindow),
 				(GtkDialogFlags)(GTK_DIALOG_DESTROY_WITH_PARENT),
-				GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
+				GTK_STOCK_APPLY, GTK_RESPONSE_APPLY,
+				GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 	gtk_window_set_icon_name(GTK_WINDOW(win), "video-display");
 	//gtk_widget_set_size_request(win, 250, 250);
 	
@@ -917,6 +966,10 @@ void openVideoConfig()
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "NTSC 2x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "hq3x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "scale3x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "prescale2x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "prescale3x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "prescale4x");
+	//gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalerCombo), "pal");
 	
 	// sync with cfg
 	int buf;
@@ -930,102 +983,56 @@ void openVideoConfig()
 	// openGL check
 	glChk = gtk_check_button_new_with_label("Enable OpenGL");
 	g_signal_connect(glChk, "clicked", G_CALLBACK(setGl), NULL);
-	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.OpenGL", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(glChk), 0);
+	setCheckbox(glChk, "SDL.OpenGL");
 	
 	// openGL linear filter check
 	linearChk = gtk_check_button_new_with_label("Enable OpenGL linear filter");
 	g_signal_connect(linearChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.OpenGLip");
+	setCheckbox(linearChk, "SDL.OpenGLip");
 	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.OpenGLip", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(linearChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(linearChk), 0);
-  	
-    // DoubleBuffering check
+	// DoubleBuffering check
 	dbChk = gtk_check_button_new_with_label("Enable double buffering");
 	g_signal_connect(dbChk, "clicked", G_CALLBACK(setDoubleBuffering), NULL);
-	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.DoubleBuffering", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dbChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dbChk), 0);
+	setCheckbox(dbChk, "SDL.DoubleBuffering");
 #endif
 	
-	
-	// PAL check
-	palChk = gtk_check_button_new_with_label("Enable PAL mode");
-	g_signal_connect(palChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.PAL");
-	
-	// sync with config
-	buf = 0;
+	// Region (NTSC/PAL/Dendy)
+	palHbox = gtk_hbox_new(FALSE, 3);
+	palLbl = gtk_label_new("Region: ");
+	palCombo = gtk_combo_box_text_new();
+	// -Video Modes Tag-
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(palCombo), "NTSC");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(palCombo), "PAL");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(palCombo), "Dendy");
+
+	// sync with cfg
 	g_config->getOption("SDL.PAL", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(palChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(palChk), 0);
-		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(palCombo), buf);
+	
+	g_signal_connect(palCombo, "changed", G_CALLBACK(setRegion), NULL);
+	gtk_box_pack_start(GTK_BOX(palHbox), palLbl, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(palHbox), palCombo, FALSE, FALSE, 5);
+
 	// New PPU check
 	ppuChk = gtk_check_button_new_with_label("Enable new PPU");
 	g_signal_connect(ppuChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.NewPPU");
-	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.NewPPU", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ppuChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ppuChk), 0);
-	
-  // "disable 8 sprite limit" check
+	setCheckbox(ppuChk, "SDL.NewPPU");
+
+	// "disable 8 sprite limit" check
 	spriteLimitChk = gtk_check_button_new_with_label("Disable sprite limit");
 	g_signal_connect(spriteLimitChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.DisableSpriteLimit");
+	setCheckbox(spriteLimitChk, "SDL.DisableSpriteLimit");
 	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.DisableSpriteLimit", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(spriteLimitChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(spriteLimitChk), 0);
-
 	// frameskip check
 	frameskipChk = gtk_check_button_new_with_label("Enable frameskip");
 	g_signal_connect(frameskipChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.Frameskip");
-	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.Frameskip", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frameskipChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(frameskipChk), 0);
-
+	setCheckbox(frameskipChk, "SDL.Frameskip");
 
 	// clip sides check
 	clipSidesChk = gtk_check_button_new_with_label("Clip sides");
 	g_signal_connect(clipSidesChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.ClipSides");
+	setCheckbox(clipSidesChk, "SDL.ClipSides");
 	
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.ClipSides", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(clipSidesChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(clipSidesChk), 0);
-		
 	// xscale / yscale
 	xscaleHbox = gtk_hbox_new(FALSE, 5);
 	xscaleLbl = gtk_label_new("X scaling factor");
@@ -1052,17 +1059,8 @@ void openVideoConfig()
 	// show FPS check
 	showFpsChk = gtk_check_button_new_with_label("Show FPS");
 	g_signal_connect(showFpsChk, "clicked", G_CALLBACK(toggleOption), (gpointer)"SDL.ShowFPS");
+	setCheckbox(showFpsChk, "SDL.ShowFPS");
 
-	// sync with config
-	buf = 0;
-	g_config->getOption("SDL.ShowFPS", &buf);
-	if(buf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showFpsChk), 1);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showFpsChk), 0);
-
-	
-	
 	gtk_box_pack_start(GTK_BOX(vbox), lbl, FALSE, FALSE, 5);	
 	gtk_box_pack_start(GTK_BOX(vbox), hbox1, FALSE, FALSE, 5);
 #ifdef OPENGL
@@ -1070,7 +1068,7 @@ void openVideoConfig()
 	gtk_box_pack_start(GTK_BOX(vbox), linearChk, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), dbChk, FALSE, FALSE, 5);
 #endif
-	gtk_box_pack_start(GTK_BOX(vbox), palChk, FALSE, FALSE,5);
+	gtk_box_pack_start(GTK_BOX(vbox), palHbox, FALSE, FALSE,5);
 	gtk_box_pack_start(GTK_BOX(vbox), ppuChk, FALSE, FALSE, 5);
 #ifdef FRAMESKIP
 	gtk_box_pack_start(GTK_BOX(vbox), frameskipChk, FALSE, FALSE, 5);
@@ -1142,9 +1140,9 @@ void openSoundConfig()
 	GtkWidget* hbox2;
 	GtkWidget* rateCombo;
 	GtkWidget* rateLbl;
-	GtkWidget* hbox3;
 	GtkWidget* bufferLbl;
 	GtkWidget* bufferHscale;
+	GtkWidget* swapDutyChk;
 	GtkWidget* mixerFrame;
 	GtkWidget* mixerHbox;
 	GtkWidget* mixers[6];
@@ -1158,32 +1156,17 @@ void openSoundConfig()
 										NULL);
 	gtk_window_set_icon_name(GTK_WINDOW(win), "audio-x-generic");
 	main_hbox = gtk_hbox_new(FALSE, 15);
-	vbox = gtk_vbox_new(False, 5);
+	vbox = gtk_vbox_new(FALSE, 5);
 
 	// sound enable check
 	soundChk = gtk_check_button_new_with_label("Enable sound");
-	
-	// sync with cfg
-	int cfgBuf;
-	g_config->getOption("SDL.Sound", &cfgBuf);
-	if(cfgBuf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(soundChk), TRUE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(soundChk), FALSE);
-	
 	g_signal_connect(soundChk, "clicked", G_CALLBACK(toggleSound), NULL);
+	setCheckbox(soundChk,"SDL.Sound");
 
 	// low pass filter check
 	lowpassChk = gtk_check_button_new_with_label("Enable low pass filter");
-	
-	// sync with cfg
-	g_config->getOption("SDL.Sound.LowPass", &cfgBuf);
-	if(cfgBuf)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lowpassChk), TRUE);
-	else
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(lowpassChk), FALSE);
-	
 	g_signal_connect(lowpassChk, "clicked", G_CALLBACK(toggleLowPass), NULL);
+	setCheckbox(lowpassChk, "SDL.Sound.LowPass");
 	
 	// sound quality combo box
 	hbox1 = gtk_hbox_new(FALSE, 3);
@@ -1193,13 +1176,9 @@ void openSoundConfig()
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(qualityCombo), "Very High");
 
 	// sync widget with cfg 
-	g_config->getOption("SDL.Sound.Quality", &cfgBuf);
-	if(cfgBuf == 2)
-		gtk_combo_box_set_active(GTK_COMBO_BOX(qualityCombo), 2);
-	else if(cfgBuf == 1)
-		gtk_combo_box_set_active(GTK_COMBO_BOX(qualityCombo), 1);
-	else
-		gtk_combo_box_set_active(GTK_COMBO_BOX(qualityCombo), 0);
+	int buf;
+	g_config->getOption("SDL.Sound.Quality", &buf);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(qualityCombo), buf);
 		
 	g_signal_connect(qualityCombo, "changed", G_CALLBACK(setQuality), NULL);
 	
@@ -1214,17 +1193,17 @@ void openSoundConfig()
 	
 	const int rates[5] = {11025, 22050, 44100, 48000, 96000};
 	
-	char buf[8];
+	char choices[8];
 	for(int i=0; i<5;i++)
 	{
-		sprintf(buf, "%d", rates[i]);
-		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(rateCombo), buf);	
+		sprintf(choices, "%d", rates[i]);
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(rateCombo), choices);	
 	}
 	
 	// sync widget with cfg 
-	g_config->getOption("SDL.Sound.Rate", &cfgBuf);
+	g_config->getOption("SDL.Sound.Rate", &buf);
 	for(int i=0; i<5; i++)
-		if(cfgBuf == rates[i])
+		if(buf == rates[i])
 			gtk_combo_box_set_active(GTK_COMBO_BOX(rateCombo), i);
 		
 	g_signal_connect(rateCombo, "changed", G_CALLBACK(setRate), NULL);
@@ -1235,15 +1214,19 @@ void openSoundConfig()
 	gtk_box_pack_start(GTK_BOX(hbox2), rateLbl, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(hbox2), rateCombo, FALSE, FALSE, 5);
 	
-	hbox3 = gtk_hbox_new(FALSE, 2);
 	bufferHscale = gtk_hscale_new_with_range(15, 200, 2);
 	bufferLbl = gtk_label_new("Buffer size (in ms)");
 
 	// sync widget with cfg 
-	g_config->getOption("SDL.Sound.BufSize", &cfgBuf);
-	gtk_range_set_value(GTK_RANGE(bufferHscale), cfgBuf);
+	g_config->getOption("SDL.Sound.BufSize", &buf);
+	gtk_range_set_value(GTK_RANGE(bufferHscale), buf);
 	
 	g_signal_connect(bufferHscale, "button-release-event", G_CALLBACK(setBufSize), NULL);
+
+	// Swap duty cycles
+	swapDutyChk = gtk_check_button_new_with_label("Swap Duty Cycles");
+	g_signal_connect(swapDutyChk, "clicked", G_CALLBACK(toggleSwapDuty), NULL);
+	setCheckbox(swapDutyChk, "SDL.SwapDuty");
 
 	// mixer
 	mixerFrame = gtk_frame_new("Mixer:");
@@ -1283,6 +1266,7 @@ void openSoundConfig()
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bufferLbl, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bufferHscale, FALSE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), swapDutyChk, FALSE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(main_hbox), mixerFrame, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(mixerFrame), mixerHbox);
 	
@@ -1315,14 +1299,16 @@ void quit ()
 }
 const char* Authors[]= {
 	"Linux/SDL Developers:",
-	" Lukas Sabota", " Soules", " Bryan Cain", " radsaq", " Shinydoofy",
+	" Lukas Sabota //punkrockguy318", " Soules", " Bryan Cain", " radsaq", " Shinydoofy",
 	"FceuX 2.0 Developers:",
 	" SP", " zeromus", " adelikat", " caH4e3", " qfox",
-	" Luke Gustafson", " _mz", " UncombedCoconut", " DwEdit", " AnS",
+	" Luke Gustafson", " _mz", " UncombedCoconut", " DwEdit", " AnS", "rainwarrior", "feos",
 	"Pre 2.0 Guys:",
 	" Bero", " Xodnizel", " Aaron Oneal", " Joe Nahmias",
 	" Paul Kuliniewicz", " Quietust", " Ben Parnell", " Parasyte & bbitmaster",
 	" blip & nitsuja",
+	"Included components:",
+	" Mitsutaka Okazaki - YM2413 emulator", " Andrea Mazzoleni - Scale2x/Scale3x scalers", " Gilles Vollant - unzip.c PKZIP fileio",
 	NULL};
 
 void openAbout ()
@@ -1332,7 +1318,7 @@ void openAbout ()
 	gtk_show_about_dialog(GTK_WINDOW(MainWindow),
 		"program-name", "fceuX",
 		"version", FCEU_VERSION_STRING,
-		"copyright", "© 2012 FceuX development team",
+		"copyright", "© 2015 FceuX development team",
 		"license", "GPL-2; See COPYING",
 		//"license-type", GTK_LICENSE_GPL_2_0,
 		"website", "http://fceux.com",
@@ -1379,6 +1365,14 @@ void enableFullscreen ()
 		ToggleFS();
 }
 
+void toggleMenuToggling (GtkToggleAction *action)
+{
+	bool toggleMenu = gtk_toggle_action_get_active(action);
+
+	g_config->setOption("SDL.ToggleMenu", (int)toggleMenu);
+	menuTogglingEnabled = toggleMenu;
+}
+
 void toggleAutoResume (GtkToggleAction *action)
 {
 	bool autoResume = gtk_toggle_action_get_active(action);
@@ -1391,9 +1385,9 @@ void recordMovie()
 {
 	if(isloaded)
 	{
-		char* movie_fname = const_cast<char*>(FCEU_MakeFName(FCEUMKF_MOVIE, 0, 0).c_str());
-		FCEUI_printf("Recording movie to %s\n", movie_fname);
-		FCEUI_SaveMovie(movie_fname, MOVIE_FLAG_NONE, L"");
+		std::string name = FCEU_MakeFName(FCEUMKF_MOVIE, 0, 0);
+		FCEUI_printf("Recording movie to %s\n", name.c_str());
+		FCEUI_SaveMovie(name.c_str(), MOVIE_FLAG_NONE, L"");
 	}
     
 	return;
@@ -1432,7 +1426,6 @@ void recordMovieAs ()
 		fname = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (fileChooser));
 		if (!fname.size())
 			return; // no filename selected, quit the whole thing
-	  char* movie_fname = const_cast<char*>(FCEU_MakeFName(FCEUMKF_MOVIE, 0, 0).c_str());
 		
 		std::string s = GetUserText("Author name");
 		std::wstring author(s.begin(), s.end());
@@ -2213,6 +2206,7 @@ static char* menuXml =
 	"      <menuitem action='PaletteConfigAction' />"
 	"      <menuitem action='NetworkConfigAction' />"
 	"      <menuitem action='AutoResumeAction' />"
+	"      <menuitem action='ToggleMenuAction' />"
 	"      <separator />"
 	"      <menuitem action='FullscreenAction' />"
 	"    </menu>"
@@ -2299,6 +2293,7 @@ static GtkActionEntry normal_entries[] = {
 static GtkToggleActionEntry toggle_entries[] = {
 	{"GameGenieToggleAction", NULL, "Enable Game _Genie", NULL, NULL, G_CALLBACK(toggleGameGenie), FALSE},
 	{"AutoResumeAction", NULL, "Auto-Resume Play", NULL, NULL, G_CALLBACK(toggleAutoResume), FALSE},
+	{"ToggleMenuAction", NULL, "Toggle Menubar (alt)", NULL, NULL, G_CALLBACK(toggleMenuToggling), FALSE},
 };
 
 // Menu items for selecting a save state slot using radio buttons
@@ -2372,6 +2367,28 @@ void showGui(bool b)
 	else
 		gtk_widget_hide(MainWindow);
 }
+
+gint handleKeyRelease(GtkWidget* w, GdkEvent* event, gpointer cb_data)
+{
+	if(menuTogglingEnabled)
+	{
+		static bool menuShown = true;
+		if(((GdkEventKey*)event)->keyval == GDK_KEY_Alt_L || ((GdkEventKey*)event)->keyval == GDK_KEY_Alt_R)
+		{
+			if(menuShown)
+			{
+				gtk_widget_hide(Menubar);
+				menuShown = false;
+			}
+			else
+			{
+				gtk_widget_show(Menubar);
+				menuShown = true;
+			}
+		}
+	}
+	return 0;
+};
 
 int GtkMouseData[3] = {0,0,0};
 
@@ -2448,11 +2465,13 @@ void handle_resize(GtkWindow* win, GdkEvent* event, gpointer data)
 		InitVideo(GameInfo);
 	}
 	gtk_widget_set_size_request(evbox, (int)(NES_WIDTH*xscale), (int)(NES_HEIGHT*yscale));
-	GdkColor black;
+
+	// Currently unused; unsure why
+	/*	GdkColor black;
 	black.red = 0;
 	black.green = 0;
 	black.blue = 0;
-//	gtk_widget_modify_bg(GTK_WIDGET(win), GTK_STATE_NORMAL, &black);
+	gtk_widget_modify_bg(GTK_WIDGET(win), GTK_STATE_NORMAL, &black);*/
 
 	printf("DEBUG: new xscale: %f yscale: %f\n", xscale, yscale);
 
@@ -2461,10 +2480,10 @@ void handle_resize(GtkWindow* win, GdkEvent* event, gpointer data)
 
 int InitGTKSubsystem(int argc, char** argv)
 {
-	GtkWidget* Menubar;
 	GtkWidget* vbox;
 	
 	MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_set_events(GTK_WIDGET(MainWindow), GDK_KEY_RELEASE_MASK);
 //	gtk_window_set_policy (GTK_WINDOW (MainWindow), FALSE, FALSE, TRUE);
 	gtk_window_set_resizable(GTK_WINDOW(MainWindow), TRUE);
 	gtk_window_set_title(GTK_WINDOW(MainWindow), FCEU_NAME_AND_VERSION);
@@ -2516,6 +2535,7 @@ int InitGTKSubsystem(int argc, char** argv)
 	g_signal_connect(G_OBJECT(evbox), "button-press-event", G_CALLBACK(handleMouseClick), NULL);
 	g_signal_connect(G_OBJECT(evbox), "button-release-event", G_CALLBACK(handleMouseClick), NULL);
 
+	g_signal_connect(G_OBJECT(MainWindow), "key-release-event", G_CALLBACK(handleKeyRelease), NULL);
 	
 	// signal handlers
 	g_signal_connect(MainWindow, "delete-event", quit, NULL);

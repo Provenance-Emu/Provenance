@@ -259,31 +259,22 @@ typedef uint64_t			uint64;
 #else	// HAVE_STDINT_H
 #ifdef __WIN32__
 typedef intptr_t			pint;
-#else	// __WIN32__
-#ifdef PTR_NOT_INT
-typedef long				pint;
-#else
-typedef int					pint;
-#endif
-#endif	// __WIN32__
-#ifdef __WIN32__
-#ifdef __BORLANDC__
-#include <systypes.h>
-#else
 typedef signed char			int8;
 typedef unsigned char		uint8;
 typedef signed short		int16;
 typedef unsigned short		uint16;
-#ifndef WSAAP
-// winsock2.h typedefs int32 as well
-typedef signed int			int32;
-#endif
+typedef signed int     		int32;
 typedef unsigned int		uint32;
-#endif
-typedef unsigned char		uint8_t;
-typedef signed char         int8_t;
 typedef signed __int64		int64;
 typedef unsigned __int64	uint64;
+typedef int8                int8_t;
+typedef uint8       		uint8_t;
+typedef int16       		int16_t;
+typedef uint16      		uint16_t;
+typedef int32		    	int32_t;
+typedef uint32      		uint32_t;
+typedef int64               int64_t;
+typedef uint64              uint64_t;
 typedef int					socklen_t;
 #else	// __WIN32__
 typedef signed char			int8;
@@ -298,6 +289,11 @@ __extension__
 #endif
 typedef long long			int64;
 typedef unsigned long long	uint64;
+#ifdef PTR_NOT_INT
+typedef long				pint;
+#else   // __PTR_NOT_INT
+typedef int					pint;
+#endif  // __PTR_NOT_INT
 #endif	//  __WIN32__
 #endif	// HAVE_STDINT_H
 #endif	// snes9x_types_defined

@@ -67,6 +67,7 @@ vmdef vmodes[11] =
 };
 
 extern uint8 PALRAM[0x20];
+extern bool palupdate;
 
 PALETTEENTRY *color_palette;
 
@@ -222,31 +223,12 @@ static int InitBPPStuff(int fs)
 	switch (winspecial)
 	{
 	case 3:
-	specfilteropt = NTSCwinspecial;
-	break;
+		specfilteropt = NTSCwinspecial;
+		break;
 	}
 
-	if(bpp >= 16)
-	{
-		InitBlitToHigh(bpp >> 3, CBM[0], CBM[1], CBM[2], 0, fs?vmodes[vmod].special:winspecial,specfilteropt);
-	}
-	else if(bpp==8)
-	{
-		ddrval=IDirectDraw7_CreatePalette( lpDD7, DDPCAPS_8BIT|DDPCAPS_ALLOW256|DDPCAPS_INITIALIZE,color_palette,&lpddpal,NULL);
-		if (ddrval != DD_OK)
-		{
-			//ShowDDErr("Error creating palette object.");
-			FCEU_printf("Error creating palette object.\n");
-			return 0;
-		}
-		ddrval=IDirectDrawSurface7_SetPalette(lpDDSPrimary, lpddpal);
-		if (ddrval != DD_OK)
-		{
-			//ShowDDErr("Error setting palette object.");
-			FCEU_printf("Error setting palette object.\n");
-			return 0;
-		}
-	}
+	InitBlitToHigh(bpp >> 3, CBM[0], CBM[1], CBM[2], 0, fs?vmodes[vmod].special:winspecial,specfilteropt);
+	
 	return 1;
 }
 
@@ -255,10 +237,16 @@ void recalculateBestFitRect(int width, int height)
 	if (!lpDD7)
 		return;	// DirectDraw isn't initialized yet
 
-	double screen_width = VNSWID;
+	int xres = 256;
+	if(fullscreen && vmodes[0].special==3)
+		xres=301;
+	if(!fullscreen && winspecial==3)
+		xres=301;
+
+	double screen_width = VNSWID_NU(xres);
 	double screen_height = FSettings.TotalScanlines();
 	if (eoptions & EO_TVASPECT)
-		screen_width = ceil(screen_height * (screen_width / 256) * (tvAspectX / tvAspectY));
+		screen_width = ceil(screen_height * (screen_width / xres) * (tvAspectX / tvAspectY));
 
 	int center_x = width / 2;
 	int center_y = height / 2;
@@ -332,13 +320,21 @@ int SetVideoMode(int fs)
 
 	if(!fs)
 	{ 
+		int xres = 256;
 		// -Video Modes Tag-
 		if(winspecial <= 3 && winspecial >= 1)
 			specmul = 2;
 		else if(winspecial >= 4 && winspecial <= 5)
 			specmul = 3;
+		else if(winspecial >= 6 && winspecial <=8)
+			specmul = winspecial - 4; // magic assuming prescales are winspecial >= 6
+		else if(winspecial == 9)
+			specmul = 3;
 		else
 			specmul = 1;
+
+		if(winspecial == 3)
+			xres = 301;
 
 		ShowCursorAbs(1);
 		windowedfailed=1;
@@ -371,8 +367,8 @@ int SetVideoMode(int fs)
 		ddsdback.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 		ddsdback.ddsCaps.dwCaps= DDSCAPS_OFFSCREENPLAIN;
 
-		ddsdback.dwWidth=256 * specmul;
-		ddsdback.dwHeight=FSettings.TotalScanlines() * specmul;
+		ddsdback.dwWidth=xres*specmul;
+		ddsdback.dwHeight=FSettings.TotalScanlines() * ((winspecial == 9) ? 1 : specmul);
 
 		if (directDrawModeWindowed == DIRECTDRAW_MODE_SURFACE_IN_RAM)
 			// create the buffer in system memory
@@ -389,6 +385,7 @@ int SetVideoMode(int fs)
 		if(!GetBPP())
 			return 0;
 
+		//only 16,24,32 bpp are supported now
 		if(bpp!=16 && bpp!=24 && bpp!=32)
 		{
 			//ShowDDErr("Current bit depth not supported!");
@@ -424,8 +421,11 @@ int SetVideoMode(int fs)
 
 		windowedfailed=0;
 		SetMainWindowStuff();
-	} else
+	}
+	else
 	{
+		int xres = 256;
+
 		//Following is full-screen
 		if(vmod == 0)	// Custom mode
 		{
@@ -434,8 +434,15 @@ int SetVideoMode(int fs)
 				specmul = 2;
 			else if(vmodes[0].special >= 4 && vmodes[0].special <= 5)
 				specmul = 3;
+			 else if(vmodes[0].special >= 6 && vmodes[0].special <= 8)
+				specmul = vmodes[0].special - 4; // magic assuming prescales are vmodes[0].special >= 6
+			else if(vmodes[0].special == 9)
+				specmul = 3;
 			else
 				specmul = 1;
+
+			if(vmodes[0].special==3)
+				xres = 301;
 		}
 		HideFWindow(1);
 
@@ -461,8 +468,8 @@ int SetVideoMode(int fs)
 			ddsdback.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH;
 			ddsdback.ddsCaps.dwCaps= DDSCAPS_OFFSCREENPLAIN;
 
-			ddsdback.dwWidth=256 * specmul; //vmodes[vmod].srect.right;
-			ddsdback.dwHeight=FSettings.TotalScanlines() * specmul; //vmodes[vmod].srect.bottom;
+			ddsdback.dwWidth=xres * specmul; //vmodes[vmod].srect.right;
+			ddsdback.dwHeight=FSettings.TotalScanlines() * ((vmodes[0].special == 9) ? 1 : specmul); //vmodes[vmod].srect.bottom;
 
 			if (directDrawModeFullscreen == DIRECTDRAW_MODE_SURFACE_IN_RAM)
 				// create the buffer in system memory
@@ -594,18 +601,27 @@ static void BlitScreenWindow(unsigned char *XBuf)
 	if (!lpDDSBack) return;
 
 	// -Video Modes Tag-
+	int xres = 256;
 	if(winspecial <= 3 && winspecial >= 1)
 		specialmul = 2;
 	else if(winspecial >= 4 && winspecial <= 5)
 		specialmul = 3;
+	else if(winspecial >= 6 && winspecial <= 8)
+		specialmul = winspecial - 4; // magic assuming prescales are winspecial >= 6
+	else if(winspecial == 9)
+		specialmul = 3;
 	else specialmul = 1;
 
+	if(winspecial == 3)
+		xres = 301;
+
 	srect.top=srect.left=0;
-	srect.right=VNSWID * specialmul;
-	srect.bottom=FSettings.TotalScanlines() * specialmul;
+	srect.right=VNSWID_NU(xres) * specialmul;
+	srect.bottom=FSettings.TotalScanlines() * ((winspecial == 9) ? 1 : specialmul);
 
 	if(PaletteChanged==1)
 	{
+		palupdate = 1;
 		FixPaletteHi();
 		PaletteChanged=0;
 	}
@@ -628,7 +644,10 @@ static void BlitScreenWindow(unsigned char *XBuf)
 		memset(ScreenLoc,0,pitch*ddsdback.dwHeight);
 		veflags&=~1;
 	}
-	Blit8ToHigh(XBuf+FSettings.FirstSLine*256+VNSCLIP,ScreenLoc, VNSWID, FSettings.TotalScanlines(), pitch,specialmul,specialmul);
+	//NOT VNSWID_NU ON PURPOSE! this is where 256 gets turned to 301
+	//we'll actually blit a subrectangle later if we clipped the sides
+	//MOREOVER: we order this to scale the whole area no matter what; a subrectangle will come out later (right?)
+	Blit8ToHigh(XBuf+FSettings.FirstSLine*256+VNSCLIP,ScreenLoc, 256, FSettings.TotalScanlines(), pitch,specialmul,specialmul);
 
 	IDirectDrawSurface7_Unlock(lpDDSBack, NULL);
 
@@ -730,14 +749,22 @@ static void BlitScreenFull(uint8 *XBuf)
 	//uint8 y; //mbg merge 7/17/06 removed
 	RECT srect, drect;
 	LPDIRECTDRAWSURFACE7 lpDDSVPrimary;
+	int xres = 256;
 	int specmul;    // Special scaler size multiplier
 	// -Video Modes Tag-
 	if(vmodes[0].special <= 3 && vmodes[0].special >= 1)
 		specmul = 2;
 	else if(vmodes[0].special >= 4 && vmodes[0].special <= 5)
 		specmul = 3;
+	else if(vmodes[0].special >= 6 && vmodes[0].special <= 8)
+		specmul = vmodes[0].special - 4; // magic assuming prescales are vmodes[0].special >= 6
+	else if(vmodes[0].special == 9)
+		specmul = 3;
 	else
 		specmul = 1;
+
+	if(vmodes[0].special == 3)
+		xres = 301;
 
 	if(fssync==3)
 		lpDDSVPrimary=lpDDSDBack;
@@ -748,6 +775,7 @@ static void BlitScreenFull(uint8 *XBuf)
 
 	if(PaletteChanged==1)
 	{
+		palupdate = 1;
 		if(bpp>=16)
 			FixPaletteHi();
 		else
@@ -776,8 +804,8 @@ static void BlitScreenFull(uint8 *XBuf)
 
 		srect.top=0;
 		srect.left=0;
-		srect.right=VNSWID * specmul;
-		srect.bottom=FSettings.TotalScanlines() * specmul;
+		srect.right=VNSWID_NU(xres) * specmul;
+		srect.bottom=FSettings.TotalScanlines() * ((vmodes[0].special == 9) ? 1 : specmul);
 
 		//if(vmodes[vmod].flags&VMDF_STRFS)
 		//{
@@ -844,108 +872,6 @@ static void BlitScreenFull(uint8 *XBuf)
 	}
 
 	//mbg 6/29/06 merge
-#ifndef MSVC
-	if(vmod==5)
-	{
-		if(eoptions&EO_CLIPSIDES)
-		{
-			asm volatile(
-				"xorl %%edx, %%edx\n\t"
-				"akoop1:\n\t"
-				"movb $120,%%al     \n\t"
-				"akoop2:\n\t"
-				"movb 1(%%esi),%%dl\n\t"
-				"shl  $16,%%edx\n\t"
-				"movb (%%esi),%%dl\n\t"
-				"movl %%edx,(%%edi)\n\t"
-				"addl $2,%%esi\n\t"
-				"addl $4,%%edi\n\t"
-				"decb %%al\n\t"
-				"jne akoop2\n\t"
-				"addl $16,%%esi\n\t"
-				"addl %%ecx,%%edi\n\t"
-				"decb %%bl\n\t"
-				"jne akoop1\n\t"
-				:
-			: "S" (XBuf+FSettings.FirstSLine*256+VNSCLIP), "D" (ScreenLoc+((240-FSettings.TotalScanlines())/2)*pitch+(640-(VNSWID<<1))/2),"b" (FSettings.TotalScanlines()), "c" ((pitch-VNSWID)<<1)
-				: "%al", "%edx", "%cc" );
-		}
-		else
-		{
-			asm volatile(
-				"xorl %%edx, %%edx\n\t"
-				"koop1:\n\t"
-				"movb $128,%%al     \n\t"
-				"koop2:\n\t"
-				"movb 1(%%esi),%%dl\n\t"
-				"shl  $16,%%edx\n\t"
-				"movb (%%esi),%%dl\n\t"
-				"movl %%edx,(%%edi)\n\t"
-				"addl $2,%%esi\n\t"
-				"addl $4,%%edi\n\t"
-				"decb %%al\n\t"
-				"jne koop2\n\t"
-				"addl %%ecx,%%edi\n\t"
-				"decb %%bl\n\t"
-				"jne koop1\n\t"
-				:
-			: "S" (XBuf+FSettings.FirstSLine*256), "D" (ScreenLoc+((240-FSettings.TotalScanlines())/2)*pitch+(640-512)/2),"b" (FSettings.TotalScanlines()), "c" (pitch-512+pitch)
-				: "%al", "%edx", "%cc" );
-		}
-	}
-	else if(vmod==4)
-	{
-		if(eoptions&EO_CLIPSIDES)
-		{
-			asm volatile(
-				"ayoop1:\n\t"
-				"movb $120,%%al     \n\t"
-				"ayoop2:\n\t"
-				"movb 1(%%esi),%%dh\n\t"
-				"movb %%dh,%%dl\n\t"
-				"shl  $16,%%edx\n\t"
-				"movb (%%esi),%%dl\n\t"
-				"movb %%dl,%%dh\n\t"               // Ugh
-				"movl %%edx,(%%edi)\n\t"
-				"addl $2,%%esi\n\t"
-				"addl $4,%%edi\n\t"
-				"decb %%al\n\t"
-				"jne ayoop2\n\t"
-				"addl $16,%%esi\n\t"
-				"addl %%ecx,%%edi\n\t"
-				"decb %%bl\n\t"
-				"jne ayoop1\n\t"
-				:
-			: "S" (XBuf+FSettings.FirstSLine*256+VNSCLIP), "D" (ScreenLoc+((240-FSettings.TotalScanlines())/2)*pitch+(640-(VNSWID<<1))/2),"b" (FSettings.TotalScanlines()), "c" ((pitch-VNSWID)<<1)
-				: "%al", "%edx", "%cc" );
-		}
-		else
-		{
-			asm volatile(
-				"yoop1:\n\t"
-				"movb $128,%%al     \n\t"
-				"yoop2:\n\t"
-				"movb 1(%%esi),%%dh\n\t"
-				"movb %%dh,%%dl\n\t"
-				"shl  $16,%%edx\n\t"
-				"movb (%%esi),%%dl\n\t"
-				"movb %%dl,%%dh\n\t"               // Ugh
-				"movl %%edx,(%%edi)\n\t"
-				"addl $2,%%esi\n\t"
-				"addl $4,%%edi\n\t"
-				"decb %%al\n\t"
-				"jne yoop2\n\t"
-				"addl %%ecx,%%edi\n\t"
-				"decb %%bl\n\t"
-				"jne yoop1\n\t"
-				:
-			: "S" (XBuf+FSettings.FirstSLine*256), "D" (ScreenLoc+((240-FSettings.TotalScanlines())/2)*pitch+(640-512)/2),"b" (FSettings.TotalScanlines()), "c" (pitch-512+pitch)
-				: "%al", "%edx", "%cc" );
-		}
-	}
-	else
-#endif 
-		//mbg 6/29/06 merge
 	{
 		if(!(vmodes[vmod].flags&VMDF_DXBLT))
 		{  
@@ -953,21 +879,24 @@ static void BlitScreenFull(uint8 *XBuf)
 			if(vmodes[vmod].special)
 				ScreenLoc += (vmodes[vmod].drect.left*(bpp>>3)) + ((vmodes[vmod].drect.top)*pitch);   
 			else
-				ScreenLoc+=((vmodes[vmod].x-VNSWID)>>1)*(bpp>>3)+(((vmodes[vmod].y-FSettings.TotalScanlines())>>1))*pitch;
+				ScreenLoc+=((vmodes[vmod].x-VNSWID_NU(xres))>>1)*(bpp>>3)+(((vmodes[vmod].y-FSettings.TotalScanlines())>>1))*pitch;
 		}
 
 		if(bpp>=16)
 		{
-			Blit8ToHigh(XBuf+FSettings.FirstSLine*256+VNSCLIP,(uint8*)ScreenLoc, VNSWID, FSettings.TotalScanlines(), pitch,specmul,specmul); //mbg merge 7/17/06 added cast
+			//NOT VNSWID_NU ON PURPOSE! this is where 256 gets turned to 301
+			//we'll actually blit a subrectangle later if we clipped the sides
+			//MOREOVER: we order this to scale the whole area no matter what; a subrectangle will come out later (right?)
+			Blit8ToHigh(XBuf+FSettings.FirstSLine*256+VNSCLIP,(uint8*)ScreenLoc, 256, FSettings.TotalScanlines(), pitch,specmul,specmul); //mbg merge 7/17/06 added cast
 		}
 		else
 		{
 			XBuf+=FSettings.FirstSLine*256+VNSCLIP;
 			// -Video Modes Tag-
 			if(vmodes[vmod].special)
-				Blit8To8(XBuf,(uint8*)ScreenLoc, VNSWID, FSettings.TotalScanlines(), pitch,vmodes[vmod].xscale,vmodes[vmod].yscale,0,vmodes[vmod].special); //mbg merge 7/17/06 added cast
+				Blit8To8(XBuf,(uint8*)ScreenLoc, VNSWID_NU(xres), FSettings.TotalScanlines(), pitch,vmodes[vmod].xscale,vmodes[vmod].yscale,0,vmodes[vmod].special); //mbg merge 7/17/06 added cast
 			else
-				Blit8To8(XBuf,(uint8*)ScreenLoc, VNSWID, FSettings.TotalScanlines(), pitch,1,1,0,0); //mbg merge 7/17/06 added cast
+				Blit8To8(XBuf,(uint8*)ScreenLoc, VNSWID_NU(xres), FSettings.TotalScanlines(), pitch,1,1,0,0); //mbg merge 7/17/06 added cast
 		}
 	}
 
@@ -1113,6 +1042,9 @@ static int RecalcCustom(void)
 {
 	vmdef *cmode = &vmodes[0];
 
+	//don't see how ntsc could make it through here
+	int xres = 256;
+
 	if ((cmode->x <= 0) || (cmode->y <= 0))
 		ResetCustomMode();
 
@@ -1138,7 +1070,7 @@ static int RecalcCustom(void)
 			cmode->flags|=VMDF_DXBLT;
 
 
-		if(VNSWID*cmode->xscale>cmode->x)
+		if(VNSWID_NU(xres)*cmode->xscale>cmode->x)
 		{
 			if(cmode->special)
 			{
@@ -1173,8 +1105,8 @@ static int RecalcCustom(void)
 		cmode->drect.top=(cmode->y-(FSettings.TotalScanlines()*cmode->yscale))>>1;
 		cmode->drect.bottom=cmode->drect.top+FSettings.TotalScanlines()*cmode->yscale;
 
-		cmode->drect.left=(cmode->x-(VNSWID*cmode->xscale))>>1;
-		cmode->drect.right=cmode->drect.left+VNSWID*cmode->xscale;
+		cmode->drect.left=(cmode->x-(VNSWID_NU(xres)*cmode->xscale))>>1;
+		cmode->drect.right=cmode->drect.left+VNSWID_NU(xres)*cmode->xscale;
 	}
 
 	// -Video Modes Tag-
@@ -1185,7 +1117,7 @@ static int RecalcCustom(void)
 		//return(0);
 	}
 
-	if(cmode->x<VNSWID)
+	if(cmode->x<VNSWID_NU(xres))
 	{
 		FCEUD_PrintError("Horizontal resolution is too low.");
 		return(0);
@@ -1257,9 +1189,9 @@ BOOL CALLBACK VideoConCallB(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPara
 		//CheckRadioButton(hwndDlg,IDC_RADIO_SCALE,IDC_RADIO_STRETCH,(vmodes[0].flags&VMDF_STRFS)?IDC_RADIO_STRETCH:IDC_RADIO_SCALE);
 
 		// -Video Modes Tag-
-		char *str[]={"<none>","hq2x","Scale2x","NTSC 2x","hq3x","Scale3x"};
+		char *str[]={"<none>","hq2x","Scale2x","NTSC 2x","hq3x","Scale3x","Prescale2x","Prescale3x","Prescale4x"};//,"PAL"};
 		int x;
-		for(x=0;x<6;x++)
+		for(x=0;x<10;x++)
 		{
 			SendDlgItemMessage(hwndDlg,IDC_VIDEOCONFIG_SCALER_FS,CB_ADDSTRING,0,(LPARAM)(LPSTR)str[x]);
 			SendDlgItemMessage(hwndDlg,IDC_VIDEOCONFIG_SCALER_WIN,CB_ADDSTRING,0,(LPARAM)(LPSTR)str[x]);

@@ -184,6 +184,7 @@ static void M190Power(void) {
 	SetWriteHandler(0x8000, 0xFFFF, M190Write);
 	SetReadHandler(0xDC00, 0xDC00, M190Read);
 	SetReadHandler(0xDD00, 0xDD00, M190Read);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 	Sync();
 }
 

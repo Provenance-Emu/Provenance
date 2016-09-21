@@ -69,6 +69,7 @@ static void M186Power(void) {
 	SetWriteHandler(0x4200, 0x43FF, M186Write);
 	SetReadHandler(0x4400, 0x4FFF, ASWRAM);
 	SetWriteHandler(0x4400, 0x4FFF, BSWRAM);
+	FCEU_CheatAddRAM(32, 0x6000, WRAM);
 	regs[0] = regs[1] = regs[2] = regs[3];
 	Sync();
 }

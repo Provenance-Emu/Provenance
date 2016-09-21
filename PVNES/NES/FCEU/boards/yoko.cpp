@@ -174,6 +174,7 @@ static void M83Power(void) {
 	SetWriteHandler(0x6000, 0x7fff, CartBW); // Pirate Dragon Ball Z Party [p1] used if for saves instead of seraial EEPROM
 	SetReadHandler(0x8000, 0xffff, CartBR);
 	SetWriteHandler(0x8000, 0xffff, M83Write);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void UNLYOKOReset(void) {

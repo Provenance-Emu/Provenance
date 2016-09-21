@@ -72,6 +72,10 @@ int mutecapture;
 #endif
 static int noconfig;
 
+int pal_emulation;
+int dendy;
+bool swapDuty;
+
 // -Video Modes Tag- : See --special
 static const char *DriverUsage=
 "Option         Value   Description\n"
@@ -100,8 +104,8 @@ static const char *DriverUsage=
 "--fullscreen   {0|1}   Enable full screen mode.\n"
 "--noframe      {0|1}   Hide title bar and window decorations.\n"
 "--special      {1-4}   Use special video scaling filters\n"
-"                         (1 = hq2x 2 = Scale2x 3 = NTSC 2x 4 = hq3x\n"
-"                         5 = Scale3x)\n"
+"                         (1 = hq2x; 2 = Scale2x; 3 = NTSC 2x; 4 = hq3x;\n"
+"                         5 = Scale3x; 6 = Prescale2x; 7 = Prescale3x; 8=Precale4x; 9=PAL)\n"
 "--palette      f       Load custom global palette from file f.\n"
 "--sound        {0|1}   Enable sound.\n"
 "--soundrate    x       Set sound playback rate to x Hz.\n"
@@ -213,10 +217,10 @@ int LoadGame(const char *path)
 	// set pal/ntsc
 	int id;
 	g_config->getOption("SDL.PAL", &id);
-	if(id)
-		FCEUI_SetVidSystem(1);
-	else
-		FCEUI_SetVidSystem(0);
+	FCEUI_SetRegion(id);
+
+	g_config->getOption("SDL.SwapDuty", &id);
+	swapDuty = id;
 	
 	std::string filename;
 	g_config->getOption("SDL.Sound.RecordFile", &filename);
@@ -622,6 +626,18 @@ int main(int argc, char *argv[])
 
     // update the input devices
 	UpdateInput(g_config);
+
+	// check if opengl is enabled with a scaler and display an error and bail	
+	int opengl;
+	int scaler;
+	g_config->getOption("SDL.OpenGL", &opengl);
+	g_config->getOption("SDL.SpecialFilter", &scaler);
+	if(opengl && scaler)
+	{
+		printf("Scalers are not supported in OpenGL mode.  Terminating.\n");
+		exit(2);
+	}
+
 
 	// check for a .fcm file to convert to .fm2
 	g_config->getOption ("SDL.FCMConvert", &s);

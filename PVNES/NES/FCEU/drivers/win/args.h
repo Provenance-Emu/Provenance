@@ -4,6 +4,8 @@ extern char* ConfigToLoad;	//Contains the filename of the config file specified 
 extern char* LuaToLoad;		//Contains the filename of the lua script specified in the command line arguments
 extern char* PaletteToLoad; //Contains the filename of the palette file specified in the command line arguments
 extern char* AviToLoad;		//Contains the filename of the Avi to be captured specified in the command line arguments
+extern char* DumpInput;
+extern char* PlayInput;
 extern bool replayReadOnlySetting;
 extern int replayStopFrameSetting;
 extern int PauseAfterLoad;

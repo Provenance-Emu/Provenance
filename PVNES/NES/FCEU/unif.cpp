@@ -311,10 +311,11 @@ static int LoadCHR(FCEUFILE *fp) {
 	return(1);
 }
 
-#define BMCFLAG_FORCE4 1
-#define BMCFLAG_16KCHRR  2
-#define BMCFLAG_32KCHRR  4
-#define BMCFLAG_EXPCHRR  8
+#define BMCFLAG_FORCE4    0x01
+#define BMCFLAG_16KCHRR   0x02
+#define BMCFLAG_32KCHRR   0x04
+#define BMCFLAG_128KCHRR  0x08
+#define BMCFLAG_256KCHRR  0x10
 
 static BMAPPING bmap[] = {
 	{ "11160", BMC11160_Init, 0 },
@@ -343,6 +344,7 @@ static BMAPPING bmap[] = {
 	{ "BS-5", BMCBS5_Init, 0 },
 	{ "CC-21", UNLCC21_Init, 0 },
 	{ "CITYFIGHT", UNLCITYFIGHT_Init, 0 },
+	{ "10-24-C-A1", BMC1024CA1_Init, 0 },
 	{ "CNROM", CNROM_Init, 0 },
 	{ "CPROM", CPROM_Init, BMCFLAG_16KCHRR },
 	{ "D1038", BMCD1038_Init, 0 },
@@ -354,8 +356,8 @@ static BMAPPING bmap[] = {
 	{ "ELROM", ELROM_Init, 0 },
 	{ "ETROM", ETROM_Init, 0 },
 	{ "EWROM", EWROM_Init, 0 },
-	{ "FK23C", BMCFK23C_Init, BMCFLAG_EXPCHRR },
-	{ "FK23CA", BMCFK23CA_Init, BMCFLAG_EXPCHRR },
+	{ "FK23C", BMCFK23C_Init, BMCFLAG_256KCHRR },
+	{ "FK23CA", BMCFK23CA_Init, BMCFLAG_256KCHRR },
 	{ "FS304", UNLFS304_Init, 0 },
 	{ "G-146", BMCG146_Init, 0 },
 	{ "GK-192", BMCGK192_Init, 0 },
@@ -366,8 +368,10 @@ static BMAPPING bmap[] = {
 	{ "HKROM", HKROM_Init, 0 },
 	{ "KOF97", UNLKOF97_Init, 0 },
 	{ "KONAMI-QTAI", Mapper190_Init, 0 },
+	{ "KS7010", UNLKS7010_Init, 0 },
 	{ "KS7012", UNLKS7012_Init, 0 },
 	{ "KS7013B", UNLKS7013B_Init, 0 },
+	{ "KS7016", UNLKS7016_Init, 0 },
 	{ "KS7017", UNLKS7017_Init, 0 },
 	{ "KS7030", UNLKS7030_Init, 0 },
 	{ "KS7031", UNLKS7031_Init, 0 },
@@ -390,6 +394,7 @@ static BMAPPING bmap[] = {
 	{ "NovelDiamond9999999in1", Novel_Init, 0 },
 	{ "OneBus", UNLOneBus_Init, 0 },
 	{ "PEC-586", UNLPEC586Init, 0 },
+	{ "RET-CUFROM", Mapper29_Init, BMCFLAG_32KCHRR },
 	{ "RROM", NROM_Init, 0 },
 	{ "RROM-128", NROM_Init, 0 },
 	{ "SA-002", TCU02_Init, 0 },
@@ -447,9 +452,22 @@ static BMAPPING bmap[] = {
 	{ "TVROM", TLROM_Init, BMCFLAG_FORCE4 },
 	{ "Transformer", Transformer_Init, 0 },
 	{ "UNROM", UNROM_Init, 0 },
+	{ "UNROM-512-8", UNROM512_Init, 0 },
+	{ "UNROM-512-16", UNROM512_Init, BMCFLAG_16KCHRR },
+	{ "UNROM-512-32", UNROM512_Init, BMCFLAG_32KCHRR },
 	{ "UOROM", UNROM_Init, 0 },
 	{ "VRC7", UNLVRC7_Init, 0 },
 	{ "YOKO", UNLYOKO_Init, 0 },
+	{ "SB-2000", UNLSB2000_Init, 0 },
+	{ "COOLBOY", COOLBOY_Init, BMCFLAG_256KCHRR },
+	{ "158B", UNL158B_Init, 0 },
+	{ "DRAGONFIGHTER", UNLBMW8544_Init, 0 },
+	{ "EH8813A", UNLEH8813A_Init, 0 },
+	{ "HP898F", BMCHP898F_Init, 0 },
+	{ "F-15", BMCF15_Init, 0 },
+	{ "RT-01", UNLRT01_Init, 0 },
+	{ "81-01-31-C", BMC810131C_Init, 0 },
+	{ "8-IN-1", BMC8IN1_Init, 0 },
 
 	{ 0, 0, 0 }
 };
@@ -505,13 +523,16 @@ static int InitializeBoard(void) {
 		if (!strcmp((char*)sboardname, (char*)bmap[x].name)) {
 			if (!malloced[16]) {
 				if (bmap[x].flags & BMCFLAG_16KCHRR)
-					CHRRAMSize = 16384;
+					CHRRAMSize = 16;
 				else if (bmap[x].flags & BMCFLAG_32KCHRR)
-					CHRRAMSize = 32768;
-				else if (bmap[x].flags & BMCFLAG_EXPCHRR)
-					CHRRAMSize = 128 * 1024;
+					CHRRAMSize = 32;
+				else if (bmap[x].flags & BMCFLAG_128KCHRR)
+					CHRRAMSize = 128;
+				else if (bmap[x].flags & BMCFLAG_256KCHRR)
+					CHRRAMSize = 256;
 				else
-					CHRRAMSize = 8192;
+					CHRRAMSize = 8;
+                CHRRAMSize <<= 10;
 				if ((UNIFchrrama = (uint8*)FCEU_malloc(CHRRAMSize))) {
 					SetupCartCHRMapping(0, UNIFchrrama, CHRRAMSize, 1);
 					AddExState(UNIFchrrama, CHRRAMSize, 0, "CHRR");

@@ -335,10 +335,16 @@ static void ConvertFCM(HWND hwndOwner)
 
 void CalcWindowSize(RECT *al)
 {
-	double screen_width = VNSWID;
+	int xres = 256;
+	if(fullscreen && vmodes[0].special==3)
+		xres=301;
+	if(!fullscreen && winspecial==3)
+		xres=301;
+
+	double screen_width = VNSWID_NU(xres);
 	double screen_height = FSettings.TotalScanlines();
 	if (eoptions & EO_TVASPECT)
-		screen_width = ceil(screen_height * (screen_width / 256) * (tvAspectX / tvAspectY));
+		screen_width = ceil(screen_height * (screen_width / xres) * (tvAspectX / tvAspectY));
 
 	al->left = 0;
 	al->top = 0;
@@ -400,8 +406,8 @@ void UpdateCheckedMenuItems()
 	bool spr, bg;
 	FCEUI_GetRenderPlanes(spr,bg);
 
-	static int *polo[] = { &genie, &pal_emulation, &status_icon};
-	static int polo2[]={ MENU_GAME_GENIE, MENU_PAL, MENU_SHOW_STATUS_ICON };
+	static int *polo[] = { &genie, &status_icon};
+	static int polo2[]={ MENU_GAME_GENIE, MENU_SHOW_STATUS_ICON };
 	int x;
 
 	// Check or uncheck the necessary menu items
@@ -438,6 +444,14 @@ void UpdateCheckedMenuItems()
 	CheckMenuItem(fceumenu, MENU_DISPLAY_BG, bg?MF_CHECKED:MF_UNCHECKED);
 	CheckMenuItem(fceumenu, MENU_DISPLAY_OBJ, spr?MF_CHECKED:MF_UNCHECKED);
 	CheckMenuItem(fceumenu, ID_INPUTDISPLAY_OLDSTYLEDISP, oldInputDisplay?MF_CHECKED:MF_UNCHECKED);
+
+	//Config - Region SubMenu
+	if (PAL)
+		CheckMenuRadioItem(fceumenu, MENU_NTSC, MENU_DENDY, MENU_PAL, MF_BYCOMMAND);
+	else if (dendy)
+		CheckMenuRadioItem(fceumenu, MENU_NTSC, MENU_DENDY, MENU_DENDY, MF_BYCOMMAND);
+	else		
+		CheckMenuRadioItem(fceumenu, MENU_NTSC, MENU_DENDY, MENU_NTSC, MF_BYCOMMAND);
 
 	// Tools Menu
 	CheckMenuItem(fceumenu, MENU_ALTERNATE_AB, GetAutoFireDesynch() ? MF_CHECKED : MF_UNCHECKED);
@@ -1121,7 +1135,13 @@ void GetMouseData(uint32 (&md)[3])
 {
 	extern RECT bestfitRect;
 
-	double screen_width = VNSWID;
+	int xres = 256;
+	if(fullscreen && vmodes[0].special==3)
+		xres=301;
+	if(!fullscreen && winspecial==3)
+		xres=301;
+
+	double screen_width = VNSWID_NU(xres);
 	double screen_height = FSettings.TotalScanlines();
 
 	if (eoptions & EO_BESTFIT && (bestfitRect.top || bestfitRect.left))
@@ -1965,12 +1985,14 @@ LRESULT FAR PASCAL AppWndProc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 				FCEUI_SetGameGenie(genie!=0);
 				UpdateCheckedMenuItems();
 				break;
+			case MENU_NTSC:
+				FCEUI_SetRegion(0);
+				break;
 			case MENU_PAL:
-				pal_emulation ^= 1;
-				FCEUI_SetVidSystem(pal_emulation);
-				RefreshThrottleFPS();
-				UpdateCheckedMenuItems();
-				PushCurrentVideoSettings();
+				FCEUI_SetRegion(1);
+				break;
+			case MENU_DENDY:
+				FCEUI_SetRegion(2);
 				break;
 			case MENU_DIRECTORIES:
 				ConfigDirectories();
@@ -2290,13 +2312,13 @@ LRESULT FAR PASCAL AppWndProc(HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 
 		if(wParam==SC_KEYMENU)
 		{
-			if(GameInfo && ((InputType[2]==SIFC_FKB) || (InputType[2]==SIFC_SUBORKB)) && cidisabled)
+			if(GameInfo && ((InputType[2]==SIFC_FKB) || (InputType[2]==SIFC_SUBORKB) || (InputType[2]==SIFC_PEC586KB)) && cidisabled)
 				break;
 			if(lParam == VK_RETURN || fullscreen || tog) break;
 		}
 		goto proco;
 	case WM_SYSKEYDOWN:
-		if(GameInfo && ((InputType[2]==SIFC_FKB) || (InputType[2]==SIFC_SUBORKB)) && cidisabled)
+		if(GameInfo && ((InputType[2]==SIFC_FKB) || (InputType[2]==SIFC_SUBORKB) || (InputType[2]==SIFC_PEC586KB)) && cidisabled)
 			break; // Hopefully this won't break DInput...
 
 		if(fullscreen || tog)
@@ -2328,25 +2350,15 @@ adelikat: Outsourced this to a remappable hotkey
 		if(GameInfo)
 		{
 			//Only disable command keys if a game is loaded(and the other conditions are right, of course).
-			if(InputType[2]==SIFC_FKB)
+			if((InputType[2]==SIFC_FKB) || (InputType[2]==SIFC_SUBORKB) || (InputType[2]==SIFC_PEC586KB))
 			{
 				if(wParam==VK_SCROLL)
 				{
 					cidisabled^=1;
-					FCEUI_DispMessage("Family Keyboard %sabled.",0,cidisabled?"en":"dis");
+					FCEUI_DispMessage("%s Keyboard %sabled.",0,InputType[2]==SIFC_FKB?"Family":(InputType[2]==SIFC_SUBORKB?"Subor":"PEC586"),cidisabled?"en":"dis");
 				}
 				if(cidisabled)
 					break; // Hopefully this won't break DInput...
-			}
-			if(InputType[2]==SIFC_SUBORKB)
-			{
-				if(wParam==VK_SCROLL)
-				{
-					cidisabled^=1;
-					FCEUI_DispMessage("Subor Keyboard %sabled.",0,cidisabled?"en":"dis");
-				}
-				if(cidisabled)
-					break;
 			}
 		}
 		goto proco;
