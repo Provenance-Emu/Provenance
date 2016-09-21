@@ -8,7 +8,6 @@
 
 #import "PVGame.h"
 
-
 @implementation PVGame
 
 + (NSDictionary *)defaultPropertyValues
