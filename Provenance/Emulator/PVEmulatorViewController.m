@@ -220,6 +220,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
                 _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
             }];
+			[[NSRunLoop currentRunLoop] addTimer:_fpsTimer forMode:NSDefaultRunLoopMode];
             [_fpsTimer fire];
         } else {
 #endif
