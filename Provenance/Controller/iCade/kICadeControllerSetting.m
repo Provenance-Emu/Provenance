@@ -20,8 +20,11 @@ NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
         case kICadeControllerSettingStandard:
             stringRepresentation = @"Standard Controller";
             break;
-        case kICadeControllerSetting8Bitdo:
+        case kICadeControllerSetting8BitdoNES30:
             stringRepresentation = @"8bitdo Nes30 Controller";
+            break;
+        case kICadeControllerSetting8BitdoSFC30:
+            stringRepresentation = @"8bitdo SFC30 Controller";
             break;
         case kICadeControllerSettingSteelSeries:
             stringRepresentation = @"SteelSeries Free Controller";
@@ -41,8 +44,11 @@ PViCadeController* kIcadeControllerSettingToPViCadeController(kICadeControllerSe
         case kICadeControllerSettingStandard:
             controller = [[PViCadeController alloc] init];
             break;
-        case kICadeControllerSetting8Bitdo:
-            controller = [[PViCade8BitdoController alloc] init];
+        case kICadeControllerSetting8BitdoNES30:
+            controller = [[PViCade8BitdoController alloc] initWithControllerType:ICade8bitdoControllerTypeNES30];
+            break;
+        case kICadeControllerSetting8BitdoSFC30:
+            controller = [[PViCade8BitdoController alloc] initWithControllerType:ICade8bitdoControllerTypeSFC30];
             break;
         case kICadeControllerSettingSteelSeries:
             controller = [[PViCadeSteelSeriesController alloc] init];
