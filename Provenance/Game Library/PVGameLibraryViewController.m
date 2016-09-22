@@ -155,6 +155,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleAppDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserverForName:kInterfaceDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [self.collectionView.collectionViewLayout invalidateLayout];
+    }];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -1418,7 +1421,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #if TARGET_OS_TV
     return CGSizeMake(250, 360);
 #else
-	return CGSizeMake(100, 144);
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        return CGSizeMake(100, 144);
+    }
+    return CGSizeMake(100, 100);
 #endif
 }
 
