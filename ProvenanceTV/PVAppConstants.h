@@ -17,6 +17,7 @@
 extern NSInteger const PVMaxRecentsShortcutCount;
 
 extern NSString *const PVAppGroupId;
+extern NSString *const kInterfaceDidChangeNotification;
 
 extern NSString *const PVGameControllerKey;
 extern NSString *const PVGameMD5Key;
