@@ -17,6 +17,7 @@ NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
+NSString * const kFPSCountKey = @"kFPSCountKey";
 
 @implementation PVSettingsModel
 
@@ -46,7 +47,8 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
                                                                   kButtonVibrationKey : @(YES),
                                                                   kShowRecentGamesKey : @YES,
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
-                                                                  kVolumeSettingKey : @(1.0)}];
+                                                                  kVolumeSettingKey : @(1.0),
+																  kFPSCountKey : @(NO)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -57,9 +59,18 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
         _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
+        _showFPSCount = [[NSUserDefaults standardUserDefaults] boolForKey:kFPSCountKey];
 	}
 	
 	return self;
+}
+
+- (void)setShowFPSCount:(BOOL)showFPSCount
+{
+    _showFPSCount = showFPSCount;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:_showFPSCount forKey:kFPSCountKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)setAutoSave:(BOOL)autoSave

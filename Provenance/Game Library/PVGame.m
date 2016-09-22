@@ -18,7 +18,7 @@
              @"originalArtworkURL" : @"",
              @"md5Hash" : @"",
              @"requiresSync" : @YES,
-             @"systemIdentifier" : @"",};
+             @"systemIdentifier" : @""};
 }
 
 + (NSArray<NSString *> *)requiredProperties

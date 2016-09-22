@@ -181,7 +181,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     unsigned long long previousFilesize = [[timer userInfo][@"filesize"] unsignedLongLongValue];
     NSError *error = nil;
     NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
-    NSUInteger currentFilesize = [attributes fileSize];
+    unsigned long long currentFilesize = [attributes fileSize];
     if (previousFilesize == currentFilesize)
     {
         if ([[path pathExtension] isEqualToString:@"zip"])
