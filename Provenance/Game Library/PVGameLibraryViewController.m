@@ -157,6 +157,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserverForName:kInterfaceDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
         [self.collectionView.collectionViewLayout invalidateLayout];
+        [self.collectionView reloadData];
     }];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file

@@ -102,7 +102,6 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     
     // TODO: To be replaced with the correct system placeholder
     
-    // TODO: Due to new placeholder system, we may need to find a way to display the title of the game on the image otherwise it will only show the placeholder but without any information regarding the game itself
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
@@ -130,11 +129,18 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
         [_titleLabel setText:[game title]];
     }
     
+    // TODO: May be renabled later
     NSString *placeholderImageText = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:game.systemIdentifier];
 
     if ([artworkURL isEqualToString:@""] &&
         [originalArtworkURL isEqualToString:@""]) {
-        self.imageView.image = [self imageWithText:placeholderImageText];
+        NSString *artworkText;
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            artworkText = placeholderImageText;
+        } else {
+            artworkText = game.title;
+        }
+        self.imageView.image = [self imageWithText:artworkText];
     } else {
         NSString *key = [artworkURL length] ? artworkURL : nil;
         
@@ -143,14 +149,19 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
         }
         
         if (key) {
-            self.operation = [[PVMediaCache shareInstance] imageForKey:key
-                                                            completion:^(UIImage *image) {
-                                                                
-                                                                UIImage *artwork = image ?: [self imageWithText:placeholderImageText];
-                                                                
-                                                                self.imageView.image = artwork;
-                                                                [self setNeedsLayout];
-                                                            }];
+            self.operation = [[PVMediaCache shareInstance] imageForKey:key completion:^(UIImage *image) {
+                
+                NSString *artworkText;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    artworkText = placeholderImageText;
+                } else {
+                    artworkText = game.title;
+                }
+                UIImage *artwork = image ?: [self imageWithText:artworkText];
+                
+                self.imageView.image = artwork;
+                [self setNeedsLayout];
+            }];
         }
     }
     
