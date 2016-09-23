@@ -24,7 +24,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
-@property (weak, nonatomic) IBOutlet UILabel *recentGamesValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
 
 @end
 
@@ -42,7 +42,7 @@
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
-    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+    [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
 	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
 	[self.versionValueLabel setText:versionText];
@@ -79,6 +79,9 @@
                     [settings setAutoLoadAutoSaves:![settings autoLoadAutoSaves]];
                     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
                     break;
+                case 2:
+                    [settings setShowFPSCount:![settings showFPSCount]];
+                    [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
                 default:
                     break;
             }
@@ -153,11 +156,6 @@
                 case 3: {
                     PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
                     [self.navigationController pushViewController:conflictViewController animated:YES];
-                    break;
-                }
-                case 4: {
-                    [settings setShowRecentGames:![settings showRecentGames]];
-                    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
                     break;
                 }
                 default:

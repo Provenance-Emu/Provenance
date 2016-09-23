@@ -89,7 +89,7 @@
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Show Game Titles";
 #if TARGET_OS_TV
-             cell.detailTextLabel.text = ([[PVSettingsModel sharedInstance] showGameTitles]) ? @"On" : @"Off";
+            cell.detailTextLabel.text = ([[PVSettingsModel sharedInstance] showGameTitles]) ? @"On" : @"Off";
 #else
             cell.accessoryView = _hideTitlesSwitch;
 #endif
