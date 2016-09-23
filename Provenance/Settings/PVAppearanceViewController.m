@@ -12,8 +12,10 @@
 
 @interface PVAppearanceViewController ()
 
+#if !TARGET_OS_TV
 @property (nonatomic) UISwitch *hideTitlesSwitch;
 @property (nonatomic) UISwitch *recentlyPlayedSwitch;
+#endif
 
 @end
 
@@ -27,6 +29,7 @@
     
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     
+#if !TARGET_OS_TV
     _hideTitlesSwitch = [UISwitch new];
     _hideTitlesSwitch.onTintColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.99 alpha:1.00];
     [_hideTitlesSwitch setOn:[settings showGameTitles]];
@@ -36,6 +39,8 @@
     _recentlyPlayedSwitch.onTintColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.99 alpha:1.00];
     [_recentlyPlayedSwitch setOn:[settings showRecentGames]];
     [_recentlyPlayedSwitch addTarget:self action:@selector(switchChangedValue:) forControlEvents:UIControlEventValueChanged];
+#endif
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,6 +49,7 @@
     // Dispose of any resources that can be recreated.
 }
 
+#if !TARGET_OS_TV
 - (void)switchChangedValue:(UISwitch *)switchItem
 {
     if ([switchItem isEqual:_hideTitlesSwitch]) {
@@ -54,6 +60,7 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:kInterfaceDidChangeNotification object:nil];
 }
+#endif
 
 #pragma mark - Table view data source
 
@@ -81,15 +88,40 @@
     if (indexPath.section == 0) {
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Show Game Titles";
+#if TARGET_OS_TV
+             cell.detailTextLabel.text = ([[PVSettingsModel sharedInstance] showGameTitles]) ? @"On" : @"Off";
+#else
             cell.accessoryView = _hideTitlesSwitch;
+#endif
         } else if (indexPath.row == 1) {
             cell.textLabel.text = @"Show recently played games";
+#if TARGET_OS_TV
+            cell.detailTextLabel.text = ([[PVSettingsModel sharedInstance] showRecentGames]) ? @"On" : @"Off";
+#else
             cell.accessoryView = _recentlyPlayedSwitch;
+#endif
         }
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+#if TARGET_OS_TV
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    PVSettingsModel *settings =  [PVSettingsModel sharedInstance];
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            [settings setShowGameTitles:![settings showGameTitles]];
+            cell.detailTextLabel.text = ([settings showGameTitles]) ? @"On" : @"Off";
+        } else if (indexPath.row == 1) {
+            [settings setShowRecentGames:![settings showRecentGames]];
+            cell.detailTextLabel.text = ([settings showRecentGames]) ? @"On" : @"Off";
+        }
+    }
+#endif
 }
 
 @end
