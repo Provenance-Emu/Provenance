@@ -198,6 +198,8 @@
 		1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.m */; };
 		1F8D52461D9198E000C29F90 /* PVLicensesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
+		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
 		25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
@@ -467,6 +469,8 @@
 		1F8D52441D9198E000C29F90 /* PVLicensesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLicensesViewController.h; sourceTree = "<group>"; };
 		1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLicensesViewController.m; sourceTree = "<group>"; };
 		1F8D52471D91993000C29F90 /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
+		1FB125941D93E57F00D045D0 /* PVAppearanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppearanceViewController.h; sourceTree = "<group>"; };
+		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAppearanceViewController.m; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
@@ -655,6 +659,8 @@
 				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
 				1F8D52441D9198E000C29F90 /* PVLicensesViewController.h */,
 				1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */,
+				1FB125941D93E57F00D045D0 /* PVAppearanceViewController.h */,
+				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -1460,6 +1466,7 @@
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
 				1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
+				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
@@ -1474,6 +1481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */,
 				1AD481FF1BA354B100FDA50A /* PViCadeGamepadDirectionPad.m in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1AD481F81BA354B100FDA50A /* PViCadeControllerViewController.m in Sources */,

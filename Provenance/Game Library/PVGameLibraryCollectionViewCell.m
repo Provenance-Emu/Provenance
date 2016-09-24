@@ -13,6 +13,7 @@
 
 #import "PVGame.h"
 #import "PVMediaCache.h"
+#import "PVSettingsModel.h"
 #import "PVAppConstants.h"
 #import "PVEmulatorConfiguration.h"
 
@@ -57,7 +58,12 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 {
 	if ((self = [super initWithFrame:frame]))
 	{
-		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
+        CGFloat imageHeight = frame.size.height;
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            imageHeight -= 44;
+        }
+        
+		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, imageHeight)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
@@ -83,13 +89,16 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
 		[_titleLabel setMinimumScaleFactor:0.75];
 
-		[[self contentView] addSubview:_titleLabel];
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            [[self contentView] addSubview:_titleLabel];
+        }
         [[self contentView] addSubview:_imageView];
     }
 	return self;
 }
 
-- (UIImage *)imageWithText:(NSString *)text {
+- (UIImage *)imageWithText:(NSString *)text
+{
     
     // TODO: To be replaced with the correct system placeholder
     
@@ -110,18 +119,28 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     return missingArtworkImage;
 }
 
-- (void)setupWithGame:(PVGame *)game {
+- (void)setupWithGame:(PVGame *)game
+{
     
     NSString *artworkURL = [game customArtworkURL];
     NSString *originalArtworkURL = [game originalArtworkURL];
     
-    [_titleLabel setText:[game title]];
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        [_titleLabel setText:[game title]];
+    }
     
+    // TODO: May be renabled later
     NSString *placeholderImageText = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:game.systemIdentifier];
 
     if ([artworkURL isEqualToString:@""] &&
         [originalArtworkURL isEqualToString:@""]) {
-        self.imageView.image = [self imageWithText:placeholderImageText];
+        NSString *artworkText;
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            artworkText = placeholderImageText;
+        } else {
+            artworkText = game.title;
+        }
+        self.imageView.image = [self imageWithText:artworkText];
     } else {
         NSString *key = [artworkURL length] ? artworkURL : nil;
         
@@ -130,14 +149,19 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
         }
         
         if (key) {
-            self.operation = [[PVMediaCache shareInstance] imageForKey:key
-                                                            completion:^(UIImage *image) {
-                                                                
-                                                                UIImage *artwork = image ?: [self imageWithText:placeholderImageText];
-                                                                
-                                                                self.imageView.image = artwork;
-                                                                [self setNeedsLayout];
-                                                            }];
+            self.operation = [[PVMediaCache shareInstance] imageForKey:key completion:^(UIImage *image) {
+                
+                NSString *artworkText;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    artworkText = placeholderImageText;
+                } else {
+                    artworkText = game.title;
+                }
+                UIImage *artwork = image ?: [self imageWithText:artworkText];
+                
+                self.imageView.image = artwork;
+                [self setNeedsLayout];
+            }];
         }
     }
     
@@ -168,6 +192,13 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
+    
+    CGFloat imageHeight = self.frame.size.height;
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        imageHeight -= 44;
+    }
+    
+    self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
 
 #if TARGET_OS_TV
     CGAffineTransform titleTransform = _titleLabel.transform;
