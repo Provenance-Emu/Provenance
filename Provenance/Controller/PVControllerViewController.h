@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 @property (nonatomic, strong) JSButton *rightShoulderButton;
 @property (nonatomic, strong) JSButton *startButton;
 @property (nonatomic, strong) JSButton *selectButton;
+@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
 
 - (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
 

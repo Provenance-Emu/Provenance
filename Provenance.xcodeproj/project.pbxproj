@@ -23,7 +23,7 @@
 		1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.m */; };
 		1A34C58617D517760058E7D1 /* systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* systems.plist */; };
 		1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
-		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
+		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
@@ -58,6 +58,7 @@
 		1A5209891BADCBB500DAE6E3 /* PVControllerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */; };
 		1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
 		1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
+		1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
 		1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7417181ABF215B00F3CD3C /* libPVNES.a */; };
 		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
@@ -373,6 +374,8 @@
 		1A5209871BADCBB500DAE6E3 /* PVControllerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerManager.m; sourceTree = "<group>"; };
 		1A52098A1BADD4F900DAE6E3 /* PVControllerSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVControllerSelectionViewController.h; sourceTree = "<group>"; };
 		1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVControllerSelectionViewController.m; sourceTree = "<group>"; };
+		1A5665071D96A18A006EAE01 /* UIDevice+Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Hardware.h"; sourceTree = "<group>"; };
+		1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Hardware.m"; sourceTree = "<group>"; };
 		1A65D1C419917D55004E1777 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		1A7417181ABF215B00F3CD3C /* libPVNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVNES.a"; sourceTree = "<group>"; };
@@ -980,6 +983,8 @@
 				1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */,
 				BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */,
 				BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */,
+				1A5665071D96A18A006EAE01 /* UIDevice+Hardware.h */,
+				1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1417,6 +1422,7 @@
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
+				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
 				1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */,
@@ -1830,7 +1836,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1888,7 +1893,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -1946,7 +1950,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -2219,7 +2222,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -2256,7 +2258,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
@@ -2293,7 +2294,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.ProvenanceTV.TopShelf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 			};
