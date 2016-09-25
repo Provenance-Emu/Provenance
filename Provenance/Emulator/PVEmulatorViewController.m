@@ -498,22 +498,33 @@ void uncaughtExceptionHandler(NSException *exception)
             weakSelf.isShowingMenu = NO;
         }]];
     }
-
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		[weakSelf performSelector:@selector(showSaveStateMenu)
-					   withObject:nil
-					   afterDelay:0.1];
-	}]];
+    
+#if !TARGET_OS_TV
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Screenshot" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf performSelector:@selector(takeScreenshot)
+                       withObject:nil
+                       afterDelay:0.1];
+    }]];
+#endif
+    
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf performSelector:@selector(showSaveStateMenu)
+                       withObject:nil
+                       afterDelay:0.1];
+    }]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Load State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showLoadStateMenu)
 					   withObject:nil
 					   afterDelay:0.1];
 	}]];
+    
     [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Speed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSpeedMenu)
 					   withObject:nil
 					   afterDelay:0.1];
     }]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
@@ -528,9 +539,11 @@ void uncaughtExceptionHandler(NSException *exception)
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
 	}]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
@@ -698,6 +711,31 @@ void uncaughtExceptionHandler(NSException *exception)
          [[[PVControllerManager sharedManager] iCadeController] refreshListener];
      }];
 }
+
+#if !TARGET_OS_TV
+- (void)takeScreenshot
+{
+    CGFloat width = _glViewController.view.frame.size.width;
+    CGFloat height = _glViewController.view.frame.size.height;
+    
+    CGSize size = CGSizeMake(width, height);
+    
+    UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+    
+    CGRect rec = CGRectMake(0, 0, width, height);
+    [_glViewController.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+    });
+    
+    [self.emulatorCore setPauseEmulation:NO];
+    self.isShowingMenu = NO;
+}
+#endif
 
 - (void)showSpeedMenu
 {
