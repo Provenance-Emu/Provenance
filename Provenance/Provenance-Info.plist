@@ -47,7 +47,7 @@
 		<true/>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Provenance can set game artworks from your device's photo library.</string>
+	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
