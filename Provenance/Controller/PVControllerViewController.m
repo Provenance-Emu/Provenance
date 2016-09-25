@@ -17,6 +17,7 @@
 #import "PVControllerManager.h"
 #import "PVEmulatorCore.h"
 #import "PVEmulatorConstants.h"
+#import "UIDevice+Hardware.h"
 
 @interface PVControllerViewController ()
 
@@ -51,6 +52,7 @@
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
+	self.feedbackGenerator = nil;
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -71,11 +73,16 @@
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
 
-    if ([[PVControllerManager sharedManager] hasControllers])
-    {
-        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
-        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
-    }
+	if (NSClassFromString(@"UISelectionFeedbackGenerator")) {
+		self.feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
+		[self.feedbackGenerator prepare];
+	}
+
+	if ([[PVControllerManager sharedManager] hasControllers])
+	{
+		[self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+		[self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
+	}
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -317,42 +324,38 @@
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
-	[self doesNotImplementSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
 {
-	[self doesNotImplementSelector:_cmd];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
-	[self doesNotImplementSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
-	[self doesNotImplementSelector:_cmd];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
 }
 
 // These are private/undocumented API, so we need to expose them here
@@ -364,19 +367,31 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
 - (void)vibrate
 {
-    AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
-    
-    if ([[PVSettingsModel sharedInstance] buttonVibration])
-    {
-        NSInteger vibrationLength = 30;
-        NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
-        
-        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-        dictionary[@"VibePattern"] = pattern;
-        dictionary[@"Intensity"] = @1;
-        
-        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
-    }
+#if !TARGET_OS_TV
+	if ([[PVSettingsModel sharedInstance] buttonVibration])
+	{
+		// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
+		// everything else should fall back to the vibration motor.
+		if ([[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,2"] ||
+			[[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,3"])
+		{
+			[self.feedbackGenerator selectionChanged];
+		}
+		else
+		{
+			AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+
+			NSInteger vibrationLength = 30;
+			NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
+
+			NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+			dictionary[@"VibePattern"] = pattern;
+			dictionary[@"Intensity"] = @1;
+
+			AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+		}
+	}
+#endif
 }
 
 #pragma mark -
