@@ -52,7 +52,9 @@
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
+#if !TARGET_OS_TV
 	self.feedbackGenerator = nil;
+#endif
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -73,10 +75,12 @@
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
 
+#if !TARGET_OS_TV
 	if (NSClassFromString(@"UISelectionFeedbackGenerator")) {
 		self.feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
 		[self.feedbackGenerator prepare];
 	}
+#endif
 
 	if ([[PVControllerManager sharedManager] hasControllers])
 	{
