@@ -26,10 +26,10 @@
     [super viewDidLoad];
     
     self.title = @"Appearance";
-    
+
+#if !TARGET_OS_TV
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     
-#if !TARGET_OS_TV
     _hideTitlesSwitch = [UISwitch new];
     _hideTitlesSwitch.onTintColor = [UIColor colorWithRed:0.20 green:0.45 blue:0.99 alpha:1.00];
     [_hideTitlesSwitch setOn:[settings showGameTitles]];
