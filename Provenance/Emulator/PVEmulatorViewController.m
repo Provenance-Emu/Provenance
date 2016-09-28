@@ -210,7 +210,6 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fpsLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.glViewController.view attribute:NSLayoutAttributeRight multiplier:1.0 constant:-40]];
         
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
-        
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
             // Block-based NSTimer method is only available on iOS 10 and later
 			__weak typeof(self) weakSelf = self;
@@ -498,22 +497,33 @@ void uncaughtExceptionHandler(NSException *exception)
             weakSelf.isShowingMenu = NO;
         }]];
     }
-
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		[weakSelf performSelector:@selector(showSaveStateMenu)
-					   withObject:nil
-					   afterDelay:0.1];
-	}]];
+    
+#if !TARGET_OS_TV
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Screenshot" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf performSelector:@selector(takeScreenshot)
+                       withObject:nil
+                       afterDelay:0.1];
+    }]];
+#endif
+    
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Save State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf performSelector:@selector(showSaveStateMenu)
+                       withObject:nil
+                       afterDelay:0.1];
+    }]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Load State" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showLoadStateMenu)
 					   withObject:nil
 					   afterDelay:0.1];
 	}]];
+    
     [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Speed" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf performSelector:@selector(showSpeedMenu)
 					   withObject:nil
 					   afterDelay:0.1];
     }]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Reset" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		if ([[PVSettingsModel sharedInstance] autoSave])
 		{
@@ -528,9 +538,11 @@ void uncaughtExceptionHandler(NSException *exception)
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
 	}]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
 	}]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
@@ -698,6 +710,41 @@ void uncaughtExceptionHandler(NSException *exception)
          [[[PVControllerManager sharedManager] iCadeController] refreshListener];
      }];
 }
+
+#if !TARGET_OS_TV
+- (void)takeScreenshot
+{
+    [UIView animateWithDuration:0.4 animations:^{
+        _fpsLabel.alpha = 0;
+    } completion:^(BOOL finished) {
+        if (finished) {
+            CGFloat width = _glViewController.view.frame.size.width;
+            CGFloat height = _glViewController.view.frame.size.height;
+            
+            CGSize size = CGSizeMake(width, height);
+            
+            UIGraphicsBeginImageContextWithOptions(size, NO, [UIScreen mainScreen].scale);
+            
+            CGRect rec = CGRectMake(0, 0, width, height);
+            [_glViewController.view drawViewHierarchyInRect:rec afterScreenUpdates:YES];
+            
+            UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
+            });
+            
+            [self.emulatorCore setPauseEmulation:NO];
+            self.isShowingMenu = NO;
+            
+            [UIView animateWithDuration:0.4 animations:^{
+                _fpsLabel.alpha = 1;
+            }];
+        }
+    }];
+}
+#endif
 
 - (void)showSpeedMenu
 {
