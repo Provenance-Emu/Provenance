@@ -278,8 +278,6 @@
 		BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */; };
 		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
 		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
-		E32D548E1D99C83900C41A52 /* local.plist in Resources */ = {isa = PBXBuildFile; fileRef = E37DD0AA1D98762F009123E5 /* local.plist */; };
-		E37DD0AB1D98762F009123E5 /* local.plist in Resources */ = {isa = PBXBuildFile; fileRef = E37DD0AA1D98762F009123E5 /* local.plist */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -601,7 +599,6 @@
 		BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVGame+Sizing.m"; sourceTree = "<group>"; };
 		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+GroupConfig.h"; sourceTree = "<group>"; };
 		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+GroupConfig.m"; sourceTree = "<group>"; };
-		E37DD0AA1D98762F009123E5 /* local.plist */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = local.plist; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -929,7 +926,6 @@
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				E37DD0AA1D98762F009123E5 /* local.plist */,
 				1A34C58517D517760058E7D1 /* systems.plist */,
 				1AECF4A61966D6D600F8704E /* openvgdb.sqlite */,
 				1A9FBE1A1ABD23DD004E778B /* vba-over.ini */,
@@ -1432,7 +1428,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E37DD0AB1D98762F009123E5 /* local.plist in Resources */,
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */,
@@ -1450,7 +1445,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E32D548E1D99C83900C41A52 /* local.plist in Resources */,
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
 				1AD482371BA35A3300FDA50A /* systems.plist in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
@@ -1520,7 +1514,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "PLIST_PATH=\"${SOURCE_ROOT}/Provenance/Resources/local.plist\"\nrm -f $PLIST_PATH\nLOCAL_SHA=$(git rev-parse --short HEAD)\nFULL_MASTER_SHA=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nMASTER_SHA=$(git rev-parse --short $FULL_MASTER_SHA)\ndefaults write $PLIST_PATH \"LocalSHA\" \"${LOCAL_SHA}\"\ndefaults write $PLIST_PATH \"MasterSHA\" \"${MASTER_SHA}\"";
+			shellScript = "localSha=$(git rev-parse --short HEAD)\nfullMasterSha=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nmasterSha=$(git rev-parse --short $fullMasterSha)\n/usr/libexec/PlistBuddy -c \"Set :LocalGitSha $localSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n/usr/libexec/PlistBuddy -c \"Set :MasterGitSha $masterSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
 		};
 		E3D030EE1D980D9F00045BE6 /* Set Git SHA */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1534,7 +1528,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "PLIST_PATH=\"${SOURCE_ROOT}/Provenance/Resources/local.plist\"\nrm -f $PLIST_PATH\nLOCAL_SHA=$(git rev-parse --short HEAD)\nFULL_MASTER_SHA=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nMASTER_SHA=$(git rev-parse --short $FULL_MASTER_SHA)\ndefaults write $PLIST_PATH \"LocalSHA\" \"${LOCAL_SHA}\"\ndefaults write $PLIST_PATH \"MasterSHA\" \"${MASTER_SHA}\"";
+			shellScript = "localSha=$(git rev-parse --short HEAD)\nfullMasterSha=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nmasterSha=$(git rev-parse --short $fullMasterSha)\n/usr/libexec/PlistBuddy -c \"Set :LocalGitSha $localSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n/usr/libexec/PlistBuddy -c \"Set :MasterGitSha $masterSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

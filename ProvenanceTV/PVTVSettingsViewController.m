@@ -53,10 +53,8 @@
 #else
     [self.modeValueLabel setText:@"RELEASE"];
 #endif
-    NSString* localPlistPath = [[NSBundle mainBundle] pathForResource:@"local" ofType:@"plist"];
-    NSDictionary *gitDict = [[NSDictionary alloc] initWithContentsOfFile:localPlistPath];
-    NSString *gitMasterShaText = [gitDict objectForKey:@"MasterSHA"];
-    NSString *gitLocalShaText = [gitDict objectForKey:@"LocalSHA"];
+    NSString *gitMasterShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"MasterGitSha"];
+    NSString *gitLocalShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"LocalGitSha"];
     UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
 
     if ([gitMasterShaText length] > 0) {
