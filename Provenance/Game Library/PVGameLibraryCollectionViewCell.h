@@ -17,4 +17,6 @@
 + (CGSize)cellSizeForImageSize:(CGSize)imageSize;
 - (void)sizeImageViews:(CGSize)size;
 
++ (CGSize)cellSizeForImageSize:(CGSize)imageSize;
+
 @end

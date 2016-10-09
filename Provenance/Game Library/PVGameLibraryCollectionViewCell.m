@@ -9,8 +9,40 @@
 #import "PVGameLibraryCollectionViewCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import "UIView+FrameAdditions.h"
+#import "PVGame.h"
+#import "PVMediaCache.h"
+#import "PVSettingsModel.h"
+#import "PVAppConstants.h"
+#import "PVEmulatorConfiguration.h"
 
 static const CGFloat LabelHeight = 80.0;
+
+CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
+    CGFloat width = originalSize.width;
+    CGFloat height = originalSize.height;
+    
+    CGFloat multiplier = 0.f;
+    
+    if (height > maximumSize.height) {
+        multiplier = maximumSize.height / height;
+    }
+    
+    if (width > maximumSize.width) {
+        CGFloat provisionalMultiplier = maximumSize.width / width;
+        BOOL validMultiplier = provisionalMultiplier > 0;
+        if (validMultiplier && (provisionalMultiplier < multiplier || multiplier == 0)) {
+            multiplier = provisionalMultiplier;
+        }
+    }
+    
+    if (multiplier > 0) {
+        // CGRectIntegral does floorf() on origin and ceilf() on size
+        height = ceilf(height * multiplier);
+        width = ceilf(width * multiplier);
+    }
+    
+    return CGSizeMake(width, height);
+}
 
 @interface PVGameLibraryCollectionViewCell ()
 
