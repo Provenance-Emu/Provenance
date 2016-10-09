@@ -11,6 +11,7 @@
 
 #define VNSCLIP  ((eoptions&EO_CLIPSIDES)?8:0)
 #define VNSWID   ((eoptions&EO_CLIPSIDES)?240:256)
+#define VNSWID_NU(XR)   (VNSWID==256?XR:((int)(XR/256.f*240)))
 
 #define SO_FORCE8BIT  1
 #define SO_SECONDARY  2
@@ -42,6 +43,9 @@ extern int genie;
 // Flag that indicates whether PAL Emulation is enabled or not.
 extern int pal_emulation;
 extern int pal_setting_specified;
+// dendy and pal should have been designed alongside, using enum or alike
+// now it's not possible to do it easily, so we'll just use the flag here and there, not to touch PAL logics
+extern int dendy;
 extern int status_icon;
 extern int frame_display;
 extern int rerecord_display;
@@ -54,6 +58,7 @@ extern int EnableBackgroundInput;
 extern int AFon;
 extern int AFoff;
 extern int AutoFireOffset;
+
 
 extern int vmod;
 
@@ -101,14 +106,17 @@ extern int soundPCMvol;		//Sound channel PCM - volume control
 
 extern int soundquality;
 extern bool muteTurbo;
+extern bool swapDuty;
 
-extern uint8 cpalette[192];
+extern int cpalette_count;
+extern uint8 cpalette[64*8*3];
 extern int srendlinen;
 extern int erendlinen;
 extern int srendlinep;
 extern int erendlinep;
 
-extern int ntsccol, ntsctint, ntschue;
+extern int ntsctint, ntschue;
+extern bool ntsccol_enable;
 extern bool force_grayscale;
 
 //mbg merge 7/17/06 did these have to be unsigned?
@@ -135,6 +143,8 @@ void RemoveDirs();
 void CreateDirs();
 void SetDirs();
 void FCEUX_LoadMovieExtras(const char * fname);
+bool ALoad(const char* nameo, char* innerFilename = 0, bool silent = false);
 //void initDirectories();	//adelikat 03/02/09 - commenting out reference to a directory that I commented out
+
 
 #endif

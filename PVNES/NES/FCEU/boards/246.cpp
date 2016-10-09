@@ -54,6 +54,7 @@ static void M246Power(void) {
 	SetReadHandler(0x6800, 0x6FFF, CartBR);
 	SetWriteHandler(0x6800, 0x6FFF, CartBW);
 	SetReadHandler(0x8000, 0xFFFF, CartBR);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M246Close(void)

@@ -1169,6 +1169,21 @@ void S9xResetSaveTimer (bool8 dontsave)
 	t = time(NULL);
 }
 
+uint32 S9xFreezeSize()
+{
+    nulStream stream;
+    S9xFreezeToStream(&stream);
+    return stream.size();
+}
+
+bool8 S9xFreezeGameMem (uint8 *buf, uint32 bufSize)
+{
+    memStream mStream(buf, bufSize);
+	S9xFreezeToStream(&mStream);
+
+	return (TRUE);
+}
+
 bool8 S9xFreezeGame (const char *filename)
 {
 	STREAM	stream = NULL;
@@ -1192,6 +1207,14 @@ bool8 S9xFreezeGame (const char *filename)
 	}
 
 	return (FALSE);
+}
+
+int S9xUnfreezeGameMem (const uint8 *buf, uint32 bufSize)
+{
+    memStream stream(buf, bufSize);
+	int result = S9xUnfreezeFromStream(&stream);
+
+	return result;
 }
 
 bool8 S9xUnfreezeGame (const char *filename)

@@ -11,19 +11,24 @@
 
 @implementation PVGame (Sizing)
 
+CGFloat const PVGameBoxArtAspectRatioSquare = 1.0;
+CGFloat const PVGameBoxArtAspectRatioWide = 1.4;
+CGFloat const PVGameBoxArtAspectRatioTall = 0.7;
+
+CGFloat const PVGameBoxArtWidth = 280.0;
+
 - (CGSize)boxartSize
 {
-    CGFloat imageAspectRatio = 1.0;
-    CGFloat width = 280.0;
+    CGFloat imageAspectRatio = PVGameBoxArtAspectRatioSquare;
     
     if ([self.systemIdentifier isEqualToString:PVSNESSystemIdentifier]) {
-        imageAspectRatio = 1.40;
+        imageAspectRatio = PVGameBoxArtAspectRatioWide;
     }
     else if ([self.systemIdentifier isEqualToString:PVNESSystemIdentifier] ||
              [self.systemIdentifier isEqualToString:PVGenesisSystemIdentifier]) {
-        imageAspectRatio = 0.70;
+        imageAspectRatio = PVGameBoxArtAspectRatioTall;
     }
-    return CGSizeMake(width, width/imageAspectRatio);
+    return CGSizeMake(PVGameBoxArtWidth, PVGameBoxArtWidth/imageAspectRatio);
 }
 
 @end

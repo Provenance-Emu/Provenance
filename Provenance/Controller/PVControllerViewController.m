@@ -17,6 +17,7 @@
 #import "PVControllerManager.h"
 #import "PVEmulatorCore.h"
 #import "PVEmulatorConstants.h"
+#import "UIDevice+Hardware.h"
 
 @interface PVControllerViewController ()
 
@@ -51,6 +52,9 @@
 	self.rightShoulderButton = nil;
 	self.startButton = nil;
 	self.selectButton = nil;
+#if !TARGET_OS_TV
+	self.feedbackGenerator = nil;
+#endif
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -71,11 +75,18 @@
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
 
-    if ([[PVControllerManager sharedManager] hasControllers])
-    {
-        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
-        [self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
-    }
+#if !TARGET_OS_TV
+	if (NSClassFromString(@"UISelectionFeedbackGenerator")) {
+		self.feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
+		[self.feedbackGenerator prepare];
+	}
+#endif
+
+	if ([[PVControllerManager sharedManager] hasControllers])
+	{
+		[self hideTouchControlsForController:[[PVControllerManager sharedManager] player1]];
+		[self hideTouchControlsForController:[[PVControllerManager sharedManager] player2]];
+	}
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -115,7 +126,7 @@
 		NSString *controlType = [control objectForKey:PVControlTypeKey];
 		
 		BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
-		CGFloat kDPadTopMargin = 64.0;
+		CGFloat kDPadTopMargin = 96.0;
 		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
 		
 		if ([controlType isEqualToString:PVDPad])
@@ -142,7 +153,7 @@
 		else if ([controlType isEqualToString:PVButtonGroup])
 		{
 			CGFloat xPadding = 5;
-			CGFloat bottomPadding = 32;
+			CGFloat bottomPadding = 16;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			
 			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
@@ -181,6 +192,7 @@
 			CGFloat xPadding = 10;
 			CGFloat yPadding = 10;
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+
 			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, size.width, size.height);
 			
 			if (!self.leftShoulderButton)
@@ -316,42 +328,38 @@
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
-	[self doesNotImplementSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
 {
-	[self doesNotImplementSelector:_cmd];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
-	[self doesNotImplementSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
-	[self doesNotImplementSelector:_cmd];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
+	[self vibrate];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
-    [self doesNotImplementOptionalSelector:_cmd];
 }
 
 // These are private/undocumented API, so we need to expose them here
@@ -363,19 +371,31 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 
 - (void)vibrate
 {
-    AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
-    
-    if ([[PVSettingsModel sharedInstance] buttonVibration])
-    {
-        NSInteger vibrationLength = 30;
-        NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
-        
-        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-        dictionary[@"VibePattern"] = pattern;
-        dictionary[@"Intensity"] = @1;
-        
-        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
-    }
+#if !TARGET_OS_TV
+	if ([[PVSettingsModel sharedInstance] buttonVibration])
+	{
+		// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
+		// everything else should fall back to the vibration motor.
+		if ([[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,2"] ||
+			[[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,3"])
+		{
+			[self.feedbackGenerator selectionChanged];
+		}
+		else
+		{
+			AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+
+			NSInteger vibrationLength = 30;
+			NSArray *pattern = @[@NO, @0, @YES, @(vibrationLength)];
+
+			NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+			dictionary[@"VibePattern"] = pattern;
+			dictionary[@"Intensity"] = @1;
+
+			AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+		}
+	}
+#endif
 }
 
 #pragma mark -
@@ -387,7 +407,9 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self.leftShoulderButton setHidden:YES];
     [self.rightShoulderButton setHidden:YES];
     
-    if ([controller extendedGamepad])
+    //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
+    NSArray *useStandardGamepad = [NSArray arrayWithObjects: PVGBSystemIdentifier, PVGBCSystemIdentifier, PVGBASystemIdentifier, nil];
+    if ([controller extendedGamepad] || [useStandardGamepad containsObject:self.systemIdentifier])
     {
         [self.startButton setHidden:YES];
         [self.selectButton setHidden:YES];

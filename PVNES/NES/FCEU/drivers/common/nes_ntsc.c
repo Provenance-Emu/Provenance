@@ -24,7 +24,7 @@ nes_ntsc_setup_t const nes_ntsc_rgb        = { 0, 0, 0, 0,.2,  0,.7, -1, -1,-1, 
 #define alignment_count 3
 #define burst_count     3
 #define rescale_in      8
-#define rescale_out     6
+#define rescale_out     7
 
 #define artifacts_mid   1.0f
 #define fringing_mid    1.0f
@@ -81,14 +81,13 @@ static void correct_errors( nes_ntsc_rgb_t color, nes_ntsc_rgb_t* out )
 	}
 }
 
-void nes_ntsc_init( nes_ntsc_t* ntsc, nes_ntsc_setup_t const* setup, int bpp, int multiplier )
+void nes_ntsc_init( nes_ntsc_t* ntsc, nes_ntsc_setup_t const* setup, int bpp )
 {
 	int merge_fields;
 	int entry;
 	init_t impl;
 	float gamma_factor;
 
-	OutputMultiplier = multiplier;
 	OutputDepth = bpp * 8;
 
 	if ( !setup )
@@ -244,18 +243,12 @@ void nes_ntsc_init( nes_ntsc_t* ntsc, nes_ntsc_setup_t const* setup, int bpp, in
 #ifndef NES_NTSC_NO_BLITTERS
 
 void nes_ntsc_blit( nes_ntsc_t const* ntsc, NES_NTSC_IN_T const* input, long in_row_width,
-		int burst_phase, int in_width, int in_height, void* rgb_out, long out_pitch )
+		int burst_phase, int emphasis, int in_width, int in_height, void* rgb_out, long out_pitch )
 {
 	int chunk_count = (in_width - 1) / nes_ntsc_in_chunk;
 
-	int TempMultiplier = OutputMultiplier * 3;
-	if (TempMultiplier > 7)
-		TempMultiplier = 7;
-
 	for ( ; in_height; --in_height )
 	{
-		int out;
-		for ( out = OutputMultiplier; out; --out ) {
 		NES_NTSC_IN_T const* line_in = input;
 		NES_NTSC_BEGIN_ROW( ntsc, burst_phase, nes_ntsc_black, nes_ntsc_black, NES_NTSC_ADJ_IN( *line_in ) );
 		nes_ntsc_out_t* restrict line_out = (nes_ntsc_out_t*) rgb_out;
@@ -297,7 +290,6 @@ void nes_ntsc_blit( nes_ntsc_t const* ntsc, NES_NTSC_IN_T const* input, long in_
 		NES_NTSC_RGB_OUT( 5, line_out [5], OutputDepth );
 		NES_NTSC_RGB_OUT( 6, line_out [6], OutputDepth );
 		rgb_out = (char*) rgb_out + out_pitch;
-		}
 		
 		burst_phase = (burst_phase + 1) % nes_ntsc_burst_count;
 		input += in_row_width;

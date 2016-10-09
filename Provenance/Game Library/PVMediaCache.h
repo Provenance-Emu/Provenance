@@ -10,8 +10,10 @@ extern NSString * const PVMediaCacheWasEmptiedNotification;
 
 @interface PVMediaCache : NSObject
 
++ (instancetype)shareInstance;
+
 + (NSString *)cachePath;
-+ (UIImage *)imageForKey:(NSString *)key;
+- (NSBlockOperation *)imageForKey:(NSString *)key completion:(void(^)(UIImage *image))completion;
 + (NSString *)filePathForKey:(NSString *)key;
 + (NSString *)writeImageToDisk:(UIImage *)image withKey:(NSString *)key;
 + (NSString *)writeDataToDisk:(NSData *)data withKey:(NSString *)key;

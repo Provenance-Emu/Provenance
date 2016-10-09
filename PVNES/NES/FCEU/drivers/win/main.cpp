@@ -146,6 +146,8 @@ double tvAspectX = TV_ASPECT_DEFAULT_X, tvAspectY = TV_ASPECT_DEFAULT_Y;
 int genie = 0;
 int pal_emulation = 0;
 int pal_setting_specified = 0;
+int dendy = 0;
+bool swapDuty = 0; // some Famicom and NES clones had duty cycle bits swapped
 int ntsccol = 0, ntsctint, ntschue;
 std::string BaseDirectory;
 int PauseAfterLoad;
@@ -634,6 +636,15 @@ int main(int argc,char *argv[])
 	// Parse the commandline arguments
 	t = ParseArgies(argc, argv);
 
+	if(PlayInput)
+		PlayInputFile = fopen(PlayInput, "rb");
+	if(DumpInput)
+		DumpInputFile = fopen(DumpInput, "wb");
+
+	extern int disableBatteryLoading;
+	if(PlayInput || DumpInput)
+		disableBatteryLoading = 1;
+
 	int saved_pal_setting = !!pal_emulation;
 
 	if (ConfigToLoad)
@@ -656,6 +667,7 @@ int main(int argc,char *argv[])
         pauseAfterPlayback = !!pauseAfterPlayback;
         closeFinishedMovie = !!closeFinishedMovie;
         EnableBackgroundInput = !!EnableBackgroundInput;
+		dendy = !!dendy;
 
 		KeyboardSetBackgroundAccess(EnableBackgroundInput!=0);
 		JoystickSetBackgroundAccess(EnableBackgroundInput!=0);
@@ -680,9 +692,10 @@ int main(int argc,char *argv[])
 	DoVideoConfigFix();
 	DoTimingConfigFix();
 
+	//restore the last user-set palette (cpalette and cpalette_count are preserved in the config file)
 	if(eoptions & EO_CPALETTE)
 	{
-		FCEUI_SetPaletteArray(cpalette);
+		FCEUI_SetUserPalette(cpalette,cpalette_count);
 	}
 
 	if(!t)
@@ -754,9 +767,9 @@ int main(int argc,char *argv[])
 			LoadNewGamey(hAppWnd, 0);
 	}
 
-	if (pal_setting_specified)
+	if (pal_setting_specified && !dendy)
 	{
-		// Force the PAL setting specified in the command line
+		// Force the PAL setting specified in the command line, unless Dendy
         pal_emulation = saved_pal_setting;
         FCEUI_SetVidSystem(pal_emulation);
 	}

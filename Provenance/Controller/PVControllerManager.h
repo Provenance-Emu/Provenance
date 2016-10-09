@@ -11,6 +11,8 @@
 
 @class PViCadeController;
 
+extern NSString * const PVControllerManagerControllerReassignedNotification;
+
 @interface PVControllerManager : NSObject
 
 + (PVControllerManager *)sharedManager;

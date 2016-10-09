@@ -13,6 +13,12 @@ typedef struct {
 					// that are not really MMC3 but are
 					// set to mapper 4.
 	int battery;	// Presence of an actual battery.
+	int ines2;
+	int submapper;	// Submappers as defined by NES 2.0
+	int wram_size;
+	int battery_wram_size;
+	int vram_size;
+	int battery_vram_size;
 	uint8 MD5[16];
 	uint32 CRC32;	// Should be set by the iNES/UNIF loading
 					// code, used by mapper/board code, maybe

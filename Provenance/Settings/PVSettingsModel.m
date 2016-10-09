@@ -14,8 +14,11 @@ NSString * const kControllerOpacityKey = @"kControllerOpacityKey";
 NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
+NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
+NSString * const kFPSCountKey = @"kFPSCountKey";
+NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
 
 @implementation PVSettingsModel
 
@@ -43,8 +46,11 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
+                                                                  kShowRecentGamesKey : @YES,
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
-                                                                  kVolumeSettingKey : @(1.0)}];
+                                                                  kVolumeSettingKey : @(1.0),
+																  kFPSCountKey : @(NO),
+                                                                  kShowGameTitlesKey: @(YES)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -52,11 +58,30 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 		_controllerOpacity = [[NSUserDefaults standardUserDefaults] floatForKey:kControllerOpacityKey];
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
+        _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
+        _showFPSCount = [[NSUserDefaults standardUserDefaults] boolForKey:kFPSCountKey];
+        _showGameTitles = [[NSUserDefaults standardUserDefaults] boolForKey:kShowGameTitlesKey];
 	}
 	
 	return self;
+}
+
+- (void)setShowGameTitles:(BOOL)showGameTitles
+{
+    _showGameTitles = showGameTitles;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:_showGameTitles forKey:kShowGameTitlesKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setShowFPSCount:(BOOL)showFPSCount
+{
+    _showFPSCount = showFPSCount;
+    
+    [[NSUserDefaults standardUserDefaults] setBool:_showFPSCount forKey:kFPSCountKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)setAutoSave:(BOOL)autoSave
@@ -101,6 +126,13 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 {
     _buttonVibration = buttonVibration;
     [[NSUserDefaults standardUserDefaults] setBool:_buttonVibration forKey:kButtonVibrationKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setShowRecentGames:(BOOL)showRecentGames
+{
+    _showRecentGames = showRecentGames;
+    [[NSUserDefaults standardUserDefaults] setBool:_showRecentGames forKey:kShowRecentGamesKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

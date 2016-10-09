@@ -48,6 +48,7 @@ static void UNLEDU2000Power(void) {
 	SetReadHandler(0x6000, 0xFFFF, CartBR);
 	SetWriteHandler(0x6000, 0xFFFF, CartBW);
 	SetWriteHandler(0x8000, 0xFFFF, UNLEDU2000HiWrite);
+	FCEU_CheatAddRAM(32, 0x6000, WRAM);
 	reg = 0;
 	Sync();
 }
