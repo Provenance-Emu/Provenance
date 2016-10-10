@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-
+unsigned int debuggerPageSize = 14;
 int vblankScanLines = 0;	//Used to calculate scanlines 240-261 (vblank)
 int vblankPixel = 0;		//Used to calculate the pixels in vblank
 
@@ -232,12 +232,12 @@ int getBank(int offs)
 
 	if (GameInfo && GameInfo->type==GIT_NSF)
 		return addr != -1 ? addr / 0x1000 : -1;
-	return addr != -1 ? addr / 0x4000 : -1;
+	return addr != -1 ? addr / (1<<debuggerPageSize) : -1; //formerly, dividing by 0x4000
 }
 
 int GetNesFileAddress(int A){
 	int result;
-	if((A < 0x8000) || (A > 0xFFFF))return -1;
+	if((A < 0x6000) || (A > 0xFFFF))return -1;
 	result = &Page[A>>11][A]-PRGptr[0];
 	if((result > (int)(PRGsize[0])) || (result < 0))return -1;
 	else return result+16; //16 bytes for the header remember
@@ -263,7 +263,7 @@ uint8 *GetNesCHRPointer(int A){
 }
 
 uint8 GetMem(uint16 A) {
-	if ((A >= 0x2000) && (A < 0x4000)) {
+	if ((A >= 0x2000) && (A < 0x4000)) // PPU regs and their mirrors
 		switch (A&7) {
 			case 0: return PPU[0];
 			case 1: return PPU[1];
@@ -271,16 +271,36 @@ uint8 GetMem(uint16 A) {
 			case 3: return PPU[3];
 			case 4: return SPRAM[PPU[3]];
 			case 5: return XOffset;
-			case 6: return RefreshAddr&0xFF;
+			case 6: return FCEUPPU_PeekAddress() & 0xFF;
 			case 7: return VRAMBuffer;
 		}
-	} else if ((A >= 0x4000) && (A < 0x5000)) return 0xFF;	// AnS: changed the range, so MMC5 ExRAM can be watched in the Hexeditor
-	if (GameInfo) return ARead[A](A);					 //adelikat: 11/17/09: Prevent crash if this is called with no game loaded.
-	else return 0;
+	// feos: added more registers
+	else if ((A >= 0x4000) && (A < 0x4010))
+		return PSG[A&15];
+	else if ((A >= 0x4010) && (A < 0x4018))
+		switch(A&7) {
+			case 0: return DMCFormat;
+			case 1: return RawDALatch;
+			case 2: return DMCAddressLatch;
+			case 3: return DMCSizeLatch;
+			case 4: return SpriteDMA;
+			case 5: return EnabledChannels;
+			case 6: return RawReg4016;
+			case 7: return IRQFrameMode;
+		}		
+	else if ((A >= 0x4018) && (A < 0x5000))	// AnS: changed the range, so MMC5 ExRAM can be watched in the Hexeditor
+		return 0xFF;
+	if (GameInfo) {							//adelikat: 11/17/09: Prevent crash if this is called with no game loaded.
+		uint32 ret;
+		fceuindbg=1;
+		ret = ARead[A](A);
+		fceuindbg=0;
+		return ret;
+	} else return 0;
 }
 
 uint8 GetPPUMem(uint8 A) {
-	uint16 tmp=RefreshAddr&0x3FFF;
+	uint16 tmp = FCEUPPU_PeekAddress() & 0x3FFF;
 
 	if (tmp<0x2000) return VPage[tmp>>10][tmp];
 	if (tmp>=0x3F00) return PALRAM[tmp&0x1F];
@@ -405,7 +425,8 @@ void LogCDData(uint8 *opcode, uint16 A, int size) {
 		for (i = 0; i < size; i++) {
 			if(cdloggerdata[j+i] & 1)continue; //this has been logged so skip
 			cdloggerdata[j+i] |= 1;
-			cdloggerdata[j+i] |=((_PC+i)>>11)&0x0c;
+			cdloggerdata[j+i] |= ((_PC + i) >> 11) & 0x0c;
+			cdloggerdata[j+i] |= ((_PC & 0x8000) >> 8) ^ 0x80;	// 19/07/14 used last reserved bit, if bit 7 is 1, then code is running from lowe area (6000)
 			if(indirectnext)cdloggerdata[j+i] |= 0x10;
 			codecount++;
 			if(!(cdloggerdata[j+i] & 2))undefinedcount--;
@@ -607,13 +628,14 @@ static void breakpoint(uint8 *opcode, uint16 A, int size) {
 				// PPU Mem breaks
 				if ((watchpoint[i].flags & brk_type) && ((A >= 0x2000) && (A < 0x4000)) && ((A&7) == 7))
 				{
+					const uint32 PPUAddr = FCEUPPU_PeekAddress();
 					if (watchpoint[i].endaddress)
 					{
-						if ((watchpoint[i].address <= RefreshAddr) && (watchpoint[i].endaddress >= RefreshAddr))
+						if ((watchpoint[i].address <= PPUAddr) && (watchpoint[i].endaddress >= PPUAddr))
 							BreakHit(i);
 					} else
 					{
-						if (watchpoint[i].address == RefreshAddr)
+						if (watchpoint[i].address == PPUAddr)
 							BreakHit(i);
 					}
 				}
@@ -737,7 +759,7 @@ static void breakpoint(uint8 *opcode, uint16 A, int size) {
 void DebugCycle()
 {
 	uint8 opcode[3] = {0};
-	uint16 A = 0;
+	uint16 A = 0, tmp;
 	int size;
 
 	if (scanline == 240)
@@ -772,12 +794,14 @@ void DebugCycle()
 	{
 		case 0: break;
 		case 1:
-			A = (opcode[1] + _X) & 0xFF;
-			A = GetMem(A) | (GetMem(A + 1) << 8);
+			tmp = (opcode[1] + _X) & 0xFF;
+			A = GetMem(tmp);
+			tmp = (opcode[1] + _X + 1) & 0xFF;
+			A |= (GetMem(tmp) << 8);
 			break;
 		case 2: A = opcode[1]; break;
 		case 3: A = opcode[1] | (opcode[2] << 8); break;
-		case 4: A = (GetMem(opcode[1]) | (GetMem(opcode[1]+1) << 8)) + _Y; break;
+		case 4: A = (GetMem(opcode[1]) | (GetMem((opcode[1] + 1) & 0xFF) << 8)) + _Y; break;
 		case 5: A = opcode[1] + _X; break;
 		case 6: A = (opcode[1] | (opcode[2] << 8)) + _Y; break;
 		case 7: A = (opcode[1] | (opcode[2] << 8)) + _X; break;

@@ -73,37 +73,38 @@ static void MMC1CHR(void) {
 }
 
 static void MMC1PRG(void) {
-	uint8 offs = DRegs[1] & 0x10;
+	uint8 offs_16banks = DRegs[1] & 0x10;
+	uint8 prg_reg = DRegs[3] & 0xF; //homebrewers arent allowed to use more banks on MMC1. use another mapper.
 	if (MMC1PRGHook16) {
 		switch (DRegs[0] & 0xC) {
 		case 0xC:
-			MMC1PRGHook16(0x8000, (DRegs[3] + offs));
-			MMC1PRGHook16(0xC000, 0xF + offs);
+			MMC1PRGHook16(0x8000, (prg_reg + offs_16banks));
+			MMC1PRGHook16(0xC000, 0xF + offs_16banks);
 			break;
 		case 0x8:
-			MMC1PRGHook16(0xC000, (DRegs[3] + offs));
-			MMC1PRGHook16(0x8000, offs);
+			MMC1PRGHook16(0xC000, (prg_reg + offs_16banks));
+			MMC1PRGHook16(0x8000, offs_16banks);
 			break;
 		case 0x0:
 		case 0x4:
-			MMC1PRGHook16(0x8000, ((DRegs[3] & ~1) + offs));
-			MMC1PRGHook16(0xc000, ((DRegs[3] & ~1) + offs + 1));
+			MMC1PRGHook16(0x8000, ((prg_reg & ~1) + offs_16banks));
+			MMC1PRGHook16(0xc000, ((prg_reg & ~1) + offs_16banks + 1));
 			break;
 		}
 	} else {
 		switch (DRegs[0] & 0xC) {
 		case 0xC:
-			setprg16(0x8000, (DRegs[3] + offs));
-			setprg16(0xC000, 0xF + offs);
+			setprg16(0x8000, (prg_reg + offs_16banks));
+			setprg16(0xC000, 0xF + offs_16banks);
 			break;
 		case 0x8:
-			setprg16(0xC000, (DRegs[3] + offs));
-			setprg16(0x8000, offs);
+			setprg16(0xC000, (prg_reg + offs_16banks));
+			setprg16(0x8000, offs_16banks);
 			break;
 		case 0x0:
 		case 0x4:
-			setprg16(0x8000, ((DRegs[3] & ~1) + offs));
-			setprg16(0xc000, ((DRegs[3] & ~1) + offs + 1));
+			setprg16(0x8000, ((prg_reg & ~1) + offs_16banks));
+			setprg16(0xc000, ((prg_reg & ~1) + offs_16banks + 1));
 			break;
 		}
 	}
@@ -247,8 +248,8 @@ static void GenMMC1Power(void) {
 		FCEU_CheatAddRAM(8, 0x6000, WRAM);
 		if (mmc1opts & 4)
 			FCEU_dwmemset(WRAM, 0, 8192)
-			else if (!(mmc1opts & 2))
-				FCEU_dwmemset(WRAM, 0, 8192);
+		else if (!(mmc1opts & 2))
+			FCEU_dwmemset(WRAM, 0, 8192);	// wtf?
 	}
 	SetWriteHandler(0x8000, 0xFFFF, MMC1_write);
 	SetReadHandler(0x8000, 0xFFFF, CartBR);

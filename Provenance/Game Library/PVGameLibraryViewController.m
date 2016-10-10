@@ -155,6 +155,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleAppDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserverForName:kInterfaceDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [self.collectionView.collectionViewLayout invalidateLayout];
+        [self.collectionView reloadData];
+    }];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -201,7 +205,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)loadGameFromShortcut
 {
-    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    PVAppDelegate *appDelegate = (PVAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if ([appDelegate shortcutItemMD5])
     {
@@ -923,8 +927,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
         PVGame *game = games[[indexPath item]];
         
-        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@""
-                                                                             message:@""
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                             message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
         if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
         {
@@ -1396,33 +1400,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
 	
-	NSString *artworkURL = [game customArtworkURL];
-	NSString *originalArtworkURL = [game originalArtworkURL];
-    __block UIImage *artwork = nil;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([artworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:artworkURL];
-        }
-        else if ([originalArtworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:originalArtworkURL];
-        }
-        
-        if (artwork)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[cell imageView] setImage:artwork];
-                [cell setNeedsLayout];
-            });
-        }
-    });
-    
-	[cell setText:[game title]];
-	[[cell missingLabel] setText:[game title]];
-	
-    [cell setNeedsLayout];
+    [cell setupWithGame:game];
     
 	return cell;
 }
@@ -1446,7 +1424,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #if TARGET_OS_TV
     return CGSizeMake(250, 360);
 #else
-	return CGSizeMake(100, 144);
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        return CGSizeMake(100, 144);
+    }
+    return CGSizeMake(100, 100);
 #endif
 }
 
@@ -1627,11 +1608,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self dismissViewControllerAnimated:YES completion:NULL];
 	
 	UIImage *image = info[UIImagePickerControllerOriginalImage];
-	image = [image scaledImageWithMaxResolution:200];
+	image = [image scaledImageWithMaxResolution:PVThumbnailMaxResolution];
 	
 	if (image)
 	{
-		NSData *imageData = UIImagePNGRepresentation(image);
+        NSData *imageData = UIImagePNGRepresentation(image);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
         [self.realm beginWriteTransaction];

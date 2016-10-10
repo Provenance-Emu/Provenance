@@ -138,11 +138,6 @@ static __weak PVNESEmulatorCore *_current;
     pXBuf = 0;
     soundSize = 0;
 
-	if (self.controller1 || self.controller2)
-	{
-		[self updateControllers];
-	}
-
     FCEUI_Emulate(&pXBuf, &soundBuffer, &soundSize, 0);
 
     pXBuf = XBuf;
@@ -366,6 +361,9 @@ uint64 FCEUD_GetTime(void) {return 0;}
 uint64 FCEUD_GetTimeFreq(void) {return 0;}
 const char *GetKeyboard(void) {return "";}
 bool turbo = false;
+bool swapDuty = 0; // some Famicom and NES clones had duty cycle bits swapped
+int dendy = 0;
+int pal_emulation = 0;
 int closeFinishedMovie = 0;
 int FCEUD_ShowStatusIcon(void) {return 0;}
 int FCEUD_SendData(void *data, uint32 len) {return 1;}

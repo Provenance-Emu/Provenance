@@ -308,7 +308,9 @@ static void S9xSetSA1MemMap (uint32 which1, uint8 map)
 
 	for (int c = 0; c < 0x200; c += 16)
 	{
-		uint8	*block = &Memory.ROM[(map & 7) * 0x100000 + (c << 11) - 0x8000];
+        // conversion to int is needed here - map is promoted but which1 is not
+        int32 offset = (((map & 0x80) ? map : which1) & 7) * 0x100000 + (c << 11) - 0x8000;
+		uint8	*block = &Memory.ROM[offset];
 		for (int i = c + 8; i < c + 16; i++)
 			Memory.Map[start2 + i] = SA1.Map[start2 + i] = block;
 	}

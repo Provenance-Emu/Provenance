@@ -103,6 +103,7 @@ SFORMAT FCEUMOV_STATEINFO[]={
 char curMovieFilename[512] = {0};
 MovieData currMovieData;
 MovieData defaultMovieData;
+int currRerecordCount; // Keep the global value
 
 char lagcounterbuf[32] = {0};
 
@@ -388,6 +389,7 @@ void MovieRecord::dump(MovieData* md, EMUFILE* os, int index)
 MovieData::MovieData()
 	: version(MOVIE_VERSION)
 	, emuVersion(FCEU_VERSION_NUMERIC)
+	, fds(false)
 	, palFlag(false)
 	, PPUflag(false)
 	, rerecordCount(0)
@@ -834,92 +836,95 @@ void MovieData::dumpSavestateTo(std::vector<uint8>* buf, int compressionLevel)
 //begin playing an existing movie
 bool FCEUI_LoadMovie(const char *fname, bool _read_only, int _pauseframe)
 {
-//	if(!FCEU_IsValidUI(FCEUI_PLAYMOVIE))
-//		return true;	//adelikat: file did not fail to load, so let's return true here, just do nothing
-//
-//	assert(fname);
-//
-//	//mbg 6/10/08 - we used to call StopMovie here, but that cleared curMovieFilename and gave us crashes...
-//	if(movieMode == MOVIEMODE_PLAY || movieMode == MOVIEMODE_FINISHED)
-//		StopPlayback();
-//	else if(movieMode == MOVIEMODE_RECORD)
-//		StopRecording();
-//	//--------------
-//
-//	currMovieData = MovieData();
-//
-//	strcpy(curMovieFilename, fname);
-//	FCEUFILE *fp = FCEU_fopen(fname,0,"rb",0);
-//	if (!fp) return false;
-//	if(fp->isArchive() && !_read_only) {
-//		FCEU_PrintError("Cannot open a movie in read+write from an archive.");
-//		return true;	//adelikat: file did not fail to load, so return true (false is only for file not exist/unable to open errors
-//	}
-//
-//#ifdef WIN32
-//	//Fix relative path if necessary and then add to the recent movie menu
-//	extern std::string BaseDirectory;
-//
-//	string name = fname;
-//	if (IsRelativePath(fname))
-//	{
-//		name = ConvertRelativePath(name);
-//	}
-//	AddRecentMovieFile(name.c_str());
-//#endif
-//
-//	LoadFM2(currMovieData, fp->stream, fp->size, false);
-//	LoadSubtitles(currMovieData);
-//	delete fp;
-//
-//	freshMovie = true;	//Movie has been loaded, so it must be unaltered
-//	if (bindSavestate) AutoSS = false;	//If bind savestate to movie is true, then their isn't a valid auto-save to load, so flag it
-//	//fully reload the game to reinitialize everything before playing any movie
-//	poweron(true);
-//
-//	if(currMovieData.savestate.size())
-//	{
-//		//WE NEED TO LOAD A SAVESTATE
-//		movieFromPoweron = false;
-//		bool success = MovieData::loadSavestateFrom(&currMovieData.savestate);
-//		if(!success) return true;	//adelikat: I guess return true here?  False is only for a bad movie filename, if it got this far the file was good?
-//	} else {
-//		movieFromPoweron = true;
-//	}
-//
-//	//if there is no savestate, we won't have this crucial piece of information at the start of the movie.
-//	//so, we have to include it with the movie
-//	if(currMovieData.palFlag)
-//		FCEUI_SetVidSystem(1);
-//	else
-//		FCEUI_SetVidSystem(0);
-//
-//	//force the input configuration stored in the movie to apply
-//	FCEUD_SetInput(currMovieData.fourscore, currMovieData.microphone, (ESI)currMovieData.ports[0], (ESI)currMovieData.ports[1], (ESIFC)currMovieData.ports[2]);
-//
-//	//stuff that should only happen when we're ready to positively commit to the replay
-//	currFrameCounter = 0;
-//	pauseframe = _pauseframe;
-//	movie_readonly = _read_only;
-//	movieMode = MOVIEMODE_PLAY;
-//
-//	if(movie_readonly)
-//		FCEU_DispMessage("Replay started Read-Only.",0);
-//	else
-//		FCEU_DispMessage("Replay started Read+Write.",0);
-//
-//#ifdef WIN32
-//	SetMainWindowText();
-//#endif
-//
-//	#ifdef CREATE_AVI
-//	if(LoggingEnabled)
-//	{
-//	    FCEU_DispMessage("Video recording enabled.\n",0);
-//	    LoggingEnabled = 2;
-//	}
-//	#endif
-//
+#if 0 //Provenance
+	if(!FCEU_IsValidUI(FCEUI_PLAYMOVIE))
+		return true;	//adelikat: file did not fail to load, so let's return true here, just do nothing
+
+	assert(fname);
+
+	//mbg 6/10/08 - we used to call StopMovie here, but that cleared curMovieFilename and gave us crashes...
+	if(movieMode == MOVIEMODE_PLAY || movieMode == MOVIEMODE_FINISHED)
+		StopPlayback();
+	else if(movieMode == MOVIEMODE_RECORD)
+		StopRecording();
+	//--------------
+
+	currMovieData = MovieData();
+
+	strcpy(curMovieFilename, fname);
+	FCEUFILE *fp = FCEU_fopen(fname,0,"rb",0);
+	if (!fp) return false;
+	if(fp->isArchive() && !_read_only) {
+		FCEU_PrintError("Cannot open a movie in read+write from an archive.");
+		return true;	//adelikat: file did not fail to load, so return true (false is only for file not exist/unable to open errors
+	}
+
+#ifdef WIN32
+	//Fix relative path if necessary and then add to the recent movie menu
+	extern std::string BaseDirectory;
+
+	string name = fname;
+	if (IsRelativePath(fname))
+	{
+		name = ConvertRelativePath(name);
+	}
+	AddRecentMovieFile(name.c_str());
+#endif
+
+	LoadFM2(currMovieData, fp->stream, fp->size, false);
+	LoadSubtitles(currMovieData);
+	delete fp;
+
+	freshMovie = true;	//Movie has been loaded, so it must be unaltered
+	if (bindSavestate) AutoSS = false;	//If bind savestate to movie is true, then their isn't a valid auto-save to load, so flag it
+	//fully reload the game to reinitialize everything before playing any movie
+	poweron(true);
+
+	if(currMovieData.savestate.size())
+	{
+		//WE NEED TO LOAD A SAVESTATE
+		movieFromPoweron = false;
+		bool success = MovieData::loadSavestateFrom(&currMovieData.savestate);
+		if(!success) return true;	//adelikat: I guess return true here?  False is only for a bad movie filename, if it got this far the file was good?
+	} else {
+		movieFromPoweron = true;
+	}
+
+	//if there is no savestate, we won't have this crucial piece of information at the start of the movie.
+	//so, we have to include it with the movie
+	if(currMovieData.palFlag)
+		FCEUI_SetVidSystem(1);
+	else
+		FCEUI_SetVidSystem(0);
+
+	//force the input configuration stored in the movie to apply
+	FCEUD_SetInput(currMovieData.fourscore, currMovieData.microphone, (ESI)currMovieData.ports[0], (ESI)currMovieData.ports[1], (ESIFC)currMovieData.ports[2]);
+
+	//stuff that should only happen when we're ready to positively commit to the replay
+	currFrameCounter = 0;
+	pauseframe = _pauseframe;
+	movie_readonly = _read_only;
+	movieMode = MOVIEMODE_PLAY;
+	if (movieMode != MOVIEMODE_TASEDITOR)
+		currRerecordCount = currMovieData.rerecordCount;
+
+	if(movie_readonly)
+		FCEU_DispMessage("Replay started Read-Only.",0);
+	else
+		FCEU_DispMessage("Replay started Read+Write.",0);
+
+#ifdef WIN32
+	SetMainWindowText();
+#endif
+
+	#ifdef CREATE_AVI
+	if(LoggingEnabled)
+	{
+	    FCEU_DispMessage("Video recording enabled.\n",0);
+	    LoggingEnabled = 2;
+	}
+	#endif
+#endif
 	return true;
 }
 
@@ -972,6 +977,8 @@ void FCEUI_SaveMovie(const char *fname, EMOVIE_FLAG flags, std::wstring author)
 
 	movieMode = MOVIEMODE_RECORD;
 	movie_readonly = false;
+	if (movieMode != MOVIEMODE_TASEDITOR)
+		currRerecordCount = 0;
 
 	FCEU_DispMessage("Movie recording started.",0);
 }
@@ -1406,10 +1413,18 @@ void FCEUMOV_IncrementRerecordCount()
 {
 #ifdef _S9XLUA_H
 	if(!FCEU_LuaRerecordCountSkip())
-		currMovieData.rerecordCount++;
+		if (movieMode != MOVIEMODE_TASEDITOR)
+			currRerecordCount++;
+		else
+			currMovieData.rerecordCount++;
 #else
-	currMovieData.rerecordCount++;
+	if (movieMode != MOVIEMODE_TASEDITOR)
+		currRerecordCount++;
+	else
+		currMovieData.rerecordCount++;
 #endif
+	if (movieMode != MOVIEMODE_TASEDITOR)
+		currMovieData.rerecordCount = currRerecordCount;
 }
 
 void FCEUI_MovieToggleFrameDisplay(void)

@@ -7,12 +7,41 @@
 
 #import "PVMediaCache.h"
 #import "NSString+Hashing.h"
+#import "UIImage+Scaling.h"
+#import "PVAppConstants.h"
 
 NSString * const kPVCachePath = @"PVCache";
 
 NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNotification";
 
+@interface PVMediaCache ()
+
+@property (strong, nonatomic) NSOperationQueue *operationQueue;
+
+@end
+
 @implementation PVMediaCache
+
+#pragma mark - Object life cycle
+
++ (instancetype)shareInstance {
+    static dispatch_once_t onceToken;
+    static PVMediaCache *cache = nil;
+    dispatch_once(&onceToken, ^{
+        cache = [[PVMediaCache alloc] init];
+        [cache configure];
+    });
+    
+    return cache;
+}
+
+#pragma mark - Private
+
+- (void)configure {
+    self.operationQueue = [[NSOperationQueue alloc] init];
+}
+
+#pragma mark - Public
 
 + (NSString *)cachePath
 {
@@ -42,24 +71,37 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
 	return cachePath;
 }
 
-+ (UIImage *)imageForKey:(NSString *)key
-{
+- (NSBlockOperation *)imageForKey:(NSString *)key completion:(void (^)(UIImage *))completion {
     if (![key length])
     {
+        if (completion) {
+            completion(nil);
+        }
         return nil;
     }
     
-	NSString *cachePath = [self cachePath];	
-	NSString *keyHash = [key MD5Hash];
-	cachePath = [cachePath stringByAppendingPathComponent:keyHash];
-	
-	UIImage *image = nil;
-	if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath])
-	{
-		image = [UIImage imageWithContentsOfFile:cachePath];
-	}
-	
-	return image;
+    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+        
+        NSString *cachePath = [[self class] cachePath];
+        NSString *keyHash = [key MD5Hash];
+        cachePath = [cachePath stringByAppendingPathComponent:keyHash];
+        
+        UIImage *image = nil;
+        if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath])
+        {
+            image = [UIImage imageWithContentsOfFile:cachePath];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (completion) {
+                completion(image);
+            }
+        });
+    }];
+    
+    [self.operationQueue addOperation:operation];
+    
+    return operation;
 }
 
 + (NSString *)filePathForKey:(NSString *)key
@@ -85,7 +127,9 @@ NSString * const PVMediaCacheWasEmptiedNotification = @"PVMediaCacheWasEmptiedNo
         return nil;
     }
     
-	NSData *imageData = UIImagePNGRepresentation(image);
+    UIImage *newImage = [image scaledImageWithMaxResolution:PVThumbnailMaxResolution];
+    
+    NSData *imageData = UIImagePNGRepresentation(newImage);
 	
 	return [self writeDataToDisk:imageData withKey:key];
 }
