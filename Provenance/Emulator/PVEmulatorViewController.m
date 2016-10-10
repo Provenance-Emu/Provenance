@@ -544,13 +544,17 @@ void uncaughtExceptionHandler(NSException *exception)
         [weakSelf quit];
 	}]];
     
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[weakSelf.emulatorCore setPauseEmulation:NO];
-		weakSelf.isShowingMenu = NO;
+    UIAlertAction *resumeAction = [UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.emulatorCore setPauseEmulation:NO];
+        weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-	}]];
+    }];
+    
+    [actionsheet addAction:resumeAction];
+    
+    [actionsheet setPreferredAction:resumeAction];
 
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
