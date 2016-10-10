@@ -7,7 +7,13 @@
 //
 
 // iOS
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DDRC_SH2
+// TODO: Find a way to make -D_SVP_DRC only on arm64 builds, or fix the crashes related to -D_SVP_DRC on __arm__
+// D_SVP_DRC is required to get playable performance on modern devices (tested iPad Air 2)
+// It works on Apple TV, because it ONLY builds arm64. But iOS also builds armv7 which breaks since __arm__ is defined.
+// options. Maybe compile in the .S files on armv7 (if it supports it), or disable -DD_SVP_DRC on armv7.
+// A final option is to weak link PicoDrive and only compile as ARM64 since it will probably not even run on armv7 devices.
+// Use dyload to load and unload the framework on ARM64 platforms and preset a message to the user that the platform isn't support on armv7
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DDRC_SH2 -D_SVP_DRC
 OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited)
 
 // tv OS
