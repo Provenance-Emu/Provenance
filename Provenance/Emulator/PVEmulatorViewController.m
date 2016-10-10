@@ -370,35 +370,30 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-    [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
-    [self.gameAudio pauseAudio];
+
 }
 
 - (void)appWillResignActive:(NSNotification *)note
 {
     [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
     [self.gameAudio pauseAudio];
+    [self showMenu:self];
 }
 
 - (void)appDidBecomeActive:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setShouldResyncTime:YES];
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+    if (!self.isShowingMenu)
+    {
+        [self.emulatorCore setPauseEmulation:NO];
+    }
+    
+    [self.emulatorCore setShouldResyncTime:YES];
+    [self.gameAudio startAudio];
 }
 
 - (void)showMenu:(id)sender
