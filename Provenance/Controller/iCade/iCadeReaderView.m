@@ -21,11 +21,12 @@
  */
 
 #import "iCadeReaderView.h"
+#import <UIKit/UIKit.h>
 
-static const char *ON_STATES  = "wdxayhujikol";
-static const char *OFF_STATES = "eczqtrfnmpgv";
+static const char *ON_STATES  = "wdxayhujikol"; //wdxazhujikol for German keyboard layout
+static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboard layout
 
-@interface iCadeReaderView()
+@interface iCadeReaderView() <UIKeyInput>
 
 - (void)didEnterBackground;
 - (void)didBecomeActive;
@@ -97,8 +98,33 @@ static const char *OFF_STATES = "eczqtrfnmpgv";
 }
 
 - (void)insertText:(NSString *)text {
+    // does not to work on tvOS, use keyCommands + keyPressed instead
+}
+
+- (void)deleteBackward {
+    // This space intentionally left blank to complete protocol
+}
+
+#pragma mark - keys
+
+- (NSArray * )keyCommands {
+    NSMutableArray *keys = [NSMutableArray array];
     
-    char ch = [text characterAtIndex:0];
+    int numberOfStates = (int)(strlen(ON_STATES)+strlen(OFF_STATES));
+    char states[numberOfStates+1]; //+1 for crash on release
+    strcpy(states,ON_STATES);
+    strcat(states,OFF_STATES);
+    
+    for (int i=0; i<numberOfStates; i++) {
+        UIKeyCommand *keyCommand = [UIKeyCommand keyCommandWithInput: [NSString stringWithFormat:@"%c" , states[i]] modifierFlags: 0 action: @selector(keyPressed:)];
+        [keys addObject:keyCommand];
+    }
+    
+    return keys;
+}
+
+- (void)keyPressed:(UIKeyCommand *)keyCommand {
+    char ch = [keyCommand.input characterAtIndex:0];
     char *p = strchr(ON_STATES, ch);
     bool stateChanged = false;
     if (p) {
@@ -119,22 +145,18 @@ static const char *OFF_STATES = "eczqtrfnmpgv";
             }
         }
     }
-
+    
     if (stateChanged && _delegateFlags.stateChanged) {
         [_delegate stateChanged:_iCadeState];
     }
     
     static int cycleResponder = 0;
-    if (++cycleResponder > 100) {
+    if (++cycleResponder > 20) {
         // necessary to clear a buffer that accumulates internally
         cycleResponder = 0;
         [self resignFirstResponder];
         [self becomeFirstResponder];
     }
-}
-
-- (void)deleteBackward {
-    // This space intentionally left blank to complete protocol
 }
 
 @end
