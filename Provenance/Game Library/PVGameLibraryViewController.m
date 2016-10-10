@@ -1423,7 +1423,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 #if TARGET_OS_TV
     PVGame *game = [self gameAtIndexPath:indexPath];
-    return [PVGameLibraryCollectionViewCell cellSizeForImageSize:[game boxartSize]];
+    CGSize boxartSize = CGSizeMake(280.0, 280.0 / game.boxartAspectRatio);
+    return [PVGameLibraryCollectionViewCell cellSizeForImageSize:boxartSize];
 #else
     if ([[PVSettingsModel sharedInstance] showGameTitles]) {
         return CGSizeMake(100, 144);

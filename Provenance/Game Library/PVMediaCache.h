@@ -8,7 +8,9 @@ extern NSString * const kPVCachePath;
 
 extern NSString * const PVMediaCacheWasEmptiedNotification;
 
-@interface PVMediaCache : NSObject
+@interface PVMediaCache : NSObject {
+    
+}
 
 + (instancetype)shareInstance;
 
@@ -19,7 +21,5 @@ extern NSString * const PVMediaCacheWasEmptiedNotification;
 + (NSString *)writeDataToDisk:(NSData *)data withKey:(NSString *)key;
 + (BOOL)deleteImageForKey:(NSString *)key;
 + (void)emptyCache;
-
-+ (void)imageForKey:(NSString *)key callback:(void (^)(UIImage *image))block;
 
 @end

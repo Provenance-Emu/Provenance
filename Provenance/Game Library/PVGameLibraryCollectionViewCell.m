@@ -134,7 +134,9 @@ static const CGFloat LabelHeight = 80.0;
                 UIImage *artwork = image ?: [self imageWithText:artworkText];
                 
                 self.imageView.image = artwork;
-                self.imageView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), [game boxartSize].height);
+                
+                CGSize boxartSize = CGSizeMake(280.0, 280.0 / game.boxartAspectRatio);
+                self.imageView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), boxartSize.height);
 
                 [self setNeedsLayout];
             }];
@@ -168,13 +170,6 @@ static const CGFloat LabelHeight = 80.0;
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-    
-    CGFloat imageHeight = self.frame.size.height;
-    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
-        imageHeight -= 44;
-    }
-    
-    self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
 
 #if TARGET_OS_TV
     CGAffineTransform titleTransform = _titleLabel.transform;
@@ -187,6 +182,11 @@ static const CGFloat LabelHeight = 80.0;
     [_titleLabel setOriginX:0];
     [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
     _titleLabel.transform = titleTransform;
+#else
+    CGFloat imageHeight = self.frame.size.height;
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        imageHeight -= 44;
+    }
 #endif
 }
 

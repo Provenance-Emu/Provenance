@@ -10,6 +10,6 @@
 
 @interface PVGame (Sizing)
 
-- (CGSize)boxartSize;
+- (CGFloat)boxartAspectRatio;
 
 @end

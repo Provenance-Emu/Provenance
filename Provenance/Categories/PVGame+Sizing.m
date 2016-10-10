@@ -12,12 +12,10 @@
 @implementation PVGame (Sizing)
 
 CGFloat const PVGameBoxArtAspectRatioSquare = 1.0;
-CGFloat const PVGameBoxArtAspectRatioWide = 1.4;
+CGFloat const PVGameBoxArtAspectRatioWide = 1.45;
 CGFloat const PVGameBoxArtAspectRatioTall = 0.7;
 
-CGFloat const PVGameBoxArtWidth = 280.0;
-
-- (CGSize)boxartSize
+- (CGFloat)boxartAspectRatio
 {
     CGFloat imageAspectRatio = PVGameBoxArtAspectRatioSquare;
     
@@ -28,7 +26,8 @@ CGFloat const PVGameBoxArtWidth = 280.0;
              [self.systemIdentifier isEqualToString:PVGenesisSystemIdentifier]) {
         imageAspectRatio = PVGameBoxArtAspectRatioTall;
     }
-    return CGSizeMake(PVGameBoxArtWidth, PVGameBoxArtWidth/imageAspectRatio);
+    
+    return imageAspectRatio;
 }
 
 @end
