@@ -16,7 +16,13 @@
 {
     [super viewDidLoad];
     
+#if TARGET_OS_TV
+    [self.splitViewController setTitle:@"Supported iCade Controllers"];
+    [self.tableView setBackgroundColor:[UIColor clearColor]];
+    [self.tableView setBackgroundView:nil];
+#else
     self.title = @"Supported iCade Controllers";
+#endif
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
