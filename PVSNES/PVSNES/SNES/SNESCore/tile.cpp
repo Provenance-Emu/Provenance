@@ -698,7 +698,7 @@ void S9xSelectTileConverter (int depth, bool8 hires, bool8 sub, bool8 mosaic)
 	}
 
 #define IS_BLANK_TILE() \
-	(BG.Buffered[TileNumber] == BLANK_TILE)
+	( ( (Tile & H_FLIP) ? BG.BufferedFlip[TileNumber] : BG.Buffered[TileNumber]) == BLANK_TILE)
 
 #define SELECT_PALETTE() \
 	if (BG.DirectColourMode) \
@@ -1387,12 +1387,29 @@ extern struct SLineMatrixData	LineMatrixData[240];
 //     We don't know how Sub(0, y) is handled.
 
 #define DRAW_PIXEL_H2x1(N, M) \
-	if (Z1 > GFX.DB[Offset + 2 * N] && (M)) \
-	{ \
-		GFX.S[Offset + 2 * N] = MATH((GFX.ClipColors ? 0 : GFX.SubScreen[Offset + 2 * N]), GFX.RealScreenColors[Pix], GFX.SubZBuffer[Offset + 2 * N]); \
-		GFX.S[Offset + 2 * N + 1] = MATH(GFX.ScreenColors[Pix], GFX.SubScreen[Offset + 2 * N], GFX.SubZBuffer[Offset + 2 * N]); \
-		GFX.DB[Offset + 2 * N] = GFX.DB[Offset + 2 * N + 1] = Z2; \
-	}
+    if (Z1 > GFX.DB[Offset + 2 * N] && (M)) \
+    { \
+        GFX.S[Offset + 2 * N] = MATH(GFX.ScreenColors[Pix], GFX.SubScreen[Offset + 2 * N], GFX.SubZBuffer[Offset + 2 * N]); \
+        GFX.S[Offset + 2 * N + 1] = MATH((GFX.ClipColors ? 0 : GFX.SubScreen[Offset + 2 * N + 2]), GFX.RealScreenColors[Pix], GFX.SubZBuffer[Offset + 2 * N]); \
+        GFX.DB[Offset + 2 * N] = GFX.DB[Offset + 2 * N + 1] = Z2; \
+    }
+
+/* The logic above shifts everything one pixel to the left, thus producing a blank line on the right. The code below places the pixel on correct positions but
+   would incur two additional branches for the edges on every pixel.
+*/
+
+//#define DRAW_PIXEL_H2x1(N, M) \
+//    if (Z1 > GFX.DB[Offset + 2 * N] && (M)) \
+//    { \
+//        GFX.S[Offset + 2 * N + 1] = MATH(GFX.ScreenColors[Pix], GFX.SubScreen[Offset + 2 * N], GFX.SubZBuffer[Offset + 2 * N]); \
+//        if ((Offset + 2 * N ) % GFX.RealPPL != (SNES_WIDTH - 1) << 1) \
+//            GFX.S[Offset + 2 * N + 2] = MATH((GFX.ClipColors ? 0 : GFX.SubScreen[Offset + 2 * N + 2]), GFX.RealScreenColors[Pix], GFX.SubZBuffer[Offset + 2 * N]); \
+//        if ((Offset + 2 * N) % GFX.RealPPL == 0) \
+//            GFX.S[Offset + 2 * N] = MATH((GFX.ClipColors ? 0 : GFX.SubScreen[Offset + 2 * N]), GFX.RealScreenColors[Pix], GFX.SubZBuffer[Offset + 2 * N]); \
+//        GFX.DB[Offset + 2 * N] = GFX.DB[Offset + 2 * N + 1] = Z2; \
+//    }
+
+
 
 #define DRAW_PIXEL(N, M)	DRAW_PIXEL_H2x1(N, M)
 #define NAME2				Hires

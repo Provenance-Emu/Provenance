@@ -605,7 +605,11 @@ VOICE_CLOCK(V9_V6_V3) { voice_V9(v); voice_V6(v+1); voice_V3(v+2); }
 
 inline void SPC_DSP::echo_read( int ch )
 {
-	int s = GET_LE16SA( ECHO_PTR( ch ) );
+	int s;
+	if ( m.t_echo_ptr >= 0xffc0 && rom_enabled )
+		s = GET_LE16SA( &hi_ram [m.t_echo_ptr + ch * 2 - 0xffc0] );
+	else
+		s = GET_LE16SA( ECHO_PTR( ch ) );
 	// second copy simplifies wrap-around handling
 	ECHO_FIR( 0 ) [ch] = ECHO_FIR( 8 ) [ch] = s >> 1;
 }

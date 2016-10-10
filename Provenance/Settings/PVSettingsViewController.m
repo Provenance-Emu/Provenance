@@ -13,6 +13,7 @@
 #import "PVGameLibraryViewController.h"
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
+#import "PVLicensesViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -32,7 +33,7 @@
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
-    [self.recentGamesSwitch setOn:[settings showRecentGames]];
+	[self.fpsCountSwitch setOn:[settings showFPSCount]];
     [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
@@ -59,9 +60,19 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+- (IBAction)help:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
 - (IBAction)done:(id)sender
 {
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (IBAction)toggleFPSCount:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setShowFPSCount:[self.fpsCountSwitch isOn]];
 }
 
 - (IBAction)toggleAutoSave:(id)sender
@@ -92,11 +103,6 @@
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
 
-- (IBAction)toggleRecentGamesSwitch:(id)sender;
-{
-    [[PVSettingsModel sharedInstance] setShowRecentGames:[self.recentGamesSwitch isOn]];
-}
-
 - (IBAction)volumeChanged:(id)sender
 {
     [[PVSettingsModel sharedInstance] setVolume:self.volumeSlider.value];
@@ -109,8 +115,7 @@
     if (indexPath.section == 3 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:iCadeControllerViewController animated:YES];
     }
     else if(indexPath.section == 4 && indexPath. row == 0) {
         // import/export roms and game saves button
@@ -182,9 +187,13 @@
     else if (indexPath.section == 5 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:conflictViewController animated:YES];
     }
+    else if (indexPath.section == 7 && indexPath.row == 0) {
+        PVLicensesViewController *licensesViewController = [[PVLicensesViewController alloc] init];
+        [self.navigationController pushViewController:licensesViewController animated:YES];
+    }
+    
     [self.tableView deselectRowAtIndexPath:indexPath animated: YES];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)] animated:NO];
 }

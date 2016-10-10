@@ -17,14 +17,6 @@
     [super viewDidLoad];
     
     self.title = @"Supported iCade Controllers";
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancel:)];
-    [self.navigationItem setLeftBarButtonItem:cancelButton];
-}
-
-- (void)cancel:(id)sender
-{
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -60,7 +52,7 @@
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [settings setICadeControllerSetting:[indexPath row]];
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

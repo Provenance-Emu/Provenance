@@ -50,7 +50,6 @@ uint32_t gb_pad[PVGBButtonCount];
 - (void)outputAudio:(unsigned)frames;
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
-- (void)updateControllers;
 @end
 
 @implementation PVGBEmulatorCore

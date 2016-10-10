@@ -14,25 +14,20 @@ class HermiteResampler : public Resampler
 {
     protected:
 
-        double r_step;
-        double r_frac;
-        int    r_left[4], r_right[4];
+        float r_step;
+        float r_frac;
+        int   r_left[4], r_right[4];
 
-        double
-        hermite (double mu1, double a, double b, double c, double d)
+        static inline float
+        hermite (float mu1, float a, float b, float c, float d)
         {
-            const double tension = 0.0; //-1 = low, 0 = normal, 1 = high
-            const double bias    = 0.0; //-1 = left, 0 = even, 1 = right
-
-            double mu2, mu3, m0, m1, a0, a1, a2, a3;
+            float mu2, mu3, m0, m1, a0, a1, a2, a3;
 
             mu2 = mu1 * mu1;
             mu3 = mu2 * mu1;
 
-            m0  = (b - a) * (1 + bias) * (1 - tension) / 2;
-            m0 += (c - b) * (1 - bias) * (1 - tension) / 2;
-            m1  = (c - b) * (1 + bias) * (1 - tension) / 2;
-            m1 += (d - c) * (1 - bias) * (1 - tension) / 2;
+            m0 = (c - a) * 0.5;
+            m1 = (d - b) * 0.5;
 
             a0 = +2 * mu3 - 3 * mu2 + 1;
             a1 =      mu3 - 2 * mu2 + mu1;
@@ -72,6 +67,7 @@ class HermiteResampler : public Resampler
         read (short *data, int num_samples)
         {
             int i_position = start >> 1;
+            int max_samples = buffer_size >> 1;
             short *internal_buffer = (short *) buffer;
             int o_position = 0;
             int consumed = 0;
@@ -80,27 +76,14 @@ class HermiteResampler : public Resampler
             {
                 int s_left = internal_buffer[i_position];
                 int s_right = internal_buffer[i_position + 1];
-                int max_samples = buffer_size >> 1;
-                const double margin_of_error = 1.0e-10;
-
-                if (fabs(r_step - 1.0) < margin_of_error)
-                {
-                    data[o_position] = (short) s_left;
-                    data[o_position + 1] = (short) s_right;
-
-                    o_position += 2;
-                    i_position += 2;
-                    if (i_position >= max_samples)
-                        i_position -= max_samples;
-                    consumed += 2;
-
-                    continue;
-                }
+                float hermite_val[2];
 
                 while (r_frac <= 1.0 && o_position < num_samples)
                 {
-                    data[o_position]     = SHORT_CLAMP (hermite (r_frac, r_left [0], r_left [1], r_left [2], r_left [3]));
-                    data[o_position + 1] = SHORT_CLAMP (hermite (r_frac, r_right[0], r_right[1], r_right[2], r_right[3]));
+                    hermite_val[0] = hermite (r_frac, r_left [0], r_left [1], r_left [2], r_left [3]);
+                    hermite_val[1] = hermite (r_frac, r_right[0], r_right[1], r_right[2], r_right[3]); 
+                    data[o_position]     = SHORT_CLAMP (hermite_val[0]);
+                    data[o_position + 1] = SHORT_CLAMP (hermite_val[1]);
 
                     o_position += 2;
 
@@ -113,14 +96,14 @@ class HermiteResampler : public Resampler
                     r_left [1] = r_left [2];
                     r_left [2] = r_left [3];
                     r_left [3] = s_left;
-    
+
                     r_right[0] = r_right[1];
                     r_right[1] = r_right[2];
                     r_right[2] = r_right[3];
-                    r_right[3] = s_right;                    
-                    
+                    r_right[3] = s_right;
+
                     r_frac -= 1.0;
-                    
+
                     i_position += 2;
                     if (i_position >= max_samples)
                         i_position -= max_samples;

@@ -224,7 +224,7 @@ void
 FCEUD_SoundVolumeAdjust(int n)
 {
 	int soundvolume;
-	g_config->getOption("SDL.SoundVolume", &soundvolume);
+	g_config->getOption("SDL.Sound.Volume", &soundvolume);
 
 	switch(n) {
 	case -1:
@@ -246,7 +246,7 @@ FCEUD_SoundVolumeAdjust(int n)
 
 	s_mute = 0;
 	FCEUI_SetSoundVolume(soundvolume);
-	g_config->setOption("SDL.SoundVolume", soundvolume);
+	g_config->setOption("SDL.Sound.Volume", soundvolume);
 
 	FCEU_DispMessage("Sound volume %d.",0, soundvolume);
 }

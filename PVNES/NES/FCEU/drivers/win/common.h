@@ -35,7 +35,7 @@ extern int eoptions;
 
 #define EO_BGRUN              1
 
-#define EO_CPALETTE           4
+#define EO_CPALETTE           4 //this is bad, it is desynchronized from other state management in palette.cpp
 #define EO_NOSPRLIM           8
 #define EO_FSAFTERLOAD       32
 #define EO_FOAFTERSTART      64

@@ -79,6 +79,7 @@ static void SSSNROMPower(void) {
 	SetReadHandler(0x6000, 0x7FFF, CartBR);
 	SetWriteHandler(0x6000, 0x7FFF, CartBW);
 	SetReadHandler(0x8000, 0xFFFF, CartBR);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void SSSNROMReset(void) {
@@ -109,7 +110,6 @@ void SSSNROM_Init(CartInfo *info) {
 	WRAMSIZE = 16384;
 	WRAM = (uint8*)FCEU_gmalloc(WRAMSIZE);
 	SetupCartPRGMapping(0x10, WRAM, WRAMSIZE, 1);
-
 	AddExState(WRAM, WRAMSIZE, 0, "WRAM");
 	AddExState(&StateRegs, ~0, 0, 0);
 }

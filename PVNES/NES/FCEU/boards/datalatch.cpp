@@ -30,7 +30,7 @@ static void (*WSync)(void);
 static DECLFW(LatchWrite) {
 //	FCEU_printf("bs %04x %02x\n",A,V);
 	if (bus_conflict)
-		latche = (V == CartBR(A)) ? V : 0;
+		latche = V & CartBR(A);
 	else
 		latche = V;
 	WSync();
@@ -42,6 +42,7 @@ static void LatchPower(void) {
 	if (WRAM) {
 		SetReadHandler(0x6000, 0xFFFF, CartBR);
 		SetWriteHandler(0x6000, 0x7FFF, CartBW);
+		FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 	} else {
 		SetReadHandler(0x8000, 0xFFFF, CartBR);
 	}
@@ -92,7 +93,7 @@ static DECLFW(NROMWrite) {
 
 static void NROMPower(void) {
 	setprg8r(0x10, 0x6000, 0);	// Famili BASIC (v3.0) need it (uses only 4KB), FP-BASIC uses 8KB
-	setprg16(0x8000, 0);
+	setprg16(0x8000, ~1);
 	setprg16(0xC000, ~0);
 	setchr8(0);
 
@@ -100,7 +101,9 @@ static void NROMPower(void) {
 	SetWriteHandler(0x6000, 0x7FFF, CartBW);
 	SetReadHandler(0x8000, 0xFFFF, CartBR);
 
-	#ifdef DEBUG_MAPPER
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
+
+#ifdef DEBUG_MAPPER
 	SetWriteHandler(0x4020, 0xFFFF, NROMWrite);
 	#endif
 }
@@ -122,14 +125,14 @@ void NROM_Init(CartInfo *info) {
 //------------------ Map 2 ---------------------------
 
 static void UNROMSync(void) {
-	static uint32 mirror_in_use = 0;
-	if (PRGsize[0] <= 128 * 1024) {
-		setprg16(0x8000, latche & 0x7);
-		if (latche & 8) mirror_in_use = 1;
-		if (mirror_in_use)
-			setmirror(((latche >> 3) & 1) ^ 1);	// Higway Star Hacked mapper
-	} else
-		setprg16(0x8000, latche & 0xf);
+//	static uint32 mirror_in_use = 0;
+//	if (PRGsize[0] <= 128 * 1024) {
+//		setprg16(0x8000, latche & 0x7);
+//		if (latche & 8) mirror_in_use = 1;
+//		if (mirror_in_use)
+//			setmirror(((latche >> 3) & 1) ^ 1);	// Higway Star Hacked mapper, disabled till new mapper defined
+//	} else
+	setprg16(0x8000, latche);
 	setprg16(0xc000, ~0);
 	setchr8(0);
 }
@@ -200,6 +203,20 @@ static void CPROMSync(void) {
 void CPROM_Init(CartInfo *info) {
 	Latch_Init(info, CPROMSync, 0, 0x8000, 0xFFFF, 0, 0);
 }
+
+//------------------ Map 29 ---------------------------	//Used by Glider, http://www.retrousb.com/product_info.php?cPath=30&products_id=58
+
+static void M29Sync() {
+	setprg16(0x8000, (latche & 0x1C) >> 2);
+	setprg16(0xc000, ~0);
+	setchr8r(0, latche & 3);
+	setprg8r(0x10, 0x6000, 0);
+}
+
+void Mapper29_Init(CartInfo *info) {
+	Latch_Init(info, M29Sync, 0, 0x8000, 0xFFFF, 1, 0);
+}
+
 
 //------------------ Map 38 ---------------------------
 

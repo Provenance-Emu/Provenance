@@ -99,6 +99,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     isRunning  = NO;
 }
 
+- (void)updateControllers
+{
+    //subclasses may implement for polling
+}
+
 - (void)frameRefreshThread:(id)anArgument
 {
     gameInterval = 1.0 / ([self frameInterval] * _framerateMultiplier);
@@ -134,6 +139,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         }
         
         OEWaitUntil(gameTime);
+        
+        // Service the event loop
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
+        
+        [self updateControllers];
     }
 }
 

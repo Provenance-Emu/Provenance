@@ -1581,8 +1581,11 @@ void S9xSetCPU (uint8 Byte, uint16 Address)
 				if (CPU.InDMAorHDMA)
 					return;
 				// XXX: Not quite right...
-				if (Byte)
+                if (Byte) {
+                    CPU.PrevCycles = CPU.Cycles;
 					CPU.Cycles += Timings.DMACPUSync;
+                    S9xCheckInterrupts();
+                }
 				if (Byte & 0x01)
 					S9xDoDMA(0);
 				if (Byte & 0x02)

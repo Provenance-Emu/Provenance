@@ -101,6 +101,7 @@ static void UNLPEC586Power(void) {
 		SetReadHandler(0x8000, 0xFFFF, CartBR);
 	SetWriteHandler(0x5000, 0x5fff, UNLPEC586Write);
 	SetReadHandler(0x5000, 0x5fff, UNLPEC586Read);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void UNLPEC586Close(void) {

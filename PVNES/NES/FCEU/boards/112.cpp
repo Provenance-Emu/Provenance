@@ -72,6 +72,7 @@ static void M112Power(void) {
 	SetWriteHandler(0x4020, 0x5FFF, M112Write);
 	SetReadHandler(0x6000, 0x7FFF, CartBR);
 	SetWriteHandler(0x6000, 0x7FFF, CartBW);
+	FCEU_CheatAddRAM(8, 0x6000, WRAM);
 }
 
 static void StateRestore(int version) {

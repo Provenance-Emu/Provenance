@@ -8,7 +8,6 @@
 
 #import "PVGame.h"
 
-
 @implementation PVGame
 
 + (NSDictionary *)defaultPropertyValues
@@ -19,7 +18,7 @@
              @"originalArtworkURL" : @"",
              @"md5Hash" : @"",
              @"requiresSync" : @YES,
-             @"systemIdentifier" : @"",};
+             @"systemIdentifier" : @""};
 }
 
 + (NSArray<NSString *> *)requiredProperties

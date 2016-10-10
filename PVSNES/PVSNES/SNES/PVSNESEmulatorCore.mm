@@ -132,10 +132,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 - (void)executeFrame
 {
     IPPU.RenderThisFrame = YES;
-    if (self.controller1 || self.controller2)
-    {
-        [self pollControllers];
-    }
     S9xMainLoop();
 }
 
@@ -386,7 +382,7 @@ static void FinalizeSamplesAudioCallback(void *)
     }
 }
 
-- (void)pollControllers
+- (void)updateControllers
 {
     GCController *controller = nil;
 

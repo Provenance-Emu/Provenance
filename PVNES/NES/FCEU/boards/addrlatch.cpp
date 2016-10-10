@@ -44,6 +44,7 @@ static void LatchPower(void) {
 	if (WRAM) {
 		SetReadHandler(0x6000, 0xFFFF, CartBR);
 		SetWriteHandler(0x6000, 0x7FFF, CartBW);
+		FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 	} else
 		SetReadHandler(0x6000, 0xFFFF, defread);
 	SetWriteHandler(addrreg0, addrreg1, LatchWrite);
@@ -302,7 +303,7 @@ static void M212Sync(void) {
 }
 
 void Mapper212_Init(CartInfo *info) {
-	Latch_Init(info, M212Sync, M212Read, 0xFFFF, 0x8000, 0xFFFF, 0);
+	Latch_Init(info, M212Sync, M212Read, 0x0000, 0x8000, 0xFFFF, 0);
 }
 
 //------------------ Map 213 ---------------------------
