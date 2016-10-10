@@ -135,8 +135,9 @@ static const CGFloat LabelHeight = 80.0;
                 
                 self.imageView.image = artwork;
                 
-                CGSize boxartSize = CGSizeMake(280.0, 280.0 / game.boxartAspectRatio);
-                self.imageView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), boxartSize.height);
+                CGFloat width = CGRectGetWidth(self.frame);
+                CGSize boxartSize = CGSizeMake(width, width / game.boxartAspectRatio);
+                self.imageView.frame = CGRectMake(0, 0, width, boxartSize.height);
 
                 [self setNeedsLayout];
             }];

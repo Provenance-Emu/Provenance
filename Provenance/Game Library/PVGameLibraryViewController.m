@@ -44,6 +44,8 @@ NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
+static const CGFloat CellWidth = 280.0;
+
 @interface PVGameLibraryViewController ()
 
 @property (nonatomic, strong) RLMRealm *realm;
@@ -1423,7 +1425,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
 #if TARGET_OS_TV
     PVGame *game = [self gameAtIndexPath:indexPath];
-    CGSize boxartSize = CGSizeMake(280.0, 280.0 / game.boxartAspectRatio);
+    CGSize boxartSize = CGSizeMake(CellWidth, CellWidth / game.boxartAspectRatio);
     return [PVGameLibraryCollectionViewCell cellSizeForImageSize:boxartSize];
 #else
     if ([[PVSettingsModel sharedInstance] showGameTitles]) {
