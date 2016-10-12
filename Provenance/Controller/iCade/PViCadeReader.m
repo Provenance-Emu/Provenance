@@ -29,13 +29,17 @@ static PViCadeReader* sharedReader = nil;
 }
 
 -(void) listenToWindow:(UIWindow *)window {
-    UIWindow* keyWindow = [UIApplication sharedApplication].keyWindow;
+    UIWindow* keyWindow = window?:[UIApplication sharedApplication].keyWindow;
     if (keyWindow != _internalReader.window) {
         [_internalReader removeFromSuperview];
         [keyWindow addSubview:_internalReader];
     }
-    _internalReader.active = YES;
+    else {
+        [keyWindow bringSubviewToFront:_internalReader];
+    }
+    
     _internalReader.delegate = self;
+    _internalReader.active = YES;
 }
 
 -(void) listenToKeyWindow {
