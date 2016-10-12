@@ -28,7 +28,7 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
 
 @interface iCadeReaderView() <UIKeyInput>
 
-- (void)didEnterBackground;
+- (void)willResignActive;
 - (void)didBecomeActive;
 
 @end
@@ -41,18 +41,18 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
     self = [super initWithFrame:frame];
     inputView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     return self;
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
 }
 
-- (void)didEnterBackground {
+- (void)willResignActive {
     if (self.active)
         [self resignFirstResponder];
 }
@@ -67,11 +67,19 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
 }
 
 - (void)setActive:(BOOL)value {
-    if (active == value) return;
+    if (active == value) {
+        if (value) {
+            [self resignFirstResponder];
+        } else {
+            return;
+        }
+    }
     
     active = value;
     if (active) {
-        [self becomeFirstResponder];
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+            [self becomeFirstResponder];
+        }
     } else {
         [self resignFirstResponder];
     }
