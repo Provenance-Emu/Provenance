@@ -820,7 +820,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)controllerDidConnect:(NSNotification *)note
 {
-	[self.menuButton setHidden:YES];
+    GCController *controller = [note object];
+    // iCade controllers don't have a pause button, so don't hide the menu
+    if (![[controller vendorName] isKindOfClass:[PViCadeController class]]) {
+        [self.menuButton setHidden:YES];
+    }
 }
 
 - (void)controllerDidDisconnect:(NSNotification *)note
