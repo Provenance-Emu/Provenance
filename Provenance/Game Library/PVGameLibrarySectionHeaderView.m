@@ -36,12 +36,28 @@
         [self addSubview:bottomSeparator];
 #endif
 		[_titleLabel setNumberOfLines:0];
-		[_titleLabel setTextColor:[UIColor darkGrayColor]];
+        [_titleLabel setTextColor:[self colorForText]];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self addSubview:_titleLabel];
 	}
 	
 	return self;
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
+{
+    [_titleLabel setTextColor:[self colorForText]];
+}
+
+- (UIColor *)colorForText
+{
+#if TARGET_OS_TV
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        return [UIColor lightGrayColor];
+    }
+#endif
+    
+    return [UIColor darkGrayColor];
 }
 
 - (void)prepareForReuse
