@@ -53,16 +53,7 @@ void OEWaitUntil(NSTimeInterval time)
 {
     init_mach_time();
 
-    uint64_t deadline = (time / mach_to_sec);
-    
-    uint64_t now = mach_absolute_time();
-    
-    if (deadline > now) {
-        mach_wait_until(deadline);
-    }
-    else {
-        NSLog(@"Wait error\nnow:      %li\ndeadline: %li\n", now, deadline);
-    }
+    mach_wait_until(time / mach_to_sec);
 }
 
 @interface OEPerfMonitorObservation : NSObject

@@ -135,7 +135,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
             }
         }
         
-        OEWaitUntil(gameTime);
+        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
+        
+        if (gameTime >= currentMonotonicTime) {
+            OEWaitUntil(gameTime);
+        }
         
         // Service the event loop
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
