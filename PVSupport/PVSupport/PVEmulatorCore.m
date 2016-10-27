@@ -8,10 +8,10 @@
 
 #import "PVEmulatorCore.h"
 #import "NSObject+PVAbstractAdditions.h"
-#import <mach/mach_time.h>
-#import "OETimingUtils.h"
 #import "OERingBuffer.h"
+#import "RealTimeThread.h"
 
+#define GetTickCountSince(x) (-[x timeIntervalSinceNow])
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
@@ -64,11 +64,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+            self.gameSpeed = GameSpeedNormal;
+            [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
 
-            _framerateMultiplier = 1.0;
-            _gameSpeed = GameSpeedNormal;
-			
-			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
 	}
 }
@@ -106,61 +104,30 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     //subclasses may implement for polling
 }
 
-- (void)frameRefreshThread:(id)anArgument
+- (void) emulationLoopThread {
 {
     int frameCount = 0;
-    NSDate *fpsCounter = [NSDate date];
-    gameInterval = 1.0 / ([self frameInterval] * _framerateMultiplier);
-    NSTimeInterval gameTime = OEMonotonicTime();
-    OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
+    
+    //Become a real-time thread:
+    MakeCurrentThreadRealTime();
 
-    while (!shouldStop)
-    {
-        if (self.shouldResyncTime)
-        {
-            self.shouldResyncTime = NO;
-            gameTime = OEMonotonicTime();
-        }
+    //Setup Initial timing
+    NSDate *origin = [NSDate date];
+    NSTimeInterval sleepTime = 0;
+    NSTimeInterval nextEmuTick = GetTickCountSince(origin);
 
-        gameTime += gameInterval;
+    //Emulation loop
+    while (!shouldStop) {
 
-        @autoreleasepool
-        {
-            if (isRunning)
-            {
-				if (self.isSpeedModified)
-                {
-                    [self executeFrame];
-                }
-                else
-                {
-                    @synchronized(self)
-                    {
-                        [self executeFrame];
-                    }
-                }
-                frameCount += 1;
-            }
-        }
-        
-        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
-        
-        if (gameTime >= currentMonotonicTime) {
-            OEWaitUntil(gameTime);
-        }
-
-        // Service the event loop
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
-        
         [self updateControllers];
-
-        // Compute FPS
-        NSTimeInterval timeSinceLastFPS = GetSecondsSince(fpsCounter);
-        if (timeSinceLastFPS >= 0.5) {
-            self.emulationFPS = (double)frameCount / timeSinceLastFPS;
-            frameCount = 0;
-            fpsCounter = [NSDate date];
+                        [self executeFrame];
+        
+        nextEmuTick += gameInterval;
+        sleepTime = nextEmuTick - GetTickCountSince(origin);
+        if(sleepTime >= 0) {
+            [NSThread sleepForTimeInterval:sleepTime];
         }
+
     }
 }
 
@@ -192,7 +159,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 
     NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
-    OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
 
 - (void)executeFrame

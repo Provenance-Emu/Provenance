@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
 		B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4291DE86780008450F5 /* GameController.framework */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -50,6 +52,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
+		0592894E1DC194FD0012644D /* RealTimeThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
 		1A4E718C1A6C699F005CA80F /* DebugUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebugUtils.h; sourceTree = "<group>"; };
 		1ACEA64717F7467D0031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1ACEA64B17F7467D0031B1C9 /* PVSupport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSupport-Prefix.pch"; sourceTree = "<group>"; };
@@ -58,12 +62,10 @@
 		1ACEA67A17F747250031B1C9 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1ACEA67C17F7472F0031B1C9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OETimingUtils.h; sourceTree = "<group>"; };
 		1ACEA69117F748F80031B1C9 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
 		1ACEA69217F748F80031B1C9 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
 		1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TPCircularBuffer.c; sourceTree = "<group>"; };
 		1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
-		1ACEA69717F748F80031B1C9 /* OETimingUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OETimingUtils.m; sourceTree = "<group>"; };
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -169,8 +171,8 @@
 				B3C96EBB1D62C54D003F1E93 /* PVSupport.h */,
 				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
-				1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */,
-				1ACEA69717F748F80031B1C9 /* OETimingUtils.m */,
+				0592894D1DC194FD0012644D /* RealTimeThread.h */,
+				0592894E1DC194FD0012644D /* RealTimeThread.m */,
 				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
 				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
 				B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */,
@@ -341,7 +343,7 @@
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
-				B3C96EB11D62C3C7003F1E93 /* OETimingUtils.m in Sources */,
+				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,7 +357,7 @@
 				B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D651D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3C96EC31D62C5E7003F1E93 /* OEGameAudio.m in Sources */,
-				B3C96EC51D62C5E7003F1E93 /* OETimingUtils.m in Sources */,
+				059289501DC194FD0012644D /* RealTimeThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
