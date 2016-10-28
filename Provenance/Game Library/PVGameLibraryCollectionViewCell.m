@@ -7,7 +7,6 @@
 //
 
 #import "PVGameLibraryCollectionViewCell.h"
-#import <QuartzCore/QuartzCore.h>
 #import "UIImage+Color.h"
 #import "UIView+FrameAdditions.h"
 #import "PVGame+Sizing.h"
@@ -135,10 +134,18 @@ static const CGFloat LabelHeight = 44.0;
                 
                 self.imageView.image = artwork;
                 
+            #if TARGET_OS_TV
                 CGFloat width = CGRectGetWidth(self.frame);
                 CGSize boxartSize = CGSizeMake(width, width / game.boxartAspectRatio);
                 self.imageView.frame = CGRectMake(0, 0, width, boxartSize.height);
-
+            #else
+                CGFloat imageHeight = self.frame.size.height;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    imageHeight -= 44;
+                }
+                self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
+            #endif
+                
                 [self setNeedsLayout];
             }];
         }
