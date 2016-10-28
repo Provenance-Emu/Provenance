@@ -16,7 +16,7 @@
 #import "PVAppConstants.h"
 #import "PVEmulatorConfiguration.h"
 
-static const CGFloat LabelHeight = 80.0;
+static const CGFloat LabelHeight = 44.0;
 
 @interface PVGameLibraryCollectionViewCell ()
 
@@ -41,7 +41,7 @@ static const CGFloat LabelHeight = 80.0;
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, LabelHeight)];
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 #if TARGET_OS_TV
         // The label's alpha will get set to 1 on focus

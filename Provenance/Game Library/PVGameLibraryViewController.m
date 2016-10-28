@@ -44,7 +44,7 @@ NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
-static const CGFloat CellWidth = 280.0;
+static const CGFloat CellWidth = 308.0;
 
 @interface PVGameLibraryViewController ()
 
@@ -1445,7 +1445,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    return 30;
+    return 50;
 #else
 	return 5.0;
 #endif
@@ -1454,7 +1454,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    	return UIEdgeInsetsMake(40, 40, 120, 40);
+    	return UIEdgeInsetsMake(40, 0, 120, 0);
 #else
     	return UIEdgeInsetsMake(5, 5, 5, 5);
 #endif
