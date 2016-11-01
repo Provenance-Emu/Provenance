@@ -14,4 +14,6 @@
 
 - (void)setupWithGame:(PVGame *)game;
 
++ (CGSize)cellSizeForImageSize:(CGSize)imageSize;
+
 @end

@@ -239,6 +239,7 @@
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		BE9FDCCB1C210CED0046DF0E /* PVRecentGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9938A11BBB02590050A2B7 /* PVRecentGame.m */; };
 		BE9FDCCE1C211A220046DF0E /* PVGame.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697117C8C0DE0019F6D2 /* PVGame.m */; };
+		BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */; };
 		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
 		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
@@ -531,6 +532,8 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRecentGame+TopShelf.m"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		BEB41B391CAB01D6009E0B7E /* PVGame+Sizing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVGame+Sizing.h"; sourceTree = "<group>"; };
+		BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVGame+Sizing.m"; sourceTree = "<group>"; };
 		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+GroupConfig.h"; sourceTree = "<group>"; };
 		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+GroupConfig.m"; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
@@ -989,6 +992,8 @@
 				1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */,
 				BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.h */,
 				BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m */,
+				BEB41B391CAB01D6009E0B7E /* PVGame+Sizing.h */,
+				BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */,
 				1A5665071D96A18A006EAE01 /* UIDevice+Hardware.h */,
 				1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */,
 			);
@@ -1500,6 +1505,7 @@
 				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */,
 				1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */,
 				1AD481CD1BA353FC00FDA50A /* PVGameImporter.m in Sources */,
+				BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */,
 				1AD481FE1BA354B100FDA50A /* PViCadeGamepadButtonInput.m in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.m in Sources */,
 				1AD481CE1BA353FE00FDA50A /* PVGameLibraryViewController.m in Sources */,
