@@ -61,6 +61,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+            _gameSpeed = GameSpeedNormal;
             framerateMultiplier = 1.0;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
@@ -135,7 +136,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
             }
         }
         
-        OEWaitUntil(gameTime);
+        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
+        
+        if (gameTime >= currentMonotonicTime) {
+            OEWaitUntil(gameTime);
+        }
         
         // Service the event loop
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
