@@ -11,7 +11,6 @@
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
 
-#define GetTickCountSince(x) (-[x timeIntervalSinceNow])
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
@@ -105,8 +104,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 }
 
 - (void) emulationLoopThread {
-{
+
+    // For FPS computation
     int frameCount = 0;
+    NSDate *fpsCounter = [NSDate date];
     
     //Become a real-time thread:
     MakeCurrentThreadRealTime();
@@ -114,16 +115,22 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     //Setup Initial timing
     NSDate *origin = [NSDate date];
     NSTimeInterval sleepTime;
-    NSTimeInterval nextEmuTick = GetTickCountSince(origin);
+    NSTimeInterval nextEmuTick = GetSecondsSince(origin);
 
     //Emulation loop
     while (!shouldStop) {
 
         [self updateControllers];
+        @synchronized (self) {
+            [self executeFrame];
+        }
+        frameCount += 1;
+
+        [self updateControllers];
                         [self executeFrame];
         
         nextEmuTick += gameInterval;
-        sleepTime = nextEmuTick - GetTickCountSince(origin);
+        sleepTime = nextEmuTick - GetSecondsSince(origin);
         if(sleepTime >= 0) {
             [NSThread sleepForTimeInterval:sleepTime];
         }
@@ -132,9 +139,16 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
             //left the app and came back later, or there was a time change
             //Reset time
             origin = [NSDate date];
-            nextEmuTick = GetTickCountSince(origin);
+            nextEmuTick = GetSecondsSince(origin);
         }
 
+        // Compute FPS
+        NSTimeInterval timeSinceLastFPS = GetSecondsSince(fpsCounter);
+        if (timeSinceLastFPS >= 0.5) {
+            self.emulationFPS = (double)frameCount / timeSinceLastFPS;
+            frameCount = 0;
+            fpsCounter = [NSDate date];
+        }
     }
 }
 
