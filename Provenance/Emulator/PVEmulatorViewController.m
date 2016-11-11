@@ -213,20 +213,14 @@ void uncaughtExceptionHandler(NSException *exception)
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 80000
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
             // Block-based NSTimer method is only available on iOS 10 and later
-			__weak typeof(self) weakSelf = self;
-            _fpsTimer = [NSTimer timerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
-#if DEBUG
-                NSLog(@"FPS: %li", _glViewController.framesPerSecond);
-#endif
-                _fpsLabel.text = [NSNumber numberWithInteger:weakSelf.glViewController.framesPerSecond].stringValue;
+            self.fpsTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                self.fpsLabel.text = [NSString stringWithFormat:@"%2.02f", self.emulatorCore.emulationFPS];
             }];
-			[[NSRunLoop currentRunLoop] addTimer:_fpsTimer forMode:NSDefaultRunLoopMode];
-            [_fpsTimer fire];
         } else {
 #endif
             // Use traditional scheduledTimerWithTimeInterval method on older version of iOS
-            _fpsTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateFPSLabel) userInfo:nil repeats:YES];
-            [_fpsTimer fire];
+            self.fpsTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(updateFPSLabel) userInfo:nil repeats:YES];
+            [self.fpsTimer fire];
         }
         
     }
@@ -576,7 +570,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #if DEBUG
     NSLog(@"FPS: %li", _glViewController.framesPerSecond);
 #endif
-    _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
+    self.fpsLabel.text = [NSString stringWithFormat:@"%2.02f", self.emulatorCore.emulationFPS];
 }
 
 - (void)showSaveStateMenu

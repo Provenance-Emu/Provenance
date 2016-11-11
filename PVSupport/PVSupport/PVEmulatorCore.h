@@ -30,6 +30,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
 };
 
+#define GetSecondsSince(x) (-[x timeIntervalSinceNow])
+
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
@@ -42,6 +44,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     BOOL isRunning;
     BOOL shouldStop;
 }
+
+@property (nonatomic, assign) double emulationFPS;
 
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;
