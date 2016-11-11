@@ -166,14 +166,14 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (void)stopEmulation
 {
+    [super stopEmulation]; //Leave emulation loop first
+
     emulating = 0;
 
     [self writeSaveFile];
 
     vba.emuCleanUp();
     soundShutdown();
-
-    [super stopEmulation];
 }
 
 - (NSTimeInterval)frameInterval

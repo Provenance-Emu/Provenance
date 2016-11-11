@@ -17,7 +17,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
-@property (nonatomic, assign) CGFloat framerateMultiplier;
+@property (nonatomic, assign) CGFloat  framerateMultiplier;
 @end
 
 @implementation PVEmulatorCore
@@ -36,6 +36,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	{
 		NSUInteger count = [self audioBufferCount];
         ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
+        self.emulationLoopThreadLock = [NSLock new];
 	}
 	
 	return self;
@@ -96,6 +97,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 {
 	shouldStop = YES;
     isRunning  = NO;
+
+    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
+    [self.emulationLoopThreadLock unlock];
 }
 
 - (void)updateControllers
@@ -109,26 +113,26 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     int frameCount = 0;
     NSDate *fpsCounter = [NSDate date];
     
-    //Become a real-time thread:
-    MakeCurrentThreadRealTime();
-
     //Setup Initial timing
     NSDate *origin = [NSDate date];
     NSTimeInterval sleepTime;
     NSTimeInterval nextEmuTick = GetSecondsSince(origin);
+    
+    [self.emulationLoopThreadLock lock];
+
+    //Become a real-time thread:
+    MakeCurrentThreadRealTime();
 
     //Emulation loop
     while (!shouldStop) {
 
         [self updateControllers];
+        
         @synchronized (self) {
             [self executeFrame];
         }
         frameCount += 1;
 
-        [self updateControllers];
-                        [self executeFrame];
-        
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
         if(sleepTime >= 0) {
@@ -149,7 +153,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
             frameCount = 0;
             fpsCounter = [NSDate date];
         }
+
     }
+    
+    [self.emulationLoopThreadLock unlock];
 }
 
 - (void)setGameSpeed:(GameSpeed)gameSpeed

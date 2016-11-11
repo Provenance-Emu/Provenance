@@ -112,6 +112,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 	
     NSString *batterySavesDirectory = [self batterySavesPath];
+    
+    [super stopEmulation];
 	
     if([batterySavesDirectory length] != 0)
     {
@@ -125,7 +127,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         Memory.SaveSRAM([filePath UTF8String]);
     }
 	
-    [super stopEmulation];
 }
 
 - (void)executeFrame
