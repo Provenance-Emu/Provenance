@@ -138,10 +138,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         if(sleepTime >= 0) {
             [NSThread sleepForTimeInterval:sleepTime];
         }
-        else if (sleepTime < -3) {
-            //We're behind for more than 3seconds, this probably means the user
-            //left the app and came back later, or there was a time change
-            //Reset time
+        else {
+            // We're behind, we need to reset emulation time,
+            // otherwise emulation will "catch up" to real time
             origin = [NSDate date];
             nextEmuTick = GetSecondsSince(origin);
         }
@@ -153,7 +152,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
             frameCount = 0;
             fpsCounter = [NSDate date];
         }
-
+        
     }
     
     [self.emulationLoopThreadLock unlock];
