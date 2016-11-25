@@ -140,10 +140,10 @@
 		B3C96E901D62C233003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E8F1D62C233003F1E93 /* OpenGLES.framework */; };
 		B3C96E921D62C23C003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */; };
 		B3C96E941D62C245003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96E931D62C245003F1E93 /* CoreGraphics.framework */; };
-		B3C96E951D62C2F3003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; };
-		B3C96E961D62C2F4003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; };
-		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
-		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; };
+		B3C96E951D62C2F3003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96E961D62C2F4003F1E93 /* OE2600SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 941DFB4E15B7CEC200C6552F /* OE2600SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96E971D62C2FD003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96E981D62C2FE003F1E93 /* PVStellaGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVStellaGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EDE1D62C6A8003F1E93 /* Stella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* Stella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D2E3831D6E7E1B0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3821D6E7E1B0058544D /* PVSupport.framework */; };
 		B3D2E3841D6E7E260058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F462F1D6A86EA0085BA9F /* PVSupport.framework */; };
