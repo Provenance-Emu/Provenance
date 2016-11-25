@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		054588A01D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 0545889F1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m */; };
+		054588A11D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 0545889F1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m */; };
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
@@ -309,6 +311,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0545889E1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCade8BitdoSFC30Controller.h; sourceTree = "<group>"; };
+		0545889F1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCade8BitdoSFC30Controller.m; sourceTree = "<group>"; };
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
 		1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorViewController.h; sourceTree = "<group>"; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorViewController.m; sourceTree = "<group>"; };
@@ -1164,6 +1168,8 @@
 				E41448901B34B9600056D80A /* PViCadeController.m */,
 				E4F936981B50829F009403C5 /* PViCade8BitdoController.h */,
 				E4F936991B50829F009403C5 /* PViCade8BitdoController.m */,
+				0545889E1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.h */,
+				0545889F1D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m */,
 				F43211981BFB6AB300387909 /* PViCadeSteelSeriesController.h */,
 				F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */,
 				E41448921B34BBAB0056D80A /* PViCadeReader.h */,
@@ -1268,9 +1274,6 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
-					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = 63497P68S6;
-					};
 					1AD481B31BA350A400FDA50A = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = 63497P68S6;
@@ -1465,6 +1468,7 @@
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.m in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
+				054588A01D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
@@ -1550,6 +1554,7 @@
 				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
+				054588A11D9358BE0048BC1C /* PViCade8BitdoSFC30Controller.m in Sources */,
 				25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
@@ -1718,6 +1723,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1763,6 +1769,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2173,6 +2180,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
