@@ -7,7 +7,7 @@
 //
 
 #import "PVGenesisControllerViewController.h"
-#import "PVGenesisEmulatorCore.h"
+#import <PVGenesis/PVGenesisEmulatorCore.h>
 
 @interface PVGenesisControllerViewController ()
 

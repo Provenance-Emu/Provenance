@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -43,8 +43,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-               BuildableName = "Stella.framework"
-               BlueprintName = "Stella"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella"
                ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -70,8 +70,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA6AB17F74D150031B1C9"
-               BuildableName = "libPVGenesis.a"
+               BlueprintIdentifier = "B3E432031DE6917700D3C91E"
+               BuildableName = "PVGenesis.framework"
                BlueprintName = "PVGenesis"
                ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
             </BuildableReference>

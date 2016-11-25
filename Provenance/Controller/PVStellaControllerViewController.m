@@ -7,7 +7,7 @@
 //
 
 #import "PVStellaControllerViewController.h"
-#import "PVStellaGameCore.h"
+#import <PVStella/PVStellaGameCore.h>
 
 @interface PVStellaControllerViewController ()
 

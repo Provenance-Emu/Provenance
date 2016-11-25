@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0730"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-               BuildableName = "Stella.framework"
-               BlueprintName = "Stella"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella"
                ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-            BuildableName = "Stella.framework"
-            BlueprintName = "Stella"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-            BuildableName = "Stella.framework"
-            BlueprintName = "Stella"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -87,8 +87,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
-            BuildableName = "Stella.framework"
-            BlueprintName = "Stella"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella"
             ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

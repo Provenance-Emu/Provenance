@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupportTV"
+               BlueprintName = "PVSupport tvOS"
                ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
-               BuildableName = "Stella.framework"
-               BlueprintName = "Stella tvOS"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella tvOS"
                ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -70,6 +70,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3E432111DE6919B00D3C91E"
+               BuildableName = "PVGenesis.framework"
+               BlueprintName = "PVGenesis tvOS"
+               ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD482FF1BA3640500FDA50A"
                BuildableName = "libPVGBTV.a"
                BlueprintName = "PVGBTV"
@@ -88,20 +102,6 @@
                BuildableName = "libPVGBATV.a"
                BlueprintName = "PVGBATV"
                ReferencedContainer = "container:PVGBA/PVGBA.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD4824F1BA363CC00FDA50A"
-               BuildableName = "libPVGenesisTV.a"
-               BlueprintName = "PVGenesisTV"
-               ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

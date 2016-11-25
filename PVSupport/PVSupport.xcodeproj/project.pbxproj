@@ -7,24 +7,30 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
+		B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4291DE86780008450F5 /* GameController.framework */; };
+		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A9F42E1DE86E65008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67617F746F80031B1C9 /* UIKit.framework */; };
+		B3A9F4301DE86E6D008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F42F1DE86E6D008450F5 /* UIKit.framework */; };
 		B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
 		B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; };
+		B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
 		B3C96EB01D62C3C7003F1E93 /* OETimingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EB11D62C3C7003F1E93 /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
-		B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
 		B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
 		B3C96EC31D62C5E7003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B3C96EC51D62C5E7003F1E93 /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; };
+		B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
@@ -39,8 +45,6 @@
 		B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D651D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
-		B3FA5D671D6B90BD00060D71 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FA5D681D6B90BD00060D71 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D691D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 		B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */; };
 /* End PBXBuildFile section */
@@ -64,6 +68,9 @@
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B3A9F42F1DE86E6D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
@@ -85,6 +92,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A9F4301DE86E6D008450F5 /* UIKit.framework in Frameworks */,
+				B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */,
 				B3FA5D4D1D6B859F00060D71 /* AudioToolbox.framework in Frameworks */,
 				B3FA5D491D6B859800060D71 /* Foundation.framework in Frameworks */,
 			);
@@ -94,6 +103,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A9F42E1DE86E65008450F5 /* UIKit.framework in Frameworks */,
+				B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */,
 				B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */,
 				B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */,
 			);
@@ -133,6 +144,9 @@
 		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3A9F42F1DE86E6D008450F5 /* UIKit.framework */,
+				B3A9F4291DE86780008450F5 /* GameController.framework */,
+				B3A9F4271DE86777008450F5 /* GameController.framework */,
 				B3FA5D4C1D6B859F00060D71 /* AudioToolbox.framework */,
 				B3FA5D4A1D6B859C00060D71 /* AudioUnit.framework */,
 				B3FA5D481D6B859800060D71 /* Foundation.framework */,
@@ -198,11 +212,11 @@
 			files = (
 				B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */,
 				B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */,
-				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
-				B3FA5D681D6B90BD00060D71 /* PVGameControllerUtilities.h in Headers */,
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
+				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* OETimingUtils.h in Headers */,
+				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
 			);
@@ -212,11 +226,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */,
 				B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */,
 				B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */,
-				B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
-				B3FA5D671D6B90BD00060D71 /* PVGameControllerUtilities.h in Headers */,
+				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
@@ -227,9 +241,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3C96E9D1D62C3A3003F1E93 /* PVSupportTV */ = {
+		B3C96E9D1D62C3A3003F1E93 /* PVSupport tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupportTV" */;
+			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport tvOS" */;
 			buildPhases = (
 				B3C96E991D62C3A3003F1E93 /* Sources */,
 				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
@@ -240,7 +254,7 @@
 			);
 			dependencies = (
 			);
-			name = PVSupportTV;
+			name = "PVSupport tvOS";
 			productName = "PVSupportTV Framework";
 			productReference = B3C96E9E1D62C3A3003F1E93 /* PVSupport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -269,7 +283,7 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					B3C96E9D1D62C3A3003F1E93 = {
@@ -294,7 +308,7 @@
 			projectRoot = "";
 			targets = (
 				B3C96EBE1D62C5E7003F1E93 /* PVSupport */,
-				B3C96E9D1D62C3A3003F1E93 /* PVSupportTV */,
+				B3C96E9D1D62C3A3003F1E93 /* PVSupport tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -464,6 +478,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -495,6 +510,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -527,6 +543,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -559,6 +576,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -589,6 +607,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -620,6 +639,7 @@
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -658,7 +678,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupportTV" */ = {
+		B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C96EA31D62C3A3003F1E93 /* Debug */,

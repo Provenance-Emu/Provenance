@@ -9,7 +9,7 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVEmulatorConstants.h"
 
-#import "PVGenesisEmulatorCore.h"
+#import <PVGenesis/PVGenesisEmulatorCore.h>
 #import "PVGenesisControllerViewController.h"
 
 #import "PVSNESEmulatorCore.h"
@@ -24,7 +24,7 @@
 #import "PVNESEmulatorCore.h"
 #import "PVNESControllerViewController.h"
 
-#import "PVStellaGameCore.h"
+#import <PVStella/PVStellaGameCore.h>
 #import "PVStellaControllerViewController.h"
 
 #import <ProSystem/ProSystemGameCore.h>

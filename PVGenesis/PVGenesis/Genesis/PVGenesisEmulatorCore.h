@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import "libretro.h"
+#import <PVGenesis/libretro.h>
 
 typedef NS_ENUM(NSUInteger, PVGenesisButton)
 {

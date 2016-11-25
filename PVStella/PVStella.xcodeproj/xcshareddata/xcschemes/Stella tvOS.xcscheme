@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD4824F1BA363CC00FDA50A"
-               BuildableName = "libPVGenesisTV.a"
-               BlueprintName = "PVGenesisTV"
-               ReferencedContainer = "container:PVGenesis.xcodeproj">
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport tvOS"
+               ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella tvOS"
+               ReferencedContainer = "container:PVStella.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,6 +43,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella tvOS"
+            ReferencedContainer = "container:PVStella.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -45,10 +68,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD4824F1BA363CC00FDA50A"
-            BuildableName = "libPVGenesisTV.a"
-            BlueprintName = "PVGenesisTV"
-            ReferencedContainer = "container:PVGenesis.xcodeproj">
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella tvOS"
+            ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,10 +86,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD4824F1BA363CC00FDA50A"
-            BuildableName = "libPVGenesisTV.a"
-            BlueprintName = "PVGenesisTV"
-            ReferencedContainer = "container:PVGenesis.xcodeproj">
+            BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+            BuildableName = "PVStella.framework"
+            BlueprintName = "PVStella tvOS"
+            ReferencedContainer = "container:PVStella.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

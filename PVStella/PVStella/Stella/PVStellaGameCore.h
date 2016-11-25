@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <Stella/OE2600SystemResponderClient.h>
+#import <PVStella/OE2600SystemResponderClient.h>
 
 @class OERingBuffer;
 

@@ -27,3 +27,4 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVGameControllerUtilities.h>
 #import <PVSupport/OEGameAudio.h>
+#import <PVSupport/NSObject+PVAbstractAdditions.h>

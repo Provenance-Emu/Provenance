@@ -123,10 +123,10 @@
 		1AD482C81BA363E900FDA50A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; };
 		1AD482C91BA363E900FDA50A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */; };
 		1AD482CA1BA363E900FDA50A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
-		BED8C0231D71467600742D04 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8C0211D71467600742D04 /* stream.cpp */; };
-		BED8C0241D71467600742D04 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8C0211D71467600742D04 /* stream.cpp */; };
 		B3D2E3861D6E7E3D0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3851D6E7E3D0058544D /* PVSupport.framework */; };
 		B3D2E3881D6E7E4A0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3871D6E7E4A0058544D /* PVSupport.framework */; };
+		BED8C0231D71467600742D04 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8C0211D71467600742D04 /* stream.cpp */; };
+		BED8C0241D71467600742D04 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8C0211D71467600742D04 /* stream.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -151,7 +151,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1A2A95A317F761A100F1CB0D /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "../PVSupport/build/Debug-iphoneos/libPVSupport.a"; sourceTree = "<group>"; };
 		1ACEA8E417F75F350031B1C9 /* libPVSNES.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSNES.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1ACEA8E717F75F350031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1ACEA8EB17F75F350031B1C9 /* PVSNES-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSNES-Prefix.pch"; sourceTree = "<group>"; };
@@ -279,10 +278,10 @@
 		1ACEA98E17F760390031B1C9 /* tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
 		1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
 		1AD482D01BA363E900FDA50A /* libPVSNESTV.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVSNESTV.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		BED8C0211D71467600742D04 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
-		BED8C0221D71467600742D04 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 		B3D2E3851D6E7E3D0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E3871D6E7E4A0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		BED8C0211D71467600742D04 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
+		BED8C0221D71467600742D04 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -338,7 +337,6 @@
 			children = (
 				B3D2E3871D6E7E4A0058544D /* PVSupport.framework */,
 				B3D2E3851D6E7E3D0058544D /* PVSupport.framework */,
-				1A2A95A317F761A100F1CB0D /* libPVSupport.a */,
 				1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */,
 				1ACEA91417F75FAF0031B1C9 /* CoreAudio.framework */,
 				1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */,
