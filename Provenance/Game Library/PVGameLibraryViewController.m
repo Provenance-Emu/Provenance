@@ -23,6 +23,8 @@
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
     #import "PVSettingsViewController.h"
+#else
+#import "PVGame+Sizing.h"
 #endif
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
@@ -41,6 +43,8 @@ NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
+
+static const CGFloat CellWidth = 308.0;
 
 @interface PVGameLibraryViewController ()
 
@@ -1422,7 +1426,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 #if TARGET_OS_TV
-    return CGSizeMake(250, 360);
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    CGSize boxartSize = CGSizeMake(CellWidth, CellWidth / game.boxartAspectRatio);
+    return [PVGameLibraryCollectionViewCell cellSizeForImageSize:boxartSize];
 #else
     if ([[PVSettingsModel sharedInstance] showGameTitles]) {
         return CGSizeMake(100, 144);
@@ -1441,7 +1447,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    return 30;
+    return 50;
 #else
 	return 5.0;
 #endif
@@ -1450,13 +1456,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    	return UIEdgeInsetsMake(40, 40, 120, 40);
+    	return UIEdgeInsetsMake(40, 0, 120, 0);
 #else
     	return UIEdgeInsetsMake(5, 5, 5, 5);
 #endif
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    [self loadGame:game];
+}
+
+- (PVGame *)gameAtIndexPath:(NSIndexPath *)indexPath
 {
     PVGame *game = nil;
     if (self.searchResults)
@@ -1469,7 +1481,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
     
-    [self loadGame:game];
+    return game;
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -1600,7 +1612,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
-#pragma mark - Image Picker Deleate
+#pragma mark - Image Picker Delegate
 
 #if !TARGET_OS_TV
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info

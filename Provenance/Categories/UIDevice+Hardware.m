@@ -30,4 +30,19 @@
 	return [self getSysInfoByName:"hw.machine"];
 }
 
+///All known Device Types for iPhone 7 or iPhone 7 Plus
++ (BOOL)isIphone7or7Plus
+{
+    if ([[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,1"] ||    //iPhone 7 (A1660/A1779/A1780)
+        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,2"] ||    //iPhone 7 Plus (A1661/A1785/A1786)
+        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,3"] ||    //iPhone 7 (A1778)
+        [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,4"]) {    //iPhone 7 Plus (A1784)
+        
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
 @end

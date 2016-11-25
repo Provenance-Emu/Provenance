@@ -64,7 +64,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+
             _framerateMultiplier = 1.0;
+            _gameSpeed = GameSpeedNormal;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
@@ -138,7 +140,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
             }
         }
         
-        OEWaitUntil(gameTime);
+        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
+        
+        if (gameTime >= currentMonotonicTime) {
+            OEWaitUntil(gameTime);
+        }
         
         // Service the event loop
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);

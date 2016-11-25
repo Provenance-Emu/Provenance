@@ -96,4 +96,8 @@
     return self;
 }
 
+- (NSString *) vendorName {
+    return @"8Bitdo";
+}
+
 @end

@@ -21,7 +21,7 @@ NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
             stringRepresentation = @"Standard Controller";
             break;
         case kICadeControllerSetting8Bitdo:
-            stringRepresentation = @"8bitdo Nes30 Controller";
+            stringRepresentation = @"8Bitdo Controller";
             break;
         case kICadeControllerSettingSteelSeries:
             stringRepresentation = @"SteelSeries Free Controller";
