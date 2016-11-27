@@ -53,8 +53,12 @@ void PicoExit(void)
   PicoCartUnload();
   z80_exit();
 
-  if (SRam.data)
-    free(SRam.data);
+    if (SRam.data != NULL) {
+        free(SRam.data);
+        SRam.data = NULL;
+        SRam.size = 0;
+        SRam.start = SRam.end = 0;
+    }
   pevt_dump();
 }
 

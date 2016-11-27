@@ -84,6 +84,7 @@ PICO_INTERNAL int PicoResetMCD(void)
   else if (SRam.data != NULL) {
     free(SRam.data);
     SRam.data = NULL;
+      SRam.size = 0;
   }
   SRam.start = SRam.end = 0; // unused
 

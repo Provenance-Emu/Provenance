@@ -756,8 +756,9 @@ size_t retro_get_memory_size(unsigned id)
 
 	// if game doesn't write to sram, don't report it to
 	// libretro so that RA doesn't write out zeroed .srm
-	for (i = 0, sum = 0; i < SRam.size; i++)
+    for (i = 0, sum = 0; i < SRam.size; i++) {
 		sum |= SRam.data[i];
+    }
 
 	return (sum != 0) ? SRam.size : 0;
 }

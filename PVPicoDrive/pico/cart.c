@@ -555,6 +555,8 @@ int PicoCartInsert(unsigned char *rom, unsigned int romsize, const char *carthw_
   if (SRam.data) {
     free(SRam.data);
     SRam.data = NULL;
+      SRam.size = 0;
+      SRam.start = SRam.end = 0;
   }
 
   if (PicoCartUnloadHook != NULL) {
