@@ -44,7 +44,9 @@ NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
+#if TARGET_OS_TV
 static const CGFloat CellWidth = 308.0;
+#endif
 
 @interface PVGameLibraryViewController ()
 
