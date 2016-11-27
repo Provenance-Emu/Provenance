@@ -84,6 +84,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
+               BuildableName = "PVNES.framework"
+               BlueprintName = "PVNES"
+               ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1ACEA8E317F75F350031B1C9"
                BuildableName = "libPVSNES.a"
                BlueprintName = "PVSNES"
@@ -116,20 +130,6 @@
                BuildableName = "libPVGB.a"
                BlueprintName = "PVGB"
                ReferencedContainer = "container:PVGB/PVGB.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3A74E71ABF11AC002274A3"
-               BuildableName = "libPVNES.a"
-               BlueprintName = "PVNES"
-               ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

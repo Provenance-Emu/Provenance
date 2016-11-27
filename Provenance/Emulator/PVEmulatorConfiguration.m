@@ -21,7 +21,7 @@
 #import "PVGBEmulatorCore.h"
 #import "PVGBControllerViewController.h"
 
-#import "PVNESEmulatorCore.h"
+#import <PVNES/PVNESEmulatorCore.h>
 #import "PVNESControllerViewController.h"
 
 #import <PVStella/PVStellaGameCore.h>

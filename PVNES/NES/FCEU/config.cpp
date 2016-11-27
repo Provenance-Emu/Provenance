@@ -48,7 +48,7 @@ char *FCEUI_GetAboutString() {
 
 	if(aboutString) return aboutString;
 
-	const char *compilerString = FCEUD_GetCompilerString();
+	const char *compilerString = ""; //FCEUD_GetCompilerString();
 
 	//allocate the string and concatenate the template with the compiler string
 	if (!(aboutString = (char*)FCEU_dmalloc(strlen(aboutTemplate) + strlen(compilerString) + 1)))

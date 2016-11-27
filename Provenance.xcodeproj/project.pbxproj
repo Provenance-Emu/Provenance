@@ -58,7 +58,6 @@
 		1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52098B1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m */; };
 		1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
-		1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7417181ABF215B00F3CD3C /* libPVNES.a */; };
 		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.m */; };
 		1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9647B017D6864300A55612 /* PVControllerViewController.m */; };
@@ -171,7 +170,6 @@
 		1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
 		1AD4840D1BA36C8C00FDA50A /* libPVGBATV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD484071BA36C8B00FDA50A /* libPVGBATV.a */; };
 		1AD4840E1BA36C8C00FDA50A /* libPVGBTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD484081BA36C8B00FDA50A /* libPVGBTV.a */; };
-		1AD484101BA36C8C00FDA50A /* libPVNESTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4840A1BA36C8B00FDA50A /* libPVNESTV.a */; };
 		1AD484111BA36C8C00FDA50A /* libPVSNESTV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */; };
 		1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6C1BFD3896007D6C7C /* AVFoundation.framework */; };
 		1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
@@ -229,10 +227,9 @@
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CC1D6B80D4002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
-		B37303451DE7DCB200D0B366 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37303441DE7DCB200D0B366 /* PVGenesis.framework */; };
-		B37303471DE7DCCC00D0B366 /* PVGenesisTV.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37303461DE7DCCC00D0B366 /* PVGenesisTV.framework */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3A9F42B1DE867BA008450F5 /* Stella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689F1D6EA6CC0021B949 /* Stella.framework */; };
+		B3A9F62F1DE88287008450F5 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F62E1DE88287008450F5 /* PVNES.framework */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
@@ -245,6 +242,10 @@
 		B3AD68A81D6EA7220021B949 /* Stella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689F1D6EA6CC0021B949 /* Stella.framework */; };
 		B3AD68A91D6EA7220021B949 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3AD68AA1D6EA7220021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
+		B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; };
+		B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
+		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E3921D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E3931D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
@@ -325,7 +326,9 @@
 				B311698F1D70A3BF00D7AECA /* Stella.framework in Embed Frameworks */,
 				B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
+				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */,
+				B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,7 +463,6 @@
 		1AD481C41BA350A400FDA50A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AD4820C1BA3557900FDA50A /* libPVGB.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGB.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGB.a"; sourceTree = "<group>"; };
 		1AD4820D1BA3557900FDA50A /* libPVGBA.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBA.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGBA.a"; sourceTree = "<group>"; };
-		1AD4820E1BA3557900FDA50A /* libPVGenesis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesis.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVGenesis.a"; sourceTree = "<group>"; };
 		1AD4820F1BA3557900FDA50A /* libPVSNES.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNES.a; path = "../../Library/Developer/Xcode/DerivedData/Provenance-gleuluimsajnpagtfsvuqhxkldcw/Build/Products/Debug-iphoneos/libPVSNES.a"; sourceTree = "<group>"; };
 		1AD482161BA3592D00FDA50A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		1AD482181BA3593900FDA50A /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
@@ -480,7 +482,6 @@
 		1AD482341BA35A0B00FDA50A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		1AD484071BA36C8B00FDA50A /* libPVGBATV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBATV.a; path = "PVGBA/build/Debug-appletvos/libPVGBATV.a"; sourceTree = "<group>"; };
 		1AD484081BA36C8B00FDA50A /* libPVGBTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGBTV.a; path = "PVGB/build/Debug-appletvos/libPVGBTV.a"; sourceTree = "<group>"; };
-		1AD484091BA36C8B00FDA50A /* libPVGenesisTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVGenesisTV.a; path = "PVGenesis/build/Debug-appletvos/libPVGenesisTV.a"; sourceTree = "<group>"; };
 		1AD4840A1BA36C8B00FDA50A /* libPVNESTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVNESTV.a; path = "PVNES/build/Debug-appletvos/libPVNESTV.a"; sourceTree = "<group>"; };
 		1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSNESTV.a; path = "PVSNES/build/Debug-appletvos/libPVSNESTV.a"; sourceTree = "<group>"; };
 		1AD4BC6C1BFD3896007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -556,10 +557,13 @@
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
 		B37303441DE7DCB200D0B366 /* PVGenesis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVGenesis.framework; path = "PVGenesis/build/Debug-iphoneos/PVGenesis.framework"; sourceTree = "<group>"; };
-		B37303461DE7DCCC00D0B366 /* PVGenesisTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVGenesisTV.framework; path = "PVGenesis/build/Debug-iphoneos/PVGenesisTV.framework"; sourceTree = "<group>"; };
+		B3A9F62C1DE88274008450F5 /* PVNES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVNES.framework; path = "PVNES/build/Debug-iphoneos/PVNES.framework"; sourceTree = "<group>"; };
+		B3A9F62E1DE88287008450F5 /* PVNES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVNES.framework; path = "PVNES/build/Debug-appletvos/PVNES.framework"; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD689F1D6EA6CC0021B949 /* Stella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Stella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C9D42F1DEA1B260068D057 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D2E38F1D6E8B3C0058544D /* PV32XControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PV32XControllerViewController.h; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
@@ -611,7 +615,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37303451DE7DCB200D0B366 /* PVGenesis.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */,
@@ -623,8 +626,9 @@
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				1A4DF9F51C0E402B00DDBC20 /* libPVSNES.a in Frameworks */,
 				1A4DF9F41C0E401E00DDBC20 /* libPVGB.a in Frameworks */,
+				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
+				B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */,
 				1A4DF9F31C0E401000DDBC20 /* libPVGBA.a in Frameworks */,
-				1A7417191ABF215B00F3CD3C /* libPVNES.a in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
@@ -646,7 +650,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37303471DE7DCCC00D0B366 /* PVGenesisTV.framework in Frameworks */,
+				B3A9F62F1DE88287008450F5 /* PVNES.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
 				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
@@ -655,7 +659,6 @@
 				1AD484111BA36C8C00FDA50A /* libPVSNESTV.a in Frameworks */,
 				1AD4840D1BA36C8C00FDA50A /* libPVGBATV.a in Frameworks */,
 				1AD4840E1BA36C8C00FDA50A /* libPVGBTV.a in Frameworks */,
-				1AD484101BA36C8C00FDA50A /* libPVNESTV.a in Frameworks */,
 				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3AD68A01D6EA6CC0021B949 /* Stella.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
@@ -792,7 +795,10 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B37303461DE7DCCC00D0B366 /* PVGenesisTV.framework */,
+				B3C9D4321DEA1B340068D057 /* PVGenesis.framework */,
+				B3C9D42F1DEA1B260068D057 /* PVNES.framework */,
+				B3A9F62E1DE88287008450F5 /* PVNES.framework */,
+				B3A9F62C1DE88274008450F5 /* PVNES.framework */,
 				B37303441DE7DCB200D0B366 /* PVGenesis.framework */,
 				B3AD68A21D6EA7070021B949 /* ProSystem.framework */,
 				B3AD689F1D6EA6CC0021B949 /* Stella.framework */,
@@ -911,7 +917,6 @@
 		1A4DF9F81C0E40FE00DDBC20 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
-				1AD484091BA36C8B00FDA50A /* libPVGenesisTV.a */,
 				1AD4840B1BA36C8B00FDA50A /* libPVSNESTV.a */,
 				1AD484071BA36C8B00FDA50A /* libPVGBATV.a */,
 				1AD484081BA36C8B00FDA50A /* libPVGBTV.a */,
@@ -941,7 +946,6 @@
 		1A4DF9F91C0E411500DDBC20 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				1AD4820E1BA3557900FDA50A /* libPVGenesis.a */,
 				1AD4820F1BA3557900FDA50A /* libPVSNES.a */,
 				1AD4820C1BA3557900FDA50A /* libPVGB.a */,
 				1AD4820D1BA3557900FDA50A /* libPVGBA.a */,
@@ -1824,6 +1828,8 @@
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1871,6 +1877,8 @@
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1923,6 +1931,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1983,6 +1992,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2043,6 +2053,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2289,6 +2300,8 @@
 					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
 					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";

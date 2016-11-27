@@ -46,3 +46,5 @@ enum PPUPHASE {
 };
 
 extern PPUPHASE ppuphase;
+// This define fixes missing symbol PPU. Was it accessing the PPU declared in SNES in static builds? - Joe M
+#define PPU nes_PPU
