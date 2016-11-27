@@ -1032,7 +1032,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVGB tvOS/Info.plist";
+				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
@@ -1065,7 +1065,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVGB tvOS/Info.plist";
+				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
@@ -1098,7 +1098,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVGB tvOS/Info.plist";
+				INFOPLIST_FILE = PVGB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";

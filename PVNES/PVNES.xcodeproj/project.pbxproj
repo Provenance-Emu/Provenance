@@ -2221,7 +2221,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVNES tvOS/Info.plist";
+				INFOPLIST_FILE = PVNES/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2267,7 +2267,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVNES tvOS/Info.plist";
+				INFOPLIST_FILE = PVNES/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2313,7 +2313,7 @@
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = "PVNES tvOS/Info.plist";
+				INFOPLIST_FILE = PVNES/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
