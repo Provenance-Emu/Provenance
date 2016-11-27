@@ -84,6 +84,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C9D53F1DEA83FD0068D057"
+               BuildableName = "PVSNES.framework"
+               BlueprintName = "PVSNES tvOS"
+               ReferencedContainer = "container:PVSNES/PVSNES.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A9F4431DE877E4008450F5"
                BuildableName = "PVNES.framework"
                BlueprintName = "PVNES tvOS"
@@ -116,20 +130,6 @@
                BuildableName = "PVGBA.framework"
                BlueprintName = "PVGBA tvOS"
                ReferencedContainer = "container:PVGBA/PVGBA.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD4828E1BA363E900FDA50A"
-               BuildableName = "libPVSNESTV.a"
-               BlueprintName = "PVSNESTV"
-               ReferencedContainer = "container:PVSNES/PVSNES.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

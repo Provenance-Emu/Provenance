@@ -12,7 +12,7 @@
 #import <PVGenesis/PVGenesisEmulatorCore.h>
 #import "PVGenesisControllerViewController.h"
 
-#import "PVSNESEmulatorCore.h"
+#import <PVSNES/PVSNESEmulatorCore.h>
 #import "PVSNESControllerViewController.h"
 
 #import <PVGBA/PVGBAEmulatorCore.h>
