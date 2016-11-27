@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-               BuildableName = "libPVGB.a"
-               BlueprintName = "PVGB"
+               BuildableName = "libPVGB-Static.a"
+               BlueprintName = "PVGB-Static"
                ReferencedContainer = "container:PVGB.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB.a"
-            BlueprintName = "PVGB"
+            BuildableName = "libPVGB-Static.a"
+            BlueprintName = "PVGB-Static"
             ReferencedContainer = "container:PVGB.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB.a"
-            BlueprintName = "PVGB"
+            BuildableName = "libPVGB-Static.a"
+            BlueprintName = "PVGB-Static"
             ReferencedContainer = "container:PVGB.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -87,8 +87,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB.a"
-            BlueprintName = "PVGB"
+            BuildableName = "libPVGB-Static.a"
+            BlueprintName = "PVGB-Static"
             ReferencedContainer = "container:PVGB.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

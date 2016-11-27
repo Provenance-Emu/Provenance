@@ -18,7 +18,7 @@
 #import "PVGBAEmulatorCore.h"
 #import "PVGBAControllerViewController.h"
 
-#import "PVGBEmulatorCore.h"
+#import <PVGB/PVGBEmulatorCore.h>
 #import "PVGBControllerViewController.h"
 
 #import <PVNES/PVNESEmulatorCore.h>
