@@ -5,7 +5,7 @@
 @* This work is licensed under the terms of MAME license.
 @* See COPYING file in the top-level directory.
 @*
-
+#ifdef __arm__
 .equiv PCM_STEP_SHIFT, 11
 
 .text
@@ -702,3 +702,4 @@ m_s68k_write16_regs_spec:               @ special case
 .pool
 
 @ vim:filetype=armasm
+#endif

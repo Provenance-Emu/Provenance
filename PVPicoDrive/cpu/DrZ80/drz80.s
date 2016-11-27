@@ -1,3 +1,4 @@
+#ifdef __arm__
 ;@ Reesy's Z80 Emulator Version 0.001
 
 ;@ (c) Copyright 2004 Reesy, All rights reserved
@@ -8094,4 +8095,4 @@ opcode_ED_BB:
 ;@     b end_loop
 
 ;@ vim:filetype=armasm
-
+#endif

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B368C2461D6D873900FE9EF8 /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
+		B36BE9041DEB43120078A9CB /* stub_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F117829B4400A212AC /* stub_arm.S */; };
 		B36EE5131D6D3B5F000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
 		B36EE5141D6D3BF0000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94D517829B4400A212AC /* compiler.c */; };
 		B36EE5151D6D3BF1000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94D517829B4400A212AC /* compiler.c */; };
@@ -251,7 +252,7 @@
 		946B94EE17829B4400A212AC /* memory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
 		946B94EF17829B4400A212AC /* ssp16.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ssp16.c; sourceTree = "<group>"; };
 		946B94F017829B4400A212AC /* ssp16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ssp16.h; sourceTree = "<group>"; };
-		946B94F117829B4400A212AC /* stub_arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = stub_arm.S; sourceTree = "<group>"; };
+		946B94F117829B4400A212AC /* stub_arm.S */ = {isa = PBXFileReference; explicitFileType = sourcecode.asm; fileEncoding = 4; path = stub_arm.S; sourceTree = "<group>"; };
 		946B94F217829B4400A212AC /* svp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = svp.c; sourceTree = "<group>"; };
 		946B94F317829B4400A212AC /* carthw.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = carthw.cfg; sourceTree = "<group>"; };
 		946B94F417829B4400A212AC /* carthw_cfg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = carthw_cfg.c; sourceTree = "<group>"; };
@@ -1636,6 +1637,7 @@
 				B37937C61D6BD0B000EBAE81 /* cdd.c in Sources */,
 				B37937C71D6BD0B000EBAE81 /* cue.c in Sources */,
 				B37937CE1D6BDD9A00EBAE81 /* misc.c in Sources */,
+				B36BE9041DEB43120078A9CB /* stub_arm.S in Sources */,
 				B37937CF1D6BDDA100EBAE81 /* pcm.c in Sources */,
 				B37937BA1D6BD06700EBAE81 /* 32x.c in Sources */,
 				B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */,
@@ -1875,7 +1877,6 @@
 					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-D_USE_CZ80",
 					"-DIOS",
 					"-DNO_ZLIB",
 					"-DINLINE=inline",
@@ -1936,7 +1937,6 @@
 					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-D_USE_CZ80",
 					"-DIOS",
 					"-DNO_ZLIB",
 					"-DINLINE=inline",
@@ -2006,7 +2006,6 @@
 					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-D_USE_CZ80",
 					"-DIOS",
 					"-DNO_ZLIB",
 					"-DINLINE=inline",
@@ -2069,7 +2068,6 @@
 					"-falign-functions=2",
 					"-DNDEBUG",
 					"-DEMU_F68K",
-					"-D_USE_CZ80",
 					"-DIOS",
 					"-DNO_ZLIB",
 					"-DINLINE=inline",

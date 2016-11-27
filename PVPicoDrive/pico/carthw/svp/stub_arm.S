@@ -1,3 +1,4 @@
+#ifdef __arm__
 @*
 @* Compiler helper functions and some SVP HLE code
 @* (C) notaz, 2008,2009
@@ -625,3 +626,4 @@ APPLE_WRAP(tr_unhandled)
 #endif
 
 @ vim:filetype=armasm
+#endif

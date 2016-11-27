@@ -13,9 +13,15 @@
 // options. Maybe compile in the .S files on armv7 (if it supports it), or disable -DD_SVP_DRC on armv7.
 // A final option is to weak link PicoDrive and only compile as ARM64 since it will probably not even run on armv7 devices.
 // Use dyload to load and unload the framework on ARM64 platforms and preset a message to the user that the platform isn't support on armv7
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -DDRC_SH2 -D_SVP_DRC
-OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited)
+
+// Arm 32bit
+OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DDRC_SH2 -D_SVP_DRC -D_USE_CZ80
+OTHER_CFLAGS[sdk=iphoneos*][arch=arm64] = $(inherited) -DDRC_SH2 -D_USE_CZ80
+
+OTHER_CFLAGS[sdk=iphonesimulator*] = $(inherited) -D_USE_CZ80
 
 // tv OS
-OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2
-OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited)
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2 -D_USE_CZ80
+OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -D_USE_CZ80

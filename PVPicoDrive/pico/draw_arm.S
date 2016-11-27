@@ -7,7 +7,7 @@
  *
  * this is highly specialized, be careful if changing related C code!
  */
-
+#ifdef __arm__
 .extern Pico
 .extern PicoOpt
 .extern HighCol
@@ -2027,3 +2027,4 @@ blockcpy_loop_or:
     bx      lr
 
 @ vim:filetype=armasm
+#endif

@@ -6,6 +6,8 @@
  * See COPYING file in the top-level directory.
  */
 
+#ifdef __arm__
+
 .equ SRR_MAPPED,    (1 <<  0)
 .equ SRR_READONLY,  (1 <<  1)
 .equ SRF_EEPROM,    (1 <<  1)
@@ -257,3 +259,4 @@ m_write16_not_sreg:
 .pool
 
 @ vim:filetype=armasm
+#endif

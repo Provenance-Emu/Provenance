@@ -7,7 +7,7 @@
  *
  * this is highly specialized, be careful if changing related C code!
  */
-
+#ifdef __arm__
 .extern Pico
 .extern PicoDraw2FB
 
@@ -935,3 +935,4 @@ DrawSpriteFull:
 .pool
 
 @ vim:filetype=armasm
+#endif
