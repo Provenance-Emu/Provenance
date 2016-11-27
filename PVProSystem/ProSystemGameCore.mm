@@ -482,9 +482,9 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 - (void)setPalette32 {
     for(int index = 0; index < 256; index++)
     {
-        uint32_t r = palette_data[(index * 3) + 0] << 16;
-        uint32_t g = palette_data[(index * 3) + 1] << 8;
-        uint32_t b = palette_data[(index * 3) + 2];
+        uint32_t r = CFSwapInt32LittleToHost(palette_data[(index * 3) + 0] << 0);
+        uint32_t g = CFSwapInt32LittleToHost(palette_data[(index * 3) + 1] << 8);
+        uint32_t b = CFSwapInt32LittleToHost(palette_data[(index * 3) + 2] << 16);
         _displayPalette[index] = r | g | b;
     }
 }
