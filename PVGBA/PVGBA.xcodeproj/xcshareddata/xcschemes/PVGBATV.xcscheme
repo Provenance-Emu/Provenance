@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD482D11BA363F900FDA50A"
-               BuildableName = "libPVGBATV.a"
-               BlueprintName = "PVGBATV"
+               BuildableName = "libPVGBATV-Static.a"
+               BlueprintName = "PVGBATV-Static"
                ReferencedContainer = "container:PVGBA.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,8 +47,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD482D11BA363F900FDA50A"
-            BuildableName = "libPVGBATV.a"
-            BlueprintName = "PVGBATV"
+            BuildableName = "libPVGBATV-Static.a"
+            BlueprintName = "PVGBATV-Static"
             ReferencedContainer = "container:PVGBA.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -69,8 +69,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD482D11BA363F900FDA50A"
-            BuildableName = "libPVGBATV.a"
-            BlueprintName = "PVGBATV"
+            BuildableName = "libPVGBATV-Static.a"
+            BlueprintName = "PVGBATV-Static"
             ReferencedContainer = "container:PVGBA.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -87,8 +87,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1AD482D11BA363F900FDA50A"
-            BuildableName = "libPVGBATV.a"
-            BlueprintName = "PVGBATV"
+            BuildableName = "libPVGBATV-Static.a"
+            BlueprintName = "PVGBATV-Static"
             ReferencedContainer = "container:PVGBA.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

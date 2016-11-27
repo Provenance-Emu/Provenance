@@ -15,7 +15,7 @@
 #import "PVSNESEmulatorCore.h"
 #import "PVSNESControllerViewController.h"
 
-#import "PVGBAEmulatorCore.h"
+#import <PVGBA/PVGBAEmulatorCore.h>
 #import "PVGBAControllerViewController.h"
 
 #import <PVGB/PVGBEmulatorCore.h>

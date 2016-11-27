@@ -7,7 +7,7 @@
 //
 
 #import "PVGBAControllerViewController.h"
-#import "PVGBAEmulatorCore.h"
+#import <PVGBA/PVGBAEmulatorCore.h>
 #import "PVSettingsModel.h"
 #import <AudioToolbox/AudioToolbox.h>
 
