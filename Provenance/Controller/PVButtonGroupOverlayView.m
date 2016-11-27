@@ -72,7 +72,7 @@
 		{
 			[button touchesMoved:touches withEvent:event];
 		}
-		else
+		else if (button.pressed)
 		{
 			[button touchesEnded:touches withEvent:event];
 		}
