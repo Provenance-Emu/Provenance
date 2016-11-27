@@ -37,7 +37,7 @@ extern uint8 FASTCALL FFCEUX_PPURead_Default(uint32 A);
 void FFCEUX_PPUWrite_Default(uint32 A, uint8 V);
 
 extern int g_rasterpos;
-extern uint8 nes_PPU[4];
+extern uint8 PPU[4];
 extern bool DMC_7bit;
 extern bool paldeemphswap;
 
@@ -46,5 +46,3 @@ enum PPUPHASE {
 };
 
 extern PPUPHASE ppuphase;
-// This define fixes missing symbol PPU. Was it accessing the PPU declared in SNES in static builds? - Joe M
-#define PPU nes_PPU
