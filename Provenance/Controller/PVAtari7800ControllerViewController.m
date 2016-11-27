@@ -34,6 +34,8 @@
             [button setTag:OE7800ButtonSelect];
         } else if ([[[button titleLabel] text] isEqualToString:@"Reset"]) {
             [button setTag:OE7800ButtonReset];
+        } else if ([[[button titleLabel] text] isEqualToString:@"Pause"]) {
+            [button setTag:OE7800ButtonPause];
         }
     }
     

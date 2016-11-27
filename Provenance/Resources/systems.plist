@@ -877,7 +877,7 @@
 						<key>PVControlTitle</key>
 						<string>Fire 1</string>
 						<key>PVControlFrame</key>
-						<string>{{76,84},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -885,7 +885,7 @@
 						<key>PVControlTitle</key>
 						<string>Fire 2</string>
 						<key>PVControlFrame</key>
-						<string>{{84,76},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>

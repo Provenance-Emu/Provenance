@@ -386,6 +386,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 
     switch(button)
     {
+            // Controller buttons P1 + P2
         case OE7800ButtonUp:
             _inputState[ProSystemMap[button + playerShift]] ^= 1;
             break;
@@ -396,13 +397,13 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         case OE7800ButtonFire2:
             _inputState[ProSystemMap[button + playerShift]] = 1;
             break;
-
+            // Console buttons
         case OE7800ButtonSelect:
         case OE7800ButtonPause:
         case OE7800ButtonReset:
             _inputState[ProSystemMap[button + 6]] = 1;
             break;
-
+            // Difficulty switches
         case OE7800ButtonLeftDiff:
         case OE7800ButtonRightDiff:
             _inputState[ProSystemMap[button + 6]] ^= (1 << 0);
@@ -418,6 +419,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 
     switch(button)
     {
+            // Controller buttons P1 + P2
         case OE7800ButtonUp:
             _inputState[ProSystemMap[button + playerShift]] ^= 1;
             break;
@@ -428,7 +430,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         case OE7800ButtonFire2:
             _inputState[ProSystemMap[button + playerShift]] = 0;
             break;
-
+            // Console buttons
         case OE7800ButtonSelect:
         case OE7800ButtonPause:
         case OE7800ButtonReset:
