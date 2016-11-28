@@ -107,7 +107,7 @@ typedef struct __cartdata {
 	uint8 size;
 } cartdata;
 
-#define Sprite16  (nes_PPU[0]& 0x20)   //Sprites 8x16/8x8
+#define Sprite16  (PPU[0]& 0x20)   //Sprites 8x16/8x8
 //#define MMC5SPRVRAMADR(V)      &MMC5SPRVPage[(V)>>10][(V)]
 static inline uint8 *  MMC5BGVRAMADR(uint32 A) {
 	if (!Sprite16) {
@@ -141,7 +141,7 @@ uint8 FASTCALL mmc5_PPURead(uint32 A) {
 		if (ppuphase == PPUPHASE_BG 
 			//zero 03-aug-2014 - added this to fix Uchuu Keibitai SDF. The game reads NT entries from CHR rom while PPU is disabled.
 			//obviously we have enormous numbers of bugs springing from our terrible emulation of ppu-disabled states, but this does the job for fixing this one
-			&& (nes_PPU[1] & 0x10)
+			&& (PPU[1] & 0x10)
 			)
 			return *MMC5BGVRAMADR(A);
 		else return MMC5SPRVPage[(A) >> 10][(A)];
@@ -519,7 +519,7 @@ void MMC5_hb(int scanline) {
 	//zero 24-jul-2014 - revised for newer understanding, to fix metal slader glory credits. see r7371 in bizhawk
 	
 	int sl = scanline + 1;
-	int ppuon = (nes_PPU[1] & 0x18);
+	int ppuon = (PPU[1] & 0x18);
 
 	if (!ppuon || sl >= 241)
 	{

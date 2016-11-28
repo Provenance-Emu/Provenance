@@ -811,7 +811,7 @@ void Blit8ToHigh(uint8 *src, uint8 *dest, int xr, int yr, int pitch, int xscale,
 					int outxr = 301;
 					//if(xr == 282) outxr = 282; //hack for windows
 					burst_phase ^= 1;
-					nes_ntsc_blit( nes_ntsc, (unsigned char*)src, xr, burst_phase, (nes_PPU[1] >> 5) << 6, xr, yr, ntscblit, (2*outxr) * Bpp );
+					nes_ntsc_blit( nes_ntsc, (unsigned char*)src, xr, burst_phase, (PPU[1] >> 5) << 6, xr, yr, ntscblit, (2*outxr) * Bpp );
 
 					const uint8 *in = ntscblit + (Bpp * xscale);
 					uint8 *out = dest;

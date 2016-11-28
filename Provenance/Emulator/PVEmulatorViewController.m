@@ -8,9 +8,9 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
 #import "PVGame.h"
-#import "OEGameAudio.h"
+#import <PVSupport/OEGameAudio.h>
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"

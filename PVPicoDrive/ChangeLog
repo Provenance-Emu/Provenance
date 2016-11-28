@@ -1,0 +1,487 @@
+1.91 (2013-10-12)
+  + Added OpenDingux support (Paul Cercueil).
+  * Save directory changed to ~/.picodrive/ for generic platform build
+    (Paul Cercueil).
+  + Revived GP2X/Caanoo/Wiz support.
+  + Switched to cleaner CD controller code from Eke-Eke's Genesis Plus GX.
+  * Fixed overflow issue where cd emulation would break after
+    ~10 minutes of gameplay.
+  * Fixed synchronization issue where model1 CD BIOS would randomly hang.
+
+1.90 (2013-09-24)
+  + 32X+CD emulation has been implemented.
+  + CD graphics processor code has been replaced with much cleaner Eke-Eke's
+    implementation from Genesis Plus GX.
+  + CD PCM code has been completely rewritten.
+  * Various CD compatibility issues have been solved. Hopefully no more
+    regressions this time.
+  * pandora: fixed tv-out (again), added automatic layer switching
+  * libretro: fixed crackling sound for some games, added some core options
+  * sdl: multiple joystick support has been fixed (Victor Luchits)
+
+1.85 (2013-08-31)
+  * Lots of 32X compatibility and accuracy improvements. All commercial games
+    are booting now, but some still have issues.
+  * Fixed some regressions in MegaCD code, like hang in jap BIOS.
+  * Implemented pause for SMS.
+  * Updated UI with improvements from PCSX ReARMed.
+  * Frontend timing has been rewritten, should no longer slowly desync from
+    LCD on pandora.
+  * Added libretro and SDL 32/64bit ports, fixed compatibility issues with
+    Android, iOS.
+  * Various other things I forgot (it has been a while since last release..)
+
+1.80 (2010-09-19)
+  + Added Caanoo support. Now the GP2X binary supports GP2X F100/F200, Wiz
+    and Caanoo. Lots of internal refactoring to support this.
+  + Enabled 32X and SMS code. It's still unfinished but better release something
+    now than wait even more (it has been in development for more then a year now
+    due to various other projects or simply lack of time).
+  + Pandora: added hardware scaler support, including ability to resize the
+    layer and control filtering.
+  + GP2X: Added basic line-doubling vertical scaling option.
+  * Changed the way keys are bound, no need to unbind old one any more.
+  * Handle MP3s with ID3 tags better (some MP3s with ID3 did not play).
+  * Improved shadow/hilight color levels.
+  * Fixed broken cheat support.
+
+1.80beta2
+  * Pandora: updated documentation.
+
+1.80beta1 (2010-06-02)
+  + Added pandora port.
+  * Internal refactoring for 32x/SMS support.
+  * Move mapper database to external file.
+  + Added preliminary SMS emulation.
+  + Added emulation of 32x peripherals including VDP. More work is needed here.
+  + ARM: Added new SH2 recompiler for 32x. Some unification with SVP one.
+  - Disabled most of the above bacause I'm not yet happy with the results.
+
+1.56 (2009-09-19)
+  * Changed sync in Sega CD emulation again. Should fix games that
+    broke after changes in 1.51a.
+  * Fixed default keys rebinding when they shouldn't.
+  * Fixed sram being loaded from wrong game.
+  * Emu should no longer hang shortly after using fast-forward.
+  * Fixed save states sometimes no longer showing up in save state menu.
+  * ARM: some asm code refactoring for slight speed improvement.
+
+1.55
+  + Added Wiz support. Now the same GP2X binary supports F100/F200 and Wiz.
+  * Changed shadow/hilight handling a bit, fixes some effects in Pirates! Gold.
+  * Complete input code rewrite. This fixes some limitations like not allowing
+    to control both players using single input device. It also allows to use
+    more devices (like keyboards) on Linux based devices.
+  * Options menu has been reordered, "restore defaults" option added.
+
+1.51b
+  * Fixed a crash when uncompressed savestate is loaded.
+  * Fixed an idle loop detection related hanging problem.
+  * PSP: fixed another palette related regression.
+  * UIQ3: updated frontend for the latest emu core.
+
+1.51a
+  * Fixed a sync problem between main and sub 68k. Should fix the hanging
+    problem for some games.
+  * ARM: fixed a crash when CD savestate is loaded just after loading ROM.
+
+1.51
+  * Improved bin_to_cso_mp3 tool, it should no longer complain about
+    missing lame.exe even if it's in working dir.
+  * Fixed a regression from 1.50, which caused slowdowns in Final Fight.
+  * Fixed some regressions from 1.50 related to sprite limit and palette
+    handling (caused graphical glitches in some games).
+  + Added ABC turbo actions to key config.
+  * Some other minor adjustments.
+
+1.50
+  + Added some basic support for Sega Pico, a MegaDrive-based toy.
+  + Added proper support for cue/bin images, including cdda playback.
+    .cue sheets with iso/cso/mp3/wav files listed in them are now
+    supported too (but 44kHz restriction still applies).
+  + Added bin_to_cso_mp3 tool, based on Exophase's bin_to_iso_ogg.
+    The tool can convert .cue/.bin Sega CD images to .cso/.mp3.
+  * Greatly improved Sega CD load times.
+  * Changed how scheduling between 68k and z80 is handled. Improves
+    performance for some games. Credits to Lordus for the idea.
+  * YM2612 state was not 100% saved, this should be better now.
+  * Improved renderer performance for shadow/hilight mode.
+  * Added a hack for YM2612 frequency overflow issue (bleep noises
+    in Shaq Fu, Spider-Man - The Animated Series (intro music), etc.)
+    Credits to Nemesis @ spritesmind forum. Works only if sound rate
+    is set to 44kHz.
+  + Implemented some sprite rendering improvements, as suggested by
+    Exophase. Games with lots of sprites now perform better.
+  + Added better idle loop detection, based on Lordus' idea again.
+  - "accurate timing" option removed, as disabling it no longer
+    improves performance.
+  - "accurate sprites" was removed too, the new sprite code can
+    properly handle sprite priorities in all cases.
+  * Timers adjusted again.
+  * Improved .smd detection code.
+  * ARM: fixed a bug in DrZ80 core, which could cause problems in
+    some rare cases.
+  * ARM: fixed a problem of occasional clicks on MP3 music start.
+  * Minor general optimizations and menu improvements.
+  * Fixed a bug in Sega CD savestate loader, where the game would
+    sometimes crash after load.
+  * Fixed a crash of games using eeprom (introduced in 1.40b).
+  * PSP: fixed suspend/resume (hopefully for real).
+
+1.40c
+  * Fixed a problem with sound in Marble Madness.
+  * GP2X: Fixed minor problem with key config.
+
+1.40b
+  * Fixed sprite masking code. Thanks to Lordus for explaining how it works.
+  + Added "disable sprite limit" option.
+  + PSP: added black level adjustment to display options.
+  * Changed reset to act as 'soft' reset.
+  + Added detection for Puggsy (it doesn't really have sram).
+  * Some small timing adjustments.
+
+1.40a
+  * GP2X: Fixed a binding problem with up and down keys.
+  * Default game config no longer overrides global user config.
+
+1.40
+  + Added support for SVP (Sega Virtua Processor) to emulate Virtua Racing,
+    wrote ARM recompiler and some HLE code for VR. Credits to Exophase and
+    Rokas for various ideas.
+  * Changed config file format, files are now human-readable. Game specific
+    configs are now held in single file (but old game config files are still
+    read when new one is missing).
+  * Fixed a bug where some key combos didn't work as expected.
+  * Fixed a regression in renderer (ARM ports only, some graphic glitches in
+    rare cases).
+  * Adjusted fast renderer to work with more games, including VR.
+  * Fixed a problem where SegaCD RAM cart data was getting lost on reset.
+  * GP2X: Greatly reduced SegaCD FMV game slowdowns by disabling read-ahead
+    in the Linux kernel and C library (thanks to Rokas and Exophase for ideas
+    again). Be sure to keep "ReadAhead buffer" OFF to avoid slowdowns.
+  + PicoDrive now comes with a game config file for some games which need
+    special settings, so they should now work out-of-the-box. More games will
+    be added with later updates.
+  + GP2X: Files now can be deleted by pressing A+SELECT in the file browser.
+
+1.35b
+  * PSP: mp3 code should no longer fail on 1.5 firmware.
+  + PSP: added gamma adjustment option.
+  + Added .cso ISO format support. Useful for non-FMV games.
+  * It is now possile to force a region after the ROM is loaded.
+  * Fixed a sram bug in memhandlers (fixes Shining in the Darkness saves).
+  * PSP: fixed another bug in memhanlers, which crashed the emu for some games
+    (like NBA Jam and NHL 9x).
+  + PSP: added suspend/resume handling for Sega CD games.
+  + GP2X: added additional low volume levels for my late-night gaming sessions
+    (in stereo mode only).
+  + GP2X: added "fast forward" action in key config. Not recommended to use for
+    Sega CD, may case problems there.
+  * Some other small tweaks I forgot about.
+
+1.35a
+  * PSP: fixed a bug which prevented to load any ROMs after testing the BIOS.
+  * PSP: fixed incorrect CZ80 memory map setup, which caused Z80 crashes and
+    graphics corruption in EU Mega CD model1 BIOS menus.
+  + PSP: added additional "set to 4:3 scaled" display option for convenience.
+  + PSP: Added an option to disable frame limitter (works only with non-auto frameskip).
+
+1.35
+  + PSP port added. Lots of new code for it. Integrated modified FAME/C, CZ80 cores.
+  + Some minor generic optimizations.
+  * Patched some code which was crashing under PSP, but was working in GP2X/Giz
+    (although it should have crashed there too).
+  * Readme updated.
+
+1.34
+  + Gizmondo port added.
+  + Some new optimizations in memory handlers, and for shadow/hilight mode.
+  + Added some hacks to make more games work without enabling "accurate timing".
+  * Adjusted timing for "accurate timing" mode and added preliminary VDP FIFO
+    emulation. Fixes Double Dragon 2, tearing in Chaos Engine and some other games.
+  * Fixed a few games not having sound at startup.
+  * Updated serial EEPROM code to support more games. Thanks to EkeEke for
+    providing info about additional EEPROM types and game mappers.
+  * The above change fixed hang of NBA Jam.
+  * Minor adjustments to control configurator.
+
+1.33
+  * Updated Cyclone core to 0.0088.
+  + Added A r k's usbjoy fix.
+  + Added "perfect vsync" option, which adjusts GP2X LCD refresh rate and syncs
+    emulation to it to eliminate tearing and ensure smoothest scrolling possible.
+  + Added an option to use A_SN's gamma curve for gamma correction (improves dark
+    and bright color display for mk2s).
+  * Sometimes stray sounds were played after loading a savestate. Fixed.
+  * Fixed a problem where >6MB mp3s were corrupted in memory (sound glitches in
+    Snatcher).
+  * PD no longer overwrites video player code in memory, video player now can be
+    used after exiting PicoDrive.
+  * Fixed a bug which was causing Sonic 3 code to deadlock in some rare conditions
+    if "accurate timing" was not enabled.
+  * Fixed support for large hacked ROMs like "Ultimate Mortal Kombat Trilogy".
+    Upto 10MB hacked ROMs are supported now.
+  + Config profiles added (press left/right when saving config).
+  * Changed key configuration behavior to the one from gpfce (should be more
+    intuitive).
+  + Added some skinning capabilities to the menu system with default skin by
+    ketchupgun. Delete skin directory if you want old behaviour.
+  * Some other little tweaks I forgot about.
+
+1.32
+  + Added some new scaling options.
+  + Added ability to reload CD images while game is running (needed for games
+    with multiple CDs, like Night Trap).
+  + Added RAM cart emulation.
+  * Fixed DMA timing emulation (caused lock-ups for some genesis games).
+  * Idle loop detection was picking up wrong code and causing glitches, fixed.
+  * The ym2612 code on 940 now can handle multiple updates per frame
+    (fixes Thunger Force III "seiren" level drums for example).
+  * Memory handlers were ignoring some writes to PSG chip, fixed (missing sounds in
+    Popful Mail, Silpheed).
+  * Improved z80 timing, should fix some sound problems.
+  * Fixed a bug with sram register (fixes Phantasy Star 4).
+  * ROM loader was incorrectly identifying some ROMs as invalid. Fixed.
+  * Added code for PRG ram write protection register (Dungeon Explorer).
+  * The memory mode register change in 1.31 was unsafe and caused some glitches in
+    AH-3 Thunderstrike. Fixed.
+  * Fixed a file descriptor leak.
+  * Updated documentation, added Gmenu2x manual.
+
+1.31
+  * Changed the way memory mode register is read (fixes Lunar 2, broken in 1.30).
+  * Fixed TAS opcode on sub-68k side (fixes Batman games).
+  * File browser now filters out mp3s, saves and some other files, which are not ROMS.
+
+1.30
+  + ISO files now can be zipped. Note that this causes VERY long loading times.
+  + Added data pre-buffering support, this allows to reduce frequency of short pauses
+    in FMV games (caused by SD access), but makes those pauses longer.
+  * Fixed PCM DMA transfers (intro FMV in Popful Mail).
+  + Properly implemented "decode" data transformation (Jaguar XJ220).
+  * Integrated "better sync" code into cyclone code, what made this mode much faster.
+  * Fixed a bug related to game specific config saving.
+  * Frameskipper was skipping sound processing, what caused some audio desyncs. Fixed.
+  * Fixed reset not working for some games.
+  + New assembly optimized memory handlers for CD (gives at least a few fps).
+    Also re-enabled all optimizations from 0.964 release.
+  + New idle-loop detection code for sub-68k. Speeds up at least a few games.
+
+1.201
+  + Added basic cheat support (GameGenie and Genecyst patches).
+
+1.20
+  * Fixed a long-standing problem in audio mixing code which caused slight distortions
+    at lower sample rates.
+  * Changed the way 920 and 940 communicates (again), should be more reliable and give
+    slight performance increase.
+  * Some optimizations in audio mixing code.
+  * Some menu changes (background added, smaller font in ROM browser, savestate loader
+    now can select slots).
+  + 1M mode DMA transfers implemented (used by FMV games like Night Trap and Sewer Shark).
+  + Games now can run code from WORD RAM in 1M mode (fixes Adventures of Willy Beamish).
+  + "Cell arrange" address mapping is now emulated (Heart of the alien).
+  + "Color numeric operation" is now emulated (text in Lunar 2, Silpheed intro graphics).
+  + "Better sync" option added (prevents some games from hanging).
+
+1.14
+  + Region autodetection now can be customized.
+  * When CDDA music tracks changed, old buffer contents were incorrectly played. Fixed.
+  * BRAM is now automatically formatted (no need to enter BIOS menu and format any more).
+  * Games now can be reset, CDDA music no longer breaks after loading another ISO.
+  * Fixed a race condition between 920 and 940 which sometimes caused CDDA music not to play.
+  + Savestates implemented for Sega/Mega CD.
+  + PCM sound added.
+  * Some mixer code rewritten in asm. 22kHz and 11kHz sound rates are now supported in
+    Mega CD mode (but mp3s must still be 44kHz stereo).
+  + Timer emulation added.
+  * CDC DMA tansfers fixed. Snatcher and probably some more games now boot.
+  * 2M word RAM -> VDP transfers fixed, no more corruption in Ecco and some other games.
+
+1.10
+  + GP2X: Added experimental Sega CD support.
+  + GP2X: Added partial gmv movie playback support.
+
+0.964 (2006-12-03)
+  * GP2X: Fixed a sound buffer underflow issue on lower sample rate modes, which was
+          happening for NTSC games and causing sound clicks.
+  * GP2X: Redone key config to better support USB joysticks (now multiple joysticks
+          should be useable and configurable).
+  + GP2X: Added save confirmation option.
+  + GP2X: Added 940 CPU crash detection.
+  + ALL:  UIQ3 port added.
+
+0.963
+  * GP2X: Gamma-reset-on-entering-menu bug fixed.
+  * GP2X: Recompiled PicoDrive with gcc profiling option set as described here:
+          http://www.gp32x.com/board/index.php?showtopic=28490
+
+0.962
+  * GP2X: Fixed an issue with incorrect sounds in some games when dualcore operation
+          was enabled (for example punch sound in SOR).
+  * GP2X: Limited max volume to 90, because higher values often cause distortions.
+  * GP2X: Fixed a bug with lower res scaling.
+  * GP2X: Gamma is now reset on exit.
+
+0.96
+  * ALL:  Severely optimized MAME's YM2612 core, part of it is now rewritten in asm.
+  + GP2X: The YM2612's code now can be run in GP2X's ARM940T CPU, what causes large
+          performance increase.
+  * ALL:  Accurate renderers are slightly faster now.
+  + GP2X: Using quadruple buffering instead of doublebuffer now, also updated
+          framelimitter, this should eliminate some scrolling and tearing problems.
+  * GP2X: Fixed some flickering issues of 8bit accurate renderer.
+  + GP2X: craigix's RAM timings now can be enabled in the menu (see advanced options).
+  + GP2X: Added ability to save config for specific games only.
+  + GP2X: Gamma control added (using GP2X's hardware capabilities for this).
+  * GP2X: Volume keys are now configurable.
+  + GP2X: GnoStiC added USB joystick support, I made it possible to use it for
+          player 2 control (currently untested).
+  * GP2X: squidgehack is now applied through kernel module (cleaner way).
+
+0.95
+  * ALL:  Fixed a bug in sprite renderer which was causing slowdowns for some games.
+  + GP2X: Added command line support
+  + GP2X: Added optional hardware scaling for lower-res games like Shining Force.
+  * ALL:  Sound chips are now sampled 2 times per frame. This fixed some games which
+          had missing sounds (Vectorman 2 1st level, Thunder Force 3 water level,
+	      etc.).
+  + ALL:  Added another accurate 8-bit renderer which is slightly faster and made it
+          default.
+
+0.945
+  + GP2X: Added frame limiter for frameskipped modes.
+  * GP2X: Increased brightness a bit (unused pixel bits now also contain data).
+  * GP2X: Suidgehack was not applied correctly (was applied before allocating some
+          high memory and had no effect).
+
+0.94
+  + Added GP2X port.
+  * Improved interrupt timing, Mazin Saga and Burning Force now works.
+  * Rewritten renderer code to better suit GP2X, should be faster on other
+    ports too.
+  + Added support for banking used by 12-in-1 and 4-in-1 ROMs (thanks Haze).
+  + Added some protection device faking, used by some unlicensed games like
+    Super Bubble Bobble, King of Fighters, Elf Wor, ... (thanks to Haze again)
+  + Added primitive Virtua Racing SVP faking, so menus can be seen now.
+
+0.93
+  * Fixed a problem with P900/P910 key configuration in FC mode.
+  * Improved shadow/hilight mode emulation. Still not perfect, but should be
+    enough for most games.
+  + Save state slots added.
+  + Region selector added.
+
+0.92
+  VDP changes:
+  * VDP emulation is now more accurate (fixes flickering in Chase HQ II,
+    Super Hang-On and some other problems in other games).
+  * HV counter emulation is now much more accurate. Fixes the Asterix games,
+    line in Road Rash 3, etc.
+  * Minor sprite and layer scroll masking bugs fixed.
+  + Added partial interlace mode renderer (Sonic 2 vs mode)
+  * Fixed a crash in both renderers when certain size window layers were used.
+  + Added emulation of shadow/hilight operator sprites. Other shadow/hilight
+    effects are still unemulated.
+  + Sprite emulation is more accurate, sprite limit is emulated.
+  + Added "accurate sprites" option, which always draws sprites in correct
+    order and emulates sprite collision bit, but is significantly slower.
+
+  Emulation changes:
+  * Improved interrupt handling, added deferred interrupt emulation
+    (Lemmings, etc).
+  + Added serial EEPROM SRAM support (Wonder Boy in Monster World,
+    Megaman - The Wily Wars and many EA sports games like NBA Jam).
+  + Implemented ROM banking for Super Street Fighter II - The New Challengers
+  * Updated to the latest version of DrZ80 core, integrated memory handlers
+    in it for better performance. A noticeable performance increase, but save
+	states may not work from the previous version (you can only use them with
+	sound disabled in that case).
+  + SRAM word read handler was using incorrect byte order, fixed.
+
+  Changes in Cyclone 0.0086:
+  + Added missing CHK opcode handler (used by SeaQuest DSV).
+  + Added missing TAS opcode handler (Gargoyles,Bubba N Stix,...). As in real genesis,
+    memory write-back phase is ignored (but can be enabled in config.h if needed).
+  + Added missing NBCD and TRAPV opcode handlers.
+  + Added missing addressing mode for CMP/EOR.
+  + Added some minor optimizations.
+  - Removed 216 handlers for 2927 opcodes which were generated for invalid addressing modes.
+  + Fixed flags for ASL, NEG, NEGX, DIVU, ADDX, SUBX, ROXR.
+  + Bugs fixed in MOVEP, LINK, ADDQ, DIVS handlers.
+  * Undocumented flags for CHK, ABCD, SBCD and NBCD are now emulated the same way as in Musashi.
+  + Added Uninitialized Interrupt emulation.
+  + Altered timing for about half of opcodes to match Musashi's.
+
+0.80
+  * Nearly all VDP code was rewritten in ARM asm. Gives ~10-25% performance
+    increase (depends on game).
+  * Optimized 32-column renderer not to render tiles offscreen, games which
+    use 32-column display (like Shining Force) run ~50% faster.
+  + Added new "Alternative renderer", which gives another ~30-45% performance
+    increase (in addition to mentioned above), but works only with some games,
+    because it is missing some features (it uses tile-based rendering
+    instead of default line-based and disables H-ints).
+  + Added "fit2" display mode for all FC gamers. It always uses 208x146 for
+    P800 and 208x208 for all other phones.
+  + Added volume control for Motorolas (experimental).
+
+  VDP changes:
+  + Added support for vertical window (used by Vapor Trail, Mercs, GRIND
+    Stormer and others).
+  + Added sprite masking (hiding), adds some speed.
+  + Added preliminary H counter emulation. Comix Zone and Sonic 3D Blast
+    special stage are now playable.
+  + Added column based vertical scrolling (Gunstar Heroes battleship level,
+    Sonic and Knuckles lava boss, etc).
+
+  Emulation changes:
+  + Re-added and improved Z80 faking when Z80 is disabled. Many games now can
+    be played without enabling Z80 (Lost Vikings, Syndicate, etc), but some
+    still need it (International Superstar Soccer Deluxe).
+  * Improved ym2612 timers, Outrun music plays at correct speed, voices in
+    Earthworm Jim play better, more games play sound.
+  * I/O registers now remember their values (needed for Pirates! Gold)
+  + Added support for 6 button pad.
+
+  Changes in Cyclone 0.0083wip:
+  + Added missing CHK opcode (used by SeaQuest DSV).
+  + Added missing TAS opcode (Gargoyles). As in real genesis, write-back phase
+    is ignored (but is enabled for other systems).
+
+  Backported stuff from Snes9x:
+  * Fixed Pxxx jog up/down which were not working in game.
+  + Added an option to gzip save states to save space.
+  + The emulator now pauses whenever it is loosing focus, so it will now pause
+    when alarm/ponecall/battery low/... windows come up.
+  - Removed 'pause on phonecall' feature, as it is no longer needed.
+  + Video fix for asian A1000s.
+
+0.70
+  * Started using tools from "Symbian GCC Improvement Project", which give
+    considerable speed increase (~4fps in "center 90" mode).
+  * Rewrote some drawing routines in ARM assembly (gives ~6 more fps in
+    "center 90" mode).
+  * Minor improvement to 0 and 180 "fit" modes. Now they look slightly better
+    and are faster.
+  * Minor stability improvements (emulator is less likely to crash).
+  + Added some background for OSD text for better readability.
+  + Added Pal/NTSC detection. This is needed for proper sound speed.
+  + Implemented Reesy's DrZ80 Z80 emu. Made some changes to it with hope to make
+    it faster.
+  + Implemented ym2612 emu from the MAME project. Runs well but sometimes sounds
+    a bit weird. Could be a little faster, so made some changes too.
+  + Implemented SN76489 emu from the MAME project.
+  + Added two separate sound output methods (mediaserver and cmaudiofb) with
+    autodetection (needs testing).
+  * Fixed VDP DMA fill emulation (as described in Charles MacDonald's docs),
+    fixes Contra and some other games.
+
+0.301
+  Launcher:
+  * Launcher now starts emulation process from current directory,
+    not from hardcoded paths.
+  * Improved 'pause on call' feature, should hopefully work with Motorola phones.
+
+0.30 (2006-01-07)
+  Initial release based on fDave's code.

@@ -7,7 +7,7 @@
 //
 
 #import "PVGBControllerViewController.h"
-#import "PVGBEmulatorCore.h"
+#import <PVGB/PVGBEmulatorCore.h>
 
 @interface PVGBControllerViewController ()
 

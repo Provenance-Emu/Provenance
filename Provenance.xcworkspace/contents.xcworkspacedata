@@ -11,10 +11,19 @@
       location = "group:PVGenesis/PVGenesis.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PVProSystem/PVProSystem.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:PVPicoDrive/PVPicoDrive.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PVSNES/PVSNES.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVGBA/PVGBA.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:PVStella/PVStella.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVGB/PVGB.xcodeproj">

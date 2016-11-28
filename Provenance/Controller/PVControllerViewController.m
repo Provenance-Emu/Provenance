@@ -10,12 +10,12 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVButtonGroupOverlayView.h"
 #import "PVSettingsModel.h"
-#import "NSObject+PVAbstractAdditions.h"
+#import <PVSupport/NSObject+PVAbstractAdditions.h>
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "PVControllerManager.h"
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
 #import "PVEmulatorConstants.h"
 #import "UIDevice+Hardware.h"
 

@@ -7,8 +7,8 @@
 //
 
 #import "PVGLViewController.h"
+#import <PVSupport/PVEmulatorCore.h>
 #import "PVSettingsModel.h"
-#import "PVEmulatorCore.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()

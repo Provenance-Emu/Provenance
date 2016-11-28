@@ -10,9 +10,12 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import <mach/mach_time.h>
 #import "OETimingUtils.h"
+#import "OERingBuffer.h"
 
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
+
+NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat framerateMultiplier;
@@ -61,8 +64,9 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+
+            _framerateMultiplier = 1.0;
             _gameSpeed = GameSpeedNormal;
-            framerateMultiplier = 1.0;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
@@ -104,7 +108,7 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    gameInterval = 1.0 / ([self frameInterval] * _framerateMultiplier);
     NSTimeInterval gameTime = OEMonotonicTime();
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 

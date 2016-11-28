@@ -7,7 +7,7 @@
 //
 
 #import "PVNESControllerViewController.h"
-#import "PVNESEmulatorCore.h"
+#import <PVNES/PVNESEmulatorCore.h>
 
 @interface PVNESControllerViewController ()
 

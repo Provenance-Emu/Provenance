@@ -1,0 +1,6 @@
+[submodule "platform/libpicofe"]
+	path = platform/libpicofe
+	url = git://notaz.gp2x.de/~notaz/libpicofe.git
+[submodule "cpu/cyclone"]
+	path = cpu/cyclone
+	url = git://notaz.gp2x.de/~notaz/cyclone68000.git
