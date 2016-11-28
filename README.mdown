@@ -21,12 +21,16 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Genesis / Mega Drive
     - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
     - Game Gear
+    - 32X
 - Nintendo
     - NES (Nintendo Entertainment System)
     - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
     - Gameboy Advance
+- Atari
+    - 2600
+    - 7800
 
 ###Features
 
@@ -77,6 +81,12 @@ SNES (Super Nintendo) emulation is provided by [SNES9x](http://www.snes9x.com).
 Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.net/projects/vba/).
 
 Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
+
+Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
+
+Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/)
+
+Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive)
 
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 
