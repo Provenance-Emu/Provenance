@@ -26,9 +26,10 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVAtari800/OE5200SystemResponderClient.h>
 
 @class OERingBuffer;
 
 __attribute__((visibility("default")))
-@interface ATR800GameCore : PVEmulatorCore
+@interface ATR800GameCore : PVEmulatorCore <OE5200SystemResponderClient>
 @end

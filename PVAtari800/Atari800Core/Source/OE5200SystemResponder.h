@@ -24,8 +24,8 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <OpenEmuSystem/OpenEmuSystem.h>
-#import "OE5200SystemResponderClient.h"
+#import <PVAtari800/OpenEmuSystem.h>
+#import <PVAtari800/OE5200SystemResponderClient.h>
 
 OE_EXPORTED_CLASS
 @interface OE5200SystemResponder : OESystemResponder
