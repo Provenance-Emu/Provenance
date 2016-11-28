@@ -39,10 +39,10 @@ typedef NS_ENUM(NSUInteger, OEA8Button) {
 };
 
 @protocol OEA8SystemResponderClient  <NSObject>
-- (oneway void)mouseMovedAtPoint:(OEIntPoint)point;
-- (oneway void)leftMouseDownAtPoint:(OEIntPoint)point;
+- (oneway void)mouseMovedAtPoint:(CGPoint)point;
+- (oneway void)leftMouseDownAtPoint:(CGPoint)point;
 - (oneway void)leftMouseUp;
-- (oneway void)rightMouseDownAtPoint:(OEIntPoint)point;
+- (oneway void)rightMouseDownAtPoint:(CGPoint)point;
 - (oneway void)rightMouseUp;
 //- (oneway void)keyDown:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;
 //- (oneway void)keyUp:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;

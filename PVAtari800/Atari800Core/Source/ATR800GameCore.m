@@ -135,6 +135,10 @@ static ATR800GameCore *_currentCore;
     return @"";
 }
 
+- (BOOL)loadFileAtPath:(NSString *)path {
+    return [self loadFileAtPath:path error:nil];
+}
+
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     // Set the default palette (NTSC)
@@ -309,7 +313,7 @@ static ATR800GameCore *_currentCore;
 - (CGSize)aspectSize
 {
     // TODO: fix PAR
-    //return OEIntSizeMake(336 * (6.0 / 7.0), 240);
+    //return CGSizeMake(336 * (6.0 / 7.0), 240);
     return CGSizeMake(336, 240);
 }
 
@@ -325,7 +329,7 @@ static ATR800GameCore *_currentCore;
 
 - (GLenum)internalPixelFormat
 {
-    return GL_RGB8;
+    return GL_RGBA;
 }
 
 #pragma mark - Audio
@@ -341,11 +345,18 @@ static ATR800GameCore *_currentCore;
 }
 
 #pragma mark - Save States
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+    return StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
+}
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     BOOL success = StateSav_SaveAtariState([fileName UTF8String], "wb", TRUE);
     if(block) block(success==YES, nil);
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+    return StateSav_ReadAtariState([fileName UTF8String], "rb");
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
@@ -356,12 +367,12 @@ static ATR800GameCore *_currentCore;
 
 #pragma mark - Input
 
-- (oneway void)mouseMovedAtPoint:(OEIntPoint)point
+- (oneway void)mouseMovedAtPoint:(CGPoint)point
 {
 
 }
 
-- (oneway void)leftMouseDownAtPoint:(OEIntPoint)point
+- (oneway void)leftMouseDownAtPoint:(CGPoint)point
 {
 
 }
@@ -371,7 +382,7 @@ static ATR800GameCore *_currentCore;
 
 }
 
-- (oneway void)rightMouseDownAtPoint:(OEIntPoint)point
+- (oneway void)rightMouseDownAtPoint:(CGPoint)point
 {
 
 }

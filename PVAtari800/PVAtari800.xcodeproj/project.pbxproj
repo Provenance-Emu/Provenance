@@ -62,6 +62,7 @@
 		94DEA011171918A300073397 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DEA00F171918A200073397 /* crc32.c */; };
 		94DEA013171918D200073397 /* emuos.c in Sources */ = {isa = PBXBuildFile; fileRef = 94DEA012171918D200073397 /* emuos.c */; };
 		94DEA019171951AD00073397 /* OpenEmuBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94DEA018171951AD00073397 /* OpenEmuBase.framework */; };
+		B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269544614317D34003A07D4 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE74B1D6AB19C002EE3ED /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7501D6AB1B4002EE3ED /* default.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E465198C11A10075135C /* default.act */; };
 		B36DE7511D6AB1B4002EE3ED /* gray.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E466198C11A10075135C /* gray.act */; };
@@ -116,8 +117,8 @@
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; };
-		B36DE78D1D6AB493002EE3ED /* OEA8SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78A1D6AB493002EE3ED /* OEA8SystemResponderClient.h */; };
-		B36DE7981D6ABA87002EE3ED /* OE5200SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7971D6ABA7D002EE3ED /* OE5200SystemResponderClient.h */; };
+		B36DE78D1D6AB493002EE3ED /* OEA8SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78A1D6AB493002EE3ED /* OEA8SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36DE7981D6ABA87002EE3ED /* OE5200SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7971D6ABA7D002EE3ED /* OE5200SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 /* End PBXBuildFile section */
 
@@ -488,8 +489,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36DE7981D6ABA87002EE3ED /* OE5200SystemResponderClient.h in Headers */,
 				B36DE74B1D6AB19C002EE3ED /* PVAtari800.h in Headers */,
+				B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */,
+				B36DE7981D6ABA87002EE3ED /* OE5200SystemResponderClient.h in Headers */,
 				B36DE78D1D6AB493002EE3ED /* OEA8SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -922,6 +924,7 @@
 				B36DE74F1D6AB19C002EE3ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

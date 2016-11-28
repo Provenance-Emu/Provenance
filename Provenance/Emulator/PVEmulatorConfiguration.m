@@ -33,6 +33,9 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVAtari800/ATR800GameCore.h>
+#import "PVAtari5200ControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -113,6 +116,10 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PV5200SystemIdentifier])
+    {
+        core = [[ATR800GameCore alloc] init];
+    }
     
 	return core;
 }
@@ -159,7 +166,10 @@
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
-	
+    else if ([systemID isEqualToString:PV5200SystemIdentifier])
+    {
+        controller = [[PVAtari5200ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
 	return controller;
 }
 
