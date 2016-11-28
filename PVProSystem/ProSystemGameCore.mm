@@ -382,14 +382,14 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 }
 
 - (oneway void)didPush7800Button:(OE7800Button)button forPlayer:(NSUInteger)player {
-    int playerShift = player != 1 ? 6 : 0;
+    int playerShift = player == 0 ? 0 : 6;
 
     switch(button)
     {
             // Controller buttons P1 + P2
         case OE7800ButtonUp:
-            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-            break;
+//            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+//            break;
         case OE7800ButtonDown:
         case OE7800ButtonLeft:
         case OE7800ButtonRight:
@@ -415,14 +415,14 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 }
 
 - (oneway void)didRelease7800Button:(OE7800Button)button forPlayer:(NSUInteger)player {
-    int playerShift = player != 1 ? 6 : 0;
+    int playerShift = player == 0 ? 0 : 6;
 
     switch(button)
     {
             // Controller buttons P1 + P2
         case OE7800ButtonUp:
-            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-            break;
+//            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+//            break;
         case OE7800ButtonDown:
         case OE7800ButtonLeft:
         case OE7800ButtonRight:

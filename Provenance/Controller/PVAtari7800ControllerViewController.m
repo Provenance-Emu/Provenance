@@ -102,7 +102,7 @@
 - (void)buttonPressed:(JSButton *)button
 {
     PVProSystemGameCore *proSystemCore = (PVProSystemGameCore *)self.emulatorCore;
-    NSInteger tag = button.tag;
+    OE7800Button tag = button.tag;
     [proSystemCore didPush7800Button:tag forPlayer:0];
     [self vibrate];
 }
@@ -110,7 +110,7 @@
 - (void)buttonReleased:(JSButton *)button
 {
     PVProSystemGameCore *proSystemCore = (PVProSystemGameCore *)self.emulatorCore;
-    NSInteger tag = button.tag;
+    OE7800Button tag = button.tag;
     [proSystemCore didRelease7800Button:tag forPlayer:0];
 }
 
