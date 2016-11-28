@@ -1,0 +1,14 @@
+libpicofe, or LIB-PICOdrive's-FrontEnd, is an attempt to reuse PicoDrive's
+frontend code for other projects. To accommodate various needs, this is
+tripple-licensed with these licenses:
+  - GNU GPL, version 2 or later.
+  - GNU LGPL, version 2.1 or later.
+  - MAME license.
+When used as part of another project, host project's license usually applies
+to combined source code as a whole.
+
+The library also contains filters by Roman Pauer (M-HT), that are licensed
+under MIT license, which is compatible with the above licenses.
+
+
+- notaz

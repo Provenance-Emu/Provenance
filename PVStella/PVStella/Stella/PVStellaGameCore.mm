@@ -38,11 +38,9 @@
 
 // Size and screen buffer consants
 typedef                         uint32_t     stellabuffer_t;
-#define STELLA_WIDTH            160
-#define STELLA_HEIGHT           210
 #define STELLA_PITCH_SHIFT      2
 #define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
-#define STELLA_PIXEL_FORMAT     GL_RGBA
+#define STELLA_PIXEL_FORMAT     GL_BGRA
 #define STELLA_INTERNAL_FORMAT  GL_RGBA
 
 const NSUInteger A2600EmulatorValues[] = {
@@ -102,8 +100,9 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
     
     dispatch_apply(height, memcpy_queue, ^(size_t y) {
         const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
+        
         //uint16_t *dst = current->videoBuffer + y * current->videoWidth;
-        stellabuffer_t *dst = strongCurrent->_videoBuffer + y * STELLA_WIDTH;
+        stellabuffer_t *dst = strongCurrent->_videoBuffer + y * strongCurrent->_videoWidth;
         
         memcpy(dst, src, sizeof(stellabuffer_t)*width);
     });
@@ -164,6 +163,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
+//            *(retro_pixel_format *)data = RETRO_PIXEL_FORMAT_0RGB1555;
             break;
         }
         default : {
@@ -228,7 +228,7 @@ static void writeSaveFile(const char* path, int type)
     {
         if(_videoBuffer)
             free(_videoBuffer);
-        _videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * sizeof(stellabuffer_t));
+        _videoBuffer = (stellabuffer_t*)malloc(160 * 256 * 4);
     }
     
 	_current = self;
@@ -426,18 +426,19 @@ static void writeSaveFile(const char* path, int type)
 //    __strong PVStellaGameCore *strongCurrent = _current;
 
     //return OEIntRectMake(0, 0, strongCurrent->_videoWidth, strongCurrent->_videoHeight);
-    return CGRectMake(0, 0, STELLA_WIDTH, STELLA_HEIGHT);
+    return CGRectMake(0, 0, _videoWidth, _videoHeight);
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(STELLA_WIDTH, STELLA_HEIGHT);
+    return CGSizeMake(160, 256);
     
 //    __strong PVStellaGameCore *strongCurrent = _current;
     //return CGSizeMake(strongCurrent->_videoWidth, strongCurrent->_videoHeight);
 }
 
 - (CGSize)aspectSize {
-    return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
+    return CGSizeMake(_videoWidth * (12.0/7.0), _videoHeight);
+//    return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
 }
 
 //- (void)setupEmulation

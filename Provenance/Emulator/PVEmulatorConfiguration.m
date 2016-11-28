@@ -9,23 +9,29 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVEmulatorConstants.h"
 
-#import "PVGenesisEmulatorCore.h"
+#import <PVGenesis/PVGenesisEmulatorCore.h>
 #import "PVGenesisControllerViewController.h"
 
-#import "PVSNESEmulatorCore.h"
+#import <PVSNES/PVSNESEmulatorCore.h>
 #import "PVSNESControllerViewController.h"
 
-#import "PVGBAEmulatorCore.h"
+#import <PVGBA/PVGBAEmulatorCore.h>
 #import "PVGBAControllerViewController.h"
 
-#import "PVGBEmulatorCore.h"
+#import <PVGB/PVGBEmulatorCore.h>
 #import "PVGBControllerViewController.h"
 
-#import "PVNESEmulatorCore.h"
+#import <PVNES/PVNESEmulatorCore.h>
 #import "PVNESControllerViewController.h"
 
-#import "PVStellaGameCore.h"
+#import <PVStella/PVStellaGameCore.h>
 #import "PVStellaControllerViewController.h"
+
+#import <ProSystem/ProSystemGameCore.h>
+#import "PVAtari7800ControllerViewController.h"
+
+#import <PicoDrive/PicodriveGameCore.h>
+#import "PV32XControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
 
@@ -99,6 +105,14 @@
     {
         core = [[PVStellaGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PV7800SystemIdentifier])
+    {
+        core = [[PVProSystemGameCore alloc] init];
+    }
+    else if ([systemID isEqualToString:PV32XSystemIdentifier])
+    {
+        core = [[PicodriveGameCore alloc] init];
+    }
     
 	return core;
 }
@@ -136,6 +150,14 @@
     else if ([systemID isEqualToString:PV2600SystemIdentifier])
     {
         controller = [[PVStellaControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV7800SystemIdentifier])
+    {
+        controller = [[PVAtari7800ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV32XSystemIdentifier])
+    {
+        controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;

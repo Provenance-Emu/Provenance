@@ -1,0 +1,6 @@
+*.o
+cyclone_gen
+Cyclone.s
+cscope.out
+tags
+tests/test_misc2.bin

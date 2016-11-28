@@ -10,9 +10,12 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import <mach/mach_time.h>
 #import "OETimingUtils.h"
+#import "OERingBuffer.h"
 
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
+
+NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat framerateMultiplier;
@@ -61,7 +64,9 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		{
 			isRunning  = YES;
 			shouldStop = NO;
+
             _framerateMultiplier = 1.0;
+            _gameSpeed = GameSpeedNormal;
 			
 			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
@@ -135,7 +140,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
             }
         }
         
-        OEWaitUntil(gameTime);
+        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
+        
+        if (gameTime >= currentMonotonicTime) {
+            OEWaitUntil(gameTime);
+        }
         
         // Service the event loop
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);

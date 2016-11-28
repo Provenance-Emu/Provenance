@@ -10,6 +10,7 @@
 #import "PVSettingsModel.h"
 #import "PViCadeController.h"
 #import "kICadeControllerSetting.h"
+#import "PViCade8BitdoController.h"
 
 NSString * const PVControllerManagerControllerReassignedNotification = @"PVControllerManagerControllerReassignedNotification";
 
@@ -101,8 +102,20 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
         self.player2 = nil;
     }
     
-    // Reassign any controller which we are unassigned
-    BOOL assigned = [self assignControllers];
+    BOOL assigned = NO;
+    if ([controller isKindOfClass:[PViCade8BitdoController class]]) {
+        // For 8Bitdo, we set to listen again for controllers after disconnecting
+        // so we can detect when they connect again
+        if (self.iCadeController) {
+            [self listenForICadeControllers];
+        }
+    }
+    else {
+        // Reassign any controller which we are unassigned
+        // (we don't do this for 8Bitdo, instead we listen for them to connect)
+        assigned = [self assignControllers];
+    }
+    
     if (!assigned) {
         [[NSNotificationCenter defaultCenter] postNotificationName:PVControllerManagerControllerReassignedNotification
                                                             object:self];
@@ -115,6 +128,9 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
         weakSelf.iCadeController.controllerPressedAnyKey = nil;
         [weakSelf assignController:weakSelf.iCadeController];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidConnectNotification object:[[PVControllerManager sharedManager] iCadeController]];
+
     };
 }
 

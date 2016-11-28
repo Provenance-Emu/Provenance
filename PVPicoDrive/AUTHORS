@@ -1,0 +1,56 @@
+notaz
+core, 32X emulation, CD code, ARM asm renderers, dynamic recompilers,
+Pandora, GPH device, PSP, Gizmondo ports, CPU core hacks
+lots of additional coding (see changeLog).
+Homepage: http://notaz.gp2x.de/
+
+fDave
+project starter
+Cyclone 68000 core and PicoDrive core itself
+
+Chui
+FAME/C 68k interpreter core
+(based on C68K by Stephane Dallongeville)
+
+Stephane Dallongeville (written), NJ (optimized)
+CZ80 Z80 interpreter core
+
+Reesy & FluBBa
+DrZ80, the Z80 interpreter written in ARM assembly.
+Homepage: http://reesy.gp32x.de/ (defunct)
+
+Tatsuyuki Satoh, Jarek Burczynski, MAME development
+software implementation of Yamaha FM sound generator
+
+MAME development
+Texas Instruments SN76489 / SN76496 programmable tone/noise generator
+Homepage: http://www.mame.net/
+
+Eke-Eke
+CD graphics processor and CD controller implementation (from Genesis Plus GX)
+
+
+Additional thanks
+-----------------
+
+* Charles MacDonald (http://cgfm2.emuviews.com/) for old but still very useful
+  info about genesis hardware.
+* Steve Snake for all that he has done for Genesis emulation scene.
+* Stephane Dallongeville for writing Gens and making it open source.
+* Tasco Deluxe for his reverse engineering work on SVP and some mappers.
+* Bart Trzynadlowski for his SSFII and 68000 docs.
+* Haze for his research (http://mamedev.emulab.it/haze/).
+* Lordus, Exophase and Rokas for various ideas.
+* Nemesis for his YM2612, VDP research and docs.
+* Eke-Eke for sharing the knowledge and his work on Genesis Plus GX.
+* Many posters at spritesmind.net forums for valuable information.
+* Mark and Jean-loup for zlib library.
+* ketchupgun for the skin.
+* GP2X specific help: rlyeh, Squidge, Dzz, A_SN, Alex and GP32X posters.
+* Gizmondo code: Kingcdr, Reesy, jens.l (for the device itself)
+* Hardware: craigix (GP2X), EvilDragon (Wiz, Caanoo, Pandora, ...)
+  and jens.l (Gizmondo)
+* Paul Cercueil for OpenDingux port.
+* Inder for some graphics.
+* squarepusher for some libretro fixes
+* Anyone else I forgot. Let me know if it's you.

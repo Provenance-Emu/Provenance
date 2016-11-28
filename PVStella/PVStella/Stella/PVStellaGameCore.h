@@ -27,10 +27,11 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import "OE2600SystemResponderClient.h"
+#import <PVStella/OE2600SystemResponderClient.h>
 
 @class OERingBuffer;
 
+__attribute__((visibility("default")))
 @interface PVStellaGameCore : PVEmulatorCore
 - (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
 - (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;

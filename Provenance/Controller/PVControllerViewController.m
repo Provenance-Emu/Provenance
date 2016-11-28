@@ -10,12 +10,12 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVButtonGroupOverlayView.h"
 #import "PVSettingsModel.h"
-#import "NSObject+PVAbstractAdditions.h"
+#import <PVSupport/NSObject+PVAbstractAdditions.h>
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "PVControllerManager.h"
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
 #import "PVEmulatorConstants.h"
 #import "UIDevice+Hardware.h"
 
@@ -376,8 +376,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	{
 		// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
 		// everything else should fall back to the vibration motor.
-		if ([[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,2"] ||
-			[[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone9,3"])
+		if ([UIDevice isIphone7or7Plus])
 		{
 			[self.feedbackGenerator selectionChanged];
 		}

@@ -41,21 +41,21 @@
 #include <cstdio>
 #include <cstdlib>
 
-#define VBlankON    (nes_PPU[0] & 0x80)	//Generate VBlank NMI
-#define Sprite16    (nes_PPU[0] & 0x20)	//Sprites 8x16/8x8
-#define BGAdrHI     (nes_PPU[0] & 0x10)	//BG pattern adr $0000/$1000
-#define SpAdrHI     (nes_PPU[0] & 0x08)	//Sprite pattern adr $0000/$1000
-#define INC32       (nes_PPU[0] & 0x04)	//auto increment 1/32
+#define VBlankON    (PPU[0] & 0x80)	//Generate VBlank NMI
+#define Sprite16    (PPU[0] & 0x20)	//Sprites 8x16/8x8
+#define BGAdrHI     (PPU[0] & 0x10)	//BG pattern adr $0000/$1000
+#define SpAdrHI     (PPU[0] & 0x08)	//Sprite pattern adr $0000/$1000
+#define INC32       (PPU[0] & 0x04)	//auto increment 1/32
 
-#define SpriteON    (nes_PPU[1] & 0x10)	//Show Sprite
-#define ScreenON    (nes_PPU[1] & 0x08)	//Show screen
-#define PPUON       (nes_PPU[1] & 0x18)	//PPU should operate
-#define GRAYSCALE   (nes_PPU[1] & 0x01)	//Grayscale (AND palette entries with 0x30)
+#define SpriteON    (PPU[1] & 0x10)	//Show Sprite
+#define ScreenON    (PPU[1] & 0x08)	//Show screen
+#define PPUON       (PPU[1] & 0x18)	//PPU should operate
+#define GRAYSCALE   (PPU[1] & 0x01)	//Grayscale (AND palette entries with 0x30)
 
-#define SpriteLeft8 (nes_PPU[1] & 0x04)
-#define BGLeft8     (nes_PPU[1] & 0x02)
+#define SpriteLeft8 (PPU[1] & 0x04)
+#define BGLeft8     (PPU[1] & 0x02)
 
-#define PPU_status  (nes_PPU[2])
+#define PPU_status  (PPU[2])
 
 #define READPAL(ofs)    (PALRAM[(ofs)] & (GRAYSCALE ? 0x30 : 0xFF))
 #define READUPAL(ofs)   (UPALRAM[(ofs)] & (GRAYSCALE ? 0x30 : 0xFF))
@@ -350,7 +350,7 @@ int scanline;
 int g_rasterpos;
 static uint32 scanlines_per_frame;
 
-uint8 nes_PPU[4];
+uint8 PPU[4];
 uint8 PPUSPL;
 uint8 NTARAM[0x800], PALRAM[0x20], SPRAM[0x100], SPRBUF[0x100];
 uint8 UPALRAM[0x03];//for 0x4/0x8/0xC addresses in palette, the ones in
@@ -541,7 +541,7 @@ static DECLFR(A2004) {
 						switch (spr_read.mode) {
 						case 0:
 							if (spr_read.count < 2)
-								spr_read.ret = (nes_PPU[3] & 0xF8) + (spr_read.count << 2);
+								spr_read.ret = (PPU[3] & 0xF8) + (spr_read.count << 2);
 							else
 								spr_read.ret = spr_read.count << 2;
 
@@ -583,7 +583,7 @@ static DECLFR(A2004) {
 							}
 
 							if (spr_read.count < 2)
-								spr_read.ret = (nes_PPU[3] & 0xF8) + (spr_read.count << 2);
+								spr_read.ret = (PPU[3] & 0xF8) + (spr_read.count << 2);
 							else
 								spr_read.ret = spr_read.count << 2;
 
@@ -649,7 +649,7 @@ static DECLFR(A2004) {
 				return spr_read.ret;
 			}
 		} else
-			return SPRAM[nes_PPU[3]];
+			return SPRAM[PPU[3]];
 	} else {
 		FCEUPPU_LineUpdate();
 		return PPUGenLatch;
@@ -772,10 +772,10 @@ static DECLFW(B2000) {
 	FCEUPPU_LineUpdate();
 	PPUGenLatch = V;
 
-	if (!(nes_PPU[0] & 0x80) && (V & 0x80) && (PPU_status & 0x80))
+	if (!(PPU[0] & 0x80) && (V & 0x80) && (PPU_status & 0x80))
 		TriggerNMI2();
 
-	nes_PPU[0] = V;
+	PPU[0] = V;
 	TempAddr &= 0xF3FF;
 	TempAddr |= (V & 3) << 10;
 
@@ -789,7 +789,7 @@ static DECLFW(B2001) {
 	if (paldeemphswap)
 		V = (V&0x9F)|((V&0x40)>>1)|((V&0x20)<<1);
 	PPUGenLatch = V;
-	nes_PPU[1] = V;
+	PPU[1] = V;
 	if (V & 0xE0)
 		deemp = V >> 5;
 }
@@ -800,7 +800,7 @@ static DECLFW(B2002) {
 
 static DECLFW(B2003) {
 	PPUGenLatch = V;
-	nes_PPU[3] = V;
+	PPU[3] = V;
 	PPUSPL = V & 0x7;
 }
 
@@ -810,18 +810,18 @@ static DECLFW(B2004) {
 		//the attribute upper bits are not connected
 		//so AND them out on write, since reading them
 		//should return 0 in those bits.
-		if ((nes_PPU[3] & 3) == 2)
+		if ((PPU[3] & 3) == 2)
 			V &= 0xE3;
-		SPRAM[nes_PPU[3]] = V;
-		nes_PPU[3] = (nes_PPU[3] + 1) & 0xFF;
+		SPRAM[PPU[3]] = V;
+		PPU[3] = (PPU[3] + 1) & 0xFF;
 	} else {
 		if (PPUSPL >= 8) {
-			if (nes_PPU[3] >= 8)
-				SPRAM[nes_PPU[3]] = V;
+			if (PPU[3] >= 8)
+				SPRAM[PPU[3]] = V;
 		} else {
 			SPRAM[PPUSPL] = V;
 		}
-		nes_PPU[3]++;
+		PPU[3]++;
 		PPUSPL++;
 	}
 }
@@ -1046,7 +1046,7 @@ static void RefreshLine(int lastpixel) {
 	if(PEC586Hack)
 		vofs = ((RefreshAddr & 0x200) << 3) | ((RefreshAddr >> 12) & 7);
 	else
-		vofs = ((nes_PPU[0] & 0x10) << 8) | ((RefreshAddr >> 12) & 7);
+		vofs = ((PPU[0] & 0x10) << 8) | ((RefreshAddr >> 12) & 7);
 
 	if (!ScreenON && !SpriteON) {
 		uint32 tem;
@@ -1158,7 +1158,7 @@ static void RefreshLine(int lastpixel) {
 	PALRAM[0xC] &= 63;
 
 	RefreshAddr = smorkus;
-	if (firsttile <= 2 && 2 < lasttile && !(nes_PPU[1] & 2)) {
+	if (firsttile <= 2 && 2 < lasttile && !(PPU[1] & 2)) {
 		uint32 tem;
 		tem = READPAL(0) | (READPAL(0) << 8) | (READPAL(0) << 16) | (READPAL(0) << 24);
 		tem |= 0x40404040;
@@ -1258,17 +1258,17 @@ static void DoLine(void) {
 	//greyscale handling (mask some bits off the color) ? ? ?
 	if (ScreenON || SpriteON)
 	{
-		if (nes_PPU[1] & 0x01) {
+		if (PPU[1] & 0x01) {
 			for (x = 63; x >= 0; x--)
 				*(uint32*)&target[x << 2] = (*(uint32*)&target[x << 2]) & 0x30303030;
 		}
 	}
 
 	//some pathetic attempts at deemph
-	if ((nes_PPU[1] >> 5) == 0x7) {
+	if ((PPU[1] >> 5) == 0x7) {
 		for (x = 63; x >= 0; x--)
 			*(uint32*)&target[x << 2] = ((*(uint32*)&target[x << 2]) & 0x3f3f3f3f) | 0xc0c0c0c0;
-	} else if (nes_PPU[1] & 0xE0)
+	} else if (PPU[1] & 0xE0)
 		for (x = 63; x >= 0; x--)
 			*(uint32*)&target[x << 2] = (*(uint32*)&target[x << 2]) | 0x40404040;
 	else
@@ -1277,14 +1277,14 @@ static void DoLine(void) {
 
 	//write the actual deemph
 	for (x = 63; x >= 0; x--)
-		*(uint32*)&dtarget[x << 2] = ((nes_PPU[1]>>5)<<0)|((nes_PPU[1]>>5)<<8)|((nes_PPU[1]>>5)<<16)|((nes_PPU[1]>>5)<<24);
+		*(uint32*)&dtarget[x << 2] = ((PPU[1]>>5)<<0)|((PPU[1]>>5)<<8)|((PPU[1]>>5)<<16)|((PPU[1]>>5)<<24);
 
 	sphitx = 0x100;
 
 	if (ScreenON || SpriteON)
 		FetchSpriteData();
 
-	if (GameHBIRQHook && (ScreenON || SpriteON) && ((nes_PPU[0] & 0x38) != 0x18)) {
+	if (GameHBIRQHook && (ScreenON || SpriteON) && ((PPU[0] & 0x38) != 0x18)) {
 		X6502_Run(6);
 		Fixit2();
 		X6502_Run(4);
@@ -1296,7 +1296,7 @@ static void DoLine(void) {
 		X6502_Run(85 - 6 - 16);
 
 		// A semi-hack for Star Trek: 25th Anniversary
-		if (GameHBIRQHook && (ScreenON || SpriteON) && ((nes_PPU[0] & 0x38) != 0x18))
+		if (GameHBIRQHook && (ScreenON || SpriteON) && ((PPU[0] & 0x38) != 0x18))
 			GameHBIRQHook();
 	}
 
@@ -1336,7 +1336,7 @@ static void FetchSpriteData(void) {
 	uint8 H;
 	int n;
 	int vofs;
-	uint8 P0 = nes_PPU[0];
+	uint8 P0 = PPU[0];
 
 	spr = (SPR*)SPRAM;
 	H = 8;
@@ -1586,7 +1586,7 @@ static void RefreshSprites(void) {
 }
 
 static void CopySprites(uint8 *target) {
-	uint8 n = ((nes_PPU[1] & 4) ^ 4) << 1;
+	uint8 n = ((PPU[1] & 4) ^ 4) << 1;
 	uint8 *P = target;
 
 	if (!spork) return;
@@ -1679,7 +1679,7 @@ void PPU_ResetHooks() {
 }
 
 void FCEUPPU_Reset(void) {
-	VRAMBuffer = nes_PPU[0] = nes_PPU[1] = PPU_status = nes_PPU[3] = 0;
+	VRAMBuffer = PPU[0] = PPU[1] = PPU_status = PPU[3] = 0;
 	PPUSPL = 0;
 	PPUGenLatch = 0;
 	RefreshAddr = TempAddr = 0;
@@ -1740,7 +1740,7 @@ int FCEUPPU_Loop(int skip) {
 		//Not sure if this is correct.  According to Matt Conte and my own tests, it is.
 		//Timing is probably off, though.
 		//NOTE:  Not having this here breaks a Super Donkey Kong game.
-		nes_PPU[3] = PPUSPL = 0;
+		PPU[3] = PPUSPL = 0;
 
 		//I need to figure out the true nature and length of this delay.
 		X6502_Run(12);
@@ -1765,7 +1765,7 @@ int FCEUPPU_Loop(int skip) {
 			int x;
 
 			if (ScreenON || SpriteON) {
-				if (GameHBIRQHook && ((nes_PPU[0] & 0x38) != 0x18))
+				if (GameHBIRQHook && ((PPU[0] & 0x38) != 0x18))
 					GameHBIRQHook();
 				if (PPU_hook)
 					for (x = 0; x < 42; x++) {
@@ -1814,7 +1814,7 @@ int FCEUPPU_Loop(int skip) {
 		}
 		#endif
 		else {
-			deemp = nes_PPU[1] >> 5;
+			deemp = PPU[1] >> 5;
 
 			// manual samples can't play correctly with overclocking
 			if (DMC_7bit && skip_7bit_overclocking) // 7bit sample started before 240th line
@@ -2010,9 +2010,9 @@ struct BGData {
 } bgdata;
 
 static inline int PaletteAdjustPixel(int pixel) {
-	if ((nes_PPU[1] >> 5) == 0x7)
+	if ((PPU[1] >> 5) == 0x7)
 		return (pixel & 0x3f) | 0xc0;
-	else if (nes_PPU[1] & 0xE0)
+	else if (PPU[1] & 0xE0)
 		return pixel | 0x40;
 	else
 		return (pixel & 0x3F) | 0x80;
@@ -2045,7 +2045,7 @@ int FCEUX_PPU_Loop(int skip) {
 		//Not sure if this is correct.  According to Matt Conte and my own tests, it is.
 		//Timing is probably off, though.
 		//NOTE:  Not having this here breaks a Super Donkey Kong game.
-		nes_PPU[3] = PPUSPL = 0;
+		PPU[3] = PPUSPL = 0;
 		const int delay = 20;	//fceu used 12 here but I couldnt get it to work in marble madness and pirates.
 
 		ppur.status.sl = 241;	//for sprite reads
@@ -2208,7 +2208,7 @@ int FCEUX_PPU_Loop(int skip) {
 						}
 
 						*ptr++ = PaletteAdjustPixel(pixelcolor);
-						*dptr++= nes_PPU[1]>>5; //grab deemph
+						*dptr++= PPU[1]>>5; //grab deemph
 					}
 				}
 			}
@@ -2323,7 +2323,7 @@ int FCEUX_PPU_Loop(int skip) {
 				//does not set SpriteON in the beginning but it does
 				//set the bg on so if using the conditional SpriteON the MMC3 counter
 				//the counter will never count and no IRQs will be fired so use PPUON
-				if (((nes_PPU[0] & 0x38) != 0x18) && s == 2 && PPUON) {
+				if (((PPU[0] & 0x38) != 0x18) && s == 2 && PPUON) {
 					//(The MMC3 scanline counter is based entirely on PPU A12, triggered on rising edges (after the line remains low for a sufficiently long period of time))
 					//http://nesdevwiki.org/wiki/index.php/Nintendo_MMC3
 					//test cases for timing: SMB3, Crystalis

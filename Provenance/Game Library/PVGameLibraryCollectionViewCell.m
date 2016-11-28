@@ -7,42 +7,15 @@
 //
 
 #import "PVGameLibraryCollectionViewCell.h"
-#import <QuartzCore/QuartzCore.h>
 #import "UIImage+Color.h"
 #import "UIView+FrameAdditions.h"
-
-#import "PVGame.h"
+#import "PVGame+Sizing.h"
 #import "PVMediaCache.h"
 #import "PVSettingsModel.h"
 #import "PVAppConstants.h"
 #import "PVEmulatorConfiguration.h"
 
-CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
-    CGFloat width = originalSize.width;
-    CGFloat height = originalSize.height;
-    
-    CGFloat multiplier = 0.f;
-    
-    if (height > maximumSize.height) {
-        multiplier = maximumSize.height / height;
-    }
-    
-    if (width > maximumSize.width) {
-        CGFloat provisionalMultiplier = maximumSize.width / width;
-        BOOL validMultiplier = provisionalMultiplier > 0;
-        if (validMultiplier && (provisionalMultiplier < multiplier || multiplier == 0)) {
-            multiplier = provisionalMultiplier;
-        }
-    }
-    
-    if (multiplier > 0) {
-        // CGRectIntegral does floorf() on origin and ceilf() on size
-        height = ceilf(height * multiplier);
-        width = ceilf(width * multiplier);
-    }
-    
-    return CGSizeMake(width, height);
-}
+static const CGFloat LabelHeight = 44.0;
 
 @interface PVGameLibraryCollectionViewCell ()
 
@@ -67,7 +40,7 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, LabelHeight)];
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
 #if TARGET_OS_TV
         // The label's alpha will get set to 1 on focus
@@ -160,6 +133,19 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
                 UIImage *artwork = image ?: [self imageWithText:artworkText];
                 
                 self.imageView.image = artwork;
+                
+            #if TARGET_OS_TV
+                CGFloat width = CGRectGetWidth(self.frame);
+                CGSize boxartSize = CGSizeMake(width, width / game.boxartAspectRatio);
+                self.imageView.frame = CGRectMake(0, 0, width, boxartSize.height);
+            #else
+                CGFloat imageHeight = self.frame.size.height;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    imageHeight -= 44;
+                }
+                self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
+            #endif
+                
                 [self setNeedsLayout];
             }];
         }
@@ -184,7 +170,7 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 - (void)prepareForReuse
 {
 	[super prepareForReuse];
-	
+
 	[self.imageView setImage:nil];
 	[self.titleLabel setText:nil];
 }
@@ -192,13 +178,6 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-    
-    CGFloat imageHeight = self.frame.size.height;
-    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
-        imageHeight -= 44;
-    }
-    
-    self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
 
 #if TARGET_OS_TV
     CGAffineTransform titleTransform = _titleLabel.transform;
@@ -209,12 +188,13 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     [_titleLabel sizeToFit];
     [_titleLabel setWidth:[[self contentView] bounds].size.width];
     [_titleLabel setOriginX:0];
-    CGSize imageSize = pv_CGSizeAspectFittingSize(_imageView.image.size, self.contentView.bounds.size);
-    [_imageView setSize:imageSize];
-    _imageView.center = CGPointMake(CGRectGetMidX(self.contentView.bounds),
-                                    CGRectGetMidY(self.contentView.bounds));
     [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
     _titleLabel.transform = titleTransform;
+#else
+    CGFloat imageHeight = self.frame.size.height;
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        imageHeight -= 44;
+    }
 #endif
 }
 
@@ -235,5 +215,10 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     } completion:nil];
 }
 #endif
+
++ (CGSize)cellSizeForImageSize:(CGSize)imageSize
+{
+    return CGSizeMake(imageSize.width, imageSize.height + LabelHeight);
+}
 
 @end

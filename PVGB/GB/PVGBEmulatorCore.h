@@ -25,7 +25,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
 
 typedef NS_ENUM(NSInteger, PVGBButton)
 {

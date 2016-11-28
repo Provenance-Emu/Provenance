@@ -1,0 +1,394 @@
+#!/bin/sh
+# some elements originated from qemu configure
+set -e
+
+TMPC="/tmp/picodrive-conf-${RANDOM}-$$-${RANDOM}.c"
+TMPO="/tmp/picodrive-conf-${RANDOM}-$$-${RANDOM}.o"
+TMPB="/tmp/picodrive-conf-${RANDOM}-$$-${RANDOM}"
+trap "rm -f $TMPC $TMPO $TMPB" EXIT INT QUIT TERM
+rm -f config.log
+
+compile_object()
+{
+  c="$CC $CFLAGS -c $TMPC -o $TMPO $@"
+  echo $c >> config.log
+  $c >> config.log 2>&1
+}
+
+compile_binary()
+{
+  c="$CC $CFLAGS $TMPC -o $TMPB $LDFLAGS $@"
+  echo $c >> config.log
+  $c >> config.log 2>&1
+}
+
+check_define()
+{
+  $CC -E -dD $CFLAGS pico/arm_features.h | grep -q $1 || return 1
+  return 0
+}
+
+# setting options to "yes" or "no" will make that choice default,
+# "" means "autodetect".
+
+platform_list="generic pandora gp2x opendingux"
+platform="generic"
+sound_driver_list="oss alsa sdl"
+sound_drivers=""
+have_armv5=""
+have_armv6=""
+have_armv7=""
+have_arm_neon=""
+have_libavcodec=""
+need_sdl="no"
+need_xlib="no"
+# these are for known platforms
+optimize_cortexa8="no"
+optimize_arm926ej="no"
+optimize_arm920="no"
+
+# hardcoded stuff
+CC="${CC-${CROSS_COMPILE}gcc}"
+CXX="${CXX-${CROSS_COMPILE}g++}"
+AS="${AS-${CROSS_COMPILE}as}"
+STRIP="${STRIP-${CROSS_COMPILE}strip}"
+SDL_CONFIG="`$CC --print-sysroot 2> /dev/null || true`/usr/bin/sdl-config"
+MAIN_LDLIBS="$LDLIBS -lm"
+config_mak="config.mak"
+
+fail()
+{
+  echo "$@"
+  exit 1
+}
+
+# call during arg parsing, so that cmd line can override platform defaults
+set_platform()
+{
+  platform=$1
+  case "$platform" in
+  generic)
+    ;;
+  opendingux)
+    sound_drivers="sdl"
+    ;;
+  pandora)
+    sound_drivers="oss alsa"
+    optimize_cortexa8="yes"
+    have_arm_neon="yes"
+    ;;
+  gp2x)
+    sound_drivers="oss"
+    optimize_arm920="yes"
+    CFLAGS="$CFLAGS -D__GP2X__"
+    if [ "$CROSS_COMPILE" = "arm-linux-" ]; then
+      # still using static, dynamic linking slows Wiz 1-10%
+      # also libm on F100 is not compatible
+      MAIN_LDLIBS="$MAIN_LDLIBS -static"
+    fi
+    ;;
+  *)
+    fail "unsupported platform: $platform"
+    ;;
+  esac
+}
+
+for opt do
+  optarg=`expr "x$opt" : 'x[^=]*=\(.*\)'` || true
+  case "$opt" in
+  --help|-h) show_help="yes"
+  ;;
+  --platform=*) set_platform "$optarg"
+  ;;
+  --sound-drivers=*) sound_drivers="$optarg"
+  ;;
+  *) echo "ERROR: unknown option $opt"; show_help="yes"
+  ;;
+  esac
+done
+
+if [ "$show_help" = "yes" ]; then
+  echo "options:"
+  echo "  --help                   print this message"
+  echo "  --platform=NAME          target platform [$platform]"
+  echo "                           available: $platform_list"
+  echo "  --sound-drivers=LIST     sound output drivers [guessed]"
+  echo "                           available: $sound_driver_list"
+  echo "influential environment variables:"
+  echo "  CROSS_COMPILE CC CXX AS STRIP CFLAGS ASFLAGS LDFLAGS LDLIBS"
+  exit 1
+fi
+
+# validate selections
+if [ "x$sound_drivers" != "x" ]; then
+  for d in $sound_drivers; do
+    if ! echo $sound_driver_list | grep -q "\<$d\>"; then
+      fail "unsupported sound driver: $sound_driver"
+    fi
+  done
+fi
+
+if ! test -f "platform/libpicofe/README"; then
+  fail "libpicofe is missing, please run 'git submodule update --init'"
+fi
+
+#if [ "$need_warm" = "yes" ]; then
+#  if ! test -f "frontend/warm/README"; then
+#    fail "wARM is missing, please run 'git submodule init && git submodule update'"
+#  fi
+#fi
+
+# basic compiler test
+cat > $TMPC <<EOF
+int main(void) { return 0; }
+EOF
+if ! compile_binary; then
+  fail "compiler test failed, please check config.log"
+fi
+
+if [ -z "$ARCH" ]; then
+  ARCH=`$CC -dumpmachine | awk -F '-' '{print $1}'`
+fi
+
+case "$ARCH" in
+arm*)
+  # ARM stuff
+  ARCH="arm"
+
+  if [ "$optimize_cortexa8" = "yes" ]; then
+    CFLAGS="$CFLAGS -mcpu=cortex-a8 -mtune=cortex-a8"
+    ASFLAGS="$ASFLAGS -mcpu=cortex-a8"
+  fi
+  if [ "$optimize_arm926ej" = "yes" ]; then
+    CFLAGS="$CFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
+    ASFLAGS="$ASFLAGS -mcpu=arm926ej-s -mfloat-abi=softfp"
+  fi
+  if [ "$optimize_arm920" = "yes" ]; then
+    CFLAGS="$CFLAGS -mcpu=arm920t -mtune=arm920t"
+    ASFLAGS="$ASFLAGS -mcpu=arm920t -mfloat-abi=soft"
+  fi
+
+  if [ "x$have_arm_neon" = "x" ]; then
+    # detect NEON from user-supplied cflags to enable asm code
+    have_arm_neon=`check_define __ARM_NEON__ && echo yes` || true
+  fi
+  if [ "x$have_armv7" = "x" ]; then
+    if check_define HAVE_ARMV7; then
+      have_armv7="yes"
+      have_armv6="yes"
+      have_armv5="yes"
+    fi
+  fi
+  if [ "x$have_armv6" = "x" ]; then
+    if check_define HAVE_ARMV6; then
+      have_armv6="yes"
+      have_armv5="yes"
+    fi
+  fi
+  if [ "x$have_armv5" = "x" ]; then
+    have_armv5=`check_define HAVE_ARMV5 && echo yes` || true
+  fi
+
+  # automatically set mfpu and mfloat-abi if they are not set
+  if [ "$have_arm_neon" = "yes" ]; then
+    fpu="neon"
+  elif [ "$have_armv6" = "yes" ]; then
+    fpu="vfp"
+  fi
+  if [ "x$fpu" != "x" ]; then
+    echo "$CFLAGS" | grep -q -- '-mfpu=' || CFLAGS="$CFLAGS -mfpu=$fpu"
+    echo "$ASFLAGS" | grep -q -- '-mfpu=' || ASFLAGS="$ASFLAGS -mfpu=$fpu"
+    floatabi_set_by_gcc=`$CC -v 2>&1 | grep -q -- --with-float= && echo yes` || true
+    if [ "$floatabi_set_by_gcc" != "yes" ]; then
+      echo "$CFLAGS" | grep -q -- '-mfloat-abi=' || CFLAGS="$CFLAGS -mfloat-abi=softfp"
+      echo "$ASFLAGS" | grep -q -- '-mfloat-abi=' || ASFLAGS="$ASFLAGS -mfloat-abi=softfp"
+    fi
+  fi
+
+  # must disable thumb as recompiler can't handle it
+  if check_define __thumb__; then
+    CFLAGS="$CFLAGS -marm"
+  fi
+
+  # warn about common mistakes
+  if [ "$platform" != "gp2x" -a "$have_armv5" != "yes" ]; then
+    if ! echo "$CFLAGS" | grep -q -- '-mcpu=\|-march='; then
+      echo "Warning: compiling for ARMv4, is that really what you want?"
+      echo "You probably should specify -mcpu= or -march= like this:"
+      echo "  CFLAGS=-march=armv6 ./configure ..."
+    fi
+  fi
+  if [ "$have_arm_neon" = "yes" -a "$have_armv7" != "yes" ]; then
+    echo "Warning: compiling for NEON, but not ARMv7?"
+    echo "You probably want to specify -mcpu= or -march= like this:"
+    echo "  CFLAGS=-march=armv7-a ./configure ..."
+  fi
+  ;;
+*)
+  ;;
+esac
+
+case "$platform" in
+generic | opendingux)
+  need_sdl="yes"
+  ;;
+esac
+
+# header/library presence tests
+check_zlib()
+{
+  cat > $TMPC <<EOF
+  #include <zlib.h>
+  int main(void) { uncompress(0, 0, 0, 0); }
+EOF
+  compile_binary
+}
+
+check_libpng()
+{
+  cat > $TMPC <<EOF
+  #include <png.h>
+  void main() { png_init_io(0, 0); }
+EOF
+#  compile_binary
+  compile_object
+}
+
+check_oss()
+{
+  cat > $TMPC <<EOF
+  #include <sys/soundcard.h>
+  #include <sys/ioctl.h>
+  void main() { int a=0; ioctl(0, SNDCTL_DSP_SETFMT, &a); }
+EOF
+  compile_binary
+}
+
+check_alsa()
+{
+  cat > $TMPC <<EOF
+  #include <alsa/asoundlib.h>
+  void main() { snd_pcm_open(0, 0, 0, 0); }
+EOF
+  compile_binary "$@"
+}
+
+check_sdl()
+{
+  cat > $TMPC <<EOF
+  #include <SDL.h>
+  void main() { SDL_OpenAudio(0, 0); }
+EOF
+  compile_binary "$@"
+}
+
+check_libavcodec()
+{
+  cat > $TMPC <<EOF
+  #include <libavcodec/avcodec.h>
+  void main() { avcodec_decode_audio3(0, 0, 0, 0); }
+EOF
+  compile_object "$@"
+}
+
+#MAIN_LDLIBS="$MAIN_LDLIBS -lz"
+#check_zlib || fail "please install zlib (libz-dev)"
+
+MAIN_LDLIBS="-lpng $MAIN_LDLIBS"
+check_libpng || fail "please install libpng (libpng-dev)"
+
+if check_libavcodec; then
+  have_libavcodec="yes"
+  # add -ldl if needed
+  case "$MAIN_LDLIBS" in
+    *"-ldl"*) ;;
+    *) MAIN_LDLIBS="-ldl $MAIN_LDLIBS" ;;
+  esac
+fi
+
+# find what audio support we can compile
+if [ "x$sound_drivers" = "x" ]; then
+  if check_oss; then sound_drivers="$sound_drivers oss"; fi
+  if check_alsa -lasound; then
+    sound_drivers="$sound_drivers alsa"
+    MAIN_LDLIBS="-lasound $MAIN_LDLIBS"
+  fi
+  if [ "$need_sdl" = "yes" ] || check_sdl `$SDL_CONFIG --cflags --libs`; then
+    sound_drivers="$sound_drivers sdl"
+    need_sdl="yes"
+  fi
+else
+  if echo $sound_drivers | grep -q "\<oss\>"; then
+    check_oss || fail "oss support is missing"
+  fi
+  if echo $sound_drivers | grep -q "\<alsa\>"; then
+    MAIN_LDLIBS="-lasound $MAIN_LDLIBS"
+    check_alsa -lasound || fail "please install libasound2-dev"
+  fi
+fi
+
+if [ "$need_sdl" = "yes" ]; then
+  [ -x "$SDL_CONFIG" ] || \
+    fail "sdl-config is missing; please install libsdl (libsdl1.2-dev)"
+  CFLAGS="$CFLAGS `$SDL_CONFIG --cflags`"
+  MAIN_LDLIBS="`$SDL_CONFIG --libs` $MAIN_LDLIBS"
+  check_sdl `$SDL_CONFIG --libs` || fail "please install libsdl (libsdl1.2-dev)"
+fi
+
+cat > $TMPC <<EOF
+void test(void *f, void *d) { fread(d, 1, 1, f); }
+EOF
+if compile_object -Wno-unused-result; then
+  CFLAGS="$CFLAGS -Wno-unused-result"
+fi
+
+# set things that failed to autodetect to "no"
+test "x$have_armv6" != "x" || have_armv6="no"
+test "x$have_armv7" != "x" || have_armv7="no"
+test "x$have_libavcodec" != "x" || have_libavcodec="no"
+
+echo "architecture        $ARCH"
+echo "platform            $platform"
+echo "sound drivers       $sound_drivers"
+echo "C compiler          $CC"
+echo "C compiler flags    $CFLAGS"
+echo "libraries           $MAIN_LDLIBS"
+echo "linker flags        $LDFLAGS"
+echo "libavcodec (mp3)    $have_libavcodec"
+# echo "ARMv7 optimizations $have_armv7"
+
+echo "# Automatically generated by configure" > $config_mak
+printf "# Configured with:" >> $config_mak
+printf " '%s'" "$0" "$@" >> $config_mak
+echo >> $config_mak
+
+echo "CC = $CC" >> $config_mak
+echo "CXX = $CXX" >> $config_mak
+echo "AS = $AS" >> $config_mak
+echo "STRIP = $STRIP" >> $config_mak
+echo "CFLAGS += $CFLAGS" >> $config_mak
+echo "ASFLAGS += $ASFLAGS" >> $config_mak
+echo "LDFLAGS += $LDFLAGS" >> $config_mak
+echo "LDLIBS += $MAIN_LDLIBS" >> $config_mak
+echo >> $config_mak
+
+echo "ARCH = $ARCH" >> $config_mak
+echo "PLATFORM = $platform" >> $config_mak
+echo "SOUND_DRIVERS = $sound_drivers" >> $config_mak
+if [ "$have_libavcodec" = "yes" ]; then
+  echo "HAVE_LIBAVCODEC = 1" >> $config_mak
+fi
+
+# GP2X toolchains are too old for UAL asm,
+# so add this here to not litter main Makefile
+if [ "$platform" = "g1p2x" ]; then
+  echo >> $config_mak
+  echo "%.o: %.S" >> $config_mak
+  echo "        $(CC) $(CFLAGS) -E -c $^ -o /tmp/$(notdir $@).s" >> $config_mak
+  echo "        $(AS) $(ASFLAGS) /tmp/$(notdir $@).s -o $@" >> $config_mak
+fi
+
+# use pandora's skin (for now)
+test -e skin || ln -s platform/pandora/skin skin
+
+# vim:shiftwidth=2:expandtab
