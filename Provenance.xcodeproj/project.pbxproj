@@ -1836,12 +1836,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1881,12 +1875,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -2273,12 +2261,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
-					"$(PROJECT_DIR)/PVStella/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVSupport/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVProSystem/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVGenesis/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-iphoneos",
-					"$(PROJECT_DIR)/PVNES/build/Debug-appletvos",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
