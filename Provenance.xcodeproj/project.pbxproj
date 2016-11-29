@@ -1295,6 +1295,7 @@
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
+				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 			);
@@ -1314,6 +1315,7 @@
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1A44C0AE1D0A1E730018751A /* Set Build Number */,
+				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				BE9FDCC61C210B9F0046DF0E /* Embed App Extensions */,
@@ -1499,6 +1501,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
+		E32D548D1D99C82E00C41A52 /* Set Git SHA */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Git SHA";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "localSha=$(git rev-parse --short HEAD)\nfullMasterSha=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nmasterSha=$(git rev-parse --short $fullMasterSha)\n/usr/libexec/PlistBuddy -c \"Set :LocalGitSha $localSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n/usr/libexec/PlistBuddy -c \"Set :MasterGitSha $masterSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
+		E3D030EE1D980D9F00045BE6 /* Set Git SHA */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Git SHA";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "localSha=$(git rev-parse --short HEAD)\nfullMasterSha=$(diff -u <(git rev-list --first-parent add_git_sha_to_settings) <(git rev-list --first-parent master) | sed -ne 's/^ //p' | head -1)\nmasterSha=$(git rev-parse --short $fullMasterSha)\n/usr/libexec/PlistBuddy -c \"Set :LocalGitSha $localSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n/usr/libexec/PlistBuddy -c \"Set :MasterGitSha $masterSha\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
