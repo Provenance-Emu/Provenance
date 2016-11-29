@@ -370,6 +370,8 @@
 		B3B3B96E1DED144100602746 /* rsp.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115A61C730A2B00E9AD14 /* rsp.h */; };
 		B3BDEC8B1DED5E02002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
 		B3BDEC8C1DED5E04002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
+		B3BDEC901DED6091002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CCA11824C2200BEAA42 /* mupen64plus.ini */; };
+		B3BDEC911DED6096002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CCA11824C2200BEAA42 /* mupen64plus.ini */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2933,6 +2935,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BDEC901DED6091002BD7A4 /* mupen64plus.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2947,6 +2950,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BDEC911DED6096002BD7A4 /* mupen64plus.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
