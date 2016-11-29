@@ -40,8 +40,8 @@
 #import "mupen64plus-core/src/main/version.h"
 #import "memory.h"
 //#import "mupen64plus-core/src/main/main.h"
-
-#import <OERingBuffer.h>
+#import <dispatch/dispatch.h>
+#import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
@@ -330,6 +330,7 @@ static void MupenSetAudioSpeed(int percent)
     
     m64p_dynlib_handle core_handle = dlopen_myself();
     
+    // Assistane block to load frameworks
     void (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
@@ -342,7 +343,7 @@ static void MupenSetAudioSpeed(int percent)
     };
     
     // Load Video
-    LoadPlugin(M64PLUGIN_GFX, @"mupen64plusRice");
+    LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
     //LoadPlugin(M64PLUGIN_GFX, @"mupen64plus-video-glide64mk2.so");
     
     ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");

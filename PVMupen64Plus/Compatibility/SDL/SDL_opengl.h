@@ -25,7 +25,7 @@
  */
 
 #include <unistd.h>
-#import <OpenGL/gl.h>
+#import <OpenGLES/ES3/gl.h>
 
 #ifndef APIENTRY
 #define APIENTRY

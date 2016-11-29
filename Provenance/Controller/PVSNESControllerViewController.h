@@ -11,8 +11,3 @@
 @interface PVSNESControllerViewController : PVControllerViewController
 
 @end
-
-// TODO: Make a file for me
-@interface PVN64ControllerViewController : PVControllerViewController
-
-@end

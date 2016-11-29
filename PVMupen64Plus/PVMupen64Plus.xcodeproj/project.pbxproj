@@ -7,142 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A12672F16A37000000A650A /* reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A12672D16A37000000A650A /* reset.c */; };
-		3D00F06D1183E4AA002995A1 /* eventloop.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06A1183E4AA002995A1 /* eventloop.m */; };
-		3D00F06E1183E4AA002995A1 /* osd.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06B1183E4AA002995A1 /* osd.m */; };
-		3D00F06F1183E4AA002995A1 /* screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06C1183E4AA002995A1 /* screenshot.m */; };
-		3D00F0811183E52F002995A1 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
-		3D00F0C01183E6FA002995A1 /* vidext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0BF1183E6FA002995A1 /* vidext.m */; };
-		3D208DB911824C2200BEAA42 /* mupen64plus.cht in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CC911824C2200BEAA42 /* mupen64plus.cht */; };
-		3D208DBA11824C2200BEAA42 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CCA11824C2200BEAA42 /* mupen64plus.ini */; };
-		3D208DCA11824C2200BEAA42 /* LICENSES in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CDC11824C2200BEAA42 /* LICENSES */; };
-		3D208DCD11824C2200BEAA42 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CE211824C2200BEAA42 /* README */; };
-		3D208DCE11824C2200BEAA42 /* RELEASE in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CE311824C2200BEAA42 /* RELEASE */; };
-		3D208DE511824C2200BEAA42 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D0D11824C2200BEAA42 /* callbacks.c */; };
-		3D208DE611824C2200BEAA42 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D0F11824C2200BEAA42 /* common.c */; };
-		3D208DE711824C2200BEAA42 /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1011824C2200BEAA42 /* config.c */; };
-		3D208DE811824C2200BEAA42 /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1211824C2200BEAA42 /* debugger.c */; };
-		3D208DE911824C2200BEAA42 /* frontend.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1411824C2200BEAA42 /* frontend.c */; };
-		3D208DFE11824C2200BEAA42 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4C11824C2200BEAA42 /* memory.c */; };
-		3D208E0111824C2200BEAA42 /* dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D5511824C2200BEAA42 /* dynamiclib_unix.c */; };
-		3D208E0311824C2200BEAA42 /* files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D5811824C2200BEAA42 /* files_unix.c */; };
-		3D208E0811824C2200BEAA42 /* dummy_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6311824C2200BEAA42 /* dummy_audio.c */; };
-		3D208E0911824C2200BEAA42 /* dummy_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6511824C2200BEAA42 /* dummy_input.c */; };
-		3D208E0A11824C2200BEAA42 /* dummy_rsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6711824C2200BEAA42 /* dummy_rsp.c */; };
-		3D208E0B11824C2200BEAA42 /* dummy_video.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6911824C2200BEAA42 /* dummy_video.c */; };
-		3D208E0C11824C2200BEAA42 /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6B11824C2200BEAA42 /* plugin.c */; };
-		3D208E1511824C2200BEAA42 /* exception.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7611824C2200BEAA42 /* exception.c */; };
-		3D208E1611824C2200BEAA42 /* interupt.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7811824C2200BEAA42 /* interupt.c */; };
-		3D208E1811824C2200BEAA42 /* pure_interp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7D11824C2200BEAA42 /* pure_interp.c */; };
-		3D208E1911824C2200BEAA42 /* r4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7E11824C2200BEAA42 /* r4300.c */; };
-		3D208E1A11824C2200BEAA42 /* recomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D8011824C2200BEAA42 /* recomp.c */; };
-		3D208E2C11824C2200BEAA42 /* assemble.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9911824C2200BEAA42 /* assemble.c */; };
-		3D208E2D11824C2200BEAA42 /* gbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9B11824C2200BEAA42 /* gbc.c */; };
-		3D208E2E11824C2200BEAA42 /* gcop0.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9C11824C2200BEAA42 /* gcop0.c */; };
-		3D208E2F11824C2200BEAA42 /* gcop1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9D11824C2200BEAA42 /* gcop1.c */; };
-		3D208E3011824C2200BEAA42 /* gcop1_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9E11824C2200BEAA42 /* gcop1_d.c */; };
-		3D208E3111824C2200BEAA42 /* gcop1_l.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9F11824C2200BEAA42 /* gcop1_l.c */; };
-		3D208E3211824C2200BEAA42 /* gcop1_s.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA011824C2200BEAA42 /* gcop1_s.c */; };
-		3D208E3311824C2200BEAA42 /* gcop1_w.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA111824C2200BEAA42 /* gcop1_w.c */; };
-		3D208E3411824C2200BEAA42 /* gr4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA211824C2200BEAA42 /* gr4300.c */; };
-		3D208E3511824C2200BEAA42 /* gregimm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA311824C2200BEAA42 /* gregimm.c */; };
-		3D208E3611824C2200BEAA42 /* gspecial.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA411824C2200BEAA42 /* gspecial.c */; };
-		3D208E3711824C2200BEAA42 /* gtlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA511824C2200BEAA42 /* gtlb.c */; };
-		3D208E3811824C2200BEAA42 /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA711824C2200BEAA42 /* regcache.c */; };
-		3D208E3911824C2200BEAA42 /* rjump.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA911824C2200BEAA42 /* rjump.c */; };
-		3D208E4B11824D7A00BEAA42 /* lgpl-license in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CDA11824C2200BEAA42 /* lgpl-license */; };
-		3D208E4C11824D7B00BEAA42 /* gpl-license in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CD911824C2200BEAA42 /* gpl-license */; };
-		3D208E5811824E1900BEAA42 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4111824C2200BEAA42 /* ioapi.c */; };
-		3D208E5911824E1B00BEAA42 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4511824C2200BEAA42 /* zip.c */; };
-		3D208E5A11824E1C00BEAA42 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4311824C2200BEAA42 /* unzip.c */; };
-		3D208E981182550400BEAA42 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E971182550400BEAA42 /* OpenGL.framework */; };
-		3D208E9E1182551500BEAA42 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E9D1182551500BEAA42 /* libz.dylib */; };
-		3D208F821182B00300BEAA42 /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
-		3D8B35D812260F9D00C4C844 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* main.m */; };
-		3DC21457166C6BB90014251E /* mupen64plus-video-rice.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3DCABE0E166C6A20002F2066 /* mupen64plus-video-rice.so */; };
-		3DC2145A166C6C6E0014251E /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
-		3DC2145F166C6D7F0014251E /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DC2145C166C6D7F0014251E /* libpng.a */; };
-		3DC21460166C6F170014251E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E9D1182551500BEAA42 /* libz.dylib */; };
-		3DCABDBB166C4B89002F2066 /* jpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B875166C2A0A00082F27 /* jpeg.c */; };
-		3DCABDBC166C4B89002F2066 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B876166C2A0A00082F27 /* main.c */; };
-		3DCABDBD166C4B89002F2066 /* ucode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B878166C2A0A00082F27 /* ucode1.cpp */; };
-		3DCABDBE166C4B89002F2066 /* ucode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B879166C2A0A00082F27 /* ucode2.cpp */; };
-		3DCABDBF166C4B89002F2066 /* ucode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B87A166C2A0A00082F27 /* ucode3.cpp */; };
-		3DCABDC0166C4B89002F2066 /* ucode3mp3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B87B166C2A0A00082F27 /* ucode3mp3.cpp */; };
-		3DCABDC2166C4CB2002F2066 /* mupen64plus-rsp-hle.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3DCABDB3166C4ACB002F2066 /* mupen64plus-rsp-hle.so */; };
-		3DCABDC8166C5BE2002F2066 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
-		3DCABE12166C6AB6002F2066 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
-		3DCABE17166C6AB6002F2066 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
-		3DCABE1A166C6AB6002F2066 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
-		3DCABE1B166C6AB6002F2066 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B892166C2A0A00082F27 /* Config.cpp */; };
-		3DCABE1D166C6AB6002F2066 /* ConvertImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B894166C2A0A00082F27 /* ConvertImage.cpp */; };
-		3DCABE1F166C6AB6002F2066 /* ConvertImage16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B896166C2A0A00082F27 /* ConvertImage16.cpp */; };
-		3DCABE22166C6AB6002F2066 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B899166C2A0A00082F27 /* Debugger.cpp */; };
-		3DCABE24166C6AB6002F2066 /* DecodedMux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B89B166C2A0A00082F27 /* DecodedMux.cpp */; };
-		3DCABE26166C6AB6002F2066 /* DeviceBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B89D166C2A0A00082F27 /* DeviceBuilder.cpp */; };
-		3DCABE2B166C6AB6002F2066 /* FrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A2166C2A0A00082F27 /* FrameBuffer.cpp */; };
-		3DCABE2D166C6AB6002F2066 /* GeneralCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A4166C2A0A00082F27 /* GeneralCombiner.cpp */; };
-		3DCABE2F166C6AB6002F2066 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A6166C2A0A00082F27 /* GraphicsContext.cpp */; };
-		3DCABE33166C6AB6002F2066 /* BMGImage.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8AB166C2A0A00082F27 /* BMGImage.c */; };
-		3DCABE36166C6AB6002F2066 /* BMGUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8AE166C2A0A00082F27 /* BMGUtils.c */; };
-		3DCABE38166C6AB6002F2066 /* bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B0166C2A0A00082F27 /* bmp.c */; };
-		3DCABE3A166C6AB6002F2066 /* pngrw.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B2166C2A0A00082F27 /* pngrw.c */; };
-		3DCABE3D166C6AB6002F2066 /* OGLCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B5166C2A0A00082F27 /* OGLCombiner.cpp */; };
-		3DCABE44166C6AB6002F2066 /* OGLDecodedMux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8BC166C2A0A00082F27 /* OGLDecodedMux.cpp */; };
-		3DCABE46166C6AB6002F2066 /* OGLExtCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8BE166C2A0A00082F27 /* OGLExtCombiner.cpp */; };
-		3DCABE48166C6AB6002F2066 /* OGLExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C0166C2A0A00082F27 /* OGLExtensions.cpp */; };
-		3DCABE4A166C6AB6002F2066 /* OGLExtRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C2166C2A0A00082F27 /* OGLExtRender.cpp */; };
-		3DCABE4E166C6AB6002F2066 /* OGLGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C6166C2A0A00082F27 /* OGLGraphicsContext.cpp */; };
-		3DCABE50166C6AB6002F2066 /* OGLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C8166C2A0A00082F27 /* OGLRender.cpp */; };
-		3DCABE52166C6AB6002F2066 /* OGLRenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CA166C2A0A00082F27 /* OGLRenderExt.cpp */; };
-		3DCABE53166C6AB6002F2066 /* OGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CB166C2A0A00082F27 /* OGLTexture.cpp */; };
-		3DCABE56166C6AB6002F2066 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CE166C2A0A00082F27 /* osal_dynamiclib_unix.c */; };
-		3DCABE58166C6AB6002F2066 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D1166C2A0A00082F27 /* osal_files_unix.c */; };
-		3DCABE5B166C6AB6002F2066 /* Render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D5166C2A0A00082F27 /* Render.cpp */; };
-		3DCABE5D166C6AB6002F2066 /* RenderBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D7166C2A0A00082F27 /* RenderBase.cpp */; };
-		3DCABE5F166C6AB6002F2066 /* RenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D9166C2A0A00082F27 /* RenderExt.cpp */; };
-		3DCABE60166C6AB6002F2066 /* RenderTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8DA166C2A0A00082F27 /* RenderTexture.cpp */; };
-		3DCABE68166C6AB6002F2066 /* RSP_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E2166C2A0A00082F27 /* RSP_Parser.cpp */; };
-		3DCABE6A166C6AB6002F2066 /* RSP_S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E4166C2A0A00082F27 /* RSP_S2DEX.cpp */; };
-		3DCABE6C166C6AB6002F2066 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E6166C2A0A00082F27 /* Texture.cpp */; };
-		3DCABE6E166C6AB6002F2066 /* TextureFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E8166C2A0A00082F27 /* TextureFilters.cpp */; };
-		3DCABE70166C6AB6002F2066 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8EA166C2A0A00082F27 /* TextureFilters_2xsai.cpp */; };
-		3DCABE71166C6AB6002F2066 /* TextureFilters_hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8EB166C2A0A00082F27 /* TextureFilters_hq2x.cpp */; };
-		3DCABE73166C6AB6002F2066 /* TextureFilters_hq4x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8ED166C2A0A00082F27 /* TextureFilters_hq4x.cpp */; };
-		3DCABE76166C6AB6002F2066 /* TextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8F0166C2A0A00082F27 /* TextureManager.cpp */; };
-		3DCABE7C166C6AB6002F2066 /* VectorMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8F6166C2A0A00082F27 /* VectorMath.cpp */; };
-		3DCABE80166C6AB6002F2066 /* Video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8FA166C2A0A00082F27 /* Video.cpp */; };
-		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
-		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
-		942130D01793DD8F00E57482 /* alist.c in Sources */ = {isa = PBXBuildFile; fileRef = 942130CB1793DD8F00E57482 /* alist.c */; };
-		942130D11793DD8F00E57482 /* cicx105.c in Sources */ = {isa = PBXBuildFile; fileRef = 942130CD1793DD8F00E57482 /* cicx105.c */; };
-		942130D71793E90800E57482 /* mupen64plus-video-glide64mk2.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 94D58BE416BE327A0093CD72 /* mupen64plus-video-glide64mk2.so */; };
-		942130D91793E96600E57482 /* glitchmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 942130D81793E96600E57482 /* glitchmain.cpp */; };
-		94D58BDB16BE327A0093CD72 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
-		94D58BDE16BE327A0093CD72 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E9D1182551500BEAA42 /* libz.dylib */; };
-		94D58BDF16BE327A0093CD72 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D208E971182550400BEAA42 /* OpenGL.framework */; };
-		94D58BE016BE327A0093CD72 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DC2145C166C6D7F0014251E /* libpng.a */; };
-		94D58C7C16BE33EC0093CD72 /* 3dmath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BF016BE33EC0093CD72 /* 3dmath.cpp */; };
-		94D58C7E16BE33EC0093CD72 /* Combine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BF316BE33EC0093CD72 /* Combine.cpp */; };
-		94D58C7F16BE33EC0093CD72 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BF516BE33EC0093CD72 /* Config.cpp */; };
-		94D58C8016BE33EC0093CD72 /* CRC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BF716BE33EC0093CD72 /* CRC.cpp */; };
-		94D58C8116BE33EC0093CD72 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BFA16BE33EC0093CD72 /* Debugger.cpp */; };
-		94D58C8216BE33EC0093CD72 /* DepthBufferRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BFC16BE33EC0093CD72 /* DepthBufferRender.cpp */; };
-		94D58C8316BE33EC0093CD72 /* FBtoScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58BFE16BE33EC0093CD72 /* FBtoScreen.cpp */; };
-		94D58C8516BE33EC0093CD72 /* Ini.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C0B16BE33EC0093CD72 /* Ini.cpp */; };
-		94D58C8616BE33EC0093CD72 /* Keys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C1516BE33EC0093CD72 /* Keys.cpp */; };
-		94D58C8716BE33EC0093CD72 /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C1816BE33EC0093CD72 /* Main.cpp */; };
-		94D58C8816BE33EC0093CD72 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C1D16BE33EC0093CD72 /* osal_dynamiclib_unix.c */; };
-		94D58C8A16BE33EC0093CD72 /* rdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C1F16BE33EC0093CD72 /* rdp.cpp */; };
-		94D58C8B16BE33EC0093CD72 /* TexBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C2116BE33EC0093CD72 /* TexBuffer.cpp */; };
-		94D58C8C16BE33EC0093CD72 /* TexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C2316BE33EC0093CD72 /* TexCache.cpp */; };
-		94D58C8E16BE33EC0093CD72 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C3C16BE33EC0093CD72 /* Util.cpp */; };
-		94D58CA216BE33EC0093CD72 /* combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C6C16BE33EC0093CD72 /* combiner.cpp */; };
-		94D58CA316BE33EC0093CD72 /* geometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C6D16BE33EC0093CD72 /* geometry.cpp */; };
-		94D58CA516BE33EC0093CD72 /* textures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94D58C7816BE33EC0093CD72 /* textures.cpp */; };
-		94D58CAC16BE5DAD0093CD72 /* Glide64mk2.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94D58BE716BE33EC0093CD72 /* Glide64mk2.ini */; };
 		B33115771C72F67800E9AD14 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103131C72AA3200DD066C /* libz.tbd */; };
-		B33115791C72F6E500E9AD14 /* libPVSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33115781C72F6E500E9AD14 /* libPVSupport.a */; };
 		B331158F1C7309C200E9AD14 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B33115BB1C730A2B00E9AD14 /* module.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115991C730A2B00E9AD14 /* module.c */; };
 		B33115BC1C730A2B00E9AD14 /* module.h in Headers */ = {isa = PBXBuildFile; fileRef = B331159A1C730A2B00E9AD14 /* module.h */; };
@@ -300,146 +165,21 @@
 		B37EFF971C72F47000857158 /* reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A12672D16A37000000A650A /* reset.c */; };
 		B37EFF981C72F48700857158 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103151C72AA3800DD066C /* Foundation.framework */; };
 		B37EFF991C72F48C00857158 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
-		B3C102D91C72A54100DD066C /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D0D11824C2200BEAA42 /* callbacks.c */; };
-		B3C102DA1C72A54100DD066C /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D0F11824C2200BEAA42 /* common.c */; };
-		B3C102DB1C72A54100DD066C /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1011824C2200BEAA42 /* config.c */; };
-		B3C102DC1C72A54100DD066C /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1211824C2200BEAA42 /* debugger.c */; };
-		B3C102DD1C72A54100DD066C /* frontend.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D1411824C2200BEAA42 /* frontend.c */; };
-		B3C102E01C72A54100DD066C /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4C11824C2200BEAA42 /* memory.c */; };
-		B3C102E31C72A54100DD066C /* dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D5511824C2200BEAA42 /* dynamiclib_unix.c */; };
-		B3C102E41C72A54100DD066C /* files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D5811824C2200BEAA42 /* files_unix.c */; };
-		B3C102E51C72A54100DD066C /* dummy_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6311824C2200BEAA42 /* dummy_audio.c */; };
-		B3C102E61C72A54100DD066C /* dummy_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6511824C2200BEAA42 /* dummy_input.c */; };
-		B3C102E71C72A54100DD066C /* dummy_rsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6711824C2200BEAA42 /* dummy_rsp.c */; };
-		B3C102E81C72A54100DD066C /* dummy_video.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6911824C2200BEAA42 /* dummy_video.c */; };
-		B3C102E91C72A54100DD066C /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D6B11824C2200BEAA42 /* plugin.c */; };
-		B3C102EA1C72A54100DD066C /* exception.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7611824C2200BEAA42 /* exception.c */; };
-		B3C102EB1C72A54100DD066C /* interupt.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7811824C2200BEAA42 /* interupt.c */; };
-		B3C102ED1C72A54100DD066C /* pure_interp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7D11824C2200BEAA42 /* pure_interp.c */; };
-		B3C102EE1C72A54100DD066C /* r4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7E11824C2200BEAA42 /* r4300.c */; };
-		B3C102EF1C72A54100DD066C /* recomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D8011824C2200BEAA42 /* recomp.c */; };
-		B3C102F01C72A54100DD066C /* assemble.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9911824C2200BEAA42 /* assemble.c */; };
-		B3C102F11C72A54100DD066C /* gbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9B11824C2200BEAA42 /* gbc.c */; };
-		B3C102F21C72A54100DD066C /* gcop0.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9C11824C2200BEAA42 /* gcop0.c */; };
-		B3C102F31C72A54100DD066C /* gcop1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9D11824C2200BEAA42 /* gcop1.c */; };
-		B3C102F41C72A54100DD066C /* gcop1_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9E11824C2200BEAA42 /* gcop1_d.c */; };
-		B3C102F51C72A54100DD066C /* gcop1_l.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9F11824C2200BEAA42 /* gcop1_l.c */; };
-		B3C102F61C72A54100DD066C /* gcop1_s.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA011824C2200BEAA42 /* gcop1_s.c */; };
-		B3C102F71C72A54100DD066C /* gcop1_w.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA111824C2200BEAA42 /* gcop1_w.c */; };
-		B3C102F81C72A54100DD066C /* gr4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA211824C2200BEAA42 /* gr4300.c */; };
-		B3C102F91C72A54100DD066C /* gregimm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA311824C2200BEAA42 /* gregimm.c */; };
-		B3C102FA1C72A54100DD066C /* gspecial.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA411824C2200BEAA42 /* gspecial.c */; };
-		B3C102FB1C72A54100DD066C /* gtlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA511824C2200BEAA42 /* gtlb.c */; };
-		B3C102FC1C72A54100DD066C /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA711824C2200BEAA42 /* regcache.c */; };
-		B3C102FD1C72A54100DD066C /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4311824C2200BEAA42 /* unzip.c */; };
-		B3C102FE1C72A54100DD066C /* rjump.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA911824C2200BEAA42 /* rjump.c */; };
-		B3C103021C72A54100DD066C /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4111824C2200BEAA42 /* ioapi.c */; };
-		B3C103031C72A54100DD066C /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4511824C2200BEAA42 /* zip.c */; };
-		B3C103071C72A54100DD066C /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
-		B3C103081C72A54100DD066C /* eventloop.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06A1183E4AA002995A1 /* eventloop.m */; };
-		B3C103091C72A54100DD066C /* osd.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06B1183E4AA002995A1 /* osd.m */; };
-		B3C1030A1C72A54100DD066C /* screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06C1183E4AA002995A1 /* screenshot.m */; };
-		B3C1030B1C72A54100DD066C /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
-		B3C1030C1C72A54100DD066C /* vidext.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0BF1183E6FA002995A1 /* vidext.m */; };
-		B3C1030D1C72A54100DD066C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* main.m */; };
-		B3C103101C72A54100DD066C /* reset.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A12672D16A37000000A650A /* reset.c */; };
-		B3C103121C72AA2B00DD066C /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
-		B3C103161C72AA3800DD066C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103151C72AA3800DD066C /* Foundation.framework */; };
-		B3C1031F1C72CCAA00DD066C /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
-		B3C103221C72CFBD00DD066C /* OGLES2FragmentShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C103201C72CFBD00DD066C /* OGLES2FragmentShaders.cpp */; };
-		B3C1034D1C72D9B400DD066C /* cp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1034C1C72D9B400DD066C /* cp1.c */; };
-		B3C1036E1C72DA1D00DD066C /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1034E1C72DA1D00DD066C /* cheat.c */; };
-		B3C1036F1C72DA1D00DD066C /* eep_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103501C72DA1D00DD066C /* eep_file.c */; };
-		B3C103711C72DA1D00DD066C /* fla_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103541C72DA1D00DD066C /* fla_file.c */; };
-		B3C103731C72DA1D00DD066C /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103591C72DA1D00DD066C /* main.c */; };
-		B3C103741C72DA1D00DD066C /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1035B1C72DA1D00DD066C /* md5.c */; };
-		B3C103751C72DA1D00DD066C /* mpk_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1035D1C72DA1D00DD066C /* mpk_file.c */; };
-		B3C103761C72DA1D00DD066C /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1035F1C72DA1D00DD066C /* profile.c */; };
-		B3C103771C72DA1D00DD066C /* rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103611C72DA1D00DD066C /* rom.c */; };
-		B3C103781C72DA1D00DD066C /* savestates.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103631C72DA1D00DD066C /* savestates.c */; };
-		B3C103791C72DA1D00DD066C /* sdl_key_converter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103651C72DA1D00DD066C /* sdl_key_converter.c */; };
-		B3C1037A1C72DA1D00DD066C /* sra_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103671C72DA1D00DD066C /* sra_file.c */; };
-		B3C1037B1C72DA1D00DD066C /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103691C72DA1D00DD066C /* util.c */; };
-		B3C1037C1C72DA1D00DD066C /* workqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1036C1C72DA1D00DD066C /* workqueue.c */; };
-		B3C103861C72DA7400DD066C /* cart_rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1037E1C72DA7400DD066C /* cart_rom.c */; };
-		B3C103871C72DA7400DD066C /* flashram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103801C72DA7400DD066C /* flashram.c */; };
-		B3C103881C72DA7400DD066C /* pi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103821C72DA7400DD066C /* pi_controller.c */; };
-		B3C103891C72DA7400DD066C /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103841C72DA7400DD066C /* sram.c */; };
-		B3C103AC1C72DAA400DD066C /* fb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1038B1C72DAA400DD066C /* fb.c */; };
-		B3C103AD1C72DAA400DD066C /* rdp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1038D1C72DAA400DD066C /* rdp_core.c */; };
-		B3C103AE1C72DAA400DD066C /* rdram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103901C72DAA400DD066C /* rdram.c */; };
-		B3C103AF1C72DAA400DD066C /* rdram_detection_hack.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103921C72DAA400DD066C /* rdram_detection_hack.c */; };
-		B3C103B01C72DAA400DD066C /* ri_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103941C72DAA400DD066C /* ri_controller.c */; };
-		B3C103B11C72DAA400DD066C /* af_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103971C72DAA400DD066C /* af_rtc.c */; };
-		B3C103B21C72DAA400DD066C /* cic.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103991C72DAA400DD066C /* cic.c */; };
-		B3C103B31C72DAA400DD066C /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1039B1C72DAA400DD066C /* eeprom.c */; };
-		B3C103B41C72DAA400DD066C /* game_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1039D1C72DAA400DD066C /* game_controller.c */; };
-		B3C103B51C72DAA400DD066C /* mempak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1039F1C72DAA400DD066C /* mempak.c */; };
-		B3C103B61C72DAA400DD066C /* n64_cic_nus_6105.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103A11C72DAA400DD066C /* n64_cic_nus_6105.c */; };
-		B3C103B71C72DAA400DD066C /* pif.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103A31C72DAA400DD066C /* pif.c */; };
-		B3C103B81C72DAA400DD066C /* rumblepak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103A51C72DAA400DD066C /* rumblepak.c */; };
-		B3C103B91C72DAA400DD066C /* si_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103A71C72DAA400DD066C /* si_controller.c */; };
-		B3C103BA1C72DAA400DD066C /* vi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103AA1C72DAA400DD066C /* vi_controller.c */; };
-		B3C103BE1C72DAD700DD066C /* rsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103BC1C72DAD700DD066C /* rsp_core.c */; };
-		B3C103C21C72DAFF00DD066C /* ai_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C01C72DAFF00DD066C /* ai_controller.c */; };
-		B3C103C41C72DBE000DD066C /* cached_interp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C31C72DBE000DD066C /* cached_interp.c */; };
-		B3C103C61C72DC5900DD066C /* cp0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C51C72DC5900DD066C /* cp0.c */; };
-		B3C103C91C72DCE400DD066C /* mi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C81C72DCE400DD066C /* mi_controller.c */; };
-		B3C103CB1C72DD1600DD066C /* r4300_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CA1C72DD1600DD066C /* r4300_core.c */; };
-		B3C103CD1C72DD4B00DD066C /* tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CC1C72DD4B00DD066C /* tlb.c */; };
-		B3C103D61C72DDBA00DD066C /* emulate_game_controller_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CE1C72DDA000DD066C /* emulate_game_controller_via_input_plugin.c */; };
-		B3C103D71C72DDC400DD066C /* get_time_using_C_localtime.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D21C72DDA000DD066C /* get_time_using_C_localtime.c */; };
-		B3C103D81C72DDCB00DD066C /* rumble_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D41C72DDAD00DD066C /* rumble_via_input_plugin.c */; };
-		B3C103D91C72DDE300DD066C /* emulate_speaker_via_audio_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D01C72DDA000DD066C /* emulate_speaker_via_audio_plugin.c */; };
+		B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8561DECE9D800602746 /* PVSupport.framework */; };
+		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3B3B8591DECEA0200602746 /* PVN64SystemResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C103171C72AA8F00DD066C /* PVN64SystemResponder.h */; };
+		B3B3B85A1DECEA0200602746 /* PVN64SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3B3B8681DECEAC000602746 /* alist.c in Sources */ = {isa = PBXBuildFile; fileRef = 942130CB1793DD8F00E57482 /* alist.c */; };
+		B3B3B8691DECEAC000602746 /* cicx105.c in Sources */ = {isa = PBXBuildFile; fileRef = 942130CD1793DD8F00E57482 /* cicx105.c */; };
+		B3B3B86A1DECEAC000602746 /* jpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B875166C2A0A00082F27 /* jpeg.c */; };
+		B3B3B86B1DECEAC000602746 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B876166C2A0A00082F27 /* main.c */; };
+		B3B3B86C1DECEAC000602746 /* ucode1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B878166C2A0A00082F27 /* ucode1.cpp */; };
+		B3B3B86D1DECEAC000602746 /* ucode2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B879166C2A0A00082F27 /* ucode2.cpp */; };
+		B3B3B86E1DECEAC000602746 /* ucode3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B87A166C2A0A00082F27 /* ucode3.cpp */; };
+		B3B3B86F1DECEAC000602746 /* ucode3mp3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B87B166C2A0A00082F27 /* ucode3mp3.cpp */; };
+		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		3DC21458166C6BE10014251E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3DCABE0D166C6A20002F2066;
-			remoteInfo = "mupen64plus-video-rice";
-		};
-		3DCABDC3166C4D86002F2066 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3DCABDB2166C4ACB002F2066;
-			remoteInfo = "mupen64plus-rsp-hle";
-		};
-		942130D51793E8FC00E57482 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 94D58BAD16BE327A0093CD72;
-			remoteInfo = "mupen64plus-video-glide64mk2";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3DCABDC1166C4C9F002F2066 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				942130D71793E90800E57482 /* mupen64plus-video-glide64mk2.so in CopyFiles */,
-				3DC21457166C6BB90014251E /* mupen64plus-video-rice.so in CopyFiles */,
-				3DCABDC2166C4CB2002F2066 /* mupen64plus-rsp-hle.so in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3C102911C729B4200DD066C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -639,10 +379,7 @@
 		3DC2145C166C6D7F0014251E /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		3DC2145D166C6D7F0014251E /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		3DC2145E166C6D7F0014251E /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
-		3DCABDB3166C4ACB002F2066 /* mupen64plus-rsp-hle.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "mupen64plus-rsp-hle.so"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DCABDC7166C524C002F2066 /* SDL_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl.h; sourceTree = "<group>"; };
-		3DCABE0E166C6A20002F2066 /* mupen64plus-video-rice.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "mupen64plus-video-rice.so"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8D5B49B6048680CD000E48DA /* Mupen64Plus.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Mupen64Plus.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		942130C61793D30000E57482 /* osal_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osal_opengl.h; sourceTree = "<group>"; };
 		942130CA1793DD8F00E57482 /* alist_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alist_internal.h; sourceTree = "<group>"; };
@@ -653,7 +390,6 @@
 		942130CF1793DD8F00E57482 /* jpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jpeg.h; sourceTree = "<group>"; };
 		942130D81793E96600E57482 /* glitchmain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = glitchmain.cpp; sourceTree = "<group>"; };
 		944951E514D912E500FC80E7 /* fpu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fpu.h; sourceTree = "<group>"; };
-		94D58BE416BE327A0093CD72 /* mupen64plus-video-glide64mk2.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "mupen64plus-video-glide64mk2.so"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94D58BE716BE33EC0093CD72 /* Glide64mk2.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Glide64mk2.ini; sourceTree = "<group>"; };
 		94D58BEA16BE33EC0093CD72 /* mupen64plus-video-glide64mk2.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "mupen64plus-video-glide64mk2.vcxproj"; sourceTree = "<group>"; };
 		94D58BEB16BE33EC0093CD72 /* mupen64plus-video-glide64mk2.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "mupen64plus-video-glide64mk2.vcxproj.filters"; sourceTree = "<group>"; };
@@ -934,7 +670,6 @@
 		94E6B8FB166C2A0A00082F27 /* Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Video.h; sourceTree = "<group>"; };
 		94E6B8FC166C2A0A00082F27 /* video_api_export.ver */ = {isa = PBXFileReference; lastKnownFileType = text; path = video_api_export.ver; sourceTree = "<group>"; };
 		94F2868616C6CFDB0075A73E /* Gfx_1.3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Gfx_1.3.h; sourceTree = "<group>"; };
-		B33115781C72F6E500E9AD14 /* libPVSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPVSupport.a; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/libPVSupport.a"; sourceTree = "<group>"; };
 		B331157A1C72FBE000E9AD14 /* interpreter_cop0.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter_cop0.def; sourceTree = "<group>"; };
 		B331157B1C72FBE100E9AD14 /* interpreter_cop1.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter_cop1.def; sourceTree = "<group>"; };
 		B331157C1C72FBE100E9AD14 /* interpreter_r4300.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = interpreter_r4300.def; sourceTree = "<group>"; };
@@ -975,13 +710,16 @@
 		B33115B41C730A2B00E9AD14 /* select.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = select.h; sourceTree = "<group>"; };
 		B33115B51C730A2B00E9AD14 /* vu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vu.c; sourceTree = "<group>"; };
 		B33115B61C730A2B00E9AD14 /* vu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vu.h; sourceTree = "<group>"; };
-		B37EFEF01C72E63300857158 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mupen64plusRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B37EFEF21C72E63300857158 /* mupen64plus-video-rice-dynamic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mupen64plus-video-rice-dynamic.h"; sourceTree = "<group>"; };
+		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusVideoRice.h; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B37EFF381C72F43300857158 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusDynamic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B37EFF3A1C72F43400857158 /* PVMupen64PlusDynamic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusDynamic.h; sourceTree = "<group>"; };
+		B37EFF381C72F43300857158 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64Plus.h; sourceTree = "<group>"; };
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3C102931C729B4200DD066C /* libPVMupen64Plus.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPVMupen64Plus.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B3B8561DECE9D800602746 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusRspHLE.h; sourceTree = "<group>"; };
+		B3B3B8631DECEA9100602746 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C103111C72AA2B00DD066C /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C103131C72AA3200DD066C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C103151C72AA3800DD066C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1110,43 +848,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3DCABDB0166C4ACB002F2066 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3DCABE0B166C6A20002F2066 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C1031F1C72CCAA00DD066C /* OpenGLES.framework in Frameworks */,
-				3DC21460166C6F170014251E /* libz.dylib in Frameworks */,
-				3DC2145F166C6D7F0014251E /* libpng.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8D5B49B3048680CD000E48DA /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
-				3D208E981182550400BEAA42 /* OpenGL.framework in Frameworks */,
-				3D208E9E1182551500BEAA42 /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		94D58BDC16BE327A0093CD72 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				94D58BDE16BE327A0093CD72 /* libz.dylib in Frameworks */,
-				94D58BDF16BE327A0093CD72 /* OpenGL.framework in Frameworks */,
-				94D58BE016BE327A0093CD72 /* libpng.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B33115881C7309C200E9AD14 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1168,19 +869,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B33115791C72F6E500E9AD14 /* libPVSupport.a in Frameworks */,
+				B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */,
 				B33115771C72F67800E9AD14 /* libz.tbd in Frameworks */,
 				B37EFF991C72F48C00857158 /* OpenGLES.framework in Frameworks */,
 				B37EFF981C72F48700857158 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C102901C729B4200DD066C /* Frameworks */ = {
+		B3B3B85C1DECEA9100602746 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C103161C72AA3800DD066C /* Foundation.framework in Frameworks */,
-				B3C103121C72AA2B00DD066C /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1190,19 +889,17 @@
 		089C166AFE841209C02AAC07 /* Mupen64Plus */ = {
 			isa = PBXGroup;
 			children = (
-				B33115781C72F6E500E9AD14 /* libPVSupport.a */,
-				B3C103151C72AA3800DD066C /* Foundation.framework */,
-				B3C103131C72AA3200DD066C /* libz.tbd */,
-				B3C103111C72AA2B00DD066C /* OpenGLES.framework */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
-				B37EFEF11C72E63300857158 /* mupen64plus-video-rice-dynamic */,
-				B37EFF391C72F43400857158 /* PVMupen64PlusDynamic */,
+				B37EFEF11C72E63300857158 /* PVMupen64PlusVideoRice */,
+				B37EFF391C72F43400857158 /* PVMupen64Plus */,
 				B331158D1C7309C200E9AD14 /* PVRSPCXD4 */,
+				B3B3B8611DECEA9100602746 /* PVMupen64PlusRspHLE */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				3D208CB511824B5E00BEAA42 /* mupen64plus-Info.plist */,
+				B3B3B8551DECE9D800602746 /* Frameworks */,
 			);
 			name = Mupen64Plus;
 			sourceTree = "<group>";
@@ -1261,14 +958,10 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D5B49B6048680CD000E48DA /* Mupen64Plus.oecoreplugin */,
-				3DCABDB3166C4ACB002F2066 /* mupen64plus-rsp-hle.so */,
-				3DCABE0E166C6A20002F2066 /* mupen64plus-video-rice.so */,
-				94D58BE416BE327A0093CD72 /* mupen64plus-video-glide64mk2.so */,
-				B3C102931C729B4200DD066C /* libPVMupen64Plus.a */,
-				B37EFEF01C72E63300857158 /* mupen64plusRice.framework */,
-				B37EFF381C72F43300857158 /* PVMupen64PlusDynamic.framework */,
+				B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */,
+				B37EFF381C72F43300857158 /* PVMupen64Plus.framework */,
 				B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */,
+				B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2429,22 +2122,44 @@
 			path = vu;
 			sourceTree = "<group>";
 		};
-		B37EFEF11C72E63300857158 /* mupen64plus-video-rice-dynamic */ = {
+		B37EFEF11C72E63300857158 /* PVMupen64PlusVideoRice */ = {
 			isa = PBXGroup;
 			children = (
-				B37EFEF21C72E63300857158 /* mupen64plus-video-rice-dynamic.h */,
+				B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */,
 				B37EFEF41C72E63300857158 /* Info.plist */,
 			);
+			name = PVMupen64PlusVideoRice;
 			path = "mupen64plus-video-rice-dynamic";
 			sourceTree = "<group>";
 		};
-		B37EFF391C72F43400857158 /* PVMupen64PlusDynamic */ = {
+		B37EFF391C72F43400857158 /* PVMupen64Plus */ = {
 			isa = PBXGroup;
 			children = (
-				B37EFF3A1C72F43400857158 /* PVMupen64PlusDynamic.h */,
+				B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */,
 				B37EFF3C1C72F43400857158 /* Info.plist */,
 			);
+			name = PVMupen64Plus;
 			path = PVMupen64PlusDynamic;
+			sourceTree = "<group>";
+		};
+		B3B3B8551DECE9D800602746 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3C103151C72AA3800DD066C /* Foundation.framework */,
+				B3C103131C72AA3200DD066C /* libz.tbd */,
+				B3C103111C72AA2B00DD066C /* OpenGLES.framework */,
+				B3B3B8561DECE9D800602746 /* PVSupport.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3B3B8611DECEA9100602746 /* PVMupen64PlusRspHLE */ = {
+			isa = PBXGroup;
+			children = (
+				B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */,
+				B3B3B8631DECEA9100602746 /* Info.plist */,
+			);
+			path = PVMupen64PlusRspHLE;
 			sourceTree = "<group>";
 		};
 		B3C103231C72D03600DD066C /* new_dynarec */ = {
@@ -2605,82 +2320,24 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */,
+				B3B3B8591DECEA0200602746 /* PVN64SystemResponder.h in Headers */,
+				B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */,
+				B3B3B85A1DECEA0200602746 /* PVN64SystemResponderClient.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3B3B85D1DECEA9100602746 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3DCABDB2166C4ACB002F2066 /* mupen64plus-rsp-hle */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3DCABDB4166C4ACB002F2066 /* Build configuration list for PBXNativeTarget "mupen64plus-rsp-hle" */;
-			buildPhases = (
-				3DCABDAF166C4ACB002F2066 /* Sources */,
-				3DCABDB0166C4ACB002F2066 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "mupen64plus-rsp-hle";
-			productName = "mupen64plus-rsp-hle";
-			productReference = 3DCABDB3166C4ACB002F2066 /* mupen64plus-rsp-hle.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		3DCABE0D166C6A20002F2066 /* mupen64plus-video-rice */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3DCABE0F166C6A20002F2066 /* Build configuration list for PBXNativeTarget "mupen64plus-video-rice" */;
-			buildPhases = (
-				3DCABE0A166C6A20002F2066 /* Sources */,
-				3DCABE0B166C6A20002F2066 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "mupen64plus-video-rice";
-			productName = "mupen64plus-video-rice";
-			productReference = 3DCABE0E166C6A20002F2066 /* mupen64plus-video-rice.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
-		8D5B49AC048680CD000E48DA /* Mupen64Plus */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Mupen64Plus" */;
-			buildPhases = (
-				8D5B49B1048680CD000E48DA /* Sources */,
-				8D5B49AF048680CD000E48DA /* Resources */,
-				8D5B49B3048680CD000E48DA /* Frameworks */,
-				3DCABDC1166C4C9F002F2066 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				942130D61793E8FC00E57482 /* PBXTargetDependency */,
-				3DC21459166C6BE10014251E /* PBXTargetDependency */,
-				3DCABDC4166C4D86002F2066 /* PBXTargetDependency */,
-			);
-			name = Mupen64Plus;
-			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = Mupen64Plus;
-			productReference = 8D5B49B6048680CD000E48DA /* Mupen64Plus.oecoreplugin */;
-			productType = "com.apple.product-type.bundle";
-		};
-		94D58BAD16BE327A0093CD72 /* mupen64plus-video-glide64mk2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 94D58BE116BE327A0093CD72 /* Build configuration list for PBXNativeTarget "mupen64plus-video-glide64mk2" */;
-			buildPhases = (
-				94D58BAE16BE327A0093CD72 /* Sources */,
-				94D58BDC16BE327A0093CD72 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "mupen64plus-video-glide64mk2";
-			productName = "mupen64plus-video-rice";
-			productReference = 94D58BE416BE327A0093CD72 /* mupen64plus-video-glide64mk2.so */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		B331158B1C7309C200E9AD14 /* PVRSPCXD4 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B33115911C7309C200E9AD14 /* Build configuration list for PBXNativeTarget "PVRSPCXD4" */;
@@ -2699,9 +2356,9 @@
 			productReference = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B37EFEEF1C72E63300857158 /* mupen64plusRice */ = {
+		B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "mupen64plusRice" */;
+			buildConfigurationList = B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoRice" */;
 			buildPhases = (
 				B37EFEEB1C72E63300857158 /* Sources */,
 				B37EFEEC1C72E63300857158 /* Frameworks */,
@@ -2712,14 +2369,14 @@
 			);
 			dependencies = (
 			);
-			name = mupen64plusRice;
+			name = PVMupen64PlusVideoRice;
 			productName = "mupen64plus-video-rice-dynamic";
-			productReference = B37EFEF01C72E63300857158 /* mupen64plusRice.framework */;
+			productReference = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B37EFF371C72F43300857158 /* PVMupen64PlusDynamic */ = {
+		B37EFF371C72F43300857158 /* PVMupen64Plus */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B37EFF3D1C72F43400857158 /* Build configuration list for PBXNativeTarget "PVMupen64PlusDynamic" */;
+			buildConfigurationList = B37EFF3D1C72F43400857158 /* Build configuration list for PBXNativeTarget "PVMupen64Plus" */;
 			buildPhases = (
 				B37EFF331C72F43300857158 /* Sources */,
 				B37EFF341C72F43300857158 /* Frameworks */,
@@ -2730,27 +2387,28 @@
 			);
 			dependencies = (
 			);
-			name = PVMupen64PlusDynamic;
+			name = PVMupen64Plus;
 			productName = PVMupen64PlusDynamic;
-			productReference = B37EFF381C72F43300857158 /* PVMupen64PlusDynamic.framework */;
+			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C102921C729B4200DD066C /* PVMupen64Plus */ = {
+		B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C102991C729B4300DD066C /* Build configuration list for PBXNativeTarget "PVMupen64Plus" */;
+			buildConfigurationList = B3B3B8651DECEA9100602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusRspHLE" */;
 			buildPhases = (
-				B3C1028F1C729B4200DD066C /* Sources */,
-				B3C102901C729B4200DD066C /* Frameworks */,
-				B3C102911C729B4200DD066C /* CopyFiles */,
+				B3B3B85B1DECEA9100602746 /* Sources */,
+				B3B3B85C1DECEA9100602746 /* Frameworks */,
+				B3B3B85D1DECEA9100602746 /* Headers */,
+				B3B3B85E1DECEA9100602746 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = PVMupen64Plus;
-			productName = PVMupen64Plus;
-			productReference = B3C102931C729B4200DD066C /* libPVMupen64Plus.a */;
-			productType = "com.apple.product-type.library.static";
+			name = PVMupen64PlusRspHLE;
+			productName = PVMupen64PlusRspHLE;
+			productReference = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -2759,23 +2417,21 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					B331158B1C7309C200E9AD14 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 9DSA2J9CHZ;
 					};
 					B37EFEEF1C72E63300857158 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 9DSA2J9CHZ;
 					};
 					B37EFF371C72F43300857158 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = 9DSA2J9CHZ;
 					};
-					B3C102921C729B4200DD066C = {
-						CreatedOnToolsVersion = 7.3;
+					B3B3B85F1DECEA9100602746 = {
+						CreatedOnToolsVersion = 8.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -2790,36 +2446,15 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* Mupen64Plus */,
-				3DCABDB2166C4ACB002F2066 /* mupen64plus-rsp-hle */,
-				3DCABE0D166C6A20002F2066 /* mupen64plus-video-rice */,
-				B37EFEEF1C72E63300857158 /* mupen64plusRice */,
-				94D58BAD16BE327A0093CD72 /* mupen64plus-video-glide64mk2 */,
-				B3C102921C729B4200DD066C /* PVMupen64Plus */,
-				B37EFF371C72F43300857158 /* PVMupen64PlusDynamic */,
+				B37EFF371C72F43300857158 /* PVMupen64Plus */,
+				B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */,
+				B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */,
 				B331158B1C7309C200E9AD14 /* PVRSPCXD4 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		8D5B49AF048680CD000E48DA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-				3D208DCA11824C2200BEAA42 /* LICENSES in Resources */,
-				3D208DB911824C2200BEAA42 /* mupen64plus.cht in Resources */,
-				3D208DBA11824C2200BEAA42 /* mupen64plus.ini in Resources */,
-				3D208DCD11824C2200BEAA42 /* README in Resources */,
-				3D208DCE11824C2200BEAA42 /* RELEASE in Resources */,
-				3DCABDC8166C5BE2002F2066 /* RiceVideoLinux.ini in Resources */,
-				94D58CAC16BE5DAD0093CD72 /* Glide64mk2.ini in Resources */,
-				3D208E4B11824D7A00BEAA42 /* lgpl-license in Resources */,
-				3D208E4C11824D7B00BEAA42 /* gpl-license in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B331158A1C7309C200E9AD14 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2841,151 +2476,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3B3B85E1DECEA9100602746 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		3DCABDAF166C4ACB002F2066 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3DCABDBB166C4B89002F2066 /* jpeg.c in Sources */,
-				3DCABDBC166C4B89002F2066 /* main.c in Sources */,
-				3DCABDBD166C4B89002F2066 /* ucode1.cpp in Sources */,
-				3DCABDBE166C4B89002F2066 /* ucode2.cpp in Sources */,
-				3DCABDBF166C4B89002F2066 /* ucode3.cpp in Sources */,
-				3DCABDC0166C4B89002F2066 /* ucode3mp3.cpp in Sources */,
-				942130D01793DD8F00E57482 /* alist.c in Sources */,
-				942130D11793DD8F00E57482 /* cicx105.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3DCABE0A166C6A20002F2066 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3DCABE12166C6AB6002F2066 /* Blender.cpp in Sources */,
-				3DCABE17166C6AB6002F2066 /* Combiner.cpp in Sources */,
-				3DCABE1A166C6AB6002F2066 /* CombinerTable.cpp in Sources */,
-				3DCABE1B166C6AB6002F2066 /* Config.cpp in Sources */,
-				3DCABE1D166C6AB6002F2066 /* ConvertImage.cpp in Sources */,
-				3DCABE1F166C6AB6002F2066 /* ConvertImage16.cpp in Sources */,
-				3DCABE22166C6AB6002F2066 /* Debugger.cpp in Sources */,
-				3DCABE24166C6AB6002F2066 /* DecodedMux.cpp in Sources */,
-				3DCABE26166C6AB6002F2066 /* DeviceBuilder.cpp in Sources */,
-				3DCABE2B166C6AB6002F2066 /* FrameBuffer.cpp in Sources */,
-				3DCABE2D166C6AB6002F2066 /* GeneralCombiner.cpp in Sources */,
-				3DCABE2F166C6AB6002F2066 /* GraphicsContext.cpp in Sources */,
-				3DCABE33166C6AB6002F2066 /* BMGImage.c in Sources */,
-				3DCABE36166C6AB6002F2066 /* BMGUtils.c in Sources */,
-				3DCABE38166C6AB6002F2066 /* bmp.c in Sources */,
-				3DCABE3A166C6AB6002F2066 /* pngrw.c in Sources */,
-				3DCABE3D166C6AB6002F2066 /* OGLCombiner.cpp in Sources */,
-				3DCABE44166C6AB6002F2066 /* OGLDecodedMux.cpp in Sources */,
-				3DCABE46166C6AB6002F2066 /* OGLExtCombiner.cpp in Sources */,
-				B3C103221C72CFBD00DD066C /* OGLES2FragmentShaders.cpp in Sources */,
-				3DCABE48166C6AB6002F2066 /* OGLExtensions.cpp in Sources */,
-				3DCABE4A166C6AB6002F2066 /* OGLExtRender.cpp in Sources */,
-				3DCABE4E166C6AB6002F2066 /* OGLGraphicsContext.cpp in Sources */,
-				3DCABE50166C6AB6002F2066 /* OGLRender.cpp in Sources */,
-				3DCABE52166C6AB6002F2066 /* OGLRenderExt.cpp in Sources */,
-				3DCABE53166C6AB6002F2066 /* OGLTexture.cpp in Sources */,
-				3DCABE56166C6AB6002F2066 /* osal_dynamiclib_unix.c in Sources */,
-				3DCABE58166C6AB6002F2066 /* osal_files_unix.c in Sources */,
-				3DCABE5B166C6AB6002F2066 /* Render.cpp in Sources */,
-				3DCABE5D166C6AB6002F2066 /* RenderBase.cpp in Sources */,
-				3DCABE5F166C6AB6002F2066 /* RenderExt.cpp in Sources */,
-				3DCABE60166C6AB6002F2066 /* RenderTexture.cpp in Sources */,
-				3DCABE68166C6AB6002F2066 /* RSP_Parser.cpp in Sources */,
-				3DCABE6A166C6AB6002F2066 /* RSP_S2DEX.cpp in Sources */,
-				3DCABE6C166C6AB6002F2066 /* Texture.cpp in Sources */,
-				3DCABE6E166C6AB6002F2066 /* TextureFilters.cpp in Sources */,
-				3DCABE70166C6AB6002F2066 /* TextureFilters_2xsai.cpp in Sources */,
-				3DCABE71166C6AB6002F2066 /* TextureFilters_hq2x.cpp in Sources */,
-				3DCABE73166C6AB6002F2066 /* TextureFilters_hq4x.cpp in Sources */,
-				3DCABE76166C6AB6002F2066 /* TextureManager.cpp in Sources */,
-				3DCABE7C166C6AB6002F2066 /* VectorMath.cpp in Sources */,
-				3DCABE80166C6AB6002F2066 /* Video.cpp in Sources */,
-				3DC2145A166C6C6E0014251E /* SDLStubs.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8D5B49B1048680CD000E48DA /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3D208DE511824C2200BEAA42 /* callbacks.c in Sources */,
-				3D208DE611824C2200BEAA42 /* common.c in Sources */,
-				3D208DE711824C2200BEAA42 /* config.c in Sources */,
-				3D208DE811824C2200BEAA42 /* debugger.c in Sources */,
-				3D208DE911824C2200BEAA42 /* frontend.c in Sources */,
-				3D208DFE11824C2200BEAA42 /* memory.c in Sources */,
-				3D208E0111824C2200BEAA42 /* dynamiclib_unix.c in Sources */,
-				3D208E0311824C2200BEAA42 /* files_unix.c in Sources */,
-				3D208E0811824C2200BEAA42 /* dummy_audio.c in Sources */,
-				3D208E0911824C2200BEAA42 /* dummy_input.c in Sources */,
-				3D208E0A11824C2200BEAA42 /* dummy_rsp.c in Sources */,
-				3D208E0B11824C2200BEAA42 /* dummy_video.c in Sources */,
-				3D208E0C11824C2200BEAA42 /* plugin.c in Sources */,
-				3D208E1511824C2200BEAA42 /* exception.c in Sources */,
-				3D208E1611824C2200BEAA42 /* interupt.c in Sources */,
-				3D208E1811824C2200BEAA42 /* pure_interp.c in Sources */,
-				3D208E1911824C2200BEAA42 /* r4300.c in Sources */,
-				3D208E1A11824C2200BEAA42 /* recomp.c in Sources */,
-				3D208E2C11824C2200BEAA42 /* assemble.c in Sources */,
-				3D208E2D11824C2200BEAA42 /* gbc.c in Sources */,
-				3D208E2E11824C2200BEAA42 /* gcop0.c in Sources */,
-				3D208E2F11824C2200BEAA42 /* gcop1.c in Sources */,
-				3D208E3011824C2200BEAA42 /* gcop1_d.c in Sources */,
-				3D208E3111824C2200BEAA42 /* gcop1_l.c in Sources */,
-				3D208E3211824C2200BEAA42 /* gcop1_s.c in Sources */,
-				3D208E3311824C2200BEAA42 /* gcop1_w.c in Sources */,
-				3D208E3411824C2200BEAA42 /* gr4300.c in Sources */,
-				3D208E3511824C2200BEAA42 /* gregimm.c in Sources */,
-				3D208E3611824C2200BEAA42 /* gspecial.c in Sources */,
-				3D208E3711824C2200BEAA42 /* gtlb.c in Sources */,
-				3D208E3811824C2200BEAA42 /* regcache.c in Sources */,
-				3D208E5A11824E1C00BEAA42 /* unzip.c in Sources */,
-				3D208E3911824C2200BEAA42 /* rjump.c in Sources */,
-				3D208E5811824E1900BEAA42 /* ioapi.c in Sources */,
-				3D208E5911824E1B00BEAA42 /* zip.c in Sources */,
-				3D208F821182B00300BEAA42 /* MupenGameCore.m in Sources */,
-				3D00F06D1183E4AA002995A1 /* eventloop.m in Sources */,
-				3D00F06E1183E4AA002995A1 /* osd.m in Sources */,
-				3D00F06F1183E4AA002995A1 /* screenshot.m in Sources */,
-				3D00F0811183E52F002995A1 /* SDLStubs.m in Sources */,
-				3D00F0C01183E6FA002995A1 /* vidext.m in Sources */,
-				3D8B35D812260F9D00C4C844 /* main.m in Sources */,
-				0A12672F16A37000000A650A /* reset.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		94D58BAE16BE327A0093CD72 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				94D58CA216BE33EC0093CD72 /* combiner.cpp in Sources */,
-				94D58CA316BE33EC0093CD72 /* geometry.cpp in Sources */,
-				94D58CA516BE33EC0093CD72 /* textures.cpp in Sources */,
-				94D58C7C16BE33EC0093CD72 /* 3dmath.cpp in Sources */,
-				94D58C7E16BE33EC0093CD72 /* Combine.cpp in Sources */,
-				94D58C7F16BE33EC0093CD72 /* Config.cpp in Sources */,
-				94D58C8016BE33EC0093CD72 /* CRC.cpp in Sources */,
-				94D58C8116BE33EC0093CD72 /* Debugger.cpp in Sources */,
-				94D58C8216BE33EC0093CD72 /* DepthBufferRender.cpp in Sources */,
-				94D58C8316BE33EC0093CD72 /* FBtoScreen.cpp in Sources */,
-				94D58C8516BE33EC0093CD72 /* Ini.cpp in Sources */,
-				94D58C8616BE33EC0093CD72 /* Keys.cpp in Sources */,
-				94D58C8716BE33EC0093CD72 /* Main.cpp in Sources */,
-				94D58C8A16BE33EC0093CD72 /* rdp.cpp in Sources */,
-				94D58C8B16BE33EC0093CD72 /* TexBuffer.cpp in Sources */,
-				94D58C8C16BE33EC0093CD72 /* TexCache.cpp in Sources */,
-				94D58C8E16BE33EC0093CD72 /* Util.cpp in Sources */,
-				94D58C8816BE33EC0093CD72 /* osal_dynamiclib_unix.c in Sources */,
-				94D58BDB16BE327A0093CD72 /* SDLStubs.m in Sources */,
-				942130D91793E96600E57482 /* glitchmain.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B33115871C7309C200E9AD14 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3146,119 +2646,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3C1028F1C729B4200DD066C /* Sources */ = {
+		B3B3B85B1DECEA9100602746 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C103D91C72DDE300DD066C /* emulate_speaker_via_audio_plugin.c in Sources */,
-				B3C103B51C72DAA400DD066C /* mempak.c in Sources */,
-				B3C103D71C72DDC400DD066C /* get_time_using_C_localtime.c in Sources */,
-				B3C102D91C72A54100DD066C /* callbacks.c in Sources */,
-				B3C103B21C72DAA400DD066C /* cic.c in Sources */,
-				B3C102DA1C72A54100DD066C /* common.c in Sources */,
-				B3C102DB1C72A54100DD066C /* config.c in Sources */,
-				B3C102DC1C72A54100DD066C /* debugger.c in Sources */,
-				B3C103BE1C72DAD700DD066C /* rsp_core.c in Sources */,
-				B3C103BA1C72DAA400DD066C /* vi_controller.c in Sources */,
-				B3C103AF1C72DAA400DD066C /* rdram_detection_hack.c in Sources */,
-				B3C103C61C72DC5900DD066C /* cp0.c in Sources */,
-				B3C102DD1C72A54100DD066C /* frontend.c in Sources */,
-				B3C103B91C72DAA400DD066C /* si_controller.c in Sources */,
-				B3C102E01C72A54100DD066C /* memory.c in Sources */,
-				B3C103B81C72DAA400DD066C /* rumblepak.c in Sources */,
-				B3C103B61C72DAA400DD066C /* n64_cic_nus_6105.c in Sources */,
-				B3C103781C72DA1D00DD066C /* savestates.c in Sources */,
-				B3C102E31C72A54100DD066C /* dynamiclib_unix.c in Sources */,
-				B3C103881C72DA7400DD066C /* pi_controller.c in Sources */,
-				B3C102E41C72A54100DD066C /* files_unix.c in Sources */,
-				B3C102E51C72A54100DD066C /* dummy_audio.c in Sources */,
-				B3C103B31C72DAA400DD066C /* eeprom.c in Sources */,
-				B3C1036E1C72DA1D00DD066C /* cheat.c in Sources */,
-				B3C1034D1C72D9B400DD066C /* cp1.c in Sources */,
-				B3C102E61C72A54100DD066C /* dummy_input.c in Sources */,
-				B3C102E71C72A54100DD066C /* dummy_rsp.c in Sources */,
-				B3C103AC1C72DAA400DD066C /* fb.c in Sources */,
-				B3C102E81C72A54100DD066C /* dummy_video.c in Sources */,
-				B3C102E91C72A54100DD066C /* plugin.c in Sources */,
-				B3C102EA1C72A54100DD066C /* exception.c in Sources */,
-				B3C103751C72DA1D00DD066C /* mpk_file.c in Sources */,
-				B3C102EB1C72A54100DD066C /* interupt.c in Sources */,
-				B3C1037B1C72DA1D00DD066C /* util.c in Sources */,
-				B3C103871C72DA7400DD066C /* flashram.c in Sources */,
-				B3C102ED1C72A54100DD066C /* pure_interp.c in Sources */,
-				B3C102EE1C72A54100DD066C /* r4300.c in Sources */,
-				B3C102EF1C72A54100DD066C /* recomp.c in Sources */,
-				B3C103B11C72DAA400DD066C /* af_rtc.c in Sources */,
-				B3C102F01C72A54100DD066C /* assemble.c in Sources */,
-				B3C102F11C72A54100DD066C /* gbc.c in Sources */,
-				B3C102F21C72A54100DD066C /* gcop0.c in Sources */,
-				B3C102F31C72A54100DD066C /* gcop1.c in Sources */,
-				B3C102F41C72A54100DD066C /* gcop1_d.c in Sources */,
-				B3C103D81C72DDCB00DD066C /* rumble_via_input_plugin.c in Sources */,
-				B3C103B41C72DAA400DD066C /* game_controller.c in Sources */,
-				B3C102F51C72A54100DD066C /* gcop1_l.c in Sources */,
-				B3C103C91C72DCE400DD066C /* mi_controller.c in Sources */,
-				B3C102F61C72A54100DD066C /* gcop1_s.c in Sources */,
-				B3C1037A1C72DA1D00DD066C /* sra_file.c in Sources */,
-				B3C102F71C72A54100DD066C /* gcop1_w.c in Sources */,
-				B3C1037C1C72DA1D00DD066C /* workqueue.c in Sources */,
-				B3C102F81C72A54100DD066C /* gr4300.c in Sources */,
-				B3C103B01C72DAA400DD066C /* ri_controller.c in Sources */,
-				B3C102F91C72A54100DD066C /* gregimm.c in Sources */,
-				B3C102FA1C72A54100DD066C /* gspecial.c in Sources */,
-				B3C103CD1C72DD4B00DD066C /* tlb.c in Sources */,
-				B3C103AD1C72DAA400DD066C /* rdp_core.c in Sources */,
-				B3C103761C72DA1D00DD066C /* profile.c in Sources */,
-				B3C102FB1C72A54100DD066C /* gtlb.c in Sources */,
-				B3C103771C72DA1D00DD066C /* rom.c in Sources */,
-				B3C102FC1C72A54100DD066C /* regcache.c in Sources */,
-				B3C102FD1C72A54100DD066C /* unzip.c in Sources */,
-				B3C103D61C72DDBA00DD066C /* emulate_game_controller_via_input_plugin.c in Sources */,
-				B3C102FE1C72A54100DD066C /* rjump.c in Sources */,
-				B3C103AE1C72DAA400DD066C /* rdram.c in Sources */,
-				B3C103021C72A54100DD066C /* ioapi.c in Sources */,
-				B3C103031C72A54100DD066C /* zip.c in Sources */,
-				B3C103B71C72DAA400DD066C /* pif.c in Sources */,
-				B3C103071C72A54100DD066C /* MupenGameCore.m in Sources */,
-				B3C103C21C72DAFF00DD066C /* ai_controller.c in Sources */,
-				B3C103CB1C72DD1600DD066C /* r4300_core.c in Sources */,
-				B3C103731C72DA1D00DD066C /* main.c in Sources */,
-				B3C103081C72A54100DD066C /* eventloop.m in Sources */,
-				B3C103791C72DA1D00DD066C /* sdl_key_converter.c in Sources */,
-				B3C103091C72A54100DD066C /* osd.m in Sources */,
-				B3C1030A1C72A54100DD066C /* screenshot.m in Sources */,
-				B3C103861C72DA7400DD066C /* cart_rom.c in Sources */,
-				B3C1030B1C72A54100DD066C /* SDLStubs.m in Sources */,
-				B3C1036F1C72DA1D00DD066C /* eep_file.c in Sources */,
-				B3C1030C1C72A54100DD066C /* vidext.m in Sources */,
-				B3C103C41C72DBE000DD066C /* cached_interp.c in Sources */,
-				B3C103711C72DA1D00DD066C /* fla_file.c in Sources */,
-				B3C103741C72DA1D00DD066C /* md5.c in Sources */,
-				B3C1030D1C72A54100DD066C /* main.m in Sources */,
-				B3C103891C72DA7400DD066C /* sram.c in Sources */,
-				B3C103101C72A54100DD066C /* reset.c in Sources */,
+				B3B3B86B1DECEAC000602746 /* main.c in Sources */,
+				B3B3B86F1DECEAC000602746 /* ucode3mp3.cpp in Sources */,
+				B3B3B86C1DECEAC000602746 /* ucode1.cpp in Sources */,
+				B3B3B8681DECEAC000602746 /* alist.c in Sources */,
+				B3B3B86D1DECEAC000602746 /* ucode2.cpp in Sources */,
+				B3B3B8691DECEAC000602746 /* cicx105.c in Sources */,
+				B3B3B86E1DECEAC000602746 /* ucode3.cpp in Sources */,
+				B3B3B86A1DECEAC000602746 /* jpeg.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		3DC21459166C6BE10014251E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3DCABE0D166C6A20002F2066 /* mupen64plus-video-rice */;
-			targetProxy = 3DC21458166C6BE10014251E /* PBXContainerItemProxy */;
-		};
-		3DCABDC4166C4D86002F2066 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3DCABDB2166C4ACB002F2066 /* mupen64plus-rsp-hle */;
-			targetProxy = 3DCABDC3166C4D86002F2066 /* PBXContainerItemProxy */;
-		};
-		942130D61793E8FC00E57482 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 94D58BAD16BE327A0093CD72 /* mupen64plus-video-glide64mk2 */;
-			targetProxy = 942130D51793E8FC00E57482 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
@@ -3272,95 +2675,33 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB913B08733D840010E9CD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_FAST_MATH = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\"";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				LD_RUNPATH_SEARCH_PATHS = "\"~/Library/Graphics/Quartz Composer Plug-Ins/OpenEmuQC.plugin/Contents/Frameworks/\" \"/Library/Graphics/Quartz Composer Plug-Ins/OpenEmuQC.plugin/Contents/Frameworks/\" ~/Library/Frameworks /Library/Frameworks @loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					/sw/lib,
-				);
-				OTHER_CFLAGS = (
-					"-DIN_OPENEMU",
-					"-DPIC",
-					"-DDYNAREC",
-					"-DM64P_PARALLEL",
-				);
-				PRODUCT_NAME = Mupen64Plus;
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = x86_64;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = oecoreplugin;
-			};
-			name = Debug;
-		};
-		1DEB913C08733D840010E9CD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_C_LANGUAGE_STANDARD = "compiler-default";
-				GCC_DYNAMIC_NO_PIC = YES;
-				GCC_FAST_MATH = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\"";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "\"$(USER_LIBRARY_DIR)/Application Support/OpenEmu/Cores\"";
-				LD_RUNPATH_SEARCH_PATHS = "\"~/Library/Graphics/Quartz Composer Plug-Ins/OpenEmuQC.plugin/Contents/Frameworks/\" \"/Library/Graphics/Quartz Composer Plug-Ins/OpenEmuQC.plugin/Contents/Frameworks/\" ~/Library/Frameworks /Library/Frameworks @loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					/sw/lib,
-				);
-				OTHER_CFLAGS = (
-					"-DIN_OPENEMU",
-					"-DPIC",
-					"-DDYNAREC",
-					"-DM64P_PARALLEL",
-				);
-				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
-				PRODUCT_NAME = Mupen64Plus;
-				SKIP_INSTALL = YES;
-				VALID_ARCHS = x86_64;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = oecoreplugin;
-			};
-			name = Release;
-		};
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -3386,16 +2727,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_CFLAGS = (
 					"-ffast-math",
@@ -3416,200 +2767,6 @@
 			};
 			name = Release;
 		};
-		3DCABDB5166C4ACB002F2066 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = so;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INSTALL_PATH = "";
-				LD_DYLIB_INSTALL_NAME = "";
-				MACH_O_TYPE = mh_bundle;
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Debug;
-		};
-		3DCABDB6166C4ACB002F2066 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = so;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INSTALL_PATH = "";
-				LD_DYLIB_INSTALL_NAME = "";
-				MACH_O_TYPE = mh_bundle;
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Release;
-		};
-		3DCABE10166C6A20002F2066 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_EXTENSION = so;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../DerivedData/OpenEmu/Build/Products/Release\"",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
-				);
-				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = (
-					"-ffast-math",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-mmmx",
-					"-msse",
-					"-fPIC",
-					"-D__unix__",
-					"-DUSE_GLES=1",
-					"-DNEON=1",
-					"-DVFP_HARD=1",
-					"-DSDL_VIDEO_OPENGL_ES2=1",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Debug;
-		};
-		3DCABE11166C6A20002F2066 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_EXTENSION = so;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../DerivedData/OpenEmu/Build/Products/Release\"",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
-				);
-				MACH_O_TYPE = staticlib;
-				OTHER_CFLAGS = (
-					"-ffast-math",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-mmmx",
-					"-msse",
-					"-fPIC",
-					"-D__unix__",
-					"-DUSE_GLES=1",
-					"-DNEON=1",
-					"-DVFP_HARD=1",
-					"-DSDL_VIDEO_OPENGL_ES2=1",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Release;
-		};
-		94D58BE216BE327A0093CD72 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = so;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../DerivedData/OpenEmu/Build/Products/Release\"",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\"";
-				INSTALL_PATH = "";
-				LD_DYLIB_INSTALL_NAME = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
-				);
-				MACH_O_TYPE = mh_bundle;
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Debug;
-		};
-		94D58BE316BE327A0093CD72 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = "";
-				DYLIB_CURRENT_VERSION = "";
-				EXECUTABLE_EXTENSION = so;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../DerivedData/OpenEmu/Build/Products/Release\"",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\"";
-				INSTALL_PATH = "";
-				LD_DYLIB_INSTALL_NAME = "";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
-				);
-				MACH_O_TYPE = mh_bundle;
-				PRIVATE_HEADERS_FOLDER_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PUBLIC_HEADERS_FOLDER_PATH = "";
-			};
-			name = Release;
-		};
 		B33115921C7309C200E9AD14 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3623,10 +2780,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3640,6 +2798,7 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -3683,11 +2842,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3696,6 +2856,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
@@ -3739,11 +2900,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3761,13 +2923,13 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mupen64plus-core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
 					"\"$(SRCROOT)/png\"",
 				);
 				INFOPLIST_FILE = "mupen64plus-video-rice-dynamic/Info.plist";
@@ -3795,7 +2957,7 @@
 					"-DSDL_VIDEO_OPENGL_ES2=1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.mupen64plusRice;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3816,12 +2978,13 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3834,13 +2997,13 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mupen64plus-core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
 					"\"$(SRCROOT)/png\"",
 				);
 				INFOPLIST_FILE = "mupen64plus-video-rice-dynamic/Info.plist";
@@ -3868,7 +3031,7 @@
 					"-DSDL_VIDEO_OPENGL_ES2=1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.mupen64plusRice;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3893,10 +3056,11 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3912,13 +3076,13 @@
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mupen64plus-core/src\"",
 					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3927,7 +3091,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					/sw/lib,
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
@@ -3936,7 +3099,7 @@
 					"-DDYNAREC",
 					"-DM64P_PARALLEL",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64PlusDynamic;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3960,7 +3123,128 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/mupen64plus-core/src\"",
+					"\"$(SRCROOT)/Compatibility/SDL\"",
+				);
+				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-DIN_OPENEMU",
+					"-DPIC",
+					"-DDYNAREC",
+					"-DM64P_PARALLEL",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3B3B8661DECEA9100602746 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMupen64plusRspHLE;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3B3B8671DECEA9100602746 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -3972,34 +3256,18 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
-				);
-				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
+				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					/sw/lib,
-				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"-DIN_OPENEMU",
-					"-DPIC",
-					"-DDYNAREC",
-					"-DM64P_PARALLEL",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64PlusDynamic;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMupen64plusRspHLE;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -4009,159 +3277,14 @@
 			};
 			name = Release;
 		};
-		B3C1029A1C729B4300DD066C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					/sw/lib,
-				);
-				MTL_ENABLE_DEBUG_INFO = YES;
-				OTHER_CFLAGS = (
-					"-DIN_OPENEMU",
-					"-DPIC",
-					"-DDYNAREC",
-					"-DM64P_PARALLEL",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		B3C1029B1C729B4300DD066C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_MODEL_TUNING = G5;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/mupen64plus-core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"$(SRCROOT)/../PVSupport/**",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-					/sw/lib,
-				);
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"-DIN_OPENEMU",
-					"-DPIC",
-					"-DDYNAREC",
-					"-DM64P_PARALLEL",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "Mupen64Plus" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1DEB913B08733D840010E9CD /* Debug */,
-				1DEB913C08733D840010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVMupen64Plus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB913F08733D840010E9CD /* Debug */,
 				1DEB914008733D840010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3DCABDB4166C4ACB002F2066 /* Build configuration list for PBXNativeTarget "mupen64plus-rsp-hle" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3DCABDB5166C4ACB002F2066 /* Debug */,
-				3DCABDB6166C4ACB002F2066 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3DCABE0F166C6A20002F2066 /* Build configuration list for PBXNativeTarget "mupen64plus-video-rice" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3DCABE10166C6A20002F2066 /* Debug */,
-				3DCABE11166C6A20002F2066 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		94D58BE116BE327A0093CD72 /* Build configuration list for PBXNativeTarget "mupen64plus-video-glide64mk2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				94D58BE216BE327A0093CD72 /* Debug */,
-				94D58BE316BE327A0093CD72 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -4173,8 +3296,9 @@
 				B33115931C7309C200E9AD14 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "mupen64plusRice" */ = {
+		B37EFEF71C72E63300857158 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoRice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B37EFEF51C72E63300857158 /* Debug */,
@@ -4183,7 +3307,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B37EFF3D1C72F43400857158 /* Build configuration list for PBXNativeTarget "PVMupen64PlusDynamic" */ = {
+		B37EFF3D1C72F43400857158 /* Build configuration list for PBXNativeTarget "PVMupen64Plus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B37EFF3E1C72F43400857158 /* Debug */,
@@ -4192,14 +3316,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C102991C729B4300DD066C /* Build configuration list for PBXNativeTarget "PVMupen64Plus" */ = {
+		B3B3B8651DECEA9100602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusRspHLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C1029A1C729B4300DD066C /* Debug */,
-				B3C1029B1C729B4300DD066C /* Release */,
+				B3B3B8661DECEA9100602746 /* Debug */,
+				B3B3B8671DECEA9100602746 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

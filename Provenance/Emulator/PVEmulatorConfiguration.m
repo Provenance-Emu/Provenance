@@ -33,7 +33,8 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
-#import "MupenGameCore.h"
+#import <PVMupen64Plus/MupenGameCore.h>
+#import "PVN64ControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
 
