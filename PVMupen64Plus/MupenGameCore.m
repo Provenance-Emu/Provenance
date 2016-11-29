@@ -125,8 +125,10 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
-//    dispatch_release(mupenWaitToBeginFrameSemaphore);
-//    dispatch_release(coreWaitToEndFrameSemaphore);
+#if !__has_feature(objc_arc)
+    dispatch_release(mupenWaitToBeginFrameSemaphore);
+    dispatch_release(coreWaitToEndFrameSemaphore);
+#endif
 }
 
 // Pass 0 as paramType to receive all state changes.
@@ -579,7 +581,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (GLenum)pixelFormat
 {
-    return GL_RGBA;
+    return GL_BGRA;
 }
 
 - (GLenum)pixelType
