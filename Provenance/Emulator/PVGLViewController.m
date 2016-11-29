@@ -198,9 +198,20 @@ EAGLContext* CreateBestEAGLContext()
             triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
         }
 
+        CGFloat width = self.emulatorCore.bufferSize.width;
+        CGFloat height = self.emulatorCore.bufferSize.height;
+        GLenum pixelFormat = [self.emulatorCore pixelFormat];
+        GLenum pixelType  =  [self.emulatorCore pixelType];
+        GLenum internalPixelFormat = [self.emulatorCore internalPixelFormat];
+        
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
+// Some stuff i'm playing with from various docs on texture shring -joem
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexImage2D(GL_TEXTURE_2D, 0, internalPixelFormat,  width, height, 0, pixelFormat, pixelType, NULL);
+//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, pixelFormat, pixelType, self.emulatorCore.videoBuffer);
 
+        // Apple Open GL has an effect for rendering a tetxture. 
 //        if (texture)
 //        {
 //            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
@@ -209,8 +220,8 @@ EAGLContext* CreateBestEAGLContext()
 //            self.effect.texture2d0.enabled = YES;
 //            self.effect.useConstantColor = YES;
 //        }
-
-        [self.effect prepareToDraw];
+//
+//        [self.effect prepareToDraw];
 
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
@@ -242,7 +253,7 @@ EAGLContext* CreateBestEAGLContext()
     {
         @synchronized(self.emulatorCore)
         {
-//            renderBlock();
+            renderBlock();
         }
     }
 }
@@ -350,9 +361,9 @@ EAGLContext* CreateBestEAGLContext()
 
     [self renderEnd];
     [_glContext presentRenderbuffer:GL_RENDERBUFFER];
-//    GLKView *view = (GLKView *)self.view;
-//    dispatch_sync(dispatch_get_main_queue(), ^{
-//        [view display];
-//    });
+    GLKView *view = (GLKView *)self.view;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [view display];
+    });
 }
 @end
