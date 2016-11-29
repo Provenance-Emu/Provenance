@@ -452,11 +452,15 @@ static void MupenSetAudioSpeed(int percent)
                      NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
                      NSFilePathErrorKey : fileName
                  }];
-                 block(NO, error);
+                 if (block) {
+                     block(NO, error);
+                 }
                  return;
              }
 
-             block(YES, nil);
+             if (block) {
+                 block(YES, nil);
+             }
          });
          return NO;
      }];
