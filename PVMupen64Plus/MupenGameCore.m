@@ -432,6 +432,12 @@ static void MupenSetAudioSpeed(int percent)
     CoreDoCommand(M64CMD_RESET, 1 /* hard reset */, NULL);
 }
 
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+    [self saveStateToFileAtPath:fileName completionHandler:nil];
+    // FIXME: Return real save result
+    return YES;
+}
+
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
     [self OE_addHandlerForType:M64CORE_STATE_SAVECOMPLETE usingBlock:
@@ -478,6 +484,12 @@ static void MupenSetAudioSpeed(int percent)
 
          return !scheduleSaveState();
      }];
+}
+
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+    [self loadStateFromFileAtPath:fileName completionHandler:nil];
+    return YES;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block

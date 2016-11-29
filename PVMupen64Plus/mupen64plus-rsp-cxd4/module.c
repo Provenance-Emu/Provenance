@@ -21,6 +21,8 @@
 #include <windows.h>
 #endif
 
+#include <CoreFoundation/CoreFoundation.h>
+
 #include "module.h"
 #include "su.h"
 
@@ -629,7 +631,12 @@ NOINLINE int my_system(char* command)
     CloseHandle(info_process.hProcess);
     CloseHandle(info_process.hThread);
 #else
+#if TARGET_OS_TV
+    // system not available in tvOS
+    ret_slot = 0;
+#else
     ret_slot = system(command);
+#endif
 #endif
     return (ret_slot);
 }
