@@ -89,6 +89,10 @@
 {
     if (![self.conflictedFiles count])
     {
+        if ([indexPath row] == 2) {
+            return YES;
+        }
+        
         return NO;
     }
 
