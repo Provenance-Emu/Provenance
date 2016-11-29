@@ -56,7 +56,9 @@ bool macSetBundlePath(char* buffer)
     {
         DebugMessage(M64MSG_VERBOSE, "checking whether we are using an app bundle: yes");
         // executable is inside an app bundle, use app bundle-relative paths
-        sprintf(buffer, "%s/Contents/Resources/", path);
+        // I needed to mod this for iphone real quick - jm
+        //        sprintf(buffer, "%s/Contents/Resources/", path);
+        sprintf(buffer, "%s/", path);
         return true;
     }
     else

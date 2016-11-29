@@ -368,6 +368,8 @@
 		B3B3B96C1DED144100602746 /* select.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B41C730A2B00E9AD14 /* select.h */; };
 		B3B3B96D1DED144100602746 /* vu.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B61C730A2B00E9AD14 /* vu.h */; };
 		B3B3B96E1DED144100602746 /* rsp.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115A61C730A2B00E9AD14 /* rsp.h */; };
+		B3BDEC8B1DED5E02002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
+		B3BDEC8C1DED5E04002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -2923,6 +2925,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BDEC8C1DED5E04002BD7A4 /* RiceVideoLinux.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2951,6 +2954,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BDEC8B1DED5E02002BD7A4 /* RiceVideoLinux.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
