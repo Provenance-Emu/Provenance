@@ -247,6 +247,8 @@
 		B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */; };
 		B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */; };
+		B3BDEC931DED60A1002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */; };
+		B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */; };
 		B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; };
 		B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
@@ -602,6 +604,7 @@
 		B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RiceVideoLinux.ini; path = "PVMupen64Plus/mupen64plus-video-rice/data/RiceVideoLinux.ini"; sourceTree = "<group>"; };
+		B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mupen64plus.ini; path = "PVMupen64Plus/mupen64plus-core/data/mupen64plus.ini"; sourceTree = "<group>"; };
 		B3C9D42F1DEA1B260068D057 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -826,6 +829,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */,
 				B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
@@ -1505,6 +1509,7 @@
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
+				B3BDEC931DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
 				B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
@@ -1523,6 +1528,7 @@
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */,
+				B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
