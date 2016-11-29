@@ -1,0 +1,64 @@
+Libpng 1.6.26 - October 20, 2016
+
+This is a public release of libpng, intended for use in production codes.
+
+Files available for download:
+
+Source files with LF line endings (for Unix/Linux) and with a
+"configure" script
+
+   libpng-1.6.26.tar.xz (LZMA-compressed, recommended)
+   libpng-1.6.26.tar.gz
+
+Source files with CRLF line endings (for Windows), without the
+"configure" script
+
+   lpng1626.7z  (LZMA-compressed, recommended)
+   lpng1626.zip
+
+Other information:
+
+   libpng-1.6.26-README.txt
+   libpng-1.6.26-LICENSE.txt
+   libpng-1.6.26-*.asc (armored detached GPG signatures)
+
+Changes since the last public release (1.6.25):
+
+  Fixed handling zero length IDAT in pngfix (bug report by Agostino Sarubbo,
+    bugfix by John Bowler).
+  Do not issue a png_error() on read in png_set_pCAL() because png_handle_pCAL
+    has allocated memory that libpng needs to free.
+  Conditionally compile png_set_benign_errors() in pngread.c and pngtest.c
+  Issue a png_benign_error instead of a png_error on ADLER32 mismatch
+    while decoding compressed data chunks.
+  Changed PNG_ZLIB_VERNUM to ZLIB_VERNUM in pngpriv.h, pngstruct.h, and
+    pngrutil.c.
+  If CRC handling of critical chunks has been set to PNG_CRC_QUIET_USE,
+    ignore the ADLER32 checksum in the IDAT chunk as well as the chunk CRCs.
+  Issue png_benign_error() on ADLER32 checksum mismatch instead of png_error().
+  Add tests/badcrc.png and tests/badadler.png to tests/pngtest.
+  Merged pngtest.c with libpng-1.7.0beta84/pngtest.c
+  Updated the documentation about CRC and ADLER32 handling.
+  Quieted 117 warnings from clang-3.8 in pngtrans.c, pngread.c,
+     pngwrite.c, pngunknown.c, and pngvalid.c.
+  Quieted the 144 remaining -Wconversion compiler warnings by
+    revising the png_isaligned() macro and trivial changes in png.c,
+    pngerror.c, pngget.c, pngmem.c, pngset.c, pngrtran.c, pngrutil.c,
+    pngwtran.c, pngwrite.c, and pngwutil.c.
+  Quieted (bogus?) clang warnings about "absolute value has no effect"
+    when PNG_USE_ABS is defined.
+  Fixed offsets in contrib/intel/intel_sse.patch
+  Changed integer constant 4294967294 to unsigned 4294967294U in pngconf.h
+    to avoid a signed/unsigned compare in the preprocessor.
+  Use zlib-1.2.8.1 inflateValidate() instead of inflateReset2() to
+    optionally avoid ADLER32 evaluation.
+  Cosmetic change, "ptr != 0" to "ptr != NULL" in png.c and pngrutil.c
+  Despammed email addresses (replaced "@" with " at ").
+
+Send comments/corrections/commendations to png-mng-implement at lists.sf.net
+(subscription required; visit
+https://lists.sourceforge.net/lists/listinfo/png-mng-implement
+to subscribe)
+or to glennrp at users.sourceforge.net
+
+Glenn R-P
