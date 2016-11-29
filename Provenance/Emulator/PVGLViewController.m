@@ -281,13 +281,11 @@ EAGLContext* CreateBestEAGLContext()
 - (void)startRenderingOnAlternateThread
 {
     [self renderStart];
-    
-    
 }
 
 - (void)willRenderFrameOnAlternateThread
 {
-
+    [EAGLContext setCurrentContext:_alternateContext];
 }
 
 - (void)didRenderFrameOnAlternateThread
@@ -332,7 +330,7 @@ EAGLContext* CreateBestEAGLContext()
 {
 
     [self renderStart];
-//    [EAGLContext setCurrentContext:_glContext];
+    [EAGLContext setCurrentContext:_glContext];
     
     GLenum status = glGetError();
     if(status)
