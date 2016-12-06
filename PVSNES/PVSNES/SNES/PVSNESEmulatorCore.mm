@@ -26,11 +26,11 @@
  */
 
 #import "PVSNESEmulatorCore.h"
-#import "OERingBuffer.h"
-#import "OETimingUtils.h"
+#import <PVSupport/OERingBuffer.h>
+#import <PVSupport/OETimingUtils.h>
+#import <PVSupport/PVGameControllerUtilities.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
-#import "PVGameControllerUtilities.h"
 
 #include "memmap.h"
 #include "pixform.h"
@@ -59,12 +59,17 @@ static __weak PVSNESEmulatorCore *_current;
 @public
     UInt16        *soundBuffer;
     unsigned char *videoBuffer;
+    unsigned char *videoBufferA;
+    unsigned char *videoBufferB;
 }
 
 @end
 
 bool8 S9xDeinitUpdate(int width, int height)
 {
+    __strong PVSNESEmulatorCore *strongCurrent = _current;
+    [strongCurrent flipBuffers];
+
     return true;
 }
 
@@ -86,8 +91,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)dealloc
 {
-    S9xSetSamplesAvailableCallback(NULL, NULL);
-    free(videoBuffer);
+    free(videoBufferA);
+    videoBufferA = NULL;
+    free(videoBufferB);
+    videoBufferB = NULL;
     videoBuffer = NULL;
     free(soundBuffer);
     soundBuffer = NULL;
@@ -156,16 +163,25 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     //Settings.AutoDisplayMessages    = true;
     //Settings.FrameTimeNTSC          = 16667;
 
-    if (videoBuffer)
-        free(videoBuffer);
-   
-    videoBuffer = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    if (videoBufferA)
+    {
+        free(videoBufferA);
+    }
+    
+    if (videoBufferB)
+    {
+        free(videoBufferB);
+    }
+
+    videoBuffer = NULL;
+    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
+    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
     //GFX.PixelFormat = 3;
 
     GFX.Pitch = 512 * 2;
     //GFX.PPL = SNES_WIDTH;
-    GFX.Screen = (short unsigned int *)videoBuffer;
-    
+    GFX.Screen = (short unsigned int *)videoBufferA;
+
     S9xUnmapAllControls();
     [self mapButtons];
 
@@ -189,7 +205,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         DLog(@"Couldn't init sound");
     }
 
-    S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, (__bridge void *)self);
+    S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, NULL);
 
     Settings.NoPatch = true;
     Settings.BSXBootup = false;
@@ -217,6 +233,20 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 }
 
 #pragma mark Video
+
+- (void)flipBuffers
+{
+    if (GFX.Screen == (short unsigned int *)videoBufferA)
+    {
+        videoBuffer = videoBufferA;
+        GFX.Screen = (short unsigned int *)videoBufferB;
+    }
+    else
+    {
+        videoBuffer = videoBufferB;
+        GFX.Screen = (short unsigned int *)videoBufferA;
+    }
+}
 
 - (const void *)videoBuffer
 {
@@ -265,17 +295,14 @@ bool8 S9xOpenSoundDevice(void)
 	return true;
 }
 
-- (void)finalizeAudioSamples
+static void FinalizeSamplesAudioCallback(void *)
 {
+    __strong PVSNESEmulatorCore *strongCurrent = _current;
+    
     S9xFinalizeSamples();
     int samples = S9xGetSampleCount();
-    S9xMixSamples((uint8_t*)soundBuffer, samples);
-    [[self ringBufferAtIndex:0] write:soundBuffer maxLength:samples * 2];
-}
-
-static void FinalizeSamplesAudioCallback(void *context)
-{
-    [(__bridge PVSNESEmulatorCore *)context finalizeAudioSamples];
+    S9xMixSamples((uint8_t*)strongCurrent->soundBuffer, samples);
+    [[strongCurrent ringBufferAtIndex:0] write:strongCurrent->soundBuffer maxLength:samples * 2];
 }
 
 - (double)audioSampleRate

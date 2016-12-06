@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1ACEA8E317F75F350031B1C9"
-               BuildableName = "libPVSNES.a"
-               BlueprintName = "PVSNES"
+               BuildableName = "libPVSNES-Static.a"
+               BlueprintName = "PVSNES-Static"
                ReferencedContainer = "container:PVSNES.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,8 +46,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1ACEA8E317F75F350031B1C9"
-            BuildableName = "libPVSNES.a"
-            BlueprintName = "PVSNES"
+            BuildableName = "libPVSNES-Static.a"
+            BlueprintName = "PVSNES-Static"
             ReferencedContainer = "container:PVSNES.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

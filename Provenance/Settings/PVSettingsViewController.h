@@ -15,22 +15,25 @@
 @class PVGameImporter;
 
 @interface PVSettingsViewController : UITableViewController {
-    
-    
+
+
 }
 
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLoadSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoLockSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
-@property (weak, nonatomic) IBOutlet UISwitch *recentGamesSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *imageSmoothing;
 @property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
 @property (weak, nonatomic) IBOutlet UILabel *opacityValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gitMasterShaLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gitLocalShaLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 @property (weak, nonatomic) IBOutlet UISlider *volumeSlider;
 @property (weak, nonatomic) IBOutlet UILabel *volumeValueLabel;
+@property (weak, nonatomic) IBOutlet UISwitch *fpsCountSwitch;
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 

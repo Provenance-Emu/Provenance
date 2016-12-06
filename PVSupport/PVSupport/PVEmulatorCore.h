@@ -7,13 +7,34 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "OERingBuffer.h"
 #import <GameController/GameController.h>
+#import <PVSupport/OERingBuffer.h>
+
+#pragma mark -
+
+/*!
+ * @function GET_CURRENT_OR_RETURN
+ * @abstract Fetch the current game core, or fail with given return code if there is none.
+ */
+#define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
+
+@class OERingBuffer;
+extern NSString *const PVEmulatorCoreErrorDomain;
+
+typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
+    PVEmulatorCoreErrorCodeCouldNotStart            = -1,
+    PVEmulatorCoreErrorCodeCouldNotLoadRom          = -2,
+    PVEmulatorCoreErrorCodeCouldNotLoadState        = -3,
+    PVEmulatorCoreErrorCodeStateHasWrongSize        = -4,
+    PVEmulatorCoreErrorCodeCouldNotSaveState        = -5,
+    PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
+};
+
+#define GetSecondsSince(x) (-[x timeIntervalSinceNow])
 
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
-    NSThread *_gameThread;
 
 	double _sampleRate;
 	
@@ -22,10 +43,9 @@
 
     BOOL isRunning;
     BOOL shouldStop;
-
-    double framerateMultiplier;
-
 }
+
+@property (nonatomic, assign) double emulationFPS;
 
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;

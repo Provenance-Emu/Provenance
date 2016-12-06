@@ -38,8 +38,6 @@
 #else
     self.title = @"Solve Conflicts";
 
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)];
-    [self.navigationItem setRightBarButtonItem:doneButton];
     if (![[self conflictedFiles] count]) {
         self.tableView.separatorColor = [UIColor clearColor];
     }
@@ -60,11 +58,6 @@
     }
     
     self.conflictedFiles = [tempConflictedFiles copy];
-}
-
-- (void)done:(id)sender
-{
-    [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (NSString *)documentsPath
@@ -96,6 +89,10 @@
 {
     if (![self.conflictedFiles count])
     {
+        if ([indexPath row] == 2) {
+            return YES;
+        }
+        
         return NO;
     }
 

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+export LD_PRELOAD=
+
+if ! [ -e /dev/accel ]; then
+	# Wiz
+	export POLLUX_RAM_TIMINGS='ram_timings=2,9,4,1,1,1,1'
+	export POLLUX_LCD_TIMINGS_NTSC='lcd_timings=397,1,37,277,341,0,17,337;clkdiv0=9'
+	export POLLUX_LCD_TIMINGS_PAL='lcd_timings=428,1,37,277,341,0,17,337;clkdiv0=10'
+fi
+
+./PicoDrive "$@"
+
+cd /usr/gp2x
+exec ./gp2xmenu

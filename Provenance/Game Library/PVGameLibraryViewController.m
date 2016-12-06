@@ -23,6 +23,8 @@
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
     #import "PVSettingsViewController.h"
+#else
+#import "PVGame+Sizing.h"
 #endif
 #import "UIImage+Scaling.h"
 #import "PVGameLibrarySectionHeaderView.h"
@@ -41,6 +43,10 @@ NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
 
 NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
+
+#if TARGET_OS_TV
+static const CGFloat CellWidth = 308.0;
+#endif
 
 @interface PVGameLibraryViewController ()
 
@@ -155,6 +161,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                              selector:@selector(handleAppDidBecomeActive:)
                                                  name:UIApplicationDidBecomeActiveNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserverForName:kInterfaceDidChangeNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        [self.collectionView.collectionViewLayout invalidateLayout];
+        [self.collectionView reloadData];
+    }];
 	
 	[PVEmulatorConfiguration sharedInstance]; //load the config file
 		
@@ -195,11 +205,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 
     [self loadGameFromShortcut];
+    
+    [self becomeFirstResponder];
 }
 
 - (void)loadGameFromShortcut
 {
-    PVAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+    PVAppDelegate *appDelegate = (PVAppDelegate *)[[UIApplication sharedApplication] delegate];
     
     if ([appDelegate shortcutItemMD5])
     {
@@ -921,8 +933,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
         PVGame *game = games[[indexPath item]];
         
-        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:@""
-                                                                             message:@""
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                             message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
         if (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPad)
         {
@@ -1394,33 +1406,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
 	
-	NSString *artworkURL = [game customArtworkURL];
-	NSString *originalArtworkURL = [game originalArtworkURL];
-    __block UIImage *artwork = nil;
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if ([artworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:artworkURL];
-        }
-        else if ([originalArtworkURL length])
-        {
-            artwork = [PVMediaCache imageForKey:originalArtworkURL];
-        }
-        
-        if (artwork)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [[cell imageView] setImage:artwork];
-                [cell setNeedsLayout];
-            });
-        }
-    });
-    
-	[cell setText:[game title]];
-	[[cell missingLabel] setText:[game title]];
-	
-    [cell setNeedsLayout];
+    [cell setupWithGame:game];
     
 	return cell;
 }
@@ -1442,9 +1428,14 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
 #if TARGET_OS_TV
-    return CGSizeMake(250, 360);
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    CGSize boxartSize = CGSizeMake(CellWidth, CellWidth / game.boxartAspectRatio);
+    return [PVGameLibraryCollectionViewCell cellSizeForImageSize:boxartSize];
 #else
-	return CGSizeMake(100, 144);
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        return CGSizeMake(100, 144);
+    }
+    return CGSizeMake(100, 100);
 #endif
 }
 
@@ -1458,7 +1449,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    return 30;
+    return 50;
 #else
 	return 5.0;
 #endif
@@ -1467,13 +1458,19 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
 {
 #if TARGET_OS_TV
-    	return UIEdgeInsetsMake(40, 40, 120, 40);
+    	return UIEdgeInsetsMake(40, 0, 120, 0);
 #else
     	return UIEdgeInsetsMake(5, 5, 5, 5);
 #endif
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    PVGame *game = [self gameAtIndexPath:indexPath];
+    [self loadGame:game];
+}
+
+- (PVGame *)gameAtIndexPath:(NSIndexPath *)indexPath
 {
     PVGame *game = nil;
     if (self.searchResults)
@@ -1486,7 +1483,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         game = games[[indexPath item]];
     }
     
-    [self loadGame:game];
+    return game;
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath
@@ -1617,7 +1614,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
-#pragma mark - Image Picker Deleate
+#pragma mark - Image Picker Delegate
 
 #if !TARGET_OS_TV
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -1625,11 +1622,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self dismissViewControllerAnimated:YES completion:NULL];
 	
 	UIImage *image = info[UIImagePickerControllerOriginalImage];
-	image = [image scaledImageWithMaxResolution:200];
+	image = [image scaledImageWithMaxResolution:PVThumbnailMaxResolution];
 	
 	if (image)
 	{
-		NSData *imageData = UIImagePNGRepresentation(image);
+        NSData *imageData = UIImagePNGRepresentation(image);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
         [self.realm beginWriteTransaction];
@@ -1649,4 +1646,47 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 }
 #endif
 
+#pragma mark - Keyboard actions
+
+- (NSArray<UIKeyCommand *>*)keyCommands {
+    NSMutableArray<UIKeyCommand*> *sectionCommands = [NSMutableArray arrayWithCapacity:self.sectionInfo.count+2];
+    
+    for (int i=0; i<self.sectionInfo.count; i++) {
+        NSString *input = [NSString stringWithFormat:@"%i", i];
+        NSString *title = [self nameForSectionAtIndex:i];
+        
+        // Simulator Command + number has shorcuts already
+#if TARGET_OS_SIMULATOR
+        UIKeyModifierFlags flags = UIKeyModifierControl | UIKeyModifierCommand;
+#else
+        UIKeyModifierFlags flags = UIKeyModifierCommand;
+#endif
+        
+        UIKeyCommand* command = [UIKeyCommand keyCommandWithInput:input modifierFlags:flags action:@selector(selectSection:) discoverabilityTitle:title];
+        [sectionCommands addObject:command];
+    }
+
+    UIKeyCommand *findCommand =
+    [UIKeyCommand keyCommandWithInput:@"f"
+                        modifierFlags:UIKeyModifierCommand | UIKeyModifierAlternate
+                               action:@selector(selectSearch:)
+                 discoverabilityTitle:@"Find…"];
+    [sectionCommands addObject:findCommand];
+    
+    return sectionCommands;
+}
+
+- (void)selectSearch:(UIKeyCommand *)sender {
+    [self.searchField becomeFirstResponder];
+}
+
+- (void)selectSection:(UIKeyCommand *)sender {
+    NSInteger section = [sender.input integerValue];
+   
+    [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:0 inSection:section] atScrollPosition:UICollectionViewScrollPositionTop animated:YES];
+}
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
 @end

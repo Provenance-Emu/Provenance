@@ -8,12 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class PVGame;
+
 @interface PVGameLibraryCollectionViewCell : UICollectionViewCell
 
-@property (nonatomic, readonly) UIImageView *imageView;
-@property (nonatomic, readonly) UILabel *titleLabel;
-@property (nonatomic, readonly) UILabel *missingLabel;
+- (void)setupWithGame:(PVGame *)game;
 
-- (void)setText:(NSString *)text;
++ (CGSize)cellSizeForImageSize:(CGSize)imageSize;
 
 @end

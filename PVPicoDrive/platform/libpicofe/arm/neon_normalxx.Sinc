@@ -1,0 +1,686 @@
+@@
+@@  Copyright (C) 2012 Roman Pauer
+@@
+@@  Permission is hereby granted, free of charge, to any person obtaining a copy of
+@@  this software and associated documentation files (the "Software"), to deal in
+@@  the Software without restriction, including without limitation the rights to
+@@  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+@@  of the Software, and to permit persons to whom the Software is furnished to do
+@@  so, subject to the following conditions:
+@@
+@@  The above copyright notice and this permission notice shall be included in all
+@@  copies or substantial portions of the Software.
+@@
+@@  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+@@  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+@@  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+@@  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+@@  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+@@  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+@@  SOFTWARE.
+@@
+
+
+#if __GNUC__ < 4 || (__GNUC__ == 4 && __GNUC_MINOR__ < 4)
+/* can't use because gas wants ',' before ':' */
+#define A128
+#define A256
+#else
+#define A128 :128
+#define A256 :256
+#endif
+
+.macro bgr1555_to_rgb565 dr0 dr1 t0 t1 t2 ar
+        mov \ar, #0x07c0
+        vshl.u16 \t0, \dr0, #11
+        vshl.u16 \t1, \dr1, #11
+        vshl.u16 \dr0, \dr0, #1
+        vshl.u16 \dr1, \dr1, #1
+        vdup.16 \t2, \ar
+        vsri.u16 \t0, \dr0, #11
+        vsri.u16 \t1, \dr1, #11
+        vbif \dr0, \t0, \t2
+        vbif \dr1, \t1, \t2
+.endm
+
+.macro _neon_normalxx_8_16_line_middle src, dst, pal, counter, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, dststride, dA, dB
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+
+        ldr \reg2, [\src, #4]               @ reg2 = src[4-7]
+
+        ldr \reg3, [\src, #8]               @ reg3 = src[8-11]
+
+        ldr \reg4, [\src, #12]              @ reg4 = src[12-15]
+        ubfx \reg5, \reg1, #0, #8           @ reg5 = src[0]
+
+        ldr \reg5, [\pal, \reg5, lsl #2]    @ reg5 = pal[src[0]]
+        ubfx \reg6, \reg1, #8, #8           @ reg6 = src[1]
+
+        ldr \reg6, [\pal, \reg6, lsl #2]    @ reg6 = pal[src[1]]
+        ubfx \reg7, \reg1, #16, #8          @ reg7 = src[2]
+
+        ldr \reg7, [\pal, \reg7, lsl #2]    @ reg7 = pal[src[2]]
+        lsr	\reg1, \reg1, #24               @ reg1 = src[3]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[3]]
+        ubfx \reg8, \reg2, #0, #8           @ reg8 = src[4]
+
+        ldr \reg8, [\pal, \reg8, lsl #2]    @ reg8 = pal[src[4]]
+        ubfx \reg9, \reg2, #8, #8           @ reg9 = src[5]
+
+        ldr \reg9, [\pal, \reg9, lsl #2]    @ reg9 = pal[src[5]]
+        bfi \reg5, \reg6, #16, #16          @ reg5 = pal[src[0]] | pal[src[1]] << 16
+
+        bfi \reg7, \reg1, #16, #16          @ reg7 = pal[src[2]] | pal[src[3]] << 16
+        ubfx \reg6, \reg2, #16, #8          @ reg6 = src[6]
+
+        vmov d16, \reg5, \reg7              @ d16 = pal[src[0-3]]
+        lsr	\reg2, \reg2, #24               @ reg2 = src[7]
+
+        ldr \reg6, [\pal, \reg6, lsl #2]    @ reg6 = pal[src[6]]
+        bfi \reg8, \reg9, #16, #16          @ reg8 = pal[src[4]] | pal[src[5]] << 16
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[7]]
+        ubfx \reg1, \reg3, #0, #8           @ reg1 = src[8]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[8]]
+        ubfx \reg5, \reg3, #8, #8           @ reg5 = src[9]
+
+        ldr \reg5, [\pal, \reg5, lsl #2]    @ reg5 = pal[src[9]]
+        ubfx \reg7, \reg3, #16, #8          @ reg7 = src[10]
+
+        ldr \reg7, [\pal, \reg7, lsl #2]    @ reg7 = pal[src[10]]
+        bfi \reg6, \reg2, #16, #16          @ reg6 = pal[src[6]] | pal[src[7]] << 16
+
+        vmov d17, \reg8, \reg6              @ d17 = pal[src[4-7]]
+        lsr	\reg3, \reg3, #24               @ reg3 = src[11]
+
+        ldr \reg3, [\pal, \reg3, lsl #2]    @ reg3 = pal[src[11]]
+        ubfx \reg2, \reg4, #0, #8           @ reg2 = src[12]
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[12]]
+        ubfx \reg6, \reg4, #8, #8           @ reg6 = src[13]
+
+        ldr \reg6, [\pal, \reg6, lsl #2]    @ reg6 = pal[src[13]]
+        ubfx \reg8, \reg4, #16, #8          @ reg8 = src[14]
+
+        ldr \reg8, [\pal, \reg8, lsl #2]    @ reg8 = pal[src[14]]
+        lsr	\reg4, \reg4, #24               @ reg4 = src[15]
+
+        ldr \reg4, [\pal, \reg4, lsl #2]    @ reg4 = pal[src[15]]
+        bfi \reg1, \reg5, #16, #16          @ reg1 = pal[src[8]] | pal[src[9]] << 16
+
+        bfi \reg7, \reg3, #16, #16          @ reg7 = pal[src[10]] | pal[src[11]] << 16
+        bfi \reg2, \reg6, #16, #16          @ reg2 = pal[src[12]] | pal[src[13]] << 16
+
+        vmov \dA, \reg1, \reg7              @ dA = pal[src[8-11]]
+        sub \counter, \counter, #16         @ counter -= 16
+
+        bfi \reg8, \reg4, #16, #16          @ reg8 = pal[src[14]] | pal[src[15]] << 16
+        add \src, \src, #16                 @ src += 16
+
+        vmov \dB, \reg2, \reg8              @ dB = pal[src[12-15]]
+        cmp \counter, #16
+.endm
+
+.macro neon_normal1x_8_16_line src, dst, pal, counter, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9
+    @ align src to 4 bytes
+        andS \reg5, \src, #3                @ reg5 = src & 3
+        beq 10f
+
+    @ first 1-3 pixels
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+        rsb \reg5, \reg5, #4                @ reg5 = 4 - (src & 3)
+
+        add \src, \src, \reg5               @ src += reg5
+        sub \counter, \counter, \reg5       @ counter -= reg5
+
+        subS \reg5, \reg5, #1               @ reg5--
+
+        ubfx \reg2, \reg1, #0, #8           @ reg2 = src[0]
+        ubfxne \reg3, \reg1, #8, #8         @ reg3 = src[1]
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[reg2]
+
+        ldrne \reg3, [\pal, \reg3, lsl #2]  @ reg3 = pal[reg3]
+
+        strh \reg2, [\dst]                  @ dst[0] = reg2
+
+        strneh \reg3, [\dst, #2]!           @ dst[1] = reg3; dst++
+        subneS \reg5, \reg5, #1             @ reg5--
+
+        ubfxne \reg4, \reg1, #16, #8        @ reg4 = src[2]
+        add \dst, \dst, #2                  @ dst++
+
+        ldrne \reg4, [\pal, \reg4, lsl #2]  @ reg4 = pal[reg4]
+
+        strneh \reg4, [\dst], #2            @ dst[2] = reg4; dst++
+
+    @ middle pixels (16 per iteration)
+    10:
+        _neon_normalxx_8_16_line_middle \src, \dst, \pal, \counter, \reg1, \reg2, \reg3, \reg4, \reg5, \reg6, \reg7, \reg8, \reg9, , d18, d19
+
+        vst1.16 {d16-d19}, [\dst]!          @ dst[0-15] = d16-d19; dst += 2*16
+        bhs 10b
+
+    @ last 0-15 bytes
+
+        cmp \counter, #0
+        beq 40f
+
+        cmp \counter, #4
+        blo 30f
+
+    @ 4-12 pixels (4 pre iteration)
+    20:
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+        sub \counter, \counter, #4          @ counter -= 4
+
+        add \src, \src, #4                  @ src += 4
+        add \dst, \dst, #(2*4)              @ dst += 4
+
+        ubfx \reg2, \reg1, #0, #8           @ reg2 = src[0]
+        cmp \counter, #4
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[0]]
+        ubfx \reg3, \reg1, #8, #8           @ reg3 = src[1]
+
+        ldr \reg3, [\pal, \reg3, lsl #2]    @ reg3 = pal[src[1]]
+        ubfx \reg4, \reg1, #16, #8          @ reg4 = src[2]
+
+        ldr \reg4, [\pal, \reg4, lsl #2]    @ reg4 = pal[src[2]]
+        lsr	\reg1, \reg1, #24               @ reg1 = src[3]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[3]]
+
+        strh \reg2, [\dst, #-8]             @ dst[0] = reg2
+
+        strh \reg3, [\dst, #-6]             @ dst[1] = reg3
+
+        strh \reg4, [\dst, #-4]             @ dst[2] = reg4
+
+        strh \reg1, [\dst, #-2]             @ dst[3] = reg1
+        bhs 20b
+
+        cmp \counter, #0
+        beq 40f
+
+    @ last 1-3 pixels
+    30:
+        ldrb \reg1, [\src]                  @ reg1 = src[0]
+        subS \counter, \counter, #1         @ counter--
+
+        ldrneb \reg2, [\src, #1]!           @ reg2 = src[1]; src++
+
+        add \src, \src, #1                  @ src++
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+
+        ldrne \reg2, [\pal, \reg2, lsl #2]  @ reg2 = pal[src[1]]
+
+        strh \reg1, [\dst]                  @ dst[0] = reg1
+
+        strneh \reg2, [\dst, #2]!           @ dst[1] = reg2; dst++
+        subneS \counter, \counter, #1       @ counter--
+
+        ldrneb \reg3, [\src], #1            @ reg3 = src[2]; src++
+        add \dst, \dst, #2                  @ dst++
+
+        ldrne \reg3, [\pal, \reg3, lsl #2]  @ reg3 = pal[src[2]]
+
+        strneh \reg3, [\dst], #2            @ dst[2] = reg3; dst++
+
+    40:
+.endm
+
+.macro neon_normal2x_8_16_line src, dst, pal, counter, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, dststride
+    @ align src to 4 bytes
+        andS \reg5, \src, #3                @ reg5 = src & 3
+        beq 10f
+
+    @ first 1-3 pixels
+        rsb \reg5, \reg5, #4                @ reg5 = 4 - (src & 3)
+    1:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \dst, \dst, #4                  @ dst += 2*2
+        sub \counter, \counter, #1          @ counter--
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        subS \reg5, \reg5, #1               @ reg5--
+
+        strh \reg1, [\dst, #-4]             @ dst[0] = reg1
+
+        strh \reg1, [\dst, #-2]             @ dst[1] = reg1
+
+        strh \reg1, [\reg2]                 @ dst1[0] = reg1
+
+        strh \reg1, [\reg2, #2]             @ dst1[1] = reg1
+        bne 1b
+
+    @ middle pixels (16 per iteration)
+    10:
+        _neon_normalxx_8_16_line_middle \src, \dst, \pal, \counter, \reg1, \reg2, \reg3, \reg4, \reg5, \reg6, \reg7, \reg8, \reg9, \dststride, d20, d21
+
+        vmov q9, q8
+        add \reg1, \dst, \dststride         @ reg1 = dst + dststride
+
+        vmov q11, q10
+        vst2.16 {q8,q9}, [\dst]!            @ dst[0-7] = q8-q9; dst += 2*2*8
+
+        vst2.16 {q10,q11}, [\dst]!          @ dst[8-15] = q10-q11; dst += 2*2*8
+
+        vst2.16 {q8,q9}, [\reg1]!           @ dst1[0-7] = q8-q9; dst1 += 2*2*8
+
+        vst2.16 {q10,q11}, [\reg1]!         @ dst1[8-15] = q10-q11; dst1 += 2*2*8
+        bhs 10b
+
+    @ last 0-15 bytes
+
+        cmp \counter, #0
+        beq 40f
+
+        cmp \counter, #4
+        blo 30f
+
+    @ 4-12 pixels (4 pre iteration)
+    20:
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+        sub \counter, \counter, #4          @ counter -= 4
+
+        add \src, \src, #4                  @ src += 4
+
+        ubfx \reg2, \reg1, #0, #8           @ reg2 = src[0]
+        cmp \counter, #4
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[0]]
+        ubfx \reg3, \reg1, #8, #8           @ reg3 = src[1]
+
+        ldr \reg3, [\pal, \reg3, lsl #2]    @ reg3 = pal[src[1]]
+        ubfx \reg4, \reg1, #16, #8          @ reg4 = src[2]
+
+        ldr \reg4, [\pal, \reg4, lsl #2]    @ reg4 = pal[src[2]]
+        lsr	\reg1, \reg1, #24               @ reg1 = src[3]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[3]]
+
+        add \reg5, \dst, \dststride
+        bfi \reg2, \reg3, #16, #16          @ reg2 = reg2 | reg3 << 16
+
+        vmov.32 d16[0], \reg2
+
+        bfi \reg4, \reg1, #16, #16          @ reg4 = reg4 | reg1 << 16
+
+        vmov.32 d16[1], \reg4
+
+        vmov d17, d16
+
+        vst2.16 {d16,d17}, [\dst]!          @ dst[0-7] = d16-d17; dst += 2*2*4
+
+        vst2.16 {d16,d17}, [\reg5]          @ dst1[0-7] = d16-d17
+        bhs 20b
+
+        cmp \counter, #0
+        beq 40f
+
+    @ last 1-3 pixels
+    30:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \dst, \dst, #4                  @ dst += 2*2
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        subS \counter, \counter, #1         @ counter--
+
+        strh \reg1, [\dst, #-4]             @ dst[0] = reg1
+
+        strh \reg1, [\dst, #-2]             @ dst[1] = reg1
+
+        strh \reg1, [\reg2]                 @ dst1[0] = reg1
+
+        strh \reg1, [\reg2, #2]             @ dst1[1] = reg1
+        bne 30b
+
+    40:
+.endm
+
+.macro neon_normal3x_8_16_line src, dst, pal, counter, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, dststride
+    @ align src to 4 bytes
+        andS \reg5, \src, #3                @ reg5 = src & 3
+        beq 10f
+
+    @ first 1-3 pixels
+        rsb \reg5, \reg5, #4                @ reg5 = 4 - (src & 3)
+    1:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \reg3, \reg2, \dststride
+        add \dst, \dst, #6                  @ dst += 3*2
+
+        sub \counter, \counter, #1          @ counter--
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        subS \reg5, \reg5, #1               @ reg5--
+
+        strh \reg1, [\dst, #-6]             @ dst[0] = reg1
+
+        strh \reg1, [\dst, #-4]             @ dst[1] = reg1
+
+        strh \reg1, [\dst, #-2]             @ dst[2] = reg1
+        bfi \reg1, \reg1, #16, #16          @ reg1 = reg1 | reg1 << 16
+
+        strh \reg1, [\reg2]                 @ dst1[0] = reg1
+
+        str \reg1, [\reg2, #2]              @ dst1[1-2] = reg1
+
+        strh \reg1, [\reg3]                 @ dst2[0] = reg1
+
+        str \reg1, [\reg3, #2]              @ dst2[1-2] = reg1
+        bne 1b
+
+    @ middle pixels (16 per iteration)
+    10:
+        _neon_normalxx_8_16_line_middle \src, \dst, \pal, \counter, \reg1, \reg2, \reg3, \reg4, \reg5, \reg6, \reg7, \reg8, \reg9, \dststride, d22, d23
+
+        vmov q9, q8
+        add \reg1, \dst, \dststride         @ reg1 = dst + dststride
+
+        vmov q10, q8
+        add \reg2, \dst, \dststride, lsl #1 @ reg1 = dst + 2 * dststride
+
+        vmov q12, q11
+        vst3.16 {d16,d18,d20}, [\dst]!      @ dst[0-3] = q8-q10[0]; dst += 3*2*4
+
+        vmov q13, q11
+        vst3.16 {d17,d19,d21}, [\dst]!      @ dst[4-7] = q8-q10[1]; dst += 3*2*4
+
+        vst3.16 {d22,d24,d26}, [\dst]!      @ dst[8-11] = q11-q13[0]; dst += 3*2*4
+
+        vst3.16 {d23,d25,d27}, [\dst]!      @ dst[12-15] = q11-q13[1]; dst += 3*2*4
+
+        vst3.16 {d16,d18,d20}, [\reg1]!     @ dst1[0-3] = q8-q10[0]; dst1 += 3*2*4
+
+        vst3.16 {d17,d19,d21}, [\reg1]!     @ dst1[4-7] = q8-q10[1]; dst1 += 3*2*4
+
+        vst3.16 {d22,d24,d26}, [\reg1]!     @ dst1[8-11] = q11-q13[0]; dst1 += 3*2*4
+
+        vst3.16 {d23,d25,d27}, [\reg1]!     @ dst1[12-15] = q11-q13[1]; dst1 += 3*2*4
+
+        vst3.16 {d16,d18,d20}, [\reg2]!     @ dst2[0-3] = q8-q10[0]; dst2 += 3*2*4
+
+        vst3.16 {d17,d19,d21}, [\reg2]!     @ dst2[4-7] = q8-q10[1]; dst2 += 3*2*4
+
+        vst3.16 {d22,d24,d26}, [\reg2]!     @ dst2[8-11] = q11-q13[0]; dst2 += 3*2*4
+
+        vst3.16 {d23,d25,d27}, [\reg2]!     @ dst2[12-15] = q11-q13[1]; dst2 += 3*2*4
+        bhs 10b
+
+    @ last 0-15 bytes
+
+        cmp \counter, #0
+        beq 40f
+
+        cmp \counter, #4
+        blo 30f
+
+    @ 4-12 pixels (4 pre iteration)
+    20:
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+        sub \counter, \counter, #4          @ counter -= 4
+
+        add \src, \src, #4                  @ src += 4
+
+        ubfx \reg2, \reg1, #0, #8           @ reg2 = src[0]
+        cmp \counter, #4
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[0]]
+        ubfx \reg3, \reg1, #8, #8           @ reg3 = src[1]
+
+        ldr \reg3, [\pal, \reg3, lsl #2]    @ reg3 = pal[src[1]]
+        ubfx \reg4, \reg1, #16, #8          @ reg4 = src[2]
+
+        ldr \reg4, [\pal, \reg4, lsl #2]    @ reg4 = pal[src[2]]
+        lsr	\reg1, \reg1, #24               @ reg1 = src[3]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[3]]
+
+        add \reg5, \dst, \dststride
+        bfi \reg2, \reg3, #16, #16          @ reg2 = reg2 | reg3 << 16
+
+        vmov.32 d16[0], \reg2
+        add \reg6, \reg5, \dststride
+
+        bfi \reg4, \reg1, #16, #16          @ reg4 = reg4 | reg1 << 16
+
+        vmov.32 d16[1], \reg4
+
+        vmov d17, d16
+
+        vmov d18, d16
+
+        vst3.16 {d16,d17,d18}, [\dst]!      @ dst[0-11] = d16-d18; dst += 3*2*4
+
+        vst3.16 {d16,d17,d18}, [\reg5]      @ dst1[0-11] = d16-d18
+
+        vst3.16 {d16,d17,d18}, [\reg6]      @ dst2[0-11] = d16-d18
+        bhs 20b
+
+        cmp \counter, #0
+        beq 40f
+
+    @ last 1-3 pixels
+    30:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \reg3, \reg2, \dststride
+        add \dst, \dst, #6                  @ dst += 3*2
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        subS \counter, \counter, #1         @ counter--
+
+        strh \reg1, [\dst, #-6]             @ dst[0] = reg1
+
+        strh \reg1, [\dst, #-4]             @ dst[1] = reg1
+
+        strh \reg1, [\dst, #-2]             @ dst[2] = reg1
+        bfi \reg1, \reg1, #16, #16          @ reg1 = reg1 | reg1 << 16
+
+        strh \reg1, [\reg2]                 @ dst1[0] = reg1
+
+        str \reg1, [\reg2, #2]              @ dst1[1-2] = reg1
+
+        strh \reg1, [\reg3]                 @ dst2[0] = reg1
+
+        str \reg1, [\reg3, #2]              @ dst2[1-2] = reg1
+        bne 30b
+
+    40:
+.endm
+
+.macro neon_normal4x_8_16_line src, dst, pal, counter, reg1, reg2, reg3, reg4, reg5, reg6, reg7, reg8, reg9, dststride
+    @ align src to 4 bytes
+        andS \reg5, \src, #3                @ reg5 = src & 3
+        beq 10f
+
+    @ first 1-3 pixels
+        rsb \reg5, \reg5, #4                @ reg5 = 4 - (src & 3)
+    1:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \reg3, \reg2, \dststride
+        add \dst, \dst, #8                  @ dst += 4*2
+
+        sub \counter, \counter, #1          @ counter--
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        add \reg4, \reg3, \dststride
+
+        strh \reg1, [\dst, #-8]             @ dst[0] = reg1
+        subS \reg5, \reg5, #1               @ reg5--
+
+        strh \reg1, [\dst, #-6]             @ dst[1] = reg1
+
+        bfi \reg1, \reg1, #16, #16          @ reg1 = reg1 | reg1 << 16
+        str \reg1, [\dst, #-4]              @ dst[2-3] = reg1
+
+        str \reg1, [\reg2]                  @ dst1[0-1] = reg1
+
+        str \reg1, [\reg2, #4]              @ dst1[2-3] = reg1
+
+        str \reg1, [\reg3]                  @ dst2[0-1] = reg1
+
+        str \reg1, [\reg3, #4]              @ dst2[2-3] = reg1
+
+        str \reg1, [\reg4]                  @ dst3[0-1] = reg1
+
+        str \reg1, [\reg4, #4]              @ dst3[2-3] = reg1
+        bne 1b
+
+    @ middle pixels (16 per iteration)
+    10:
+        _neon_normalxx_8_16_line_middle \src, \dst, \pal, \counter, \reg1, \reg2, \reg3, \reg4, \reg5, \reg6, \reg7, \reg8, \reg9, \dststride, d24, d25
+
+        vmov q9, q8
+        add \reg1, \dst, \dststride         @ reg1 = dst + dststride
+
+        vmov q10, q8
+        add \reg2, \dst, \dststride, lsl #1 @ reg2 = dst + 2 * dststride
+
+        vmov q11, q8
+        add \reg3, \reg1, \dststride,lsl #1 @ reg3 = dst + 3 * dststride
+
+        vmov q13, q12
+        vst4.16 {d16,d18,d20,d22}, [\dst]!  @ dst[0-3] = q8-q11[0]; dst += 4*2*4
+
+        vmov q14, q12
+
+        vmov q15, q12
+        vst4.16 {d17,d19,d21,d23}, [\dst]!  @ dst[4-7] = q8-q11[1]; dst += 4*2*4
+
+        vst4.16 {d24,d26,d28,d30}, [\dst]!  @ dst[8-11] = q12-q15[0]; dst += 4*2*4
+
+        vst4.16 {d25,d27,d29,d31}, [\dst]!  @ dst[12-15] = q12-q15[1]; dst += 4*2*4
+
+        vst4.16 {d16,d18,d20,d22}, [\reg1]! @ dst1[0-3] = q8-q11[0]; dst1 += 4*2*4
+
+        vst4.16 {d17,d19,d21,d23}, [\reg1]! @ dst1[4-7] = q8-q11[1]; dst1 += 4*2*4
+
+        vst4.16 {d24,d26,d28,d30}, [\reg1]! @ dst1[8-11] = q12-q15[0]; dst1 += 4*2*4
+
+        vst4.16 {d25,d27,d29,d31}, [\reg1]! @ dst1[12-15] = q12-q15[1]; dst1 += 4*2*4
+
+        vst4.16 {d16,d18,d20,d22}, [\reg2]! @ dst2[0-3] = q8-q11[0]; dst2 += 4*2*4
+
+        vst4.16 {d17,d19,d21,d23}, [\reg2]! @ dst2[4-7] = q8-q11[1]; dst2 += 4*2*4
+
+        vst4.16 {d24,d26,d28,d30}, [\reg2]! @ dst2[8-11] = q12-q15[0]; dst2 += 4*2*4
+
+        vst4.16 {d25,d27,d29,d31}, [\reg2]! @ dst2[12-15] = q12-q15[1]; dst2 += 4*2*4
+
+        vst4.16 {d16,d18,d20,d22}, [\reg3]! @ dst3[0-3] = q8-q11[0]; dst3 += 4*2*4
+
+        vst4.16 {d17,d19,d21,d23}, [\reg3]! @ dst3[4-7] = q8-q11[1]; dst3 += 4*2*4
+
+        vst4.16 {d24,d26,d28,d30}, [\reg3]! @ dst3[8-11] = q12-q15[0]; dst3 += 4*2*4
+
+        vst4.16 {d25,d27,d29,d31}, [\reg3]! @ dst3[12-15] = q12-q15[1]; dst3 += 4*2*4
+        bhs 10b
+
+    @ last 0-15 bytes
+
+        cmp \counter, #0
+        beq 40f
+
+        cmp \counter, #4
+        blo 30f
+
+    @ 4-12 pixels (4 pre iteration)
+    20:
+        ldr \reg1, [\src]                   @ reg1 = src[0-3]
+        sub \counter, \counter, #4          @ counter -= 4
+
+        add \src, \src, #4                  @ src += 4
+
+        ubfx \reg2, \reg1, #0, #8           @ reg2 = src[0]
+        cmp \counter, #4
+
+        ldr \reg2, [\pal, \reg2, lsl #2]    @ reg2 = pal[src[0]]
+        ubfx \reg3, \reg1, #8, #8           @ reg3 = src[1]
+
+        ldr \reg3, [\pal, \reg3, lsl #2]    @ reg3 = pal[src[1]]
+        ubfx \reg4, \reg1, #16, #8          @ reg4 = src[2]
+
+        ldr \reg4, [\pal, \reg4, lsl #2]    @ reg4 = pal[src[2]]
+        lsr	\reg1, \reg1, #24               @ reg1 = src[3]
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[3]]
+
+        add \reg5, \dst, \dststride
+        bfi \reg2, \reg3, #16, #16          @ reg2 = reg2 | reg3 << 16
+
+        vmov.32 d16[0], \reg2
+        add \reg6, \reg5, \dststride
+
+        bfi \reg4, \reg1, #16, #16          @ reg4 = reg4 | reg1 << 16
+        add \reg7, \reg6, \dststride
+
+        vmov.32 d16[1], \reg4
+
+        vmov d17, d16
+
+        vmov d18, d16
+
+        vmov d19, d16
+
+        vst4.16 {d16,d17,d18,d19}, [\dst]!  @ dst[0-15] = d16-d19; dst += 4*2*4
+
+        vst4.16 {d16,d17,d18,d19}, [\reg5]  @ dst1[0-15] = d16-d19
+
+        vst4.16 {d16,d17,d18,d19}, [\reg6]  @ dst2[0-15] = d16-d19
+
+        vst4.16 {d16,d17,d18,d19}, [\reg7]  @ dst3[0-15] = d16-d19
+        bhs 20b
+
+        cmp \counter, #0
+        beq 40f
+
+    @ last 1-3 pixels
+    30:
+        ldrb \reg1, [\src], #1              @ reg1 = src[0]; src++
+        add \reg2, \dst, \dststride
+
+        add \reg3, \reg2, \dststride
+        add \dst, \dst, #8                  @ dst += 4*2
+
+        ldr \reg1, [\pal, \reg1, lsl #2]    @ reg1 = pal[src[0]]
+        add \reg4, \reg3, \dststride
+
+        strh \reg1, [\dst, #-8]             @ dst[0] = reg1
+        subS \counter, \counter, #1         @ counter--
+
+        strh \reg1, [\dst, #-6]             @ dst[1] = reg1
+
+        bfi \reg1, \reg1, #16, #16          @ reg1 = reg1 | reg1 << 16
+        str \reg1, [\dst, #-4]              @ dst[2-3] = reg1
+
+        str \reg1, [\reg2]                  @ dst1[0-1] = reg1
+
+        str \reg1, [\reg2, #4]              @ dst1[2-3] = reg1
+
+        str \reg1, [\reg3]                  @ dst2[0-1] = reg1
+
+        str \reg1, [\reg3, #4]              @ dst2[2-3] = reg1
+
+        str \reg1, [\reg4]                  @ dst3[0-1] = reg1
+
+        str \reg1, [\reg4, #4]              @ dst3[2-3] = reg1
+        bne 30b
+
+    40:
+.endm
+

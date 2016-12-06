@@ -7,7 +7,7 @@
 //
 
 #import "PVGBControllerViewController.h"
-#import "PVGBEmulatorCore.h"
+#import <PVGB/PVGBEmulatorCore.h>
 
 @interface PVGBControllerViewController ()
 
@@ -83,7 +83,7 @@
             break;
     }
     
-    [self vibrate];
+	[super dPad:dPad didPressDirection:direction];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -94,6 +94,7 @@
     [gbCore releaseGBButton:PVGBButtonDown];
     [gbCore releaseGBButton:PVGBButtonLeft];
     [gbCore releaseGBButton:PVGBButtonRight];
+	[super dPadDidReleaseDirection:dPad];
 }
 
 - (void)buttonPressed:(JSButton *)button
@@ -101,37 +102,42 @@
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore pushGBButton:[button tag]];
     
-    [self vibrate];
+	[super buttonPressed:button];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore releaseGBButton:[button tag]];
+	[super buttonReleased:button];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore pushGBButton:PVGBButtonStart];
+	[super pressStartForPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore releaseGBButton:PVGBButtonStart];
+	[super releaseStartForPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore pushGBButton:PVGBButtonSelect];
+	[super pressSelectForPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     PVGBEmulatorCore *gbCore = (PVGBEmulatorCore *)self.emulatorCore;
     [gbCore releaseGBButton:PVGBButtonSelect];
+	[super releaseSelectForPlayer:player];
 }
 
 @end

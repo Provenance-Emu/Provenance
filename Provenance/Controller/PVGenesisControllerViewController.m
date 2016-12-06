@@ -7,7 +7,7 @@
 //
 
 #import "PVGenesisControllerViewController.h"
-#import "PVGenesisEmulatorCore.h"
+#import <PVGenesis/PVGenesisEmulatorCore.h>
 
 @interface PVGenesisControllerViewController ()
 
@@ -98,7 +98,7 @@
 			break;
 	}
     
-    [self vibrate];
+	[super dPad:dPad didPressDirection:direction];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -109,43 +109,49 @@
 	[genesisCore releaseGenesisButton:PVGenesisButtonDown forPlayer:0];
 	[genesisCore releaseGenesisButton:PVGenesisButtonLeft forPlayer:0];
 	[genesisCore releaseGenesisButton:PVGenesisButtonRight forPlayer:0];
+	[super dPadDidReleaseDirection:dPad];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore pushGenesisButton:[button tag] forPlayer:0];
-    [self vibrate];
+	[super buttonPressed:button];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
 	PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore releaseGenesisButton:[button tag] forPlayer:0];
+	[super buttonReleased:button];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore pushGenesisButton:PVGenesisButtonStart forPlayer:player];
+	[super pressStartForPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore releaseGenesisButton:PVGenesisButtonStart forPlayer:player];
+	[super releaseStartForPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore pushGenesisButton:PVGenesisButtonMode forPlayer:player];
+	[super pressSelectForPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     PVGenesisEmulatorCore *genesisCore = (PVGenesisEmulatorCore *)self.emulatorCore;
     [genesisCore releaseGenesisButton:PVGenesisButtonMode forPlayer:player];
+	[self releaseSelectForPlayer:player];
 }
 
 @end

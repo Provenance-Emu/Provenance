@@ -2,7 +2,7 @@
 An iOS & tvOS Frontend for multiple emulators
 
 ###Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) And follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
+[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
 ###Why 'Provenance'?
 
@@ -21,12 +21,16 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Genesis / Mega Drive
     - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
     - Game Gear
+    - 32X
 - Nintendo
-    - NES
+    - NES (Nintendo Entertainment System)
     - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
     - Gameboy Advance
+- Atari
+    - 2600
+    - 7800
 
 ###Features
 
@@ -50,14 +54,12 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Custom artwork is also supported
 - Game library searching
 - Supports iOS 8+
-    - 3D Touch shortcuts for recent games on iPhone 6S/Plus
+    - 3D Touch shortcuts for recent games (iPhone 6s and later)
+    - Taptic Engine Feedback for button presses (iPhone 7 and later)
 - Supports Apple TV tvOS 9+
-    - TopShelf support
+    - TopShelf support [See instructions](https://github.com/jasarien/Provenance/pull/242)
 
 Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
-
-Please note that this is an open source project done in the free time of the author and contributors and new features and new emulator cores may take time.
-Adding a comment to an existing issue does not help speed up the development in any way.
 
 ###Importing ROMs
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
@@ -70,7 +72,7 @@ If you're a contributor, or would like to contribute, there is a developer-focus
 
 #Attributions
 
-Sega system emulation is provided by [Genesis Plus GX](http://code.google.com/p/genplus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
+Sega system emulation is provided by [Genesis Plus GX](https://bitbucket.org/eke/genesis-plus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
 
 NES/Famicom Disk System emulation is provided by [FCEUX](http://www.fceux.com/web/home.html).
 
@@ -79,6 +81,12 @@ SNES (Super Nintendo) emulation is provided by [SNES9x](http://www.snes9x.com).
 Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.net/projects/vba/).
 
 Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
+
+Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
+
+Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/)
+
+Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive)
 
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 

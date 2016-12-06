@@ -23,8 +23,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gitMasterShaLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gitLocalShaLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
-@property (weak, nonatomic) IBOutlet UILabel *recentGamesValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
 
 @end
 
@@ -42,7 +44,7 @@
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
-    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
+    [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
 	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
 	[self.versionValueLabel setText:versionText];
@@ -51,6 +53,23 @@
 #else
     [self.modeValueLabel setText:@"RELEASE"];
 #endif
+    NSString *gitMasterShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"MasterGitSha"];
+    NSString *gitLocalShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"LocalGitSha"];
+    UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
+
+    if ([gitMasterShaText length] > 0) {
+        [self.gitMasterShaLabel setText:gitMasterShaText];
+    } else {
+        [self.gitMasterShaLabel setTextColor:color];
+        [self.gitMasterShaLabel setText:@"(none)"];
+    }
+
+    if ([gitLocalShaText length] > 0) {
+        [self.gitLocalShaLabel setText:gitLocalShaText];
+    } else {
+        [self.gitLocalShaLabel setTextColor:color];
+        [self.gitLocalShaLabel setText:@"(none)"];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -79,6 +98,9 @@
                     [settings setAutoLoadAutoSaves:![settings autoLoadAutoSaves]];
                     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
                     break;
+                case 2:
+                    [settings setShowFPSCount:![settings showFPSCount]];
+                    [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
                 default:
                     break;
             }
@@ -153,11 +175,6 @@
                 case 3: {
                     PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
                     [self.navigationController pushViewController:conflictViewController animated:YES];
-                    break;
-                }
-                case 4: {
-                    [settings setShowRecentGames:![settings showRecentGames]];
-                    [self.recentGamesValueLabel setText:([settings showRecentGames]) ? @"On" : @"Off"];
                     break;
                 }
                 default:

@@ -7,40 +7,21 @@
 //
 
 #import "PVGameLibraryCollectionViewCell.h"
-#import <QuartzCore/QuartzCore.h>
 #import "UIImage+Color.h"
 #import "UIView+FrameAdditions.h"
+#import "PVGame+Sizing.h"
+#import "PVMediaCache.h"
+#import "PVSettingsModel.h"
+#import "PVAppConstants.h"
+#import "PVEmulatorConfiguration.h"
 
-CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
-    CGFloat width = originalSize.width;
-    CGFloat height = originalSize.height;
-    
-    CGFloat multiplier = 0.f;
-    
-    if (height > maximumSize.height) {
-        multiplier = maximumSize.height / height;
-    }
-    
-    if (width > maximumSize.width) {
-        CGFloat provisionalMultiplier = maximumSize.width / width;
-        BOOL validMultiplier = provisionalMultiplier > 0;
-        if (validMultiplier && (provisionalMultiplier < multiplier || multiplier == 0)) {
-            multiplier = provisionalMultiplier;
-        }
-    }
-    
-    if (multiplier > 0) {
-        // CGRectIntegral does floorf() on origin and ceilf() on size
-        height = ceilf(height * multiplier);
-        width = ceilf(width * multiplier);
-    }
-    
-    return CGSizeMake(width, height);
-}
+static const CGFloat LabelHeight = 44.0;
 
 @interface PVGameLibraryCollectionViewCell ()
 
-@property (nonatomic, strong) UIImageView *missingArtworkView;
+@property (nonatomic, readonly) UIImageView *imageView;
+@property (nonatomic, readonly) UILabel *titleLabel;
+@property (strong, nonatomic) NSBlockOperation *operation;
 
 @end
 
@@ -50,22 +31,21 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 {
 	if ((self = [super initWithFrame:frame]))
 	{
-		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - 44)];
+        CGFloat imageHeight = frame.size.height;
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            imageHeight -= 44;
+        }
+        
+		_imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, imageHeight)];
 		[_imageView setContentMode:UIViewContentModeScaleAspectFit];
 		[_imageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, 44)];
+        _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [_imageView frame].size.height, frame.size.width, LabelHeight)];
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
-        UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:1];
-        UIImage *missingArtworkImage = [UIImage imageWithSize:CGSizeMake(CGRectGetWidth(frame), CGRectGetHeight(frame) - 44)
-                                                        color:backgroundColor
-                                                         text:nil];
-        self.missingArtworkView = [[UIImageView alloc] initWithImage:missingArtworkImage];
 #if TARGET_OS_TV
         // The label's alpha will get set to 1 on focus
         _titleLabel.alpha = 0;
         [_imageView setAdjustsImageWhenAncestorFocused:YES];
-        [self.missingArtworkView setAdjustsImageWhenAncestorFocused:YES];
         [_titleLabel setTextColor:[UIColor whiteColor]];
         [[_titleLabel layer] setMasksToBounds:NO];
         [_titleLabel setShadowColor:[[UIColor blackColor] colorWithAlphaComponent:0.8]];
@@ -82,44 +62,115 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
 		[_titleLabel setMinimumScaleFactor:0.75];
 
-		[[self contentView] addSubview:_titleLabel];
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            [[self contentView] addSubview:_titleLabel];
+        }
         [[self contentView] addSubview:_imageView];
     }
 	return self;
 }
 
-- (void)setText:(NSString *)text {
-    [_titleLabel setText:text];
+- (UIImage *)imageWithText:(NSString *)text
+{
+    
+    // TODO: To be replaced with the correct system placeholder
+    
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text
                                                                          attributes:@{
-                                                                                      NSFontAttributeName: [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline],
+                                                                                      NSFontAttributeName: [UIFont systemFontOfSize:30.0],
                                                                                       NSParagraphStyleAttributeName: paragraphStyle,
                                                                                       NSForegroundColorAttributeName: [UIColor grayColor]
                                                                                       }];
+    
     UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.9];
-    UIImage *missingArtworkImage = [UIImage imageWithSize:self.missingArtworkView.bounds.size
+    UIImage *missingArtworkImage = [UIImage imageWithSize:CGSizeMake(PVThumbnailMaxResolution, PVThumbnailMaxResolution)
                                                     color:backgroundColor
                                                      text:attributedText];
-    self.missingArtworkView.image = missingArtworkImage;
+    
+    return missingArtworkImage;
+}
+
+- (void)setupWithGame:(PVGame *)game
+{
+    
+    NSString *artworkURL = [game customArtworkURL];
+    NSString *originalArtworkURL = [game originalArtworkURL];
+    
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        [_titleLabel setText:[game title]];
+    }
+    
+    // TODO: May be renabled later
+    NSString *placeholderImageText = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:game.systemIdentifier];
+
+    if ([artworkURL isEqualToString:@""] &&
+        [originalArtworkURL isEqualToString:@""]) {
+        NSString *artworkText;
+        if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+            artworkText = placeholderImageText;
+        } else {
+            artworkText = game.title;
+        }
+        self.imageView.image = [self imageWithText:artworkText];
+    } else {
+        NSString *key = [artworkURL length] ? artworkURL : nil;
+        
+        if (!key) {
+            key = [originalArtworkURL length] ? originalArtworkURL : nil;
+        }
+        
+        if (key) {
+            self.operation = [[PVMediaCache shareInstance] imageForKey:key completion:^(UIImage *image) {
+                
+                NSString *artworkText;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    artworkText = placeholderImageText;
+                } else {
+                    artworkText = game.title;
+                }
+                UIImage *artwork = image ?: [self imageWithText:artworkText];
+                
+                self.imageView.image = artwork;
+                
+            #if TARGET_OS_TV
+                CGFloat width = CGRectGetWidth(self.frame);
+                CGSize boxartSize = CGSizeMake(width, width / game.boxartAspectRatio);
+                self.imageView.frame = CGRectMake(0, 0, width, boxartSize.height);
+            #else
+                CGFloat imageHeight = self.frame.size.height;
+                if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+                    imageHeight -= 44;
+                }
+                self.imageView.frame = CGRectMake(0, 0, self.frame.size.width, imageHeight);
+            #endif
+                
+                [self setNeedsLayout];
+            }];
+        }
+    }
+    
     [self setNeedsLayout];
     if ([self respondsToSelector:@selector(setNeedsFocusUpdate)]) {
         [self setNeedsFocusUpdate];
     }
+    
+    [self setNeedsLayout];
 }
 
 - (void)dealloc
 {
+    [self.operation cancel];
+    
     _imageView = nil;
 	_titleLabel = nil;
-	self.missingArtworkView = nil;
 }
 
 - (void)prepareForReuse
 {
 	[super prepareForReuse];
-	
+
 	[self.imageView setImage:nil];
 	[self.titleLabel setText:nil];
 }
@@ -127,17 +178,6 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 - (void)layoutSubviews
 {
 	[super layoutSubviews];
-	
-	if (![_imageView image])
-	{
-		[self.contentView addSubview:self.missingArtworkView];
-        [_imageView removeFromSuperview];
-    }
-    else
-    {
-        [self.missingArtworkView removeFromSuperview];
-        [self.contentView addSubview:_imageView];
-    }
 
 #if TARGET_OS_TV
     CGAffineTransform titleTransform = _titleLabel.transform;
@@ -148,16 +188,13 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
     [_titleLabel sizeToFit];
     [_titleLabel setWidth:[[self contentView] bounds].size.width];
     [_titleLabel setOriginX:0];
-    CGSize imageSize = pv_CGSizeAspectFittingSize(_imageView.image.size, self.contentView.bounds.size);
-    [_imageView setSize:imageSize];
-    _imageView.center = CGPointMake(CGRectGetMidX(self.contentView.bounds),
-                                    CGRectGetMidY(self.contentView.bounds));
-    if (_imageView.image) {
-        [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
-    } else {
-        [_titleLabel setOriginY:CGRectGetMaxY(self.missingArtworkView.frame)];
-    }
+    [_titleLabel setOriginY:CGRectGetMaxY(_imageView.frame)];
     _titleLabel.transform = titleTransform;
+#else
+    CGFloat imageHeight = self.frame.size.height;
+    if ([[PVSettingsModel sharedInstance] showGameTitles]) {
+        imageHeight -= 44;
+    }
 #endif
 }
 
@@ -179,33 +216,9 @@ CGSize pv_CGSizeAspectFittingSize(CGSize originalSize, CGSize maximumSize) {
 }
 #endif
 
-- (void)setSelected:(BOOL)selected
++ (CGSize)cellSizeForImageSize:(CGSize)imageSize
 {
-    [super setSelected:selected];
-
-    if (selected)
-    {
-        [UIView animateWithDuration:0.1
-                              delay:0
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             [_imageView setAlpha:0.6];
-                             [self.missingArtworkView setAlpha:0.6];
-                         }
-                         completion:NULL];
-    }
-    else
-    {
-        [UIView animateWithDuration:0.3
-                              delay:0
-                            options:UIViewAnimationOptionBeginFromCurrentState
-                         animations:^{
-                             [_imageView setAlpha:1];
-                             [self.missingArtworkView setAlpha:1];
-                         }
-                         completion:NULL];
-    }
+    return CGSizeMake(imageSize.width, imageSize.height + LabelHeight);
 }
-
 
 @end

@@ -37,7 +37,7 @@ extern uint8 FASTCALL FFCEUX_PPURead_Default(uint32 A);
 void FFCEUX_PPUWrite_Default(uint32 A, uint8 V);
 
 extern int g_rasterpos;
-extern uint8 nes_PPU[4];
+extern uint8 PPU[4];
 extern bool DMC_7bit;
 extern bool paldeemphswap;
 

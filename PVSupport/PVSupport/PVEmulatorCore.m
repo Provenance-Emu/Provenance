@@ -10,9 +10,12 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import <mach/mach_time.h>
 #import "OETimingUtils.h"
+#import "OERingBuffer.h"
 
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
+
+NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.ErrorDomain";
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat framerateMultiplier;
@@ -61,10 +64,11 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 		{
 			isRunning  = YES;
 			shouldStop = NO;
-            framerateMultiplier = 1.0;
+
+            _framerateMultiplier = 1.0;
+            _gameSpeed = GameSpeedNormal;
 			
-            _gameThread = [[NSThread alloc] initWithTarget:self selector:@selector(frameRefreshThread:) object:nil];
-            [_gameThread start];
+			[NSThread detachNewThreadSelector:@selector(frameRefreshThread:) toTarget:self withObject:nil];
 		}
 	}
 }
@@ -104,7 +108,9 @@ static NSTimeInterval defaultFrameInterval = 60.0;
 
 - (void)frameRefreshThread:(id)anArgument
 {
-    gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+    int frameCount = 0;
+    NSDate *fpsCounter = [NSDate date];
+    gameInterval = 1.0 / ([self frameInterval] * _framerateMultiplier);
     NSTimeInterval gameTime = OEMonotonicTime();
     OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 
@@ -133,15 +139,28 @@ static NSTimeInterval defaultFrameInterval = 60.0;
                         [self executeFrame];
                     }
                 }
+                frameCount += 1;
             }
         }
         
-        OEWaitUntil(gameTime);
+        NSTimeInterval currentMonotonicTime = OEMonotonicTime();
         
+        if (gameTime >= currentMonotonicTime) {
+            OEWaitUntil(gameTime);
+        }
+
         // Service the event loop
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, 0);
         
         [self updateControllers];
+
+        // Compute FPS
+        NSTimeInterval timeSinceLastFPS = GetSecondsSince(fpsCounter);
+        if (timeSinceLastFPS >= 0.5) {
+            self.emulationFPS = (double)frameCount / timeSinceLastFPS;
+            frameCount = 0;
+            fpsCounter = [NSDate date];
+        }
     }
 }
 
