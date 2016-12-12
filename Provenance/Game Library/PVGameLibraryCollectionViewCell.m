@@ -72,6 +72,12 @@ static const CGFloat LabelHeight = 44.0;
 
 - (UIImage *)imageWithText:(NSString *)text
 {
+    if (!text) {
+        UIColor *backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.9];
+        return [UIImage imageWithSize:CGSizeMake(PVThumbnailMaxResolution, PVThumbnailMaxResolution)
+                                color:backgroundColor
+                                 text:[[NSAttributedString alloc] initWithString: @""]];
+    }
     
     // TODO: To be replaced with the correct system placeholder
     
