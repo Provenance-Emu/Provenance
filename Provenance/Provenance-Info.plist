@@ -38,13 +38,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>614</string>
+	<string>602</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LocalGitSha</key>
-	<string>c07de2b</string>
+	<string>37a9baf</string>
 	<key>MasterGitSha</key>
-	<string></string>
+	<string>a3e072b</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
