@@ -28,7 +28,6 @@
 #import "PVStellaGameCore.h"
 
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/OETimingUtils.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>

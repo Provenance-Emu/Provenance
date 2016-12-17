@@ -73,7 +73,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
-    [self.emulatorCore stopEmulation];
+    [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
 	NSSetUncaughtExceptionHandler(NULL);
@@ -784,10 +784,11 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.emulatorCore autoSaveState];
     }
 
+    [self.emulatorCore stopEmulation]; //Leave emulation loop first
+
 	[self.fpsTimer invalidate];
 	self.fpsTimer = nil;
     [self.gameAudio stopAudio];
-    [self.emulatorCore stopEmulation];
 #if !TARGET_OS_TV
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 #endif
