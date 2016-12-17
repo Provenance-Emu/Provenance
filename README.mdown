@@ -1,6 +1,8 @@
 # Provenance
 An iOS & tvOS Frontend for multiple emulators
 
+![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/584099618419c2cf0b076e78/1480628777026/?format=600w)
+
 ###Building Provenance
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
