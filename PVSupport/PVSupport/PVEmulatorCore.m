@@ -129,7 +129,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         [self updateControllers];
         
         @synchronized (self) {
-            [self executeFrame];
+            if (isRunning) {
+                [self executeFrame];
+            }
         }
         frameCount += 1;
 
