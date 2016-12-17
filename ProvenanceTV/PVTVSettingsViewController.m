@@ -23,8 +23,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gitMasterShaLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gitLocalShaLabel;
+@property (weak, nonatomic) IBOutlet UILabel *revisionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
 
@@ -53,22 +52,14 @@
 #else
     [self.modeValueLabel setText:@"RELEASE"];
 #endif
-    NSString *gitMasterShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"MasterGitSha"];
-    NSString *gitLocalShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"LocalGitSha"];
+    NSString *revisionString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Revision"];
     UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
 
-    if ([gitMasterShaText length] > 0) {
-        [self.gitMasterShaLabel setText:gitMasterShaText];
+    if ([revisionString length] > 0) {
+        [self.revisionLabel setText:revisionString];
     } else {
-        [self.gitMasterShaLabel setTextColor:color];
-        [self.gitMasterShaLabel setText:@"(none)"];
-    }
-
-    if ([gitLocalShaText length] > 0) {
-        [self.gitLocalShaLabel setText:gitLocalShaText];
-    } else {
-        [self.gitLocalShaLabel setTextColor:color];
-        [self.gitLocalShaLabel setText:@"(none)"];
+        [self.revisionLabel setTextColor:color];
+        [self.revisionLabel setText:@"(none)"];
     }
 }
 

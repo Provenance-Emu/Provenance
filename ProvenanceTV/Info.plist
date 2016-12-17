@@ -33,10 +33,8 @@
 	<string>593</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>LocalGitSha</key>
+	<key>Revision</key>
 	<string>37a9baf</string>
-	<key>MasterGitSha</key>
-	<string>a3e072b</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

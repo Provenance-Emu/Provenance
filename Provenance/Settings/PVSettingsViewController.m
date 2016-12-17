@@ -46,22 +46,14 @@
 #else
     [self.modeLabel setText:@"RELEASE"];
 #endif
-    NSString *gitMasterShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"MasterGitSha"];
-    NSString *gitLocalShaText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"LocalGitSha"];
+    NSString *revisionString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Revision"];
     UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
 
-    if ([gitMasterShaText length] > 0) {
-        [self.gitMasterShaLabel setText:gitMasterShaText];
+    if ([revisionString length] > 0) {
+        [self.revisionLabel setText:revisionString];
     } else {
-        [self.gitMasterShaLabel setTextColor:color];
-        [self.gitMasterShaLabel setText:@"(none)"];
-    }
-
-    if ([gitLocalShaText length] > 0) {
-        [self.gitLocalShaLabel setText:gitLocalShaText];
-    } else {
-        [self.gitLocalShaLabel setTextColor:color];
-        [self.gitLocalShaLabel setText:@"(none)"];
+        [self.revisionLabel setTextColor:color];
+        [self.revisionLabel setText:@"(none)"];
     }
 }
 
