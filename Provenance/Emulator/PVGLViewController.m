@@ -7,7 +7,8 @@
 //
 
 #import "PVGLViewController.h"
-#import "PVEmulatorCore.h"
+#import <PVSupport/PVEmulatorCore.h>
+#import "PVSettingsModel.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()
@@ -16,7 +17,7 @@
 	GLKVector2 textureCoordinates[8];
 	GLKVector3 triangleVertices[6];
 	GLKVector2 triangleTexCoords[6];
-	
+
 	GLuint texture;
 }
 
@@ -44,24 +45,24 @@
 	{
 		self.emulatorCore = emulatorCore;
 	}
-	
+
 	return self;
 }
 
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
+
 	[self setPreferredFramesPerSecond:60];
-	
+
 	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 	[EAGLContext setCurrentContext:self.glContext];
-	
+
 	GLKView *view = (GLKView *)self.view;
     view.context = self.glContext;
-	
+
 	self.effect = [[GLKBaseEffect alloc] init];
-	
+
 	[self setupTexture];
 }
 
@@ -135,11 +136,16 @@
 	glBindTexture(GL_TEXTURE_2D, texture);
     //error = glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-    //error = glGetError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //error = glGetError();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //error = glGetError();
+	if ([[PVSettingsModel sharedInstance] imageSmoothing])
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -206,14 +212,14 @@
             glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
             glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
         }
-        
+
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        
+
         if (texture)
         {
             glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
         }
-        
+
         glDisableVertexAttribArray(GLKVertexAttribPosition);
     };
 

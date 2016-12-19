@@ -75,6 +75,7 @@ static void M32Power(void) {
 	SetWriteHandler(0x9000, 0x9FFF, M32Write1);
 	SetWriteHandler(0xA000, 0xAFFF, M32Write2);
 	SetWriteHandler(0xB000, 0xBFFF, M32Write3);
+	FCEU_CheatAddRAM(WRAMSIZE >> 10, 0x6000, WRAM);
 }
 
 static void M32Close(void)

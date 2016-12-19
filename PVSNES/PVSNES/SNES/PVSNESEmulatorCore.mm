@@ -26,11 +26,10 @@
  */
 
 #import "PVSNESEmulatorCore.h"
-#import "OERingBuffer.h"
-#import "OETimingUtils.h"
+#import <PVSupport/OERingBuffer.h>
+#import <PVSupport/PVGameControllerUtilities.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
-#import "PVGameControllerUtilities.h"
 
 #include "memmap.h"
 #include "pixform.h"
@@ -113,6 +112,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 	
     NSString *batterySavesDirectory = [self batterySavesPath];
+    
+    [super stopEmulation];
 	
     if([batterySavesDirectory length] != 0)
     {
@@ -126,16 +127,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         Memory.SaveSRAM([filePath UTF8String]);
     }
 	
-    [super stopEmulation];
 }
 
 - (void)executeFrame
 {
     IPPU.RenderThisFrame = YES;
-    if (self.controller1 || self.controller2)
-    {
-        [self pollControllers];
-    }
     S9xMainLoop();
 }
 
@@ -386,7 +382,7 @@ static void FinalizeSamplesAudioCallback(void *)
     }
 }
 
-- (void)pollControllers
+- (void)updateControllers
 {
     GCController *controller = nil;
 

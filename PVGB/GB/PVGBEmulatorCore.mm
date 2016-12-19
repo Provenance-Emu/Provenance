@@ -25,8 +25,7 @@
 */
 
 #import "PVGBEmulatorCore.h"
-#import "OERingBuffer.h"
-#import "OETimingUtils.h"
+#import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
@@ -50,7 +49,6 @@ uint32_t gb_pad[PVGBButtonCount];
 - (void)outputAudio:(unsigned)frames;
 - (void)applyCheat:(NSString *)code;
 - (void)loadPalette;
-- (void)updateControllers;
 @end
 
 @implementation PVGBEmulatorCore

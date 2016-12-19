@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA64317F7467D0031B1C9"
-               BuildableName = "libPVSupport.a"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport"
                ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
@@ -28,8 +28,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA6AB17F74D150031B1C9"
-               BuildableName = "libPVGenesis.a"
+               BlueprintIdentifier = "B3E432031DE6917700D3C91E"
+               BuildableName = "PVGenesis.framework"
                BlueprintName = "PVGenesis"
                ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
             </BuildableReference>
@@ -42,8 +42,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA8E317F75F350031B1C9"
-               BuildableName = "libPVSNES.a"
+               BlueprintIdentifier = "B3C9D5311DEA83DE0068D057"
+               BuildableName = "PVSNES.framework"
                BlueprintName = "PVSNES"
                ReferencedContainer = "container:PVSNES/PVSNES.xcodeproj">
             </BuildableReference>
@@ -56,8 +56,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A9FBC191ABD0DA7004E778B"
-               BuildableName = "libPVGBA.a"
+               BlueprintIdentifier = "B3C9D4B71DEA77DF0068D057"
+               BuildableName = "PVGBA.framework"
                BlueprintName = "PVGBA"
                ReferencedContainer = "container:PVGBA/PVGBA.xcodeproj">
             </BuildableReference>
@@ -70,8 +70,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-               BuildableName = "libPVGB.a"
+               BlueprintIdentifier = "B3C9D4391DEA6AFB0068D057"
+               BuildableName = "PVGB.framework"
                BlueprintName = "PVGB"
                ReferencedContainer = "container:PVGB/PVGB.xcodeproj">
             </BuildableReference>
@@ -84,8 +84,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3A74E71ABF11AC002274A3"
-               BuildableName = "libPVNES.a"
+               BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
+               BuildableName = "PVNES.framework"
                BlueprintName = "PVNES"
                ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
             </BuildableReference>

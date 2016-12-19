@@ -3,7 +3,7 @@
 #ifdef _SDL2
 #include <SDL2/SDL.h>
 #else
-#include <SDL/SDL.h>
+#include <SDL.h>
 #endif
 
 uint32 PtoV(uint16 x, uint16 y);

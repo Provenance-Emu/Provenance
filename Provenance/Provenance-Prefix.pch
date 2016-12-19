@@ -7,5 +7,6 @@
 #ifdef __OBJC__
 	#import <UIKit/UIKit.h>
 	#import <Foundation/Foundation.h>
-    #import "DebugUtils.h"
+    #import <PVSupport/DebugUtils.h>
+    #import "PVAvailability.h"
 #endif

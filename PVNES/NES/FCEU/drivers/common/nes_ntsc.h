@@ -54,15 +54,16 @@ extern nes_ntsc_setup_t const nes_ntsc_monochrome;/* desaturated + artifacts */
 /* Initializes and adjusts parameters. Can be called multiple times on the same
 nes_ntsc_t object. Can pass NULL for either parameter. */
 typedef struct nes_ntsc_t nes_ntsc_t;
-void nes_ntsc_init( nes_ntsc_t* ntsc, nes_ntsc_setup_t const* setup, int bpp, int multiplier );
+void nes_ntsc_init( nes_ntsc_t* ntsc, nes_ntsc_setup_t const* setup, int bpp );
 
 /* Filters one or more rows of pixels. Input pixels are 6/9-bit palette indicies.
-In_row_width is the number of pixels to get to the next input row. Out_pitch
+In_row_width is the number of pixels to get to the next input row. Emphasis is
+the emphasis bits to bitwise-OR with all pixels in the input data. Out_pitch
 is the number of *bytes* to get to the next output row. Output pixel format
 is set by NES_NTSC_OUT_DEPTH (defaults to 16-bit RGB). */
 void nes_ntsc_blit( nes_ntsc_t const* ntsc, NES_NTSC_IN_T const* nes_in,
-		long in_row_width, int burst_phase, int in_width, int in_height,
-		void* rgb_out, long out_pitch );
+		long in_row_width, int burst_phase, int emphasis, int in_width,
+		int in_height, void* rgb_out, long out_pitch );
 
 /* Number of output pixels written by blitter for given input width. Width might
 be rounded down slightly; use NES_NTSC_IN_WIDTH() on result to find rounded

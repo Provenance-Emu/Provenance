@@ -7,7 +7,7 @@
 //
 
 #import "PVSNESControllerViewController.h"
-#import "PVSNESEmulatorCore.h"
+#import <PVSNES/PVSNESEmulatorCore.h>
 
 @interface PVSNESControllerViewController ()
 
@@ -93,7 +93,7 @@
 			break;
 	}
 	
-    [self vibrate];
+	[super dPad:dPad didPressDirection:direction];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -104,6 +104,7 @@
 	[snesCore releaseSNESButton:PVSNESButtonDown forPlayer:0];
 	[snesCore releaseSNESButton:PVSNESButtonLeft forPlayer:0];
 	[snesCore releaseSNESButton:PVSNESButtonRight forPlayer:0];
+	[super dPadDidReleaseDirection:dPad];
 }
 
 - (void)buttonPressed:(JSButton *)button
@@ -111,37 +112,42 @@
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore pushSNESButton:[button tag] forPlayer:0];
     
-    [self vibrate];
+	[super buttonPressed:button];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
 	PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore releaseSNESButton:[button tag] forPlayer:0];
+	[super buttonReleased:button];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore pushSNESButton:PVSNESButtonStart forPlayer:player];
+	[super pressStartForPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore releaseSNESButton:PVSNESButtonStart forPlayer:player];
+	[super releaseStartForPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore pushSNESButton:PVSNESButtonSelect forPlayer:player];
+	[super pressSelectForPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     PVSNESEmulatorCore *snesCore = (PVSNESEmulatorCore *)self.emulatorCore;
     [snesCore releaseSNESButton:PVSNESButtonSelect forPlayer:player];
+	[super releaseSelectForPlayer:player];
 }
 
 @end

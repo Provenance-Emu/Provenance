@@ -7,7 +7,7 @@
 //
 
 #import "PVGBAControllerViewController.h"
-#import "PVGBAEmulatorCore.h"
+#import <PVGBA/PVGBAEmulatorCore.h>
 #import "PVSettingsModel.h"
 #import <AudioToolbox/AudioToolbox.h>
 
@@ -87,7 +87,7 @@
             break;
     }
     
-    [self vibrate];
+	[super dPad:dPad didPressDirection:direction];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -98,6 +98,7 @@
     [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:0];
     [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:0];
     [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:0];
+	[super dPadDidReleaseDirection:dPad];
 }
 
 - (void)buttonPressed:(JSButton *)button
@@ -105,37 +106,42 @@
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore pushGBAButton:[button tag] forPlayer:0];
     
-    [self vibrate];
+	[super buttonPressed:button];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore releaseGBAButton:[button tag] forPlayer:0];
+	[super buttonReleased:button];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore pushGBAButton:PVGBAButtonStart forPlayer:player];
+	[super pressStartForPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore releaseGBAButton:PVGBAButtonStart forPlayer:player];
+	[super releaseStartForPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore pushGBAButton:PVGBAButtonSelect forPlayer:player];
+	[super pressSelectForPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
     [gbaCore releaseGBAButton:PVGBAButtonSelect forPlayer:player];
+	[super releaseSelectForPlayer:player];
 }
 
 @end

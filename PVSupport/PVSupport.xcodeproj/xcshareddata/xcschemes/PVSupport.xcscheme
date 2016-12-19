@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1ACEA64317F7467D0031B1C9"
-               BuildableName = "libPVSupport.a"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport"
                ReferencedContainer = "container:PVSupport.xcodeproj">
             </BuildableReference>
@@ -45,8 +45,8 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1ACEA64317F7467D0031B1C9"
-            BuildableName = "libPVSupport.a"
+            BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+            BuildableName = "PVSupport.framework"
             BlueprintName = "PVSupport"
             ReferencedContainer = "container:PVSupport.xcodeproj">
          </BuildableReference>

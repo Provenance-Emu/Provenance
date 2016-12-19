@@ -13,6 +13,7 @@
 #import "PVGameLibraryViewController.h"
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
+#import "PVLicensesViewController.h"
 
 @interface PVSettingsViewController ()
 
@@ -23,7 +24,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
+
 	self.title = @"Settings";
 
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
@@ -32,7 +33,8 @@
 	[self.opacitySlider setValue:[settings controllerOpacity]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
-    [self.recentGamesSwitch setOn:[settings showRecentGames]];
+    [self.imageSmoothing setOn:[settings imageSmoothing]];
+	[self.fpsCountSwitch setOn:[settings showFPSCount]];
     [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
@@ -44,7 +46,15 @@
 #else
     [self.modeLabel setText:@"RELEASE"];
 #endif
-    
+    NSString *revisionString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Revision"];
+    UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
+
+    if ([revisionString length] > 0) {
+        [self.revisionLabel setText:revisionString];
+    } else {
+        [self.revisionLabel setTextColor:color];
+        [self.revisionLabel setText:@"(none)"];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -59,9 +69,19 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+- (IBAction)help:(id)sender
+{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
 - (IBAction)done:(id)sender
 {
 	[[self presentingViewController] dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (IBAction)toggleFPSCount:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setShowFPSCount:[self.fpsCountSwitch isOn]];
 }
 
 - (IBAction)toggleAutoSave:(id)sender
@@ -78,7 +98,7 @@
 {
     self.opacitySlider.value = floor(self.opacitySlider.value / 0.05) * 0.05;
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
-    
+
 	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
 }
 
@@ -92,9 +112,9 @@
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
 
-- (IBAction)toggleRecentGamesSwitch:(id)sender;
+- (IBAction)toggleSmoothing:(id)sender
 {
-    [[PVSettingsModel sharedInstance] setShowRecentGames:[self.recentGamesSwitch isOn]];
+    [[PVSettingsModel sharedInstance] setImageSmoothing:[self.imageSmoothing isOn]];
 }
 
 - (IBAction)volumeChanged:(id)sender
@@ -109,19 +129,18 @@
     if (indexPath.section == 3 && indexPath.row == 0)
     {
         PViCadeControllerViewController *iCadeControllerViewController = [[PViCadeControllerViewController alloc] init];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:iCadeControllerViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:iCadeControllerViewController animated:YES];
     }
     else if(indexPath.section == 4 && indexPath. row == 0) {
         // import/export roms and game saves button
         [tableView deselectRowAtIndexPath:[tableView indexPathForSelectedRow] animated:YES];
-        
+
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
         Reachability *reachability = [Reachability reachabilityForInternetConnection];
         [reachability startNotifier];
-        
+
         NetworkStatus status = [reachability currentReachabilityStatus];
-        
+
         if (status != ReachableViaWiFi)
         {
             UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
@@ -132,17 +151,17 @@
             [self presentViewController:alert animated:YES completion:NULL];
         } else {
             // connected via wifi, let's continue
-            
+
             // start web transfer service
             [[PVWebServer sharedInstance] startServer];
-            
+
             // get the IP address of the device
             NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
-            
+
 #if TARGET_IPHONE_SIMULATOR
             ipAddress = [ipAddress stringByAppendingString:@":8080"];
 #endif
-            
+
             NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
             UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
                                                             message: message
@@ -152,7 +171,7 @@
             }]];
             [self presentViewController:alert animated:YES completion:NULL];
         }
-        
+
     }
     else if (indexPath.section == 5 && indexPath.row == 0)
     {
@@ -182,9 +201,13 @@
     else if (indexPath.section == 5 && indexPath.row == 2)
     {
         PVConflictViewController *conflictViewController = [[PVConflictViewController alloc] initWithGameImporter:self.gameImporter];
-        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:conflictViewController];
-        [self presentViewController:navController animated:YES completion:NULL];
+        [self.navigationController pushViewController:conflictViewController animated:YES];
     }
+    else if (indexPath.section == 7 && indexPath.row == 0) {
+        PVLicensesViewController *licensesViewController = [[PVLicensesViewController alloc] init];
+        [self.navigationController pushViewController:licensesViewController animated:YES];
+    }
+
     [self.tableView deselectRowAtIndexPath:indexPath animated: YES];
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done:)] animated:NO];
 }

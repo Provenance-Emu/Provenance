@@ -88,6 +88,7 @@ static uint8 MMC5LineCounter;
 static uint8 mmc5psize, mmc5vsize;
 static uint8 mul[2];
 
+static uint32 WRAMSIZE = 0;
 static uint8 *WRAM = NULL;
 static uint8 *MMC5fill = NULL;
 static uint8 *ExRAM = NULL;
@@ -137,7 +138,11 @@ static void mmc5_PPUWrite(uint32 A, uint8 V) {
 
 uint8 FASTCALL mmc5_PPURead(uint32 A) {
 	if (A < 0x2000) {
-		if (ppuphase == PPUPHASE_BG)
+		if (ppuphase == PPUPHASE_BG 
+			//zero 03-aug-2014 - added this to fix Uchuu Keibitai SDF. The game reads NT entries from CHR rom while PPU is disabled.
+			//obviously we have enormous numbers of bugs springing from our terrible emulation of ppu-disabled states, but this does the job for fixing this one
+			&& (PPU[1] & 0x10)
+			)
 			return *MMC5BGVRAMADR(A);
 		else return MMC5SPRVPage[(A) >> 10][(A)];
 	} else {
@@ -269,6 +274,7 @@ static void MMC5WRAM(uint32 A, uint32 V) {
 	V = MMC5WRAMIndex[V & 7];
 	if (V != 255) {
 		setprg8r(0x10, A, V);
+		FCEU_CheatAddRAM(8, 0x6000, (WRAM + ((V * 8192) & (WRAMSIZE - 1))));
 		MMC5MemIn[(A - 0x6000) >> 13] = 1;
 	} else
 		MMC5MemIn[(A - 0x6000) >> 13] = 0;
@@ -510,21 +516,40 @@ void MMC5Synco(void) {
 }
 
 void MMC5_hb(int scanline) {
-	if (scanline == 240) {
+	//zero 24-jul-2014 - revised for newer understanding, to fix metal slader glory credits. see r7371 in bizhawk
+	
+	int sl = scanline + 1;
+	int ppuon = (PPU[1] & 0x18);
+
+	if (!ppuon || sl >= 241)
+	{
+		// whenever rendering is off for any reason (vblank or forced disable
+		// the irq counter resets, as well as the inframe flag (easily verifiable from software)
+		MMC5IRQR &= ~0x40;
+		MMC5IRQR &= ~0x80;
 		MMC5LineCounter = 0;
-		MMC5IRQR = 0x40;
+		X6502_IRQEnd(FCEU_IQEXT);
 		return;
 	}
-	if (MMC5LineCounter < 240) {
-		if (MMC5LineCounter == IRQScanline) {
+
+	if (!(MMC5IRQR&0x40))
+	{
+		MMC5IRQR |= 0x40;
+		MMC5IRQR &= ~0x80;
+		MMC5LineCounter = 0;
+		X6502_IRQEnd(FCEU_IQEXT);
+	}
+	else
+	{
+		MMC5LineCounter++;
+		if (MMC5LineCounter == IRQScanline)
+		{
 			MMC5IRQR |= 0x80;
 			if (IRQEnable & 0x80)
 				X6502_IRQBegin(FCEU_IQEXT);
 		}
-		MMC5LineCounter++;
 	}
-	if (MMC5LineCounter == 240)
-		MMC5IRQR = 0;
+
 }
 
 void MMC5_StateRestore(int version) {
@@ -727,8 +752,11 @@ void NSFMMC5_Init(void) {
 }
 
 void NSFMMC5_Close(void) {
+	if (WRAM)
+		FCEU_gfree(WRAM);
+	WRAM = NULL;
 	FCEU_gfree(ExRAM);
-	ExRAM = 0;
+	ExRAM = NULL;
 }
 
 static void GenMMC5Reset(void) {
@@ -760,7 +788,7 @@ static void GenMMC5Reset(void) {
 	SetReadHandler(0x5205, 0x5206, MMC5_read);
 
 //	GameHBIRQHook=MMC5_hb;
-	FCEU_CheatAddRAM(8, 0x6000, WRAM);
+//	FCEU_CheatAddRAM(8, 0x6000, WRAM);
 	FCEU_CheatAddRAM(1, 0x5c00, ExRAM);
 }
 
@@ -849,7 +877,8 @@ static void GenMMC5_Init(CartInfo *info, int wsize, int battery) {
 }
 
 void Mapper5_Init(CartInfo *info) {
-	GenMMC5_Init(info, DetectMMC5WRAMSize(info->CRC32), info->battery);
+	WRAMSIZE = DetectMMC5WRAMSize(info->CRC32);
+	GenMMC5_Init(info, WRAMSIZE, info->battery);
 }
 
 // ELROM seems to have 0KB of WRAM

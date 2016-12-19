@@ -365,6 +365,7 @@
 #define IDB_BITMAP_SELECTED19           288
 #define IDD_TASEDITOR_SAVINGOPTIONS     289
 #define IDD_SYMBOLIC_DEBUG_NAMING       290
+#define DLG_SNESPAD                     291
 #define MENU_HIDE_MENU                  300
 #define COMBO_FILTER                    300
 #define IDC_EDIT_AUTHORINFO             300
@@ -416,7 +417,6 @@
 #define IDC_DEBUGGER_VAL_PPU            310
 #define IDC_LABEL_PALUSED2              310
 #define IDC_LABEL_NEWPPUUSED            310
-#define MENU_PAL                        311
 #define IDC_DEBUGGER_VAL_SPR            311
 #define IDC_LABEL_TWEAKCOUNT            311
 #define IDC_BTN_CHEAT_ADDFROMFILE       311
@@ -426,6 +426,9 @@
 #define MENU_DIRECTORIES                320
 #define MENU_INPUT                      321
 #define MENU_GUI_OPTIONS                327
+#define MENU_NTSC                       330
+#define MENU_PAL                        331
+#define MENU_DENDY                      332
 #define CHECK_DISABLE_FOURSCORE         400
 #define MENU_MV_BOOKMARKS_RM_ALL        400
 #define IDC_WINSIZE_MUL_X               400
@@ -575,9 +578,11 @@
 #define IDC_SELECTION_MARKER_EDIT       1147
 #define IDC_NOTE_TO_FIND                1147
 #define IDC_AUTOSAVE_PERIOD             1147
+#define IDC_EXTRA_SCANLINES             1147
 #define IDC_BUTTON9                     1148
 #define TASEDITOR_FIND_NEXT_SIMILAR_MARKER 1148
 #define IDC_SYMBOLIC_ADDRESS            1148
+#define IDC_VBLANK_SCANLINES            1148
 #define IDC_HISTORYLIST                 1149
 #define IDC_SYMBOLIC_NAME               1149
 #define IDC_BOOKMARKSLIST               1150
@@ -632,6 +637,9 @@
 #define IDC_COPY_INPUT                  1203
 #define IDC_AUTORESUMECDLOGGING         1203
 #define IDC_MASK_UNUSED_GRAPHICS        1203
+#define CHECK_SOUND_SWAPDUTY            1203
+#define CB_OVERCLOCKING                 1203
+#define CHECK_DEEMPH_SWAP               1203
 #define IDC_VOLUMEGROUP                 1204
 #define IDC_OMITBLANK                   1204
 #define IDC_CHECK3                      1204
@@ -641,12 +649,16 @@
 #define IDC_AUTORESUMECDLOGGING2        1204
 #define IDC_AUTOSAVECDL                 1204
 #define IDC_INVERT_THE_MASK             1204
+#define IDC_DEBUGGER_PREDEFINEDREGS     1204
+#define IDC_DEBUGGER_PREDEFINED_REGS    1204
 #define IDC_RAMLIST                     1205
 #define IDC_CHECK4                      1205
 #define IDC_CHECK_BOOKMARKS             1205
 #define IDC_SUPERIMPOSE2                1205
 #define IDC_RUN_AUTO                    1205
 #define IDC_AUTOLOADCDL                 1205
+#define IDC_INVERT_THE_MASK2            1205
+#define IDC_SPRITE16_MODE               1205
 #define IDC_C_SEARCH                    1206
 #define IDC_CHECK5                      1206
 #define IDC_CHECK_GREENZONE             1206
@@ -753,6 +765,17 @@
 #define ID_STATIC                       1286
 #define ID_CDL_OPTIONS                  1287
 #define ID_CDL_GENERATEROM              1288
+#define CTL_PALSAT_TRACKBAR             1291
+#define CB_SKIP_7BIT                    1293
+#define STATIC_SATVALUE                 1294
+#define CTL_PALNOTCH_TRACKBAR           1295
+#define STATIC_NOTCHVALUE               1296
+#define CTL_PALSHARP_TRACKBAR           1297
+#define STATIC_SHARPVALUE               1298
+#define CTL_PALCONTRAST_TRACKBAR        1299
+#define STATIC_CONTRASTVALUE            1300
+#define CTL_PALBRIGHT_TRACKBAR          1301
+#define STATIC_BRIGHTVALUE              1302
 #define MENU_NETWORK                    40040
 #define MENU_PALETTE                    40041
 #define MENU_SOUND                      40042
@@ -1201,6 +1224,9 @@
 #define ID_HIGHLIGHTING_FADEWHENPAUSED  40586
 #define ID_HIGHLIGHTING_SETFADINGPERIOD 40587
 #define ID_HIGHLIGHTING_HIGHLIGHT_ACTIVITY 40588
+#define ID_DUMPTOFILE_CPUBUS            40589
+#define MENU_MV_FILE_DUMP_64K           40590
+#define ID_CONFIG_REGION                40591
 #define IDC_DEBUGGER_ICONTRAY           55535
 #define MW_ValueLabel2                  65423
 #define MW_ValueLabel1                  65426
@@ -1212,9 +1238,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        291
-#define _APS_NEXT_COMMAND_VALUE         40589
-#define _APS_NEXT_CONTROL_VALUE         1290
+#define _APS_NEXT_RESOURCE_VALUE        292
+#define _APS_NEXT_COMMAND_VALUE         40596
+#define _APS_NEXT_CONTROL_VALUE         1303
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

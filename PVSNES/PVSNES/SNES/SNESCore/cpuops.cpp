@@ -1754,12 +1754,12 @@ static void OpC8Slow (void)
 
 	if (CheckIndex())
 	{
-		Registers.YL--;
+		Registers.YL++;
 		SetZN(Registers.YL);
 	}
 	else
 	{
-		Registers.Y.W--;
+		Registers.Y.W++;
 		SetZN(Registers.Y.W);
 	}
 }

@@ -1,0 +1,144 @@
+
+___________________________________________________________________________
+
+  DrZ80 (c) Copyright 2004 Reesy.   Free for non-commercial use
+
+  Reesy's e-mail: drsms_reesy(atsymbol)yahoo.co.uk
+  Replace (atsymbol) with @
+  
+___________________________________________________________________________
+
+
+What is it?
+-----------
+
+DrZ80 is an emulator for the Z80 microprocessor, written in ARM 32-bit assembly.
+It is aimed at chips such as ARM7 and ARM9 cores, StrongARM and XScale, to interpret Z80
+code as fast as possible.
+
+Flags are mapped onto ARM flags whenever possible, which speeds up the processing of an opcode.
+
+ARM Register Usage
+------------------
+
+See source code for up to date of register usage, however a summary is here:
+
+  r0-3: Temporary registers
+  r3  : Pointer to Opcode Jump table
+  r4  : T-States remaining
+  r5  : Pointer to Cpu Context
+  r6  : Current PC + Memory Base (i.e. pointer to next opcode)
+  r7  : Z80 A Register in top 8 bits (i.e. 0xAA000000)
+  r8  : Z80 F Register (Flags) (NZCV) in lowest four bits
+  r9  : Z80 BC Register pair in top 16 bits (i.e. 0xBBCC0000)
+  r10 : Z80 DE Register pair in top 16 bits (i.e. 0xDDEE0000)
+  r11 : Z80 HL Register pair in top 16 bits (i.e. 0xHHLL0000)
+  r12 : Z80 Stack + Memory Base (i.e. pointer to current stack in host system memory)
+
+( note: r3,r12 are always preserved when calling external memory functions )
+
+How to Compile
+--------------
+
+The core is targeted for the GNU compiler, so to compile just add the "DrZ80.o" object
+to your makefile and that should be it.
+
+If you want to compile it seperately, use:  as -o DrZ80.o DrZ80.s
+
+( note: If you want to use DrZ80 with a different compiler you will need to run
+        some sort of parser through the source to make the syntax of the source
+	compatible with your target compiler )
+
+
+Adding to your project
+----------------------
+
+To add DrZ80 to your project, add DrZ80.o, and include DrZ80.h
+There is one structure: 'struct DrZ80', and  three functions: DrZ80Run,DrZ80RaiseInt
+and DrZ80_irq_callback.
+
+Don't worry if this seem very minimal - its all you need to run as many Z80s as you want.
+It works with both C and C++.
+
+( Note: DrZ80_irq_callback is just a pointer to an irq call back function that needs
+        to be written by you )
+
+Declaring a Memory handlers
+---------------------------
+
+Before you can reset or execute Z80 opcodes you must first set up a set of memory handlers.
+There are 8 functions you have to set up per CPU, like this:
+
+  unsigned int z80_rebaseSP(unsigned short new_sp);
+  unsigned int z80_rebasePC(unsigned short new_pc);
+  unsigned char z80_read8(unsigned short a);
+  unsigned short z80_read16(unsigned short a);
+  void z80_write8(unsigned char d,unsigned short a); 
+  void z80_write16(unsigned short d,unsigned short a); 
+  unsigned char z80_in(unsigned char p);
+  void z80_out(unsigned char p,unsigned char d);
+  
+You can think of these functions representing the Z80's memory bus.
+The Read and Write functions are called whenever the Z80 reads or writes memory.
+The In and Out functions are called whenever the Z80 uses the I/O ports.
+The z80_rebasePC and z80_rebaseSP functions are to do with creating direct memory
+pointers in the host machines memory, I will explain more about this later.
+
+Declaring a CPU Context
+-----------------------
+
+To declare a CPU simple declare a struct Cyclone in your code. For example to declare
+two Z80s:
+
+  struct DrZ80 MyCpu;
+  struct DrZ80 MyCpu2;
+
+It's probably a good idea to initialise the memory to zero:
+
+  memset(&MyCpu, 0,sizeof(MyCpu));
+  memset(&MyCpu2,0,sizeof(MyCpu2));
+
+Next point to your memory handlers:
+
+  MyCpu.z80_rebasePC=z80_rebasePC;
+  MyCpu.z80_rebaseSP=z80_rebaseSP;
+  MyCpu.z80_read8   =z80_read8;
+  MyCpu.z80_read16  =z80_read16;
+  MyCpu.z80_write8  =z80_write8;
+  MyCpu.z80_write16 =z80_write16;
+  MyCpu.z80_in      =z80_in;
+  MyCpu.z80_out     =z80_out;
+
+Now you are nearly ready to reset the Z80, except you need one more function: checkpc().
+
+The z80_rebasePC() function
+---------------------------
+
+When DrZ80 reads opcodes, it doesn't use a memory handler every time, this would be
+far too slow, instead it uses a direct pointer to ARM memory.
+For example if your Rom image was at 0x3000000 and the program counter was $206,
+Cyclone's program counter would be 0x3000206.
+
+The difference between an ARM address and a Z80 address is also stored in a variable called
+'pc_membase'. In the above example it's 0x3000000. To retrieve the real PC, DrZ80 just
+subtracts 'pc_membase'.
+
+Everytime the Z80 PC is modified, i.e. by a jump,branch intructions or by an interupt, DrZ80
+calls the z80_rebasePC function. If the PC is in a different bank, for example Ram instead 
+of Rom, change 'pc_membase', recalculate the new PC and return it.
+
+The z80_rebaseSP() function
+---------------------------
+
+When DrZ80 pushs/pops to the Z80 stack pointer, it doesn't use a memory handler every time.  In
+order to gain more speed a direct pointer to ARM memory is used.  For example if your Ram was at 
+0x3000000 and the z80 stack pointer counter was 0xD000, DrZ80's stack pointer would be 0x300D000.
+
+The difference between an ARM address and a Z80 address is also stored in a variable called
+'sp_membase'. In the above example it's 0x3000000. To retrieve the real SP, DrZ80 just
+subtracts 'sp_membase'.
+
+Everytime the Z80 SP is modified ( i.e. set with a new value LD SP,NN etc ) DrZ80
+calls the z80_rebaseSP function. If the SP is in a different bank, for example Rom instead 
+of Ram, change 'sp_membase', recalculate the new SP and return it.
+

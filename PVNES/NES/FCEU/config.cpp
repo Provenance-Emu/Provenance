@@ -18,10 +18,13 @@ char *FCEUI_GetAboutString() {
 	const char *aboutTemplate =
 		FCEU_NAME_AND_VERSION "\n\n"
 		"Administrators:\n"
-		"zeromus, adelikat, AnS\n\n"
+		"zeromus, punkrockguy318 (Lukas Sabota), feos\n"
+		"\n"
 		"Current Contributors:\n"
-		"punkrockguy318 (Lukas Sabota)\n"
-		"CaH4e3, gocha, xhainingx, feos\n"
+		"CaH4e3, rainwarrior\n"
+		"\n"
+		"Past Contributors:\n"
+		"xhainingx, gocha, AnS\n"
 		"\n"
 		"FCEUX 2.0:\n"
 		"mz, nitsujrehtona, SP, Ugly Joe,\n"
@@ -45,7 +48,7 @@ char *FCEUI_GetAboutString() {
 
 	if(aboutString) return aboutString;
 
-	const char *compilerString = FCEUD_GetCompilerString();
+	const char *compilerString = ""; //FCEUD_GetCompilerString();
 
 	//allocate the string and concatenate the template with the compiler string
 	if (!(aboutString = (char*)FCEU_dmalloc(strlen(aboutTemplate) + strlen(compilerString) + 1)))

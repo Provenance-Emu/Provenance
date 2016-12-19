@@ -11,6 +11,7 @@
 @interface PVWebServer ()
 
 @property (nonatomic, strong) GCDWebUploader *webServer;
+@property (nonatomic, strong) NSUserActivity *handoffActivity;
 
 @end
 
@@ -55,16 +56,28 @@
     return documentPath;
 }
 
+- (NSUserActivity *)handoffActivity
+{
+    if (!_handoffActivity) {
+        _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"com.app.browser"];
+        _handoffActivity.webpageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", [self getIPAddress]]];
+    }
+    
+    return _handoffActivity;
+}
+
 - (void)startServer
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
     [self.webServer start];
+    [self.handoffActivity becomeCurrent];
 }
 
 - (void)stopServer
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
     [self.webServer stop];
+    [self.handoffActivity resignCurrent];
 }
 
 - (NSString *)getIPAddress

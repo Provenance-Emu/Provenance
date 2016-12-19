@@ -7,7 +7,7 @@
 //
 
 #import "PVNESControllerViewController.h"
-#import "PVNESEmulatorCore.h"
+#import <PVNES/PVNESEmulatorCore.h>
 
 @interface PVNESControllerViewController ()
 
@@ -83,7 +83,7 @@
             break;
     }
     
-    [self vibrate];
+	[super dPad:dPad didPressDirection:direction];
 }
 
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
@@ -94,6 +94,7 @@
     [nesCore releaseNESButton:PVNESButtonDown forPlayer:0];
     [nesCore releaseNESButton:PVNESButtonLeft forPlayer:0];
     [nesCore releaseNESButton:PVNESButtonRight forPlayer:0];
+	[super dPadDidReleaseDirection:dPad];
 }
 
 - (void)buttonPressed:(JSButton *)button
@@ -101,37 +102,42 @@
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore pushNESButton:[button tag] forPlayer:0];
     
-    [self vibrate];
+	[super buttonPressed:button];
 }
 
 - (void)buttonReleased:(JSButton *)button
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore releaseNESButton:[button tag] forPlayer:0];
+	[super buttonReleased:button];
 }
 
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore pushNESButton:PVNESButtonStart forPlayer:player];
+	[super pressStartForPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore releaseNESButton:PVNESButtonStart forPlayer:player];
+	[super releaseStartForPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore pushNESButton:PVNESButtonSelect forPlayer:player];
+	[super pressSelectForPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     PVNESEmulatorCore *nesCore = (PVNESEmulatorCore *)self.emulatorCore;
     [nesCore releaseNESButton:PVNESButtonSelect forPlayer:player];
+	[super releaseSelectForPlayer:player];
 }
 
 @end

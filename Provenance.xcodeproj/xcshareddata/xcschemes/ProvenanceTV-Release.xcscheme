@@ -1,11 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0710"
+   LastUpgradeVersion = "0810"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport tvOS"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96DFD1D62BE5A003F1E93"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella tvOS"
+               ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3A3E9851D6BFF6F00CCD7C8"
+               BuildableName = "PicoDrive.framework"
+               BlueprintName = "PicoDrive tvOS"
+               ReferencedContainer = "container:PVPicoDrive/PVPicoDrive.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3FA5D6E1D6BAD4100060D71"
+               BuildableName = "ProSystem.framework"
+               BlueprintName = "ProSystem tvOS"
+               ReferencedContainer = "container:PVProSystem/PVProSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3E432111DE6919B00D3C91E"
+               BuildableName = "PVGenesis.framework"
+               BlueprintName = "PVGenesis tvOS"
+               ReferencedContainer = "container:PVGenesis/PVGenesis.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C9D53F1DEA83FD0068D057"
+               BuildableName = "PVSNES.framework"
+               BlueprintName = "PVSNES tvOS"
+               ReferencedContainer = "container:PVSNES/PVSNES.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3A9F4431DE877E4008450F5"
+               BuildableName = "PVNES.framework"
+               BlueprintName = "PVNES tvOS"
+               ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C9D4471DEA6B0D0068D057"
+               BuildableName = "PVGB.framework"
+               BlueprintName = "PVGB tvOS"
+               ReferencedContainer = "container:PVGB/PVGB.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C9D4C51DEA77E90068D057"
+               BuildableName = "PVGBA.framework"
+               BlueprintName = "PVGBA tvOS"
+               ReferencedContainer = "container:PVGBA/PVGBA.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
