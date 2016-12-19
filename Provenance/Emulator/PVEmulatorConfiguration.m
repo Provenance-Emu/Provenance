@@ -24,6 +24,9 @@
 #import "PVNESEmulatorCore.h"
 #import "PVNESControllerViewController.h"
 
+#import "MednafenGameCore.h"
+#import "PVPSXControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -92,6 +95,10 @@
     {
         core = [[PVNESEmulatorCore alloc] init];
     }
+    else if ([systemID isEqualToString:PVPSXSystemIdentifier])
+    {
+        core = [[MednafenGameCore alloc] init];
+    }
 	
 	return core;
 }
@@ -125,6 +132,10 @@
              [systemID isEqualToString:PVFDSSystemIdentifier])
     {
         controller = [[PVNESControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVPSXSystemIdentifier])
+    {
+        controller = [[PVPSXControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;
