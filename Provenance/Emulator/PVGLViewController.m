@@ -71,6 +71,8 @@
 
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
+#pragma message "psx aspect ratio is not well casted"
+        //CGSize aspectSize = CGSizeMake(4, 3);
         CGSize aspectSize = [self.emulatorCore aspectSize];
         CGFloat ratio = 0;
         if (aspectSize.width > aspectSize.height) {
@@ -127,13 +129,21 @@
 
 - (void)setupTexture
 {
+    //GLenum error;
 	glGenTextures(1, &texture);
+    //error = glGetError();
 	glBindTexture(GL_TEXTURE_2D, texture);
+    //error = glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
+    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //error = glGetError();
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -148,14 +158,15 @@
         CGFloat texWidth = (screenSize.width / bufferSize.width);
         CGFloat texHeight = (screenSize.height / bufferSize.height);
 
-        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+        vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
         vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
         vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+        vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
 
+#pragma message "to check why textWidth is only 0.85f, I've changed it directly to 1.0f"
         textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-        textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
-        textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+        textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
+        textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
         textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
 
         int vertexIndices[6] = {
@@ -168,10 +179,11 @@
             triangleVertices[i]  = vertices[vertexIndices[i]];
             triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
         }
-
+//GLenum error;
         glBindTexture(GL_TEXTURE_2D, texture);
+  //      error = glGetError();
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-
+//error = glGetError();
         if (texture)
         {
             self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
@@ -182,7 +194,7 @@
         }
 
         [self.effect prepareToDraw];
-
+//error = glGetError();
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
 

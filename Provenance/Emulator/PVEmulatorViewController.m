@@ -151,6 +151,9 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
+#pragma message "moved load of game before to have MednafenCoreGame.game already initialized"
+    bool loaded = [self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]];
+    assert(loaded);
 
     if ([[UIScreen screens] count] > 1)
     {
@@ -195,10 +198,10 @@ void uncaughtExceptionHandler(NSException *exception)
 		[self.menuButton setHidden:YES];
 	}
 
-    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
+    if (!loaded)
     {
         __weak typeof(self) weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DLog(@"Unable to load ROM at %@", [self.game romPath]);
 #if !TARGET_OS_TV
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
