@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Mednafen/Mednafen.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "container:Provenance.xcodeproj">
    </FileRef>
    <FileRef
@@ -18,6 +15,9 @@
    </FileRef>
    <FileRef
       location = "group:PVPicoDrive/PVPicoDrive.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:/Volumes/Data/Users/jmattiello/Workspace/Provenance/Mednafen/PVMednafen.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVSNES/PVSNES.xcodeproj">

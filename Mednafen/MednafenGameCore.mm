@@ -36,7 +36,7 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#import "OERingBuffer.h"
+#import <PVSupport/OERingBuffer.h>
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
