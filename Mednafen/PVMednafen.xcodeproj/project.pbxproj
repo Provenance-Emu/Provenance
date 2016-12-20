@@ -377,6 +377,8 @@
 		AA71E07A1D683FC5009691FC /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55C17F1DE5A0090372A /* demo.cpp */; };
 		AA71E07B1D683FC5009691FC /* sha256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94CFB62F1A75D73F001F174F /* sha256.cpp */; };
 		AA71E07C1D683FC5009691FC /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC7517F1DE5D0090372A /* primitives.cpp */; };
+		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E4791E08893000AD0E8B /* c68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94CFB6371A75DA89001F174F /* c68k.cpp */; };
 		B340E47A1E08893000AD0E8B /* c68kexec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94CFB6381A75DA9C001F174F /* c68kexec.cpp */; };
@@ -4744,6 +4746,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */,
+				B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4751,6 +4754,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -569,7 +569,6 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
-		AA216EB41D6E13AB00303DA3 /* libMednafenTV.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMednafenTV.a; path = "Mednafen/build/Debug-appletvos/libMednafenTV.a"; sourceTree = "<group>"; };
 		AA9B6EDC1D70981000422E5F /* PVPSXControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPSXControllerViewController.h; sourceTree = "<group>"; };
 		AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVPSXControllerViewController.m; sourceTree = "<group>"; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -799,7 +798,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B340E6091E088CF900AD0E8B /* PVMednafen.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -826,7 +824,7 @@
 			isa = PBXGroup;
 			children = (
 				B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */,
-				AA216EB41D6E13AB00303DA3 /* libMednafenTV.a */,
+				B340E6091E088CF900AD0E8B /* PVMednafen.framework */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 				B3AD689A1D6EA6180021B949 /* PicoDrive.framework */,

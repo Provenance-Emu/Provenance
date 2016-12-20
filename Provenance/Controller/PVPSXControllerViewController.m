@@ -7,7 +7,7 @@
 //
 
 #import "PVPSXControllerViewController.h"
-#import "MednafenGameCore.h"
+#import <PVMednafen/MednafenGameCore.h>
 
 @interface PVPSXControllerViewController ()
 

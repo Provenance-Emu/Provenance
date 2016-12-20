@@ -33,7 +33,7 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
-#import "MednafenGameCore.h"
+#import <PVMednafen/MednafenGameCore.h>
 #import "PVPSXControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
