@@ -21,4 +21,6 @@
 @property BOOL requiresSync;
 @property NSString *systemIdentifier;
 
+@property BOOL isFavorite;
+
 @end
