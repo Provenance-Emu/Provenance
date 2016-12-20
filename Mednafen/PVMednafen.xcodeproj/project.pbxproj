@@ -171,7 +171,6 @@
 		94817C3B1922B53900FDFC99 /* okiadpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94817C381922B53900FDFC99 /* okiadpcm.cpp */; };
 		94817C3F1922B75000FDFC99 /* v810_fp_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94817C3D1922B75000FDFC99 /* v810_fp_ops.cpp */; };
 		94817C441922C8E400FDFC99 /* cputest.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55217F1DE5A0090372A /* cputest.c */; };
-		94817C451922C8E400FDFC99 /* x86_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55717F1DE5A0090372A /* x86_cpu.c */; };
 		94817C461922D29B00FDFC99 /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55C17F1DE5A0090372A /* demo.cpp */; };
 		94817C471922D36300FDFC99 /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC7517F1DE5D0090372A /* primitives.cpp */; };
 		948D5B4618C805E500346504 /* OwlResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 948D5B4418C805E500346504 /* OwlResampler.cpp */; };
@@ -557,7 +556,6 @@
 		B340E5281E08893000AD0E8B /* resolve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC9017F1DE5D0090372A /* resolve.cpp */; };
 		B340E5291E08893000AD0E8B /* Stereo_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC0D17F1DE5D0090372A /* Stereo_Buffer.cpp */; };
 		B340E52A1E08893000AD0E8B /* cputest.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55217F1DE5A0090372A /* cputest.c */; };
-		B340E52B1E08893000AD0E8B /* x86_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55717F1DE5A0090372A /* x86_cpu.c */; };
 		B340E52C1E08893000AD0E8B /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55C17F1DE5A0090372A /* demo.cpp */; };
 		B340E52D1E08893000AD0E8B /* sha256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94CFB62F1A75D73F001F174F /* sha256.cpp */; };
 		B340E52E1E08893000AD0E8B /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC7517F1DE5D0090372A /* primitives.cpp */; };
@@ -739,7 +737,6 @@
 		B340E5DE1E08893000AD0E8B /* resolve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC9017F1DE5D0090372A /* resolve.cpp */; };
 		B340E5DF1E08893000AD0E8B /* Stereo_Buffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC0D17F1DE5D0090372A /* Stereo_Buffer.cpp */; };
 		B340E5E01E08893000AD0E8B /* cputest.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55217F1DE5A0090372A /* cputest.c */; };
-		B340E5E11E08893000AD0E8B /* x86_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55717F1DE5A0090372A /* x86_cpu.c */; };
 		B340E5E21E08893000AD0E8B /* demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D55C17F1DE5A0090372A /* demo.cpp */; };
 		B340E5E31E08893000AD0E8B /* sha256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94CFB62F1A75D73F001F174F /* sha256.cpp */; };
 		B340E5E41E08893000AD0E8B /* primitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC7517F1DE5D0090372A /* primitives.cpp */; };
@@ -5085,7 +5082,6 @@
 				8CB3E07817F1DE5E0090372A /* resolve.cpp in Sources */,
 				948D5B4718C8083D00346504 /* Stereo_Buffer.cpp in Sources */,
 				94817C441922C8E400FDFC99 /* cputest.c in Sources */,
-				94817C451922C8E400FDFC99 /* x86_cpu.c in Sources */,
 				94817C461922D29B00FDFC99 /* demo.cpp in Sources */,
 				94CFB6341A75D740001F174F /* sha256.cpp in Sources */,
 				94817C471922D36300FDFC99 /* primitives.cpp in Sources */,
@@ -5462,7 +5458,6 @@
 				B340E5281E08893000AD0E8B /* resolve.cpp in Sources */,
 				B340E5291E08893000AD0E8B /* Stereo_Buffer.cpp in Sources */,
 				B340E52A1E08893000AD0E8B /* cputest.c in Sources */,
-				B340E52B1E08893000AD0E8B /* x86_cpu.c in Sources */,
 				B340E52C1E08893000AD0E8B /* demo.cpp in Sources */,
 				B340E52D1E08893000AD0E8B /* sha256.cpp in Sources */,
 				B340E52E1E08893000AD0E8B /* primitives.cpp in Sources */,
@@ -5651,7 +5646,6 @@
 				B340E5DE1E08893000AD0E8B /* resolve.cpp in Sources */,
 				B340E5DF1E08893000AD0E8B /* Stereo_Buffer.cpp in Sources */,
 				B340E5E01E08893000AD0E8B /* cputest.c in Sources */,
-				B340E5E11E08893000AD0E8B /* x86_cpu.c in Sources */,
 				B340E5E21E08893000AD0E8B /* demo.cpp in Sources */,
 				B340E5E31E08893000AD0E8B /* sha256.cpp in Sources */,
 				B340E5E41E08893000AD0E8B /* primitives.cpp in Sources */,
@@ -6064,6 +6058,7 @@
 					"-mllvm",
 					"-disable-lsr",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -6147,6 +6142,7 @@
 					"-mllvm",
 					"-disable-lsr",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
