@@ -670,18 +670,31 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (NSArray *)indexPathsForGameWithMD5Hash:(NSString *)md5Hash
 {
     NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-    
-    [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
-        NSArray *games = self.gamesInSections[sectionKey];
-        [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+
+    if (self.searchResults)
+    {
+        for (PVGame *game in self.searchResults) {
             if ([[game md5Hash] isEqualToString:md5Hash])
             {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:gameIndex inSection:sectionIndex];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.searchResults indexOfObject:game] inSection:0];
                 [indexPaths addObject:indexPath];
             }
+        }
+    }
+    else
+    {
+        [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
+            NSArray *games = self.gamesInSections[sectionKey];
+            [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+                if ([[game md5Hash] isEqualToString:md5Hash])
+                {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:gameIndex inSection:sectionIndex];
+                    [indexPaths addObject:indexPath];
+                }
+            }];
         }];
-    }];
-    
+    }
+
     return indexPaths;
 }
 
@@ -953,9 +966,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             // no index path, we're buggered.
             return;
         }
-        
-        NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-        PVGame *game = games[[indexPath item]];
+
+        PVGame *game = [self gameAtIndexPath:indexPath];
         
         UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
                                                                              message:nil
