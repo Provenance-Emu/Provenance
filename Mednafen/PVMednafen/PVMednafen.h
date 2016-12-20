@@ -15,5 +15,5 @@ FOUNDATION_EXPORT double PVMednafenVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVMednafenVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVMednafen/PublicHeader.h>
-
+#import <PVMednafen/MednafenGameCore.h>
 
