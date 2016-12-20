@@ -399,7 +399,6 @@
 		B340E48B1E08893000AD0E8B /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D84A17F1DE5C0090372A /* huc6273.cpp */; };
 		B340E48C1E08893000AD0E8B /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D53017F1DE5A0090372A /* crc32.cpp */; };
 		B340E48D1E08893000AD0E8B /* sio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D8A017F1DE5C0090372A /* sio.cpp */; };
-		B340E48E1E08893000AD0E8B /* CDAFReader_SF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94B082471A8697EF00D3C0BC /* CDAFReader_SF.cpp */; };
 		B340E48F1E08893000AD0E8B /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC3917F1DE5D0090372A /* mapping0.c */; };
 		B340E4901E08893000AD0E8B /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC4217F1DE5D0090372A /* registry.c */; };
 		B340E4911E08893000AD0E8B /* okiadpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94817C381922B53900FDFC99 /* okiadpcm.cpp */; };
@@ -580,7 +579,6 @@
 		B340E5411E08893000AD0E8B /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D84A17F1DE5C0090372A /* huc6273.cpp */; };
 		B340E5421E08893000AD0E8B /* crc32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D53017F1DE5A0090372A /* crc32.cpp */; };
 		B340E5431E08893000AD0E8B /* sio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D8A017F1DE5C0090372A /* sio.cpp */; };
-		B340E5441E08893000AD0E8B /* CDAFReader_SF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94B082471A8697EF00D3C0BC /* CDAFReader_SF.cpp */; };
 		B340E5451E08893000AD0E8B /* mapping0.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC3917F1DE5D0090372A /* mapping0.c */; };
 		B340E5461E08893000AD0E8B /* registry.c in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3DC4217F1DE5D0090372A /* registry.c */; };
 		B340E5471E08893000AD0E8B /* okiadpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94817C381922B53900FDFC99 /* okiadpcm.cpp */; };
@@ -750,8 +748,6 @@
 		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
 		B340E5F61E088A4E00AD0E8B /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37E1AC5E305004F42AD /* libvorbisenc.a */; };
 		B340E5F71E088A5300AD0E8B /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37C1AC5E1E9004F42AD /* libvorbis.a */; };
-		B340E5F81E088A5800AD0E8B /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37E1AC5E305004F42AD /* libvorbisenc.a */; };
-		B340E5F91E088A5B00AD0E8B /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37C1AC5E1E9004F42AD /* libvorbis.a */; };
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
 		B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FC1E088AF700AD0E8B /* PVSupport.framework */; };
 /* End PBXBuildFile section */
@@ -2190,8 +2186,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */,
-				B340E5F81E088A5800AD0E8B /* libvorbisenc.a in Frameworks */,
-				B340E5F91E088A5B00AD0E8B /* libvorbis.a in Frameworks */,
 				B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */,
@@ -5301,7 +5295,6 @@
 				B340E48B1E08893000AD0E8B /* huc6273.cpp in Sources */,
 				B340E48C1E08893000AD0E8B /* crc32.cpp in Sources */,
 				B340E48D1E08893000AD0E8B /* sio.cpp in Sources */,
-				B340E48E1E08893000AD0E8B /* CDAFReader_SF.cpp in Sources */,
 				B340E48F1E08893000AD0E8B /* mapping0.c in Sources */,
 				B340E4901E08893000AD0E8B /* registry.c in Sources */,
 				B340E4911E08893000AD0E8B /* okiadpcm.cpp in Sources */,
@@ -5489,7 +5482,6 @@
 				B340E5411E08893000AD0E8B /* huc6273.cpp in Sources */,
 				B340E5421E08893000AD0E8B /* crc32.cpp in Sources */,
 				B340E5431E08893000AD0E8B /* sio.cpp in Sources */,
-				B340E5441E08893000AD0E8B /* CDAFReader_SF.cpp in Sources */,
 				B340E5451E08893000AD0E8B /* mapping0.c in Sources */,
 				B340E5461E08893000AD0E8B /* registry.c in Sources */,
 				B340E5471E08893000AD0E8B /* okiadpcm.cpp in Sources */,
@@ -6002,6 +5994,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -6090,6 +6083,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
