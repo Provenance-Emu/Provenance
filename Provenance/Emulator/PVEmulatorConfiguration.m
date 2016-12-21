@@ -35,6 +35,7 @@
 
 #import <PVMednafen/MednafenGameCore.h>
 #import "PVPSXControllerViewController.h"
+#import "PVWonderSwanControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
 
@@ -116,12 +117,19 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
-    
-    else if ([systemID isEqualToString:PVPSXSystemIdentifier])
+    else if ([systemID isEqualToString:PVPSXSystemIdentifier] ||
+             [systemID isEqualToString:PVLynxSystemIdentifier] ||
+             [systemID isEqualToString:PVPCESystemIdentifier] ||
+             [systemID isEqualToString:PVPCECDSystemIdentifier] ||
+             [systemID isEqualToString:PVPCFXSystemIdentifier] ||
+             [systemID isEqualToString:PVVirtualBoySystemIdentifier] ||
+             [systemID isEqualToString:PVWonderSwanSystemIdentifier])
     {
         core = [[MednafenGameCore alloc] init];
     }
 	
+    core.systemIdentifier = systemID;
+    
 	return core;
 }
 
@@ -171,6 +179,11 @@
     {
         controller = [[PVPSXControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
+    else if ([systemID isEqualToString:PVWonderSwanSystemIdentifier])
+    {
+        controller = [[PVWonderSwanControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+
 	
 	return controller;
 }

@@ -100,8 +100,6 @@ enum systemTypes{ lynx, pce, pcfx, psx, vb, wswan };
     NSTimeInterval mednafenCoreTiming;
     OEIntSize mednafenCoreAspect;
     NSUInteger maxDiscs;
-    
-    
 }
 
 @end
@@ -115,11 +113,14 @@ static __weak MednafenGameCore *_current;
     return inputBuffer[bufferId];
 }
 
-static void mednafen_init(MednafenGameCore* current, NSString* batterySavesDirectory, NSString* biosPath)
+static void mednafen_init(MednafenGameCore* current)
 {
     //passing by parameter
     //GET_CURRENT_OR_RETURN();
 
+    NSString* batterySavesDirectory = current.batterySavesPath;
+    NSString* biosPath = current.batterySavesPath;
+    
     std::vector<MDFNGI*> ext;
     MDFNI_InitializeModules(ext);
 
@@ -902,8 +903,7 @@ static void emulation_run()
     
     for(auto button : PSXMap)
     {
-#pragma message "test controller"
-        
+#pragma message "test controller"        
         //force only player one
         if([_current controllerValueForButtonID:button  forPlayer:0])
         {
@@ -913,8 +913,6 @@ static void emulation_run()
         {
             [_current getInputBuffer:0][0] &= ~(1 << PSXMap[button]);
         }
-        
-        
     }
 
     static int16_t sound_buf[0x10000];
@@ -961,14 +959,59 @@ static void emulation_run()
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
 #pragma message "Make sure system identifier from PVGame is correct"
-    if(true/*[[self systemIdentifier] isEqualToString:@"openemu.system.psx"]*/)
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.lynx"])
+    {
+        systemType = lynx;
+        
+        mednafenCoreModule = @"lynx";
+        mednafenCoreAspect = OEIntSizeMake(80, 51);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 48000;
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.pce"] || [[self systemIdentifier] isEqualToString:@"com.provenance.pcecd"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sgfx"])
+    {
+        systemType = pce;
+        
+        mednafenCoreModule = @"pce";
+        mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 48000;
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.pcfx"])
+    {
+        systemType = pcfx;
+        
+        mednafenCoreModule = @"pcfx";
+        mednafenCoreAspect = OEIntSizeMake(4, 3);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 48000;
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.psx"])
     {
         systemType = psx;
-
+        
         mednafenCoreModule = @"psx";
         mednafenCoreAspect = OEIntSizeMake(3, 2);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.vb"])
+    {
+        systemType = vb;
+        
+        mednafenCoreModule = @"vb";
+        mednafenCoreAspect = OEIntSizeMake(12, 7);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 48000;
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.ws"] || [[self systemIdentifier] isEqualToString:@"com.provenance.wsc"])
+    {
+        systemType = wswan;
+        
+        mednafenCoreModule = @"wswan";
+        mednafenCoreAspect = OEIntSizeMake(14, 9);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 48000;
     }
     else
     {
@@ -977,7 +1020,7 @@ static void emulation_run()
     }
 #pragma message "fix bios path"
     assert(_current);
-    mednafen_init(_current, [self batterySavesPath], [self BIOSPath]);
+    mednafen_init(_current);
 
     game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
 
@@ -1188,8 +1231,14 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 # pragma mark - Input
 
 // Map OE button order to Mednafen button order
+const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
+const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
+const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
+const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
+const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 
+#pragma MARK PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
     inputBuffer[player-1][0] |= 1 << PSXMap[button];
@@ -1207,6 +1256,17 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
     *(uint16*)& buf[3 + analogNumber * 2] = 32767 * value;
 }
 
+#pragma MARK WonderSwan
+- (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] |= 1 << WSMap[button];
+}
+
+- (oneway void)didReleaseWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] &= ~(1 << WSMap[button]);
+}
+
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
 {
     GCController *controller = nil;
@@ -1220,6 +1280,40 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
         controller = self.controller2;
     }
     
+    switch (systemType) {
+            
+        case lynx:
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case pce:
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case pcfx:
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case psx:
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case vb:
+            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            break;
+
+        case wswan:
+            return [self WonderSwanControllerValueForButtonID:buttonID forController:controller];
+            break;
+            
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
@@ -1309,7 +1403,89 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
         }
     }
 #endif
-    
+    return 0;
+}
+
+- (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEWSButtonX1:
+                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+            case OEWSButtonX3:
+                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+            case OEWSButtonX4:
+                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+            case OEWSButtonX2:
+                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+            case OEWSButtonA:
+                return [[pad buttonX] isPressed];
+            case OEWSButtonB:
+                return [[pad buttonA] isPressed];
+            case OEWSButtonStart:
+                return [[pad buttonB] isPressed];
+            case OEWSButtonSound:
+                return [[pad leftShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *pad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEWSButtonX1:
+                return [[dpad up] isPressed];
+            case OEWSButtonX3:
+                return [[dpad down] isPressed];
+            case OEWSButtonX4:
+                return [[dpad left] isPressed];
+            case OEWSButtonX2:
+                return [[dpad right] isPressed];
+            case OEWSButtonA:
+                return [[pad buttonX] isPressed];
+            case OEWSButtonB:
+                return [[pad buttonA] isPressed];
+            case OEWSButtonStart:
+                return [[pad buttonB] isPressed];
+            case OEWSButtonSound:
+                return [[pad leftShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *pad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEWSButtonX1:
+                return [[dpad up] value] > 0.5;
+                break;
+            case OEWSButtonX3:
+                return [[dpad down] value] > 0.5;
+                break;
+            case OEWSButtonX4:
+                return [[dpad left] value] > 0.5;
+                break;
+            case OEWSButtonX2:
+                return [[dpad right] value] > 0.5;
+                break;
+            case OEWSButtonA:
+                return [[pad buttonA] isPressed];
+                break;
+            case OEWSButtonB:
+                return [[pad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
     return 0;
 }
 

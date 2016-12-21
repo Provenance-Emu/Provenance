@@ -60,10 +60,33 @@ typedef NS_ENUM(int, PVPSXButton)
     OEPSXButtonCount
 };
 
+typedef enum _OEWSButton
+{
+    OEWSButtonX1, // Up
+    OEWSButtonX3, // Down
+    OEWSButtonX4, // Left
+    OEWSButtonX2, // Right
+    OEWSButtonY1,
+    OEWSButtonY3,
+    OEWSButtonY4,
+    OEWSButtonY2,
+    OEWSButtonA,
+    OEWSButtonB,
+    OEWSButtonStart,
+    OEWSButtonSound,
+    OEWSButtonCount
+} OEWSButton;
 
 __attribute__((visibility("default")))
 @interface MednafenGameCore : PVEmulatorCore
+
+// PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player;
+
+// WonderSwan
+- (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
+
 @end
