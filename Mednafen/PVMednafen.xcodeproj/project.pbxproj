@@ -748,8 +748,6 @@
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
 		B340E5F31E088A4000AD0E8B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F21E088A4000AD0E8B /* UIKit.framework */; };
 		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
-		B340E5F61E088A4E00AD0E8B /* libvorbisenc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37E1AC5E305004F42AD /* libvorbisenc.a */; };
-		B340E5F71E088A5300AD0E8B /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9453E37C1AC5E1E9004F42AD /* libvorbis.a */; };
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
 		B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FC1E088AF700AD0E8B /* PVSupport.framework */; };
 /* End PBXBuildFile section */
@@ -2200,8 +2198,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */,
-				B340E5F61E088A4E00AD0E8B /* libvorbisenc.a in Frameworks */,
-				B340E5F71E088A5300AD0E8B /* libvorbis.a in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
 				B340E5ED1E088A1E00AD0E8B /* libiconv.tbd in Frameworks */,
@@ -6172,6 +6168,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -6258,6 +6255,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
