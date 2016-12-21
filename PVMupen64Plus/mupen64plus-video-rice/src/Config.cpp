@@ -395,70 +395,72 @@ BOOL InitConfiguration(void)
 }
 
 bool isMMXSupported() 
-{ 
-    int IsMMXSupported = 0; 
-   
-#if !defined(__GNUC__) && !defined(NO_ASM)
-    __asm 
-    { 
-        mov eax,1   // CPUID level 1 
-        cpuid       // EDX = feature flag 
-        and edx,0x800000        // test bit 23 of feature flag 
-        mov IsMMXSupported,edx  // != 0 if MMX is supported 
-    } 
-#elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
-  return true;
-#elif !defined(NO_ASM) // GCC assumed
-   asm volatile (
-         "push %%ebx           \n"
-         "mov $1, %%eax        \n"  // CPUID level 1 
-         "cpuid                \n"      // EDX = feature flag 
-         "and $0x800000, %%edx \n"      // test bit 23 of feature flag 
-         "pop %%ebx            \n"
-         : "=d"(IsMMXSupported)
-         :
-         : "memory", "cc", "eax", "ecx"
-         );
-#endif
-    if (IsMMXSupported != 0) 
-        return true; 
-    else 
-        return false; 
-} 
+{
+    return false;
+//    int IsMMXSupported = 0; 
+//   
+//#if !defined(__GNUC__) && !defined(NO_ASM)
+//    __asm 
+//    { 
+//        mov eax,1   // CPUID level 1 
+//        cpuid       // EDX = feature flag 
+//        and edx,0x800000        // test bit 23 of feature flag 
+//        mov IsMMXSupported,edx  // != 0 if MMX is supported 
+//    } 
+//#elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
+//  return true;
+//#elif !defined(NO_ASM) // GCC assumed
+//   asm volatile (
+//         "push %%ebx           \n"
+//         "mov $1, %%eax        \n"  // CPUID level 1 
+//         "cpuid                \n"      // EDX = feature flag 
+//         "and $0x800000, %%edx \n"      // test bit 23 of feature flag 
+//         "pop %%ebx            \n"
+//         : "=d"(IsMMXSupported)
+//         :
+//         : "memory", "cc", "eax", "ecx"
+//         );
+//#endif
+//    if (IsMMXSupported != 0) 
+//        return true; 
+//    else 
+//        return false; 
+}
 
 bool isSSESupported() 
 {
-    int SSESupport = 0;
-
-// And finally, check the CPUID for Streaming SIMD Extensions support.
-#if !defined(__GNUC__) && !defined(NO_ASM)
-    _asm
-	{
-            mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
-            cpuid                    // Perform CPUID (puts processor feature info into EDX)
-            and      edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
-            mov      SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
-    }
-#elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
-  return true;
-#elif !defined(NO_ASM) // GCC assumed
-   asm volatile (
-         "push %%ebx                       \n"
-         "mov $1, %%eax                    \n"  // Put a "1" in eax to tell CPUID to get the feature bits
-         "cpuid                            \n"  // Perform CPUID (puts processor feature info into EDX)
-         "and       $0x02000000, %%edx     \n"  // Test bit 25, for Streaming SIMD Extensions existence.
-         "pop %%ebx                        \n"
-         : "=d"(SSESupport)
-         :
-         : "memory", "cc", "eax", "ecx"
-         );
-# endif
-    
-    if (SSESupport != 0) 
-        return true; 
-    else 
-        return false; 
-} 
+    return false;
+//    int SSESupport = 0;
+//
+//// And finally, check the CPUID for Streaming SIMD Extensions support.
+//#if !defined(__GNUC__) && !defined(NO_ASM)
+//    _asm
+//	{
+//            mov      eax, 1          // Put a "1" in eax to tell CPUID to get the feature bits
+//            cpuid                    // Perform CPUID (puts processor feature info into EDX)
+//            and      edx, 02000000h  // Test bit 25, for Streaming SIMD Extensions existence.
+//            mov      SSESupport, edx // SIMD Extensions).  Set return value to 1 to indicate,
+//    }
+//#elif defined(__GNUC__) && defined(__x86_64__) && !defined(NO_ASM)
+//  return true;
+//#elif !defined(NO_ASM) // GCC assumed
+//   asm volatile (
+//         "push %%ebx                       \n"
+//         "mov $1, %%eax                    \n"  // Put a "1" in eax to tell CPUID to get the feature bits
+//         "cpuid                            \n"  // Perform CPUID (puts processor feature info into EDX)
+//         "and       $0x02000000, %%edx     \n"  // Test bit 25, for Streaming SIMD Extensions existence.
+//         "pop %%ebx                        \n"
+//         : "=d"(SSESupport)
+//         :
+//         : "memory", "cc", "eax", "ecx"
+//         );
+//# endif
+//    
+//    if (SSESupport != 0) 
+//        return true; 
+//    else 
+//        return false;
+}
 
 static void ReadConfiguration(void)
 {

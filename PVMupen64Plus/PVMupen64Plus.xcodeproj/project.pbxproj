@@ -50,6 +50,9 @@
 		B33115D21C730A2B00E9AD14 /* select.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B41C730A2B00E9AD14 /* select.h */; };
 		B33115D31C730A2B00E9AD14 /* vu.c in Sources */ = {isa = PBXBuildFile; fileRef = B33115B51C730A2B00E9AD14 /* vu.c */; };
 		B33115D41C730A2B00E9AD14 /* vu.h in Headers */ = {isa = PBXBuildFile; fileRef = B33115B61C730A2B00E9AD14 /* vu.h */; };
+		B334D0071DFBA640008E8B1F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B334D0061DFBA640008E8B1F /* PVSupport.framework */; };
+		B334D0081DFBA6E2008E8B1F /* empty_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7511824C2200BEAA42 /* empty_dynarec.c */; };
+		B334D0091DFBA6E4008E8B1F /* empty_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7511824C2200BEAA42 /* empty_dynarec.c */; };
 		B37EFEF91C72E6CD00857158 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
 		B37EFEFA1C72E6CD00857158 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
 		B37EFEFB1C72E6CD00857158 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
@@ -133,32 +136,18 @@
 		B37EFF651C72F47000857158 /* r4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7E11824C2200BEAA42 /* r4300.c */; };
 		B37EFF661C72F47000857158 /* recomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D8011824C2200BEAA42 /* recomp.c */; };
 		B37EFF671C72F47000857158 /* af_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103971C72DAA400DD066C /* af_rtc.c */; };
-		B37EFF681C72F47000857158 /* assemble.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9911824C2200BEAA42 /* assemble.c */; };
-		B37EFF691C72F47000857158 /* gbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9B11824C2200BEAA42 /* gbc.c */; };
-		B37EFF6A1C72F47000857158 /* gcop0.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9C11824C2200BEAA42 /* gcop0.c */; };
-		B37EFF6B1C72F47000857158 /* gcop1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9D11824C2200BEAA42 /* gcop1.c */; };
-		B37EFF6C1C72F47000857158 /* gcop1_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9E11824C2200BEAA42 /* gcop1_d.c */; };
 		B37EFF6D1C72F47000857158 /* rumble_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D41C72DDAD00DD066C /* rumble_via_input_plugin.c */; };
 		B37EFF6E1C72F47000857158 /* game_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1039D1C72DAA400DD066C /* game_controller.c */; };
-		B37EFF6F1C72F47000857158 /* gcop1_l.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9F11824C2200BEAA42 /* gcop1_l.c */; };
 		B37EFF701C72F47000857158 /* mi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C81C72DCE400DD066C /* mi_controller.c */; };
-		B37EFF711C72F47000857158 /* gcop1_s.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA011824C2200BEAA42 /* gcop1_s.c */; };
 		B37EFF721C72F47000857158 /* sra_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103671C72DA1D00DD066C /* sra_file.c */; };
-		B37EFF731C72F47000857158 /* gcop1_w.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA111824C2200BEAA42 /* gcop1_w.c */; };
 		B37EFF741C72F47000857158 /* workqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1036C1C72DA1D00DD066C /* workqueue.c */; };
-		B37EFF751C72F47000857158 /* gr4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA211824C2200BEAA42 /* gr4300.c */; };
 		B37EFF761C72F47000857158 /* ri_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103941C72DAA400DD066C /* ri_controller.c */; };
-		B37EFF771C72F47000857158 /* gregimm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA311824C2200BEAA42 /* gregimm.c */; };
-		B37EFF781C72F47000857158 /* gspecial.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA411824C2200BEAA42 /* gspecial.c */; };
 		B37EFF791C72F47000857158 /* tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CC1C72DD4B00DD066C /* tlb.c */; };
 		B37EFF7A1C72F47000857158 /* rdp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1038D1C72DAA400DD066C /* rdp_core.c */; };
 		B37EFF7B1C72F47000857158 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1035F1C72DA1D00DD066C /* profile.c */; };
-		B37EFF7C1C72F47000857158 /* gtlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA511824C2200BEAA42 /* gtlb.c */; };
 		B37EFF7D1C72F47000857158 /* rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103611C72DA1D00DD066C /* rom.c */; };
-		B37EFF7E1C72F47000857158 /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA711824C2200BEAA42 /* regcache.c */; };
 		B37EFF7F1C72F47000857158 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4311824C2200BEAA42 /* unzip.c */; };
 		B37EFF801C72F47000857158 /* emulate_game_controller_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CE1C72DDA000DD066C /* emulate_game_controller_via_input_plugin.c */; };
-		B37EFF811C72F47000857158 /* rjump.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA911824C2200BEAA42 /* rjump.c */; };
 		B37EFF821C72F47000857158 /* rdram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103901C72DAA400DD066C /* rdram.c */; };
 		B37EFF831C72F47000857158 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4111824C2200BEAA42 /* ioapi.c */; };
 		B37EFF841C72F47000857158 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4511824C2200BEAA42 /* zip.c */; };
@@ -237,32 +226,18 @@
 		B3B3B8C71DED130B00602746 /* r4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7E11824C2200BEAA42 /* r4300.c */; };
 		B3B3B8C81DED130B00602746 /* recomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D8011824C2200BEAA42 /* recomp.c */; };
 		B3B3B8C91DED130B00602746 /* af_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103971C72DAA400DD066C /* af_rtc.c */; };
-		B3B3B8CA1DED130B00602746 /* assemble.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9911824C2200BEAA42 /* assemble.c */; };
-		B3B3B8CB1DED130B00602746 /* gbc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9B11824C2200BEAA42 /* gbc.c */; };
-		B3B3B8CC1DED130B00602746 /* gcop0.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9C11824C2200BEAA42 /* gcop0.c */; };
-		B3B3B8CD1DED130B00602746 /* gcop1.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9D11824C2200BEAA42 /* gcop1.c */; };
-		B3B3B8CE1DED130B00602746 /* gcop1_d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9E11824C2200BEAA42 /* gcop1_d.c */; };
 		B3B3B8CF1DED130B00602746 /* rumble_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D41C72DDAD00DD066C /* rumble_via_input_plugin.c */; };
 		B3B3B8D01DED130B00602746 /* game_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1039D1C72DAA400DD066C /* game_controller.c */; };
-		B3B3B8D11DED130B00602746 /* gcop1_l.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D9F11824C2200BEAA42 /* gcop1_l.c */; };
 		B3B3B8D21DED130B00602746 /* mi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103C81C72DCE400DD066C /* mi_controller.c */; };
-		B3B3B8D31DED130B00602746 /* gcop1_s.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA011824C2200BEAA42 /* gcop1_s.c */; };
 		B3B3B8D41DED130B00602746 /* sra_file.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103671C72DA1D00DD066C /* sra_file.c */; };
-		B3B3B8D51DED130B00602746 /* gcop1_w.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA111824C2200BEAA42 /* gcop1_w.c */; };
 		B3B3B8D61DED130B00602746 /* workqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1036C1C72DA1D00DD066C /* workqueue.c */; };
-		B3B3B8D71DED130B00602746 /* gr4300.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA211824C2200BEAA42 /* gr4300.c */; };
 		B3B3B8D81DED130B00602746 /* ri_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103941C72DAA400DD066C /* ri_controller.c */; };
-		B3B3B8D91DED130B00602746 /* gregimm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA311824C2200BEAA42 /* gregimm.c */; };
-		B3B3B8DA1DED130B00602746 /* gspecial.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA411824C2200BEAA42 /* gspecial.c */; };
 		B3B3B8DB1DED130B00602746 /* tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CC1C72DD4B00DD066C /* tlb.c */; };
 		B3B3B8DC1DED130B00602746 /* rdp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1038D1C72DAA400DD066C /* rdp_core.c */; };
 		B3B3B8DD1DED130B00602746 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C1035F1C72DA1D00DD066C /* profile.c */; };
-		B3B3B8DE1DED130B00602746 /* gtlb.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA511824C2200BEAA42 /* gtlb.c */; };
 		B3B3B8DF1DED130B00602746 /* rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103611C72DA1D00DD066C /* rom.c */; };
-		B3B3B8E01DED130B00602746 /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA711824C2200BEAA42 /* regcache.c */; };
 		B3B3B8E11DED130B00602746 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4311824C2200BEAA42 /* unzip.c */; };
 		B3B3B8E21DED130B00602746 /* emulate_game_controller_via_input_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103CE1C72DDA000DD066C /* emulate_game_controller_via_input_plugin.c */; };
-		B3B3B8E31DED130B00602746 /* rjump.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208DA911824C2200BEAA42 /* rjump.c */; };
 		B3B3B8E41DED130B00602746 /* rdram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103901C72DAA400DD066C /* rdram.c */; };
 		B3B3B8E51DED130B00602746 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4111824C2200BEAA42 /* ioapi.c */; };
 		B3B3B8E61DED130B00602746 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D4511824C2200BEAA42 /* zip.c */; };
@@ -372,6 +347,8 @@
 		B3BDEC8C1DED5E04002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = 94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */; };
 		B3BDEC901DED6091002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CCA11824C2200BEAA42 /* mupen64plus.ini */; };
 		B3BDEC911DED6096002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = 3D208CCA11824C2200BEAA42 /* mupen64plus.ini */; };
+		B3E01D5C1E0A2DD00040D282 /* empty_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7511824C2200BEAA42 /* empty_dynarec.c */; };
+		B3E01D5D1E0A2DD10040D282 /* empty_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = 3D208D7511824C2200BEAA42 /* empty_dynarec.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -939,6 +916,7 @@
 		B33115B41C730A2B00E9AD14 /* select.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = select.h; sourceTree = "<group>"; };
 		B33115B51C730A2B00E9AD14 /* vu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vu.c; sourceTree = "<group>"; };
 		B33115B61C730A2B00E9AD14 /* vu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vu.h; sourceTree = "<group>"; };
+		B334D0061DFBA640008E8B1F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusVideoRice.h; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1102,6 +1080,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B334D0071DFBA640008E8B1F /* PVSupport.framework in Frameworks */,
 				B3882C141DED279C007183B6 /* libpng.a in Frameworks */,
 				B3303E821DED272E00896D96 /* libz.tbd in Frameworks */,
 				B37EFF241C72E6E800857158 /* OpenGLES.framework in Frameworks */,
@@ -2461,6 +2440,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B334D0061DFBA640008E8B1F /* PVSupport.framework */,
 				B3303E811DED272E00896D96 /* libz.tbd */,
 				B3C103151C72AA3800DD066C /* Foundation.framework */,
 				B3C103131C72AA3200DD066C /* libz.tbd */,
@@ -3091,6 +3071,7 @@
 				B37EFF501C72F47000857158 /* rumblepak.c in Sources */,
 				B37EFF511C72F47000857158 /* n64_cic_nus_6105.c in Sources */,
 				B37EFF521C72F47000857158 /* savestates.c in Sources */,
+				B334D0081DFBA6E2008E8B1F /* empty_dynarec.c in Sources */,
 				B37EFF531C72F47000857158 /* dynamiclib_unix.c in Sources */,
 				B37EFF541C72F47000857158 /* pi_controller.c in Sources */,
 				B37EFF551C72F47000857158 /* files_unix.c in Sources */,
@@ -3112,32 +3093,18 @@
 				B37EFF651C72F47000857158 /* r4300.c in Sources */,
 				B37EFF661C72F47000857158 /* recomp.c in Sources */,
 				B37EFF671C72F47000857158 /* af_rtc.c in Sources */,
-				B37EFF681C72F47000857158 /* assemble.c in Sources */,
-				B37EFF691C72F47000857158 /* gbc.c in Sources */,
-				B37EFF6A1C72F47000857158 /* gcop0.c in Sources */,
-				B37EFF6B1C72F47000857158 /* gcop1.c in Sources */,
-				B37EFF6C1C72F47000857158 /* gcop1_d.c in Sources */,
 				B37EFF6D1C72F47000857158 /* rumble_via_input_plugin.c in Sources */,
 				B37EFF6E1C72F47000857158 /* game_controller.c in Sources */,
-				B37EFF6F1C72F47000857158 /* gcop1_l.c in Sources */,
 				B37EFF701C72F47000857158 /* mi_controller.c in Sources */,
-				B37EFF711C72F47000857158 /* gcop1_s.c in Sources */,
 				B37EFF721C72F47000857158 /* sra_file.c in Sources */,
-				B37EFF731C72F47000857158 /* gcop1_w.c in Sources */,
 				B37EFF741C72F47000857158 /* workqueue.c in Sources */,
-				B37EFF751C72F47000857158 /* gr4300.c in Sources */,
 				B37EFF761C72F47000857158 /* ri_controller.c in Sources */,
-				B37EFF771C72F47000857158 /* gregimm.c in Sources */,
-				B37EFF781C72F47000857158 /* gspecial.c in Sources */,
 				B37EFF791C72F47000857158 /* tlb.c in Sources */,
 				B37EFF7A1C72F47000857158 /* rdp_core.c in Sources */,
 				B37EFF7B1C72F47000857158 /* profile.c in Sources */,
-				B37EFF7C1C72F47000857158 /* gtlb.c in Sources */,
 				B37EFF7D1C72F47000857158 /* rom.c in Sources */,
-				B37EFF7E1C72F47000857158 /* regcache.c in Sources */,
 				B37EFF7F1C72F47000857158 /* unzip.c in Sources */,
 				B37EFF801C72F47000857158 /* emulate_game_controller_via_input_plugin.c in Sources */,
-				B37EFF811C72F47000857158 /* rjump.c in Sources */,
 				B37EFF821C72F47000857158 /* rdram.c in Sources */,
 				B37EFF831C72F47000857158 /* ioapi.c in Sources */,
 				B37EFF841C72F47000857158 /* zip.c in Sources */,
@@ -3200,6 +3167,7 @@
 				B3B3B8B21DED130B00602746 /* rumblepak.c in Sources */,
 				B3B3B8B31DED130B00602746 /* n64_cic_nus_6105.c in Sources */,
 				B3B3B8B41DED130B00602746 /* savestates.c in Sources */,
+				B334D0091DFBA6E4008E8B1F /* empty_dynarec.c in Sources */,
 				B3B3B8B51DED130B00602746 /* dynamiclib_unix.c in Sources */,
 				B3B3B8B61DED130B00602746 /* pi_controller.c in Sources */,
 				B3B3B8B71DED130B00602746 /* files_unix.c in Sources */,
@@ -3221,32 +3189,18 @@
 				B3B3B8C71DED130B00602746 /* r4300.c in Sources */,
 				B3B3B8C81DED130B00602746 /* recomp.c in Sources */,
 				B3B3B8C91DED130B00602746 /* af_rtc.c in Sources */,
-				B3B3B8CA1DED130B00602746 /* assemble.c in Sources */,
-				B3B3B8CB1DED130B00602746 /* gbc.c in Sources */,
-				B3B3B8CC1DED130B00602746 /* gcop0.c in Sources */,
-				B3B3B8CD1DED130B00602746 /* gcop1.c in Sources */,
-				B3B3B8CE1DED130B00602746 /* gcop1_d.c in Sources */,
 				B3B3B8CF1DED130B00602746 /* rumble_via_input_plugin.c in Sources */,
 				B3B3B8D01DED130B00602746 /* game_controller.c in Sources */,
-				B3B3B8D11DED130B00602746 /* gcop1_l.c in Sources */,
 				B3B3B8D21DED130B00602746 /* mi_controller.c in Sources */,
-				B3B3B8D31DED130B00602746 /* gcop1_s.c in Sources */,
 				B3B3B8D41DED130B00602746 /* sra_file.c in Sources */,
-				B3B3B8D51DED130B00602746 /* gcop1_w.c in Sources */,
 				B3B3B8D61DED130B00602746 /* workqueue.c in Sources */,
-				B3B3B8D71DED130B00602746 /* gr4300.c in Sources */,
 				B3B3B8D81DED130B00602746 /* ri_controller.c in Sources */,
-				B3B3B8D91DED130B00602746 /* gregimm.c in Sources */,
-				B3B3B8DA1DED130B00602746 /* gspecial.c in Sources */,
 				B3B3B8DB1DED130B00602746 /* tlb.c in Sources */,
 				B3B3B8DC1DED130B00602746 /* rdp_core.c in Sources */,
 				B3B3B8DD1DED130B00602746 /* profile.c in Sources */,
-				B3B3B8DE1DED130B00602746 /* gtlb.c in Sources */,
 				B3B3B8DF1DED130B00602746 /* rom.c in Sources */,
-				B3B3B8E01DED130B00602746 /* regcache.c in Sources */,
 				B3B3B8E11DED130B00602746 /* unzip.c in Sources */,
 				B3B3B8E21DED130B00602746 /* emulate_game_controller_via_input_plugin.c in Sources */,
-				B3B3B8E31DED130B00602746 /* rjump.c in Sources */,
 				B3B3B8E41DED130B00602746 /* rdram.c in Sources */,
 				B3B3B8E51DED130B00602746 /* ioapi.c in Sources */,
 				B3B3B8E61DED130B00602746 /* zip.c in Sources */,
@@ -3401,8 +3355,6 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 				);
@@ -3411,6 +3363,7 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = iphoneos;
+				VALID_ARCHS = arm64;
 			};
 			name = Debug;
 		};
@@ -3438,14 +3391,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 				);
@@ -3454,6 +3406,7 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = iphoneos;
+				VALID_ARCHS = arm64;
 			};
 			name = Release;
 		};
@@ -3486,6 +3439,21 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-fPIC",
+					"-D__unix__",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility-inlines-hidden",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lpng16",
@@ -3524,6 +3492,21 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fvisibility=hidden",
+					"-DGCC",
+					"-pthread",
+					"-fPIC",
+					"-D__unix__",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fvisibility-inlines-hidden",
+					"-DPNG_ARM_NEON_OPT=0",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lpng16",
@@ -3541,6 +3524,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3583,12 +3567,9 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse2",
 					"-fPIC",
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
-					"-DARCH_MIN_SSE2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3603,6 +3584,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3641,12 +3623,9 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse2",
 					"-fPIC",
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
-					"-DARCH_MIN_SSE2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3715,14 +3694,13 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
 					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
+					"-DNO_ASM",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -3787,14 +3765,13 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
 					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
+					"-DNO_ASM",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -3862,7 +3839,6 @@
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DPIC",
-					"-DDYNAREC",
 					"-DM64P_PARALLEL",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
@@ -3925,7 +3901,6 @@
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DPIC",
-					"-DDYNAREC",
 					"-DM64P_PARALLEL",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
@@ -4098,7 +4073,6 @@
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DPIC",
-					"-DDYNAREC",
 					"-DM64P_PARALLEL",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
@@ -4162,7 +4136,6 @@
 				OTHER_CFLAGS = (
 					"-DIN_OPENEMU",
 					"-DPIC",
-					"-DDYNAREC",
 					"-DM64P_PARALLEL",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
@@ -4229,14 +4202,12 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
-					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
+					"-DNO_ASM=1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -4299,14 +4270,12 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
-					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
+					"-DNO_ASM=1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -4473,12 +4442,9 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse2",
 					"-fPIC",
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
-					"-DARCH_MIN_SSE2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
 				PRODUCT_NAME = PVRSPCXD4;
@@ -4532,12 +4498,9 @@
 					"-fvisibility=hidden",
 					"-DGCC",
 					"-pthread",
-					"-mmmx",
-					"-msse2",
 					"-fPIC",
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
-					"-DARCH_MIN_SSE2",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVRSPCXD4;
 				PRODUCT_NAME = PVRSPCXD4;
