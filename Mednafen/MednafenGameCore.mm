@@ -872,8 +872,7 @@ static void mednafen_init(MednafenGameCore* current)
 //    }
 }
 
-- (id)init
-{
+- (id)init {
     if((self = [super init]))
     {
         _current = self;
@@ -887,12 +886,15 @@ static void mednafen_init(MednafenGameCore* current)
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     for(unsigned i = 0; i < 8; i++)
         free(inputBuffer[i]);
 
     delete surf;
+    
+    if (_current == self) {
+        _current = nil;
+    }
 }
 
 # pragma mark - Execution
@@ -1247,6 +1249,45 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
     inputBuffer[player-1][0] &= ~(1 << LynxMap[button]);
 }
 
+#pragma MARK PC-*
+- (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+{
+    if (button != OEPCEButtonMode) // Check for six button mode toggle
+        inputBuffer[player-1][0] |= 1 << PCEMap[button];
+    else
+        inputBuffer[player-1][0] ^= 1 << PCEMap[button];
+}
+
+- (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+{
+    if (button != OEPCEButtonMode)
+        inputBuffer[player-1][0] &= ~(1 << PCEMap[button]);
+}
+
+- (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
+{
+    if (button != OEPCECDButtonMode) // Check for six button mode toggle
+        inputBuffer[player-1][0] |= 1 << PCEMap[button];
+    else
+        inputBuffer[player-1][0] ^= 1 << PCEMap[button];
+}
+
+- (oneway void)didReleasePCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
+{
+    if (button != OEPCECDButtonMode)
+        inputBuffer[player-1][0] &= ~(1 << PCEMap[button]);
+}
+
+- (oneway void)didPushPCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] |= 1 << PCFXMap[button];
+}
+
+- (oneway void)didReleasePCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] &= ~(1 << PCFXMap[button]);
+}
+
 #pragma MARK PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
@@ -1263,6 +1304,17 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
     int analogNumber = PSXMap[button] - 17;
     uint8_t *buf = (uint8_t *)inputBuffer[player-1];
     *(uint16*)& buf[3 + analogNumber * 2] = 32767 * value;
+}
+
+#pragma mark Virtual Boy
+- (oneway void)didPushVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] |= 1 << VBMap[button];
+}
+
+- (oneway void)didReleaseVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] &= ~(1 << VBMap[button]);
 }
 
 #pragma MARK WonderSwan
@@ -1308,7 +1360,7 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
             break;
 
         case vb:
-            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            return [self VirtualBoyControllerValueForButtonID:buttonID forController:controller];
             break;
 
         case wswan:
@@ -1488,6 +1540,105 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
                 return [[pad buttonA] isPressed];
                 break;
             case OEPSXButtonCircle:
+                return [[pad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+    return 0;
+}
+
+- (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEVBButtonLeftUp:
+                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+            case OEVBButtonLeftDown:
+                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+            case OEVBButtonLeftLeft:
+                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+            case OEVBButtonLeftRight:
+                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+            case OEVBButtonRightUp:
+                return [[[pad rightThumbstick] up] isPressed];
+            case OEVBButtonRightDown:
+                return [[[pad rightThumbstick] down] isPressed];
+            case OEVBButtonRightLeft:
+                return [[[pad rightThumbstick] left] isPressed];
+            case OEVBButtonRightRight:
+                return [[[pad rightThumbstick] right] isPressed];
+            case OEVBButtonB:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case OEVBButtonA:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+            case OEVBButtonL:
+                return [[pad leftShoulder] isPressed];
+            case OEVBButtonR:
+                return [[pad rightShoulder] isPressed];
+            case OEVBButtonStart:
+                return [[pad leftTrigger] isPressed];
+            case OEVBButtonSelect:
+                return [[pad rightTrigger] isPressed];
+            default:
+                break;
+        }
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *pad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEVBButtonLeftUp:
+                return [[dpad up] isPressed];
+            case OEVBButtonLeftDown:
+                return [[dpad down] isPressed];
+            case OEVBButtonLeftLeft:
+                return [[dpad left] isPressed];
+            case OEVBButtonLeftRight:
+                return [[dpad right] isPressed];
+            case OEVBButtonB:
+                return [[pad buttonB] isPressed];
+            case OEVBButtonA:
+                return [[pad buttonA] isPressed];
+            case OEVBButtonL:
+                return [[pad leftShoulder] isPressed];
+            case OEVBButtonR:
+                return [[pad rightShoulder] isPressed];
+            case OEVBButtonStart:
+                return [[pad buttonX] isPressed];
+            case OEVBButtonSelect:
+                return [[pad buttonY] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *pad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OEVBButtonLeftUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case OEVBButtonLeftDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case OEVBButtonLeftLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case OEVBButtonLeftRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case OEVBButtonA:
+                return [[pad buttonA] isPressed];
+                break;
+            case OEVBButtonB:
                 return [[pad buttonX] isPressed];
                 break;
             default:

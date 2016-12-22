@@ -221,6 +221,8 @@
 		B32893741E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */; };
 		B32893781E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */; };
 		B32893791E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */; };
+		B328937D1E0B87960090B97A /* PVVBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.m */; };
+		B328937E1E0B87960090B97A /* PVVBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.m */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B340E6071E088CF300AD0E8B /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */; };
@@ -579,6 +581,8 @@
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWonderSwanControllerViewController.m; sourceTree = "<group>"; };
 		B32893761E0B4EA30090B97A /* PVLynxControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLynxControllerViewController.h; sourceTree = "<group>"; };
 		B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLynxControllerViewController.m; sourceTree = "<group>"; };
+		B328937B1E0B87960090B97A /* PVVBControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVVBControllerViewController.h; sourceTree = "<group>"; };
+		B328937C1E0B87960090B97A /* PVVBControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVVBControllerViewController.m; sourceTree = "<group>"; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -903,6 +907,7 @@
 				1A74171A1ABF22FD00F3CD3C /* NES */,
 				1A9FBE1F1ABD28A9004E778B /* SNES */,
 				B32893701E0B24D80090B97A /* WonderSwan */,
+				B328937A1E0B87630090B97A /* VirtualBoy */,
 				1A47C96117BC310700C27644 /* JSButton.h */,
 				1A47C96217BC310700C27644 /* JSButton.m */,
 				B3D2E38F1D6E8B3C0058544D /* PV32XControllerViewController.h */,
@@ -1269,6 +1274,15 @@
 				B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */,
 			);
 			name = "Atari Lynx";
+			sourceTree = "<group>";
+		};
+		B328937A1E0B87630090B97A /* VirtualBoy */ = {
+			isa = PBXGroup;
+			children = (
+				B328937B1E0B87960090B97A /* PVVBControllerViewController.h */,
+				B328937C1E0B87960090B97A /* PVVBControllerViewController.m */,
+			);
+			name = VirtualBoy;
 			sourceTree = "<group>";
 		};
 		B36DE7CD1D6B80DA002EE3ED /* Atari7800 */ = {
@@ -1645,6 +1659,7 @@
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */,
+				B328937D1E0B87960090B97A /* PVVBControllerViewController.m in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
@@ -1735,6 +1750,7 @@
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
+				B328937E1E0B87960090B97A /* PVVBControllerViewController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,

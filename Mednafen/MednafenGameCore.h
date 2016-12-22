@@ -169,10 +169,22 @@ __attribute__((visibility("default")))
 - (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
 
+// PC-*
+- (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
+
 // PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player;
+
+// Virtual Boy
+- (oneway void)didPushVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
 
 // WonderSwan
 - (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
