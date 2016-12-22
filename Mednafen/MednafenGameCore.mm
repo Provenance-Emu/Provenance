@@ -119,7 +119,7 @@ static void mednafen_init(MednafenGameCore* current)
     //GET_CURRENT_OR_RETURN();
 
     NSString* batterySavesDirectory = current.batterySavesPath;
-    NSString* biosPath = current.batterySavesPath;
+    NSString* biosPath = current.BIOSPath;
     
     std::vector<MDFNGI*> ext;
     MDFNI_InitializeModules(ext);
@@ -1160,14 +1160,12 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 # pragma mark - Save States
 
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
-    block(MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL), nil);
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+    return MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
-{
-    block(MDFNI_LoadState(fileName.fileSystemRepresentation, ""), nil);
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+    return MDFNI_LoadState(fileName.fileSystemRepresentation, "");
 }
 
 - (NSData *)serializeStateWithError:(NSError **)outError
@@ -1238,6 +1236,17 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 
+#pragma MARK Atari Lynx
+- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] |= 1 << LynxMap[button];
+}
+
+- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+{
+    inputBuffer[player-1][0] &= ~(1 << LynxMap[button]);
+}
+
 #pragma MARK PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
@@ -1283,7 +1292,7 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
     switch (systemType) {
             
         case lynx:
-            return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
+            return [self LynxControllerValueForButtonID:buttonID forController:controller];
             break;
 
         case pce:
@@ -1310,6 +1319,89 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
             break;
     }
 
+    return 0;
+}
+
+- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+            case OELynxButtonDown:
+                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+            case OELynxButtonLeft:
+                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+            case OELynxButtonRight:
+                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+            case OELynxButtonB:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+            case OELynxButtonOption1:
+                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+            case OELynxButtonOption2:
+                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+            default:
+                break;
+        }
+    }
+    else if ([controller gamepad])
+    {
+        GCGamepad *pad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] isPressed];
+            case OELynxButtonDown:
+                return [[dpad down] isPressed];
+            case OELynxButtonLeft:
+                return [[dpad left] isPressed];
+            case OELynxButtonRight:
+                return [[dpad right] isPressed];
+            case OELynxButtonB:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+            case OELynxButtonOption1:
+                return [[pad leftShoulder] isPressed];
+            case OELynxButtonOption2:
+                return [[pad rightShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad])
+    {
+        GCMicroGamepad *pad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case OELynxButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case OELynxButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case OELynxButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed];
+                break;
+            case OELynxButtonB:
+                return [[pad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
     return 0;
 }
 

@@ -35,6 +35,7 @@
 
 #import <PVMednafen/MednafenGameCore.h>
 #import "PVPSXControllerViewController.h"
+#import "PVLynxControllerViewController.h"
 #import "PVWonderSwanControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
@@ -183,7 +184,10 @@
     {
         controller = [[PVWonderSwanControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
-
+    else if ([systemID isEqualToString:PVLynxSystemIdentifier])
+    {
+        controller = [[PVLynxControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
 	
 	return controller;
 }

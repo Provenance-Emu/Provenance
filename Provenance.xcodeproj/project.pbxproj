@@ -219,6 +219,8 @@
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B32893731E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */; };
 		B32893741E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */; };
+		B32893781E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */; };
+		B32893791E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B340E6071E088CF300AD0E8B /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */; };
@@ -575,6 +577,8 @@
 		AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVPSXControllerViewController.m; sourceTree = "<group>"; };
 		B32893711E0B250B0090B97A /* PVWonderSwanControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVWonderSwanControllerViewController.h; sourceTree = "<group>"; };
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVWonderSwanControllerViewController.m; sourceTree = "<group>"; };
+		B32893761E0B4EA30090B97A /* PVLynxControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLynxControllerViewController.h; sourceTree = "<group>"; };
+		B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLynxControllerViewController.m; sourceTree = "<group>"; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -890,6 +894,7 @@
 				B3D2E3941D6E8B460058544D /* 32X */,
 				B3DF87681D6A5A6200D216D4 /* Atari2600 */,
 				B36DE7CD1D6B80DA002EE3ED /* Atari7800 */,
+				B32893751E0B4E540090B97A /* Atari Lynx */,
 				1AABE0CD1ABE3E4000FF6AEF /* GB */,
 				1A9FBE201ABD28B6004E778B /* GBA */,
 				1A9FBE1E1ABD28A1004E778B /* Genesis */,
@@ -1255,6 +1260,15 @@
 				B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */,
 			);
 			name = WonderSwan;
+			sourceTree = "<group>";
+		};
+		B32893751E0B4E540090B97A /* Atari Lynx */ = {
+			isa = PBXGroup;
+			children = (
+				B32893761E0B4EA30090B97A /* PVLynxControllerViewController.h */,
+				B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */,
+			);
+			name = "Atari Lynx";
 			sourceTree = "<group>";
 		};
 		B36DE7CD1D6B80DA002EE3ED /* Atari7800 */ = {
@@ -1645,6 +1659,7 @@
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
 				B32893731E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */,
 				BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
+				B32893781E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
@@ -1734,6 +1749,7 @@
 				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+GroupConfig.m in Sources */,
 				B32893741E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
+				B32893791E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */,
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,

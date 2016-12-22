@@ -77,8 +77,97 @@ typedef enum _OEWSButton
     OEWSButtonCount
 } OEWSButton;
 
+typedef enum _OEVBButton
+{
+    OEVBButtonLeftUp,
+    OEVBButtonLeftDown,
+    OEVBButtonLeftLeft,
+    OEVBButtonLeftRight,
+    OEVBButtonRightUp,
+    OEVBButtonRightDown,
+    OEVBButtonRightLeft,
+    OEVBButtonRightRight,
+    OEVBButtonL,
+    OEVBButtonR,
+    OEVBButtonA,
+    OEVBButtonB,
+    OEVBButtonStart,
+    OEVBButtonSelect,
+    OEVBButtonCount
+} OEVBButton;
+
+typedef enum _OEPCFXButton
+{
+    OEPCFXButtonUp,
+    OEPCFXButtonDown,
+    OEPCFXButtonLeft,
+    OEPCFXButtonRight,
+    OEPCFXButton1,
+    OEPCFXButton2,
+    OEPCFXButton3,
+    OEPCFXButton4,
+    OEPCFXButton5,
+    OEPCFXButton6,
+    OEPCFXButtonRun,
+    OEPCFXButtonSelect,
+    OEPCFXButtonCount,
+} OEPCFXButton;
+
+typedef enum _OEPCECDButton
+{
+    OEPCECDButtonUp,
+    OEPCECDButtonDown,
+    OEPCECDButtonLeft,
+    OEPCECDButtonRight,
+    OEPCECDButton1,
+    OEPCECDButton2,
+    OEPCECDButton3,
+    OEPCECDButton4,
+    OEPCECDButton5,
+    OEPCECDButton6,
+    OEPCECDButtonRun,
+    OEPCECDButtonSelect,
+    OEPCECDButtonMode,
+    OEPCECDButtonCount
+} OEPCECDButton;
+
+typedef enum _OEPCEButton
+{
+    OEPCEButtonUp,
+    OEPCEButtonDown,
+    OEPCEButtonLeft,
+    OEPCEButtonRight,
+    OEPCEButton1,
+    OEPCEButton2,
+    OEPCEButton3,
+    OEPCEButton4,
+    OEPCEButton5,
+    OEPCEButton6,
+    OEPCEButtonRun,
+    OEPCEButtonSelect,
+    OEPCEButtonMode,
+    OEPCEButtonCount
+} OEPCEButton;
+
+typedef enum _OELynxButton
+{
+    OELynxButtonUp,
+    OELynxButtonDown,
+    OELynxButtonLeft,
+    OELynxButtonRight,
+    OELynxButtonA,
+    OELynxButtonB,
+    OELynxButtonOption1,
+    OELynxButtonOption2,
+    OELynxButtonCount
+} OELynxButton;
+
 __attribute__((visibility("default")))
 @interface MednafenGameCore : PVEmulatorCore
+
+// Atari Lynx
+- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
 
 // PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
