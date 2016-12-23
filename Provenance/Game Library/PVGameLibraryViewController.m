@@ -52,6 +52,7 @@ static const CGFloat CellWidth = 308.0;
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
+@property (nonatomic, strong) PVDirectoryWatcher *coverArtWatcher;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 @property (nonatomic, strong) UICollectionView *collectionView;
 #if !TARGET_OS_TV
@@ -131,6 +132,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.gamesInSections = nil;
 	
 	self.watcher = nil;
+    self.coverArtWatcher = nil;
 	self.collectionView = nil;
     self.realm = nil;
 }
@@ -300,6 +302,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	
 	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+}
+
+- (NSString *)coverArtPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+
+    return [paths.firstObject stringByAppendingPathComponent:@"Cover Art"];
 }
 
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
@@ -531,6 +544,63 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                       [weakSelf.gameImporter startImportForPaths:paths];
                                   }];
     [self.watcher startMonitoring];
+
+    self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:self.coverArtPath extractionStartedHandler:^(NSString *path) {
+        //
+    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+        //
+    } extractionCompleteHandler:^(NSArray *paths) {
+        for (NSString *imageFilepath in paths) {
+            NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
+            BOOL isDirectory = NO;
+
+            if (![NSFileManager.defaultManager fileExistsAtPath:imageFullPath isDirectory:&isDirectory] || isDirectory) {
+                continue;
+            }
+
+            NSData *coverArtFullData = [NSData dataWithContentsOfFile:imageFullPath];
+            UIImage *coverArtFullImage = [UIImage imageWithData:coverArtFullData];
+            UIImage *coverArtScaledImage = [coverArtFullImage scaledImageWithMaxResolution:PVThumbnailMaxResolution];
+
+            if (!coverArtScaledImage) {
+                continue;
+            }
+
+            NSData *coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage);
+            NSString *hash = [coverArtScaledData md5Hash];
+            [PVMediaCache writeDataToDisk:coverArtScaledData withKey:hash];
+
+            NSString *imageFileExtension = [@"." stringByAppendingString:imageFilepath.pathExtension];
+            NSString *gameFilename = [imageFilepath.lastPathComponent stringByReplacingOccurrencesOfString:imageFileExtension withString:@""];
+
+            NSString *systemID = [PVEmulatorConfiguration.sharedInstance systemIdentifierForFileExtension:gameFilename.pathExtension];
+            NSArray *cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
+
+            if ([cdBasedSystems containsObject:systemID] && ![imageFilepath.pathExtension isEqualToString:@"cue"]) {
+                continue;
+            }
+
+            NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
+            RLMResults *games = [PVGame objectsInRealm:weakSelf.realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath]];
+
+            if (games.count < 1) {
+                continue;
+            }
+
+            PVGame *game = games.firstObject;
+
+            [weakSelf.realm beginWriteTransaction];
+            [game setCustomArtworkURL:hash];
+            [weakSelf.realm commitWriteTransaction];
+
+            NSArray *indexPaths = [weakSelf indexPathsForGameWithMD5Hash:game.md5Hash];
+            [weakSelf.collectionView reloadItemsAtIndexPaths:indexPaths];
+
+            [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
+        }
+    }];
+
+    [self.coverArtWatcher startMonitoring];
     
     NSArray *systems = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
     for (NSString *systemID in systems)
