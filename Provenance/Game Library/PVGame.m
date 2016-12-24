@@ -17,6 +17,11 @@
              @"customArtworkURL" : @"",
              @"originalArtworkURL" : @"",
              @"md5Hash" : @"",
+             @"releaseDescription": @"",
+             @"developer": @"",
+             @"genre": @"",
+             @"publisher": @"",
+             @"releaseDate": @"",
              @"requiresSync" : @YES,
              @"systemIdentifier" : @"",
              @"isFavorite": @NO};
@@ -31,7 +36,12 @@
 			 @"originalArtworkURL",
 			 @"md5Hash",
 			 @"systemIdentifier",
-             @"isFavorite"];
+             @"isFavorite",
+             @"releaseDescription",
+             @"developer",
+             @"genre",
+             @"publisher",
+             @"releaseDate"];
 }
 
 @end

@@ -104,8 +104,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #endif
         [config setPath:[path stringByAppendingPathComponent:@"default.realm"]];
 
-        // Bump schema version to migrate new PVGame property, isFavorite
-        config.schemaVersion = 1;
+        // Bump schema version to migrate new PVGame properties
+        config.schemaVersion = 2;
         config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
             // Nothing to do, Realm handles migration automatically when we set an empty migration block
         };
