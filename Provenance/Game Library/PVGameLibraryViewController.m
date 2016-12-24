@@ -552,57 +552,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     } extractionCompleteHandler:^(NSArray *paths) {
         for (NSString *imageFilepath in paths) {
             NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
-            BOOL isDirectory = NO;
-
-            if (![NSFileManager.defaultManager fileExistsAtPath:imageFullPath isDirectory:&isDirectory] || isDirectory) {
-                continue;
-            }
-
-            NSData *coverArtFullData = [NSData dataWithContentsOfFile:imageFullPath];
-            UIImage *coverArtFullImage = [UIImage imageWithData:coverArtFullData];
-            UIImage *coverArtScaledImage = [coverArtFullImage scaledImageWithMaxResolution:PVThumbnailMaxResolution];
-
-            if (!coverArtScaledImage) {
-                continue;
-            }
-
-            NSData *coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage);
-            NSString *hash = [coverArtScaledData md5Hash];
-            [PVMediaCache writeDataToDisk:coverArtScaledData withKey:hash];
-
-            NSString *imageFileExtension = [@"." stringByAppendingString:imageFilepath.pathExtension];
-            NSString *gameFilename = [imageFilepath.lastPathComponent stringByReplacingOccurrencesOfString:imageFileExtension withString:@""];
-
-            NSString *systemID = [PVEmulatorConfiguration.sharedInstance systemIdentifierForFileExtension:gameFilename.pathExtension];
-            NSArray *cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
-
-            if ([cdBasedSystems containsObject:systemID] && ![imageFilepath.pathExtension isEqualToString:@"cue"]) {
-                continue;
-            }
-
-            NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
-
-            if (!gamePartialPath) {
-                continue;
-            }
-
-            NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
-            RLMResults *games = [PVGame objectsInRealm:weakSelf.realm withPredicate:gamePredicate];
-
-            if (games.count < 1) {
-                continue;
-            }
-
-            PVGame *game = games.firstObject;
-
-            [weakSelf.realm beginWriteTransaction];
-            [game setCustomArtworkURL:hash];
-            [weakSelf.realm commitWriteTransaction];
-
+            PVGame *game = [PVGameImporter importArtworkFromPath:imageFullPath];
             NSArray *indexPaths = [weakSelf indexPathsForGameWithMD5Hash:game.md5Hash];
             [weakSelf.collectionView reloadItemsAtIndexPaths:indexPaths];
-
-            [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
         }
     }];
 

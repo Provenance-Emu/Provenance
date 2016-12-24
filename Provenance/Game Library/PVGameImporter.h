@@ -13,6 +13,8 @@ typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
 typedef void (^PVGameImporterFinishedImportingGameHandler)(NSString *md5Hash);
 typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL);
 
+@class PVGame;
+
 @interface PVGameImporter : NSObject
 
 @property (nonatomic, readonly, strong) dispatch_queue_t serialImportQueue;
@@ -32,5 +34,15 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 
 - (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)systemID;
 - (void)getArtworkFromURL:(NSString *)url;
+
+/**
+ Import a specifically named image file to the matching game.
+ 
+ To update “Kart Fighter.nes”, use an image named “Kart Fighter.nes.png”.
+
+ @param imageFullPath The artwork image path
+ @return The game that was updated
+ */
++ (PVGame *)importArtworkFromPath:(NSString *)imageFullPath;
 
 @end
