@@ -546,10 +546,25 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.watcher startMonitoring];
 
     self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:self.coverArtPath extractionStartedHandler:^(NSString *path) {
-        //
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+
+        if (!hud) {
+            hud = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        }
+
+        [hud setUserInteractionEnabled:NO];
+        [hud setMode:MBProgressHUDModeAnnularDeterminate];
+        [hud setProgress:0];
+        [hud setLabelText:@"Extracting Archive…"];
     } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
-        //
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:(float)bytesRead / (float)fileSize];
     } extractionCompleteHandler:^(NSArray *paths) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:1];
+        [hud setLabelText:@"Extraction Complete!"];
+        [hud hide:YES afterDelay:0.5];
+
         for (NSString *imageFilepath in paths) {
             NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
             PVGame *game = [PVGameImporter importArtworkFromPath:imageFullPath];
