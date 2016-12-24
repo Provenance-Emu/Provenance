@@ -581,7 +581,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             }
 
             NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
-            RLMResults *games = [PVGame objectsInRealm:weakSelf.realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath]];
+
+            if (!gamePartialPath) {
+                continue;
+            }
+
+            NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
+            RLMResults *games = [PVGame objectsInRealm:weakSelf.realm withPredicate:gamePredicate];
 
             if (games.count < 1) {
                 continue;
