@@ -17,6 +17,11 @@
              @"customArtworkURL" : @"",
              @"originalArtworkURL" : @"",
              @"md5Hash" : @"",
+             @"releaseDescription": @"",
+             @"developer": @"",
+             @"genre": @"",
+             @"publisher": @"",
+             @"releaseDate": @"",
              @"requiresSync" : @YES,
              @"systemIdentifier" : @"",
              @"isFavorite": @NO};
@@ -24,14 +29,19 @@
 
 + (NSArray<NSString *> *)requiredProperties
 {
-	// All properties are required
-	return @[@"title",
-			 @"romPath",
-			 @"customArtworkURL",
-			 @"originalArtworkURL",
-			 @"md5Hash",
-			 @"systemIdentifier",
-             @"isFavorite"];
+    // All properties are required
+    return @[@"title",
+             @"romPath",
+             @"customArtworkURL",
+             @"originalArtworkURL",
+             @"md5Hash",
+             @"systemIdentifier",
+             @"isFavorite",
+             @"releaseDescription",
+             @"developer",
+             @"genre",
+             @"publisher",
+             @"releaseDate"];
 }
 
 @end
