@@ -19,12 +19,13 @@
 @interface PVEmulatorViewController : UIViewController
 #endif
 
-
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, strong) PVGame *game;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *saveStatePath;
 @property (nonatomic, copy) NSString *BIOSPath;
+@property (nonatomic, getter=isPreviewModeEnabled) BOOL previewMode;
+
 
 - (instancetype)initWithGame:(PVGame *)game;
 - (void)quit;

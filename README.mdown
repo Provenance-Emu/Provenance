@@ -57,6 +57,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Game library searching
 - Supports iOS 8+
     - 3D Touch shortcuts for recent games (iPhone 6s and later)
+    - 3D Touch Peek and Pop for previewing games (iPhone 6s and later)
     - Taptic Engine Feedback for button presses (iPhone 7 and later)
 - Supports Apple TV tvOS 9+
     - TopShelf support [See instructions](https://github.com/jasarien/Provenance/pull/242)

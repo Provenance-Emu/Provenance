@@ -38,6 +38,7 @@
 #import "RLMRealmConfiguration+GroupConfig.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
+#import <PVSupport/PVEmulatorCore.h>
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -48,7 +49,7 @@ NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 static const CGFloat CellWidth = 308.0;
 #endif
 
-@interface PVGameLibraryViewController ()
+@interface PVGameLibraryViewController () <UIViewControllerPreviewingDelegate>
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
@@ -61,6 +62,7 @@ static const CGFloat CellWidth = 308.0;
 @property (nonatomic, strong) UITextField *renameTextField;
 @property (nonatomic, strong) PVGame *gameToRename;
 @property (nonatomic, strong) PVGame *gameForCustomArt;
+@property (nonatomic) RLMNotificationToken *token;
 #if !TARGET_OS_TV
 @property (nonatomic, strong) ALAssetsLibrary *assetsLibrary;
 #endif
@@ -133,6 +135,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.watcher = nil;
 	self.collectionView = nil;
     self.realm = nil;
+    [self.token stop];
 }
 
 - (void)handleAppDidBecomeActive:(NSNotification *)note
@@ -177,10 +180,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 		
 	[self setTitle:@"Library"];
     
+    
 	UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
 	[layout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
     
-	self.collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds] collectionViewLayout:layout];
+	self.collectionView = [[UICollectionView alloc] initWithFrame:[self.view bounds]
+                                             collectionViewLayout:layout];
 	[self.collectionView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self.collectionView setDataSource:self];
 	[self.collectionView setDelegate:self];
@@ -191,6 +196,12 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.collectionView registerClass:[PVGameLibrarySectionHeaderView class]
             forSupplementaryViewOfKind:UICollectionElementKindSectionHeader
                    withReuseIdentifier:PVGameLibraryHeaderView];
+    
+    if (self.traitCollection.forceTouchCapability == UIForceTouchCapabilityAvailable) {
+        // Peek and pop setup
+        [self registerForPreviewingWithDelegate:self sourceView:self.collectionView];
+    }
+    
 #if TARGET_OS_TV
     [self.collectionView setContentInset:UIEdgeInsetsMake(40, 80, 40, 80)];
 #endif
@@ -202,17 +213,22 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self.collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
 	[self.collectionView setBackgroundColor:[UIColor clearColor]];
     
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:PVRequiresMigrationKey])
-    {
+    
+
+    __weak typeof(self) weakSelf = self;
+    self.token = [_realm addNotificationBlock:^(NSString *notification, RLMRealm * realm) {
+        [weakSelf fetchGames];
+        [weakSelf.collectionView reloadData];
+    }];
+    
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:PVRequiresMigrationKey]) {
         [self migrateLibrary];
-    }
-    else
-    {
+    } else {
         [self setUpGameLibrary];
     }
 
     [self loadGameFromShortcut];
-    
     [self becomeFirstResponder];
 }
 
@@ -845,13 +861,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)loadGame:(PVGame *)game
 {
     void (^loadGame)(void) = ^void(void) {
-        if ([self canLoadGame:game])
-        {
+        if ([self canLoadGame:game]) {
             PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
             [emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
             [emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
             [emulatorViewController setBIOSPath:[self BIOSPathForSystemID:[game systemIdentifier]]];
             [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
+            emulatorViewController.previewMode = NO;
 
             [self presentViewController:emulatorViewController animated:YES completion:NULL];
              [[[PVControllerManager sharedManager] iCadeController] refreshListener];
@@ -859,8 +875,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         }
     };
 
-    if (![[self presentedViewController] isKindOfClass:[PVEmulatorViewController class]])
-    {
+    if (![[self presentedViewController] isKindOfClass:[PVEmulatorViewController class]]) {
         loadGame();
     }
 }
@@ -1047,13 +1062,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
-- (void)toggleFavoriteForGame:(PVGame *)game {
+- (void)toggleFavoriteForGame:(PVGame *)game
+{
     [self.realm beginWriteTransaction];
     game.isFavorite = !game.isFavorite;
     [self.realm commitWriteTransaction];
-
-    [self fetchGames];
-    [self.collectionView reloadData];
 }
 
 - (void)renameGame:(PVGame *)game
@@ -1699,6 +1712,96 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.gameForCustomArt = nil;
 }
 #endif
+
+#pragma mark - UIViewControllerPreviewingDelegate
+
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)previewingContext viewControllerForLocation:(CGPoint)location
+{
+    NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:location];
+    if (!indexPath)
+        return nil;
+    
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+    if (!cell)
+        return nil;
+    
+    NSArray *games = [self.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
+    PVGame *game = games[[indexPath item]];
+    
+    PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
+    [emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath]
+                                                                              stringByAppendingPathComponent:[game romPath]]]];
+    
+    [emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath]
+                                                                        stringByAppendingPathComponent:[game romPath]]]];
+    
+    [emulatorViewController setBIOSPath:[self BIOSPathForSystemID:[game systemIdentifier]]];
+    emulatorViewController.previewMode = YES;
+    
+    
+    CGSize size = [self sizeForEmulation:emulatorViewController.emulatorCore];
+    emulatorViewController.preferredContentSize = CGSizeMake(size.width, size.height);
+    
+    previewingContext.sourceRect = cell.frame;
+    return emulatorViewController;
+}
+
+- (void)previewingContext:(id<UIViewControllerPreviewing>)previewingContext commitViewController:(UIViewController *)viewControllerToCommit
+{
+    if ([viewControllerToCommit isKindOfClass:[PVEmulatorViewController class]]) {
+        PVEmulatorViewController *viewController = (PVEmulatorViewController *)viewControllerToCommit;
+        viewController.previewMode = NO;
+        [self presentViewController:viewController animated:YES completion:NULL];
+        [[[PVControllerManager sharedManager] iCadeController] refreshListener];
+        [self updateRecentGames:viewController.game];
+    }
+}
+
+- (CGSize)sizeForEmulation:(PVEmulatorCore *)core
+{
+    // Quick and dirty hack to get the appropriate emulation frame size
+    // We'll eventually have to re-write the emulation architecture to make it more flexible
+    // Fow now, this is the same code that is used to calculate the frame in PVGLViewController
+    
+    if (!CGRectIsEmpty([core screenRect])) {
+        CGSize aspectSize = [core aspectSize];
+        CGFloat ratio = 0;
+        if (aspectSize.width > aspectSize.height) {
+            ratio = aspectSize.width / aspectSize.height;
+        } else {
+            ratio = aspectSize.height / aspectSize.width;
+        }
+        
+        CGSize parentSize = CGSizeZero;
+        if ([self parentViewController]) {
+            parentSize = [[[self parentViewController] view] bounds].size;
+        } else {
+            parentSize = [[self.view window] bounds].size;
+        }
+        
+        CGFloat height = 0;
+        CGFloat width = 0;
+        
+        if (parentSize.width > parentSize.height) {
+            height = parentSize.height;
+            width = roundf(height * ratio);
+            if (width > parentSize.width) {
+                width = parentSize.width;
+                height = roundf(width / ratio);
+            }
+        } else {
+            width = parentSize.width;
+            height = roundf(width / ratio);
+            if (height > parentSize.height) {
+                height = parentSize.width;
+                width = roundf(height / ratio);
+            }
+        }
+        
+        return CGSizeMake(width, height);
+    }
+    return CGSizeZero;
+}
 
 #pragma mark - Keyboard actions
 
