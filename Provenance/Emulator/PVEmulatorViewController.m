@@ -23,7 +23,9 @@
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
-@interface PVEmulatorViewController ()
+@interface PVEmulatorViewController () {
+    UITapGestureRecognizer *_menuGestureRecognizer;
+}
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
@@ -73,6 +75,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
+    if (_menuGestureRecognizer) {
+        [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:_menuGestureRecognizer];
+    }
+    
     [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
@@ -316,9 +322,9 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
-    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
-    [self.view addGestureRecognizer:menuGestureRecognizer];
+    _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
+    _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    [[UIApplication sharedApplication].keyWindow addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
@@ -364,35 +370,30 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-    [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
-    [self.gameAudio pauseAudio];
+
 }
 
 - (void)appWillResignActive:(NSNotification *)note
 {
     [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
     [self.gameAudio pauseAudio];
+    [self showMenu:self];
 }
 
 - (void)appDidBecomeActive:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setShouldResyncTime:YES];
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+    if (!self.isShowingMenu)
+    {
+        [self.emulatorCore setPauseEmulation:NO];
+    }
+    
+    [self.emulatorCore setShouldResyncTime:YES];
+    [self.gameAudio startAudio];
 }
 
 - (void)showMenu:(id)sender
@@ -538,13 +539,17 @@ void uncaughtExceptionHandler(NSException *exception)
         [weakSelf quit];
 	}]];
     
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[weakSelf.emulatorCore setPauseEmulation:NO];
-		weakSelf.isShowingMenu = NO;
+    UIAlertAction *resumeAction = [UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.emulatorCore setPauseEmulation:NO];
+        weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-	}]];
+    }];
+    
+    [actionsheet addAction:resumeAction];
+    
+    [actionsheet setPreferredAction:resumeAction];
 
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
