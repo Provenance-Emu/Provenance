@@ -114,7 +114,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
         [RLMRealmConfiguration setDefaultConfiguration:config];
         self.realm = [RLMRealm defaultRealm];
-        
     }
     
     return self;
@@ -1166,14 +1165,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)renameGame:(PVGame *)game toTitle:(NSString *)title;
 {
-    if (title.length)
-    {
+    if (title.length) {
         [self.realm beginWriteTransaction];
         [game setTitle:title];
         [self.realm commitWriteTransaction];
-        
-        [self fetchGames];
-        [self.collectionView reloadData];
     }
 }
 
