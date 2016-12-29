@@ -16,6 +16,7 @@
 
 +(PViCadeReader*) sharedReader;
 
+-(void) listenToWindow:(UIWindow *)window;
 -(void) listenToKeyWindow;
 -(void) stopListening;
 -(iCadeState) state;
