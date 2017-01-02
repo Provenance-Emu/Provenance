@@ -805,6 +805,20 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #pragma mark - Controllers
 
+#if TARGET_OS_TV
+// Ensure that override of menu gesture is caught and handled properly for tvOS
+-(void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(nullable UIPressesEvent *)event {
+    
+    UIPress *press = (UIPress *)presses.anyObject;
+    if ( press && press.type == UIPressTypeMenu && !self.isShowingMenu )
+    {
+        [self controllerPauseButtonPressed];
+    }
+    else
+        [super pressesBegan:presses withEvent:event];
+}
+#endif 
+
 - (void)controllerPauseButtonPressed
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
