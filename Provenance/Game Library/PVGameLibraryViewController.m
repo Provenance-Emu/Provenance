@@ -595,18 +595,18 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
     NSMutableArray *sectionInfo = [[[tempSections allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
 
+    // Check if recent games should be added to menu
+    if (recentGames.count>0) {
+        NSString *key = @"recent";
+        [sectionInfo insertObject:key atIndex:0];
+        [tempSections setObject:recentGames forKey:key];
+    }
+    
     // Check if favorite games should be added to menu
     if (favoriteGames.count > 0) {
         NSString *key = @"favorite";
         [sectionInfo insertObject:key atIndex:0];
         [tempSections setObject:favoriteGames forKey:key];
-    }
-
-    // Check if recent games should be added to menu
-    if (recentGames.count>0) {
-        NSString *key = @"recent";
-        [sectionInfo insertObject:key atIndex:1];
-        [tempSections setObject:recentGames forKey:key];
     }
     
     // Set data source
