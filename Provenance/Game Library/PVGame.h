@@ -16,6 +16,12 @@
 @property NSString *customArtworkURL;
 @property NSString *originalArtworkURL;
 
+@property NSString *releaseDescription;
+@property NSString *developer;
+@property NSString *publisher;
+@property NSString *genre;
+@property NSString *releaseDate;
+
 @property NSString *md5Hash;
 
 @property BOOL requiresSync;
