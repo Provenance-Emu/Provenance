@@ -30,11 +30,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-//	RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
-//	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//	NSString *path = paths.firstObject;
-//	[config setPath:[path stringByAppendingPathComponent:@"default.realm"]];
-//	[RLMRealmConfiguration setDefaultConfiguration:config];
 	self.realm = [RLMRealm defaultRealm];
 	[self.realm refresh];
 

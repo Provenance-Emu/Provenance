@@ -35,7 +35,7 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "PVControllerManager.h"
-#import "RLMRealmConfiguration+GroupConfig.h"
+#import "RLMRealmConfiguration+Config.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
 
@@ -88,31 +88,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if ((self = [super initWithCoder:aDecoder]))
     {
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
-        RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
-#if TARGET_OS_TV
-        NSString *path = nil;
-        if ([RLMRealmConfiguration supportsAppGroups]) {
-            path = [RLMRealmConfiguration appGroupPath];
-        }
-        else {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-            path = paths.firstObject;
-        }
-#else
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *path = paths.firstObject;
-#endif
-        [config setPath:[path stringByAppendingPathComponent:@"default.realm"]];
 
-        // Bump schema version to migrate new PVGame property, isFavorite
-        config.schemaVersion = 1;
-        config.migrationBlock = ^(RLMMigration *migration, uint64_t oldSchemaVersion) {
-            // Nothing to do, Realm handles migration automatically when we set an empty migration block
-        };
+        [RLMRealmConfiguration setRealmConfig];
 
-        [RLMRealmConfiguration setDefaultConfiguration:config];
         self.realm = [RLMRealm defaultRealm];
-        
     }
     
     return self;
