@@ -29,19 +29,19 @@
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
-@property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
 @property (nonatomic, strong) UIButton *menuButton;
 
 @property (nonatomic, assign) NSTimer *fpsTimer;
 @property (nonatomic, strong) UILabel *fpsLabel;
+@property (nonatomic, strong) RLMRealm *realm;
 
 @property (nonatomic, weak) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
 
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
-
+@property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
 @end
 
@@ -56,8 +56,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 + (void)initialize
 {
-	if ([[PVSettingsModel sharedInstance] autoSave])
-	{
+	if ([[PVSettingsModel sharedInstance] autoSave]) {
 		NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
 	}
 }
@@ -68,6 +67,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	{
 		_staticEmulatorViewController = self;
 		self.game = game;
+        
+        self.emulatorCore = [[PVEmulatorConfiguration sharedInstance]
+                             emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+        
 	}
 	
 	return self;
@@ -101,6 +104,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	self.menuButton = nil;
 
     self.fpsTimer = nil;
+    self.realm = nil;
 
 #if !TARGET_OS_TV
 	for (GCController *controller in [GCController controllers])
@@ -115,7 +119,10 @@ void uncaughtExceptionHandler(NSException *exception)
 	[super viewDidLoad];
     
 	self.title = [self.game title];
-	
+    
+    //[RLMRealmConfiguration setDefaultConfiguration:config];
+    self.realm = [RLMRealm defaultRealm];
+    
 	[self.view setBackgroundColor:[UIColor blackColor]];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self
@@ -155,7 +162,7 @@ void uncaughtExceptionHandler(NSException *exception)
 												 name:PVControllerManagerControllerReassignedNotification
 											   object:nil];
 
-	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+	
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
     [self.emulatorCore setBIOSPath:self.BIOSPath];
@@ -164,8 +171,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
 
-    if ([[UIScreen screens] count] > 1)
-    {
+    if ([[UIScreen screens] count] > 1) {
         self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
         self.secondaryWindow = [[UIWindow alloc] initWithFrame:[self.secondaryScreen bounds]];
         [self.secondaryWindow setScreen:self.secondaryScreen];
@@ -173,34 +179,11 @@ void uncaughtExceptionHandler(NSException *exception)
         [[self.glViewController view] setFrame:[self.secondaryWindow bounds]];
         [self.secondaryWindow addSubview:[self.glViewController view]];
         [self.secondaryWindow setHidden:NO];
-    }
-    else
-    {
+    } else {
         [self addChildViewController:self.glViewController];
         [self.view addSubview:[self.glViewController view]];
         [self.glViewController didMoveToParentViewController:self];
     }
-
-	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
-	[self.controllerViewController setEmulatorCore:self.emulatorCore];
-	[self addChildViewController:self.controllerViewController];
-	[self.view addSubview:[self.controllerViewController view]];
-	[self.controllerViewController didMoveToParentViewController:self];
-	
-	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
-	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-	[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
-	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
-	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
-	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];
-	[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
-	[[self.menuButton titleLabel] setShadowOffset:CGSizeMake(0, 1)];
-	[self.menuButton setTitleShadowColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:15]];
-	[self.menuButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-	[self.menuButton setAlpha:alpha];
-	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-	[self.view addSubview:self.menuButton];
     
     
     if ([[PVSettingsModel sharedInstance] showFPSCount]) {
@@ -232,8 +215,7 @@ void uncaughtExceptionHandler(NSException *exception)
     }
     
 	
-	if ([[GCController controllers] count])
-	{
+	if ([[GCController controllers] count]) {
 		[self.menuButton setHidden:YES];
 	}
 
@@ -284,12 +266,14 @@ void uncaughtExceptionHandler(NSException *exception)
 			UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Autosave file detected"
                                                                            message:@"Would you like to load it?"
                                                                     preferredStyle:UIAlertControllerStyleAlert];
+            
             [alert addAction:[UIAlertAction actionWithTitle:@"Yes"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                         [weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
                                                         [weakSelf.emulatorCore setPauseEmulation:NO];
                                                     }]];
+            
             [alert addAction:[UIAlertAction actionWithTitle:@"Yes, and stop asking"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * _Nonnull action) {
@@ -297,11 +281,13 @@ void uncaughtExceptionHandler(NSException *exception)
                                                         [[PVSettingsModel sharedInstance] setAutoSave:YES];
                                                         [[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
                                                     }]];
+            
             [alert addAction:[UIAlertAction actionWithTitle:@"No"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                         [weakSelf.emulatorCore setPauseEmulation:NO];
                                                     }]];
+            
             [alert addAction:[UIAlertAction actionWithTitle:@"No, and stop asking"
                                                       style:UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * _Nonnull action) {
@@ -345,6 +331,34 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 }
 
+- (void)setPreviewMode:(BOOL)previewMode
+{
+    _previewMode = previewMode;
+    
+    if (!self.isPreviewModeEnabled) {
+        self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
+        [self.controllerViewController setEmulatorCore:self.emulatorCore];
+        [self addChildViewController:self.controllerViewController];
+        [self.view addSubview:[self.controllerViewController view]];
+        [self.controllerViewController didMoveToParentViewController:self];
+        
+        CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
+        self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+        [self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
+        [self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
+        [self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];
+        [self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
+        [[self.menuButton titleLabel] setShadowOffset:CGSizeMake(0, 1)];
+        [self.menuButton setTitleShadowColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        [[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:15]];
+        [self.menuButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [self.menuButton setAlpha:alpha];
+        [self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:self.menuButton];
+    }
+}
+
 - (NSString *)documentsPath
 {
 #if TARGET_OS_TV
@@ -367,10 +381,12 @@ void uncaughtExceptionHandler(NSException *exception)
     return UIInterfaceOrientationMaskAll;
 }
 
-
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-
+	if (!self.isShowingMenu) {
+		[self.emulatorCore setPauseEmulation:NO];
+        [self.gameAudio startAudio];
+	}
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
@@ -801,6 +817,17 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
+}
+
+- (NSArray<UIPreviewAction *> *)previewActionItems
+{
+    UIPreviewAction *favorite = [UIPreviewAction actionWithTitle:@"Favorite" style:UIPreviewActionStyleDefault handler:^(UIPreviewAction * _Nonnull action, UIViewController * _Nonnull previewViewController) {
+        [self.realm beginWriteTransaction];
+        _game.isFavorite = !_game.isFavorite;
+        [self.realm commitWriteTransaction];
+    }];
+    
+    return @[favorite];
 }
 
 #pragma mark - Controllers

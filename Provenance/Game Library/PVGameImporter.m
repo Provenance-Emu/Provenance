@@ -495,14 +495,38 @@
     
     [realm beginWriteTransaction];
     [game setRequiresSync:NO];
-    if ([chosenResult[@"gameTitle"] length])
-    {
+    
+    if ([chosenResult[@"gameTitle"] length]) {
         [game setTitle:chosenResult[@"gameTitle"]];
     }
-    if ([chosenResult[@"boxImageURL"] length])
-    {
+    
+    if ([chosenResult[@"boxImageURL"] length]) {
         [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
     }
+    
+    if ([chosenResult[@"gameDescription"] length]) {
+        [game setReleaseDescription:chosenResult[@"gameDescription"]];
+    }
+    
+    if ([chosenResult[@"developer"] length]) {
+        [game setDeveloper:chosenResult[@"developer"]];
+    }
+    
+    if ([chosenResult[@"publisher"] length]) {
+        [game setPublisher:chosenResult[@"publisher"]];
+    }
+    
+    if ([chosenResult[@"genre"] length]) {
+        [game setGenre:chosenResult[@"genre"]];
+    }
+    
+    if ([chosenResult[@"releaseDate"] length]) {
+        // FIXME: For now we parse dates to string rather than to NSDate which is suboptimal
+        // OpenVGDB doesn't return constant date formats which makes parsing difficult
+        
+        [game setReleaseDate:chosenResult[@"releaseDate"]];
+    }
+    
     [realm commitWriteTransaction];
 }
 
@@ -565,8 +589,8 @@
     }
     
     NSArray *results = nil;
-    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
-    NSString *likeQuery = @"SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC";
+    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseDescription as 'gameDescription',  releaseDeveloper as 'developer', releasePublisher as 'publisher', releaseGenre as 'genre', releaseDate as 'releaseDate',  releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
+     NSString *likeQuery = @"SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', releaseDescription as 'gameDescription',  releaseDeveloper as 'developer', releasePublisher as 'publisher', releaseGenre as 'genre', releaseDate as 'releaseDate', regionName as 'region', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC";
     NSString *queryString = nil;
     
     NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
