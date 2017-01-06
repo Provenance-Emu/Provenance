@@ -11,9 +11,8 @@
 #import "PVControllerManager.h"
 #import "PVSearchViewController.h"
 
-#if TARGET_OS_TV
 #import "PVAppConstants.h"
-#endif
+
 
 @interface PVAppDelegate ()
 
@@ -66,8 +65,8 @@
     NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
 #pragma clang diagnostic pop
 
-    if (url && [url isFileURL])
-    {
+    
+    if (url && [url isFileURL]) {
 #if TARGET_OS_TV
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 #else
@@ -82,15 +81,15 @@
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSError *error = nil;
         BOOL success = [fileManager moveItemAtPath:sourcePath toPath:destinationPath error:&error];
-        if (!success || error)
-        {
+        if (!success || error) {
             DLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
         }
+    } else if ([components.host isEqualToString:@"play"] && [components.queryItems.firstObject.name isEqualToString:PVGameMD5Key]) {
+        self.shortcutItemMD5 = components.queryItems.firstObject.value;
     }
 #if TARGET_OS_TV
     else if ([components.path isEqualToString:PVGameControllerKey] &&
-             [components.queryItems.firstObject.name isEqualToString:PVGameMD5Key])
-    {
+             [components.queryItems.firstObject.name isEqualToString:PVGameMD5Key]) {
         self.shortcutItemMD5 = components.queryItems.firstObject.value;
     }
 #endif
@@ -101,8 +100,7 @@
 #if !TARGET_OS_TV
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(nonnull void (^)(BOOL))completionHandler {
     
-    if ([[shortcutItem type] isEqualToString:@"kRecentGameShortcut"])
-    {
+    if ([[shortcutItem type] isEqualToString:@"kRecentGameShortcut"]) {
         self.shortcutItemMD5 = (NSString *)[shortcutItem userInfo][@"PVGameHash"];
     }
     
