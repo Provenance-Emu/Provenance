@@ -159,7 +159,7 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
     }
     
     static int cycleResponder = 0;
-    if (++cycleResponder > 20) {
+    if (++cycleResponder > 100) {
         // necessary to clear a buffer that accumulates internally
         cycleResponder = 0;
         [self resignFirstResponder];
