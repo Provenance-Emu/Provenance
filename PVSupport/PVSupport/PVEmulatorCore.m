@@ -37,6 +37,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 		NSUInteger count = [self audioBufferCount];
         ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
         self.emulationLoopThreadLock = [NSLock new];
+        _gameSpeed = GameSpeedNormal;
 	}
 	
 	return self;

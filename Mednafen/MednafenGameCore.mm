@@ -933,6 +933,16 @@ static void emulation_run()
     MDFNI_Emulate(&spec);
 
     current->mednafenCoreTiming = current->masterClock / spec.MasterCycles;
+    
+    // Fix for game stutter. mednafenCoreTiming flutters on init before settling and we only read it
+    // after the first frame wot set the current->gameInterval in the super class. This work around
+    // resets the value after a few frames. -Joe M
+    static int fixCount = 0;
+    if(fixCount < 5) {
+        current->gameInterval = 1.0 / current->mednafenCoreTiming;
+        NSLog(@"%f", current->mednafenCoreTiming);
+        fixCount++;
+    }
 
     if(current->systemType == psx)
     {
@@ -1050,9 +1060,6 @@ static void emulation_run()
     }
     else if (systemType == psx)
     {
-#pragma message "as this is just a log... fuck it, were just having fun :)"
-        //NSLog(@"PSX serial: %@ player count: %d", [_current ROMSerial], multiTapPlayerCount);
-
         for(unsigned i = 0; i < multiTapPlayerCount; i++)
             game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
     }
