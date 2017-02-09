@@ -1491,6 +1491,8 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
             case OEPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
             case OEPSXButtonStart:
+                return [[pad rightTrigger] isPressed];
+            case OEPSXButtonSelect:
                 return [[pad leftTrigger] isPressed];
             default:
                 break;
