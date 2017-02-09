@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *revisionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 
 @end
 
@@ -68,6 +69,8 @@
     [super viewWillAppear:animated];
 
     self.splitViewController.title = @"Settings";
+    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
+    [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
 #pragma mark - UITableViewDelegate
@@ -97,6 +100,9 @@
             }
             break;
         case 1:
+            // icase settings
+            break;
+        case 2:
             // library settings
             switch ([indexPath row]) {
 				case 0: {

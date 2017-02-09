@@ -22,18 +22,16 @@
 		B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
-		B3C96EB01D62C3C7003F1E93 /* OETimingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96EB11D62C3C7003F1E93 /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
+		B3C96EB01D62C3C7003F1E93 /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
 		B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
 		B3C96EC31D62C5E7003F1E93 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
-		B3C96EC51D62C5E7003F1E93 /* OETimingUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69717F748F80031B1C9 /* OETimingUtils.m */; };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C96EBB1D62C54D003F1E93 /* PVSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA68E17F748F80031B1C9 /* OETimingUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
@@ -217,7 +215,7 @@
 				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
-				B3C96EB01D62C3C7003F1E93 /* OETimingUtils.h in Headers */,
+				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
 				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
@@ -234,7 +232,7 @@
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
-				B3C96ECD1D62C5E7003F1E93 /* OETimingUtils.h in Headers */,
+				B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 			);
@@ -493,6 +491,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -526,6 +525,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -559,6 +559,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

@@ -10,7 +10,7 @@
 
 NSInteger const PVMaxRecentsShortcutCount = 4;
 
-NSString *const PVAppGroupId = @"";
+NSString *const PVAppGroupId = @"group.provenance-emu.provenance";
 NSString *const kInterfaceDidChangeNotification = @"kInterfaceDidChangeNotification";
 
 NSString *const PVGameControllerKey = @"PlayController";
