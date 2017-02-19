@@ -182,7 +182,7 @@ NSString* GCDWebServerGetMimeTypeForExtension(NSString* extension) {
 }
 
 NSString* GCDWebServerEscapeURLString(NSString* string) {
-  return [string stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@":@/?&=+"] invertedSet]];
+  return [string stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@":@/?&=+,"] invertedSet]];
 }
 
 NSString* GCDWebServerUnescapeURLString(NSString* string) {
