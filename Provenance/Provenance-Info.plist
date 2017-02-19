@@ -38,7 +38,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>655</string>
+	<string>656</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -49,7 +49,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>Revision</key>
-	<string>5b7e242</string>
+	<string>64d067e</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
