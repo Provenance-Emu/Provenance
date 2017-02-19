@@ -318,7 +318,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
 	
-	NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+    NSMutableArray *filenameComponents = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] mutableCopy];
+    // remove extension
+    [filenameComponents removeLastObject];
+    
+	NSString *romName = [filenameComponents componentsJoinedByString:@"."];
 	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
 	
 	NSError *error = nil;
