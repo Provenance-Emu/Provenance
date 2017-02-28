@@ -1084,9 +1084,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.renameTextField setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [self.renameTextField setBorderStyle:UITextBorderStyleRoundedRect];
     [self.renameTextField setPlaceholder:[game title]];
+    [self.renameTextField setText:[game title]];
     [self.renameTextField setKeyboardAppearance:UIKeyboardAppearanceAlert];
     [self.renameTextField setReturnKeyType:UIReturnKeyDone];
     [self.renameTextField setDelegate:self];
+    
     UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:self.renameTextField];
     
     [self.renameToolbar setItems:@[textFieldItem]];
@@ -1102,6 +1104,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                object:nil];
     
     [self.renameTextField becomeFirstResponder];
+    [self.renameTextField selectAll:nil];
 #endif
 }
 
