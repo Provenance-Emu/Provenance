@@ -48,22 +48,29 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
                                                  selector:@selector(handleControllerDidDisconnect:)
                                                      name:GCControllerDidDisconnectNotification
                                                    object:nil];
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:kICadeControllerSettingKey
+                                                   options:NSKeyValueObservingOptionNew context:nil];
 
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         [self assignControllers];
 
-        if (!self.iCadeController)
-        {
-            PVSettingsModel* settings = [PVSettingsModel sharedInstance];
-            self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
-            if (self.iCadeController) {
-                [self listenForICadeControllers];
-            }
-        }
+        [self setupICade];
     }
 
     return self;
+}
+
+- (void)setupICade
+{
+    if (!self.iCadeController) {
+        PVSettingsModel* settings = [PVSettingsModel sharedInstance];
+        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+        if( self.iCadeController ) {
+            [self listenForICadeControllers];
+        }
+    }
 }
 
 - (void)setPlayer1:(GCController *)player1
@@ -120,6 +127,15 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     if (!assigned) {
         [[NSNotificationCenter defaultCenter] postNotificationName:PVControllerManagerControllerReassignedNotification
                                                             object:self];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (keyPath == kICadeControllerSettingKey) {
+        [self setupICade];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
 
