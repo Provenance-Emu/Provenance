@@ -15,6 +15,9 @@
 #import <Realm/Realm.h>
 #import "PVSynchronousURLSession.h"
 #import "PVEmulatorConstants.h"
+#import "PVAppConstants.h"
+#import "UIImage+Scaling.h"
+#import "NSData+Hashing.h"
 
 @interface PVGameImporter ()
 
@@ -670,6 +673,65 @@
     }
     
     return isCDROM;
+}
+
+#pragma mark -
+
++ (PVGame *)importArtworkFromPath:(NSString *)imageFullPath
+{
+    BOOL isDirectory = NO;
+
+    if (![NSFileManager.defaultManager fileExistsAtPath:imageFullPath isDirectory:&isDirectory] || isDirectory) {
+        return nil;
+    }
+
+    NSData *coverArtFullData = [NSData dataWithContentsOfFile:imageFullPath];
+    UIImage *coverArtFullImage = [UIImage imageWithData:coverArtFullData];
+    UIImage *coverArtScaledImage = [coverArtFullImage scaledImageWithMaxResolution:PVThumbnailMaxResolution];
+
+    if (!coverArtScaledImage) {
+        return nil;
+    }
+
+    NSData *coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage);
+    NSString *hash = [coverArtScaledData md5Hash];
+    [PVMediaCache writeDataToDisk:coverArtScaledData withKey:hash];
+
+    NSString *imageFilename = imageFullPath.lastPathComponent;
+    NSString *imageFileExtension = [@"." stringByAppendingString:imageFilename.pathExtension];
+    NSString *gameFilename = [imageFilename stringByReplacingOccurrencesOfString:imageFileExtension withString:@""];
+
+    NSString *systemID = [PVEmulatorConfiguration.sharedInstance systemIdentifierForFileExtension:gameFilename.pathExtension];
+    NSArray *cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
+
+    if ([cdBasedSystems containsObject:systemID] && ![gameFilename.pathExtension isEqualToString:@"cue"]) {
+        return nil;
+    }
+
+    NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
+
+    if (!gamePartialPath) {
+        return nil;
+    }
+
+    RLMRealm *realm = [RLMRealm defaultRealm];
+
+    NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
+    RLMResults *games = [PVGame objectsInRealm:realm withPredicate:gamePredicate];
+
+    if (games.count < 1) {
+        return nil;
+    }
+
+    PVGame *game = games.firstObject;
+
+    [realm beginWriteTransaction];
+    [game setCustomArtworkURL:hash];
+    [realm commitWriteTransaction];
+
+    [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
+
+    return game;
 }
 
 @end

@@ -52,6 +52,7 @@ static const CGFloat CellWidth = 308.0;
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
+@property (nonatomic, strong) PVDirectoryWatcher *coverArtWatcher;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 @property (nonatomic, strong) UICollectionView *collectionView;
 #if !TARGET_OS_TV
@@ -110,6 +111,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.gamesInSections = nil;
 	
 	self.watcher = nil;
+    self.coverArtWatcher = nil;
 	self.collectionView = nil;
     self.realm = nil;
 }
@@ -279,6 +281,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	
 	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+}
+
+- (NSString *)coverArtPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+
+    return [paths.firstObject stringByAppendingPathComponent:@"Cover Art"];
 }
 
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
@@ -514,6 +527,36 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                       [weakSelf.gameImporter startImportForPaths:paths];
                                   }];
     [self.watcher startMonitoring];
+
+    self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:self.coverArtPath extractionStartedHandler:^(NSString *path) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+
+        if (!hud) {
+            hud = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        }
+
+        [hud setUserInteractionEnabled:NO];
+        [hud setMode:MBProgressHUDModeAnnularDeterminate];
+        [hud setProgress:0];
+        [hud setLabelText:@"Extracting Archive…"];
+    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:(float)bytesRead / (float)fileSize];
+    } extractionCompleteHandler:^(NSArray *paths) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:1];
+        [hud setLabelText:@"Extraction Complete!"];
+        [hud hide:YES afterDelay:0.5];
+
+        for (NSString *imageFilepath in paths) {
+            NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
+            PVGame *game = [PVGameImporter importArtworkFromPath:imageFullPath];
+            NSArray *indexPaths = [weakSelf indexPathsForGameWithMD5Hash:game.md5Hash];
+            [weakSelf.collectionView reloadItemsAtIndexPaths:indexPaths];
+        }
+    }];
+
+    [self.coverArtWatcher startMonitoring];
     
     NSArray *systems = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
     for (NSString *systemID in systems)
