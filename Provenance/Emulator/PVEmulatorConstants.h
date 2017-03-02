@@ -19,6 +19,7 @@ extern NSString * const PVSupportedExtensionsKey;
 extern NSString * const PVControlLayoutKey;
 extern NSString * const PVControlTypeKey;
 extern NSString * const PVControlSizeKey;
+extern NSString * const PVControlDiagonalDirectionsEnabledKey;
 extern NSString * const PVGroupedButtonsKey;
 extern NSString * const PVControlFrameKey;
 extern NSString * const PVControlTitleKey;

@@ -33,6 +33,7 @@ typedef NS_ENUM(NSUInteger, JSDPadDirection)
 @interface JSDPad : UIView
 
 @property (nonatomic, weak) IBOutlet id <JSDPadDelegate> delegate;
+@property (nonatomic) BOOL diagonalDirectionsEnabled;
 
 - (void)setEnabled:(BOOL)enabled;
 - (JSDPadDirection)currentDirection;

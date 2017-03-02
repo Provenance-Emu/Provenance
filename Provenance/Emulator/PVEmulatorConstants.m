@@ -19,6 +19,7 @@ NSString * const PVSupportedExtensionsKey = @"PVSupportedExtensions";
 NSString * const PVControlLayoutKey       = @"PVControlLayout";
 NSString * const PVControlTypeKey         = @"PVControlType";
 NSString * const PVControlSizeKey         = @"PVControlSize";
+NSString * const PVControlDiagonalDirectionsEnabledKey = @"PVControlDiagonalDirectionsEnabled";
 NSString * const PVGroupedButtonsKey      = @"PVGroupedButtons";
 NSString * const PVControlFrameKey        = @"PVControlFrame";
 NSString * const PVControlTitleKey        = @"PVControlTitle";
