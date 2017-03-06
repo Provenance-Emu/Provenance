@@ -72,8 +72,6 @@
 
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
-#pragma message "psx aspect ratio is not well casted"
-        //CGSize aspectSize = CGSizeMake(4, 3);
         CGSize aspectSize = [self.emulatorCore aspectSize];
         CGFloat ratio = 0;
         if (aspectSize.width > aspectSize.height) {
@@ -164,16 +162,39 @@
         CGFloat texWidth = (screenSize.width / bufferSize.width);
         CGFloat texHeight = (screenSize.height / bufferSize.height);
 
-        vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
-        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-        vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
+        CGSize aspectSize = [self.emulatorCore aspectSize];
+        CGFloat ratio = 0;
+        if (aspectSize.width > aspectSize.height) {
+            ratio = aspectSize.width / aspectSize.height;
+        } else {
+            ratio = aspectSize.height / aspectSize.width;
+        }
 
+        // TODO: Better way to do this, like [self.emulatorCore wideScreen];
+        BOOL widescreen = ratio == 1.5;
+        
+        if(widescreen) {
+            vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
+            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+            vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
+            
 #pragma message "to check why textWidth is only 0.85f, I've changed it directly to 1.0f"
-        textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-        textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
-        textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
-        textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+            textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
+            textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
+            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+        } else {
+            vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+            vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+            
+            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+            textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
+            textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); //
+        }
 
         int vertexIndices[6] = {
             // Front
