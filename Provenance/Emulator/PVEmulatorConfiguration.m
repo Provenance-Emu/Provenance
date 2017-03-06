@@ -38,6 +38,7 @@
 #import "PVLynxControllerViewController.h"
 #import "PVVBControllerViewController.h"
 #import "PVWonderSwanControllerViewController.h"
+#import "PVNeoGeoPocketControllerViewController.h"
 
 @interface PVEmulatorConfiguration ()
 
@@ -123,6 +124,8 @@
              [systemID isEqualToString:PVLynxSystemIdentifier] ||
              [systemID isEqualToString:PVPCESystemIdentifier] ||
              [systemID isEqualToString:PVPCECDSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPCSystemIdentifier] ||
              [systemID isEqualToString:PVPCFXSystemIdentifier] ||
              [systemID isEqualToString:PVVirtualBoySystemIdentifier] ||
              [systemID isEqualToString:PVWonderSwanSystemIdentifier])
@@ -196,6 +199,10 @@
     else if ([systemID isEqualToString:PVPCESystemIdentifier])
     {
         controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ( [systemID isEqualToString:PVNGPSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPCSystemIdentifier]) {
+        controller = [[PVNeoGeoPocketControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
     else {
         @throw [NSString stringWithFormat:@"No controller for system with identifier %@", systemID];

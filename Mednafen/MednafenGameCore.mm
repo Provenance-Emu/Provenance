@@ -83,7 +83,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-enum systemTypes{ lynx, pce, pcfx, psx, vb, wswan };
+enum systemTypes{lynx, neogeo, pce, pcfx, psx, vb, wswan };
 
 @interface MednafenGameCore ()
 {
@@ -980,6 +980,15 @@ static void emulation_run()
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
+    {
+        systemType = neogeo;
+        
+        mednafenCoreModule = @"ngp";
+        mednafenCoreAspect = OEIntSizeMake(20, 19);
+        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+        sampleRate         = 44100;
+    }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pce"] || [[self systemIdentifier] isEqualToString:@"com.provenance.pcecd"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sgfx"])
     {
         systemType = pce;
@@ -1244,20 +1253,33 @@ const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
+const int NeoMap[]  = { 0x01, 0x02, 0x04, 0x08,  0x10, 0x20, 0x40};
+
 
 #pragma MARK Atari Lynx
-- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
 {
     inputBuffer[player-1][0] |= 1 << LynxMap[button];
 }
 
-- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
 {
     inputBuffer[player-1][0] &= ~(1 << LynxMap[button]);
 }
 
+#pragma MARK Neo Geo
+- (oneway void)didPushNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player
+{
+    inputBuffer[player-1][0] |= 1 << NeoMap[button];
+}
+
+- (oneway void)didReleaseNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player
+{
+    inputBuffer[player-1][0] &= ~(1 << NeoMap[button]);
+}
+
 #pragma MARK PC-*
-- (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player
 {
     if (button != OEPCEButtonMode) // Check for six button mode toggle
         inputBuffer[player-1][0] |= 1 << PCEMap[button];
@@ -1265,13 +1287,13 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
         inputBuffer[player-1][0] ^= 1 << PCEMap[button];
 }
 
-- (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player
 {
     if (button != OEPCEButtonMode)
         inputBuffer[player-1][0] &= ~(1 << PCEMap[button]);
 }
 
-- (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player
 {
     if (button != OEPCECDButtonMode) // Check for six button mode toggle
         inputBuffer[player-1][0] |= 1 << PCEMap[button];
@@ -1349,7 +1371,10 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
     }
     
     switch (systemType) {
-            
+        case neogeo:
+            // TODO
+            return [self VirtualBoyControllerValueForButtonID:buttonID forController:controller];
+            break;
         case lynx:
             return [self LynxControllerValueForButtonID:buttonID forController:controller];
             break;

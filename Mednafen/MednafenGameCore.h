@@ -156,12 +156,27 @@ typedef NS_ENUM(NSInteger, OELynxButton) {
     OELynxButtonCount
 };
 
+typedef NS_ENUM(NSInteger, OENGPButton) {
+    OENGPButtonUp,
+    OENGPButtonDown,
+    OENGPButtonLeft,
+    OENGPButtonRight,
+    OENGPButtonA,
+    OENGPButtonB,
+    OENGPButtonOption,
+    OENGPButtonCount,
+};
+
 __attribute__((visibility("default")))
 @interface MednafenGameCore : PVEmulatorCore
 
 // Atari Lynx
 - (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+
+// Neo Geo Pocket + Color
+- (oneway void)didPushNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player;
 
 // PC-*
 - (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;

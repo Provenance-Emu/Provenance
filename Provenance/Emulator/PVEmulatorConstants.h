@@ -47,6 +47,8 @@ extern NSString * const PV7800SystemIdentifier;
 extern NSString * const PV32XSystemIdentifier;
 extern NSString * const PVPSXSystemIdentifier;
 extern NSString * const PVLynxSystemIdentifier;
+extern NSString * const PVNGPSystemIdentifier;
+extern NSString * const PVNGPCSystemIdentifier;
 extern NSString * const PVPCESystemIdentifier;
 extern NSString * const PVPCECDSystemIdentifier;
 extern NSString * const PVPCFXSystemIdentifier;
