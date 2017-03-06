@@ -193,6 +193,13 @@
     {
         controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
+    else if ([systemID isEqualToString:PVPCESystemIdentifier])
+    {
+        controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else {
+        @throw [NSString stringWithFormat:@"No controller for system with identifier %@", systemID];
+    }
 	
 	return controller;
 }

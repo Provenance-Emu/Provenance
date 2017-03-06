@@ -205,7 +205,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.menuButton];
     
-    
     if ([[PVSettingsModel sharedInstance] showFPSCount]) {
         _fpsLabel = [UILabel new];
         _fpsLabel.textColor = [UIColor yellowColor];

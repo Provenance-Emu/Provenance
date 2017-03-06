@@ -60,8 +60,7 @@ typedef NS_ENUM(int, PVPSXButton)
     OEPSXButtonCount
 };
 
-typedef enum _OEWSButton
-{
+typedef NS_ENUM(NSInteger, OEWSButton) {
     OEWSButtonX1, // Up
     OEWSButtonX3, // Down
     OEWSButtonX4, // Left
@@ -75,10 +74,9 @@ typedef enum _OEWSButton
     OEWSButtonStart,
     OEWSButtonSound,
     OEWSButtonCount
-} OEWSButton;
+};
 
-typedef enum _OEVBButton
-{
+typedef NS_ENUM(NSInteger, OEVBButton) {
     OEVBButtonLeftUp,
     OEVBButtonLeftDown,
     OEVBButtonLeftLeft,
@@ -94,10 +92,9 @@ typedef enum _OEVBButton
     OEVBButtonStart,
     OEVBButtonSelect,
     OEVBButtonCount
-} OEVBButton;
+};
 
-typedef enum _OEPCFXButton
-{
+typedef NS_ENUM(NSInteger, OEPCFXButton) {
     OEPCFXButtonUp,
     OEPCFXButtonDown,
     OEPCFXButtonLeft,
@@ -111,10 +108,9 @@ typedef enum _OEPCFXButton
     OEPCFXButtonRun,
     OEPCFXButtonSelect,
     OEPCFXButtonCount,
-} OEPCFXButton;
+};
 
-typedef enum _OEPCECDButton
-{
+typedef NS_ENUM(NSInteger, OEPCECDButton) {
     OEPCECDButtonUp,
     OEPCECDButtonDown,
     OEPCECDButtonLeft,
@@ -129,10 +125,9 @@ typedef enum _OEPCECDButton
     OEPCECDButtonSelect,
     OEPCECDButtonMode,
     OEPCECDButtonCount
-} OEPCECDButton;
+};
 
-typedef enum _OEPCEButton
-{
+typedef NS_ENUM(NSInteger, OEPCEButton) {
     OEPCEButtonUp,
     OEPCEButtonDown,
     OEPCEButtonLeft,
@@ -147,10 +142,9 @@ typedef enum _OEPCEButton
     OEPCEButtonSelect,
     OEPCEButtonMode,
     OEPCEButtonCount
-} OEPCEButton;
+};
 
-typedef enum _OELynxButton
-{
+typedef NS_ENUM(NSInteger, OELynxButton) {
     OELynxButtonUp,
     OELynxButtonDown,
     OELynxButtonLeft,
@@ -160,7 +154,7 @@ typedef enum _OELynxButton
     OELynxButtonOption1,
     OELynxButtonOption2,
     OELynxButtonCount
-} OELynxButton;
+};
 
 __attribute__((visibility("default")))
 @interface MednafenGameCore : PVEmulatorCore
