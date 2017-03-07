@@ -102,6 +102,8 @@ Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSys
 
 Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
 
+Atari Lynx, Sony PlayStation, Nintendo VirtualBoy, SGK Neo Geo Pocket + Color, NEC PC Engine family and Bandai WonderSwan are provided by [Mednafen](https://mednafen.github.io)
+
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 
 #Provenance License
