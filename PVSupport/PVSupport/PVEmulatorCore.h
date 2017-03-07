@@ -85,6 +85,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;
+- (BOOL)wideScreen;
 - (GLenum)pixelFormat;
 - (GLenum)pixelType;
 - (GLenum)internalPixelFormat;

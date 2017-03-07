@@ -83,12 +83,12 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-enum systemTypes{lynx, neogeo, pce, pcfx, psx, vb, wswan };
+typedef enum MednaSystem {lynx, neogeo, pce, pcfx, psx, vb, wswan };
 
 @interface MednafenGameCore ()
 {
     uint32_t *inputBuffer[8];
-    int systemType;
+    MednaSystem systemType;
     int videoWidth, videoHeight;
     int videoOffsetX, videoOffsetY;
     int multiTapPlayerCount;
@@ -1154,6 +1154,20 @@ static void emulation_run()
 - (GLenum)internalPixelFormat
 {
     return GL_RGBA;
+}
+
+- (BOOL)wideScreen {
+    switch (systemType) {
+        case psx:
+            return YES;
+        case neogeo:
+        case lynx:
+        case pce:
+        case pcfx:
+        case vb:
+        case wswan:
+            return NO;
+    }
 }
 
 # pragma mark - Audio

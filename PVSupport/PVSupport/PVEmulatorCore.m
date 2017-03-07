@@ -261,6 +261,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	return defaultFrameInterval;
 }
 
+- (BOOL)wideScreen {
+    return NO;
+}
+
 #pragma mark - Audio
 
 - (double)audioSampleRate
