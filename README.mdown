@@ -30,9 +30,21 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
     - Gameboy Advance
+    - Virtual Boy
 - Atari
     - 2600
     - 7800
+    - Lynx
+- Sony
+	- PlayStation
+- NGK
+	- NeoGeo Pocket / NeoGeo Pocket Color
+- NEC
+	- PC Engine / TurboGrafx-16 (CD)
+	- SuperGrafx
+	- PC-FX
+- Bandai
+	- WonderSwan
 
 ###Features
 
