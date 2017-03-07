@@ -37,8 +37,8 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Lynx
 - Sony
 	- PlayStation
-- NGK
-	- NeoGeo Pocket / NeoGeo Pocket Color
+- SGK
+	- Neo Geo Pocket / Neo Geo Pocket Color
 - NEC
 	- PC Engine / TurboGrafx-16 (CD)
 	- SuperGrafx
