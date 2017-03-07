@@ -1109,7 +1109,7 @@ static void emulation_run()
 - (void)stopEmulation
 {
     MDFNI_CloseGame();
-
+    MDFNI_Kill();
     [super stopEmulation];
 }
 

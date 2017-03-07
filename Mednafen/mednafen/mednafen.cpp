@@ -1155,111 +1155,114 @@ static void BuildDynamicSetting(MDFNSetting *setting, const char *system_name, c
 
 bool MDFNI_InitializeModules(const std::vector<MDFNGI *> &ExternalSystems)
 {
- static MDFNGI *InternalSystems[] =
- {
-  #ifdef WANT_NES_EMU
-  &EmulatedNES,
-  #endif
-
-  #ifdef WANT_SNES_EMU
-  &EmulatedSNES,
-  #endif
-
-  #ifdef WANT_SNES_FAUST_EMU
-  &EmulatedSNES_Faust,
-  #endif
-
-  #ifdef WANT_GB_EMU
-  &EmulatedGB,
-  #endif
-
-  #ifdef WANT_GBA_EMU
-  &EmulatedGBA,
-  #endif
-
-  #ifdef WANT_PCE_EMU
-  &EmulatedPCE,
-  #endif
-
-  #ifdef WANT_PCE_FAST_EMU
-  &EmulatedPCE_Fast,
-  #endif
-
-  #ifdef WANT_LYNX_EMU
-  &EmulatedLynx,
-  #endif
-
-  #ifdef WANT_MD_EMU
-  &EmulatedMD,
-  #endif
-
-  #ifdef WANT_PCFX_EMU
-  &EmulatedPCFX,
-  #endif
-
-  #ifdef WANT_NGP_EMU
-  &EmulatedNGP,
-  #endif
-
-  #ifdef WANT_PSX_EMU
-  &EmulatedPSX,
-  #endif
-
-  #ifdef WANT_VB_EMU
-  &EmulatedVB,
-  #endif
-
-  #ifdef WANT_WSWAN_EMU
-  &EmulatedWSwan,
-  #endif
-
-  #ifdef WANT_SMS_EMU
-  &EmulatedSMS,
-  &EmulatedGG,
-  #endif
-
-  &EmulatedCDPlay,
-  &EmulatedDEMO
- };
- std::string i_modules_string, e_modules_string;
-
- assert(MEDNAFEN_VERSION_NUMERIC >= 0x0938);
-
- for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
- {
-  AddSystem(InternalSystems[i]);
-  if(i)
-   i_modules_string += " ";
-  i_modules_string += std::string(InternalSystems[i]->shortname);
- }
-
- for(unsigned int i = 0; i < ExternalSystems.size(); i++)
- {
-  AddSystem(ExternalSystems[i]);
-  if(i)
-   i_modules_string += " ";
-  e_modules_string += std::string(ExternalSystems[i]->shortname);
- }
-
- MDFNI_printf(_("Internal emulation modules: %s\n"), i_modules_string.c_str());
- MDFNI_printf(_("External emulation modules: %s\n"), e_modules_string.c_str());
-
-
- for(unsigned int i = 0; i < MDFNSystems.size(); i++)
-  MDFNSystemsPrio.push_back(MDFNSystems[i]);
-
- MDFNSystemsPrio.sort(MDFNSystemsPrio_CompareFunc);
-
- CDUtility::CDUtility_Init();
-
- return(1);
+    static MDFNGI *InternalSystems[] =
+    {
+#ifdef WANT_NES_EMU
+        &EmulatedNES,
+#endif
+        
+#ifdef WANT_SNES_EMU
+        &EmulatedSNES,
+#endif
+        
+#ifdef WANT_SNES_FAUST_EMU
+        &EmulatedSNES_Faust,
+#endif
+        
+#ifdef WANT_GB_EMU
+        &EmulatedGB,
+#endif
+        
+#ifdef WANT_GBA_EMU
+        &EmulatedGBA,
+#endif
+        
+#ifdef WANT_PCE_EMU
+        &EmulatedPCE,
+#endif
+        
+#ifdef WANT_PCE_FAST_EMU
+        &EmulatedPCE_Fast,
+#endif
+        
+#ifdef WANT_LYNX_EMU
+        &EmulatedLynx,
+#endif
+        
+#ifdef WANT_MD_EMU
+        &EmulatedMD,
+#endif
+        
+#ifdef WANT_PCFX_EMU
+        &EmulatedPCFX,
+#endif
+        
+#ifdef WANT_NGP_EMU
+        &EmulatedNGP,
+#endif
+        
+#ifdef WANT_PSX_EMU
+        &EmulatedPSX,
+#endif
+        
+#ifdef WANT_VB_EMU
+        &EmulatedVB,
+#endif
+        
+#ifdef WANT_WSWAN_EMU
+        &EmulatedWSwan,
+#endif
+        
+#ifdef WANT_SMS_EMU
+        &EmulatedSMS,
+        &EmulatedGG,
+#endif
+        
+        &EmulatedCDPlay,
+        &EmulatedDEMO
+    };
+    std::string i_modules_string, e_modules_string;
+    
+    // Static, clear it first
+    MDFNSystems.clear();
+    assert(MEDNAFEN_VERSION_NUMERIC >= 0x0938);
+    
+    for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
+    {
+        AddSystem(InternalSystems[i]);
+        if(i)
+            i_modules_string += " ";
+        i_modules_string += std::string(InternalSystems[i]->shortname);
+    }
+    
+    for(unsigned int i = 0; i < ExternalSystems.size(); i++)
+    {
+        AddSystem(ExternalSystems[i]);
+        if(i)
+            i_modules_string += " ";
+        e_modules_string += std::string(ExternalSystems[i]->shortname);
+    }
+    
+    MDFNI_printf(_("Internal emulation modules: %s\n"), i_modules_string.c_str());
+    MDFNI_printf(_("External emulation modules: %s\n"), e_modules_string.c_str());
+    
+    
+    for(unsigned int i = 0; i < MDFNSystems.size(); i++)
+        MDFNSystemsPrio.push_back(MDFNSystems[i]);
+    
+    MDFNSystemsPrio.sort(MDFNSystemsPrio_CompareFunc);
+    
+    CDUtility::CDUtility_Init();
+    
+    return(1);
 }
 
 static std::string settings_file_path;
+
 int MDFNI_Initialize(const char *basedir, const std::vector<MDFNSetting> &DriverSettings)
 {
-	// FIXME static
-	static std::vector<MDFNSetting> dynamic_settings;
+    static std::vector<MDFNSetting> dynamic_settings;
+    dynamic_settings.clear();
 
 	// DO NOT REMOVE/DISABLE THESE MATH AND COMPILER SANITY TESTS.  THEY EXIST FOR A REASON.
 	//uint32 st = MDFND_GetTime();
@@ -1268,7 +1271,7 @@ int MDFNI_Initialize(const char *basedir, const std::vector<MDFNSetting> &Driver
 //	 return(0);
 //	}
 	//printf("%u\n", MDFND_GetTime() - st);
-
+    
 	for(unsigned x = 0; x < 16; x++)
 	{
 	 PortDevice[x] = ~0U;
@@ -1281,69 +1284,68 @@ int MDFNI_Initialize(const char *basedir, const std::vector<MDFNSetting> &Driver
 	MDFN_SetBaseDirectory(basedir);
 
 	MDFN_InitFontData();
-
-	// Generate dynamic settings
-	for(unsigned int i = 0; i < MDFNSystems.size(); i++)
-	{
-	 MDFNSetting setting;
-	 const char *sysname;
-
-	 sysname = (const char *)MDFNSystems[i]->shortname;
-
-	 if(!MDFNSystems[i]->soundchan)
-	  printf("0 sound channels for %s????\n", sysname);
-
-	 if(MDFNSystems[i]->soundchan == 2)
-	 {
-	  BuildDynamicSetting(&setting, sysname, "forcemono", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_SOUND, CSD_forcemono, MDFNST_BOOL, "0");
-	  dynamic_settings.push_back(setting);
-	 }
-
-	 BuildDynamicSetting(&setting, sysname, "enable", MDFNSF_COMMON_TEMPLATE, CSD_enable, MDFNST_BOOL, "1");
-	 dynamic_settings.push_back(setting);
-
-	 BuildDynamicSetting(&setting, sysname, "tblur", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur, MDFNST_BOOL, "0");
-         dynamic_settings.push_back(setting);
-
-         BuildDynamicSetting(&setting, sysname, "tblur.accum", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur_accum, MDFNST_BOOL, "0");
-         dynamic_settings.push_back(setting);
-
-         BuildDynamicSetting(&setting, sysname, "tblur.accum.amount", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur_accum_amount, MDFNST_FLOAT, "50", "0", "100");
-	 dynamic_settings.push_back(setting);
-	}
+    
+    // Generate dynamic settings
+    for(unsigned int i = 0; i < MDFNSystems.size(); i++)
+    {
+        MDFNSetting setting;
+        const char *sysname;
+        
+        sysname = (const char *)MDFNSystems[i]->shortname;
+        
+        if(!MDFNSystems[i]->soundchan)
+            printf("0 sound channels for %s????\n", sysname);
+        
+        if(MDFNSystems[i]->soundchan == 2)
+        {
+            BuildDynamicSetting(&setting, sysname, "forcemono", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_SOUND, CSD_forcemono, MDFNST_BOOL, "0");
+            dynamic_settings.push_back(setting);
+        }
+        
+        BuildDynamicSetting(&setting, sysname, "enable", MDFNSF_COMMON_TEMPLATE, CSD_enable, MDFNST_BOOL, "1");
+        dynamic_settings.push_back(setting);
+        
+        BuildDynamicSetting(&setting, sysname, "tblur", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur, MDFNST_BOOL, "0");
+        dynamic_settings.push_back(setting);
+        
+        BuildDynamicSetting(&setting, sysname, "tblur.accum", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur_accum, MDFNST_BOOL, "0");
+        dynamic_settings.push_back(setting);
+        
+        BuildDynamicSetting(&setting, sysname, "tblur.accum.amount", MDFNSF_COMMON_TEMPLATE | MDFNSF_CAT_VIDEO, CSD_tblur_accum_amount, MDFNST_FLOAT, "50", "0", "100");
+        dynamic_settings.push_back(setting);
+    }
 
 	// First merge all settable settings, then load the settings from the SETTINGS FILE OF DOOOOM
 	MDFN_MergeSettings(MednafenSettings);
-        MDFN_MergeSettings(dynamic_settings);
+    MDFN_MergeSettings(dynamic_settings);
 	MDFN_MergeSettings(MDFNMP_Settings);
 
-	if(DriverSettings.size())
- 	 MDFN_MergeSettings(DriverSettings);
+    if(DriverSettings.size())
+        MDFN_MergeSettings(DriverSettings);
+    
+    for(unsigned int x = 0; x < MDFNSystems.size(); x++)
+    {
+        if(MDFNSystems[x]->Settings)
+            MDFN_MergeSettings(MDFNSystems[x]->Settings);
+    }
 
-	for(unsigned int x = 0; x < MDFNSystems.size(); x++)
-	{
-	 if(MDFNSystems[x]->Settings)
-	  MDFN_MergeSettings(MDFNSystems[x]->Settings);
-	}
-
-	MDFN_MergeSettings(RenamedSettings);
-
-	try
-	{
-	 settings_file_path = std::string(basedir) + std::string(PSS) + std::string("mednafen-09x.cfg");
-	 MDFN_LoadSettings(settings_file_path.c_str());
-	}
-	catch(std::exception &e)
-	{
-	 MDFN_PrintError("%s", e.what());
-	 return(0);
-	}
+    MDFN_MergeSettings(RenamedSettings);
+    
+    try
+    {
+        settings_file_path = std::string(basedir) + std::string(PSS) + std::string("mednafen-09x.cfg");
+        MDFN_LoadSettings(settings_file_path.c_str());
+    }
+    catch(std::exception &e)
+    {
+        MDFN_PrintError("%s", e.what());
+        return(0);
+    }
 
 	#ifdef WANT_DEBUGGER
 	MDFNDBG_Init();
 	#endif
-
-        return(1);
+    return(1);
 }
 
 void MDFNI_Kill(void)
