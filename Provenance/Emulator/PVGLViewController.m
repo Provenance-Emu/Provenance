@@ -162,8 +162,6 @@
         CGFloat texWidth = (screenSize.width / bufferSize.width);
         CGFloat texHeight = (screenSize.height / bufferSize.height);
 
-        CGSize aspectSize = [self.emulatorCore aspectSize];
-
         // Determine if core wants special sizing
         BOOL widescreen = [self.emulatorCore wideScreen];
         

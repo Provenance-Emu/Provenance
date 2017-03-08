@@ -28,32 +28,24 @@
         
         if ([[[button titleLabel] text] isEqualToString:@"A"])
         {
-            [button setTag:OEWSButtonA];
+            [button setTag:OELynxButtonA];
         }
         else if ([[[button titleLabel] text] isEqualToString:@"B"])
         {
-            [button setTag:OEWSButtonB];
+            [button setTag:OELynxButtonB];
         }
     }
     
     [self.leftShoulderButton setTag:OELynxButtonOption1];
     [self.rightShoulderButton setTag:OELynxButtonOption2];
-//
-//    [self.selectButton setTag:OEWSButtonSound];
-//    [self.startButton setTag:OEWSButtonStart];
+    [self.selectButton setTag:OELynxButtonOption2];
+    [self.startButton setTag:OELynxButtonOption1];
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
     MednafenGameCore *lynxCore = (MednafenGameCore *)self.emulatorCore;
-    
-    /*
-     OEWSButtonX1 == Up
-     OEWSButtonX2 == Right
-     OEWSButtonX3 == Down
-     OEWSButtonX4 == Left
-     */
-     
+
     [lynxCore didReleaseLynxButton:OELynxButtonUp forPlayer:0];
     [lynxCore didReleaseLynxButton:OELynxButtonDown forPlayer:0];
     [lynxCore didReleaseLynxButton:OELynxButtonLeft forPlayer:0];

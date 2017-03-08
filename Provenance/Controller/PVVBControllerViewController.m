@@ -116,25 +116,25 @@
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     MednafenGameCore *vbCore = (MednafenGameCore *)self.emulatorCore;
-    [vbCore didPushVBButton:OELynxButtonOption1 forPlayer:player];
+    [vbCore didPushVBButton:OEVBButtonStart forPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     MednafenGameCore *vbCore = (MednafenGameCore *)self.emulatorCore;
-    [vbCore didReleaseVBButton:OELynxButtonOption1 forPlayer:player];
+    [vbCore didReleaseVBButton:OEVBButtonStart forPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *vbCore = (MednafenGameCore *)self.emulatorCore;
-    [vbCore didPushVBButton:OELynxButtonOption2 forPlayer:player];
+    [vbCore didPushVBButton:OEVBButtonSelect forPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *vbCore = (MednafenGameCore *)self.emulatorCore;
-    [vbCore didReleaseVBButton:OELynxButtonOption2 forPlayer:player];
+    [vbCore didReleaseVBButton:OEVBButtonSelect forPlayer:player];
 }
 
 @end

@@ -30,7 +30,7 @@
 
 @class OERingBuffer;
 
-typedef NS_ENUM(int, PVPSXButton)
+typedef NS_ENUM(NSInteger, PVPSXButton)
 {
     OEPSXButtonUp,
     OEPSXButtonDown,
@@ -94,6 +94,23 @@ typedef NS_ENUM(NSInteger, OEVBButton) {
     OEVBButtonCount
 };
 
+typedef NS_ENUM(NSInteger, OEPCEButton) {
+    OEPCEButtonUp,
+    OEPCEButtonDown,
+    OEPCEButtonLeft,
+    OEPCEButtonRight,
+    OEPCEButton1,
+    OEPCEButton2,
+    OEPCEButton3,
+    OEPCEButton4,
+    OEPCEButton5,
+    OEPCEButton6,
+    OEPCEButtonRun,
+    OEPCEButtonSelect,
+    OEPCEButtonMode,
+    OEPCEButtonCount
+};
+
 typedef NS_ENUM(NSInteger, OEPCFXButton) {
     OEPCFXButtonUp,
     OEPCFXButtonDown,
@@ -125,23 +142,6 @@ typedef NS_ENUM(NSInteger, OEPCECDButton) {
     OEPCECDButtonSelect,
     OEPCECDButtonMode,
     OEPCECDButtonCount
-};
-
-typedef NS_ENUM(NSInteger, OEPCEButton) {
-    OEPCEButtonUp,
-    OEPCEButtonDown,
-    OEPCEButtonLeft,
-    OEPCEButtonRight,
-    OEPCEButton1,
-    OEPCEButton2,
-    OEPCEButton3,
-    OEPCEButton4,
-    OEPCEButton5,
-    OEPCEButton6,
-    OEPCEButtonRun,
-    OEPCEButtonSelect,
-    OEPCEButtonMode,
-    OEPCEButtonCount
 };
 
 typedef NS_ENUM(NSInteger, OELynxButton) {
