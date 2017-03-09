@@ -53,44 +53,84 @@
      OEWSButtonX3 == Down
      OEWSButtonX4 == Left
      */
-     
-    [wsCore didReleaseWSButton:OEWSButtonX1 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX2 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX3 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX4 forPlayer:0];
-    
-    switch (direction)
-    {
-        case JSDPadDirectionUpLeft:
-            [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
-            [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
-            break;
-        case JSDPadDirectionUp:
-            [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
-            break;
-        case JSDPadDirectionUpRight:
-            [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
-            [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
-            break;
-        case JSDPadDirectionLeft:
-            [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
-            break;
-        case JSDPadDirectionRight:
-            [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
-            break;
-        case JSDPadDirectionDownLeft:
-            [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
-            [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
-            break;
-        case JSDPadDirectionDown:
-            [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
-            break;
-        case JSDPadDirectionDownRight:
-            [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
-            [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
-            break;
-        default:
-            break;
+    if (dPad == self.dPad) {
+        [wsCore didReleaseWSButton:OEWSButtonX1 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX2 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX3 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX4 forPlayer:0];
+        
+        switch (direction)
+        {
+            case JSDPadDirectionUpLeft:
+                [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
+                break;
+            case JSDPadDirectionUp:
+                [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
+                break;
+            case JSDPadDirectionUpRight:
+                [wsCore didPushWSButton:OEWSButtonX1 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
+                break;
+            case JSDPadDirectionLeft:
+                [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
+                break;
+            case JSDPadDirectionRight:
+                [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
+                break;
+            case JSDPadDirectionDownLeft:
+                [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonX4 forPlayer:0];
+                break;
+            case JSDPadDirectionDown:
+                [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
+                break;
+            case JSDPadDirectionDownRight:
+                [wsCore didPushWSButton:OEWSButtonX3 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonX2 forPlayer:0];
+                break;
+            default:
+                break;
+        }
+    } else {
+        [wsCore didReleaseWSButton:OEWSButtonY1 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY2 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY3 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY4 forPlayer:0];
+        
+        switch (direction)
+        {
+            case JSDPadDirectionUpLeft:
+                [wsCore didPushWSButton:OEWSButtonY1 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonY4 forPlayer:0];
+                break;
+            case JSDPadDirectionUp:
+                [wsCore didPushWSButton:OEWSButtonY1 forPlayer:0];
+                break;
+            case JSDPadDirectionUpRight:
+                [wsCore didPushWSButton:OEWSButtonY1 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonY2 forPlayer:0];
+                break;
+            case JSDPadDirectionLeft:
+                [wsCore didPushWSButton:OEWSButtonY4 forPlayer:0];
+                break;
+            case JSDPadDirectionRight:
+                [wsCore didPushWSButton:OEWSButtonY2 forPlayer:0];
+                break;
+            case JSDPadDirectionDownLeft:
+                [wsCore didPushWSButton:OEWSButtonY3 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonY4 forPlayer:0];
+                break;
+            case JSDPadDirectionDown:
+                [wsCore didPushWSButton:OEWSButtonY3 forPlayer:0];
+                break;
+            case JSDPadDirectionDownRight:
+                [wsCore didPushWSButton:OEWSButtonY3 forPlayer:0];
+                [wsCore didPushWSButton:OEWSButtonY2 forPlayer:0];
+                break;
+            default:
+                break;
+        }
     }
     
     [self vibrate];
@@ -99,11 +139,17 @@
 - (void)dPadDidReleaseDirection:(JSDPad *)dPad
 {
     MednafenGameCore *wsCore = (MednafenGameCore *)self.emulatorCore;
-    
-    [wsCore didReleaseWSButton:OEWSButtonX1 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX2 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX3 forPlayer:0];
-    [wsCore didReleaseWSButton:OEWSButtonX4 forPlayer:0];
+    if (dPad == self.dPad) {
+        [wsCore didReleaseWSButton:OEWSButtonX1 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX2 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX3 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonX4 forPlayer:0];
+    } else {
+        [wsCore didReleaseWSButton:OEWSButtonY1 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY2 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY3 forPlayer:0];
+        [wsCore didReleaseWSButton:OEWSButtonY4 forPlayer:0];
+    }
 }
 
 - (void)buttonPressed:(JSButton *)button

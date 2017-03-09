@@ -1863,14 +1863,28 @@ const int NeoMap[]  = { 0x01, 0x02, 0x04, 0x08,  0x10, 0x20, 0x40};
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
+                /* WonderSwan has a Top (Y) D-Pad and a lower (X) D-Pad. MFi controllers
+                 may have the Joy Stick and Left D-Pad in either Top/Bottom configuration.
+                 Another Option is to map to Left/Right Joystick and Make left D-Pad same as
+                 left JoyStick, but if the games require using Left/Right hand at same time it
+                 may be difficult to his the right d-pad and action buttons at the same time.
+                 -joe M */
             case OEWSButtonX1:
-                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                return [[[pad leftThumbstick] up] isPressed];
             case OEWSButtonX3:
-                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                return [[[pad leftThumbstick] down] isPressed];
             case OEWSButtonX4:
-                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                return [[[pad leftThumbstick] left] isPressed];
             case OEWSButtonX2:
-                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                return [[[pad leftThumbstick] right] isPressed];
+            case OEWSButtonY1:
+                return [[dpad up] isPressed];
+            case OEWSButtonY3:
+                return [[dpad down] isPressed];
+            case OEWSButtonY4:
+                return [[dpad left] isPressed];
+            case OEWSButtonY2:
+                return [[dpad right] isPressed];
             case OEWSButtonA:
                 return [[pad buttonX] isPressed];
             case OEWSButtonB:
