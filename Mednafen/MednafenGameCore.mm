@@ -1255,7 +1255,7 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 // TODO: I have no idea what these are supposed to be
-const int NeoMap[]  = { 0x01, 0x02, 0x04, 0x08,  0x10, 0x20, 0x40};
+const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 
 #pragma MARK Atari Lynx
