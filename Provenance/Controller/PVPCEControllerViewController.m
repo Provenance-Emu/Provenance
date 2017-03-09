@@ -26,27 +26,27 @@
             continue; // skip over the PVButtonGroupOverlayView
         }
         
-        if ([[[button titleLabel] text] isEqualToString:@"1"])
+        if ([[[button titleLabel] text] isEqualToString:@"I"])
         {
             [button setTag:OEPCEButton1];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"2"])
+        else if ([[[button titleLabel] text] isEqualToString:@"II"])
         {
             [button setTag:OEPCEButton2];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"3"])
+        else if ([[[button titleLabel] text] isEqualToString:@"III"])
         {
             [button setTag:OEPCEButton3];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"4"])
+        else if ([[[button titleLabel] text] isEqualToString:@"IV"])
         {
             [button setTag:OEPCEButton4];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"5"])
+        else if ([[[button titleLabel] text] isEqualToString:@"V"])
         {
             [button setTag:OEPCEButton5];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"6"])
+        else if ([[[button titleLabel] text] isEqualToString:@"VI"])
         {
             [button setTag:OEPCEButton6];
         }
@@ -64,13 +64,6 @@
 {
     MednafenGameCore *pceCore = (MednafenGameCore *)self.emulatorCore;
     
-    /*
-     OEPCEButtonX1 == Up
-     OEPCEButtonX2 == Right
-     OEPCEButtonX3 == Down
-     OEPCEButtonX4 == Left
-     */
-     
     [pceCore didReleasePCEButton:OEPCEButtonUp forPlayer:0];
     [pceCore didReleasePCEButton:OEPCEButtonDown forPlayer:0];
     [pceCore didReleasePCEButton:OEPCEButtonLeft forPlayer:0];

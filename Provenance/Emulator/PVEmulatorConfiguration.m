@@ -36,6 +36,7 @@
 #import <PVMednafen/MednafenGameCore.h>
 #import "PVPSXControllerViewController.h"
 #import "PVLynxControllerViewController.h"
+#import "PVPCEControllerViewController.h"
 #import "PVVBControllerViewController.h"
 #import "PVWonderSwanControllerViewController.h"
 #import "PVNeoGeoPocketControllerViewController.h"
@@ -196,9 +197,11 @@
     {
         controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
-    else if ([systemID isEqualToString:PVPCESystemIdentifier])
+    else if ([systemID isEqualToString:PVPCESystemIdentifier] ||
+             [systemID isEqualToString:PVPCECDSystemIdentifier] ||
+             [systemID isEqualToString:PVPCFXSystemIdentifier])
     {
-        controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+        controller = [[PVPCEControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
     else if ( [systemID isEqualToString:PVNGPSystemIdentifier] ||
              [systemID isEqualToString:PVNGPCSystemIdentifier]) {
