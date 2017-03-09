@@ -136,10 +136,9 @@
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
 			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, size.width, size.height);
-			
+#if 1                 // Wonderswan dual D-Pad hack.
             if (!self.dPad2 && [[control objectForKey:PVControlTitleKey] isEqualToString:@"Y"])
             {
-                // Wonderswan dual D-Pad hack.
                 dPadFrame.origin.y = dPadOriginY - size.height - bottomPadding;
                 self.dPad2 = [[JSDPad alloc] initWithFrame:dPadFrame];
                 [self.dPad2 setDelegate:self];
@@ -147,7 +146,9 @@
                 [self.dPad2 setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
                 [self.view addSubview:self.dPad2];
             }
-            else if (!self.dPad)
+            else
+#endif
+            if (!self.dPad)
 			{
 				self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
 				[self.dPad setDelegate:self];
