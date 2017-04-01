@@ -56,10 +56,13 @@ const NSUInteger A2600EmulatorValues[] = {
     RETRO_DEVICE_ID_JOYPAD_SELECT
 };
 
+#define NUMBER_OF_PADS 2
+#define NUMBER_OF_PAD_INPUTS 16
+
 @interface PVStellaGameCore () {
     stellabuffer_t *_videoBuffer;
     int _videoWidth, _videoHeight;
-    int16_t _pad[2][12];
+    int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
 }
 
 @end
@@ -115,30 +118,17 @@ static void input_poll_callback(void) {
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
-    //DLog(@"polled input: port: %d device: %d id: %d", port, device, id);
+//    NSLog(@"polled input: port: %d device: %d id: %d", port, device, _id);
     
     __strong PVStellaGameCore *strongCurrent = _current;
     int16_t value = 0;
     
     if (port == 0 & device == RETRO_DEVICE_JOYPAD)
     {
-//        if (strongCurrent.controller1)
-//        {
-//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
-//        }
-        
-        if (value == 0)
-        {
-            value = strongCurrent->_pad[0][_id];
-        }
+        value = strongCurrent->_pad[0][_id];
     }
     else if(port == 1 & device == RETRO_DEVICE_JOYPAD)
     {
-//        if (strongCurrent.controller2)
-//        {
-//            value = [strongCurrent controllerValueForButtonID:_id forPlayer:port];
-//        }
-        
         if (value == 0)
         {
             value = strongCurrent->_pad[1][_id];
@@ -252,7 +242,7 @@ static void writeSaveFile(const char* path, int type)
 
 - (BOOL)loadFileAtPath: (NSString*) path
 {
-	memset(_pad, 0, sizeof(int16_t) * 10);
+	memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
     
     const void *data;
     size_t size;
@@ -365,29 +355,75 @@ static void writeSaveFile(const char* path, int type)
             
             /* TODO: To support paddles we would need to circumvent libRatre's emulation of analog controls or drop libRetro and talk to stella directly like OpenEMU did */
             
+            // DPAD
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
             
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed || gamepad.buttonY.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed || gamepad.buttonB.isPressed);
+                // Buttons
             
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = (gamepad.leftShoulder.isPressed  || gamepad.leftTrigger.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = (gamepad.rightShoulder.isPressed || gamepad.rightTrigger.isPressed);
+                // Fire 1
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
+                // Fire 2
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonX.isPressed;
+                // Fire 3
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonB.isPressed;
+            
+            // Triggers
+            
+                // Reset
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftTrigger.isPressed;
+            
+                // Select
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightTrigger.isPressed;
+   
+                // Color
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_L3] = gamepad.rightShoulder.isPressed;
+            
+                // Black and White
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_R3] = gamepad.leftShoulder.isPressed;
+            /*
+             #define RETRO_DEVICE_ID_JOYPAD_B        0 == JoystickZeroFire1
+             #define RETRO_DEVICE_ID_JOYPAD_Y        1 == Unmapped
+             #define RETRO_DEVICE_ID_JOYPAD_SELECT   2 == ConsoleSelect
+             #define RETRO_DEVICE_ID_JOYPAD_START    3 == ConsoleReset
+             #define RETRO_DEVICE_ID_JOYPAD_UP       4 == Up
+             #define RETRO_DEVICE_ID_JOYPAD_DOWN     5 == Down
+             #define RETRO_DEVICE_ID_JOYPAD_LEFT     6 == Left
+             #define RETRO_DEVICE_ID_JOYPAD_RIGHT    7 == Right
+             #define RETRO_DEVICE_ID_JOYPAD_A        8 == JoystickZeroFire2
+             #define RETRO_DEVICE_ID_JOYPAD_X        9 == JoystickZeroFire3
+             #define RETRO_DEVICE_ID_JOYPAD_L       10 == ConsoleLeftDiffA
+             #define RETRO_DEVICE_ID_JOYPAD_R       11 == ConsoleRightDiffA
+             #define RETRO_DEVICE_ID_JOYPAD_L2      12 == ConsoleLeftDiffB
+             #define RETRO_DEVICE_ID_JOYPAD_R2      13 == ConsoleRightDiffB
+             #define RETRO_DEVICE_ID_JOYPAD_L3      14 == ConsoleColor
+             #define RETRO_DEVICE_ID_JOYPAD_R3      15 == ConsoleBlackWhite
+             */
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
+                // DPAD
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_UP]    = dpad.up.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = dpad.down.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = dpad.left.isPressed;
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = dpad.right.isPressed;
 
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = (gamepad.buttonX.isPressed || gamepad.buttonY.isPressed);
-            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = (gamepad.buttonA.isPressed || gamepad.buttonB.isPressed);
+                // Buttons
             
+                // Fire 1
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_B] = gamepad.buttonA.isPressed;
+                // Fire 2
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_A] = gamepad.buttonX.isPressed;
+                // Fire 3
+            _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_X] = gamepad.buttonB.isPressed;
+            
+                // Reset
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_START]  = gamepad.leftShoulder.isPressed;
+            
+                // Select
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_SELECT] = gamepad.rightShoulder.isPressed;
         }
 #if TARGET_OS_TV
