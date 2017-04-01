@@ -924,7 +924,7 @@ static void emulation_run()
     // after the first frame wot set the current->gameInterval in the super class. This work around
     // resets the value after a few frames. -Joe M
     static int fixCount = 0;
-    if(fixCount < 5) {
+    if(fixCount < 10) {
         current->gameInterval = 1.0 / current->mednafenCoreTiming;
         NSLog(@"%f", current->mednafenCoreTiming);
         fixCount++;
@@ -1081,6 +1081,35 @@ static void emulation_run()
     emulation_run();
 
     return YES;
+}
+
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        switch (systemType) {
+            case psx: {
+                for (int i = 0; i<OEPSXButtonCross; i++) {
+                    
+                }
+            }
+            case neogeo:
+            case lynx:
+            case pce:
+            case pcfx:
+            case vb:
+            case wswan:
+                return;
+        }
+    }
 }
 
 - (void)executeFrame
@@ -1254,9 +1283,7 @@ const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
-// TODO: I have no idea what these are supposed to be
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
-
 
 #pragma MARK Atari Lynx
 - (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
