@@ -28,67 +28,67 @@
         
         if ([[[button titleLabel] text] isEqualToString:@"A"])
         {
-            [button setTag:OEPSXButtonCross];
+            [button setTag:PVPSXButtonCross];
         }
         else if ([[[button titleLabel] text] isEqualToString:@"B"])
         {
-            [button setTag:OEPSXButtonCircle];
+            [button setTag:PVPSXButtonCircle];
         }
         else if ([[[button titleLabel] text] isEqualToString:@"X"])
         {
-            [button setTag:OEPSXButtonSquare];
+            [button setTag:PVPSXButtonSquare];
         }
         else if ([[[button titleLabel] text] isEqualToString:@"Y"])
         {
-            [button setTag:OEPSXButtonTriangle];
+            [button setTag:PVPSXButtonTriangle];
         }
     }
     
-    [self.leftShoulderButton setTag:OEPSXButtonL1];
-    [self.rightShoulderButton setTag:OEPSXButtonR1];
+    [self.leftShoulderButton setTag:PVPSXButtonL1];
+    [self.rightShoulderButton setTag:PVPSXButtonR1];
 
-    [self.selectButton setTag:OEPSXButtonSelect];
-    [self.startButton setTag:OEPSXButtonStart];
+    [self.selectButton setTag:PVPSXButtonSelect];
+    [self.startButton setTag:PVPSXButtonStart];
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     
-    [psxCore didReleasePSXButton:OEPSXButtonUp forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonDown forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonLeft forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonRight forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonUp forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonDown forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonLeft forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonRight forPlayer:0];
     
     switch (direction)
     {
         case JSDPadDirectionUpLeft:
-            [psxCore didPushPSXButton:OEPSXButtonUp forPlayer:0];
-            [psxCore didPushPSXButton:OEPSXButtonLeft forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonUp forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionUp:
-            [psxCore didPushPSXButton:OEPSXButtonUp forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonUp forPlayer:0];
             break;
         case JSDPadDirectionUpRight:
-            [psxCore didPushPSXButton:OEPSXButtonUp forPlayer:0];
-            [psxCore didPushPSXButton:OEPSXButtonRight forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonUp forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonRight forPlayer:0];
             break;
         case JSDPadDirectionLeft:
-            [psxCore didPushPSXButton:OEPSXButtonLeft forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionRight:
-            [psxCore didPushPSXButton:OEPSXButtonRight forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonRight forPlayer:0];
             break;
         case JSDPadDirectionDownLeft:
-            [psxCore didPushPSXButton:OEPSXButtonDown forPlayer:0];
-            [psxCore didPushPSXButton:OEPSXButtonLeft forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonDown forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonLeft forPlayer:0];
             break;
         case JSDPadDirectionDown:
-            [psxCore didPushPSXButton:OEPSXButtonDown forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonDown forPlayer:0];
             break;
         case JSDPadDirectionDownRight:
-            [psxCore didPushPSXButton:OEPSXButtonDown forPlayer:0];
-            [psxCore didPushPSXButton:OEPSXButtonRight forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonDown forPlayer:0];
+            [psxCore didPushPSXButton:PVPSXButtonRight forPlayer:0];
             break;
         default:
             break;
@@ -101,10 +101,10 @@
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     
-    [psxCore didReleasePSXButton:OEPSXButtonUp forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonDown forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonLeft forPlayer:0];
-    [psxCore didReleasePSXButton:OEPSXButtonRight forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonUp forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonDown forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonLeft forPlayer:0];
+    [psxCore didReleasePSXButton:PVPSXButtonRight forPlayer:0];
 }
 
 - (void)buttonPressed:(JSButton *)button
@@ -124,25 +124,25 @@
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
-    [psxCore didPushPSXButton:OEPSXButtonStart forPlayer:player];
+    [psxCore didPushPSXButton:PVPSXButtonStart forPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
-    [psxCore didReleasePSXButton:OEPSXButtonStart forPlayer:player];
+    [psxCore didReleasePSXButton:PVPSXButtonStart forPlayer:player];
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
-    [psxCore didPushPSXButton:OEPSXButtonSelect forPlayer:player];
+    [psxCore didPushPSXButton:PVPSXButtonSelect forPlayer:player];
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
-    [psxCore didReleasePSXButton:OEPSXButtonSelect forPlayer:player];
+    [psxCore didReleasePSXButton:PVPSXButtonSelect forPlayer:player];
 }
 
 @end

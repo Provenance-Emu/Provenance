@@ -1057,8 +1057,9 @@ static void emulation_run() {
     }
     else if (systemType == psx)
     {
-        for(unsigned i = 0; i < multiTapPlayerCount; i++)
+        for(unsigned i = 0; i < multiTapPlayerCount; i++) {
             game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+        }
     }
     else
     {
@@ -1087,15 +1088,27 @@ static void emulation_run() {
 - (void)pollControllers {
     unsigned maxValue = 0;
     switch (systemType) {
-        case psx: {
-            maxValue = OEPSXButtonCount;
-        }
+        case psx:
+            maxValue = PVPSXButtonCount;
+            break;
         case neogeo:
+            maxValue = OENGPButtonCount;
+            break;
         case lynx:
+            maxValue = OELynxButtonCount;
+            break;
         case pce:
+            maxValue = OEPCEButtonCount;
+            break;
         case pcfx:
+            maxValue = OEPCFXButtonCount;
+            break;
         case vb:
+            maxValue = OEVBButtonCount;
+            break;
         case wswan:
+            maxValue = OEWSButtonCount;
+            break;
             return;
     }
 
@@ -1110,8 +1123,19 @@ static void emulation_run() {
             controller = self.controller2;
         }
         
-        for (unsigned i=0; i<maxValue; i++) {
-            inputBuffer[playerIndex][i] = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
+        if (controller) {
+            for (unsigned i=0; i<maxValue; i++) {
+                
+                if (systemType != psx || i < OEPSXLeftAnalogUp) {
+                    uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
+                    inputBuffer[playerIndex][i] = value;
+                } else {
+                    float analogValue = [self PSXAnalogControllerValueForButtonID:i forController:controller];
+                    [self didMovePSXJoystickDirection:(PVPSXButton)i
+                                            withValue:analogValue
+                                            forPlayer:playerIndex];
+                }
+            }
         }
     }
 }
@@ -1685,19 +1709,47 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     return 0;
 }
 
+- (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad])
+    {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        switch (buttonID) {
+            case OEPSXLeftAnalogUp:
+                return [pad leftThumbstick].up.value;
+            case OEPSXLeftAnalogDown:
+                return [pad leftThumbstick].down.value;
+            case OEPSXLeftAnalogLeft:
+                return [pad leftThumbstick].left.value;
+            case OEPSXLeftAnalogRight:
+                return [pad leftThumbstick].right.value;
+            case OEPSXRightAnalogUp:
+                return [pad rightThumbstick].up.value;
+            case OEPSXRightAnalogDown:
+                return [pad rightThumbstick].down.value;
+            case OEPSXRightAnalogLeft:
+                return [pad rightThumbstick].left.value;
+            case OEPSXRightAnalogRight:
+                return [pad rightThumbstick].right.value;
+            default:
+                break;
+        }
+    }
+    return 0;
+}
+
 - (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
-            case OEPSXButtonUp:
+            case PVPSXButtonUp:
                 return [[dpad up] isPressed];
-            case OEPSXButtonDown:
+            case PVPSXButtonDown:
                 return [[dpad down] isPressed];
-            case OEPSXButtonLeft:
+            case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
-            case OEPSXButtonRight:
+            case PVPSXButtonRight:
                 return [[dpad right] isPressed];
             case OEPSXLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
@@ -1707,21 +1759,21 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
                 return [pad leftThumbstick].left.value;
             case OEPSXLeftAnalogRight:
                 return [pad leftThumbstick].right.value;
-            case OEPSXButtonSquare:
+            case PVPSXButtonSquare:
                 return [[pad buttonX] isPressed];
-            case OEPSXButtonCross:
+            case PVPSXButtonCross:
                 return [[pad buttonA] isPressed];
-            case OEPSXButtonCircle:
+            case PVPSXButtonCircle:
                 return [[pad buttonB] isPressed];
-            case OEPSXButtonL1:
+            case PVPSXButtonL1:
                 return [[pad leftShoulder] isPressed];
-            case OEPSXButtonTriangle:
+            case PVPSXButtonTriangle:
                 return [[pad buttonY] isPressed];
-            case OEPSXButtonR1:
+            case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
-            case OEPSXButtonStart:
+            case PVPSXButtonStart:
                 return [[pad rightTrigger] isPressed];
-            case OEPSXButtonSelect:
+            case PVPSXButtonSelect:
                 return [[pad leftTrigger] isPressed];
             default:
                 break;
@@ -1732,25 +1784,25 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         GCGamepad *pad = [controller gamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
-            case OEPSXButtonUp:
+            case PVPSXButtonUp:
                 return [[dpad up] isPressed];
-            case OEPSXButtonDown:
+            case PVPSXButtonDown:
                 return [[dpad down] isPressed];
-            case OEPSXButtonLeft:
+            case PVPSXButtonLeft:
                 return [[dpad left] isPressed];
-            case OEPSXButtonRight:
+            case PVPSXButtonRight:
                 return [[dpad right] isPressed];
-            case OEPSXButtonSquare:
+            case PVPSXButtonSquare:
                 return [[pad buttonX] isPressed];
-            case OEPSXButtonCross:
+            case PVPSXButtonCross:
                 return [[pad buttonA] isPressed];
-            case OEPSXButtonCircle:
+            case PVPSXButtonCircle:
                 return [[pad buttonB] isPressed];
-            case OEPSXButtonL1:
+            case PVPSXButtonL1:
                 return [[pad leftShoulder] isPressed];
-            case OEPSXButtonTriangle:
+            case PVPSXButtonTriangle:
                 return [[pad buttonY] isPressed];
-            case OEPSXButtonR1:
+            case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
             default:
                 break;
@@ -1762,22 +1814,22 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         GCMicroGamepad *pad = [controller microGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
-            case OEPSXButtonUp:
+            case PVPSXButtonUp:
                 return [[dpad up] value] > 0.5;
                 break;
-            case OEPSXButtonDown:
+            case PVPSXButtonDown:
                 return [[dpad down] value] > 0.5;
                 break;
-            case OEPSXButtonLeft:
+            case PVPSXButtonLeft:
                 return [[dpad left] value] > 0.5;
                 break;
-            case OEPSXButtonRight:
+            case PVPSXButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case OEPSXButtonCross:
+            case PVPSXButtonCross:
                 return [[pad buttonA] isPressed];
                 break;
-            case OEPSXButtonCircle:
+            case PVPSXButtonCircle:
                 return [[pad buttonX] isPressed];
                 break;
             default:

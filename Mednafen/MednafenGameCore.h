@@ -32,23 +32,23 @@
 
 typedef NS_ENUM(NSInteger, PVPSXButton)
 {
-    OEPSXButtonUp,
-    OEPSXButtonDown,
-    OEPSXButtonLeft,
-    OEPSXButtonRight,
-    OEPSXButtonTriangle,
-    OEPSXButtonCircle,
-    OEPSXButtonCross,
-    OEPSXButtonSquare,
-    OEPSXButtonL1,
-    OEPSXButtonL2,
-    OEPSXButtonL3,
-    OEPSXButtonR1,
-    OEPSXButtonR2,
-    OEPSXButtonR3,
-    OEPSXButtonStart,
-    OEPSXButtonSelect,
-    OEPSXButtonAnalogMode,
+    PVPSXButtonUp,
+    PVPSXButtonDown,
+    PVPSXButtonLeft,
+    PVPSXButtonRight,
+    PVPSXButtonTriangle,
+    PVPSXButtonCircle,
+    PVPSXButtonCross,
+    PVPSXButtonSquare,
+    PVPSXButtonL1,
+    PVPSXButtonL2,
+    PVPSXButtonL3,
+    PVPSXButtonR1,
+    PVPSXButtonR2,
+    PVPSXButtonR3,
+    PVPSXButtonStart,
+    PVPSXButtonSelect,
+    PVPSXButtonAnalogMode,
     OEPSXLeftAnalogUp,
     OEPSXLeftAnalogDown,
     OEPSXLeftAnalogLeft,
@@ -57,7 +57,7 @@ typedef NS_ENUM(NSInteger, PVPSXButton)
     OEPSXRightAnalogDown,
     OEPSXRightAnalogLeft,
     OEPSXRightAnalogRight,
-    OEPSXButtonCount
+    PVPSXButtonCount
 };
 
 typedef NS_ENUM(NSInteger, OEWSButton) {
