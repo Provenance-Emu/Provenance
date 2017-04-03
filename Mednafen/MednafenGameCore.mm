@@ -879,16 +879,18 @@ static void mednafen_init(MednafenGameCore* current)
 
         multiTapPlayerCount = 2;
 
-        for(unsigned i = 0; i < 8; i++)
+        for(unsigned i = 0; i < 8; i++) {
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
+        }
     }
 
     return self;
 }
 
 - (void)dealloc {
-    for(unsigned i = 0; i < 8; i++)
+    for(unsigned i = 0; i < 8; i++) {
         free(inputBuffer[i]);
+    }
 
     delete surf;
     
@@ -899,8 +901,7 @@ static void mednafen_init(MednafenGameCore* current)
 
 # pragma mark - Execution
 
-static void emulation_run()
-{
+static void emulation_run() {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
@@ -1084,6 +1085,20 @@ static void emulation_run()
 }
 
 - (void)pollControllers {
+    unsigned maxValue = 0;
+    switch (systemType) {
+        case psx: {
+            maxValue = OEPSXButtonCount;
+        }
+        case neogeo:
+        case lynx:
+        case pce:
+        case pcfx:
+        case vb:
+        case wswan:
+            return;
+    }
+
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
         
@@ -1095,25 +1110,19 @@ static void emulation_run()
             controller = self.controller2;
         }
         
-        switch (systemType) {
-            case psx: {
-                for (int i = 0; i<OEPSXButtonCross; i++) {
-                    
-                }
-            }
-            case neogeo:
-            case lynx:
-            case pce:
-            case pcfx:
-            case vb:
-            case wswan:
-                return;
+        for (unsigned i=0; i<maxValue; i++) {
+            inputBuffer[playerIndex][i] = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
         }
     }
 }
 
 - (void)executeFrame
 {
+    // Should we be using controller callbacks instead?
+    if (self.controller1 || self.controller2) {
+        [self pollControllers];
+    }
+    
     emulation_run();
 }
 
@@ -1223,9 +1232,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     size_t length = stream.map_size();
     void *bytes = stream.map();
 
-    if(length)
+    if(length) {
         return [NSData dataWithBytes:bytes length:length];
-
+    }
+    
     if(outError) {
         assert(false);
 #pragma message "fix error log"
@@ -1238,8 +1248,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     return nil;
 }
 
-- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
-{
+- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError {
     NSError *error;
     const void *bytes = [state bytes];
     size_t length = [state length];
@@ -1260,16 +1269,12 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 //                                        }];
     }
 
-    if(error)
-    {
-        if(outError)
-        {
+    if(error) {
+        if(outError) {
             *outError = error;
         }
         return false;
-    }
-    else
-    {
+    } else {
         return true;
     }
 }
@@ -1285,18 +1290,95 @@ const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
-#pragma MARK Atari Lynx
-- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
-{
+#pragma mark Atari Lynx
+- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player {
     inputBuffer[player][0] |= 1 << LynxMap[button];
 }
 
-- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player
-{
+- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player {
     inputBuffer[player][0] &= ~(1 << LynxMap[button]);
 }
 
-#pragma MARK Neo Geo
+- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+    if ([controller extendedGamepad]) {
+        GCExtendedGamepad *pad = [controller extendedGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+            case OELynxButtonDown:
+                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+            case OELynxButtonLeft:
+                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+            case OELynxButtonRight:
+                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+            case OELynxButtonB:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+            case OELynxButtonOption1:
+                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+            case OELynxButtonOption2:
+                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+            default:
+                break;
+        }
+    } else if ([controller gamepad]) {
+        GCGamepad *pad = [controller gamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] isPressed];
+            case OELynxButtonDown:
+                return [[dpad down] isPressed];
+            case OELynxButtonLeft:
+                return [[dpad left] isPressed];
+            case OELynxButtonRight:
+                return [[dpad right] isPressed];
+            case OELynxButtonB:
+                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+            case OELynxButtonOption1:
+                return [[pad leftShoulder] isPressed];
+            case OELynxButtonOption2:
+                return [[pad rightShoulder] isPressed];
+            default:
+                break;
+        }
+    }
+#if TARGET_OS_TV
+    else if ([controller microGamepad]) {
+        GCMicroGamepad *pad = [controller microGamepad];
+        GCControllerDirectionPad *dpad = [pad dpad];
+        switch (buttonID) {
+            case OELynxButtonUp:
+                return [[dpad up] value] > 0.5;
+                break;
+            case OELynxButtonDown:
+                return [[dpad down] value] > 0.5;
+                break;
+            case OELynxButtonLeft:
+                return [[dpad left] value] > 0.5;
+                break;
+            case OELynxButtonRight:
+                return [[dpad right] value] > 0.5;
+                break;
+            case OELynxButtonA:
+                return [[pad buttonA] isPressed];
+                break;
+            case OELynxButtonB:
+                return [[pad buttonX] isPressed];
+                break;
+            default:
+                break;
+        }
+    }
+#endif
+    return 0;
+}
+
+#pragma mark Neo Geo
 - (oneway void)didPushNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player
 {
     inputBuffer[player][0] |= 1 << NeoMap[button];
@@ -1307,13 +1389,14 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] &= ~(1 << NeoMap[button]);
 }
 
-#pragma MARK PC-*
+#pragma mark PC-*
 - (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player
 {
-    if (button != OEPCEButtonMode) // Check for six button mode toggle
+    if (button != OEPCEButtonMode) { // Check for six button mode toggle
         inputBuffer[player][0] |= 1 << PCEMap[button];
-    else
+    } else {
         inputBuffer[player][0] ^= 1 << PCEMap[button];
+    }
 }
 
 - (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player
@@ -1324,16 +1407,18 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 - (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player
 {
-    if (button != OEPCECDButtonMode) // Check for six button mode toggle
+    if (button != OEPCECDButtonMode) { // Check for six button mode toggle
         inputBuffer[player][0] |= 1 << PCEMap[button];
-    else
+    } else {
         inputBuffer[player][0] ^= 1 << PCEMap[button];
+    }
 }
 
 - (oneway void)didReleasePCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
 {
-    if (button != OEPCECDButtonMode)
+    if (button != OEPCECDButtonMode) {
         inputBuffer[player][0] &= ~(1 << PCEMap[button]);
+    }
 }
 
 - (oneway void)didPushPCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
@@ -1346,7 +1431,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] &= ~(1 << PCFXMap[button]);
 }
 
-#pragma MARK PSX
+#pragma mark PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
     inputBuffer[player][0] |= 1 << PSXMap[button];
@@ -1375,7 +1460,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] &= ~(1 << VBMap[button]);
 }
 
-#pragma MARK WonderSwan
+#pragma mark WonderSwan
 - (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
 {
     inputBuffer[player][0] |= 1 << WSMap[button];
@@ -1386,16 +1471,12 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] &= ~(1 << WSMap[button]);
 }
 
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
-{
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {
     GCController *controller = nil;
     
-    if (player == 0)
-    {
+    if (player == 0) {
         controller = self.controller1;
-    }
-    else
-    {
+    } else {
         controller = self.controller2;
     }
     
@@ -1433,8 +1514,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 }
 
 - (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
-    if ([controller extendedGamepad])
-    {
+    if ([controller extendedGamepad]) {
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
@@ -1455,9 +1535,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
             default:
                 break;
         }
-    }
-    else if ([controller gamepad])
-    {
+    } else if ([controller gamepad]) {
         GCGamepad *pad = [controller gamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
@@ -1607,89 +1685,6 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     return 0;
 }
 
-- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
-    if ([controller extendedGamepad])
-    {
-        GCExtendedGamepad *pad = [controller extendedGamepad];
-        GCControllerDirectionPad *dpad = [pad dpad];
-        switch (buttonID) {
-            case OELynxButtonUp:
-                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
-            case OELynxButtonDown:
-                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
-            case OELynxButtonLeft:
-                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
-            case OELynxButtonRight:
-                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
-            case OELynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
-            case OELynxButtonA:
-                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
-            case OELynxButtonOption1:
-                return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
-            case OELynxButtonOption2:
-                return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
-            default:
-                break;
-        }
-    }
-    else if ([controller gamepad])
-    {
-        GCGamepad *pad = [controller gamepad];
-        GCControllerDirectionPad *dpad = [pad dpad];
-        switch (buttonID) {
-            case OELynxButtonUp:
-                return [[dpad up] isPressed];
-            case OELynxButtonDown:
-                return [[dpad down] isPressed];
-            case OELynxButtonLeft:
-                return [[dpad left] isPressed];
-            case OELynxButtonRight:
-                return [[dpad right] isPressed];
-            case OELynxButtonB:
-                return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
-            case OELynxButtonA:
-                return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
-            case OELynxButtonOption1:
-                return [[pad leftShoulder] isPressed];
-            case OELynxButtonOption2:
-                return [[pad rightShoulder] isPressed];
-            default:
-                break;
-        }
-    }
-#if TARGET_OS_TV
-    else if ([controller microGamepad])
-    {
-        GCMicroGamepad *pad = [controller microGamepad];
-        GCControllerDirectionPad *dpad = [pad dpad];
-        switch (buttonID) {
-            case OELynxButtonUp:
-                return [[dpad up] value] > 0.5;
-                break;
-            case OELynxButtonDown:
-                return [[dpad down] value] > 0.5;
-                break;
-            case OELynxButtonLeft:
-                return [[dpad left] value] > 0.5;
-                break;
-            case OELynxButtonRight:
-                return [[dpad right] value] > 0.5;
-                break;
-            case OELynxButtonA:
-                return [[pad buttonA] isPressed];
-                break;
-            case OELynxButtonB:
-                return [[pad buttonX] isPressed];
-                break;
-            default:
-                break;
-        }
-    }
-#endif
-    return 0;
-}
-
 - (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
     if ([controller extendedGamepad])
     {
@@ -1697,13 +1692,21 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
             case OEPSXButtonUp:
-                return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+                return [[dpad up] isPressed];
             case OEPSXButtonDown:
-                return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+                return [[dpad down] isPressed];
             case OEPSXButtonLeft:
-                return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+                return [[dpad left] isPressed];
             case OEPSXButtonRight:
-                return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+                return [[dpad right] isPressed];
+            case OEPSXLeftAnalogUp:
+                return [pad leftThumbstick].up.value;
+            case OEPSXLeftAnalogDown:
+                return [pad leftThumbstick].down.value;
+            case OEPSXLeftAnalogLeft:
+                return [pad leftThumbstick].left.value;
+            case OEPSXLeftAnalogRight:
+                return [pad leftThumbstick].right.value;
             case OEPSXButtonSquare:
                 return [[pad buttonX] isPressed];
             case OEPSXButtonCross:
@@ -2048,8 +2051,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     }
 }
 
-- (void)setDisc:(NSUInteger)discNumber
-{
+- (void)setDisc:(NSUInteger)discNumber {
     uint32_t index = discNumber - 1; // 0-based index
     MDFNI_SetMedia(0, 0, 0, 0); // open drive/eject disc
 
@@ -2059,8 +2061,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     });
 }
 
-- (NSUInteger)discCount
-{
+- (NSUInteger)discCount {
     return maxDiscs ? maxDiscs : 1;
 }
 
