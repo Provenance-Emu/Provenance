@@ -30,11 +30,11 @@
         {
             [button setTag:OEPSXButtonCross];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"B"] || [[[button titleLabel] text] isEqualToString:@"1"])
+        else if ([[[button titleLabel] text] isEqualToString:@"B"])
         {
             [button setTag:OEPSXButtonCircle];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"X"] || [[[button titleLabel] text] isEqualToString:@"2"])
+        else if ([[[button titleLabel] text] isEqualToString:@"X"])
         {
             [button setTag:OEPSXButtonSquare];
         }
@@ -46,9 +46,9 @@
     
     [self.leftShoulderButton setTag:OEPSXButtonL1];
     [self.rightShoulderButton setTag:OEPSXButtonR1];
-#pragma message "not enough buttons on gamepad"
-//    [self.selectButton setTag:PVSNESButtonSelect];
-//    [self.startButton setTag:PVSNESButtonStart];
+
+    [self.selectButton setTag:OEPSXButtonSelect];
+    [self.startButton setTag:OEPSXButtonStart];
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction
