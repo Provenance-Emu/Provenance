@@ -36,8 +36,8 @@
         }
     }
     
-//    [self.leftShoulderButton setTag:OEPSXButtonL1];
-//    [self.rightShoulderButton setTag:OEPSXButtonR1];
+//    [self.leftShoulderButton setTag:PVPSXButtonL1];
+//    [self.rightShoulderButton setTag:PVPSXButtonR1];
 
     [self.selectButton setTag:OENGPButtonOption];
     [self.startButton setTag:OENGPButtonOption];

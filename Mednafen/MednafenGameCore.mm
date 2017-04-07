@@ -1087,27 +1087,35 @@ static void emulation_run() {
 
 - (void)pollControllers {
     unsigned maxValue = 0;
+    const int*map;
     switch (systemType) {
         case psx:
             maxValue = PVPSXButtonCount;
+            map = PSXMap;
             break;
         case neogeo:
             maxValue = OENGPButtonCount;
+            map = NeoMap;
             break;
         case lynx:
             maxValue = OELynxButtonCount;
+            map = LynxMap;
             break;
         case pce:
             maxValue = OEPCEButtonCount;
+            map = PCEMap;
             break;
         case pcfx:
             maxValue = OEPCFXButtonCount;
+            map = PCFXMap;
             break;
         case vb:
             maxValue = OEVBButtonCount;
+            map = VBMap;
             break;
         case wswan:
             maxValue = OEWSButtonCount;
+            map = WSMap;
             break;
             return;
     }
@@ -1128,9 +1136,17 @@ static void emulation_run() {
                 
                 if (systemType != psx || i < OEPSXLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
-                    inputBuffer[playerIndex][i] = value;
+                    
+                    if(value > 0) {
+                        inputBuffer[playerIndex][0] |= 1 << map[i];
+                    } else {
+                        inputBuffer[playerIndex][0] &= ~(1 << map[i]);
+                    }
                 } else {
                     float analogValue = [self PSXAnalogControllerValueForButtonID:i forController:controller];
+                    if (analogValue != 0) {
+                        NSLog(@"%i %f", i, analogValue);
+                    }
                     [self didMovePSXJoystickDirection:(PVPSXButton)i
                                             withValue:analogValue
                                             forPlayer:playerIndex];
@@ -1470,7 +1486,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 {
     int analogNumber = PSXMap[button] - 17;
     uint8_t *buf = (uint8_t *)inputBuffer[player];
-    *(uint16*)& buf[3 + analogNumber * 2] = 32767 * value;
+//    *(uint16*)& buf[3 + analogNumber * 2] = 32767 * value;
 }
 
 #pragma mark Virtual Boy
@@ -1743,8 +1759,11 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         GCExtendedGamepad *pad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [pad dpad];
         switch (buttonID) {
-            case PVPSXButtonUp:
-                return [[dpad up] isPressed];
+            case PVPSXButtonUp: {
+                BOOL isUp = [[dpad up] isPressed];
+                if(isUp)NSLog(@"IS Up");
+                return isUp;
+            }
             case PVPSXButtonDown:
                 return [[dpad down] isPressed];
             case PVPSXButtonLeft:
