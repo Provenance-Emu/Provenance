@@ -75,7 +75,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             {
                 for (NSString *file in contents)
                 {
-                    if ([[file pathExtension] isEqualToString:@"zip"])
+                    if ([[file pathExtension].lowercaseString isEqualToString:@"zip"] || [[file pathExtension] isEqualToString:@"7z"])
                     {
                         [self extractArchiveAtPath:file];
                     }
@@ -219,6 +219,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 
 - (void)extractArchiveAtPath:(NSString *)filePath
 {
+
     if (self.extractionStartedHandler)
     {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -231,6 +232,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         return;
     }
     
+    [self stopMonitoring];
     
     if ([[filePath pathExtension].lowercaseString isEqualToString:@"zip"]) {
         [SSZipArchive unzipFileAtPath:filePath
@@ -278,6 +280,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                         }
                         
                         [_unzippedFiles removeAllObjects];
+                        [self startMonitoring];
                     }];
 
     } else if([[filePath pathExtension].lowercaseString isEqualToString:@"7z"]) {
@@ -302,6 +305,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             }
             return YES; // YES - continue iterate, NO - stop iteration
         }];
+        [self stopMonitoring];
         
         [_reader extract:items
                   toPath:self.path
@@ -333,6 +337,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         }
 
         [_unzippedFiles removeAllObjects];
+        [self startMonitoring];
     } else {
         NSLog(@"7zip running %f", progress);
 

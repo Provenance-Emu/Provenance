@@ -12,14 +12,14 @@
 
 @interface PVConflictViewController ()
 
-@property (nonatomic, strong) PVGameImporter *gameImporter;
-@property (nonatomic, strong) NSArray *conflictedFiles;
+@property (nonatomic, strong, nonnull) PVGameImporter *gameImporter;
+@property (nonatomic, strong, nullable) NSArray<NSString*> *conflictedFiles;
 
 @end
 
 @implementation PVConflictViewController
 
-- (instancetype)initWithGameImporter:(PVGameImporter *)gameImporter
+- (instancetype)initWithGameImporter:(PVGameImporter * __nonnull)gameImporter
 {
     if ((self = [super initWithStyle:UITableViewStylePlain]))
     {
@@ -48,7 +48,8 @@
 - (void)updateConflictedFiles
 {
     NSMutableArray *tempConflictedFiles = [NSMutableArray array];
-    for (NSString *file in [self.gameImporter conflictedFiles])
+    NSArray *filesInConflictsFolder = [self.gameImporter conflictedFiles];
+    for (NSString *file in filesInConflictsFolder)
     {
         NSString *extension = [file pathExtension];
         if ([[[PVEmulatorConfiguration sharedInstance] systemIdentifiersForFileExtension:[extension lowercaseString]] count] > 1)
@@ -180,10 +181,12 @@
             NSString *name = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
             [alertController addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [self.gameImporter resolveConflictsWithSolutions:@{path: systemID}];
-                [self.tableView beginUpdates];
-                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+                // This update crashes since we remove for me on aTV.
+//                [self.tableView beginUpdates];
+//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
                 [self updateConflictedFiles];
-                [self.tableView endUpdates];
+                [self.tableView reloadData];
+//                [self.tableView endUpdates];
             }]];
         }
     }
