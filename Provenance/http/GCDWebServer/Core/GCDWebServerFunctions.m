@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Pierre-Olivier Latour
+ Copyright (c) 2012-2015, Pierre-Olivier Latour
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -163,8 +163,8 @@ NSString* GCDWebServerGetMimeTypeForExtension(NSString* extension) {
   static NSDictionary* _overrides = nil;
   if (_overrides == nil) {
     _overrides = [[NSDictionary alloc] initWithObjectsAndKeys:
-                  @"text/css", @"css",
-                  nil];
+                                           @"text/css", @"css",
+                                           nil];
   }
   NSString* mimeType = nil;
   extension = [extension lowercaseString];
@@ -182,11 +182,17 @@ NSString* GCDWebServerGetMimeTypeForExtension(NSString* extension) {
 }
 
 NSString* GCDWebServerEscapeURLString(NSString* string) {
-  return [string stringByAddingPercentEncodingWithAllowedCharacters:[[NSCharacterSet characterSetWithCharactersInString:@":@/?&=+,"] invertedSet]];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  return CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)string, NULL, CFSTR(":@/?&=+"), kCFStringEncodingUTF8));
+#pragma clang diagnostic pop
 }
 
 NSString* GCDWebServerUnescapeURLString(NSString* string) {
-  return [string stringByRemovingPercentEncoding];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  return CFBridgingRelease(CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault, (CFStringRef)string, CFSTR(""), kCFStringEncodingUTF8));
+#pragma clang diagnostic pop
 }
 
 NSDictionary* GCDWebServerParseURLEncodedForm(NSString* form) {
@@ -199,13 +205,13 @@ NSDictionary* GCDWebServerParseURLEncodedForm(NSString* form) {
       break;
     }
     [scanner setScanLocation:([scanner scanLocation] + 1)];
-    
+
     NSString* value = nil;
     [scanner scanUpToString:@"&" intoString:&value];
     if (value == nil) {
       value = @"";
     }
-    
+
     key = [key stringByReplacingOccurrencesOfString:@"+" withString:@" "];
     NSString* unescapedKey = key ? GCDWebServerUnescapeURLString(key) : nil;
     value = [value stringByReplacingOccurrencesOfString:@"+" withString:@" "];
@@ -216,7 +222,7 @@ NSDictionary* GCDWebServerParseURLEncodedForm(NSString* form) {
       GWS_LOG_WARNING(@"Failed parsing URL encoded form for key \"%@\" and value \"%@\"", key, value);
       GWS_DNOT_REACHED();
     }
-    
+
     if ([scanner isAtEnd]) {
       break;
     }
@@ -240,7 +246,7 @@ NSString* GCDWebServerStringFromSockAddr(const struct sockaddr* addr, BOOL inclu
 NSString* GCDWebServerGetPrimaryIPAddress(BOOL useIPv6) {
   NSString* address = nil;
 #if TARGET_OS_IPHONE
-#if !TARGET_IPHONE_SIMULATOR
+#if !TARGET_IPHONE_SIMULATOR && !TARGET_OS_TV
   const char* primaryInterface = "en0";  // WiFi interface on iOS
 #endif
 #else
@@ -261,8 +267,10 @@ NSString* GCDWebServerGetPrimaryIPAddress(BOOL useIPv6) {
   struct ifaddrs* list;
   if (getifaddrs(&list) >= 0) {
     for (struct ifaddrs* ifap = list; ifap; ifap = ifap->ifa_next) {
-#if TARGET_IPHONE_SIMULATOR
-      if (strcmp(ifap->ifa_name, "en0") && strcmp(ifap->ifa_name, "en1"))  // Assume en0 is Ethernet and en1 is WiFi since there is no way to use SystemConfiguration framework in iOS Simulator
+#if TARGET_IPHONE_SIMULATOR || TARGET_OS_TV
+      // Assume en0 is Ethernet and en1 is WiFi since there is no way to use SystemConfiguration framework in iOS Simulator
+      // Assumption holds for Apple TV running tvOS
+      if (strcmp(ifap->ifa_name, "en0") && strcmp(ifap->ifa_name, "en1"))
 #else
       if (strcmp(ifap->ifa_name, primaryInterface))
 #endif
