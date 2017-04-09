@@ -1,5 +1,5 @@
 <!--
- Copyright (c) 2012-2014, Pierre-Olivier Latour
+ Copyright (c) 2012-2015, Pierre-Olivier Latour
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -60,28 +60,7 @@
         <h1>%header%</h1>
       </div>
       
-      <div>
-          <h3>Upload New ROMs</h3>
-          <p>You can upload new ROMs by uploading *.zip files into the roms/ directory. Then close the web server and Provenance will attempt to import them.</p>
-      </div>
-
-      <div>
-          <h3>Upload New Artwork</h3>
-          <p>You can upload new cover art images by uploading a *.zip file into the Cover Art/ directory. The images need to be named the same as their ROM (IE, “kart fighter.nes.png” will update the artwork on “kart fighter.nes”. ROM Filenames can be found in the “com.provenance.*” directories). Then close the web server and Provenance will attempt to import them.</p>
-      </div>
-      
-      <div>
-          <h3>Transfer Game Saves</h3>
-          <p>Game saves are located in the Battery States/ directory. If it doesn't exist then no game saves exist.</p>
-          <p>In-game save states are located at Save States/</p>
-      </div>
-      
-      <div style="margin-top: 20px;">
-          <h3>General Info</h3>
-          %prologue%
-          
-          <p>Don't delete or mess with files unless you know what you're doing!</p>
-      </div>
+      %prologue%
       
       <div id="alerts"></div>
       
