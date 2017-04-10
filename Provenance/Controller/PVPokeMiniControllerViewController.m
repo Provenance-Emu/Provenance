@@ -40,6 +40,8 @@
         }
     }
     
+    [self.leftShoulderButton setTag:PVPMButtonMenu];
+    
     [self.startButton setTag:PVPMButtonPower];
     [self.selectButton setTag:PVPMButtonShake];
 }

@@ -1011,6 +1011,10 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<string>bios.min</string>
+		</array>
 		<key>PVSystemName</key>
 		<string>Pokémon mini</string>
 		<key>PVShortSystemName</key>
