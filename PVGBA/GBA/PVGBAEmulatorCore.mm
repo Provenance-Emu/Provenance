@@ -26,7 +26,6 @@
 
 #import "PVGBAEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/OETimingUtils.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
@@ -167,14 +166,14 @@ static __weak PVGBAEmulatorCore *_current;
 
 - (void)stopEmulation
 {
+    [super stopEmulation]; //Leave emulation loop first
+
     emulating = 0;
 
     [self writeSaveFile];
 
     vba.emuCleanUp();
     soundShutdown();
-
-    [super stopEmulation];
 }
 
 - (NSTimeInterval)frameInterval

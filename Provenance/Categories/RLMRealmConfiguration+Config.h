@@ -8,9 +8,9 @@
 
 #import <Realm/Realm.h>
 
-@interface RLMRealmConfiguration (GroupConfig)
+@interface RLMRealmConfiguration (Config)
 
-+ (RLMRealmConfiguration *)appGroupConfig;
++ (void)setRealmConfig;
 
 + (BOOL)supportsAppGroups;
 

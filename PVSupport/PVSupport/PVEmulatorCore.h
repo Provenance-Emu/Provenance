@@ -30,6 +30,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
 };
 
+#define GetSecondsSince(x) (-[x timeIntervalSinceNow])
+
 @protocol PVRenderDelegate
 
 @required
@@ -59,6 +61,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     BOOL shouldStop;
 }
 
+@property (nonatomic, assign) double emulationFPS;
+
 @property(weak)     id<PVRenderDelegate>   renderDelegate;
 
 @property (nonatomic, copy) NSString *romName;
@@ -77,6 +81,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
 @property (nonatomic, strong) GCController *controller1;
 @property (nonatomic, strong) GCController *controller2;
+
+@property (nonatomic, strong) NSLock  *emulationLoopThreadLock;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation;

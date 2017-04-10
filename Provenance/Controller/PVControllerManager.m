@@ -11,6 +11,7 @@
 #import "PViCadeController.h"
 #import "kICadeControllerSetting.h"
 #import "PViCade8BitdoController.h"
+#import "PViCadeController.h"
 
 NSString * const PVControllerManagerControllerReassignedNotification = @"PVControllerManagerControllerReassignedNotification";
 
@@ -47,22 +48,29 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
                                                  selector:@selector(handleControllerDidDisconnect:)
                                                      name:GCControllerDidDisconnectNotification
                                                    object:nil];
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:kICadeControllerSettingKey
+                                                   options:NSKeyValueObservingOptionNew context:nil];
 
         // automatically assign the first connected controller to player 1
         // prefer gamepad or extendedGamepad over a microGamepad
         [self assignControllers];
 
-        if (!self.iCadeController)
-        {
-            PVSettingsModel* settings = [PVSettingsModel sharedInstance];
-            self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
-            if (self.iCadeController) {
-                [self listenForICadeControllers];
-            }
-        }
+        [self setupICade];
     }
 
     return self;
+}
+
+- (void)setupICade
+{
+    if (!self.iCadeController) {
+        PVSettingsModel* settings = [PVSettingsModel sharedInstance];
+        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+        if( self.iCadeController ) {
+            [self listenForICadeControllers];
+        }
+    }
 }
 
 - (void)setPlayer1:(GCController *)player1
@@ -122,16 +130,41 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     }
 }
 
-- (void)listenForICadeControllers
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (keyPath == kICadeControllerSettingKey) {
+        [self setupICade];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *)window completion:(void (^)(void))completion
 {
     __weak PVControllerManager* weakSelf = self;
     self.iCadeController.controllerPressedAnyKey = ^(PViCadeController* controller) {
-        weakSelf.iCadeController.controllerPressedAnyKey = nil;
-        [weakSelf assignController:weakSelf.iCadeController];
+        [weakSelf setController:weakSelf.iCadeController toPlayer:player];
+        [weakSelf stopListeningForICadeControllers];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidConnectNotification object:[[PVControllerManager sharedManager] iCadeController]];
-
+        
+        if (completion) {
+            completion();
+        }
     };
+    
+    [self.iCadeController.reader listenToWindow:window];
+}
+
+- (void)listenForICadeControllers
+{
+    [self listenForICadeControllersForPlayer:0 window:nil completion:nil];
+}
+
+- (void)stopListeningForICadeControllers
+{
+    [self.iCadeController setControllerPressedAnyKey:nil];
+    [self.iCadeController.reader listenToWindow:nil];
 }
 
 #pragma mark - Controllers assignment
@@ -139,7 +172,8 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
 - (void)setController:(GCController *)controller toPlayer:(NSUInteger)player;
 {
 #if TARGET_OS_TV
-    if ([controller microGamepad])
+    // check if controller is iCade, otherwise crash
+    if (![controller isKindOfClass:[PViCadeController class]] && [controller microGamepad])
     {
         [[controller microGamepad] setAllowsRotation:YES];
         [[controller microGamepad] setReportsAbsoluteDpadValues:YES];
