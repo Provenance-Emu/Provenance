@@ -93,6 +93,8 @@
 		B3CB85B81E9BF9DB009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85BC1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85BD1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */; };
+		B3CB85CC1E9C1BB9009155A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -182,6 +184,8 @@
 		B3CB85B21E9BF189009155A6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85B41E9BF18D009155A6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPMSystemResponderClient.h; sourceTree = "<group>"; };
+		B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +193,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */,
 				B3CB85AF1E9BF17F009155A6 /* PVSupport.framework in Frameworks */,
 				B3CB85AD1E9BF16F009155A6 /* UIKit.framework in Frameworks */,
 				B3CB85AB1E9BF16B009155A6 /* OpenGLES.framework in Frameworks */,
@@ -199,6 +204,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CB85CC1E9C1BB9009155A6 /* AudioToolbox.framework in Frameworks */,
 				B3CB85B51E9BF18D009155A6 /* UIKit.framework in Frameworks */,
 				B3CB85B31E9BF189009155A6 /* OpenGLES.framework in Frameworks */,
 				B3CB85B11E9BF185009155A6 /* PVSupport.framework in Frameworks */,
@@ -305,6 +311,8 @@
 		081A45F71B9563EF00565444 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */,
+				B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */,
 				B3CB85B41E9BF18D009155A6 /* UIKit.framework */,
 				B3CB85B21E9BF189009155A6 /* OpenGLES.framework */,
 				B3CB85B01E9BF185009155A6 /* PVSupport.framework */,

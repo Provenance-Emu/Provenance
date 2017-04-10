@@ -30,6 +30,7 @@
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import "PVPMSystemResponderClient.h"
 #import "PokeMini.h"
 #import "Hardware.h"
@@ -180,14 +181,23 @@ int saveEEPROM(const char *filename)
 }
 
 - (void)executeFrame {
+    // Rumble only on first frame that calls for rumble
+    static BOOL shouldRumble = YES;
+    
     // Emulate 1 frame
     PokeMini_EmulateFrame();
     
     if(PokeMini_Rumbling) {
+        if (shouldRumble) {
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+            shouldRumble = NO;
+        }
+
         PokeMini_VideoBlit(videoBuffer + PokeMini_GenRumbleOffset(current->videoWidth), current->videoWidth);
     }
     else
     {
+        shouldRumble = YES;
         PokeMini_VideoBlit(videoBuffer, current->videoWidth);
     }
     LCDDirty = 0;
