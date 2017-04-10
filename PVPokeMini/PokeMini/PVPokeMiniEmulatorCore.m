@@ -174,12 +174,12 @@ int saveEEPROM(const char *filename)
 
 - (BOOL)loadFileAtPath:(NSString *)path // error:(NSError **)error
 {
+
     romPath = path;
     return YES;
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     // Emulate 1 frame
     PokeMini_EmulateFrame();
     
@@ -199,6 +199,7 @@ int saveEEPROM(const char *filename)
 - (void)startEmulation
 {
 //    if(self.rate != 0) return;
+    [self setupController];
     [self setupEmulation];
     
     [super startEmulation];
@@ -298,6 +299,113 @@ int saveEEPROM(const char *filename)
 - (oneway void)didReleasePMButton:(PVPMButton)button forPlayer:(NSUInteger)player
 {
     JoystickButtonsEvent(button, 0);
+}
+
+- (oneway void)setupController {
+    if (self.controller1) {
+        if (self.controller1.extendedGamepad) {
+            self.controller1.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
+                // DPAD
+                if (element == gamepad.dpad.up) {
+                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.down) {
+                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.left) {
+                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.right) {
+                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
+                }
+                // Buttons
+                else if (element == gamepad.buttonA) {
+                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonB) {
+                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonX) {
+                    JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                }
+                // Extra buttons
+                else if (element == gamepad.leftTrigger) {
+                    JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftTrigger.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.rightTrigger) {
+                    JoystickButtonsEvent(PVPMButtonShake, gamepad.rightTrigger.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.leftShoulder) {
+                    JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                }
+            };
+        }
+        else if (self.controller1.gamepad) {
+            self.controller1.gamepad.valueChangedHandler = ^(GCGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
+                // DPAD
+                if (element == gamepad.dpad.up) {
+                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.down) {
+                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.left) {
+                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.right) {
+                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
+                }
+                // Buttons
+                else if (element == gamepad.buttonA) {
+                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonB) {
+                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonX) {
+                    JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonY) {
+                    JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonY.isPressed ? 1 : 0);
+                }
+                
+                // Extra buttons
+                else if (element == gamepad.leftShoulder) {
+                    JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.rightShoulder) {
+                    JoystickButtonsEvent(PVPMButtonShake, gamepad.rightShoulder.isPressed ? 1 : 0);
+                }
+            };
+        }
+#if TARGET_OS_TV
+        else if ([self.controller1 microGamepad]) {
+            GCMicroGamepad *microGamepad = [self.controller1 microGamepad];
+            
+            microGamepad.valueChangedHandler = ^(GCMicroGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
+                if (element == gamepad.dpad.up) {
+                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.down) {
+                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.left) {
+                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.dpad.right) {
+                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
+                }
+                // Buttons
+                else if (element == gamepad.buttonA) {
+                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                }
+                else if (element == gamepad.buttonX) {
+                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
+                }
+            };
+        }
+#endif
+    }
 }
 
 @end
