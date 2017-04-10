@@ -210,7 +210,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     NSLog(@"multiplier: %.1f", framerateMultiplier);
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
     [_renderDelegate setEnableVSync:framerateMultiplier == 1.0];
-    OESetThreadRealtime(gameInterval, 0.007, 0.03); // guessed from bsnes
 }
 
 - (void)executeFrame
