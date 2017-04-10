@@ -33,7 +33,7 @@
 // Minimum is 128
 // Recommended is 256
 #ifndef PMTMPV
-#define PMTMPV	256
+#define PMTMPV	512
 #endif
 
 #ifdef _WIN32
