@@ -1,0 +1,5 @@
+format=raw
+gfx=tiles
+
+img=teampokeme.bmp
+out=teampokeme.bin

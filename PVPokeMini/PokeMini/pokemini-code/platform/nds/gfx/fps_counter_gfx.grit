@@ -1,0 +1,8 @@
+# 4 bit tile
+-gB4
+-gu16
+
+# tilemap format
+-gt
+-mR4
+-m!

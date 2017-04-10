@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme>
+	<keyword-classes>
+		<keyword-class name="pm_instruction">
+			nop mov add sub adc sbc cmp inc dec neg mul div tst
+			and or xor not shl sal shr sar rol rolc ror rorc xchg pack unpack
+			swap ex push pop ret reti retskip halt stop
+		</keyword-class>
+		<keyword-class name="stack_instruction">
+			pushx pusha pushax popx popa popax
+		</keyword-class>
+		<keyword-class name="call_instruction">
+			call callb callw callc callnc callz callnz cint
+			callcb callncb callzb callnzb callcw callncw callzw callnzw
+			calll callle callg callge callo callno callns calls
+			callnx0 callnx1 callnx2 callnx3 callx0 callx1 callx2 callx3
+		</keyword-class>
+		<keyword-class name="jump_intruction">
+			jmp jmpb jmpw jc jnc jz jnz jcb jncb jzb jnzb
+			jcw jncw jzw jnzw jdbnz jint jl jle jg jge jo jno jns js
+			jnx0 jnx1 jnx2 jnx3 jx0 jx1 jx2 jx3
+		</keyword-class>
+		<keyword-class name="pm_register">
+			f a b l h ba hl x y n i xi yi sp pc u v
+		</keyword-class>
+		<keyword-class name="directive_pmas">
+			.endm .endr .macro .macroicase .rept
+			.if .elif .elsif .else .endif .ifdef .ifndef .ifstring .ifnstring
+			.db .dw .dd .ram .equ .set .define .option .unset .undefine .instruction
+			.org .orgfill .reloc .endreloc .align .ds .parse .include .incbin
+			.printf .error .warning .exit .end
+		</keyword-class>
+		<keyword-class name="pminit_macros">
+			pm_header cpu_clear set_f clear_f
+			pm_codeinfo pm_datainfo pm_rominfo colorpm_init
+			pm_align_map pm_align_tiles pm_align_bg pm_align_background pm_align_spr pm_align_oam pm_align_sprites
+			fjmp fjc fjnc fjz fjnz fjdbnz fjl fjle fjg fjge fjo fjno fjns fjs
+			fcall fcallc fcallnc fcallz fcallnz fcalll fcallle fcallg fcallge
+			fcallo fcallno fcallns fcalls
+			rirq disable_mirq enable_mirq priority_irqs enable_irqs disable_irqs
+			add24x add24y add24hl add24x_a add24y_a add24hl_a
+		</keyword-class>
+		<keyword-class name="pminit_defines">
+			pminit_ver pm_gamecode flag_z flag_c flag_o flag_s flag_bcd flag_nibble flag_id flag_ib
+			sstack_base stack_base reg_base n_base vram_base vram spr_base
+			oam_base map_base map tilemap ram_base ram_size symoutput ram
+			pm_startram pminit_rand pminit_keypad pminit_framecnt
+			sys_ctrl1 sys_ctrl2 sys_ctrl3 sys_batt sec_ctrl sec_cnt_lo sec_cnt_mid sec_cnt_hi
+			tmr1_scale tmr1_ena_osc tmr1_osc tmr2_scale tmr2_osc tmr3_scale tmr3_osc
+			irq_pri1 irq_pri2 irq_pri3 irq_ena1 irq_ena2 irq_ena3 irq_ena4 irq_act1 irq_act2 irq_act3 irq_act4
+			tmr1_ctrl_l tmr1_ctrl_h tmr1_ctrl tmr1_pre_l tmr1_pre_h tmr1_pre tmr1_pvt_l tmr1_pvt_h tmr1_pvt tmr1_cnt_l tmr1_cnt_h tmr1_cnt
+			tmr2_ctrl_l tmr2_ctrl_h tmr2_ctrl tmr2_pre_l tmr2_pre_h tmr2_pre tmr2_pvt_l tmr2_pvt_h tmr2_pvt tmr2_cnt_l tmr2_cnt_h tmr2_cnt
+			tmr3_ctrl_l tmr3_ctrl_h tmr3_ctrl tmr3_pre_l tmr3_pre_h tmr3_pre tmr3_pvt_l tmr3_pvt_h tmr3_pvt tmr3_cnt_l tmr3_cnt_h tmr3_cnt
+			tmr256_ctrl tmr256_cnt key_pad keypad cart_bus io_dir io_data aud_ctrl aud_vol
+			prc_mode prc_rate prc_map_lo prc_map_mid prc_map_hi prc_scroll_y prc_scroll_x prc_spr_lo prc_oam_lo prc_spr_mid prc_oam_mid prc_spr_hi prc_oam_hi prc_cnt
+			prc_map_base prc_spr_base prc_oam_base lcd_ctrl lcd_data
+			pokemini_chr pokemini_hex pokemini_num pokemini_uintb pokemini_sintb pokemini_uintw pokemini_uintwl pokemini_uintwh pokemini_sintw pokemini_sintwl pokemini_sintwh pokemini_fx8 pokemini_fx8l pokemini_fx8h
+			colorpm_cmd colorpm_ctrl colorpm_addr colorpm_addrl colorpm_addrh colorpm_data colorpm_lp0 colorpm_hp0 colorpm_lp1 colorpm_hp1
+			disable_irq enable_irq tmr2_enable tmrs_on tmrs_enable tmrs_osc1 tmrs_osc2 sec_enable sec_reset low_battery tmr256_enable tmr256_reset tmr_8bits tmr_16bits tmr_preset tmr_reset tmr_enable
+			tmr_lo_div_off tmr_lo_div_disable tmr_lo_div_2 tmr_lo_div_8 tmr_lo_div_32 tmr_lo_div_64 tmr_lo_div_128 tmr_lo_div_256 tmr_lo_div_1024 tmr_lo_div_4096
+			tmr_lo_div2_off tmr_lo_div2_disable tmr_lo_div2_1 tmr_lo_div2_2 tmr_lo_div2_4 tmr_lo_div2_8 tmr_lo_div2_16 tmr_lo_div2_32 tmr_lo_div2_64 tmr_lo_div2_128
+			tmr_hi_div_off tmr_hi_div_disable tmr_hi_div_2 tmr_hi_div_8 tmr_hi_div_32 tmr_hi_div_64 tmr_hi_div_128 tmr_hi_div_256 tmr_hi_div_1024 tmr_hi_div_4096
+			tmr_hi_div2_off tmr_hi_div2_disable tmr_hi_div2_1 tmr_hi_div2_2 tmr_hi_div2_4 tmr_hi_div2_8 tmr_hi_div2_16 tmr_hi_div2_32 tmr_hi_div2_64 tmr_hi_div2_128
+			tmr_div_off tmr_div_disable tmr_div_2 tmr_div_8 tmr_div_32 tmr_div_64 tmr_div_128 tmr_div_256 tmr_div_1024 tmr_div_4096
+			tmr_div2_off tmr_div2_disable tmr_div2_1 tmr_div2_2 tmr_div2_4 tmr_div2_8 tmr_div2_16 tmr_div2_32 tmr_div2_64 tmr_div2_128
+			tmr_osc1_lo tmr_osc1_hi tmr_osc2_lo tmr_osc2_hi
+			irq_pri1_tmr3 irq_pri1_tmr1 irq_pri1_tmr2 irq_pri1_prc
+			irq_pri2_unknown irq_pri2_key_pad irq_pri2_keypad irq_pri2_cartridge irq_pri2_tmr256 irq_pri2_hz irq_pri3_io irq_pri3_pio
+			irq_ena1_tmr3_pvt irq_ena1_tmr3_hi irq_ena1_tmr1_lo irq_ena1_tmr1_hi irq_ena1_tmr2_lo irq_ena1_tmr2_hi irq_ena1_prc_div irq_ena1_prc_copy
+			irq_ena2_cartridge irq_ena2_cart_eject irq_ena2_1hz irq_ena2_2hz irq_ena2_8hz irq_ena2_32hz
+			irq_ena3_key_a irq_ena3_key_b irq_ena3_key_c irq_ena3_key_up irq_ena3_key_down irq_ena3_key_left irq_ena3_key_right irq_ena3_key_power irq_ena3_keys
+			irq_ena4_unknown1 irq_ena4_unknown2 irq_ena4_unknown3 irq_ena4_unmapped1 irq_ena4_unmapped2 irq_ena4_shock irq_ena4_ir_rx
+			irq_act1_tmr3_pvt irq_act1_tmr3_hi irq_act1_tmr1_lo irq_act1_tmr1_hi irq_act1_tmr2_lo irq_act1_tmr2_hi irq_act1_prc_div irq_act1_prc_copy
+			irq_act2_cartridge irq_act2_cart_eject irq_act2_1hz irq_act2_2hz irq_act2_8hz irq_act2_32hz
+			irq_act3_key_a irq_act3_key_b irq_act3_key_c irq_act3_key_up irq_act3_key_down irq_act3_key_left irq_act3_key_right irq_act3_key_power irq_act3_keys
+			irq_act4_unknown1 irq_act4_unknown2 irq_act4_unknown3 irq_act4_unmapped1 irq_act4_unmapped2 irq_act4_shock irq_act4_ir_rx
+			key_a key_b key_c key_up key_down key_left key_right key_power
+			io_ir_tx io_ir_transmit io_ir_rx io_ir_receive io_eeprom_dat io_eeprom_data io_eeprom_clk io_eeprom_clock io_rumble io_ir_disable io_ir_off
+			prc_invertmap prc_invertbg prc_enablemap prc_enablebg prc_map prc_bg prc_enablespr prc_enableoam prc_spr prc_oam prc_enable prc_enablecopy prc_enablecpy
+			prc_map12x16 prc_bg12x16 prc_map12x16 prc_bg12x16 prc_map16x12 prc_bg16x12 prc_map16x12 prc_bg16x12
+			prc_map24x8 prc_bg24x8 prc_map24x8 prc_bg24x8 prc_map24x16 prc_bg24x16 prc_map24x16 prc_bg24x16 prc_mapmask prc_bgmask
+			prc_rate_3 prc_rate_6 prc_rate_9 prc_rate_12 prc_rate_2 prc_rate_4 prc_rate_6alt prc_rate_8 prc_ratemask
+			prc_24fps prc_12fps prc_8fps prc_6fps prc_36fps prc_18fps prc_12fpsalt prc_9fps prc_fpsmask
+			lcd_column_lo lcd_column_hi lcd_startline lcd_page lcd_contrast lcd_segdir lcd_invsegdir
+			lcd_dispsel_on lcd_dispsel_off lcd_dispinv_on lcd_dispinv_off lcd_dispenable lcd_dispdisable
+			lcd_rownormal lcd_rowinvert lcd_start_rmw lcd_begin_rmw lcd_end_rmw lcd_reset lcd_nop
+			colorpm_unlocked colorpm_unlock1 colorpm_unlock2 colorpm_lock
+			colorpm_fixed colorpm_postinc colorpm_postdec colorpm_preinc colorpm_flip
+			colorpm_vram_off colorpm_lcd_off colorpm_prc_off colorpm_vram_on colorpm_lcd_on colorpm_prc_on
+			spr_x spr_y spr_tile spr_ctrl oam_x oam_y oam_tile oam_ctrl
+			spr_hflip spr_vflip spr_invert spr_enable spr_disable oam_fliph oam_flipv oam_invert oam_enable oam_disable
+			cint_hardreset cint_softreset cint_softreset2 cint_prc_copy cint_prc_div cint_tmr2_hi cint_tmr2_lo cint_tmr1_hi cint_tmr1_lo cint_tmr3_hi cint_tmr3_pvt
+			cint_32hz cint_8hz cint_2hz cint_1hz cint_ir_rx cint_shock cint_cart_eject cint_cartridge cint_key_power cint_key_right cint_key_left cint_key_down cint_key_up
+			cint_key_c cint_key_b cint_key_a cint_unknown1d cint_unknown1e cint_unknown1f cint_irq_fff1 cint_suspend cint_sleep_lcdoff cint_sleep_lcdon cint_shutdown cint_exit
+			cint_unknown25 cint_set_contrast cint_add_contrast cint_apply_contrast cint_get_contrast cint_tmp_contrast cint_lcd_on cint_lcd_init cint_lcd_off
+			cint_enable_ramvector cint_disable_ramvector cint_enable_cart_eject cint_disable_cart_eject cint_unknown32 cint_unknown33 cint_unknown34 cint_unknown35
+			cint_unknown36 cint_unknown37 cint_unknown38 cint_unknown39 cint_unknown3a cint_cart_disable cint_cart_enable cint_cart_detect cint_routine
+			cint_set_prc_rate cint_get_prc_rate cint_multicart cint_devcart_readid cint_devcart_reset cint_devcart_program cint_devcart_erase cint_devcart_unlock
+			cint_devcart_bank cint_devcart_cmd_c9 cint_devcart_prepid cint_devcart_selgame cint_devcart_nsdk cint_ir_pulse
+			irq_prc_copy irq_prc_div irq_tmr2_hi irq_tmr2_lo irq_tmr1_hi irq_tmr1_lo irq_tmr3_hi irq_tmr3_pvt irq_32hz irq_8hz irq_2hz irq_1hz irq_ir_rx irq_shock irq_unknown
+			irq_cartridge irq_key_power irq_key_right irq_key_left irq_key_down irq_key_up irq_key_c irq_key_b irq_key_a
+			irq_prc irq_tmr2 irq_tmr1 irq_tmr3 irq_tmr256 irq_hz irq_io irq_pio irq_key irq_all irq_totallyall
+			irqf_far irqf_norirq irqf_nostartup
+		</keyword-class>
+		<keyword-class name="pmmusic_macros">
+			pmmusic_align pmmusic_pattern pmmusic_row pmmusic_writeram pmmusic_mark pmmusic_loop pmmusic_next pmmusic_goback pmmusic_end
+		</keyword-class>
+		<keyword-class name="pmmusic_defines">
+			irq_music n____
+			n_c_1 n_cs1 n_d_1 n_ds1 n_e_1 n_f_1 n_fs1 n_g_1 n_gs1 n_a_1 n_as1 n_b_1
+			n_c_2 n_cs2 n_d_2 n_ds2 n_e_2 n_f_2 n_fs2 n_g_2 n_gs2 n_a_2 n_as2 n_b_2
+			n_c_3 n_cs3 n_d_3 n_ds3 n_e_3 n_f_3 n_fs3 n_g_3 n_gs3 n_a_3 n_as3 n_b_3
+			n_c_4 n_cs4 n_d_4 n_ds4 n_e_4 n_f_4 n_fs4 n_g_4 n_gs4 n_a_4 n_as4 n_b_4
+			n_c_5 n_cs5 n_d_5 n_ds5 n_e_5 n_f_5 n_fs5 n_g_5 n_gs5 n_a_5 n_as5 n_b_5
+			n_c_6 n_cs6 n_d_6 n_ds6 n_e_6 n_f_6 n_fs6 n_g_6 n_gs6 n_a_6 n_as6 n_b_6
+			n_c_7 n_cs7 n_d_7 n_ds7 n_e_7 n_f_7 n_fs7 n_g_7 n_gs7 n_a_7 n_as7 n_b_7
+		</keyword-class>
+
+		<keyword-class name="instructions">
+			<include-class name="pm_instruction"/>
+			<include-class name="stack_instruction"/>
+			<include-class name="call_instruction"/>
+			<include-class name="jump_intruction"/>
+		</keyword-class>
+
+		<keyword-class name="macros">
+			<include-class name="pminit_macros"/>
+			<include-class name="pmmusic_macros"/>
+			<include-class name="pmclib_macros"/>
+		</keyword-class>
+		
+		<keyword-class name="functions">
+			<include-class name="pmclib_functions"/>
+		</keyword-class>
+		
+		<keyword-class name="defines">
+			<include-class name="pminit_defines"/>
+			<include-class name="pmmusic_defines"/>
+			<include-class name="pmclib_defines"/>
+		</keyword-class>
+		
+	</keyword-classes>
+
+	<language name="pm_asm" title=".:Pokémon Mini:." folding="false">
+		<lexer name="asm" />
+		<comments line=";" />
+		<use-keywords>
+			<keyword key="0" name="Instructions" class="instructions"/>
+			<keyword key="1" name="Functions" class="functions"/>
+			<keyword key="2" name="Registers" class="pm_register"/>
+			<keyword key="3" name="Macros" class="macros"/>
+			<keyword key="4" name="Directives" class="directive_pmas"/>
+			<keyword key="5" name="Defines" class="defines"/>
+		</use-keywords>
+		<use-styles>
+			<style name="Default" key="32" fore="#808080" />
+			<style name="Whitespace" key="0"  />
+			<style name="Comment" key="1" class="comment" />
+			<style name="Number" key="2" class="number" />
+			<style name="String" key="3" class="string" />
+			<style name="Operator" key="4" class="operator" />
+			<style name="Identifier" key="5" class="identifier" />
+			<style name="Instructions" key="6" class="keyword" />
+			<style name="Misc." key="7" class="keyword" bold="true" />
+			<style name="Register" key="8" fore="46aa03" bold="true" />
+			<style name="Directive" key="9" class="keyword" />
+			<style name="Directive Operand" key="10" class="keyword" />
+			<style name="Single Quote String" key="12" class="string" />
+			<style name="Unclosed String" key="13" fore="000000" back="E0C0E0" eolfilled="true" />
+			<style name="Extended Instructions" key="14" fore="B00040" />
+		</use-styles>
+	</language>
+</Scheme>

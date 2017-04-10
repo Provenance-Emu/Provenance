@@ -1,0 +1,668 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Tool: Music Converter</h1>
+    <p><strong>Current Version:</strong> 1.3 (Released with PokeMini 0.5.5)</p>
+    <p>Convert music sheets to a data format that can be used with <a href="LIB_pm_music.html">pm_music</a> library</p>
+    <h2>Command-Line</h2>
+    <pre>
+Usage: pokemini_musicconv [options]
+  -asmf               Output in asm format (def)
+  -cf                 Output in C format
+  -i music.txt        Music input (required)
+  -o music.asm        Output file
+  -oh music.inc       Output header file
+  -vh music           Set prefix for header definitions
+  -q                  Quiet
+  -v                  Verbose
+  -sv                 Super-verbose
+  -play varname       Play specific BGM/SFX
+
+Play flags:
+  -snddirect          Sound Engine: Direct (def)
+  -sndemulated        Sound Engine: Emulated
+  -piezo              Use piezo filtering (def)
+  -nopiezo            Don't use piezo filtering
+  -towav music.wav    Save to WAV while playing
+</pre>
+    <h2>Music sheet format</h2>
+        <h3 align="center">Notes</h3>
+        <p><strong>//</strong> can be used for single-line comments</p>
+        <p><strong>/*</strong> and <strong>*/</strong> are used for multi-line comments</p>
+        <p><strong>{</strong> and <strong>}</strong> can be used to brace content</p>
+        <p>Numbers can have <strong>$</strong> or <strong>0x</strong> prefix for hexadecimal notation        
+        <p>PokeMini Music converter specify &quot;s&quot; and &quot;q&quot;    to work as:
+        <p align="center" class="smallfnt"><img src="pmmusic_qs.png" alt="Pic of how Quantize and Sustain affect sound" width="256" height="128" /><br />
+        Figure 1 - How Quantize and Sustain affects volume output
+        <br />
+    <p>Using SHORTQ=yes allow quantize to meet the standard modern MML but sustain must still be specified.</p>
+    <h3 align="center">Directives</h3>
+        <table border="1" width="100%" class="smallfnt">
+          <tr>
+            <th scope="col" width="40%">Directive Name</th>
+            <th scope="col" width="60%">Description</th>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">INCLUDE</strong> anothersheet.txt</td>
+            <td>Include another file</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">TITLE</strong> <span class="code_string">sheet title</span></td>
+            <td>Title of the music sheet</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">COMPOSER</strong> <span class="code_string">composer name</span></td>
+            <td>Composer name</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">PROGRAMMER</strong> <span class="code_string">programmer name</span></td>
+            <td>Programmer name</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">DESCRIPTION</strong> <span class="code_string">description about this</span></td>
+            <td>Extra description</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">OUTFORMAT</strong> <span class="code_def">asm</span><br />
+                <strong class="code_dire">OUTFORMAT</strong> <span class="code_def">c</span></td>
+            <td>Set output format<br />
+              Overrides &quot;-asmf&quot; / &quot;-cf&quot; option</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">VARHEADER</strong> header.inc<br />
+                <strong class="code_dire">VARHEADER</strong></td>
+            <td>Set variable name (prefix) for definitions in the header<br />
+            Overrides &quot;-vh&quot;</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">OUTHEADER</strong> header.inc<br />
+                <strong class="code_dire">OUTHEADER</strong></td>
+            <td>Set output header filename, don't write filename to disable header writing<br />
+              Overrides &quot;-oh&quot;</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">OUTFILE</strong> music.asm<br />
+              <strong class="code_dire">OUTFILE</strong></td>
+            <td>Set output filename, don't write filename to disable output wiriting<br />
+            Overrides &quot;-o&quot;</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">MTIME</strong> $00FF<br />
+              <strong class="code_dire">MASTERTIME</strong> $00FF</td>
+            <td><p>Master time (In Timer 2 Preset at Prescale 6, CPU / 1024)<br />
+              TicksPerSec = 3906.25 / (Master Time + 1);</p></td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">MBPM</strong> 114, 128<br />
+            <strong class="code_dire">MASTERBPM</strong> 114, 128</td>
+            <td><p>Master time in beats-per-minute in 4/4 format for certain wait value<br />
+              1st Parameter = Beats per minute<br />
+              2nd Parameter = Wait value (between 1 and 255)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">VOLLVL</strong> <span class="code_def">mml</span><br />
+            <strong class="code_dire">VOLLEVEL</strong> <span class="code_def">mml</span></td>
+            <td>Volume level:<br />
+            <span class="code_def">mml</span> = 0 to 15<br />
+            <span class="code_def">system</span> = 0 to 3</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">OCTREV</strong> <span class="code_def">no</span><br />
+              <strong class="code_dire">OCTAVEREV</strong> <span class="code_def">no</span></td>
+            <td>Reverse octave signs in MML<br />
+              <span class="code_def">no</span> = Decrease octave is &lt; and Increase octave is &gt;<br />
+              <span class="code_def">yes</span> = Decrease octave is &gt; and Increase octave is &lt;</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">SHORTQ</strong> <span class="code_def">no</span><br />
+              <strong class="code_dire">SHORTQUANTIZE</strong> <span class="code_def">no</span></td>
+            <td>Use shorter quantize/sustain range in MML<br />
+              <span class="code_def">no</span> = Range of 'q' and 's' commands is 0 to 64<br />
+            <span class="code_def">yes</span> = Range of 'q' and 's' commands is 0 to 8</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">BGM</strong> varname <a href="#patternlist">&lt;pattern-list&gt;</a></td>
+            <td>Define Background music</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">PAT_T</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a><br />
+                <strong class="code_dire">PAT_TRACK</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a><br />
+                <strong class="code_dire">PATTERN_T</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a><br />
+            <strong class="code_dire">PATTERN_TRACK</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a></td>
+            <td>Define Pattern (<span class="code_cvar">Track</span> syntax)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">SFX_T</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a><br />
+            <strong class="code_dire">SFX_TRACK</strong> varname <a href="#trkdata">&lt;trk-data&gt;</a></td>
+            <td>Define Sound effect (<span class="code_cvar">Track</span> syntax)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">MACRO_T</strong> uppercase-letter <a href="#trkdata">&lt;trk-data&gt;</a><br />
+            <strong class="code_dire">MACRO_TRACK</strong> uppercase-letter <a href="#trkdata">&lt;trk-data&gt;</a></td>
+            <td>Define Macro (<span class="code_cvar">Track</span> syntax)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">PAT</strong> varname <a href="#mmldata">&lt;mml-data&gt;</a><br />
+            <strong class="code_dire">PATTERN</strong> varname <a href="#mmldata">&lt;mml-data&gt;</a></td>
+            <td>Define Pattern (<span class="code_cptr">MML</span> syntax)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">SFX</strong> varname <a href="#mmldata">&lt;mml-data&gt;</a></td>
+            <td>Define Sound effect (<span class="code_cptr">MML</span> syntax)</td>
+          </tr>
+          <tr>
+            <td><strong class="code_dire">MACRO</strong> uppercase-letter <a href="#mmldata">&lt;mml-data&gt;</a></td>
+            <td>Define Macro (<span class="code_cptr">MML</span> syntax)</td>
+          </tr>
+        </table>
+    <h3 align="center"><a name="patternlist" id="patternlist"></a>Pattern List &lt;pattern-list&gt;</h3>
+        <p><strong>Syntax:</strong> <em>varname varname ...</em></p>
+        <p><em>varname</em> is a name of an existing pattern</p>
+        <p>Each pattern must be separated by spaces, tabs or new-lines</p>
+        <p>Loop can be marked with a <strong>|</strong> (pipe) character between spaces, this will cause to loop from the <strong>|</strong> (pipe)  to end infinitely<br />
+        ( e.g. <span class="smallfnt"><strong class="code_dire">BGM</strong> <span class="code_def">testmusic</span> { <span class="code_def">start_pattern</span> | <span class="code_def">looping_pattern</span> }</span> )</p>
+        <h3 align="center"><a name="trkdata" id="trkdata"></a>Track data &lt;trk-data&gt;</h3>
+        <p>Data is case-insensitive: <strong>A</strong> is the same as <strong>a</strong></p>
+        <h4>-- Insert row --</h4>
+        <p>Define a row</p>
+        <p><strong>Syntax:</strong></p>
+        <blockquote>
+            <span class="code_macro">ROW</span> {cmd}, {cmd}... {\n}<br />
+        </blockquote>
+    <p><strong>Default:</strong> <strong>w</strong>24 <strong>v</strong>15 <strong>%</strong>128 <strong>q</strong>64 <strong>s</strong>64 <strong>xt</strong>1 <strong>xd</strong></p>
+<table border="1" width="100%">
+          <tr>
+            <th scope="col" width="20%">{cmd}</th>
+            <th scope="col" width="80%">Description</th>
+          </tr>
+          <tr>
+            <td><strong>C</strong>n, <strong>C-</strong>n</td>
+            <td>Set note: <strong>C, D, E, F, G, A</strong> or <strong>B</strong><br />
+            n is octave number between 1 and 9</td>
+          </tr>
+          <tr>
+            <td><strong>C#</strong>n, <strong>C+</strong>n</td>
+            <td>Set note: <strong>C, D, E, F, G, A</strong> or <strong>B</strong> (sharp)<br />
+              n is octave number between 1 and 9</td>
+          </tr>
+          <tr>
+            <td><strong>%</strong>n</td>
+            <td>Set pulse-width<br />
+              n is between 0 to 255, ex. 128 = 50% (Square)</td>
+          </tr>
+          <tr>
+            <td><strong>v</strong>n</td>
+            <td>Set volume<br />
+            n is 0 to 16, ex. 8 = 50% (VOLLVL=mml)<br />
+            n is 0 to 3, ex. 2 = 50% (VOLLVL=system)</td>
+          </tr>
+          <tr>
+            <td><strong>w</strong>n</td>
+            <td>Set number of ticks to wait<br />n is between 1 to 255</td>
+          </tr>
+          <tr>
+            <td><strong>!</strong>n:d</td>
+            <td>Write to RAM<br />
+            n is relative address between 0 to 255<br />
+            d is data to write (8-bits)            </td>
+          </tr>
+          <tr>
+            <td><strong>q</strong>n</td>
+            <td><p>Set quantization (gating)<br />
+            n is 0 to 64, ex. 32 = 50% (SHORTQ=no)<br />
+            n is 0 to 8, ex. 4 = 50% (SHORTQ=yes)</td>
+          </tr>
+          <tr>
+            <td><strong>s</strong>n</td>
+            <td>Set sustain<br />
+            n is 0 to 64, ex. 32 = 50% (SHORTQ=no)<br />
+            n is 0 to 8, ex. 4 = 50% (SHORTQ=yes)</td>
+          </tr>
+          <tr>
+            <td><strong>xt</strong>n</td>
+            <td>Set effect ticks<br />
+            Lower number provide better quality but will use more data            </td>
+      </tr>
+          <tr>
+            <td><strong>xd</strong></td>
+            <td>Disable effects</td>
+      </tr>
+          <tr>
+            <td><strong>xa</strong>n:m</td>
+            <td>Arpeggio effect (only 1 effect can be used at a time)<br />
+              n is the offset of the 2nd note<br />
+              m is the offset of the 3rd note<br />
+              ticks will affect the speed of arpeggio</td>
+          </tr>
+          <tr>
+            <td><strong>xp</strong>n</td>
+            <td>Portamento effect (only 1 effect can be used at a time)<br />
+              n is the offset of the note to slide<br />
+              ticks will affect aliasing of the tone</td>
+          </tr>
+          <tr>
+            <td><strong>xs</strong>n</td>
+            <td>Set random seed number<br />
+              n is a 32-bits seed number<br /></td>
+          </tr>
+          <tr>
+            <td><strong>xr</strong>n</td>
+            <td>Random frequencies effect (only 1 effect can be used at a time)<br />
+              n is the range of the note to generate random tones<br />
+              ticks will affect aliasing of the tone</td>
+          </tr>
+    </table>
+        <h4>-- End Sound --</h4>
+        <p>End BGM/SFX playback</p>
+        <p><strong>Syntax:</strong></p>
+        <blockquote>
+          <span class="code_macro">END</span>        </blockquote>
+    <h4>-- Start Loop --</h4>
+        <p>Start loop, can go 3 level depth</p>
+        <p><strong>Syntax:</strong></p>
+        <blockquote>
+          <span class="code_macro">LOOP</span><br />
+          <span class="code_macro">MARK</span><br />
+    <span class="code_macro">DO</span></blockquote>
+    <h4>-- End Loop --</h4>
+        <p>End loop, can go 3 level depth</p>
+        <p><strong>Syntax:</strong></p>
+        <blockquote>
+          <p><span class="code_macro">ENDL</span> {loopnum}<br />
+          <span class="code_macro">ENDLOOP</span> {loopnum}<br />
+          <span class="code_macro">REPEAT</span> {loopnum}</p>
+        </blockquote>
+    <p><em>loopnum</em> - number of loops,  between 1 and 255</p>
+        <h4>-- Use Macro --</h4>
+        <p>Use defined macro, macro must be declared before using it</p>
+        <p><strong>Syntax:</strong></p>
+        <blockquote>
+          <span class="code_macro">MACRO</span> {uppercase-letter}        </blockquote>
+        <p><em>uppercase-letter</em> - Single uppercase letter</p>
+        <h3 align="center"><a name="mmldata" id="mmldata"></a>MML data &lt;mml-data&gt;</h3>
+        <p>Data is case-sensitive: <strong>A</strong> is different than <strong>a</strong></p>
+        <p><strong>Syntax:</strong> <em>{mml}{mml}...</em></p>
+        <p><strong>Default:</strong> <strong>w</strong>24 <strong>l</strong>4 <strong>v</strong>15 <strong>o</strong>5 <strong>%</strong>128 <strong>q</strong>64 <strong>s</strong>64 <strong>xt</strong>1 <strong>xd</strong></p>
+        <p>Spaces and Tabs are ignored between each mml command</p>
+        <table border="1" width="100%">
+          <tr>
+            <th scope="col" width="20%">{mml}</th>
+            <th scope="col" width="80%">Description</th>
+          </tr>
+          <tr>
+            <td><strong>;</strong></td>
+            <td>End sound<br /></td>
+          </tr>
+          <tr>
+            <td><strong>[</strong></td>
+            <td>Start loop</td>
+          </tr>
+          <tr>
+            <td><strong>]</strong></td>
+            <td>End loop<br />
+              This will loop 1 time only</td>
+          </tr>
+          <tr>
+            <td><strong>]</strong>n</td>
+            <td>End loop<br />
+              n is number of times the sequence is played, 1 to 256</td>
+          </tr>
+          <tr>
+            <td><strong>c</strong>[n]</td>
+            <td>Play note: <strong>c, d, e, f, g, a</strong> or <strong>b</strong><br />
+              n is length of note (optional), sufix of <strong>.</strong> or <strong>..</strong> will expand note to 1.5% and 1.75% respectively</td>
+          </tr>
+          <tr>
+            <td><strong>c</strong>-[n]</td>
+            <td>Play note: <strong>c, d, e, f, g, a</strong> or <strong>b</strong> (Flat)<br />
+            n is length of note (optional), sufix of <strong>.</strong> or <strong>..</strong> will expand note to 1.5% and 1.75% respectively</td>
+          </tr>
+          <tr>
+            <td><strong>c</strong>+[n], <strong>c#</strong>[n]</td>
+            <td>Play note: <strong>c, d, e, f, g, a</strong> or <strong>b</strong> (Sharp)<br />
+            n is length of note (optional)<br />
+            sufix of <strong>.</strong> or <strong>..</strong> will expand note to 1.5% and 1.75% respectively</td>
+          </tr>
+          <tr>
+            <td><strong>r</strong>[n]</td>
+            <td>Rest / Silence<strong></strong><br />
+            n is length of rest (optional)<br />
+            sufix of <strong>.</strong> or <strong>..</strong> will expand note to 1.5% and 1.75% respectively</td>
+          </tr>
+          <tr>
+            <td><strong>%</strong>n</td>
+            <td>Set pulse-width<br />
+              n is between 0 to 255, ex. 128 = 50% (Square)</td>
+          </tr>
+          <tr>
+            <td><strong>\</strong>n<br />
+            <strong>/</strong>n</td>
+            <td>Set pulse-width in percentage<br />
+              n is between 0 to 100, ex. 50 = 50% (Square)</td>
+          </tr>
+          <tr>
+            <td><strong>v</strong>n</td>
+            <td>Set volume<br />
+              n is 0 to 16, ex. 8 = 50% (VOLLVL=mml)<br />
+              n is 0 to 3, ex. 2 = 50% (VOLLVL=system)</td>
+          </tr>
+          <tr>
+            <td><strong>w</strong>n</td>
+            <td>Set number of ticks to wait on a whole length<br />
+              n is between 1 to 255</td>
+          </tr>
+          <tr>
+            <td><strong>!</strong>n:d</td>
+            <td>Write to RAM<br />
+              n is relative address between 0 to 255<br />
+              d is data to write (8-bits) </td>
+          </tr>
+          <tr>
+            <td><strong>l</strong>n</td>
+            <td>Set length<br />
+              n is between 1 to 64, 1 = whole, 2 = half, 4 = quarter...</td>
+          </tr>
+          <tr>
+            <td><strong>A, B, C, D...</strong></td>
+            <td>Insert macro, upper-case alphabetic letter</td>
+          </tr>
+          <tr>
+            <td><strong>&lt;</strong></td>
+            <td>Decrease octave<br /></td>
+          </tr>
+          <tr>
+            <td><strong>&gt;</strong></td>
+            <td>Increase octave<br /></td>
+          </tr>
+          <tr>
+            <td><strong>o</strong>n</td>
+            <td>Set octave<br />
+            n is between 1 to 9</td>
+          </tr>
+          <tr>
+            <td><strong>q</strong>n</td>
+            <td><p>Set quantization (gating)<br />
+              n is 0 to 64, ex. 32 = 50% (SHORTQ=no)<br />
+              n is 0 to 8, ex. 4 = 50% (SHORTQ=yes)</p></td>
+          </tr>
+          <tr>
+            <td><strong>s</strong>n</td>
+            <td>Set sustain<br />
+              n is 0 to 64, ex. 32 = 50% (SHORTQ=no)<br />
+              n is 0 to 8, ex. 4 = 50% (SHORTQ=yes)</td>
+          </tr>
+          <tr>
+            <td><strong>xt</strong>n</td>
+            <td>Set effect ticks<br />
+              Lower number provide better quality but will use more data </td>
+          </tr>
+          <tr>
+            <td><strong>xd</strong></td>
+            <td>Disable effects</td>
+          </tr>
+          <tr>
+            <td><strong>xa</strong>n:m</td>
+            <td>Arpeggio effect (only 1 effect can be used at a time)<br />
+              n is the offset of the 2nd note<br />
+              m is the offset of the 3rd note<br />
+              ticks will affect the speed of arpeggio</td>
+          </tr>
+          <tr>
+            <td><strong>xp</strong>n</td>
+            <td>Portamento effect (only 1 effect can be used at a time)<br />
+              n is the offset of the note to slide<br />
+              ticks will affect aliasing of the tone</td>
+          </tr>
+          <tr>
+            <td><strong>xs</strong>n</td>
+            <td>Set random seed number<br />
+              n is a 32-bits seed number<br /></td>
+          </tr>
+          <tr>
+            <td><strong>xr</strong>n</td>
+            <td>Random frequencies effect (only 1 effect can be used at a time)<br />
+              n is the range of the note to generate random tones<br />
+              ticks will affect aliasing of the tone</td>
+          </tr>
+        </table>
+        <h2>Example</h2>
+        <pre><span class="code_dire">TITLE</span> <span class="code_string">Pokemon-Mini Intro</span>
+<span class="code_dire">COMPOSER</span> <span class="code_string">Nintendo</span>
+<span class="code_dire">PROGRAMMER</span> <span class="code_string">JustBurn</span>
+<span class="code_dire">DESCRIPTION</span> <span class="code_string">Intro played when starting any commercial game</span>
+
+<span class="code_dire">MTIME</span> $00FF
+
+<span class="code_dire">BGM</span> <span class="code_def">bgm_pmintro</span> { <span class="code_def">bgm_pmintro_p0</span> }
+
+<span class="code_dire">PAT</span> <span class="code_def">bgm_pmintro_pat</span> {    <span class="code_comm">// This version works with any MML player</span>
+ o6 l6
+ v15e v8e v15a v8a r3
+ &gt; v15d v8d v15c+ v8c+
+ &lt; v15a v8a &gt; v15e v8e r1
+ v15 l8 d a &gt; e b e b r4 ;
+}
+
+<span class="code_dire">PAT</span> <span class="code_def">bgm_pmintro_p0</span> {     <span class="code_comm">/* Same as bgm_pmintro_pat */</span>
+ o6 l3
+ s32 e a r &gt;d c+ &lt;a &gt;e r1
+ s64 l8 d a &gt;e b e b r4
+}
+
+<span class="code_dire">PAT_T</span> <span class="code_def">bgm_pmintro_p0t</span> {     <span class="code_comm">/* Same as bgm_pmintro_pat */</span>
+<strong class="code_macro">ROW</strong> w4, v15, %$80, E-5
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w4, v15, %$80, A-5
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w9, v0
+<strong class="code_macro">ROW</strong> w4, v15, %$80, D-6
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w4, v15, %$80, C#6
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w4, v15, %$80, A-5
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w4, v15, %$80, E-6
+<strong class="code_macro">ROW</strong> w4, v8
+<strong class="code_macro">ROW</strong> w24, v0
+<strong class="code_macro">ROW</strong> w3, v15, %$80, D-6
+<strong class="code_macro">ROW</strong> w3, v15, %$80, A-6
+<strong class="code_macro">ROW</strong> w3, v15, %$80, E-7
+<strong class="code_macro">ROW</strong> w3, v15, %$80, B-7
+<strong class="code_macro">ROW</strong> w3, v15, %$80, E-7
+<strong class="code_macro">ROW</strong> w3, v15, %$80, B-7
+<strong class="code_macro">ROW</strong> w6, v0
+<strong class="code_macro">END</strong>
+}
+</pre>
+        </p>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

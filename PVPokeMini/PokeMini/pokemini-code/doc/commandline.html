@@ -1,0 +1,406 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1> Command-Line </h1>
+    <p><em>Usage:</em><br />
+PokeMini [Options] rom.min</p>
+    <p> <em>Options:</em></p>
+    <table border="1">
+      <tr>
+        <th scope="col">Flag</th>
+        <th scope="col">Description</th>
+      </tr>
+      <tr>
+        <td>-freebios</td>
+        <td>Force FreeBIOS</td>
+      </tr>
+      <tr>
+        <td>-bios otherbios.min<br /></td>
+        <td>Load BIOS</td>
+      </tr>
+      <tr>
+        <td>-noeeprom<br /></td>
+        <td>Discard EEPROM data</td>
+      </tr>
+      <tr>
+        <td>-eeprom pokemini.eep   <br /></td>
+        <td>Load/Save EEPROM file</td>
+      </tr>
+      <tr>
+        <td>-eepromshare<br /></td>
+        <td>Share EEPROM to all ROMs</td>
+      </tr>
+      <tr>
+        <td>-noeepromshare<br /></td>
+        <td>Individual EEPROM for each ROM (def)</td>
+      </tr>
+      <tr>
+        <td>-nostate<br /></td>
+        <td>Discard State data (default)</td>
+      </tr>
+      <tr>
+        <td>-state pokemini.sta<br /></td>
+        <td>Load/Save state file</td>
+      </tr>
+      <tr>
+        <td>-nortc<br /></td>
+        <td>No RTC</td>
+      </tr>
+      <tr>
+        <td>-statertc<br /></td>
+        <td>RTC time difference in savestates</td>
+      </tr>
+      <tr>
+        <td>-hostrtc<br /></td>
+        <td>RTC match the Host clock (def)</td>
+      </tr>
+      <tr>
+        <td>-nosound<br /></td>
+        <td>Disable sound</td>
+      </tr>
+      <tr>
+        <td>-sound<br /></td>
+        <td>Same as -sounddirectpwm (def)</td>
+      </tr>
+      <tr>
+        <td>-sounddirect<br /></td>
+        <td>Use timer 3 directly for sound</td>
+      </tr>
+      <tr>
+        <td>-soundemulate</td>
+        <td>Emulate sound circuit<br /></td>
+      </tr>
+      <tr>
+        <td>-sounddirectpwm</td>
+        <td>Same as direct, can play PWM samples (def)<br /></td>
+      </tr>
+      <tr>
+        <td>-nopiezo<br /></td>
+        <td>Disable piezo speaker filter</td>
+      </tr>
+      <tr>
+        <td>-piezo<br /></td>
+        <td>Enable piezo speaker filter (def)</td>
+      </tr>
+      <tr>
+        <td>-scanline<br /></td>
+        <td>50% Scanline LCD filter</td>
+      </tr>
+      <tr>
+        <td>-dotmatrix<br /></td>
+        <td>LCD dot-matrix filter (def)</td>
+      </tr>
+      <tr>
+        <td>-nofilter<br /></td>
+        <td>No LCD filter</td>
+      </tr>
+      <tr>
+        <td>-2shades<br /></td>
+        <td>LCD Mode: No mixing</td>
+      </tr>
+      <tr>
+        <td>-3shades<br /></td>
+        <td>LCD Mode: Grey emulation</td>
+      </tr>
+      <tr>
+        <td>-analog<br /></td>
+        <td>LCD Mode: Pretend real LCD (def)</td>
+      </tr>
+      <tr>
+        <td>-fullbattery</td>
+        <td>Emulate with a full battery (default)<br /></td>
+      </tr>
+      <tr>
+        <td>-lowbattery</td>
+        <td>Emulate with a weak battery<br /></td>
+      </tr>
+      <tr>
+        <td>-palette 0<br /></td>
+        <td>Select palette for colors (0 to 15)</td>
+      </tr>
+      <tr>
+        <td>-rumblelvl 3<br /></td>
+        <td>Rumble level (0 to 3)</td>
+      </tr>
+      <tr>
+        <td>-nojoystick<br /></td>
+        <td>Disable joystick (def)</td>
+      </tr>
+      <tr>
+        <td>-joystick<br /></td>
+        <td>Enable joystick</td>
+      </tr>
+      <tr>
+        <td>-joyid 0<br /></td>
+        <td>Set joystick ID</td>
+      </tr>
+      <tr>
+        <td>-custom1light 0xFFFFFF</td>
+        <td>Palette Custom 1 Light</td>
+      </tr>
+      <tr>
+        <td> -custom1dark 0x000000<br /></td>
+        <td>Palette Custom 1 Dark</td>
+      </tr>
+      <tr>
+        <td>-custom2light 0xFFFFFF</td>
+        <td>Palette Custom 2 Light</td>
+      </tr>
+      <tr>
+        <td>-custom2dark 0x000000</td>
+        <td>Palette Custom 2 Dark</td>
+      </tr>
+      <tr>
+        <td>-synccycles 8</td>
+        <td>Number of cycles per hardware sync.</td>
+      </tr>
+      <tr>
+        <td>-multicart 0<br /></td>
+        <td>Multicart type (0 to 2)</td>
+      </tr>
+      <tr>
+        <td>-lcdcontrast 64<br /></td>
+        <td>LCD contrast boost in percent</td>
+      </tr>
+      <tr>
+        <td>-lcdbright 0<br /></td>
+        <td>LCD brightness offset in percent</td>
+      </tr>
+    </table>
+    <p><em>Only on SDL platform:</em></p>
+    <table border="1">
+      <tr>
+        <td>-dumpsound sound.wav</td>
+        <td>Dump sound into a WAV file</td>
+      </tr>
+      <tr>
+        <td>-windowed<br /></td>
+        <td>Display in window (default)</td>
+      </tr>
+      <tr>
+        <td>-fullscreen</td>
+        <td>Display in fullscreen</td>
+      </tr>
+      <tr>
+        <td>-zoom 4</td>
+        <td>Zoom display: 1 to 6 (def 4)</td>
+      </tr>
+      <tr>
+        <td>-bpp 16</td>
+        <td> Bits-Per-Pixel: 16 or 32 (def 16)</td>
+      </tr>
+    </table>
+    <p><em>Only on Debugger platform:</em></p>
+    <table border="1">
+      <tr>
+        <td>-autorun 0</td>
+        <td>Autorun, 0=Off, 1=Full, 2=Dbg+Snd, 3=Dbg</td>
+      </tr>
+      <tr>
+        <td>-windowed<br /></td>
+        <td>Display in window (default)</td>
+      </tr>
+      <tr>
+        <td>-fullscreen</td>
+        <td>Display in fullscreen</td>
+      </tr>
+      <tr>
+        <td>-zoom 4</td>
+        <td>Zoom display: 1 to 6 (def 4)</td>
+      </tr>
+      <tr>
+        <td>-bpp 16</td>
+        <td> Bits-Per-Pixel: 16 or 32 (def 16)</td>
+      </tr>
+    </table>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

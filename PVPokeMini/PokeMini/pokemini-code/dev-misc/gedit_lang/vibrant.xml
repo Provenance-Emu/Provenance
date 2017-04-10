@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<style-scheme id="vibrant" _name="Vibrant" version="1.0">
+	<author>Lateef Alabi-Oki</author>
+	<_description>Vibrant colors for your viewing pleasure</_description>
+
+<!-- ubuntu palette -->
+
+	<color name="orange_highlight" value="#eec73e"/>
+	<color name="orange"           value="#f0a513"/>
+	<color name="orange_base"      value="#fb8b00"/>
+	<color name="orange_shadow"    value="#f44800"/>
+
+	<color name="environmental_blue_highlight" value="#aaccee"/>
+	<color name="environmental_blue_medium"    value="#6699cc"/>
+	<color name="environmental_blue_base"      value="#336699"/>
+	<color name="environmental_blue_shadow"    value="#003366"/>
+
+	<color name="accent_yellow_highlight" value="#fdff99"/>
+	<color name="yellow"                  value="#ffff00"/>
+	<color name="accent_yellow_base"      value="#fdca01"/>
+	<color name="accent_yellow_shadow"    value="#986601"/>
+
+	<color name="accent_blue_highlight" value="#b3defd"/>
+	<color name="accent_blue"           value="#0197fd"/>
+	<color name="accent_blue_base"      value="#0169c9"/>
+	<color name="accent_blue_shadow"    value="#013397"/>
+
+	<color name="accent_orange"   value="#f44800"/>
+	<color name="pure_red"   value="#ff0000"/>
+	<color name="accent_red"      value="#fd3301"/>
+	<color name="accent_red_base" value="#d40000"/>
+	<color name="accent_deep_red" value="#980101"/>
+
+	<color name="accent_green_highlight" value="#ccff99"/>
+	<color name="accent_green"           value="#98fc66"/>
+	<color name="accent_green_base"      value="#339900"/>
+	<color name="accent_green_shadow"    value="#015a01"/>
+
+	<color name="human_highlight"      value="#fdd99b"/>
+	<color name="human"                value="#d9bb7a"/>
+	<color name="human_base"           value="#816647"/>
+	<color name="environmental_shadow" value="#565248"/>
+
+	<color name="ubuntu_toner"             value="#002b3d"/>
+	<color name="accent_magenta_highlight" value="#ff9bff"/>
+	<color name="accent_magenta"           value="#ff00ff"/>
+	<color name="accent_dark_violet"       value="#6600cc"/>
+
+	<color name="white" value="#ffffff"/>
+	<color name="black" value="#000000"/>
+	<color name="text_fg" value="#4d4d4d"/>
+	<color name="number_color" value="#0000FF"/>
+	<!--color name="comment_color" value="#7F7F7F"/-->
+	<color name="comment_color" value="#ff0000"/>
+
+<!-- Global Settings -->
+
+	<style name="text" foreground="text_fg" background="white"/>
+	<style name="selection" foreground="#black" background="#gray"/>
+	<!--<style name="cursor" foreground="accent_deep_red" bold="true"/>--> <!-- Does not work -->
+	<style name="current-line" background="accent_yellow_highlight"/>
+	<style name="line-numbers" foreground="text_fg" background="human_highlight"/>
+
+<!-- Bracket Matching -->
+
+	<style name="bracket-match" foreground="environmental_blue_medium" background="environmental_blue_highlight"/>
+	<style name="bracket-mismatch" background="dark_maroon" bold="true"/>
+	<style name="search-match" foreground="yellow"/>
+
+<!-- Syntax color for styles
+
+Languages: plain, python, ruby, xml, html, ada, asp, awk, boo, c,
+changelog, chdr, cmake, cpp, csharp, css, d, def, desktop, diff,
+docbook, dosbatch, dot, dpatch, dtd, eiffel, erlang, forth, fortran,
+gap, gtkrc, haddock, haskell, haskell-literate, idl, ini, java,
+javascript, latex, libtool, lua, m4, makefile, msil, nermele, nsis,
+objc, ocaml, ocl, octave, pascal, perl, php, pkgconfig, po, prolog,
+R, rpmspec, scheme, sh, sql, t2t, tcl, texinfo, vala, vbnet, verilog,
+vhdl, xslt, yacc
+
+-->
+
+	<style name="def:string" foreground="accent_blue_base"/>
+	<style name="def:character" foreground="accent_blue_base"/>
+	<style name="def:special-char" bold="true"/> <!-- Modified by Wa (logicplace.com) -->
+	<style name="def:number" foreground="accent_yellow_shadow"/>
+	<style name="def:decimal" foreground="accent_yellow_shadow"/>
+	<style name="def:floating-point" foreground="accent_dark_violet"/>
+	<style name="def:complex" foreground="environmental_blue_base" bold="true"/>
+	<style name="def:base-n-integer" foreground="black" bold="true"/>
+	<style name="def:boolean" foreground="accent_orange" bold="true"/>
+
+	<style name="def:identifier" foreground="accent_green_base" bold="true"/>
+	<style name="def:type" foreground="ubuntu_toner" bold="true"/>
+	<style name="def:operator" foreground="ubuntu_toner" bold="true"/>
+	<style name="def:keyword" foreground="accent_deep_red" bold="true"/>
+	<style name="def:builtin" foreground="human_base" bold="true"/>
+	<style name="def:function" foreground="human_base" bold="true"/>
+	<style name="def:preprocessor" foreground="accent_dark_violet" bold="true"/>
+	<style name="def:statement" foreground="accent_red_base" bold="true" italic="true"/>
+
+	<style name="def:constant" foreground="black" bold="true"/>
+	<style name="def:special-constant" foreground="accent_orange" bold="true"/>
+	<style name="def:note" foreground="accent_magenta" bold="true"/>
+	<style name="def:error" foreground="accent_red_base" background="black" bold="true"/>
+
+	<!-- Addition by Wa (logicplace.com) -->
+	<style name="def:underlined" underline="true"/>
+
+
+<!-- Comments -->
+
+	<style name="def:comment" foreground="accent_red" italic="true"/>
+	<style name="def:shebang" foreground="accent_red" italic="true"/>
+	<style name="def:doc-comment-element" foreground="accent_red" italic="true"/>
+
+<!-- Python Styles -->
+
+	<!-- Modified by Wa (logicplace.com) -->
+	<style name="python:string-conversion" foreground="accent_blue" italic="true"/>
+
+<!-- XML/HTML Styles Override -->
+
+	<style name="xml:attribute-name" foreground="accent_deep_red" bold="true"/>
+
+<!-- JSON/JSLON - Addition by Wa (logicplace.com) -->
+
+	<style name="json:keyname" foreground="accent_deep_red"/>
+	<style name="jslon:keyname" foreground="accent_deep_red"/>
+
+<!-- Markdown - Addition by Wa (logicplace.com) -->
+
+	<style name="markdown:header1" foreground="ubuntu_toner" background="accent_blue_highlight" bold="true"/>
+	<style name="markdown:header2" foreground="ubuntu_toner" bold="true"/>
+	<style name="markdown:header3" foreground="ubuntu_toner" italic="true"/>
+	<style name="markdown:header4" foreground="ubuntu_toner"/>
+	<style name="markdown:strong" foreground="black" bold="true"/>
+	<style name="markdown:emphasis" foreground="black" italic="true"/>
+	<style name="markdown:url" foreground="accent_blue_shadow" underline="true"/>
+	<style name="markdown:list-marker" foreground="accent_deep_red" bold="true"/>
+	<style name="markdown:code" foreground="black" background="white" bold="true" italic="false" underline="false"/>
+	<style name="markdown:horizontal-rule" foreground="black" background="black"/>
+	<style name="markdown:linebreak" background="accent_blue_highlight"/>
+</style-scheme>

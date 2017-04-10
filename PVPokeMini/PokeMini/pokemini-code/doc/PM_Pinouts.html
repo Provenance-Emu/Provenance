@@ -1,0 +1,519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Cartridge Pinouts </h1>
+    <h2><span class="mw-headline" id="Cartridge_Pinouts">Connector edge </span></h2>
+    <table style="text-align: left;" border="1" class="smallfnt">
+      <tbody>
+        <tr>
+          <th>Conn. </th>
+          <th>Card </th>
+          <th>TSOP </th>
+          <th>Name </th>
+          <th>Direction </th>
+          <th>Function </th>
+        </tr>
+        <tr>
+          <td>1 </td>
+          <td>B1 </td>
+          <td>note 1 </td>
+          <td>VCC </td>
+          <td>. </td>
+          <td>Power supply. </td>
+        </tr>
+        <tr>
+          <td>2 </td>
+          <td>B1.5 </td>
+          <td>note 1 </td>
+          <td>VCC </td>
+          <td>. </td>
+          <td>Power supply. </td>
+        </tr>
+        <tr>
+          <td>3 </td>
+          <td>B2 </td>
+          <td>2 </td>
+          <td>A20 </td>
+          <td>OUT </td>
+          <td>Address bit 20. </td>
+        </tr>
+        <tr>
+          <td>4 </td>
+          <td>B2.5 </td>
+          <td>3 </td>
+          <td>A9/A19 </td>
+          <td>OUT </td>
+          <td>Address bit 9 is latched when LALH is high. Address bit 19 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>5 </td>
+          <td>B3 </td>
+          <td>4 </td>
+          <td>A8/A18 </td>
+          <td>OUT </td>
+          <td>Address bit 8 is latched when LALH is high. Address bit 18 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>6 </td>
+          <td>B3.5 </td>
+          <td>5 </td>
+          <td>A7/A17 </td>
+          <td>OUT </td>
+          <td>Address bit 7 is latched when LALH is high. Address bit 17 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>7 </td>
+          <td>B4 </td>
+          <td>6 </td>
+          <td>A6/A16 </td>
+          <td>OUT </td>
+          <td>Address bit 6 is latched when LALH is high. Address bit 16 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>8 </td>
+          <td>B4.5 </td>
+          <td>7 </td>
+          <td>A5/A15 </td>
+          <td>OUT </td>
+          <td>Address bit 5 is latched when LALH is high. Address bit 15 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>9 </td>
+          <td>B5 </td>
+          <td>8 </td>
+          <td>A4/A14 </td>
+          <td>OUT </td>
+          <td>Address bit 4 is latched when LALH is high. Address bit 14 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>10 </td>
+          <td>B5.5 </td>
+          <td>9 </td>
+          <td>A3/A13 </td>
+          <td>OUT </td>
+          <td>Address bit 3 is latched when LALH is high. Address bit 13 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>11 </td>
+          <td>B6 </td>
+          <td>10 </td>
+          <td>A2/A12 </td>
+          <td>OUT </td>
+          <td>Address bit 2 is latched when LALH is high. Address bit 12 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>12 </td>
+          <td>B6.5 </td>
+          <td>11 </td>
+          <td>A1/A11 </td>
+          <td>OUT </td>
+          <td>Address bit 1 is latched when LALH is high. Address bit 11 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>13 </td>
+          <td>B7 </td>
+          <td>12 </td>
+          <td>A0/A10 </td>
+          <td>OUT </td>
+          <td>Address bit 0 is latched when LALH is high. Address bit 10 is latched when HALH is high. </td>
+        </tr>
+        <tr>
+          <td>14 </td>
+          <td>B7.5 </td>
+          <td>note 1 </td>
+          <td>VCC </td>
+          <td>. </td>
+          <td>Power supply. </td>
+        </tr>
+        <tr>
+          <td>15 </td>
+          <td>B8 </td>
+          <td>14 </td>
+          <td>HALE </td>
+          <td>OUT </td>
+          <td>High address bits are latched when HALE is high. </td>
+        </tr>
+        <tr>
+          <td>16 </td>
+          <td>. </td>
+          <td>. </td>
+          <td>. </td>
+          <td>. </td>
+          <td>No pad on cartridge. </td>
+        </tr>
+        <tr>
+          <td>17 </td>
+          <td>B9/M1 </td>
+          <td>15 </td>
+          <td>LALE </td>
+          <td>OUT </td>
+          <td>Low address bits are latched when LALE is high. </td>
+        </tr>
+        <tr>
+          <td>18 </td>
+          <td>B9.5 </td>
+          <td>note 2 </td>
+          <td>GND </td>
+          <td>. </td>
+          <td>Ground. </td>
+        </tr>
+        <tr>
+          <td>19 </td>
+          <td>B10 </td>
+          <td>31 </td>
+          <td>D0 </td>
+          <td>BIDIR </td>
+          <td>Data bit 0 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>20 </td>
+          <td>B10.5 </td>
+          <td>30 </td>
+          <td>D1 </td>
+          <td>BIDIR </td>
+          <td>Data bit 1 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>21 </td>
+          <td>B11 </td>
+          <td>29 </td>
+          <td>D2 </td>
+          <td>BIDIR </td>
+          <td>Data bit 2 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>22 </td>
+          <td>B11.5 </td>
+          <td>27 </td>
+          <td>D3 </td>
+          <td>BIDIR </td>
+          <td>Data bit 3 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>23 </td>
+          <td>B12 </td>
+          <td>26 </td>
+          <td>D4 </td>
+          <td>BIDIR </td>
+          <td>Data bit 4 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>24 </td>
+          <td>B12.5 </td>
+          <td>25 </td>
+          <td>D5 </td>
+          <td>BIDIR </td>
+          <td>Data bit 5 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>25 </td>
+          <td>B13 </td>
+          <td>23 </td>
+          <td>D6 </td>
+          <td>BIDIR </td>
+          <td>Data bit 6 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>26 </td>
+          <td>B13.5 </td>
+          <td>22 </td>
+          <td>D7 </td>
+          <td>BIDIR </td>
+          <td>Data bit 7 is output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>27 </td>
+          <td>B14 </td>
+          <td>20 </td>
+          <td>OE </td>
+          <td>OUT </td>
+          <td>Output Enable. Data bits are output when OE is high. </td>
+        </tr>
+        <tr>
+          <td>28 </td>
+          <td>B14.5 </td>
+          <td>. </td>
+          <td>IRQ </td>
+          <td>IN </td>
+          <td>Cause &quot;Cartridge IRQ&quot; interrupt when IRQ go high. </td>
+        </tr>
+        <tr>
+          <td>29 </td>
+          <td>B15 </td>
+          <td>19 </td>
+          <td>WE </td>
+          <td>OUT </td>
+          <td>Write Enable. Pulled down with 100K in cartridge. </td>
+        </tr>
+        <tr>
+          <td>30 </td>
+          <td>B15.5 </td>
+          <td>18 </td>
+          <td>CS </td>
+          <td>OUT </td>
+          <td>Chip select. Enables chip control. Pulled down with 100K in cartridge. </td>
+        </tr>
+        <tr>
+          <td>31 </td>
+          <td>B16 </td>
+          <td>. </td>
+          <td>CARD_N </td>
+          <td>IN </td>
+          <td>Card detect. Active-low. It is connected to GND in the cartridge. </td>
+        </tr>
+        <tr>
+          <td>32 </td>
+          <td>B16.5 </td>
+          <td>note 2 </td>
+          <td>GND </td>
+          <td>. </td>
+          <td>Ground. </td>
+        </tr>
+        <tr>
+          <td>33 </td>
+          <td>B17 </td>
+          <td>note 2 </td>
+          <td>GND </td>
+          <td>. </td>
+          <td>Ground. </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>note 1:</b> VCC on pin 1,21,28,32. LVTTL. </p>
+    <p><b>note 2:</b> GND on pin 13,16,17,24. </p>
+    <p><b>note 3:</b> Directions are relative to the system </p>
+    <h2>Abbreviations</h2>
+    <p>PM = Pokémon Mini </p>
+    <p>IN = Input </p>
+    <p>OUT = Output </p>
+    <p>BIDIR = Bi-Directional </p>
+    <p>TSOP = Thin Small Outline Package </p>
+    <p>LVTTL = Low Voltage Transistor-Transistor Level (3.3 Volt) </p>
+    <p>ROM = Read Only Memory </p>
+    <p>ALH = Address Latch High </p>
+    <p>OE = Output Enable </p>
+    <p>A? = Address signal </p>
+    <p>CS? = Chip Select </p>
+    <p>VCC = Power supply </p>
+    <p>GND = Signal ground </p>
+    <h2>TSOP Chip</h2>
+    <pre>   MX23L4004    TSOP package
+.-------------/ /-------------.
+|  1 VCC               VCC 32 |
+|  2 A20               D0  31 |
+|  3 A9/A19            D1  30 |
+|  4 A8/A18            D2  29 |
+|  5 A7/A17            VCC 28 |
+|  6 A6/A16            D3  27 |
+|  7 A5/A15            D4  26 |
+|  8 A4/A14            D5  25 |
+|  9 A3/A13            GND 24 |
+| 10 A2/A12            D6  23 |
+| 11 A1/A11            D7  22 |
+| 12 A0/A10            VCC 21 |
+| 13 GND               OE  20 |
+| 14 HALE              WE  19 |
+| 15 LALE              CS  18 |
+| 16 GND               GND 17 |
+`-------------/ /-------------'
+    </pre>
+    <h2>PCB silk screen text</h2>
+    <p>&quot;MIN-KCM1-01&quot; </p>
+    <p>&quot;4M MASKROM&quot; (4 Mbit) </p>
+    <p>Pads B1 to B17 are labeled. </p>
+    <h2>IC U1</h2>
+    <p>&quot;MX23L4004-12A&quot; (Macronix) </p>
+    <p>&quot;MIN-MPBE-0 E&quot; (Mini PinBall) </p>
+    <p>TSOP </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Pinouts">http://wiki.sublab.net/index.php/PM_Pinouts</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>
