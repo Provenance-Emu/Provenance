@@ -27,6 +27,7 @@
 #import "PVPokeMiniEmulatorCore.h"
 
 #import <PVSupport/OERingBuffer.h>
+#import <PVSupport/DebugUtils.h>
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -37,13 +38,28 @@
 #import "Joystick.h"
 #import "Video_x1.h"
 
+typedef struct {
+    bool a;
+    bool b;
+    bool c;
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+    bool menu;
+    bool power;
+    bool shake;
+} PokeMFiState;
+
 @interface PVPokeMiniEmulatorCore ()
 {
     uint8_t *audioStream;
     uint32_t *videoBuffer;
     int videoWidth, videoHeight;
     NSString *romPath;
+    PokeMFiState controllerState;
 }
+
 @end
 
 PVPokeMiniEmulatorCore *current;
@@ -311,80 +327,143 @@ int saveEEPROM(const char *filename)
     JoystickButtonsEvent(button, 0);
 }
 
+- (oneway void)dpadValueChanged:(GCControllerDirectionPad * _Nonnull)dpad {
+    // DPAD
+    if (controllerState.up != dpad.up.isPressed) {
+        JoystickButtonsEvent(PVPMButtonUp, dpad.up.isPressed ? 1 : 0);
+        controllerState.up = dpad.up.isPressed;
+        DLog(@"Up %@", dpad.up.isPressed ? @"Pressed" : @"Unpressed");
+    }
+    
+    if (controllerState.down != dpad.down.isPressed) {
+        JoystickButtonsEvent(PVPMButtonDown, dpad.down.isPressed ? 1 : 0);
+        controllerState.down = dpad.down.isPressed;
+        DLog(@"Down %@", dpad.down.isPressed ? @"Pressed" : @"Unpressed");
+    }
+    
+    if (controllerState.left != dpad.left.isPressed) {
+        JoystickButtonsEvent(PVPMButtonLeft, dpad.left.isPressed ? 1 : 0);
+        controllerState.left = dpad.left.isPressed;
+        DLog(@"Left %@", dpad.left.isPressed ? @"Pressed" : @"Unpressed");
+    }
+    
+    if (controllerState.right != dpad.right.isPressed) {
+        JoystickButtonsEvent(PVPMButtonRight, dpad.right.isPressed ? 1 : 0);
+        controllerState.right = dpad.right.isPressed;
+        DLog(@"Right %@", dpad.right.isPressed ? @"Pressed" : @"Unpressed");
+    }
+}
+
 - (oneway void)setupController {
+    
     if (self.controller1) {
         if (self.controller1.extendedGamepad) {
+            
+            __weak PVPokeMiniEmulatorCore* weakSelf = self;
+            
+            self.controller1.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
+                [weakSelf dpadValueChanged:dpad];
+            };
+            
             self.controller1.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
-                // DPAD
-                if (element == gamepad.dpad.up) {
-                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.down) {
-                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.left) {
-                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.right) {
-                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
-                }
+                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+                
                 // Buttons
-                else if (element == gamepad.buttonA) {
-                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                if (element == gamepad.buttonA) {
+                    if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                        strongSelf->controllerState.a = gamepad.buttonA.isPressed;
+                        DLog(@"A %@", strongSelf->controllerState.a ? @"Pressed" : @"Unpressed");
+                    }
                 }
                 else if (element == gamepad.buttonB) {
-                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.b != gamepad.buttonB.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                        strongSelf->controllerState.b = gamepad.buttonB.isPressed;
+                        DLog(@"B %@", strongSelf->controllerState.b ? @"Pressed" : @"Unpressed");
+                    }
                 }
                 else if (element == gamepad.buttonX) {
-                    JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.c != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.c = gamepad.buttonX.isPressed;
+                        DLog(@"C %@", strongSelf->controllerState.c ? @"Pressed" : @"Unpressed");
+                    }
                 }
                 // Extra buttons
                 else if (element == gamepad.leftTrigger) {
-                    JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftTrigger.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.menu != gamepad.leftTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.leftTrigger.isPressed;
+                        DLog(@"Menu %@", strongSelf->controllerState.menu ? @"Pressed" : @"Unpressed");
+                    }
                 }
                 else if (element == gamepad.rightTrigger) {
-                    JoystickButtonsEvent(PVPMButtonShake, gamepad.rightTrigger.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.shake != gamepad.rightTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.rightTrigger.isPressed;
+                        DLog(@"Shake %@", strongSelf->controllerState.shake ? @"Pressed" : @"Unpressed");
+                    }
                 }
                 else if (element == gamepad.leftShoulder) {
-                    JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+                        DLog(@"Power %@", strongSelf->controllerState.power ? @"Pressed" : @"Unpressed");
+                    }
                 }
             };
         }
         else if (self.controller1.gamepad) {
+            
+            __weak PVPokeMiniEmulatorCore* weakSelf = self;
+
+            self.controller1.gamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
+                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+
+                [strongSelf dpadValueChanged:dpad];
+            };
+
             self.controller1.gamepad.valueChangedHandler = ^(GCGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
-                // DPAD
-                if (element == gamepad.dpad.up) {
-                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.down) {
-                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.left) {
-                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.right) {
-                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
-                }
-                // Buttons
-                else if (element == gamepad.buttonA) {
-                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+
+                    // Buttons
+                if (element == gamepad.buttonA) {
+                    if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                        strongSelf->controllerState.a = gamepad.buttonA.isPressed;
+                    }
                 }
                 else if (element == gamepad.buttonB) {
-                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.b != gamepad.buttonB.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonB.isPressed ? 1 : 0);
+                        strongSelf->controllerState.b = gamepad.buttonB.isPressed;
+                    }
                 }
                 else if (element == gamepad.buttonX) {
-                    JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.c != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonC, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.c = gamepad.buttonX.isPressed;
+                    }
                 }
-                else if (element == gamepad.buttonY) {
-                    JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonY.isPressed ? 1 : 0);
-                }
-                
                 // Extra buttons
-                else if (element == gamepad.leftShoulder) {
-                    JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                else if (element == gamepad.buttonX) {
+                    if (strongSelf->controllerState.menu != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.buttonX.isPressed;
+                    }
                 }
                 else if (element == gamepad.rightShoulder) {
-                    JoystickButtonsEvent(PVPMButtonShake, gamepad.rightShoulder.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.shake != gamepad.rightShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.rightShoulder.isPressed;
+                    }
+                }
+                else if (element == gamepad.leftShoulder) {
+                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+                    }
                 }
             };
         }
@@ -392,25 +471,30 @@ int saveEEPROM(const char *filename)
         else if ([self.controller1 microGamepad]) {
             GCMicroGamepad *microGamepad = [self.controller1 microGamepad];
             
+            __weak PVPokeMiniEmulatorCore* weakSelf = self;
+            
+            self.controller1.microGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad * _Nonnull dpad, float xValue, float yValue) {
+                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+                
+                [strongSelf dpadValueChanged:dpad];
+            };
+
+            
             microGamepad.valueChangedHandler = ^(GCMicroGamepad * _Nonnull gamepad, GCControllerElement * _Nonnull element) {
-                if (element == gamepad.dpad.up) {
-                    JoystickButtonsEvent(PVPMButtonUp, gamepad.dpad.up.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.down) {
-                    JoystickButtonsEvent(PVPMButtonDown, gamepad.dpad.down.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.left) {
-                    JoystickButtonsEvent(PVPMButtonLeft, gamepad.dpad.left.isPressed ? 1 : 0);
-                }
-                else if (element == gamepad.dpad.right) {
-                    JoystickButtonsEvent(PVPMButtonRight, gamepad.dpad.right.isPressed ? 1 : 0);
-                }
+                __strong PVPokeMiniEmulatorCore* strongSelf = weakSelf;
+
                 // Buttons
-                else if (element == gamepad.buttonA) {
-                    JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                if (element == gamepad.buttonA) {
+                    if (strongSelf->controllerState.a != gamepad.buttonA.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonA, gamepad.buttonA.isPressed ? 1 : 0);
+                        strongSelf->controllerState.a = gamepad.buttonA.isPressed;
+                    }
                 }
                 else if (element == gamepad.buttonX) {
-                    JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
+                    if (strongSelf->controllerState.b != gamepad.buttonX.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonB, gamepad.buttonX.isPressed ? 1 : 0);
+                        strongSelf->controllerState.b = gamepad.buttonX.isPressed;
+                    }
                 }
             };
         }
