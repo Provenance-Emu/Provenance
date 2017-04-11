@@ -46,7 +46,15 @@
 #else
     [self.modeLabel setText:@"RELEASE"];
 #endif
+    NSString *revisionString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Revision"];
+    UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
 
+    if ([revisionString length] > 0) {
+        [self.revisionLabel setText:revisionString];
+    } else {
+        [self.revisionLabel setTextColor:color];
+        [self.revisionLabel setText:@"(none)"];
+    }
 }
 
 - (void)didReceiveMemoryWarning

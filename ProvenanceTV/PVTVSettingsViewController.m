@@ -23,8 +23,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *revisionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 
 @end
 
@@ -51,6 +53,15 @@
 #else
     [self.modeValueLabel setText:@"RELEASE"];
 #endif
+    NSString *revisionString = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"Revision"];
+    UIColor *color = [UIColor colorWithWhite:0.0 alpha:0.1];
+
+    if ([revisionString length] > 0) {
+        [self.revisionLabel setText:revisionString];
+    } else {
+        [self.revisionLabel setTextColor:color];
+        [self.revisionLabel setText:@"(none)"];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -58,6 +69,8 @@
     [super viewWillAppear:animated];
 
     self.splitViewController.title = @"Settings";
+    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
+    [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
 #pragma mark - UITableViewDelegate
@@ -87,6 +100,9 @@
             }
             break;
         case 1:
+            // icase settings
+            break;
+        case 2:
             // library settings
             switch ([indexPath row]) {
 				case 0: {

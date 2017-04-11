@@ -35,7 +35,7 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "PVControllerManager.h"
-#import "RLMRealmConfiguration+GroupConfig.h"
+#import "RLMRealmConfiguration+Config.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
 
@@ -52,6 +52,7 @@ static const CGFloat CellWidth = 308.0;
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
+@property (nonatomic, strong) PVDirectoryWatcher *coverArtWatcher;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 @property (nonatomic, strong) UICollectionView *collectionView;
 #if !TARGET_OS_TV
@@ -88,24 +89,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if ((self = [super initWithCoder:aDecoder]))
     {
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
-        RLMRealmConfiguration *config = [[RLMRealmConfiguration alloc] init];
-#if TARGET_OS_TV
-        NSString *path = nil;
-        if ([RLMRealmConfiguration supportsAppGroups]) {
-            path = [RLMRealmConfiguration appGroupPath];
-        }
-        else {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-            path = paths.firstObject;
-        }
-#else
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *path = paths.firstObject;
-#endif
-        [config setPath:[path stringByAppendingPathComponent:@"default.realm"]];
-        [RLMRealmConfiguration setDefaultConfiguration:config];
+
+        [RLMRealmConfiguration setRealmConfig];
+
         self.realm = [RLMRealm defaultRealm];
-        
     }
     
     return self;
@@ -124,6 +111,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	self.gamesInSections = nil;
 	
 	self.watcher = nil;
+    self.coverArtWatcher = nil;
 	self.collectionView = nil;
     self.realm = nil;
 }
@@ -295,6 +283,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
 }
 
+- (NSString *)coverArtPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+
+    return [paths.firstObject stringByAppendingPathComponent:@"Cover Art"];
+}
+
 - (NSString *)batterySavesPathForROM:(NSString *)romPath
 {
 #if TARGET_OS_TV
@@ -332,7 +331,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *documentsDirectoryPath = [paths objectAtIndex:0];
 	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
 	
-	NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+    NSMutableArray *filenameComponents = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] mutableCopy];
+    // remove extension
+    [filenameComponents removeLastObject];
+    
+	NSString *romName = [filenameComponents componentsJoinedByString:@"."];
 	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
 	
 	NSError *error = nil;
@@ -524,6 +527,36 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                       [weakSelf.gameImporter startImportForPaths:paths];
                                   }];
     [self.watcher startMonitoring];
+
+    self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:self.coverArtPath extractionStartedHandler:^(NSString *path) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+
+        if (!hud) {
+            hud = [MBProgressHUD showHUDAddedTo:weakSelf.view animated:YES];
+        }
+
+        [hud setUserInteractionEnabled:NO];
+        [hud setMode:MBProgressHUDModeAnnularDeterminate];
+        [hud setProgress:0];
+        [hud setLabelText:@"Extracting Archive…"];
+    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:(float)bytesRead / (float)fileSize];
+    } extractionCompleteHandler:^(NSArray *paths) {
+        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
+        [hud setProgress:1];
+        [hud setLabelText:@"Extraction Complete!"];
+        [hud hide:YES afterDelay:0.5];
+
+        for (NSString *imageFilepath in paths) {
+            NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
+            PVGame *game = [PVGameImporter importArtworkFromPath:imageFullPath];
+            NSArray *indexPaths = [weakSelf indexPathsForGameWithMD5Hash:game.md5Hash];
+            [weakSelf.collectionView reloadItemsAtIndexPaths:indexPaths];
+        }
+    }];
+
+    [self.coverArtWatcher startMonitoring];
     
     NSArray *systems = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
     for (NSString *systemID in systems)
@@ -550,6 +583,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     [self.realm refresh];
 
+    // Favorite Games
+    RLMResults *allSortedGames = [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES];
+    NSMutableArray *favoriteGames = [[NSMutableArray alloc] init];
+    for (PVGame *game in allSortedGames) {
+        if (game.isFavorite) {
+            [favoriteGames addObject:game];
+        }
+    }
+
     // Recent games
     NSMutableArray *recentGames = [[NSMutableArray alloc] init];
     if ([[PVSettingsModel sharedInstance] showRecentGames]) {
@@ -564,7 +606,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
     // Games by system
     NSMutableDictionary *tempSections = [NSMutableDictionary dictionary];
-    for (PVGame *game in [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES])
+    for (PVGame *game in allSortedGames)
     {
         NSString *systemID = [game systemIdentifier];
         NSMutableArray *games = [tempSections objectForKey:systemID];
@@ -576,13 +618,21 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [games addObject:game];
         [tempSections setObject:games forKey:systemID];
     }
-    
-    // Check if recent games should be added to menu
+
     NSMutableArray *sectionInfo = [[[tempSections allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
+
+    // Check if recent games should be added to menu
     if (recentGames.count>0) {
         NSString *key = @"recent";
         [sectionInfo insertObject:key atIndex:0];
         [tempSections setObject:recentGames forKey:key];
+    }
+    
+    // Check if favorite games should be added to menu
+    if (favoriteGames.count > 0) {
+        NSString *key = @"favorite";
+        [sectionInfo insertObject:key atIndex:0];
+        [tempSections setObject:favoriteGames forKey:key];
     }
     
     // Set data source
@@ -646,18 +696,31 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (NSArray *)indexPathsForGameWithMD5Hash:(NSString *)md5Hash
 {
     NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-    
-    [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
-        NSArray *games = self.gamesInSections[sectionKey];
-        [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+
+    if (self.searchResults)
+    {
+        for (PVGame *game in self.searchResults) {
             if ([[game md5Hash] isEqualToString:md5Hash])
             {
-                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:gameIndex inSection:sectionIndex];
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.searchResults indexOfObject:game] inSection:0];
                 [indexPaths addObject:indexPath];
             }
+        }
+    }
+    else
+    {
+        [self.sectionInfo enumerateObjectsUsingBlock:^(NSString *sectionKey, NSUInteger sectionIndex, BOOL *sectionStop) {
+            NSArray *games = self.gamesInSections[sectionKey];
+            [games enumerateObjectsUsingBlock:^(PVGame *game, NSUInteger gameIndex, BOOL *gameStop) {
+                if ([[game md5Hash] isEqualToString:md5Hash])
+                {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:gameIndex inSection:sectionIndex];
+                    [indexPaths addObject:indexPath];
+                }
+            }];
         }];
-    }];
-    
+    }
+
     return indexPaths;
 }
 
@@ -929,9 +992,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             // no index path, we're buggered.
             return;
         }
-        
-        NSArray *games = [weakSelf.gamesInSections objectForKey:[self.sectionInfo objectAtIndex:indexPath.section]];
-        PVGame *game = games[[indexPath item]];
+
+        PVGame *game = [self gameAtIndexPath:indexPath];
         
         UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
                                                                              message:nil
@@ -942,6 +1004,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             [[actionSheet popoverPresentationController] setSourceView:cell];
             [[actionSheet popoverPresentationController] setSourceRect:[[self.collectionView layoutAttributesForItemAtIndexPath:indexPath] bounds]];
         }
+
+        [actionSheet addAction:[UIAlertAction actionWithTitle:@"Toggle Favorite"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction *action) {
+                                                          [weakSelf toggleFavoriteForGame:game];
+                                                      }]];
+
         [actionSheet addAction:[UIAlertAction actionWithTitle:@"Rename"
                                                         style:UIAlertActionStyleDefault
                                                       handler:^(UIAlertAction * _Nonnull action) {
@@ -1004,6 +1073,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
+- (void)toggleFavoriteForGame:(PVGame *)game {
+    [self.realm beginWriteTransaction];
+    game.isFavorite = !game.isFavorite;
+    [self.realm commitWriteTransaction];
+
+    [self fetchGames];
+    [self.collectionView reloadData];
+}
+
 - (void)renameGame:(PVGame *)game
 {
 #if TARGET_OS_TV
@@ -1049,9 +1127,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [self.renameTextField setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
     [self.renameTextField setBorderStyle:UITextBorderStyleRoundedRect];
     [self.renameTextField setPlaceholder:[game title]];
+    [self.renameTextField setText:[game title]];
     [self.renameTextField setKeyboardAppearance:UIKeyboardAppearanceAlert];
     [self.renameTextField setReturnKeyType:UIReturnKeyDone];
     [self.renameTextField setDelegate:self];
+    
     UIBarButtonItem *textFieldItem = [[UIBarButtonItem alloc] initWithCustomView:self.renameTextField];
     
     [self.renameToolbar setItems:@[textFieldItem]];
@@ -1067,6 +1147,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                                object:nil];
     
     [self.renameTextField becomeFirstResponder];
+    [self.renameTextField selectAll:nil];
 #endif
 }
 
@@ -1335,6 +1416,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *systemID = [self.sectionInfo objectAtIndex:section];
     if ([systemID isEqualToString:@"recent"]) {
         return @"Recently Played";
+    } else if ([systemID isEqualToString:@"favorite"]) {
+        return @"Favorites";
     } else {
         return [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
     }

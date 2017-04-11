@@ -1,6 +1,8 @@
 # Provenance
 An iOS & tvOS Frontend for multiple emulators
 
+![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
+
 ###Building Provenance
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
@@ -84,9 +86,9 @@ Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.source
 
 Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
 
-Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/)
+Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/).
 
-Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive)
+Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
 
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 

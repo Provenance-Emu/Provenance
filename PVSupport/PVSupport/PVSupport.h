@@ -23,7 +23,6 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 #import <PVSupport/DebugUtils.h>
 #import <PVSupport/TPCircularBuffer.h>
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/OETimingUtils.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVGameControllerUtilities.h>
 #import <PVSupport/OEGameAudio.h>

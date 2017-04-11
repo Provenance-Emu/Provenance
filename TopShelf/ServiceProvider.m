@@ -8,7 +8,7 @@
 
 #import "ServiceProvider.h"
 #import "PVRecentGame+TopShelf.h"
-#import "RLMRealmConfiguration+GroupConfig.h"
+#import "RLMRealmConfiguration+Config.h"
 @import Realm;
 
 @interface ServiceProvider ()
@@ -21,7 +21,7 @@
     self = [super init];
     if (self) {
         if ([RLMRealmConfiguration supportsAppGroups]) {
-            [RLMRealmConfiguration setDefaultConfiguration:[RLMRealmConfiguration appGroupConfig]];
+            [RLMRealmConfiguration setRealmConfig];
         }
     }
     return self;
