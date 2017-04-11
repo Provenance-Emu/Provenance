@@ -1,0 +1,947 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UIYabause</class>
+ <widget class="QMainWindow" name="UIYabause">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Yabause Qt GUI</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resources.qrc">
+    <normaloff>:/icons/icons/yabause.png</normaloff>:/icons/icons/yabause.png</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>16</width>
+    <height>16</height>
+   </size>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="fSound">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>64</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <layout class="QVBoxLayout">
+     <item>
+      <widget class="QSlider" name="sVolume">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Volume</string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="tickPosition">
+        <enum>QSlider::TicksBothSides</enum>
+       </property>
+       <property name="tickInterval">
+        <number>15</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="cbSound">
+       <property name="toolTip">
+        <string>Mute/UnMute Sound</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../resources/resources.qrc">
+         <normaloff>:/actions/sound.png</normaloff>:/actions/sound.png</iconset>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QFrame" name="fVideoDriver">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>10</y>
+      <width>250</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <layout class="QVBoxLayout">
+     <item>
+      <widget class="QComboBox" name="cbVideoDriver"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>640</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="mFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="mFileSaveState">
+     <property name="title">
+      <string>S&amp;ave State</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
+       <normaloff>:/actions/icons/actions/save_state.png</normaloff>:/actions/icons/actions/save_state.png</iconset>
+     </property>
+     <addaction name="aFileSaveStateAs"/>
+     <addaction name="separator"/>
+     <addaction name="aFileSaveState0"/>
+     <addaction name="aFileSaveState1"/>
+     <addaction name="aFileSaveState2"/>
+     <addaction name="aFileSaveState3"/>
+     <addaction name="aFileSaveState4"/>
+     <addaction name="aFileSaveState5"/>
+     <addaction name="aFileSaveState6"/>
+     <addaction name="aFileSaveState7"/>
+     <addaction name="aFileSaveState8"/>
+     <addaction name="aFileSaveState9"/>
+    </widget>
+    <widget class="QMenu" name="mFileLoadState">
+     <property name="title">
+      <string>L&amp;oad State</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
+       <normaloff>:/actions/icons/actions/load_state.png</normaloff>:/actions/icons/actions/load_state.png</iconset>
+     </property>
+     <addaction name="aFileLoadStateAs"/>
+     <addaction name="separator"/>
+     <addaction name="aFileLoadState0"/>
+     <addaction name="aFileLoadState1"/>
+     <addaction name="aFileLoadState2"/>
+     <addaction name="aFileLoadState3"/>
+     <addaction name="aFileLoadState4"/>
+     <addaction name="aFileLoadState5"/>
+     <addaction name="aFileLoadState6"/>
+     <addaction name="aFileLoadState7"/>
+     <addaction name="aFileLoadState8"/>
+     <addaction name="aFileLoadState9"/>
+    </widget>
+    <addaction name="aFileSettings"/>
+    <addaction name="separator"/>
+    <addaction name="aFileOpenISO"/>
+    <addaction name="aFileOpenCDRom"/>
+    <addaction name="separator"/>
+    <addaction name="mFileSaveState"/>
+    <addaction name="mFileLoadState"/>
+    <addaction name="separator"/>
+    <addaction name="aFileScreenshot"/>
+    <addaction name="separator"/>
+    <addaction name="aFileQuit"/>
+   </widget>
+   <widget class="QMenu" name="mView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="mViewLayer">
+     <property name="title">
+      <string>&amp;Layer</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources/resources.qrc">
+       <normaloff>:/actions/icons/actions/layer.png</normaloff>:/actions/icons/actions/layer.png</iconset>
+     </property>
+     <addaction name="aViewLayerVdp1"/>
+     <addaction name="aViewLayerNBG0"/>
+     <addaction name="aViewLayerNBG1"/>
+     <addaction name="aViewLayerNBG2"/>
+     <addaction name="aViewLayerNBG3"/>
+     <addaction name="aViewLayerRBG0"/>
+    </widget>
+    <addaction name="aViewFPS"/>
+    <addaction name="mViewLayer"/>
+    <addaction name="aViewFullscreen"/>
+    <addaction name="aViewLog"/>
+   </widget>
+   <widget class="QMenu" name="mViewDebug">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>&amp;Debug</string>
+    </property>
+    <addaction name="aViewDebugMSH2"/>
+    <addaction name="aViewDebugSSH2"/>
+    <addaction name="aViewDebugVDP1"/>
+    <addaction name="aViewDebugVDP2"/>
+    <addaction name="aViewDebugM68K"/>
+    <addaction name="aViewDebugSCUDSP"/>
+    <addaction name="aViewDebugSCSP"/>
+    <addaction name="separator"/>
+    <addaction name="aViewDebugMemoryEditor"/>
+   </widget>
+   <widget class="QMenu" name="mHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="aHelpEmuCompatibility"/>
+    <addaction name="aHelpAbout"/>
+   </widget>
+   <widget class="QMenu" name="mTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="aToolsBackupManager"/>
+    <addaction name="aToolsCheatsList"/>
+    <addaction name="aToolsCheatSearch"/>
+    <addaction name="aToolsTransfer"/>
+   </widget>
+   <widget class="QMenu" name="mEmulation">
+    <property name="title">
+     <string>&amp;Emulation</string>
+    </property>
+    <addaction name="aEmulationRun"/>
+    <addaction name="aEmulationPause"/>
+    <addaction name="aEmulationReset"/>
+    <addaction name="separator"/>
+    <addaction name="aEmulationFrameSkipLimiter"/>
+   </widget>
+   <addaction name="mFile"/>
+   <addaction name="mEmulation"/>
+   <addaction name="mTools"/>
+   <addaction name="mView"/>
+   <addaction name="mViewDebug"/>
+   <addaction name="mHelp"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="aEmulationRun"/>
+   <addaction name="aEmulationPause"/>
+   <addaction name="aEmulationReset"/>
+   <addaction name="separator"/>
+   <addaction name="aFileOpenISO"/>
+   <addaction name="aFileOpenCDRom"/>
+   <addaction name="separator"/>
+   <addaction name="aFileSettings"/>
+   <addaction name="aVideoDriver"/>
+   <addaction name="aSound"/>
+   <addaction name="aEmulationFrameSkipLimiter"/>
+   <addaction name="aViewFPS"/>
+   <addaction name="aViewFullscreen"/>
+   <addaction name="aFileScreenshot"/>
+   <addaction name="separator"/>
+   <addaction name="aToolsBackupManager"/>
+   <addaction name="aToolsCheatsList"/>
+   <addaction name="separator"/>
+   <addaction name="aFileQuit"/>
+   <addaction name="aHelpAbout"/>
+  </widget>
+  <action name="aFileQuit">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/quit.png</normaloff>:/actions/icons/actions/quit.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="aYabauseStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="aYabauseStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="aFileSettings">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Settings...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="aEmulationRun">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/play.png</normaloff>:/actions/icons/actions/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>R&amp;un</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="aEmulationPause">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/pause.png</normaloff>:/actions/icons/actions/pause.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Pause</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="aEmulationReset">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="aToolsTransfer">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/transfert.png</normaloff>:/actions/icons/actions/transfert.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Transfer</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="aFileScreenshot">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/screenshot.png</normaloff>:/actions/icons/actions/screenshot.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sc&amp;reenshot</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="aEmulationFrameSkipLimiter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/frame_skipping.png</normaloff>:/actions/icons/actions/frame_skipping.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Frame Skip/Limiter</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="aViewFPS">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/fps.png</normaloff>:/actions/icons/actions/fps.png</iconset>
+   </property>
+   <property name="text">
+    <string>F&amp;PS</string>
+   </property>
+   <property name="iconText">
+    <string>FPS</string>
+   </property>
+   <property name="shortcut">
+    <string>F12</string>
+   </property>
+  </action>
+  <action name="aViewLayerVdp1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vdp1</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="aViewFullscreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/fullscreen.png</normaloff>:/actions/fullscreen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Fullscreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
+  </action>
+  <action name="aViewLog">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/log.png</normaloff>:/actions/icons/actions/log.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Log</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="aViewDebugMSH2">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Master SH2</string>
+   </property>
+  </action>
+  <action name="aViewDebugSSH2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Slave SH2</string>
+   </property>
+  </action>
+  <action name="aViewDebugVDP1">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>VDP&amp;1</string>
+   </property>
+  </action>
+  <action name="aViewDebugVDP2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>VDP&amp;2</string>
+   </property>
+  </action>
+  <action name="aViewDebugM68K">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>M&amp;68K</string>
+   </property>
+  </action>
+  <action name="aViewDebugSCUDSP">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>SCU-&amp;DSP</string>
+   </property>
+  </action>
+  <action name="aViewDebugSCSP">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>S&amp;CSP</string>
+   </property>
+  </action>
+  <action name="aViewDebugMemoryTransfer">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Memory Transfer</string>
+   </property>
+  </action>
+  <action name="aHelpAbout">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/about.png</normaloff>:/actions/icons/actions/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About...</string>
+   </property>
+  </action>
+  <action name="aViewLayerNBG0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NBG0</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="aViewLayerNBG1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NBG1</string>
+   </property>
+   <property name="shortcut">
+    <string>3</string>
+   </property>
+  </action>
+  <action name="aViewLayerNBG2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NBG2</string>
+   </property>
+   <property name="shortcut">
+    <string>4</string>
+   </property>
+  </action>
+  <action name="aViewLayerNBG3">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NBG3</string>
+   </property>
+   <property name="shortcut">
+    <string>5</string>
+   </property>
+  </action>
+  <action name="aViewLayerRBG0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>RBG0</string>
+   </property>
+   <property name="shortcut">
+    <string>6</string>
+   </property>
+  </action>
+  <action name="aFileSaveState1">
+   <property name="text">
+    <string>1</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="aFileSaveState2">
+   <property name="text">
+    <string>2</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="aFileSaveState3">
+   <property name="text">
+    <string>3</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="aFileSaveState4">
+   <property name="text">
+    <string>4</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="aFileSaveState5">
+   <property name="text">
+    <string>5</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+5</string>
+   </property>
+  </action>
+  <action name="aFileSaveState6">
+   <property name="text">
+    <string>6</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+6</string>
+   </property>
+  </action>
+  <action name="aFileSaveState7">
+   <property name="text">
+    <string>7</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+7</string>
+   </property>
+  </action>
+  <action name="aFileSaveState8">
+   <property name="text">
+    <string>8</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+8</string>
+   </property>
+  </action>
+  <action name="aFileSaveState9">
+   <property name="text">
+    <string>9</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+9</string>
+   </property>
+  </action>
+  <action name="aFileLoadState1">
+   <property name="text">
+    <string>1</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+1</string>
+   </property>
+  </action>
+  <action name="aFileLoadState2">
+   <property name="text">
+    <string>2</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+2</string>
+   </property>
+  </action>
+  <action name="aFileLoadState3">
+   <property name="text">
+    <string>3</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+3</string>
+   </property>
+  </action>
+  <action name="aFileLoadState4">
+   <property name="text">
+    <string>4</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+4</string>
+   </property>
+  </action>
+  <action name="aFileLoadState5">
+   <property name="text">
+    <string>5</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+5</string>
+   </property>
+  </action>
+  <action name="aFileLoadState6">
+   <property name="text">
+    <string>6</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+6</string>
+   </property>
+  </action>
+  <action name="aFileLoadState7">
+   <property name="text">
+    <string>7</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+7</string>
+   </property>
+  </action>
+  <action name="aFileLoadState8">
+   <property name="text">
+    <string>8</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+8</string>
+   </property>
+  </action>
+  <action name="aFileLoadState9">
+   <property name="text">
+    <string>9</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+9</string>
+   </property>
+  </action>
+  <action name="aFileSaveStateAs">
+   <property name="text">
+    <string>To File...</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
+   </property>
+  </action>
+  <action name="aFileLoadStateAs">
+   <property name="text">
+    <string>From File...</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="aToolsCheatsList">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/cheats.png</normaloff>:/actions/icons/actions/cheats.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Cheats List...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+L</string>
+   </property>
+  </action>
+  <action name="aToolsBackupManager">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/backup_ram.png</normaloff>:/actions/icons/actions/backup_ram.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Backup Manager...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+B</string>
+   </property>
+  </action>
+  <action name="aFileOpenISO">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/iso.png</normaloff>:/actions/icons/actions/iso.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;ISO...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="aFileOpenCDRom">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/cd.png</normaloff>:/actions/icons/actions/cd.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;CD Rom...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="aHelpEmuCompatibility">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/emu-compatibility.png</normaloff>:/actions/icons/actions/emu-compatibility.png</iconset>
+   </property>
+   <property name="text">
+    <string>Emu-Compatibility</string>
+   </property>
+   <property name="statusTip">
+    <string>http://www.emu-compatibility.com/yabause/index.php?lang=uk</string>
+   </property>
+  </action>
+  <action name="aSound">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/sound.png</normaloff>:/actions/sound.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sound...</string>
+   </property>
+  </action>
+  <action name="aVideoDriver">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/video.png</normaloff>:/actions/icons/actions/video.png</iconset>
+   </property>
+   <property name="text">
+    <string>Video Driver</string>
+   </property>
+  </action>
+  <action name="aFileSaveState0">
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
+  </action>
+  <action name="aFileLoadState0">
+   <property name="text">
+    <string>0</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+0</string>
+   </property>
+  </action>
+  <action name="aViewDebugMemoryEditor">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/debug_cpu.png</normaloff>:/actions/icons/actions/debug_cpu.png</iconset>
+   </property>
+   <property name="text">
+    <string>Memory &amp;Editor</string>
+   </property>
+  </action>
+  <action name="aToolsCheatSearch">
+   <property name="icon">
+    <iconset resource="../resources/resources.qrc">
+     <normaloff>:/actions/icons/actions/cheat_search.png</normaloff>:/actions/icons/actions/cheat_search.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cheat &amp;Search...</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>aFileQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>UIYabause</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>159</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

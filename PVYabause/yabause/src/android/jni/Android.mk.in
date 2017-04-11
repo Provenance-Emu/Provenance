@@ -1,0 +1,14 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := yabause
+LOCAL_SRC_FILES := yui.c sndaudiotrack.c
+LOCAL_STATIC_LIBRARIES := yabause-prebuilt
+LOCAL_LDLIBS := -llog -ljnigraphics -lGLESv1_CM
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := yabause-prebuilt
+LOCAL_SRC_FILES := libyabause.a
+LOCAL_EXPORT_C_INCLUDES := @YABAUSE_INCLUDE_DIR@
+include $(PREBUILT_STATIC_LIBRARY)

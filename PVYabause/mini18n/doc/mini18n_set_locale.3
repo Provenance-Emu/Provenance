@@ -1,0 +1,20 @@
+.TH mini18n_set_domain 3 "August 30, 2011" "mini18n-0.2" "mini18n manual"
+.SH NAME
+mini18n_set_locale, mini18n_set_domain \- load translations
+.SH SYNOPSIS
+.B #include <mini18n.h>
+
+.BI "int mini18n_set_locale(const char * filepath);"
+
+.BI "int mini18n_set_domain(const char * dirpath);"
+
+.SH DESCRIPTION
+.BR mini18n_set_locale()
+loads a translation from the specified \fIfilepath\fP.
+.PP
+.BR mini18n_set_domain()
+loads a translation matching the system language. The translation file is searched in the directory specified by \fIdirpath\fP.
+If \fIdirpath\fP is NULL, the translation is searched in the current directory.
+
+.SH RETURN VALUE
+These functions return 0 if successful and -1 otherwise.

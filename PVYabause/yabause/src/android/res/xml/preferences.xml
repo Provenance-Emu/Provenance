@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <ListPreference
+            android:key="pref_game"
+            android:title="Game"
+            android:dialogTitle="Choose game" />
+
+        <ListPreference
+            android:key="pref_bios"
+            android:title="Bios"
+            android:dialogTitle="Choose bios" />
+
+        <ListPreference
+            android:key="pref_cart"
+            android:title="Cartridge"
+            android:dialogTitle="Choose cartridge" />
+
+        <CheckBoxPreference
+            android:key="pref_audio"
+            android:title="Audio output"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:key="pref_fps"
+            android:title="FPS"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="pref_frameskip"
+            android:title="Frameskip"
+            android:defaultValue="false" />
+</PreferenceScreen>

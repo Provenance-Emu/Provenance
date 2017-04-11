@@ -1,0 +1,41 @@
+<RCC>
+    <qresource prefix="/actions">
+        <file>icons/actions/debug_cpu.png</file>
+        <file>icons/actions/cheat_search.png</file>
+        <file>icons/actions/about.png</file>
+        <file>icons/actions/backup_ram.png</file>
+        <file>icons/actions/button_cancel.png</file>
+        <file>icons/actions/button_ok.png</file>
+        <file>icons/actions/cd.png</file>
+        <file>icons/actions/cheats.png</file>
+        <file alias="controller.png">icons/controller.png</file>
+        <file>icons/actions/emu-compatibility.png</file>
+        <file>icons/actions/fps.png</file>
+        <file>icons/actions/frame_skipping.png</file>
+        <file alias="fullscreen.png">icons/actions/fullscreen.png</file>
+        <file>icons/actions/iso.png</file>
+        <file>icons/actions/layer.png</file>
+        <file>icons/actions/load_state.png</file>
+        <file>icons/actions/log.png</file>
+        <file alias="mouse.png">icons/mouse.png</file>
+        <file alias="mute.png">icons/actions/mute.png</file>
+        <file alias="no_fullscreen.png">icons/actions/no_fullscreen.png</file>
+        <file>icons/actions/open_file.png</file>
+        <file>icons/actions/pause.png</file>
+        <file>icons/actions/play.png</file>
+        <file>icons/actions/quit.png</file>
+        <file>icons/actions/reset.png</file>
+        <file>icons/actions/save_state.png</file>
+        <file>icons/actions/screenshot.png</file>
+        <file>icons/actions/settings.png</file>
+        <file alias="sound.png">icons/actions/sound.png</file>
+        <file>icons/actions/transfert.png</file>
+        <file>icons/actions/video.png</file>
+        <file alias="3dcontroller.png">icons/3dcontroller.png</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file>icons/made.png</file>
+        <file>icons/yabause.icns</file>
+        <file>icons/yabause.png</file>
+    </qresource>
+</RCC>

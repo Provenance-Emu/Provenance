@@ -1,0 +1,34 @@
+/*
+ * Bart's Custom Sega Saturn Linker Script
+ * Bart Trzynadlowski, 2001
+ * Public domain
+ *
+ * For use with the GNU linker, ld. This script has been tested with ld
+ * version 2.6-96q3.
+ *
+ * This script allows code to be loaded at 0x6004000. Data follows immediately
+ * after the code, and BSS (uninitialized data) immediately after that. The
+ * output file is a plain binary image. Begin execution at the very beginning
+ * of the binary (0x6004000.)
+ */
+
+OUTPUT_FORMAT("elf32-sh")
+SECTIONS
+{
+    . = 0x6004000;
+    .text : { *(.text) }
+    .tors : {                
+       ___ctors = . ;           
+       *(.ctors)                
+       ___ctors_end = . ;               
+       ___dtors = . ;           
+       *(.dtors)                
+       ___dtors_end = . ;               
+    }                
+    .data : { *(.data) }
+    __bss_start = .;
+    .bss : { *(.bss) }
+    __bss_end = .;
+    _end = .;
+}
+

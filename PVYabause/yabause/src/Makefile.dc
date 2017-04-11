@@ -1,0 +1,67 @@
+#	Makefile.dc
+#	Dreamcast Makefile
+#	Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 Lawrence Sebald
+#	Based on KOS makefiles (C) by Dan Potter
+#
+#	This program is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; either version 2 of the License, or
+#	(at your option) any later version.
+#
+#	This program is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with this program; if not, write to the Free Software
+#	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+#
+
+all: yabause.bin
+
+include $(KOS_BASE)/Makefile.rules
+
+KOS_CFLAGS += -I. -DDEBUG -DNO_CLI -DVERSION="0.9.14"
+KOS_ASFLAGS += -g
+
+OBJS = bios.o cdbase.o cheat.o cs0.o cs1.o cs2.o debug.o error.o m68kd.o \
+ memory.o netlink.o peripheral.o profile.o scsp.o scu.o sh2core.o sh2idle.o \
+ sh2int.o sh2d.o smpc.o vdp1.o vdp2.o yabause.o m68kcore.o coffelf.o \
+ m68kc68k.o movie.o snddummy.o japmodem.o osdcore.o
+C68K_OBJS = c68k/c68k.o c68k/c68kexec.o c68k/gen68k.o
+ARCH_OBJS = dreamcast/yui.o dreamcast/perdc.o dreamcast/viddc.o \
+ dreamcast/localtime.o dreamcast/cd.o dreamcast/sh2rec/sh2rec.o \
+ dreamcast/sh2rec/sh2rec_htab.o dreamcast/sh2rec/sh2exec.o \
+ dreamcast/sh2rec/sh2rec_mem.o
+
+c68k/c68kexec.o: c68k/gen68k
+
+c68k/gen68k: c68k/c68kexec.c c68k/c68k.c c68k/gen68k.c
+	$(CC) $(CFLAGS) -DC68K_GEN -o $@ $^
+	cd c68k && ./gen68k
+
+yabause.elf: $(OBJS) $(ARCH_OBJS) $(C68K_OBJS)
+	kos-cc -o $@ $^ -lm
+
+yabause.bin: yabause.elf
+	$(KOS_OBJCOPY) -R .stack -O binary yabause.elf yabause.bin
+
+cdtest.elf: dreamcast/cd.o tools/cdtest.o
+	kos-cc -o $@ $^
+
+cdtest.bin: cdtest.elf
+	$(KOS_OBJCOPY) -R .stack -O binary cdtest.elf cdtest.bin
+
+run: yabause.bin
+	$(KOS_LOADER) yabause.bin
+
+clean:
+	rm -f $(OBJS) $(ARCH_OBJS)
+	rm -f tools/cdtest.o
+	rm -f yabause.elf
+	rm -f cdtest.elf
+	rm -f cdtest.bin
+
+distclean: clean
+	rm -f yabause.bin

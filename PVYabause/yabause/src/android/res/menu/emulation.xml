@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/running">
+        <item android:id="@+id/pause" android:title="Pause" />
+    </group>
+    <group android:id="@+id/paused" android:visible="false">
+        <item android:id="@+id/resume" android:title="Resume" />
+    </group>
+    <item android:id="@+id/screenshot"
+          android:title="Screenshot" />
+    <item android:id="@+id/settings"
+          android:title="Settings" />
+    <item android:id="@+id/quit"
+          android:title="Quit" />
+</menu>
