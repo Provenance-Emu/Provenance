@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Emulation Layer for Vector Unit Computational Operations       *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.01.30                                                         *
+* Release:  2016.03.23                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -47,9 +47,11 @@ VECTOR_OPERATION res_V(v16 vs, v16 vt)
     message("C2\nRESERVED"); /* uncertain how to handle reserved, untested */
 #ifdef ARCH_MIN_SSE2
     vs = _mm_setzero_si128();
-    return (vs);
+    return (vt = vs); /* -Wunused-but-set-parameter */
 #else
     vector_wipe(V_result);
+    if (vt == vs)
+        return; /* -Wunused-but-set-parameter */
     return;
 #endif
 }
@@ -73,7 +75,7 @@ VECTOR_OPERATION res_M(v16 vs, v16 vt)
  */
 VECTOR_OPERATION (*COP2_C2[8 * 8])(v16, v16) = {
     VMULF  ,VMULU  ,res_M  ,res_M  ,VMUDL  ,VMUDM  ,VMUDN  ,VMUDH  , /* 000 */
-    VMACF  ,VMACU  ,res_M  ,VMACQ  ,VMADL  ,VMADM  ,VMADN  ,VMADH  , /* 001 */
+    VMACF  ,VMACU  ,res_M  ,res_M  ,VMADL  ,VMADM  ,VMADN  ,VMADH  , /* 001 */
     VADD   ,VSUB   ,res_V  ,VABS   ,VADDC  ,VSUBC  ,res_V  ,res_V  , /* 010 */
     res_V  ,res_V  ,res_V  ,res_V  ,res_V  ,VSAW   ,res_V  ,res_V  , /* 011 */
     VLT    ,VEQ    ,VNE    ,VGE    ,VCL    ,VCH    ,VCR    ,VMRG   , /* 100 */
@@ -85,9 +87,9 @@ VECTOR_OPERATION (*COP2_C2[8 * 8])(v16, v16) = {
 #ifndef ARCH_MIN_SSE2
 u16 get_VCO(void)
 {
-    register u16 VCO;
+    register u16 vco;
 
-    VCO = 0x0000
+    vco = 0x0000
       | (cf_ne[0xF % 8] << 0xF)
       | (cf_ne[0xE % 8] << 0xE)
       | (cf_ne[0xD % 8] << 0xD)
@@ -104,13 +106,13 @@ u16 get_VCO(void)
       | (cf_co[0x2 % 8] << 0x2)
       | (cf_co[0x1 % 8] << 0x1)
       | (cf_co[0x0 % 8] << 0x0);
-    return (VCO); /* Big endian becomes little. */
+    return (vco); /* Big endian becomes little. */
 }
 u16 get_VCC(void)
 {
-    register u16 VCC;
+    register u16 vcc;
 
-    VCC = 0x0000
+    vcc = 0x0000
       | (cf_clip[0xF % 8] << 0xF)
       | (cf_clip[0xE % 8] << 0xE)
       | (cf_clip[0xD % 8] << 0xD)
@@ -127,12 +129,12 @@ u16 get_VCC(void)
       | (cf_comp[0x2 % 8] << 0x2)
       | (cf_comp[0x1 % 8] << 0x1)
       | (cf_comp[0x0 % 8] << 0x0);
-    return (VCC); /* Big endian becomes little. */
+    return (vcc); /* Big endian becomes little. */
 }
 u8 get_VCE(void)
 {
     int result;
-    register u8 VCE;
+    register u8 vce;
 
     result = 0x00
       | (cf_vce[07] << 0x7)
@@ -143,14 +145,14 @@ u8 get_VCE(void)
       | (cf_vce[02] << 0x2)
       | (cf_vce[01] << 0x1)
       | (cf_vce[00] << 0x0);
-    VCE = result & 0xFF;
-    return (VCE); /* Big endian becomes little. */
+    vce = result & 0xFF;
+    return (vce); /* Big endian becomes little. */
 }
 #else
 u16 get_VCO(void)
 {
     v16 xmm, hi, lo;
-    register u16 VCO;
+    register u16 vco;
 
     hi = _mm_load_si128((v16 *)cf_ne);
     lo = _mm_load_si128((v16 *)cf_co);
@@ -162,13 +164,13 @@ u16 get_VCO(void)
     lo = _mm_slli_epi16(lo, 15);
 
     xmm = _mm_packs_epi16(lo, hi); /* Decompress INT16 Booleans to INT8 ones. */
-    VCO = _mm_movemask_epi8(xmm) & 0x0000FFFF; /* PMOVMSKB combines each MSB. */
-    return (VCO);
+    vco = _mm_movemask_epi8(xmm) & 0x0000FFFF; /* PMOVMSKB combines each MSB. */
+    return (vco);
 }
 u16 get_VCC(void)
 {
     v16 xmm, hi, lo;
-    register u16 VCC;
+    register u16 vcc;
 
     hi = _mm_load_si128((v16 *)cf_clip);
     lo = _mm_load_si128((v16 *)cf_comp);
@@ -180,13 +182,13 @@ u16 get_VCC(void)
     lo = _mm_slli_epi16(lo, 15);
 
     xmm = _mm_packs_epi16(lo, hi); /* Decompress INT16 Booleans to INT8 ones. */
-    VCC = _mm_movemask_epi8(xmm) & 0x0000FFFF; /* PMOVMSKB combines each MSB. */
-    return (VCC);
+    vcc = _mm_movemask_epi8(xmm) & 0x0000FFFF; /* PMOVMSKB combines each MSB. */
+    return (vcc);
 }
 u8 get_VCE(void)
 {
     v16 xmm, hi, lo;
-    register u8 VCE;
+    register u8 vce;
 
     hi = _mm_setzero_si128();
     lo = _mm_load_si128((v16 *)cf_vce);
@@ -194,8 +196,8 @@ u8 get_VCE(void)
     lo = _mm_slli_epi16(lo, 15); /* Rotate Boolean storage from LSB to MSB. */
 
     xmm = _mm_packs_epi16(lo, hi); /* Decompress INT16 Booleans to INT8 ones. */
-    VCE = _mm_movemask_epi8(xmm) & 0x000000FF; /* PMOVMSKB combines each MSB. */
-    return (VCE);
+    vce = _mm_movemask_epi8(xmm) & 0x000000FF; /* PMOVMSKB combines each MSB. */
+    return (vce);
 }
 #endif
 
@@ -203,31 +205,31 @@ u8 get_VCE(void)
  * CTC2 resources
  * not sure how to vectorize going the other direction into SSE2
  */
-void set_VCO(u16 VCO)
+void set_VCO(u16 vco)
 {
     register int i;
 
     for (i = 0; i < N; i++)
-        cf_co[i] = (VCO >> (i + 0x0)) & 1;
+        cf_co[i] = (vco >> (i + 0x0)) & 1;
     for (i = 0; i < N; i++)
-        cf_ne[i] = (VCO >> (i + 0x8)) & 1;
+        cf_ne[i] = (vco >> (i + 0x8)) & 1;
     return; /* Little endian becomes big. */
 }
-void set_VCC(u16 VCC)
+void set_VCC(u16 vcc)
 {
     register int i;
 
     for (i = 0; i < N; i++)
-        cf_comp[i] = (VCC >> (i + 0x0)) & 1;
+        cf_comp[i] = (vcc >> (i + 0x0)) & 1;
     for (i = 0; i < N; i++)
-        cf_clip[i] = (VCC >> (i + 0x8)) & 1;
+        cf_clip[i] = (vcc >> (i + 0x8)) & 1;
     return; /* Little endian becomes big. */
 }
-void set_VCE(u8 VCE)
+void set_VCE(u8 vce)
 {
     register int i;
 
     for (i = 0; i < N; i++)
-        cf_vce[i] = (VCE >> i) & 1;
+        cf_vce[i] = (vce >> i) & 1;
     return; /* Little endian becomes big. */
 }

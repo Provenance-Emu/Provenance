@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Module Subsystem Interface to SP Interpreter Core                  *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.01.30                                                         *
+* Release:  2016.11.05                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -20,8 +20,6 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-
-#include <CoreFoundation/CoreFoundation.h>
 
 #include "module.h"
 #include "su.h"
@@ -231,20 +229,25 @@ EXPORT void CALL CloseDLL(void)
 
 EXPORT void CALL DllAbout(p_void hParent)
 {
-    hParent = NULL;
     message(DLL_about);
+    hParent = NULL;
+    if (hParent == NULL)
+        return; /* -Wunused-but-set-parameter */
     return;
 }
 
 EXPORT void CALL DllConfig(p_void hParent)
 {
-    hParent = NULL; /* unused */
     my_system("sp_cfgui");
     update_conf(CFG_FILE);
 
     if (DMEM == IMEM || GET_RCP_REG(SP_PC_REG) % 4096 == 0x00000000)
         return;
     export_SP_memory();
+
+    hParent = NULL;
+    if (hParent == NULL)
+        return; /* -Wunused-but-set-parameter */
     return;
 }
 
@@ -252,57 +255,117 @@ EXPORT void CALL DllConfig(p_void hParent)
 
 EXPORT unsigned int CALL DoRspCycles(unsigned int cycles)
 {
+    OSTask_type task_type;
+    register unsigned int i;
+
     if (GET_RCP_REG(SP_STATUS_REG) & 0x00000003)
     {
         message("SP_STATUS_HALT");
         return 0x00000000;
     }
 
-    switch (*(pi32)(DMEM + 0xFC0))
-    { /* Simulation barrier to redirect processing externally. */
+    task_type = 0x00000000
+#ifdef USE_CLIENT_ENDIAN
+      | *((pi32)(DMEM + 0x000FC0U))
+#else
+      | (u32)DMEM[0xFC0] << 24
+      | (u32)DMEM[0xFC1] << 16
+      | (u32)DMEM[0xFC2] <<  8
+      | (u32)DMEM[0xFC3] <<  0
+#endif
+    ;
+    switch (task_type) {
 #ifdef EXTERN_COMMAND_LIST_GBI
-        case 0x00000001:
-            if (CFG_HLE_GFX == 0)
-                break;
+    case M_GFXTASK:
+        if (CFG_HLE_GFX == 0)
+            break;
 
-            if (*(pi32)(DMEM + 0xFF0) == 0x00000000)
-                break; /* Resident Evil 2, null task pointers */
-            if (GET_RSP_INFO(ProcessDlistList) == NULL)
-                { /* branch */ }
-            else
-                GET_RSP_INFO(ProcessDlistList)();
-            GET_RCP_REG(SP_STATUS_REG) |= 0x00000203;
-            if (GET_RCP_REG(SP_STATUS_REG) & 0x00000040)
-            { /* SP_STATUS_INTR_BREAK */
-                GET_RCP_REG(MI_INTR_REG) |= 0x00000001; /* R4300 SP interrupt */
-                GET_RSP_INFO(CheckInterrupts)();
-            }
-            if (GET_RCP_REG(DPC_STATUS_REG) & 0x00000002)
-            { /* DPC_STATUS_FREEZE */
-                message("DPC_CLR_FREEZE");
-                GET_RCP_REG(DPC_STATUS_REG) &= ~0x00000002;
-            }
-            return 0;
+        if (*(pi32)(DMEM + 0xFF0) == 0x00000000)
+            break; /* Resident Evil 2, null task pointers */
+        if (GET_RSP_INFO(ProcessDlistList) == NULL)
+            { /* branch */ }
+        else
+            GET_RSP_INFO(ProcessDlistList)();
+
+        GET_RCP_REG(SP_STATUS_REG) |=
+            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
+        ;
+        if (GET_RCP_REG(SP_STATUS_REG) & SP_STATUS_INTR_BREAK) {
+            GET_RCP_REG(MI_INTR_REG) |= 0x00000001;
+            GET_RSP_INFO(CheckInterrupts)();
+        }
+        GET_RCP_REG(DPC_STATUS_REG) &= ~0x00000002ul; /* DPC_STATUS_FREEZE */
+        return 0;
 #endif
 #ifdef EXTERN_COMMAND_LIST_ABI
-        case 0x00000002: /* OSTask.type == M_AUDTASK */
-            if (CFG_HLE_AUD == 0)
-                break;
+    case M_AUDTASK:
+        if (CFG_HLE_AUD == 0)
+            break;
 
-            if (GET_RSP_INFO(ProcessAlistList) == NULL)
-                { /* branch */ }
-            else
-                GET_RSP_INFO(ProcessAlistList)();
-            GET_RCP_REG(SP_STATUS_REG) |= 0x00000203;
-            if (GET_RCP_REG(SP_STATUS_REG) & 0x00000040)
-            { /* SP_STATUS_INTR_BREAK */
-                GET_RCP_REG(MI_INTR_REG) |= 0x00000001; /* R4300 SP interrupt */
-                GET_RSP_INFO(CheckInterrupts)();
-            }
-            return 0;
+        if (GET_RSP_INFO(ProcessAlistList) == NULL)
+            { /* branch */ }
+        else
+            GET_RSP_INFO(ProcessAlistList)();
+
+        GET_RCP_REG(SP_STATUS_REG) |=
+            SP_STATUS_SIG2 | SP_STATUS_BROKE | SP_STATUS_HALT
+        ;
+        if (GET_RCP_REG(SP_STATUS_REG) & SP_STATUS_INTR_BREAK) {
+            GET_RCP_REG(MI_INTR_REG) |= 0x00000001;
+            GET_RSP_INFO(CheckInterrupts)();
+        }
+        return 0;
 #endif
+    case M_VIDTASK:
+        message("M_VIDTASK");
+        break;
+    case M_NJPEGTASK:
+        break; /* Zelda, Pokemon, others */
+    case M_NULTASK:
+        message("M_NULTASK");
+        break;
+    case M_HVQTASK:
+        message("M_HVQTASK");
+        break;
+    case M_HVQMTASK:
+        if (GET_RSP_INFO(ShowCFB) == NULL) /* Gfx #1.2 or older specs */
+            break;
+        GET_RSP_INFO(ShowCFB)(); /* forced FB refresh in case gfx plugin skip */
+        break;
     }
+
+#ifdef WAIT_FOR_CPU_HOST
+    for (i = 0; i < 32; i++)
+        MFC0_count[i] = 0;
+#endif
     run_task();
+
+/*
+ * An optional EMMS when compiling with Intel SIMD or MMX support.
+ *
+ * Whether or not MMX has been executed in this emulator, here is a good time
+ * to finally empty the MM state, at the end of a long interpreter loop.
+ */
+#ifdef ARCH_MIN_SSE2
+    _mm_empty();
+#endif
+
+    if (*CR[0x4] & SP_STATUS_BROKE) /* normal exit, from executing BREAK */
+        return (cycles);
+    else if (GET_RCP_REG(MI_INTR_REG) & 1) /* interrupt set by MTC0 to break */
+        GET_RSP_INFO(CheckInterrupts)();
+    else if (*CR[0x7] != 0x00000000) /* semaphore lock fixes */
+        {}
+#ifdef WAIT_FOR_CPU_HOST
+    else
+        MF_SP_STATUS_TIMEOUT = 16; /* From now on, wait 16 times, not 32767. */
+#else
+    else { /* ??? unknown, possibly external intervention from CPU memory map */
+        message("SP_SET_HALT");
+        return (cycles);
+    }
+#endif
+    *CR[0x4] &= ~SP_STATUS_HALT; /* CPU restarts with the correct SIGs. */
     return (cycles);
 }
 
@@ -312,23 +375,31 @@ EXPORT void CALL GetDllInfo(PLUGIN_INFO *PluginInfo)
     PluginInfo -> Type = PLUGIN_TYPE_RSP;
     my_strcpy(PluginInfo -> Name, "Static Interpreter");
     PluginInfo -> NormalMemory = 0;
-    PluginInfo -> MemoryBswaped = 1;
+    PluginInfo -> MemoryBswaped = USE_CLIENT_ENDIAN;
     return;
 }
 
+p_func GBI_phase;
+void no_LLE(void)
+{
+    static int already_warned;
+
+    if (already_warned)
+        return;
+    message("RSP configured for LLE but not using LLE graphics plugin.");
+    already_warned = TRUE;
+    return;
+}
 EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
 {
     if (CycleCount != NULL) /* cycle-accuracy not doable with today's hosts */
-        *CycleCount = 0x00000000;
+        *CycleCount = 0;
     update_conf(CFG_FILE);
-
-    if (Rsp_Info.DMEM == Rsp_Info.IMEM) /* usually dummy RSP data for testing */
-        return; /* DMA is not executed just because plugin initiates. */
-    while (Rsp_Info.IMEM != Rsp_Info.DMEM + 4096)
-        message("Virtual host map noncontiguity.");
 
     RSP_INFO_NAME = Rsp_Info;
     DRAM = GET_RSP_INFO(RDRAM);
+    if (Rsp_Info.DMEM == Rsp_Info.IMEM) /* usually dummy RSP data for testing */
+        return; /* DMA is not executed just because plugin initiates. */
     DMEM = GET_RSP_INFO(DMEM);
     IMEM = GET_RSP_INFO(IMEM);
 
@@ -340,7 +411,7 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
     CR[0x5] = &GET_RCP_REG(SP_DMA_FULL_REG);
     CR[0x6] = &GET_RCP_REG(SP_DMA_BUSY_REG);
     CR[0x7] = &GET_RCP_REG(SP_SEMAPHORE_REG);
-    GET_RCP_REG(SP_PC_REG) = 0x04001000 & 0xFFF; /* task init bug on Mupen64 */
+    GET_RCP_REG(SP_PC_REG) = 0x04001000;
     CR[0x8] = &GET_RCP_REG(DPC_START_REG);
     CR[0x9] = &GET_RCP_REG(DPC_END_REG);
     CR[0xA] = &GET_RCP_REG(DPC_CURRENT_REG);
@@ -351,13 +422,19 @@ EXPORT void CALL InitiateRSP(RSP_INFO Rsp_Info, pu32 CycleCount)
     CR[0xF] = &GET_RCP_REG(DPC_TMEM_REG);
 
     MF_SP_STATUS_TIMEOUT = 32767;
+#if 1
+    GET_RCP_REG(SP_PC_REG) &= 0x00000FFFu; /* hack to fix Mupen64 */
+#endif
+
+    GBI_phase = GET_RSP_INFO(ProcessRdpList);
+    if (GBI_phase == NULL)
+        GBI_phase = no_LLE;
     return;
 }
 
 EXPORT void CALL RomClosed(void)
 {
-    // OpenEmu
-    //FILE* stream;
+    FILE* stream;
 
     GET_RCP_REG(SP_PC_REG) = 0x04001000;
 
@@ -365,9 +442,11 @@ EXPORT void CALL RomClosed(void)
  * Sometimes the end user won't correctly install to the right directory. :(
  * If the config file wasn't installed correctly, politely shut errors up.
  */
-    //stream = my_fopen(CFG_FILE, "wb");
-    //my_fwrite(conf, 8, 32 / 8, stream);
-    //my_fclose(stream);
+#if !defined(M64P_PLUGIN_API)
+    stream = my_fopen(CFG_FILE, "wb");
+    my_fwrite(conf, 8, 32 / 8, stream);
+    my_fclose(stream);
+#endif
     return;
 }
 
@@ -379,14 +458,12 @@ NOINLINE void message(const char* body)
     char* argv;
     int i, j;
 
-    argv = my_calloc(4096, 1);
+    argv = my_calloc(my_strlen(body) + 64, 1);
     my_strcpy(argv, "CMD /Q /D /C \"TITLE RSP Message&&ECHO ");
     i = 0;
     j = my_strlen(argv);
-    while (body[i] != '\0')
-    {
-        if (body[i] == '\n')
-        {
+    while (body[i] != '\0') {
+        if (body[i] == '\n') {
             my_strcat(argv, "&&ECHO ");
             ++i;
             j += 7;
@@ -400,13 +477,20 @@ NOINLINE void message(const char* body)
 #else
     fputs(body, stdout);
     putchar('\n');
+    puts("Press ENTER to return.");
+    getchar();
 #endif
     return;
 }
 #else
 NOINLINE void message(const char* body)
 {
+#if defined(M64P_PLUGIN_API)
+    DebugMessage(M64MSG_ERROR, body);
+#else
     printf("%s\n", body);
+#endif
+
 }
 #endif
 
@@ -424,8 +508,7 @@ NOINLINE void update_conf(const char* source)
         conf[i] = 0x00;
 
     stream = my_fopen(source, "rb");
-    if (stream == NULL)
-    { /* try GetModulePath or whatever to correct the path? */
+    if (stream == NULL) {
         message("Failed to read config.");
         return;
     }
@@ -438,38 +521,26 @@ NOINLINE void update_conf(const char* source)
 #ifdef SP_EXECUTE_LOG
 void step_SP_commands(uint32_t inst)
 {
-    if (output_log)
-    {
-        const char digits[16] = {
-            '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
-        };
-        char text[256];
-        char offset[4] = "";
-        char code[9] = "";
-        unsigned char endian_swap[4];
+    unsigned char endian_swap[4];
+    char text[256];
+    char offset[4] = "";
+    char code[9] = "";
 
-        endian_swap[00] = (unsigned char)(inst >> 24);
-        endian_swap[01] = (unsigned char)(inst >> 16);
-        endian_swap[02] = (unsigned char)(inst >>  8);
-        endian_swap[03] = (unsigned char)inst;
-        offset[00] = digits[(*RSP.SP_PC_REG & 0xF00) >> 8];
-        offset[01] = digits[(*RSP.SP_PC_REG & 0x0F0) >> 4];
-        offset[02] = digits[(*RSP.SP_PC_REG & 0x00F) >> 0];
-        code[00] = digits[(inst & 0xF0000000) >> 28];
-        code[01] = digits[(inst & 0x0F000000) >> 24];
-        code[02] = digits[(inst & 0x00F00000) >> 20];
-        code[03] = digits[(inst & 0x000F0000) >> 16];
-        code[04] = digits[(inst & 0x0000F000) >> 12];
-        code[05] = digits[(inst & 0x00000F00) >>  8];
-        code[06] = digits[(inst & 0x000000F0) >>  4];
-        code[07] = digits[(inst & 0x0000000F) >>  0];
-        strcpy(text, offset);
-        my_strcat(text, "\n");
-        my_strcat(text, code);
-        message(text); /* PC offset, MIPS hex. */
-        if (output_log == NULL) {} else /* Global pointer not updated?? */
-            my_fwrite(endian_swap, 4, 1, output_log);
-    }
+    if (output_log == NULL)
+        return;
+
+    endian_swap[00] = (u8)((inst >> 24) & 0xFF);
+    endian_swap[01] = (u8)((inst >> 16) & 0xFF);
+    endian_swap[02] = (u8)((inst >>  8) & 0xFF);
+    endian_swap[03] = (u8)((inst >>  0) & 0xFF);
+    sprintf(&offset[0], "%03X", GET_RCP_REG(SP_PC_REG) & 0xFFF);
+    sprintf(&code[0], "%08X", inst);
+    strcpy(text, offset);
+    my_strcat(text, "\n");
+    my_strcat(text, code);
+    message(text); /* PC offset, MIPS hex. */
+    if (output_log != NULL)
+        my_fwrite(endian_swap, 4, 1, output_log);
 }
 #endif
 
@@ -562,11 +633,8 @@ NOINLINE p_void my_calloc(size_t count, size_t size)
 NOINLINE void my_free(p_void ptr)
 {
 #ifdef WIN32
-    HANDLE this_should_be_null;
-
-    do {
-        this_should_be_null = GlobalFree(ptr);
-    } while (this_should_be_null != NULL);
+    while (GlobalFree(ptr) != NULL)
+        message("GlobalFree() failure");
 #else
     free(ptr);
 #endif
@@ -577,7 +645,8 @@ NOINLINE size_t my_strlen(const char* str)
 {
     size_t ret_slot;
 
-    for (ret_slot = 0; *str != '\0'; ret_slot++, str++);
+    for (ret_slot = 0; *str != '\0'; ret_slot++, str++)
+        ;
     return (ret_slot);
 }
 
@@ -630,13 +699,11 @@ NOINLINE int my_system(char* command)
     WaitForSingleObject(info_process.hProcess, INFINITE);
     CloseHandle(info_process.hProcess);
     CloseHandle(info_process.hThread);
-#else
-#if TARGET_OS_TV
+#elif TARGET_OS_TV
     // system not available in tvOS
     ret_slot = 0;
 #else
     ret_slot = system(command);
-#endif
 #endif
     return (ret_slot);
 }

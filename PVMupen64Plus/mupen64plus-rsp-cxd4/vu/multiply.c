@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Multiplies      *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.01.18                                                         *
+* Release:  2015.11.30                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -475,18 +475,6 @@ VECTOR_OPERATION VMACU(v16 vs, v16 vt)
     return (vs);
 #else
     vector_copy(V_result, VD);
-    return;
-#endif
-}
-
-VECTOR_OPERATION VMACQ(v16 vs, v16 vt)
-{
-    vs = vt; /* both unused ... Only the vector accumulator is a source. */
-
-    message("VMACQ\nUnimplemented."); /* untested, any N64 ROMs use this?? */
-#ifdef ARCH_MIN_SSE2
-    return (vs);
-#else
     return;
 #endif
 }

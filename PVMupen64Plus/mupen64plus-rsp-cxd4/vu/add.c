@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Simulation Layer for Vector Unit Computational Adds            *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.01.30                                                         *
+* Release:  2016.03.23                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -161,9 +161,10 @@ INLINE static void do_abs(pi16 VD, pi16 VS, pi16 VT)
         neg[i]  = (VS[i] <  0x0000);
     for (i = 0; i < N; i++)
         pos[i]  = (VS[i] >  0x0000);
+    vector_wipe(nez);
 
     for (i = 0; i < N; i++)
-        nez[i] = 0 - neg[i];
+        nez[i] -= neg[i];
     for (i = 0; i < N; i++)
         nez[i] += pos[i];
 
@@ -332,20 +333,19 @@ VECTOR_OPERATION VSUBC(v16 vs, v16 vt)
 
 VECTOR_OPERATION VSAW(v16 vs, v16 vt)
 {
-    const unsigned int element = (inst >> 21) & 0x7;
+    unsigned int element;
 
-    vt = vs; /* unused */
-    if (element > 0x2)
-    { /* branch very unlikely...never seen a game do VSAW illegally */
+    element  = 0xF & (inst_word >> 21);
+    element ^= 0x8; /* Convert scalar whole elements 8:F to 0:7. */
+
+    if (element > 0x2) {
         message("VSAW\nIllegal mask.");
 #ifdef ARCH_MIN_SSE2
         vector_wipe(vs);
 #else
         vector_wipe(V_result);
 #endif
-    }
-    else
-    {
+    } else {
 #ifdef ARCH_MIN_SSE2
         vs = *(v16 *)VACC[element];
 #else
@@ -353,8 +353,10 @@ VECTOR_OPERATION VSAW(v16 vs, v16 vt)
 #endif
     }
 #ifdef ARCH_MIN_SSE2
-    return (vs);
+    return (vt = vs);
 #else
+    if (vt == vs)
+        return; /* -Wunused-but-set-parameter */
     return;
 #endif
 }

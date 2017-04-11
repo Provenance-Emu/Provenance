@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  MSP Emulation Layer for Vector Unit Computational Operations       *
 * Authors:  Iconoclast                                                         *
-* Release:  2015.01.30                                                         *
+* Release:  2016.03.23                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -41,7 +41,7 @@
  * We are going to need this for vector operations doing scalar things.
  * The divides and VSAW need bit-wise information from the instruction word.
  */
-extern u32 inst;
+extern u32 inst_word;
 
 /*
  * RSP virtual registers (of vector unit)
@@ -252,9 +252,9 @@ extern u16 get_VCO(void);
 extern u16 get_VCC(void);
 extern u8 get_VCE(void);
 
-extern void set_VCO(u16 VCO);
-extern void set_VCC(u16 VCC);
-extern void set_VCE(u8 VCE);
+extern void set_VCO(u16 vco);
+extern void set_VCC(u16 vcc);
+extern void set_VCE(u8 vce);
 
 /*
  * shuffling convenience macros for Intel SIMD
@@ -271,6 +271,8 @@ extern void set_VCE(u8 VCE);
  * name "MFC0", which had to be renamed.)  Rather than uglify the function
  * names, we'll treat them as macros from now on, should the need arise.
  */
+#ifndef _WIN32
+
 #define VMULF       mulf_v_msp
 #define VMULU       mulu_v_msp
 #define VMULI       rndp_v_msp
@@ -347,5 +349,7 @@ extern void set_VCE(u8 VCE);
 #define VINSQ       insq_v_msp
 #define VINSN       insn_v_msp
 #define VNULLOP     nop_v_msp
+
+#endif
 
 #endif

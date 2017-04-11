@@ -1,7 +1,7 @@
 /******************************************************************************\
 * Project:  Instruction Mnemonics for Vector Unit Computational Multiplies     *
 * Authors:  Iconoclast                                                         *
-* Release:  2014.10.15                                                         *
+* Release:  2015.11.30                                                         *
 * License:  CC0 Public Domain Dedication                                       *
 *                                                                              *
 * To the extent possible under law, the author(s) have dedicated all copyright *
@@ -51,9 +51,8 @@ VECTOR_EXTERN
     VMACU  (v16 vs, v16 vt);
 /*
  *  VRNDN  (v16 vs, v16 vt); # was on Ultra64 RCP but removed
+ *  VMACQ  (v16 vs, v16 vt); # mentioned probably by mistake in RSP manual
  */
-VECTOR_EXTERN
-    VMACQ  (v16 vs, v16 vt);
 
 /*
  * double-precision accumulative multiplication

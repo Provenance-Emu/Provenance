@@ -15,23 +15,18 @@ OBJ_LIST="\
     $obj/vu/select.o \
     $obj/vu/logical.o \
     $obj/vu/divide.o"
+
 FLAGS_ANSI="\
     -O3 \
+    -fPIC \
     -DPLUGIN_API_VERSION=0x0101 \
     -march=native \
     -mstackrealign \
     -Wall \
-    -pedantic"
-FLAGS_x86_32="\
-    -O3 \
-    -masm=intel \
-    -DPLUGIN_API_VERSION=0x0101 \
-    -DARCH_MIN_SSE2 \
-    -march=native \
-    -mstackrealign \
-    -Wall \
-    -pedantic"
-FLAGS_x86_64="\
+    -pedanticz"
+
+if [ `uname -m` == 'x86_64' ]; then
+FLAGS_x86="\
     -O3 \
     -masm=intel \
     -fPIC \
@@ -40,8 +35,27 @@ FLAGS_x86_64="\
     -march=native \
     -mstackrealign \
     -Wall \
-    -pedantic"
-C_FLAGS=$FLAGS_x86_32 # default since Intel SIMD was the most tested
+    -pedantic \
+    -Wall -Wshadow -Wredundant-decls -Wextra -Wcast-align -Wcast-qual \
+    -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op
+    -Wmissing-include-dirs -Wstrict-overflow=5 -Wundef -Wno-unused \
+    -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option"
+else
+FLAGS_x86="\
+    -O3 \
+    -masm=intel \
+    -DPLUGIN_API_VERSION=0x0101 \
+    -DARCH_MIN_SSE2 \
+    -march=native \
+    -mstackrealign \
+    -Wall \
+    -pedantic \
+    -Wall -Wshadow -Wredundant-decls -Wextra -Wcast-align -Wcast-qual \
+    -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op
+    -Wmissing-include-dirs -Wstrict-overflow=5 -Wundef -Wno-unused \
+    -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option"
+fi
+C_FLAGS=$FLAGS_x86 # default since Intel SIMD was the most tested
 
 echo Compiling C source code...
 cc -S $C_FLAGS -o $obj/module.s  $src/module.c
