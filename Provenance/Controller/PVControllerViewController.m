@@ -136,10 +136,14 @@
 			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
 			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, size.width, size.height);
+            NSNumber *diagonalDirectionsEnabled = (NSNumber *)[control objectForKey:PVControlDiagonalDirectionsEnabledKey];
 			
 			if (!self.dPad)
 			{
 				self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
+                if (diagonalDirectionsEnabled) {
+                    self.dPad.diagonalDirectionsEnabled = diagonalDirectionsEnabled.boolValue;
+                }
 				[self.dPad setDelegate:self];
 				[self.dPad setAlpha:alpha];
 				[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
