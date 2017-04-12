@@ -32,6 +32,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Gameboy Advance
 - Atari
     - 2600
+    - 5200
     - 7800
 
 ###Features
@@ -85,6 +86,8 @@ Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.
 Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
 
 Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
+
+Atari 5200 emulation is provided by [Atari 800](http://atari800.sourceforge.net).
 
 Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/).
 
