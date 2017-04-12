@@ -95,17 +95,17 @@
         }
     }
     
-//    for (NSString *path in paths)
-//    {
-//        if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
-//        {
-//            NSString *newPath = [self moveROMToAppropriateSubfolder:path];
-//            if ([newPath length])
-//            {
-//                [newPaths addObject:newPath];
-//            }
-//        }
-//    }
+    for (NSString *path in paths)
+    {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
+        {
+            NSString *newPath = [self moveROMToAppropriateSubfolder:path];
+            if ([newPath length])
+            {
+                [newPaths addObject:newPath];
+            }
+        }
+    }
     
     return newPaths;
 }
