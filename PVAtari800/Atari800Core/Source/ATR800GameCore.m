@@ -707,7 +707,7 @@ static ATR800GameCore *_currentCore;
             controllerStates[playerIndex].fire = gamepad.buttonA.isPressed;
             
             // Start
-            INPUT_key_code = _gamepad.buttonX.isPressed ? AKEY_5200_START : AKEY_NONE;
+            INPUT_key_code = gamepad.buttonX.isPressed ? AKEY_5200_START : AKEY_NONE;
         }
 #endif
     }

@@ -244,7 +244,7 @@
 #define HAVE_STRTOL 1
 
 /* Define to 1 if you have the `system' function. */
-#define HAVE_SYSTEM 1
+//#define HAVE_SYSTEM 1
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
  */
