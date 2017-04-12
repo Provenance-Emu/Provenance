@@ -497,8 +497,6 @@
 		B349AF4C1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */ = {isa = PBXBuildFile; fileRef = B349AE0D1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec */; };
 		B349AF4D1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */ = {isa = PBXBuildFile; fileRef = B349AE0E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec */; };
 		B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */ = {isa = PBXBuildFile; fileRef = B349AE0E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec */; };
-		B349AF4F1E9ABCF900ACD416 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = B349AE0F1E9ABCF900ACD416 /* README.md */; };
-		B349AF501E9ABCF900ACD416 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = B349AE0F1E9ABCF900ACD416 /* README.md */; };
 		B349AF511E9ABCF900ACD416 /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE131E9ABCF900ACD416 /* LzmaSDKObjC.mm */; };
 		B349AF521E9ABCF900ACD416 /* LzmaSDKObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE131E9ABCF900ACD416 /* LzmaSDKObjC.mm */; };
 		B349AF531E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B349AE141E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp */; };
