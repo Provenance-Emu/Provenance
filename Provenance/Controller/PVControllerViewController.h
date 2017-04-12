@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, copy) NSString *systemIdentifier;
 @property (nonatomic, strong) JSDPad *dPad;
+@property (nonatomic, strong) JSDPad *dPad2;
 @property (nonatomic, strong) UIView *buttonGroup;
 @property (nonatomic, strong) JSButton *leftShoulderButton;
 @property (nonatomic, strong) JSButton *rightShoulderButton;

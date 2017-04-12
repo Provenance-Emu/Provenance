@@ -33,6 +33,14 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVMednafen/MednafenGameCore.h>
+#import "PVPSXControllerViewController.h"
+#import "PVLynxControllerViewController.h"
+#import "PVPCEControllerViewController.h"
+#import "PVVBControllerViewController.h"
+#import "PVWonderSwanControllerViewController.h"
+#import "PVNeoGeoPocketControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -113,6 +121,20 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PVPSXSystemIdentifier] ||
+             [systemID isEqualToString:PVLynxSystemIdentifier] ||
+             [systemID isEqualToString:PVPCESystemIdentifier] ||
+             [systemID isEqualToString:PVPCECDSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPCSystemIdentifier] ||
+             [systemID isEqualToString:PVPCFXSystemIdentifier] ||
+             [systemID isEqualToString:PVVirtualBoySystemIdentifier] ||
+             [systemID isEqualToString:PVWonderSwanSystemIdentifier])
+    {
+        core = [[MednafenGameCore alloc] init];
+    }
+	
+    core.systemIdentifier = systemID;
     
 	return core;
 }
@@ -158,6 +180,35 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVPSXSystemIdentifier])
+    {
+        controller = [[PVPSXControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVWonderSwanSystemIdentifier])
+    {
+        controller = [[PVWonderSwanControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVLynxSystemIdentifier])
+    {
+        controller = [[PVLynxControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVVirtualBoySystemIdentifier])
+    {
+        controller = [[PVVBControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVPCESystemIdentifier] ||
+             [systemID isEqualToString:PVPCECDSystemIdentifier] ||
+             [systemID isEqualToString:PVPCFXSystemIdentifier])
+    {
+        controller = [[PVPCEControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ( [systemID isEqualToString:PVNGPSystemIdentifier] ||
+             [systemID isEqualToString:PVNGPCSystemIdentifier]) {
+        controller = [[PVNeoGeoPocketControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else {
+        @throw [NSString stringWithFormat:@"No controller for system with identifier %@", systemID];
     }
 	
 	return controller;

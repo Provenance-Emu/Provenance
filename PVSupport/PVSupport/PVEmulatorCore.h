@@ -51,6 +51,8 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
+@property (nonatomic, copy) NSString *systemIdentifier;
+
 @property (atomic, assign) BOOL shouldResyncTime;
 
 typedef NS_ENUM(NSInteger, GameSpeed) {
@@ -83,6 +85,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;
+- (BOOL)wideScreen;
 - (GLenum)pixelFormat;
 - (GLenum)pixelType;
 - (GLenum)internalPixelFormat;

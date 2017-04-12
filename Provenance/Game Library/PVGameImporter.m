@@ -53,7 +53,7 @@
     self.finishedArtworkHandler = nil;
 }
 
-- (void)startImportForPaths:(NSArray *)paths
+- (void)startImportForPaths:(NSArray<NSString*> *)paths
 {
     dispatch_async(self.serialImportQueue, ^{
         NSArray *newPaths = [self importFilesAtPaths:paths];
@@ -67,9 +67,21 @@
     });
 }
 
-- (NSArray *)importFilesAtPaths:(NSArray *)paths
+- (NSArray *)importFilesAtPaths:(NSArray<NSString*> *)paths
 {
-    NSMutableArray *newPaths = [NSMutableArray array];
+    NSMutableArray<NSString*> *newPaths = [NSMutableArray array];
+    
+    // Reorder .cue's first
+    paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString*  _Nonnull obj1, NSString*  _Nonnull obj2) {
+        if ([obj1.pathExtension isEqualToString:@"cue"]) {
+            return NSOrderedAscending;
+        } else if ([obj2.pathExtension isEqualToString:@"cue"]) {
+            return NSOrderedDescending;
+        } else {
+            return [obj1 compare:obj2];
+        }
+    }];
+    
     
     // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved before processing its CD cue sheet or something
     for (NSString *path in paths)
@@ -147,7 +159,7 @@
     
     // moved the .cue, now move .bins .imgs etc
     
-    NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[filePath pathExtension] withString:@""];
+    NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[filePath pathExtension]] withString:@""];
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error];
     
     if (!contents)
@@ -158,7 +170,14 @@
     
     for (NSString *file in contents)
     {
-        NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[file pathExtension] withString:@""];
+        NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[file pathExtension]] withString:@""];
+        
+        
+        // Some cue's have multiple bins, like, Game.cue Game (Track 1).bin, Game (Track 2).bin ....
+        // Clip down the file name to the length of the .cue to see if they start to match
+        if (fileWithoutExtension.length > relatedFileName.length) {
+            fileWithoutExtension = [fileWithoutExtension substringWithRange:NSMakeRange(0, relatedFileName.length)];
+        }
         
         if ([fileWithoutExtension isEqual:relatedFileName])
         {
@@ -186,6 +205,8 @@
             if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[subfolderPath stringByAppendingPathComponent:file] error:&error])
             {
                 DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
+            } else {
+                DLog(@"Moved file from %@ to %@", filePath, subfolderPath);
             }
         }
     }
@@ -287,7 +308,11 @@
         
         for (NSString *file in contents)
         {
-            NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[file pathExtension] withString:@""];
+            // Crop out any extra info in the .bin files, like Game.cue and Game (Track 1).bin, we want to match up to just 'Game'
+            NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@", [file pathExtension]] withString:@""];
+            if (fileWithoutExtension.length > relatedFileName.length) {
+                fileWithoutExtension = [fileWithoutExtension substringWithRange:NSMakeRange(0, relatedFileName.length)];
+            }
             
             if ([fileWithoutExtension isEqual:relatedFileName])
             {
@@ -296,13 +321,17 @@
                 if (cuesheet)
                 {
                     NSRange range = [cuesheet rangeOfString:file options:NSCaseInsensitiveSearch];
-                    [cuesheet replaceCharactersInRange:range withString:file];
-                    if (![cuesheet writeToFile:cueSheetPath
-                                    atomically:NO
-                                      encoding:NSUTF8StringEncoding
-                                         error:&error])
-                    {
-                        DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                    if (range.location != NSNotFound) {
+                        [cuesheet replaceCharactersInRange:range withString:file];
+                        if (![cuesheet writeToFile:cueSheetPath
+                                        atomically:NO
+                                          encoding:NSUTF8StringEncoding
+                                             error:&error])
+                        {
+                            DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                        }
+                    } else {
+                        DLog(@"Range of string <%@> not found in file <%@>", file, cueSheetPath);
                     }
                 }
                 else
