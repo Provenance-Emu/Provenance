@@ -33,6 +33,9 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVAtari800/ATR800GameCore.h>
+#import "PVAtari5200ControllerViewController.h"
+
 #import <PVPokeMini/PVPokeMiniEmulatorCore.h>
 #import "PVPokeMiniControllerViewController.h"
 
@@ -124,6 +127,10 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PV5200SystemIdentifier])
+    {
+        core = [[ATR800GameCore alloc] init];
+    }
     else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
     {
         core = [[PVPokeMiniEmulatorCore alloc] init];
@@ -187,6 +194,10 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PV5200SystemIdentifier])
+    {
+        controller = [[PVAtari5200ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
     else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
     {
