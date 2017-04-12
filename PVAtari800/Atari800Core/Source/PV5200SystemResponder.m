@@ -24,25 +24,25 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "OE5200SystemResponder.h"
-#import "OE5200SystemResponderClient.h"
+#import "PV5200SystemResponder.h"
+#import "PV5200SystemResponderClient.h"
 
-@implementation OE5200SystemResponder
+@implementation PV5200SystemResponder
 @dynamic client;
 
 + (Protocol *)gameSystemResponderClientProtocol;
 {
-    return @protocol(OE5200SystemResponderClient);
+    return @protocol(PV5200SystemResponderClient);
 }
 
 - (void)pressEmulatorKey:(OESystemKey *)aKey
 {
-    [[self client] didPush5200Button:(OE5200Button)[aKey key] forPlayer:[aKey player]];
+    [[self client] didPush5200Button:(PV5200Button)[aKey key] forPlayer:[aKey player]];
 }
 
 - (void)releaseEmulatorKey:(OESystemKey *)aKey
 {
-    [[self client] didRelease5200Button:(OE5200Button)[aKey key] forPlayer:[aKey player]];
+    [[self client] didRelease5200Button:(PV5200Button)[aKey key] forPlayer:[aKey player]];
 }
 
 @end

@@ -24,12 +24,62 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <OpenEmuSystem/OpenEmuSystem.h>
-#import "OEA8SystemResponderClient.h"
+#import "PVA8SystemResponder.h"
+#import "PVA8SystemResponderClient.h"
 
-OE_EXPORTED_CLASS
-@interface OEA8SystemResponder : OESystemResponder
+@implementation PVA8SystemResponder
+@dynamic client;
 
-@property(nonatomic, weak) id<OEA8SystemResponderClient> client;
++ (Protocol *)gameSystemResponderClientProtocol;
+{
+    return @protocol(PVA8SystemResponderClient);
+}
+
+- (void)HIDKeyDown:(OEHIDEvent *)theEvent
+{
+    [super HIDKeyDown:theEvent];
+    [[self client] keyDown:[theEvent keycode] characters:[theEvent characters] charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers] flags:[theEvent modifierFlags]];
+}
+
+- (void)HIDKeyUp:(OEHIDEvent *)theEvent
+{
+    [super HIDKeyUp:theEvent];
+    [[self client] keyUp:[theEvent keycode] characters:[theEvent characters] charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers] flags:[theEvent modifierFlags]];
+}
+
+- (void)pressEmulatorKey:(OESystemKey *)aKey
+{
+    [[self client] didPushA8Button:(PVA8Button)[aKey key] forPlayer:[aKey player]];
+}
+
+- (void)releaseEmulatorKey:(OESystemKey *)aKey
+{
+    [[self client] didReleaseA8Button:(PVA8Button)[aKey key] forPlayer:[aKey player]];
+}
+
+- (void)mouseMovedAtPoint:(OEIntPoint)aPoint
+{
+    [[self client] mouseMovedAtPoint:aPoint];
+}
+
+- (void)mouseDownAtPoint:(OEIntPoint)aPoint
+{
+    [[self client] leftMouseDownAtPoint:aPoint];
+}
+
+- (void)mouseUpAtPoint
+{
+    [[self client] leftMouseUp];
+}
+
+- (void)rightMouseDownAtPoint:(OEIntPoint)aPoint
+{
+    [[self client] rightMouseDownAtPoint:aPoint];
+}
+
+- (void)rightMouseUpAtPoint
+{
+    [[self client] rightMouseUp];
+}
 
 @end

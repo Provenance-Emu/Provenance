@@ -27,13 +27,12 @@
 #import "ATR800GameCore.h"
 
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/OETimingUtils.h>
 #import <PVSupport/DebugUtils.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#import "OEA8SystemResponderClient.h"
-#import "OE5200SystemResponderClient.h"
+#import "PVA8SystemResponderClient.h"
+#import "PV5200SystemResponderClient.h"
 
 // ataria800 project includes
 #include "afile.h"
@@ -82,7 +81,7 @@ typedef struct {
 	int reset;
 } ATR5200ControllerState;
 
-@interface ATR800GameCore () <OEA8SystemResponderClient, OE5200SystemResponderClient>
+@interface ATR800GameCore () <PVA8SystemResponderClient, PV5200SystemResponderClient>
 {
 	uint8_t *_videoBuffer;
     uint8_t *_soundBuffer;
@@ -123,7 +122,7 @@ static ATR800GameCore *_currentCore;
 
 // TODO: Make me real
 -(NSString*)systemIdentifier {
-    return @"org.provenenace.5200";
+    return @"com.provenance.5200";
 }
 
 -(NSString*)biosDirectoryPath {
@@ -154,7 +153,7 @@ static ATR800GameCore *_currentCore;
 
     Colours_PreInitialise();
 
-    if([[self systemIdentifier] isEqualToString:@"provenance.system.5200"])
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.5200"])
     {
         // Set 5200.rom BIOS path
         char biosFileName[2048];
@@ -167,7 +166,7 @@ static ATR800GameCore *_currentCore;
         Atari800_SetMachineType(Atari800_MACHINE_5200);
         MEMORY_ram_size = 16;
     }
-    else if([[self systemIdentifier] isEqualToString:@"provenance.system.atari8bit"])
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.atari8bit"])
     {
         char basicFileName[2048], osbFileName[2048], xlFileName[2048];
         NSString *biosPath = [self biosDirectoryPath];
@@ -307,14 +306,14 @@ static ATR800GameCore *_currentCore;
 
 - (CGRect)screenRect
 {
-    return CGRectMake(24, 0, 336, 240);
+    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
 }
 
 - (CGSize)aspectSize
 {
     // TODO: fix PAR
     //return CGSizeMake(336 * (6.0 / 7.0), 240);
-    return CGSizeMake(336, 240);
+    return CGSizeMake(Screen_WIDTH, Screen_HEIGHT);
 }
 
 - (GLenum)pixelFormat
@@ -402,27 +401,27 @@ static ATR800GameCore *_currentCore;
 
 //}
 
-- (oneway void)didPushA8Button:(OEA8Button)button forPlayer:(NSUInteger)player
+- (oneway void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
 {
     player--;
 
     switch (button)
     {
-        case OEA8ButtonFire:
+        case PVA8ButtonFire:
             controllerStates[player].fire = 1;
             break;
-        case OEA8JoystickUp:
+        case PVA8ButtonUp:
             controllerStates[player].up = 1;
             //INPUT_key_code = AKEY_UP ^ AKEY_CTRL;
             //INPUT_key_code = INPUT_STICK_FORWARD;
             break;
-        case OEA8JoystickDown:
+        case PVA8ButtonDown:
             controllerStates[player].down = 1;
             break;
-        case OEA8JoystickLeft:
+        case PVA8ButtonLeft:
             controllerStates[player].left = 1;
             break;
-        case OEA8JoystickRight:
+        case PVA8ButtonRight:
             controllerStates[player].right = 1;
             break;
         default:
@@ -430,27 +429,27 @@ static ATR800GameCore *_currentCore;
     }
 }
 
-- (oneway void)didReleaseA8Button:(OEA8Button)button forPlayer:(NSUInteger)player
+- (oneway void)didReleaseA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
 {
     player--;
 
     switch (button)
     {
-        case OEA8ButtonFire:
+        case PVA8ButtonFire:
             controllerStates[player].fire = 0;
             break;
-        case OEA8JoystickUp:
+        case PVA8ButtonUp:
             controllerStates[player].up = 0;
             //INPUT_key_code = AKEY_UP ^ AKEY_CTRL;
             //INPUT_key_code = INPUT_STICK_FORWARD;
             break;
-        case OEA8JoystickDown:
+        case PVA8ButtonDown:
             controllerStates[player].down = 0;
             break;
-        case OEA8JoystickLeft:
+        case PVA8ButtonLeft:
             controllerStates[player].left = 0;
             break;
-        case OEA8JoystickRight:
+        case PVA8ButtonRight:
             controllerStates[player].right = 0;
             break;
         default:
@@ -458,77 +457,79 @@ static ATR800GameCore *_currentCore;
     }
 }
 
-- (oneway void)didPush5200Button:(OE5200Button)button forPlayer:(NSUInteger)player
+- (oneway void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
 	player--;
 
 	switch (button)
     {
-		case OE5200ButtonFire1:
+		case PV5200ButtonFire1:
 			controllerStates[player].fire = 1;
 			break;
-        case OE5200ButtonFire2:
-			//controllerStates[player].fire2 = 1;
+        case PV5200ButtonFire2:
+			controllerStates[player].fire2 = 1;
             INPUT_key_shift = 1; //AKEY_SHFTCTRL
 			break;
-		case OE5200ButtonUp:
+		case PV5200ButtonUp:
 			controllerStates[player].up = 1;
             //INPUT_key_code = AKEY_UP ^ AKEY_CTRL;
             //INPUT_key_code = INPUT_STICK_FORWARD;
 			break;
-		case OE5200ButtonDown:
+		case PV5200ButtonDown:
 			controllerStates[player].down = 1;
 			break;
-		case OE5200ButtonLeft:
+		case PV5200ButtonLeft:
 			controllerStates[player].left = 1;
 			break;
-		case OE5200ButtonRight:
+		case PV5200ButtonRight:
 			controllerStates[player].right = 1;
 			break;
-		case OE5200ButtonStart:
-//			controllerStates[player].start = 1;
+		case PV5200ButtonStart:
+			controllerStates[player].start = 1;
 			INPUT_key_code = AKEY_5200_START;
 			break;
-        case OE5200ButtonPause:
+        case PV5200ButtonPause:
+            controllerStates[player].pause = 1;
             INPUT_key_code = AKEY_5200_PAUSE;
             break;
-        case OE5200ButtonReset:
+        case PV5200ButtonReset:
+            controllerStates[player].reset = 1;
             INPUT_key_code = AKEY_5200_RESET;
             break;
-        case OE5200Button1:
+        case PV5200Button1:
             INPUT_key_code = AKEY_5200_1;
             break;
-        case OE5200Button2:
+        case PV5200Button2:
             INPUT_key_code = AKEY_5200_2;
             break;
-        case OE5200Button3:
+        case PV5200Button3:
             INPUT_key_code = AKEY_5200_3;
             break;
-        case OE5200Button4:
+        case PV5200Button4:
             INPUT_key_code = AKEY_5200_4;
             break;
-        case OE5200Button5:
+        case PV5200Button5:
             INPUT_key_code = AKEY_5200_5;
             break;
-        case OE5200Button6:
+        case PV5200Button6:
             INPUT_key_code = AKEY_5200_6;
             break;
-        case OE5200Button7:
+        case PV5200Button7:
             INPUT_key_code = AKEY_5200_7;
             break;
-        case OE5200Button8:
+        case PV5200Button8:
             INPUT_key_code = AKEY_5200_8;
             break;
-        case OE5200Button9:
+        case PV5200Button9:
             INPUT_key_code = AKEY_5200_9;
             break;
-        case OE5200Button0:
+        case PV5200Button0:
             INPUT_key_code = AKEY_5200_0;
             break;
-        case OE5200ButtonAsterisk:
+        case PV5200ButtonAsterisk:
             INPUT_key_code = AKEY_5200_ASTERISK;
             break;
-        case OE5200ButtonPound:
+        case PV5200ButtonPound:
             INPUT_key_code = AKEY_5200_HASH;
             break;
 		default:
@@ -536,76 +537,77 @@ static ATR800GameCore *_currentCore;
 	}
 }
 
-- (oneway void)didRelease5200Button:(OE5200Button)button forPlayer:(NSUInteger)player
+- (oneway void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
     player--;
 
     switch (button)
     {
-        case OE5200ButtonFire1:
+        case PV5200ButtonFire1:
             controllerStates[player].fire = 0;
             break;
-        case OE5200ButtonFire2:
-            //controllerStates[player].fire2 = 0;
+        case PV5200ButtonFire2:
+            controllerStates[player].fire2 = 0;
             INPUT_key_shift = 0;
             break;
-        case OE5200ButtonUp:
+        case PV5200ButtonUp:
             controllerStates[player].up = 0;
             //INPUT_key_code = 0xff;
             break;
-        case OE5200ButtonDown:
+        case PV5200ButtonDown:
             controllerStates[player].down = 0;
             break;
-        case OE5200ButtonLeft:
+        case PV5200ButtonLeft:
             controllerStates[player].left = 0;
             break;
-        case OE5200ButtonRight:
+        case PV5200ButtonRight:
             controllerStates[player].right = 0;
             break;
-        case OE5200ButtonStart:
-            //			controllerStates[player].start = 1;
+        case PV5200ButtonStart:
+            controllerStates[player].start = 0;
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200ButtonPause:
+        case PV5200ButtonPause:
+            controllerStates[player].pause = 0;
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200ButtonReset:
+        case PV5200ButtonReset:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button1:
+        case PV5200Button1:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button2:
+        case PV5200Button2:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button3:
+        case PV5200Button3:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button4:
+        case PV5200Button4:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button5:
+        case PV5200Button5:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button6:
+        case PV5200Button6:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button7:
+        case PV5200Button7:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button8:
+        case PV5200Button8:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button9:
+        case PV5200Button9:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200Button0:
+        case PV5200Button0:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200ButtonAsterisk:
+        case PV5200ButtonAsterisk:
             INPUT_key_code = AKEY_NONE;
             break;
-        case OE5200ButtonPound:
+        case PV5200ButtonPound:
             INPUT_key_code = AKEY_NONE;
             break;
         default:
@@ -653,7 +655,7 @@ int UI_SelectCartType(int k)
 {
     NSLog(@"Cart size: %d", k);
 
-    if([[_currentCore systemIdentifier] isEqualToString:@"provenance.system.atari8bit"])
+    if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.atari8bit"])
     {
         // TODO: improve detection using MD5 lookup
         switch (k)
@@ -674,7 +676,7 @@ int UI_SelectCartType(int k)
         }
     }
 
-    if([[_currentCore systemIdentifier] isEqualToString:@"provenance.system.5200"])
+    if([[_currentCore systemIdentifier] isEqualToString:@"com.provenance.5200"])
     {
         NSArray *One_Chip_16KB = @[@"a47fcb4eedab9418ea098bb431a407aa", // A.E. (Proto)
                                    @"45f8841269313736489180c8ec3e9588", // Activision Decathlon, The

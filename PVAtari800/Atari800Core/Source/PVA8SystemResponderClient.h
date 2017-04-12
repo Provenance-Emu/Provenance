@@ -24,62 +24,29 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "OEA8SystemResponder.h"
-#import "OEA8SystemResponderClient.h"
+#import <Foundation/Foundation.h>
+#import <PVSupport/PVSupport.h>
 
-@implementation OEA8SystemResponder
-@dynamic client;
+//@protocol OESystemResponderClient;
 
-+ (Protocol *)gameSystemResponderClientProtocol;
-{
-    return @protocol(OEA8SystemResponderClient);
-}
+typedef NS_ENUM(NSUInteger, PVA8Button) {
+    PVA8ButtonUp,
+    PVA8ButtonDown,
+    PVA8ButtonLeft,
+    PVA8ButtonRight,
+    PVA8ButtonFire,
+    PVA8ButtonCount
+};
 
-- (void)HIDKeyDown:(OEHIDEvent *)theEvent
-{
-    [super HIDKeyDown:theEvent];
-    [[self client] keyDown:[theEvent keycode] characters:[theEvent characters] charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers] flags:[theEvent modifierFlags]];
-}
-
-- (void)HIDKeyUp:(OEHIDEvent *)theEvent
-{
-    [super HIDKeyUp:theEvent];
-    [[self client] keyUp:[theEvent keycode] characters:[theEvent characters] charactersIgnoringModifiers:[theEvent charactersIgnoringModifiers] flags:[theEvent modifierFlags]];
-}
-
-- (void)pressEmulatorKey:(OESystemKey *)aKey
-{
-    [[self client] didPushA8Button:(OEA8Button)[aKey key] forPlayer:[aKey player]];
-}
-
-- (void)releaseEmulatorKey:(OESystemKey *)aKey
-{
-    [[self client] didReleaseA8Button:(OEA8Button)[aKey key] forPlayer:[aKey player]];
-}
-
-- (void)mouseMovedAtPoint:(OEIntPoint)aPoint
-{
-    [[self client] mouseMovedAtPoint:aPoint];
-}
-
-- (void)mouseDownAtPoint:(OEIntPoint)aPoint
-{
-    [[self client] leftMouseDownAtPoint:aPoint];
-}
-
-- (void)mouseUpAtPoint
-{
-    [[self client] leftMouseUp];
-}
-
-- (void)rightMouseDownAtPoint:(OEIntPoint)aPoint
-{
-    [[self client] rightMouseDownAtPoint:aPoint];
-}
-
-- (void)rightMouseUpAtPoint
-{
-    [[self client] rightMouseUp];
-}
+@protocol PVA8SystemResponderClient  <NSObject>
+- (oneway void)mouseMovedAtPoint:(CGPoint)point;
+- (oneway void)leftMouseDownAtPoint:(CGPoint)point;
+- (oneway void)leftMouseUp;
+- (oneway void)rightMouseDownAtPoint:(CGPoint)point;
+- (oneway void)rightMouseUp;
+//- (oneway void)keyDown:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;
+//- (oneway void)keyUp:(unsigned short)keyCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)flags;
+- (oneway void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseA8Button:(PVA8Button)button forPlayer:(NSUInteger)player;
 
 @end

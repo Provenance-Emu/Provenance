@@ -29,34 +29,34 @@
 
 //@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OE5200Button) {
-	OE5200ButtonUp,
-	OE5200ButtonDown,
-	OE5200ButtonLeft,
-	OE5200ButtonRight,
-	OE5200ButtonFire1,
-    OE5200ButtonFire2,
-    OE5200ButtonStart,
-	OE5200ButtonPause,
-    OE5200ButtonReset,
-    OE5200Button1,
-    OE5200Button2,
-    OE5200Button3,
-    OE5200Button4,
-    OE5200Button5,
-    OE5200Button6,
-    OE5200Button7,
-    OE5200Button8,
-    OE5200Button9,
-    OE5200Button0,
-    OE5200ButtonAsterisk,
-    OE5200ButtonPound,
-	OE5200ButtonCount
+typedef NS_ENUM(NSUInteger, PV5200Button) {
+	PV5200ButtonUp,
+	PV5200ButtonDown,
+	PV5200ButtonLeft,
+	PV5200ButtonRight,
+	PV5200ButtonFire1,
+    PV5200ButtonFire2,
+    PV5200ButtonStart,
+	PV5200ButtonPause,
+    PV5200ButtonReset,
+    PV5200Button1,
+    PV5200Button2,
+    PV5200Button3,
+    PV5200Button4,
+    PV5200Button5,
+    PV5200Button6,
+    PV5200Button7,
+    PV5200Button8,
+    PV5200Button9,
+    PV5200Button0,
+    PV5200ButtonAsterisk,
+    PV5200ButtonPound,
+	PV5200ButtonCount
 };
 
-@protocol OE5200SystemResponderClient <NSObject>
+@protocol PV5200SystemResponderClient <NSObject>
 
-- (oneway void)didPush5200Button:(OE5200Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease5200Button:(OE5200Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player;
 
 @end

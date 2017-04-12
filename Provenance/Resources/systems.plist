@@ -1011,6 +1011,10 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<string>5200.rom</string>
+		</array>
 		<key>PVSystemName</key>
 		<string>Atari 5200</string>
 		<key>PVShortSystemName</key>
@@ -1036,9 +1040,17 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>Fire</string>
+						<string>Fire 1</string>
 						<key>PVControlFrame</key>
-						<string>{{76,84},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>Fire 2</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>
