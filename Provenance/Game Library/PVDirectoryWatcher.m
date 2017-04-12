@@ -232,11 +232,13 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         return;
     }
     
+    NSString *path = self.path;
+    // self.path will be nil when we call stop
     [self stopMonitoring];
     
     if ([[filePath pathExtension].lowercaseString isEqualToString:@"zip"]) {
         [SSZipArchive unzipFileAtPath:filePath
-                        toDestination:self.path
+                        toDestination:path
                             overwrite:YES
                              password:nil
                       progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead) {
@@ -299,7 +301,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             if (item) {
                 [items addObject:item]; // if needs this item - store to array.
                 if (!item.isDirectory && item.fileName != nil) {
-                    NSString*fullPath = [self.path stringByAppendingPathComponent:item.fileName];
+                    NSString*fullPath = [path stringByAppendingPathComponent:item.fileName];
                     [_unzippedFiles addObject:fullPath];
                 }
             }
@@ -308,7 +310,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         [self stopMonitoring];
         
         [_reader extract:items
-                  toPath:self.path
+                  toPath:path
            withFullPaths:NO];
     }
 }
