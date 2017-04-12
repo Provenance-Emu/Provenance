@@ -298,7 +298,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         [_reader iterateWithHandler:^BOOL(LzmaSDKObjCItem * item, NSError * error){
             if (item) {
                 [items addObject:item]; // if needs this item - store to array.
-                if (!item.isDirectory) {
+                if (!item.isDirectory && item.fileName != nil) {
                     NSString*fullPath = [self.path stringByAppendingPathComponent:item.fileName];
                     [_unzippedFiles addObject:fullPath];
                 }
