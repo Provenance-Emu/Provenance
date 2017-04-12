@@ -459,8 +459,6 @@ static ATR800GameCore *_currentCore;
 
 - (oneway void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
-	player--;
-
 	switch (button)
     {
 		case PV5200ButtonFire1:
@@ -539,8 +537,6 @@ static ATR800GameCore *_currentCore;
 
 - (oneway void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
-    player--;
-
     switch (button)
     {
         case PV5200ButtonFire1:
