@@ -498,6 +498,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [weakSelf finishedDownloadingArtworkForURL:url];
     }];
     
+    NSArray *existingFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath]
+                                                                                 error:nil];
+    [self.gameImporter startImportForPaths:existingFiles];
+    
     self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
                                    extractionStartedHandler:^(NSString *path) {
                                        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];

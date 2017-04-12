@@ -1,0 +1,94 @@
+***Major issues***
+
+Cyberwar (Japan)
+	Locks up during startup(SPU status bits issue).
+
+Monkey Hero
+	Locks up shortly after title screen.  It's straddling a framebuffer write command's parameters across two linked-list
+	blocks(2 words at the end of the first block, and 1 word at the beginning of the next block).  AFAIK, this construct will only
+	work on the real thing under *very* strict timing constraints.  Probably explains why it reportedly doesn't work on the PS2.
+	It's as easy to fix as changing a certain 2 to a 3 in the GPU command table, and probably won't break anything,
+	but I'm still reluctant to do it...
+
+Simple 1500 Series Vol. 057 - The Maze
+	Locks up during startup;  looks to be poorly programmed and extremely sensitive to seek timing.
+
+Transformers - Beast Wars Transmetals
+	Locks up during loading screen. (CD timing issue)
+	It looks like a terrible game though, at least.
+
+----------------------------------------------------------------------------------------------
+
+***Medium issues***
+
+Championship Motocross 2001
+	Invisible driver.  GHOSTRIDER~  The palette data in RAM is apparently being selectively zero'd out between
+	the DMA from CDC and the DMA to GPU for some reason.  Timing issue related maybe?  (Probably CPU instruction timing issue)
+
+International Moto X (Japan)
+	Flickering/Missing graphics on racer selection screen.
+
+Nicktoons Racing
+	Totally fubared sound effects.  Likely CPU instruction timing-related(decreasing the IPC fixes this problem), or perhaps timing
+	related to SPU RAM writes?
+
+-----------------------------------------------------------------------------------------------
+
+***Lesser issues***
+
+Vigilante 8
+	Has weird red and green(and a few blue) garbage pixels in patches sometimes during gameplay.
+
+Sangokushi Eiketsuden
+	Many animations go far too fast(It *looks* like the GPU's drawing speed dictates the animation speed!  That means the animation speed is going
+	to be different on early PS1s compared to later PS1s...).
+
+Final Fantasy 7
+	"Sony Computer blah blah" game startup image is a bit glitchy; interlacing-related glitch.  That part is really sensitive to CPU, GPU, DMA,
+	and RAM timing...
+
+Nightmare Creatures
+	BIOS reverb sound excessively contaminates beginning of game.
+
+WipeOut 3
+	Music stops playing after a long while; maybe it's supposed to do that?
+
+Rascal
+	Flickering/missing graphics in menus.
+
+T'ai Fu - Wrath of the Tiger
+	Sometimes locks up when starting a new game.
+
+-----------------------------------------------------------------------------------------------
+
+Differentiate between power-on and reset-button events more accurately(e.g. in CPU and GTE code).
+
+Handle D28 of DMA CHCR properly.
+
+Rewrite CPU emulation to properly emulate the pipeline and all its quirks(might be too computationally-expensive, though).  Related TODOs
+dependent on this:
+	Audit GTE instruction cycle counts.
+	Test IRQ and COP0 latencies; PSX IRQ controller latency, software IRQ bit latency, latency of both relevant COP0 IRQ enable bits.
+	Test IRQ with LWC2.
+	Test IRQ with COP0 instructions(interrupted execution or not?).
+
+CDC status bit 4(seek error/disc change/something something) semantics aren't entirely correct; run tests to see under what conditions
+the bit is cleared(e.g. what commands will clear it).
+
+Add a means of grabbing and passing CIRC data, when using a physical CD, from Mednafen core to the PSX module so that the correct
+subheader fields can be chosen when there is a mismatch between the two instances of each field during XA ADPCM playback.
+
+Ensure(long-term, IE a note to the FUTURE) that input device state is latched in independent variables at the start of the
+input device's handling of a state read command, so that when games are reading device state across an MDFNI_Emulate() boundary, the
+data won't change in the middle, which could hypothetically cause problems in some rare circumstances(and make entering 
+button combos in games more finicky).
+
+Respect device(GPU, SPU, etc.) DMA mode/memory access mode bits(more for homebrew's sake than commercial games'). 
+
+Test if Dual Analog vibration compatibility mode can be restored with DualShock after using DualShock extended features if the "Analog"
+mode button on the gamepad is pressed after the extended features are used.
+
+The SPU in the PS1 might sometimes drop voice-on events when playing an ADPCM block that loops to itself(and was also the first and only
+ADPCM block, at least in the test program I noticed the issue in); investigate further.
+
+Ensure debugger COPn disassembly is correct(no typos or whatnot).

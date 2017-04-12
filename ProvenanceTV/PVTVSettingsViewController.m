@@ -18,7 +18,7 @@
 
 @interface PVTVSettingsViewController ()
 
-@property (nonatomic, strong) PVGameImporter *gameImporter;
+@property (nonatomic, strong, nonnull) PVGameImporter *gameImporter;
 
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
@@ -31,6 +31,24 @@
 @end
 
 @implementation PVTVSettingsViewController
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:nil];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (self) {
+        _gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:nil];
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
