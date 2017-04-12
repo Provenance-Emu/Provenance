@@ -225,11 +225,6 @@
 		B328937E1E0B87960090B97A /* PVVBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.m */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B35469381DECD8570018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
-		B35469391DECD8570018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
-		B354693A1DECD8640018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
-		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
-		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B340E60A1E088CF900AD0E8B /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B340E60B1E088CF900AD0E8B /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B349AE371E9ABCF900ACD416 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B349ACED1E9ABCF800ACD416 /* .gitignore */; };
@@ -538,6 +533,11 @@
 		B349AF701E9ABCFA00ACD416 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE341E9ABCF900ACD416 /* LzmaSDKObjCUpdateCallback.mm */; };
 		B349AF711E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */; };
 		B349AF721E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */; };
+		B35469381DECD8570018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
+		B35469391DECD8570018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
+		B354693A1DECD8640018B6F3 /* PVAtari5200ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */; };
+		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
+		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CC1D6B80D4002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
@@ -592,6 +592,8 @@
 		B3D2E3931D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
+		B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
 		B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
 		B3DF87671D6A5A5C00D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
@@ -657,6 +659,7 @@
 				B3C9D5DF1DEA8A250068D057 /* PVNES.framework in Embed Frameworks */,
 				B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
+				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
@@ -909,10 +912,6 @@
 		B328937B1E0B87960090B97A /* PVVBControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVVBControllerViewController.h; sourceTree = "<group>"; };
 		B328937C1E0B87960090B97A /* PVVBControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVVBControllerViewController.m; sourceTree = "<group>"; };
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B35469311DECCD4A0018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B35469361DECD8570018B6F3 /* PVAtari5200ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari5200ControllerViewController.h; sourceTree = "<group>"; };
-		B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari5200ControllerViewController.m; sourceTree = "<group>"; };
-		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B349ACED1E9ABCF800ACD416 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1234,6 +1233,10 @@
 		B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LzmaSDKObjCWriter.mm; sourceTree = "<group>"; };
 		B349AF731E9AC31700ACD416 /* NSArray+Inlineobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+Inlineobjc.h"; sourceTree = "<group>"; };
 		B349AF741E9AC31700ACD416 /* NSString+Inlineobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Inlineobjc.h"; sourceTree = "<group>"; };
+		B35469311DECCD4A0018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35469361DECD8570018B6F3 /* PVAtari5200ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari5200ControllerViewController.h; sourceTree = "<group>"; };
+		B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari5200ControllerViewController.m; sourceTree = "<group>"; };
+		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
 		B39578C01E6D2D8B00854D7A /* PVPCEControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVPCEControllerViewController.h; path = Provenance/Controller/PVPCEControllerViewController.h; sourceTree = "<group>"; };
@@ -1261,6 +1264,7 @@
 		B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVPokeMiniControllerViewController.m; sourceTree = "<group>"; };
 		B3D2E38F1D6E8B3C0058544D /* PV32XControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PV32XControllerViewController.h; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
+		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
 		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
 		BE1E26651C2252CA00499BA0 /* PVEmulatorConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorConstants.h; sourceTree = "<group>"; };
@@ -1375,6 +1379,7 @@
 				B3C9D5DE1DEA8A250068D057 /* PVNES.framework in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
+				B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */,
 				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
 				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
 			);
@@ -1470,6 +1475,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -1915,15 +1921,6 @@
 				378F4A141B63F2240065FA39 /* Reachability.m */,
 			);
 			path = Reachability;
-			sourceTree = "<group>";
-		};
-		B35469351DECD8250018B6F3 /* Atari5200 */ = {
-			isa = PBXGroup;
-			children = (
-				B35469361DECD8570018B6F3 /* PVAtari5200ControllerViewController.h */,
-				B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */,
-			);
-			name = Atari5200;
 			sourceTree = "<group>";
 		};
 		AA9B6EDB1D7097C400422E5F /* PSX */ = {
@@ -2392,6 +2389,15 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		B35469351DECD8250018B6F3 /* Atari5200 */ = {
+			isa = PBXGroup;
+			children = (
+				B35469361DECD8570018B6F3 /* PVAtari5200ControllerViewController.h */,
+				B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */,
+			);
+			name = Atari5200;
+			sourceTree = "<group>";
+		};
 		B36DE7CD1D6B80DA002EE3ED /* Atari7800 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2399,15 +2405,6 @@
 				B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */,
 			);
 			name = Atari7800;
-			sourceTree = "<group>";
-		};
-		B3CB85C41E9BFB4B009155A6 /* PokeMini */ = {
-			isa = PBXGroup;
-			children = (
-				B3CB85C51E9BFBA1009155A6 /* PVPokeMiniControllerViewController.h */,
-				B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */,
-			);
-			name = PokeMini;
 			sourceTree = "<group>";
 		};
 		B39578BF1E6D2D5700854D7A /* PCE */ = {
@@ -2427,6 +2424,15 @@
 				B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m */,
 			);
 			name = "Neo Geo";
+			sourceTree = "<group>";
+		};
+		B3CB85C41E9BFB4B009155A6 /* PokeMini */ = {
+			isa = PBXGroup;
+			children = (
+				B3CB85C51E9BFBA1009155A6 /* PVPokeMiniControllerViewController.h */,
+				B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */,
+			);
+			name = PokeMini;
 			sourceTree = "<group>";
 		};
 		B3D2E3941D6E8B460058544D /* 32X */ = {
