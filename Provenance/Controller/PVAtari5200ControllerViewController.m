@@ -30,14 +30,12 @@
             [button setTag:PV5200ButtonFire1];
         } else  if ([[[button titleLabel] text] isEqualToString:@"Fire 2"]) {
             [button setTag:PV5200ButtonFire2];
-        } else if ([[[button titleLabel] text] isEqualToString:@"Reset"]) {
-            [button setTag:PV5200ButtonReset];
-        } else if ([[[button titleLabel] text] isEqualToString:@"Pause"]) {
-            [button setTag:PV5200ButtonPause];
         }
     }
     
-    self.startButton.tag  = PV5200ButtonReset;
+    self.leftShoulderButton.tag = PV5200ButtonReset;
+    
+    self.startButton.tag  = PV5200ButtonStart;
     self.selectButton.tag = PV5200ButtonPause;
 }
 

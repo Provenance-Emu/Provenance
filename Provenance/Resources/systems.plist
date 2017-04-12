@@ -1031,6 +1031,14 @@
 		<array>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVLeftShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>Reset</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVButtonGroup</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
@@ -1058,7 +1066,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Reset</string>
+				<string>Start</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
@@ -1066,7 +1074,7 @@
 				<key>PVControlType</key>
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
-				<string>Select</string>
+				<string>Pause</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>

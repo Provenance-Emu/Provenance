@@ -483,15 +483,15 @@ static ATR800GameCore *_currentCore;
 			controllerStates[player].right = 1;
 			break;
 		case PV5200ButtonStart:
-			controllerStates[player].start = 1;
+//			controllerStates[player].start = 1;
 			INPUT_key_code = AKEY_5200_START;
 			break;
         case PV5200ButtonPause:
-            controllerStates[player].pause = 1;
+//            controllerStates[player].pause = 1;
             INPUT_key_code = AKEY_5200_PAUSE;
             break;
         case PV5200ButtonReset:
-            controllerStates[player].reset = 1;
+//            controllerStates[player].reset = 1;
             INPUT_key_code = AKEY_5200_RESET;
             break;
         case PV5200Button1:
@@ -543,7 +543,7 @@ static ATR800GameCore *_currentCore;
             controllerStates[player].fire = 0;
             break;
         case PV5200ButtonFire2:
-            controllerStates[player].fire2 = 0;
+//            controllerStates[player].fire2 = 0;
             INPUT_key_shift = 0;
             break;
         case PV5200ButtonUp:
@@ -560,11 +560,11 @@ static ATR800GameCore *_currentCore;
             controllerStates[player].right = 0;
             break;
         case PV5200ButtonStart:
-            controllerStates[player].start = 0;
+//            controllerStates[player].start = 0;
             INPUT_key_code = AKEY_NONE;
             break;
         case PV5200ButtonPause:
-            controllerStates[player].pause = 0;
+//            controllerStates[player].pause = 0;
             INPUT_key_code = AKEY_NONE;
             break;
         case PV5200ButtonReset:
