@@ -30,6 +30,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
     - Gameboy Advance
+    - Pokémon Mini
     - Virtual Boy
 - Atari
     - 2600
@@ -101,6 +102,8 @@ Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
 Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/).
 
 Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
+
+Pokémon Mini is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
 
 Atari Lynx, Sony PlayStation, Nintendo VirtualBoy, SNK Neo Geo Pocket + Color, NEC PC Engine family and Bandai WonderSwan are provided by [Mednafen](https://mednafen.github.io)
 

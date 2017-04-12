@@ -29,6 +29,9 @@
       location = "group:PVStella/PVStella.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PVPokeMini/PVPokeMini.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PVGB/PVGB.xcodeproj">
    </FileRef>
    <FileRef

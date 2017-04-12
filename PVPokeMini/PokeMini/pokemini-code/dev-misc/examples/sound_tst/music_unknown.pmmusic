@@ -1,0 +1,18 @@
+TITLE Unknown, received from Lupin
+COMPOSER Unknown
+PROGRAMMER Lupin
+
+MTIME $00FF
+
+PAT bgm_unk_tune1_p0 { w48 s48
+ o4
+ [ [c8>c8<e-8>c8<g8>c8<e-8>c8<]3 <b8>b8<e-8>b8<g8>b8<e-8>b8 ]5
+ c1< a-1 b-1 g1
+}
+
+PAT bgm_unk_tune2_p0 { w48 s48
+ l8 v15c4<a>ce4ceg1egb1.r4b+4ab>c1d4cde2.eee2<ab>cde2.deg2.fde2.deg2.fde4dc<a2r4gab4age1r2ab>cde2.deg2.fde2.deg2.fde4deg2r4efg4b4b+1b2r2d2.cc-c2<c2l4>c<fab+bgdgere2>d2cc-c2.<b8a8g2b2>d2.c8c-8c2def2.edcc-cd2<fa+>d2efe2.e8e8ee2ee2.e8e8e2<<l8ab>cde2.deg2.fde2.deg2.fde4dc<a2r4gab4age1r2ab>cde2.deg2.fde2.deg2.fde4deg2r4efg4b4a1a1c4<a>ce4ceg2.egb4abb+1b2a4r4<aaaaa1;
+}
+
+BGM bgm_unk_tune1 bgm_unk_tune1_p0
+BGM bgm_unk_tune2 bgm_unk_tune2_p0

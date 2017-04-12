@@ -1709,5 +1709,81 @@
 			</dict>
 		</array>
 	</dict>
+	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<string>bios.min</string>
+		</array>
+		<key>PVSystemName</key>
+		<string>Pokémon mini</string>
+		<key>PVShortSystemName</key>
+		<string>Pokémon mini</string>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.pokemonmini</string>
+		<key>PVDatabaseID</key>
+		<string>0</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>min</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{212,160}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>A</string>
+						<key>PVControlFrame</key>
+						<string>{{8,92},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>B</string>
+						<key>PVControlFrame</key>
+						<string>{{76,84},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>C</string>
+						<key>PVControlFrame</key>
+						<string>{{144,76},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Power</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Shake</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+		</array>
+	</dict>
 </array>
 </plist>

@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Minx CPU</h1>
+    <h2>Overview</h2>
+    <p>The Pokemon Mini CPU (Coined the Minx by <a href="http://www.pokemon-mini.net/" title="Team Pokeme">Team Pokeme</a>)
+      is a microcontroller designed by Nintendo R&amp;D3 for the Pokemon 
+      Mini.  The processor is 8-bit with 16-bit operations, with instructions 
+      created especially for mathematical performance.  The processor provides
+      numerous addressing modes with a 24bit addressing bus (with only 21bits
+      mapped externally) </p>
+    <p>Additionally, the Minx provides the capibility to handle up to 32
+      hardware enabled interrupts with delayed response capbility.  Up to 128
+      interrupt vectors may be specified, allowing the remaining 96 for BIOS 
+      calls. </p>
+    <p>The CPU is clocked at 4.00mhz, although the processor operates on
+      a 4 cycle data access period, leaving the system with a theoretical 
+      limit of 1MIPS. </p>
+    <h2>Minx Register Mapping</h2>
+    <p>The Minx operates with a handful of registers.  The CPU is an 
+      amalgamation of Z80 like paradigms combined with an 8-bit 
+      microcontroller like bank system. </p>
+    <table>
+      <tbody>
+        <tr>
+          <td><table border="1">
+              <caption>
+              <b>General Purpose Registers</b>
+              </caption>
+            <tbody>
+              <tr>
+                  <th> 8 Bit Registers (Low) </th>
+                <th> 8 Bit Registers (Hi) </th>
+                <th> 16 Bit Register </th>
+                <th> Index Register </th>
+              </tr>
+                <tr>
+                  <td> A </td>
+                  <td> B </td>
+                  <td> BA </td>
+                </tr>
+                <tr>
+                  <td> L </td>
+                  <td> H </td>
+                  <td> HL </td>
+                  <td> I </td>
+                </tr>
+                <tr>
+                  <td style="border: medium none;"></td>
+                  <td> N </td>
+                  <td style="border: medium none;"></td>
+                  <td> I </td>
+                </tr>
+                <tr>
+                  <td style="border: medium none;"></td>
+                  <td style="border: medium none;"></td>
+                  <td> X </td>
+                  <td> Xi </td>
+                </tr>
+                <tr>
+                  <td style="border: medium none;"></td>
+                  <td style="border: medium none;"></td>
+                  <td> Y </td>
+                  <td> Yi </td>
+                </tr>
+            </tbody>
+          </table></td>
+          <td>&nbsp; </td>
+          <td><table border="1">
+              <caption>
+              <b>Fixed Function Registers</b>
+              </caption>
+            <tbody>
+              <tr>
+                  <th> Reg. </th>
+                  <th> Description </th>
+              </tr>
+                <tr>
+                  <td> PC </td>
+                  <td> Program Cursor </td>
+                </tr>
+                <tr>
+                  <td> V </td>
+                  <td> PC Bank Register </td>
+                </tr>
+                <tr>
+                  <td> U </td>
+                  <td> V Delay Register </td>
+                </tr>
+                <tr>
+                  <td> SP </td>
+                  <td> Stack Pointer </td>
+                </tr>
+                <tr>
+                  <td> F </td>
+                  <td> Flag Register </td>
+                </tr>
+                <tr>
+                  <td> E </td>
+                  <td> Exception Register </td>
+                </tr>
+            </tbody>
+          </table></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Since the program cursor is only 16 bits, it uses a special &quot;delayed&quot;
+      register to account for the upper 8 bits of program access space.  When
+      PC has it's most significant bit set, the register V takes the place of the upper 8 bits, extending PC 
+      out to 23 bits in total.  To prevent bank switch problems, V is 
+  &quot;delayed&quot; by the means of register U.  After each branch instruction, 
+      the value of U is copied to register V implicitly, allowing for full 
+      23bit jumps without special programming tricks or special functions. </p>
+    <p>The Minx also provides additional facilities to access 24bit 
+      addresses using registers.  X and Y both provide 24bit addresses using 
+      the Xi and Yi register as their upper 8 bits. </p>
+    <h2>Flag and Exception Register</h2>
+    <table border="1">
+      <caption>
+      <b>Flag Mapping</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Bit </th>
+          <th> Flag </th>
+          <th> F. Mne. </th>
+          <th> Exception </th>
+          <th> E. Mne. </th>
+        </tr>
+        <tr>
+          <td> 0 </td>
+          <td> Zero </td>
+          <td> Z </td>
+          <td>&nbsp;?? </td>
+          <td> EX0 </td>
+        </tr>
+        <tr>
+          <td> 1 </td>
+          <td> Carry </td>
+          <td> C </td>
+          <td>&nbsp;?? </td>
+          <td> EX1 </td>
+        </tr>
+        <tr>
+          <td> 2 </td>
+          <td> Overflow </td>
+          <td> O </td>
+          <td>&nbsp;?? </td>
+          <td> EX2 </td>
+        </tr>
+        <tr>
+          <td> 3 </td>
+          <td> Sign </td>
+          <td> S </td>
+          <td>&nbsp;?? </td>
+          <td> EX3 </td>
+        </tr>
+        <tr>
+          <td> 4 </td>
+          <td> Binary Coded Decimal Mode (8-bit add\sub) </td>
+          <td> BCD </td>
+          <td> Division By Zero </td>
+          <td> EX4 </td>
+        </tr>
+        <tr>
+          <td> 5 </td>
+          <td> Low-Mask Mode (8-bit add\sub) </td>
+          <td> NIBBLE </td>
+          <td> (Enable Exceptions \ Game cube emulator only) </td>
+          <td> EEX </td>
+        </tr>
+        <tr>
+          <td> 6 </td>
+          <td> Interrupt Disable </td>
+          <td> ID </td>
+        </tr>
+        <tr>
+          <td> 7 </td>
+          <td> Interrupt Branch </td>
+          <td> IB </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+      While the F register can, in some cases, be treated as a general purpose
+      8-bit register, the exception register however is not directly 
+      accessible by any conventional means.  It is also to be noted that the 
+      exception trapping needs to be &quot;enabled&quot; by some means we've not 
+      discovered yet.  Division by zero causes the system to hard lock, and 
+      the existence of this register is only known through the reverse 
+      engineering of Pokemon Channel's internal emulator.  The lower 4 bits of
+      both registers are used for branch conditions and carry chaining for 
+      arithmetic.  The upper 4 bits are &quot;control&quot; registers. </p>
+    <h2>The I register</h2>
+    <p>Unlike X and Y, the upper 8 bits of the remaining addressing modes 
+      are not unique.  The register I provides a bank extension to the these 
+      remaining 24 bit accesses: [HL], [I+$nnnn], and [N+$nn].  It is 
+      generally good practice to maintain I as $00 unless otherwise necessary. </p>
+    <h2>The N indexed mode</h2>
+    <p>The N Indexed mode is most useful for accessing register memory 
+      quickly.  N provides the mid byte of a 24 bit addressing mode, and the 
+      $nn is an 8-bit immediate.  In example.   [N+$8A]  would point to $208A 
+      (VPU_CNT) if N = $20 and I = $00.  It is rare to see N with any value 
+      other than $20, but it is not entirely out of the question to see it 
+      change. </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/Minx_Cpu">http://wiki.sublab.net/index.php/Minx_Cpu</a>&quot;</div>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

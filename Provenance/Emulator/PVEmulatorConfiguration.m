@@ -33,6 +33,9 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVPokeMini/PVPokeMiniEmulatorCore.h>
+#import "PVPokeMiniControllerViewController.h"
+
 #import <PVMednafen/MednafenGameCore.h>
 #import "PVPSXControllerViewController.h"
 #import "PVLynxControllerViewController.h"
@@ -121,6 +124,10 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
+    {
+        core = [[PVPokeMiniEmulatorCore alloc] init];
+    }
     else if ([systemID isEqualToString:PVPSXSystemIdentifier] ||
              [systemID isEqualToString:PVLynxSystemIdentifier] ||
              [systemID isEqualToString:PVPCESystemIdentifier] ||
@@ -180,6 +187,10 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
+    {
+        controller = [[PVPokeMiniControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
     else if ([systemID isEqualToString:PVPSXSystemIdentifier])
     {

@@ -1,0 +1,10 @@
+GTK+ 2.x dev package and they dependencies
+
+Required for:
+* PokeMini Debugger
+* Color Mapper
+
+
+Latest can be downloaded in:
+
+http://www.gtk.org/download.html
