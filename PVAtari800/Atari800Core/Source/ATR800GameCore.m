@@ -157,9 +157,11 @@ static ATR800GameCore *_currentCore;
     {
         // Set 5200.rom BIOS path
         char biosFileName[2048];
-        NSString *biosPath = [self biosDirectoryPath];
-        strcpy(biosFileName, [[biosPath stringByAppendingPathComponent:@"5200.rom"] UTF8String]);
-
+        NSString *biosDirectory = [self biosDirectoryPath];
+        NSString *boisPath = [biosDirectory stringByAppendingPathComponent:@"5200.rom"];
+        
+        strcpy(biosFileName, [boisPath UTF8String]);
+        
         SYSROM_SetPath(biosFileName, 1, SYSROM_5200);
 
         // Setup machine type
@@ -263,6 +265,10 @@ static ATR800GameCore *_currentCore;
 
 - (void)executeFrame
 {
+    if (self.controller1 || self.controller2) {
+        [self pollControllers];
+    }
+    
     Atari800_Frame();
 
     unsigned int size = 44100 / (Atari800_tv_mode == Atari800_TV_NTSC ? 59.9 : 50) * 2;
@@ -465,7 +471,6 @@ static ATR800GameCore *_currentCore;
 			controllerStates[player].fire = 1;
 			break;
         case PV5200ButtonFire2:
-			controllerStates[player].fire2 = 1;
             INPUT_key_shift = 1; //AKEY_SHFTCTRL
 			break;
 		case PV5200ButtonUp:
@@ -543,7 +548,6 @@ static ATR800GameCore *_currentCore;
             controllerStates[player].fire = 0;
             break;
         case PV5200ButtonFire2:
-//            controllerStates[player].fire2 = 0;
             INPUT_key_shift = 0;
             break;
         case PV5200ButtonUp:
@@ -560,11 +564,9 @@ static ATR800GameCore *_currentCore;
             controllerStates[player].right = 0;
             break;
         case PV5200ButtonStart:
-//            controllerStates[player].start = 0;
             INPUT_key_code = AKEY_NONE;
             break;
         case PV5200ButtonPause:
-//            controllerStates[player].pause = 0;
             INPUT_key_code = AKEY_NONE;
             break;
         case PV5200ButtonReset:
@@ -610,6 +612,107 @@ static ATR800GameCore *_currentCore;
             break;
     }
 }
+
+- (void)pollControllers {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0) {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad]) {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // DPAD
+            controllerStates[playerIndex].up    = dpad.up.isPressed;
+            controllerStates[playerIndex].down  = dpad.down.isPressed;
+            controllerStates[playerIndex].left  = dpad.left.isPressed;
+            controllerStates[playerIndex].right = dpad.right.isPressed;
+
+            // Buttons
+            // Fire 1
+            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
+
+            // Fire 2
+            INPUT_key_shift = gamepad.buttonB.isPressed || gamepad.buttonY.isPressed;
+            
+            // The following buttons are on a shared bus. Only one at a time.
+            // If none, state is reset. Since only one button can be registered
+            // at a time, there has to be an preference of order.
+            
+            // Reset
+            if (gamepad.leftTrigger.isPressed) {
+                INPUT_key_code = AKEY_5200_START;
+            }
+            else if (gamepad.rightTrigger.isPressed) {
+                INPUT_key_code = AKEY_5200_PAUSE;
+            }
+            else if (gamepad.leftShoulder.isPressed || gamepad.rightShoulder.isPressed) {
+                INPUT_key_code = AKEY_5200_RESET;
+            } else {
+                INPUT_key_code = AKEY_NONE;
+            }
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // DPAD
+            controllerStates[playerIndex].up    = dpad.up.isPressed;
+            controllerStates[playerIndex].down  = dpad.down.isPressed;
+            controllerStates[playerIndex].left  = dpad.left.isPressed;
+            controllerStates[playerIndex].right = dpad.right.isPressed;
+            
+            // Buttons
+            // Fire 1
+            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed || gamepad.buttonX.isPressed;
+            
+            // Fire 2
+            INPUT_key_shift = gamepad.buttonB.isPressed;
+            
+            // The following buttons are on a shared bus. Only one at a time.
+            // If none, state is reset. Since only one button can be registered
+            // at a time, there has to be an preference of order.
+            
+            // Reset
+            if (gamepad.leftShoulder.isPressed) {
+                INPUT_key_code = AKEY_5200_START;
+            }
+            else if (gamepad.rightShoulder.isPressed) {
+                INPUT_key_code = AKEY_5200_PAUSE;
+            }
+            else if (gamepad.buttonY.isPressed) {
+                INPUT_key_code = AKEY_5200_RESET;
+            } else {
+                INPUT_key_code = AKEY_NONE;
+            }
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            // DPAD
+            controllerStates[playerIndex].up    = dpad.up.value > 0.5;
+            controllerStates[playerIndex].down  = dpad.down.value > 0.5;
+            controllerStates[playerIndex].left  = dpad.left.value > 0.5;
+            controllerStates[playerIndex].right = dpad.right.value > 0.5;
+
+            //Fire
+            controllerStates[playerIndex].fire = gamepad.buttonA.isPressed;
+            
+            // Start
+            INPUT_key_code = _gamepad.buttonX.isPressed ? AKEY_5200_START : AKEY_NONE;
+        }
+#endif
+    }
+}
+
 
 #pragma mark - Misc Helper Methods
 

@@ -352,7 +352,7 @@
 /* #undef MONITOR_PROFILE */
 
 /* Define to activate readline support in monitor. */
-#define MONITOR_READLINE 1
+//#define MONITOR_READLINE 1
 
 /* Define to activate TRACE command in monitor. */
 /* #undef MONITOR_TRACE */
