@@ -157,9 +157,10 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
-#pragma message "moved load of game before to have MednafenCoreGame.game already initialized"
-    bool loaded = [self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]];
-    assert(loaded);
+
+        // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
+        // to provide the correct data for creating views.
+    BOOL loaded = [self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]];
 
     if ([[UIScreen screens] count] > 1)
     {
