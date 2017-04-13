@@ -160,8 +160,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 {
 	if (self.dispatch_source)
 	{
-		self.extractionCompleteHandler = NULL;
-		self.path = nil;
 		dispatch_source_cancel(self.dispatch_source);
 		self.dispatch_source = NULL;
     }
