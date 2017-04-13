@@ -147,7 +147,7 @@ STDMETHODIMP CDecoder::Code(ISequentialInStream *inStream,
     SizeT outSizeProcessed = _state.decoder.dicPos - dicPos;
     _outSizeProcessed += outSizeProcessed;
 
-    bool finished = (inSizeProcessed == 0 && outSizeProcessed == 0
+    bool finished = ((inSizeProcessed == 0 && outSizeProcessed == 0)
         || status == LZMA_STATUS_FINISHED_WITH_MARK);
     bool outFinished = (_outSizeDefined && _outSizeProcessed >= _outSize);
 

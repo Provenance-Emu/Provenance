@@ -292,7 +292,7 @@ API_FUNC_static_IsArc IsArc_Lzma(const Byte *p, size_t size)
   UInt64 unpackSize = GetUi64(p + 1 + 4);
   if (unpackSize != (UInt64)(Int64)-1)
   {
-    if (size >= ((UInt64)1 << 56))
+    if ((UInt64)size >= ((UInt64)1 << 56))
       return k_IsArc_Res_NO;
   }
   if (unpackSize != 0)

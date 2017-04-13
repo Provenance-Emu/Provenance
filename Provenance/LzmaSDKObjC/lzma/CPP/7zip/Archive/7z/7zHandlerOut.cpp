@@ -149,12 +149,15 @@ HRESULT CHandler::SetMainMethod(
     if (_numSolidBytes > kSolidBytes_Max) _numSolidBytes = kSolidBytes_Max;
     _numSolidBytesDefined = true;
   }
-
-  if (!_numSolidBytesDefined)
-    if (needSolid)
-      _numSolidBytes = kSolidBytes_Max;
-    else
-      _numSolidBytes = 0;
+    
+    if (!_numSolidBytesDefined) {
+        if (needSolid) {
+            _numSolidBytes = kSolidBytes_Max;
+        }
+        else {
+            _numSolidBytes = 0;
+        }
+    }
   _numSolidBytesDefined = true;
   return S_OK;
 }
@@ -286,7 +289,7 @@ STDMETHODIMP CHandler::UpdateItems(ISequentialOutStream *outStream, UInt32 numIt
 
   bool need_CTime = (Write_CTime.Def && Write_CTime.Val);
   bool need_ATime = (Write_ATime.Def && Write_ATime.Val);
-  bool need_MTime = (Write_MTime.Def && Write_MTime.Val || !Write_MTime.Def);
+  bool need_MTime = ((Write_MTime.Def && Write_MTime.Val) || !Write_MTime.Def);
   
   if (db && !db->Files.IsEmpty())
   {

@@ -568,24 +568,29 @@ void CCensor::AddItem(ECensorPathMode pathMode, bool include, const UString &pat
 
     if (pathMode != k_FullPath)
     {
-      if (numPrefixParts != 0 && pathParts.Size() > numPrefixParts)
-        numSkipParts = pathParts.Size() - 1;
+        if (numPrefixParts != 0 && pathParts.Size() > numPrefixParts) {
+            numSkipParts = pathParts.Size() - 1;
+        }
     }
-    {
-      int dotsIndex = -1;
-      for (unsigned i = numPrefixParts; i < pathParts.Size(); i++)
       {
-        const UString &part = pathParts[i];
-        if (part == L".." || part == L".")
-          dotsIndex = i;
+          int dotsIndex = -1;
+          for (unsigned i = numPrefixParts; i < pathParts.Size(); i++)
+          {
+              const UString &part = pathParts[i];
+              if (part == L".." || part == L".") {
+                  dotsIndex = i;
+              }
+          }
+          
+          if (dotsIndex >= 0) {
+              if (dotsIndex == (int)pathParts.Size() - 1) {
+                  numSkipParts = pathParts.Size();
+              }
+              else {
+                  numSkipParts = pathParts.Size() - 1;
+              }
+          }
       }
-
-      if (dotsIndex >= 0)
-        if (dotsIndex == (int)pathParts.Size() - 1)
-          numSkipParts = pathParts.Size();
-        else
-          numSkipParts = pathParts.Size() - 1;
-    }
 
     for (unsigned i = 0; i < numSkipParts; i++)
     {
@@ -603,12 +608,12 @@ void CCensor::AddItem(ECensorPathMode pathMode, bool include, const UString &pat
   }
 
   int index = FindPrefix(prefix);
-  if (index < 0)
-    index = Pairs.Add(CPair(prefix));
-
+    if (index < 0) {
+        index = Pairs.Add(CPair(prefix));
+    }
   if (pathMode != k_AbsPath)
   {
-    if (pathParts.IsEmpty() || pathParts.Size() == 1 && pathParts[0].IsEmpty())
+    if (pathParts.IsEmpty() || (pathParts.Size() == 1 && pathParts[0].IsEmpty()))
     {
       // we create universal item, if we skip all parts as prefix (like \ or L:\ )
       pathParts.Clear();
