@@ -12,6 +12,7 @@
     GCControllerButtonValueChangedHandler _handler;
 
     BOOL _pressed;
+    float _value;
 }
 
 -(void) buttonPressed;
