@@ -26,19 +26,19 @@
             continue; // skip over the PVButtonGroupOverlayView
         }
         
-        if ([[[button titleLabel] text] isEqualToString:@"A"])
+        if ([[[button titleLabel] text] isEqualToString:@"✖"])
         {
             [button setTag:PVPSXButtonCross];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"B"])
+        else if ([[[button titleLabel] text] isEqualToString:@"●"])
         {
             [button setTag:PVPSXButtonCircle];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"X"])
+        else if ([[[button titleLabel] text] isEqualToString:@"◼"])
         {
             [button setTag:PVPSXButtonSquare];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"Y"])
+        else if ([[[button titleLabel] text] isEqualToString:@"▲"])
         {
             [button setTag:PVPSXButtonTriangle];
         }
