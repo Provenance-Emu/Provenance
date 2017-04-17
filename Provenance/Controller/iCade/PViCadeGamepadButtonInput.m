@@ -22,22 +22,27 @@
     if (_handler) {
         _handler(self, 1.0, YES);
     }
-    _pressed = YES;
+    [self setPressed:YES];
 }
 
 -(void) buttonReleased {
     if (_handler) {
         _handler(self, 0.0, NO);
     }
-    _pressed = NO;
+    [self setPressed:NO];
 }
 
 -(void) setPressed:(BOOL)pressed {
     _pressed = pressed;
+    _value = pressed ? 1.0f : 0.0f;
 }
 
 -(BOOL) isPressed {
     return _pressed;
+}
+
+- (float)value {
+    return _value;
 }
 
 @end
