@@ -1785,9 +1785,9 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
             case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
             case PVPSXButtonStart:
-                return [[pad rightTrigger] isPressed];
-            case PVPSXButtonSelect:
                 return [[pad leftTrigger] isPressed];
+            case PVPSXButtonSelect:
+                return [[pad rightTrigger] isPressed];
             default:
                 break;
         }
