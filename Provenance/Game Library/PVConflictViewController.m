@@ -45,6 +45,22 @@
     [self updateConflictedFiles];
 }
 
+- (void)viewWillAppear:(BOOL)animated;
+{
+    [super viewWillAppear:animated];
+    
+    if (!self.navigationController || self.navigationController.viewControllers.count<=1) {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+                                                                                               target:self
+                                                                                               action:@selector(dismiss)];
+    }
+}
+
+- (void)dismiss;
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (void)updateConflictedFiles
 {
     NSMutableArray *tempConflictedFiles = [NSMutableArray array];
