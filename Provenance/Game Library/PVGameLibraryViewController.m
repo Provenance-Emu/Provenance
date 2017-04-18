@@ -816,6 +816,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 //    });
 }
 
+typedef NSDictionary<NSString*,NSString*> BiosDictionary;
+
 - (BOOL)canLoadGame:(PVGame *)game
 {
     BOOL canLoad = YES;
@@ -824,7 +826,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     BOOL requiresBIOS = [system[PVRequiresBIOSKey] boolValue];
     if (requiresBIOS)
     {
-        NSArray *biosNames = system[PVBIOSNamesKey];
+        NSArray<BiosDictionary*> *biosNames = system[PVBIOSNamesKey];
         NSString *biosPath = [self BIOSPathForSystemID:[game systemIdentifier]];
         NSError *error = nil;
         NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:biosPath error:&error];
@@ -834,9 +836,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             canLoad = NO;
         }
         
-        for (NSString *name in biosNames)
+        for (BiosDictionary* bios in biosNames)
         {
-            if (![contents containsObject:name])
+            if (![contents containsObject:bios[@"Name"]])
             {
                 canLoad = NO;
                 break;
@@ -846,10 +848,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         if (canLoad == NO)
         {
             NSMutableString *biosString = [NSMutableString string];
-            for (NSString *name in biosNames)
+            for (BiosDictionary* bios in biosNames)
             {
+                NSString *name = bios[@"Name"];
                 [biosString appendString:[NSString stringWithFormat:@"%@", name]];
-                if ([biosNames lastObject] != name)
+                if (biosNames.lastObject != bios)
                 {
                     [biosString appendString:@",\n"];
                 }
