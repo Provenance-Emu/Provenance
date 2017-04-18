@@ -8,9 +8,8 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport.h>
 #import "PVGame.h"
-#import <PVSupport/OEGameAudio.h>
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
@@ -156,11 +155,23 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[self.game romPath]];
+
+    NSError *error = nil;
+    NSString *md5Hash, *crc32Hash;
+    if(![[NSFileManager defaultManager] hashFileAtURL:[NSURL fileURLWithPath:romPath] md5:&md5Hash crc32:&crc32Hash error:&error])
+    {
+        DLog(@"%@", error);
+        return;
+    }
+
+    self.emulatorCore.romMD5 = md5Hash;
+    
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
         // to provide the correct data for creating views.
-    BOOL loaded = [self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]];
+    BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
 
     if ([[UIScreen screens] count] > 1)
     {

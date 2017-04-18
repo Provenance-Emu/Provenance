@@ -196,10 +196,15 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	[self doesNotImplementOptionalSelector:_cmd];
 }
 
-- (BOOL)loadFileAtPath:(NSString*)path
+- (BOOL)loadFileAtPath:(NSString *)path
 {
-	[self doesNotImplementSelector:_cmd];
-	return NO;
+    [self doesNotImplementSelector:_cmd];
+    return NO;
+}
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+{
+    return [self loadFileAtPath:path];
 }
 
 - (BOOL)supportsDiskSwapping

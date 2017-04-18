@@ -2130,4 +2130,18 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     return maxDiscs ? maxDiscs : 1;
 }
 
+- (BOOL)supportsDiskSwapping {
+    switch (systemType) {
+        case psx:
+            return YES;
+        case neogeo:
+        case lynx:
+        case pce:
+        case pcfx:
+        case vb:
+        case wswan:
+            return NO;
+    }
+}
+
 @end

@@ -129,15 +129,6 @@ static ATR800GameCore *_currentCore;
     return self.BIOSPath;
 }
 
-// TODO: Make me real
--(NSString*)ROMMD5 {
-    return @"";
-}
-
-- (BOOL)loadFileAtPath:(NSString *)path {
-    return [self loadFileAtPath:path error:nil];
-}
-
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
     // Set the default palette (NTSC)
@@ -850,7 +841,7 @@ int UI_SelectCartType(int k)
             case 8: return CARTRIDGE_5200_8;
             case 16:
                 // Determine if 16KB cart is one-chip (NS_16) or two-chip (EE_16)
-                if([One_Chip_16KB containsObject:[[_currentCore ROMMD5] lowercaseString]])
+                if([One_Chip_16KB containsObject:[_currentCore.romMD5 lowercaseString]])
                     return CARTRIDGE_5200_NS_16;
                 else
                     return CARTRIDGE_5200_EE_16;
