@@ -76,7 +76,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)stopEmulation;
 - (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString*)path;
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error;
 - (void)updateControllers;
 
 - (BOOL)supportsDiskSwapping;
