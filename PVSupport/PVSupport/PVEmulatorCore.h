@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (nonatomic, copy) NSString *systemIdentifier;
+@property (nonatomic, strong) NSString* romMD5;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 
