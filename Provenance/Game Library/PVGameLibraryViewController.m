@@ -512,14 +512,24 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                        [hud setProgress:0];
-                                       [hud setLabelText:@"Extracting Archive..."];
+#if TARGET_OS_TV
+                                       NSString *label = [NSString stringWithFormat:@"Extracting Archive: %@", path.lastPathComponent];
+#else
+                                       NSString *label = @"Extracting Archive...";
+#endif
+                                       [hud setLabelText:label];
                                    }
                                    extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, float progress) {
                                        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                        [hud setProgress:progress];
-                                       [hud setLabelText:@"Extracting Archive..."];
+#if TARGET_OS_TV
+                                       NSString *label = [NSString stringWithFormat:@"Extracting Archive: %@", path.lastPathComponent];
+#else
+                                       NSString *label = @"Extracting Archive...";
+#endif
+                                       [hud setLabelText:label];
                                    }
                                   extractionCompleteHandler:^(NSArray *paths) {
                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
@@ -845,8 +855,23 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
             }
         }
         
+//        TODO :: Check MD5's of BIOS's as well, maybe try to match MD5s to rename BIOS's
+        
         if (canLoad == NO)
         {
+            // Create missing directory to help user out
+            NSFileManager *fm = [NSFileManager defaultManager];
+            if (![fm fileExistsAtPath:biosPath]) {
+                NSError *error;
+                BOOL success = [fm createDirectoryAtPath:biosPath
+                             withIntermediateDirectories:YES
+                                              attributes:nil
+                                                   error:&error];
+                if (!success) {
+                    NSLog(@"Error creating BIOS dir: %@", error.localizedDescription);
+                }
+            }
+            
             NSMutableString *biosString = [NSMutableString string];
             for (BiosDictionary* bios in biosNames)
             {
