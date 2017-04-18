@@ -514,11 +514,11 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                        [hud setProgress:0];
                                        [hud setLabelText:@"Extracting Archive..."];
                                    }
-                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, float progress) {
                                        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
-                                       [hud setProgress:(float)bytesRead / (float)fileSize];
+                                       [hud setProgress:progress];
                                        [hud setLabelText:@"Extracting Archive..."];
                                    }
                                   extractionCompleteHandler:^(NSArray *paths) {
@@ -543,9 +543,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud setMode:MBProgressHUDModeAnnularDeterminate];
         [hud setProgress:0];
         [hud setLabelText:@"Extracting Archive…"];
-    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, float progress) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
-        [hud setProgress:(float)bytesRead / (float)fileSize];
+        [hud setProgress:progress];
     } extractionCompleteHandler:^(NSArray *paths) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
         [hud setProgress:1];

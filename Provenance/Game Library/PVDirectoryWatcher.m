@@ -247,7 +247,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
                           if (self.extractionUpdatedHandler)
                           {
                               dispatch_async(dispatch_get_main_queue(), ^{
-                                  self.extractionUpdatedHandler(filePath, entryNumber, total, fileSize, bytesRead);
+                                  self.extractionUpdatedHandler(filePath, entryNumber, total, bytesRead/fileSize);
                               });
                           }
                       }
@@ -319,7 +319,6 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
 - (void) onLzmaSDKObjCReader:(nonnull LzmaSDKObjCReader *) reader
              extractProgress:(float) progress {
     if (progress >= 1) {
-        NSLog(@"7zip done");
         if (self.extractionCompleteHandler)
         {
             NSArray *unzippedItems = [_unzippedFiles copy];
@@ -339,12 +338,10 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         [_unzippedFiles removeAllObjects];
         [self startMonitoring];
     } else {
-        NSLog(@"7zip running %f", progress);
-
         if (self.extractionUpdatedHandler)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.extractionUpdatedHandler(@"", floor(reader.itemsCount * progress), reader.itemsCount, 0, 0);
+                self.extractionUpdatedHandler(reader.fileURL.path, floor(reader.itemsCount * progress), reader.itemsCount, progress);
             });
         }
     }

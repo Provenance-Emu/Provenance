@@ -11,7 +11,7 @@
 extern NSString *PVArchiveInflationFailedNotification;
 
 typedef void(^PVExtractionStartedHandler)(NSString *path);
-typedef void(^PVExtractionUpdatedHandler)(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead);
+typedef void(^PVExtractionUpdatedHandler)(NSString *path, NSInteger entryNumber, NSInteger total, float progress);
 typedef void(^PVExtractionCompleteHandler)(NSArray *paths);
 
 @interface PVDirectoryWatcher : NSObject
