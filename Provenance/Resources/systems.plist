@@ -265,8 +265,6 @@
 		<string>36</string>
 		<key>PVRequiresBIOS</key>
 		<false/>
-		<key>PVBIOSNames</key>
-		<array/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ngp</string>
 		<key>PVShortSystemName</key>
@@ -327,8 +325,6 @@
 		<string>37</string>
 		<key>PVRequiresBIOS</key>
 		<false/>
-		<key>PVBIOSNames</key>
-		<array/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ngpc</string>
 		<key>PVShortSystemName</key>
@@ -1818,7 +1814,7 @@
 				<key>Name</key>
 				<string>5200.rom</string>
 				<key>Size</key>
-				<integer>2048</integer>
+				<real>2048</real>
 			</dict>
 		</array>
 		<key>PVSystemName</key>

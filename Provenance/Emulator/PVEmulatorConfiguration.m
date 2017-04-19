@@ -47,6 +47,22 @@
 #import "PVWonderSwanControllerViewController.h"
 #import "PVNeoGeoPocketControllerViewController.h"
 
+@implementation BIOSEntry
+
+-(instancetype)initWithFilename:(NSString * _Nonnull )filename systemID:(NSString* _Nonnull)systemID description:(NSString * _Nonnull )desctription md5:(NSString * _Nonnull )md5 size:(NSNumber * _Nonnull )size;
+{
+    self = [super init];
+    if (self) {
+        _fileName         = filename;
+        _desc             = desctription;
+        _expectedMD5      = md5;
+        _expectedFileSize = size;
+        _systemID         = systemID;
+    }
+    return self;
+}
+@end
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -362,6 +378,48 @@
 {
     NSDictionary *system = [self systemForIdentifier:systemID];
     return system[PVDatabaseIDKey];
+}
+
+-(NSArray<BIOSEntry*>*)biosEntries {
+    
+    static NSArray<BIOSEntry*>* biosEntries;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSMutableArray<BIOSEntry*>* newEntries = [NSMutableArray new];
+        for (NSDictionary *system in self.systems) {
+            NSArray<NSDictionary*>*biosDicts = system[PVBIOSNamesKey];
+            NSString*systemID                = system[PVSystemIdentifierKey];
+            if (biosDicts) {
+                for (NSDictionary*biosDict in biosDicts) {
+                    
+                    NSString* desc = biosDict[@"Description"];
+                    NSString* md5  = biosDict[@"MD5"];
+                    NSString* name = biosDict[@"Name"];
+                    NSNumber* size = biosDict[@"Size"];
+
+                    if (desc && md5 && name && size) {
+                        BIOSEntry* newEntry = [[BIOSEntry alloc] initWithFilename:name
+                                                                         systemID:systemID
+                                                                      description:desc
+                                                                              md5:md5
+                                                                             size:size];
+                        [newEntries addObject:newEntry];
+                    } else {
+                        DLog(@"System BIOS dictionary was missing a key");
+                    }
+                }
+            }
+        }
+        biosEntries = [NSArray arrayWithArray:newEntries];
+    });
+    
+    return biosEntries;
+}
+
+-(NSArray<BIOSEntry*>*)biosEntriesForSystemIdentifier:(NSString*)systemID {
+    NSPredicate*predicate = [NSPredicate predicateWithFormat:@"systemID == %@", systemID];
+    
+    return [[self biosEntries] filteredArrayUsingPredicate:predicate];
 }
 
 @end

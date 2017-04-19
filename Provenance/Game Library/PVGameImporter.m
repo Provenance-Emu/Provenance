@@ -32,14 +32,22 @@
 
 - (instancetype)initWithCompletionHandler:(PVGameImporterCompletionHandler)completionHandler
 {
-    if ((self = [super init]))
+    if ((self = [self init]))
     {
-        self.serialImportQueue = dispatch_queue_create("com.jamsoftonline.provenance.serialImportQueue", DISPATCH_QUEUE_SERIAL);
-        self.systemToPathMap = [self updateSystemToPathMap];
-        self.romToSystemMap = [self updateRomToSystemMap];
-        self.completionHandler = completionHandler;
+        _completionHandler = completionHandler;
     }
     
+    return self;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _serialImportQueue = dispatch_queue_create("com.jamsoftonline.provenance.serialImportQueue", DISPATCH_QUEUE_SERIAL);
+        _systemToPathMap   = [self updateSystemToPathMap];
+        _romToSystemMap    = [self updateRomToSystemMap];
+    }
     return self;
 }
 
@@ -171,7 +179,6 @@
     for (NSString *file in contents)
     {
         NSString *fileWithoutExtension = [file stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[file pathExtension]] withString:@""];
-        
         
         // Some cue's have multiple bins, like, Game.cue Game (Track 1).bin, Game (Track 2).bin ....
         // Clip down the file name to the length of the .cue to see if they start to match

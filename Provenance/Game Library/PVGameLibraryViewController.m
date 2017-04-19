@@ -826,6 +826,20 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 //    });
 }
 
+-(void)createBiosDirectoryAtPath:(NSString*)biosPath {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:biosPath]) {
+        NSError *error;
+        BOOL success = [fm createDirectoryAtPath:biosPath
+                     withIntermediateDirectories:YES
+                                      attributes:nil
+                                           error:&error];
+        if (!success) {
+            NSLog(@"Error creating BIOS dir: %@", error.localizedDescription);
+        }
+    }
+}
+
 typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 
 - (BOOL)canLoadGame:(PVGame *)game
@@ -859,18 +873,8 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
         
         if (canLoad == NO)
         {
-            // Create missing directory to help user out
-            NSFileManager *fm = [NSFileManager defaultManager];
-            if (![fm fileExistsAtPath:biosPath]) {
-                NSError *error;
-                BOOL success = [fm createDirectoryAtPath:biosPath
-                             withIntermediateDirectories:YES
-                                              attributes:nil
-                                                   error:&error];
-                if (!success) {
-                    NSLog(@"Error creating BIOS dir: %@", error.localizedDescription);
-                }
-            }
+            // Create missing BIOS directory to help user out
+            [self createBiosDirectoryAtPath:biosPath];
             
             NSMutableString *biosString = [NSMutableString string];
             for (BiosDictionary* bios in biosNames)
