@@ -780,7 +780,7 @@
 				<key>MD5</key>
 				<string>e66fa1dc5820d254611fdcdba0662372</string>
 				<key>Name</key>
-				<string>BIOS_CD_E.bin</string>
+				<string>bios_CD_E.bin</string>
 				<key>Size</key>
 				<integer>131072</integer>
 			</dict>
@@ -790,9 +790,9 @@
 				<key>MD5</key>
 				<string>2efd74e3232ff260e371b99f84024f7f</string>
 				<key>Name</key>
-				<string>BIOS_CD_U.bin</string>
+				<string>bios_CD_U.bin</string>
 				<key>Size</key>
-				<integer>131072</integer>
+				<real>131072</real>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -800,9 +800,9 @@
 				<key>MD5</key>
 				<string>278a9397d192149e84e820ac621a8edd</string>
 				<key>Name</key>
-				<string>BIOS_CD_J.bin</string>
+				<string>bios_CD_J.bin</string>
 				<key>Size</key>
-				<integer>131072</integer>
+				<real>131072</real>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
@@ -1476,7 +1476,7 @@
 				<key>Description</key>
 				<string>Disk System BIOS</string>
 				<key>MD5</key>
-				<string>CA30B50F880EB660A320674ED365EF7A</string>
+				<string>ca30b50f880eb660a320674ed365ef7a</string>
 				<key>Name</key>
 				<string>disksys.rom</string>
 				<key>Size</key>
@@ -1891,6 +1891,8 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVRequiresBIOS</key>
+		<false/>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>

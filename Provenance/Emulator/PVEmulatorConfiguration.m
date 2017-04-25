@@ -53,9 +53,9 @@
 {
     self = [super init];
     if (self) {
-        _fileName         = filename;
+        _filename         = filename;
         _desc             = desctription;
-        _expectedMD5      = md5;
+        _expectedMD5      = md5.uppercaseString;
         _expectedFileSize = size;
         _systemID         = systemID;
     }
@@ -320,7 +320,7 @@
     return [systems allObjects];
 }
 
-- (NSArray *)supportedFileExtensions
+- (NSArray *)supportedROMFileExtensions
 {
 	NSMutableSet *extentions = [NSMutableSet set];
 	
@@ -333,6 +333,19 @@
 	return [extentions allObjects];
 }
 
+- (NSArray *)supportedBIOSFileExtensions
+{
+    NSMutableSet *extentions = [NSMutableSet set];
+
+    for (BIOSEntry *bios in [self biosEntries] ) {
+        NSString *ext = bios.filename.pathExtension;
+        [extentions addObject:ext];
+    }
+
+    return [extentions allObjects];
+}
+
+
 - (NSArray *)fileExtensionsForSystemIdentifier:(NSString *)systemID
 {
 	NSDictionary *system = [self systemForIdentifier:systemID];
@@ -343,8 +356,8 @@
 {
 	for (NSDictionary *system in self.systems)
 	{
-		NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
-		if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+		NSArray *supportedROMFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
+		if ([supportedROMFileExtensions containsObject:[fileExtension lowercaseString]])
 		{
 			return [system objectForKey:PVSystemIdentifierKey];
 		}
@@ -358,8 +371,8 @@
     NSMutableArray *systems = [NSMutableArray array];
     for (NSDictionary *system in self.systems)
     {
-        NSArray *supportedFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
-        if ([supportedFileExtensions containsObject:[fileExtension lowercaseString]])
+        NSArray *supportedROMFileExtensions = [system objectForKey:PVSupportedExtensionsKey];
+        if ([supportedROMFileExtensions containsObject:[fileExtension lowercaseString]])
         {
             [systems addObject:[system objectForKey:PVSystemIdentifierKey]];
         }
@@ -420,6 +433,117 @@
     NSPredicate*predicate = [NSPredicate predicateWithFormat:@"systemID == %@", systemID];
     
     return [[self biosEntries] filteredArrayUsingPredicate:predicate];
+}
+
+- (BIOSEntry* _Nullable)biosEntryForMD5:(NSString* _Nonnull)md5 {
+    NSPredicate*predicate = [NSPredicate predicateWithFormat:@"expectedMD5 == %@", md5];
+    
+    return [[self biosEntries] filteredArrayUsingPredicate:predicate].firstObject;
+}
+
+- (BIOSEntry* _Nullable)biosEntryForFilename:(NSString* _Nonnull)filename {
+    NSPredicate*predicate = [NSPredicate predicateWithFormat:@"filename == %@", filename];
+    
+    return [[self biosEntries] filteredArrayUsingPredicate:predicate].firstObject;
+}
+
+- (NSString *)BIOSPathForSystemID:(NSString *)systemID
+{
+    return [[[self documentsPath] stringByAppendingPathComponent:@"BIOS"] stringByAppendingPathComponent:systemID];
+}
+
+#pragma mark - Filesystem Helpers
+- (NSString *)documentsPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    
+    return documentsDirectoryPath;
+}
+
+- (NSString *)romsPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    
+    return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
+}
+
+- (NSString *)coverArtPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    
+    return [paths.firstObject stringByAppendingPathComponent:@"Cover Art"];
+}
+
+- (NSString *)batterySavesPathForROM:(NSString *)romPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
+    
+    NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
+    batterySavesDirectory = [batterySavesDirectory stringByAppendingPathComponent:romName];
+    
+    NSError *error = nil;
+    
+    [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error];
+    if (error)
+    {
+        DLog(@"Error creating save state directory: %@", [error localizedDescription]);
+    }
+    
+    return batterySavesDirectory;
+}
+
+- (NSString *)saveStatePathForROM:(NSString *)romPath
+{
+#if TARGET_OS_TV
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+#else
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+#endif
+    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
+    NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
+    
+    NSMutableArray *filenameComponents = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] mutableCopy];
+    // remove extension
+    [filenameComponents removeLastObject];
+    
+    NSString *romName = [filenameComponents componentsJoinedByString:@"."];
+    saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
+    
+    NSError *error = nil;
+    
+    [[NSFileManager defaultManager] createDirectoryAtPath:saveStateDirectory
+                              withIntermediateDirectories:YES
+                                               attributes:nil
+                                                    error:&error];
+    if (error)
+    {
+        DLog(@"Error creating save state directory: %@", [error localizedDescription]);
+    }
+    
+    return saveStateDirectory;
 }
 
 @end

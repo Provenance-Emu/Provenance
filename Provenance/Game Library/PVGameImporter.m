@@ -19,6 +19,61 @@
 #import "UIImage+Scaling.h"
 #import "NSData+Hashing.h"
 
+
+@interface NSArray (Map)
+
+- (NSArray *)mapObjectsUsingBlock:(id (^)(id obj, NSUInteger idx))block;
+
+@end
+
+@implementation NSArray (Map)
+
+- (NSArray *)mapObjectsUsingBlock:(id (^)(id obj, NSUInteger idx))block {
+    NSMutableArray *result = [NSMutableArray arrayWithCapacity:[self count]];
+    [self enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [result addObject:block(obj, idx)];
+    }];
+    return result;
+}
+
+@end
+
+@interface ImportCanidateFile : NSObject
+@property (nonatomic, strong, nonnull) NSString *filePath;
+@property (nonatomic, strong, nonnull) NSString *md5;
+
+- (instancetype)initWithFilePath:(NSString* _Nonnull)filePath;
+@end
+
+
+@implementation ImportCanidateFile {
+    NSString * _hastStore;
+    dispatch_once_t _hashToken;
+    
+}
+
+- (instancetype)initWithFilePath:(NSString* _Nonnull)filePath
+{
+    self = [super init];
+    if (self) {
+        _filePath = filePath;
+    }
+    return self;
+}
+
+-(NSString* _Nonnull)md5 {
+    dispatch_once(&_hashToken, ^{
+        if (_hastStore == nil) {
+            NSFileManager *fm = [NSFileManager defaultManager];
+            _hastStore = [fm MD5ForFileAtPath:_filePath fromOffset:0];
+        }
+    });
+    
+    return _hastStore;
+}
+
+@end
+
 @interface PVGameImporter ()
 
 @property (nonatomic, readwrite, strong) dispatch_queue_t serialImportQueue;
@@ -51,16 +106,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    self.openVGDB = nil;
-    self.serialImportQueue = nil;
-    self.importStartedHandler = nil;
-    self.completionHandler = nil;
-    self.finishedImportHandler = nil;
-    self.finishedArtworkHandler = nil;
-}
-
 - (void)startImportForPaths:(NSArray<NSString*> *)paths
 {
     dispatch_async(self.serialImportQueue, ^{
@@ -79,7 +124,7 @@
 {
     NSMutableArray<NSString*> *newPaths = [NSMutableArray array];
     
-    // Reorder .cue's first
+    // Reorder .cue's first.this is so we find cue's before their bins.
     paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString*  _Nonnull obj1, NSString*  _Nonnull obj2) {
         if ([obj1.pathExtension isEqualToString:@"cue"]) {
             return NSOrderedAscending;
@@ -90,24 +135,28 @@
         }
     }];
     
-    
-    // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved before processing its CD cue sheet or something
-    for (NSString *path in paths)
+    NSArray<ImportCanidateFile*> *canidateFiles = [paths mapObjectsUsingBlock:^ImportCanidateFile*(NSString* path, NSUInteger idx) {
+        return [[ImportCanidateFile alloc] initWithFilePath:[[self romsPath] stringByAppendingPathComponent:path]];
+    }];
+
+    // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved
+    // before processing its CD cue sheet or something
+    for (ImportCanidateFile *canidate in canidateFiles)
     {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
+        if ([[NSFileManager defaultManager] fileExistsAtPath:canidate.filePath])
         {
-            if ([self isCDROM:path])
+            if ([self isCDROM:canidate])
             {
-                [newPaths addObjectsFromArray:[self moveCDROMToAppropriateSubfolder:path]];
+                [newPaths addObjectsFromArray:[self moveCDROMToAppropriateSubfolder:canidate]];
             }
         }
     }
     
-    for (NSString *path in paths)
+    for (ImportCanidateFile *canidate in canidateFiles)
     {
-        if ([[NSFileManager defaultManager] fileExistsAtPath:[[self romsPath] stringByAppendingPathComponent:path]])
+        if ([[NSFileManager defaultManager] fileExistsAtPath:canidate.filePath])
         {
-            NSString *newPath = [self moveROMToAppropriateSubfolder:path];
+            NSString *newPath = [self moveROMToAppropriateSubfolder:canidate];
             if ([newPath length])
             {
                 [newPaths addObject:newPath];
@@ -118,17 +167,22 @@
     return newPaths;
 }
 
-- (NSArray *)moveCDROMToAppropriateSubfolder:(NSString *)filePath
+- (NSArray *)moveCDROMToAppropriateSubfolder:(ImportCanidateFile *)canidateFile
 {
     NSMutableArray *newPaths = [NSMutableArray array];
     
-    NSArray *systemsForExtension = [self systemIDsForRomAtPath:filePath];
+    NSArray *systemsForExtension = [self systemIDsForRomAtPath:canidateFile.filePath];
     
     NSString *systemID = nil;
     NSString *subfolderPath = nil;
     
     if ([systemsForExtension count] > 1)
     {
+        // Try to match by MD5
+        
+        
+        
+        // No MD5 match, so move to conflict dir
         subfolderPath = [self conflictPath];
         self.encounteredConflicts = YES;
     }
@@ -153,13 +207,15 @@
         return nil;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
+    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:canidateFile.filePath]
+                                                 toPath:[subfolderPath stringByAppendingPathComponent:canidateFile.filePath]
+                                                  error:&error])
     {
-        DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
+        DLog(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
         return nil;
     }
     
-    NSString *cueSheetPath = [subfolderPath stringByAppendingPathComponent:filePath];
+    NSString *cueSheetPath = [subfolderPath stringByAppendingPathComponent:canidateFile.filePath];
     if (!self.encounteredConflicts)
     {
         [newPaths addObject:cueSheetPath];
@@ -167,7 +223,7 @@
     
     // moved the .cue, now move .bins .imgs etc
     
-    NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[filePath pathExtension]] withString:@""];
+    NSString *relatedFileName = [canidateFile.filePath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[canidateFile.filePath pathExtension]] withString:@""];
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error];
     
     if (!contents)
@@ -211,9 +267,9 @@
             
             if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[subfolderPath stringByAppendingPathComponent:file] error:&error])
             {
-                DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
+                DLog(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
             } else {
-                DLog(@"Moved file from %@ to %@", filePath, subfolderPath);
+                DLog(@"Moved file from %@ to %@", canidateFile, subfolderPath);
             }
         }
     }
@@ -221,8 +277,28 @@
     return [newPaths copy];
 }
 
-- (NSString *)moveROMToAppropriateSubfolder:(NSString *)filePath
+- (BIOSEntry*)moveIfBIOS:(ImportCanidateFile*)canidateFile {
+    PVEmulatorConfiguration *config = [PVEmulatorConfiguration sharedInstance];
+   
+    BIOSEntry *bios;
+    
+    // Check if BIOS by filename - should possibly just only check MD5?
+    if ((bios = [config biosEntryForFilename:canidateFile.filePath.lastPathComponent])) {
+        return bios;
+    } else {
+        // Now check by MD5
+        NSString *fileMD5 = canidateFile.md5;
+        if ((bios = [config biosEntryForMD5:fileMD5])) {
+            return bios;
+        }
+    }
+    
+    return nil;
+}
+
+- (NSString *)moveROMToAppropriateSubfolder:(ImportCanidateFile*)canidateFile
 {
+    NSString *filePath = canidateFile.filePath;
     NSString *newPath = nil;
     
     NSArray *systemsForExtension = [self systemIDsForRomAtPath:filePath];
@@ -230,8 +306,76 @@
     NSString *systemID = nil;
     NSString *subfolderPath = nil;
     
+    NSFileManager*fm = [NSFileManager defaultManager];
+    
+    // Check first if known BIOS
+    BIOSEntry *biosEntry = [self moveIfBIOS:canidateFile];
+    if (biosEntry) {
+
+        PVEmulatorConfiguration*config = [PVEmulatorConfiguration sharedInstance];
+        NSString *biosDirectory = [config BIOSPathForSystemID:biosEntry.systemID];
+        NSString *destiaionPath = [biosDirectory stringByAppendingPathComponent:biosEntry.filename];
+        
+        NSError *error = nil;
+        
+        if (![fm fileExistsAtPath:biosDirectory]) {
+            [fm createDirectoryAtPath:biosDirectory
+          withIntermediateDirectories:YES
+                           attributes:nil
+                                error:&error];
+            
+            if (error) {
+                DLog(@"Unable to create BIOS directory %@, %@", biosDirectory, error.localizedDescription);
+            }
+        }
+        
+        if (![fm moveItemAtPath:filePath
+                         toPath:destiaionPath
+                          error:&error])
+        {
+            if ([error code] == NSFileWriteFileExistsError)
+            {
+                DLog(@"Unable to delete %@ (after trying to move and getting 'file exists error', because %@", filePath, [error localizedDescription]);
+            }
+        }
+        return nil;
+    }
+    
     if ([systemsForExtension count] > 1)
     {
+        
+        // Check by MD5
+        NSString *fileMD5 = canidateFile.md5.uppercaseString;
+        NSArray *results;
+        for (NSString *system in systemsForExtension) {
+            NSError* error;
+            // TODO: Would be better performance to search EVERY system MD5 in a single query?
+            results = [self searchDatabaseUsingKey:@"romHashMD5"
+                                             value:fileMD5
+                                          systemID:system
+                                             error:&error];
+            break;
+        }
+        
+        if (results.count) {
+            NSDictionary *chosenResult = nil;
+            for (NSDictionary *result in results)
+            {
+                if ([result[@"region"] isEqualToString:@"USA"])
+                {
+                    chosenResult = result;
+                    break;
+                }
+            }
+            
+            if (!chosenResult)
+            {
+                chosenResult = [results firstObject];
+            }
+            
+            
+        }
+        
         subfolderPath = [self conflictPath];
         self.encounteredConflicts = YES;
     }
@@ -247,21 +391,21 @@
     }
     
     NSError *error = nil;
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:subfolderPath
-                                   withIntermediateDirectories:YES
-                                                    attributes:nil
-                                                         error:&error])
+    if (![fm createDirectoryAtPath:subfolderPath
+       withIntermediateDirectories:YES
+                        attributes:nil
+                             error:&error])
     {
         DLog(@"Unable to create %@ - %@", subfolderPath, [error localizedDescription]);
         return nil;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] toPath:[subfolderPath stringByAppendingPathComponent:filePath] error:&error])
+    if (![fm moveItemAtPath:filePath toPath:[subfolderPath stringByAppendingPathComponent:filePath.lastPathComponent] error:&error])
     {
         
         if ([error code] == NSFileWriteFileExistsError)
         {
-            if (![[NSFileManager defaultManager] removeItemAtPath:[[self romsPath] stringByAppendingPathComponent:filePath] error:&error])
+            if (![fm removeItemAtPath:filePath error:&error])
             {
                 DLog(@"Unable to delete %@ (after trying to move and getting 'file exists error', because %@", filePath, [error localizedDescription]);
             }
@@ -273,7 +417,7 @@
     
     if (!self.encounteredConflicts)
     {
-      newPath = [subfolderPath stringByAppendingPathComponent:filePath];
+      newPath = [subfolderPath stringByAppendingPathComponent:filePath.lastPathComponent];
     }
     
     return newPath;
@@ -696,13 +840,13 @@
     return self.romToSystemMap[fileExtension];
 }
 
-- (BOOL)isCDROM:(NSString *)filePath
+- (BOOL)isCDROM:(ImportCanidateFile *)romFile
 {
     BOOL isCDROM = NO;
     
     PVEmulatorConfiguration *emuConfig = [PVEmulatorConfiguration sharedInstance];
     NSArray *cdExtensions = [emuConfig supportedCDFileExtensions];
-    NSString *extension = [filePath pathExtension];
+    NSString *extension = [romFile.filePath pathExtension];
     if ([cdExtensions containsObject:extension])
     {
         isCDROM = YES;
