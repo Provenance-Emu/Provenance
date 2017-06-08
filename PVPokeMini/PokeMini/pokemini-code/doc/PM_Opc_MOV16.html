@@ -1,0 +1,822 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+//window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h2>MOV = Move Register (16-Bits)</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td><table id="sortable_table_id_0" style="text-align: left;" class="sortable" border="1">
+              <tbody>
+                <tr>
+                  <th>Hex</th>
+                  <th>Mnemonic</th>
+                  <th>Cycles</th>
+                </tr>
+                <tr>
+                  <td>B8 nn nn </td>
+                  <td>MOV BA, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>B9 nn nn </td>
+                  <td>MOV HL, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>BA nn nn </td>
+                  <td>MOV X, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>BB nn nn </td>
+                  <td>MOV Y, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF 78 nn nn </td>
+                  <td>MOV SP, [#nnnn] </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>BC nn nn </td>
+                  <td>MOV [#nnnn], BA </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>BD nn nn </td>
+                  <td>MOV [#nnnn], HL </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>BE nn nn </td>
+                  <td>MOV [#nnnn], X </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>BF nn nn </td>
+                  <td>MOV [#nnnn], Y </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF 7C nn nn </td>
+                  <td>MOV [#nnnn], SP </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>C4 nn nn </td>
+                  <td>MOV BA, #nnnn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>C5 nn nn </td>
+                  <td>MOV HL, #nnnn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>C6 nn nn </td>
+                  <td>MOV X, #nnnn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>C7 nn nn </td>
+                  <td>MOV Y, #nnnn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CF 6E nn nn </td>
+                  <td>MOV SP, #nnnn </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>CF 70 ss </td>
+                  <td>MOV BA, [SP+#ss] </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 71 ss </td>
+                  <td>MOV HL, [SP+#ss] </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 72 ss </td>
+                  <td>MOV X, [SP+#ss] </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 73 ss </td>
+                  <td>MOV Y, [SP+#ss] </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 74 ss </td>
+                  <td>MOV [SP+#ss], BA </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 75 ss </td>
+                  <td>MOV [SP+#ss], HL </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 76 ss </td>
+                  <td>MOV [SP+#ss], X </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF 77 ss </td>
+                  <td>MOV [SP+#ss], Y </td>
+                  <td>24 </td>
+                </tr>
+                <tr>
+                  <td>CF C0 </td>
+                  <td>MOV BA, [HL] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C1 </td>
+                  <td>MOV HL, [HL] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C2 </td>
+                  <td>MOV X, [HL] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C3 </td>
+                  <td>MOV Y, [HL] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D0 </td>
+                  <td>MOV BA, [X] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D1 </td>
+                  <td>MOV HL, [X] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D2 </td>
+                  <td>MOV X, [X] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D3 </td>
+                  <td>MOV Y, [X] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D8 </td>
+                  <td>MOV BA, [Y] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D9 </td>
+                  <td>MOV HL, [Y] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DA </td>
+                  <td>MOV X, [Y] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DB </td>
+                  <td>MOV Y, [Y] </td>
+                  <td>20 </td>
+                </tr>
+              </tbody>
+          </table></td>
+          <td><table id="sortable_table_id_1" style="text-align: left;" class="sortable" border="1">
+              <tbody>
+                <tr>
+                  <th>Hex</th>
+                  <th>Mnemonic</th>
+                  <th>Cycles</th>
+                </tr>
+                <tr>
+                  <td>CF C4 </td>
+                  <td>MOV [HL], BA </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C5 </td>
+                  <td>MOV [HL], HL </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C6 </td>
+                  <td>MOV [HL], X </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF C7 </td>
+                  <td>MOV [HL], Y </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D4 </td>
+                  <td>MOV [X], BA </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D5 </td>
+                  <td>MOV [X], HL </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D6 </td>
+                  <td>MOV [X], X </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF D7 </td>
+                  <td>MOV [X], Y </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DC </td>
+                  <td>MOV [Y], BA </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DD </td>
+                  <td>MOV [Y], HL </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DE </td>
+                  <td>MOV [Y], X </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF DF </td>
+                  <td>MOV [Y], Y </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CF E0 </td>
+                  <td>MOV BA, BA </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E1 </td>
+                  <td>MOV BA, HL </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E2 </td>
+                  <td>MOV BA, X </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E3 </td>
+                  <td>MOV BA, Y </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E4 </td>
+                  <td>MOV HL, BA </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E5 </td>
+                  <td>MOV HL, HL </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E6 </td>
+                  <td>MOV HL, X </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E7 </td>
+                  <td>MOV HL, Y </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E8 </td>
+                  <td>MOV X, BA </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF E9 </td>
+                  <td>MOV X, HL </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF EA </td>
+                  <td>MOV X, X </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF EB </td>
+                  <td>MOV X, Y </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF EC </td>
+                  <td>MOV Y, BA </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF ED </td>
+                  <td>MOV Y, HL </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF EE </td>
+                  <td>MOV Y, X </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF EF </td>
+                  <td>MOV Y, Y </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F0 </td>
+                  <td>MOV SP, BA </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F1 </td>
+                  <td>MOV SP, HL </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F2 </td>
+                  <td>MOV SP, X </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F3 </td>
+                  <td>MOV SP, Y </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F4 </td>
+                  <td>MOV HL, SP </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F5 </td>
+                  <td>MOV HL, PC </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F8 </td>
+                  <td>MOV BA, SP </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF F9 </td>
+                  <td>MOV BA, PC </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF FA </td>
+                  <td>MOV X, SP </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CF FE </td>
+                  <td>MOV Y, SP </td>
+                  <td>8 </td>
+                </tr>
+              </tbody>
+          </table></td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Source as the column, and Destination as the row:</b> </p>
+    <table style="text-align: left;" border="1" class="smallfnt">
+      <tbody>
+        <tr>
+          <th> </th>
+          <th>#nnnn </th>
+          <th>BA </th>
+          <th>HL </th>
+          <th>X </th>
+          <th>Y </th>
+          <th>SP </th>
+          <th>PC </th>
+          <th>[HL] </th>
+          <th>[X] </th>
+          <th>[Y] </th>
+          <th>[#nnnn] </th>
+          <th>[SP+#ss] </th>
+        </tr>
+        <tr>
+          <th>BA </th>
+          <td>C4 nn nn </td>
+          <td>CF E0 </td>
+          <td>CF E1 </td>
+          <td>CF E2 </td>
+          <td>CF E3 </td>
+          <td>CF F8 </td>
+          <td>CF F9 </td>
+          <td>CF C0 </td>
+          <td>CF D0 </td>
+          <td>CF D8 </td>
+          <td>B8 nn nn </td>
+          <td>CF 70 ss </td>
+        </tr>
+        <tr>
+          <th>HL </th>
+          <td>C5 nn nn </td>
+          <td>CF E4 </td>
+          <td>CF E5 </td>
+          <td>CF E6 </td>
+          <td>CF E7 </td>
+          <td>CF F4 </td>
+          <td>CF F5 </td>
+          <td>CF C1 </td>
+          <td>CF D1 </td>
+          <td>CF D9 </td>
+          <td>B9 nn nn </td>
+          <td>CF 71 ss </td>
+        </tr>
+        <tr>
+          <th>X </th>
+          <td>C6 nn nn </td>
+          <td>CF E8 </td>
+          <td>CF E9 </td>
+          <td>CF EA </td>
+          <td>CF EB </td>
+          <td>CF FA </td>
+          <td></td>
+          <td>CF C2 </td>
+          <td>CF D2 </td>
+          <td>CF DA </td>
+          <td>BA nn nn </td>
+          <td>CF 72 ss </td>
+        </tr>
+        <tr>
+          <th>Y </th>
+          <td>C7 nn nn </td>
+          <td>CF EC </td>
+          <td>CF ED </td>
+          <td>CF EE </td>
+          <td>CF EF </td>
+          <td>CF FE </td>
+          <td></td>
+          <td>CF C3 </td>
+          <td>CF D3 </td>
+          <td>CF DB </td>
+          <td>BB nn nn </td>
+          <td>CF 73 ss </td>
+        </tr>
+        <tr>
+          <th>SP </th>
+          <td>CF 6E nn nn </td>
+          <td>CF F0 </td>
+          <td>CF F1 </td>
+          <td>CF F2 </td>
+          <td>CF F3 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>CF 78 nn nn </td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[HL] </th>
+          <td></td>
+          <td>CF C4 </td>
+          <td>CF C5 </td>
+          <td>CF C6 </td>
+          <td>CF C7 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X] </th>
+          <td></td>
+          <td>CF D4 </td>
+          <td>CF D5 </td>
+          <td>CF D6 </td>
+          <td>CF D7 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y] </th>
+          <td></td>
+          <td>CF DC </td>
+          <td>CF DD </td>
+          <td>CF DE </td>
+          <td>CF DF </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[#nnnn] </th>
+          <td></td>
+          <td>BC nn nn </td>
+          <td>BD nn nn </td>
+          <td>BE nn nn </td>
+          <td>BF nn nn </td>
+          <td>CF  6E nn nn </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[SP+#ss] </th>
+          <td></td>
+          <td>CF 74 ss </td>
+          <td>CF 75 ss </td>
+          <td>CF 76 ss </td>
+          <td>CF 77 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><span class="mw-headline" id="Execute">Execute </span></h3>
+    <pre>#nnnn    = Immediate unsigned 16-Bits
+#ss      = Immediate signed 8-Bits
+BA       = Register BA: (B shl 8) or A
+HL       = Register HL: (H shl 8) or L
+X        = Register X
+Y        = Register Y
+SP       = Register SP (Stack Pointer)
+PC       = Register PC (Program Counter)
+[HL]     = Memory: (I shl 16) or HL
+[X]      = Memory: (XI shl 16) or X
+[Y]      = Memory: (YI shl 16) or Y
+[#nnnn]  = Memory: (I shl 16) or #nnnn
+[SP+#ss] = Memory: SP + #ss
+    </pre>
+    <pre>; MOV Ds, Sc
+;
+; Ds = Destination
+; Sc = Source
+
+Ds = Sc
+    </pre>
+    <h3><span class="mw-headline" id="Description">Description </span></h3>
+    <p>16-Bits Source gets copied to the 16-Bits Destination. </p>
+    <h3><span class="mw-headline" id="Conditions">Conditions </span></h3>
+    <p>None </p>
+    <h3><span class="mw-headline" id="Examples">Examples </span></h3>
+    <pre>; A = 0xF0
+; B = 0x0E
+<b>MOV BA, $1337</b>
+; A = 0x37
+; B = 0x13
+    </pre>
+    <pre>; A = 0x12
+; B = 0xCF
+; L = 0x7E
+; H = 0xAB
+<b>MOV BA, HL</b>
+; A = 0x7E
+; B = 0xAB
+; L = 0x7E
+; H = 0xAB
+    </pre>
+    <pre>; [HL] = 0xBEEF
+; A = 0xAD
+; B = 0xDE
+<b>MOV BA, [HL]</b>
+; [HL] = 0xBEEF
+; A = 0xEF
+; B = 0xBE
+    </pre>
+    <p><a href="PM_InstructionList.html" title="PM InstructionList"><b>« Back to Instruction set</b></a> </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Opc_MOV16">http://wiki.sublab.net/index.php/PM_Opc_MOV16</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,11 @@
+format=raw
+gfx=exmap
+dither=yes	; set to 'no' if there's too much motion but will cause minor flickering when stationary
+
+img=pokemap.png
+tileset=tileset.bmp
+
+outmap=pokemap.map
+outtileset=tileset.bin
+outtilesetgray=tilesetG.bin
+outheader=pokemap.inc

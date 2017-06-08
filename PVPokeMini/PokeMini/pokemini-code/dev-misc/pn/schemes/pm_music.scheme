@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme>
+	<keyword-classes>
+		<keyword-class name="pmmusic_directives">
+			include title composer programmer description
+			outformat outlist varheader outheader
+			mtime mastertime mbpm masterbpm
+			vollvl vollevel bgm sfx sfx_t sfx_track
+			macro macro_t macro_track pat pattern
+			pat_t pat_track pattern_t pattern_track
+		</keyword-class>
+		<keyword-class name="pmmusic_defines">
+			mml system asm c
+		</keyword-class>
+		<keyword-class name="pmmusic_tracker">
+			row end loop mark do endl endloop repeat macro
+		</keyword-class>
+	</keyword-classes>
+
+	<language name="pm_music" title=".:PokeMini Music:." folding="false">
+		<lexer name="asm" />
+		<comments line=";" />
+		<use-keywords>
+			<keyword key="3" name="Macros" class="pmmusic_tracker"/>
+			<keyword key="4" name="Directives" class="pmmusic_directives"/>
+			<keyword key="5" name="Defines" class="pmmusic_defines"/>
+		</use-keywords>
+		<use-styles>
+			<style name="Default" key="32" fore="#808080" />
+			<style name="Whitespace" key="0"  />
+			<style name="Comment" key="1" class="comment" />
+			<style name="Number" key="2" class="number" />
+			<style name="String" key="3" class="string" />
+			<style name="Operator" key="4" class="operator" />
+			<style name="Identifier" key="5" class="identifier" />
+			<style name="Instructions" key="6" class="keyword" />
+			<style name="Misc." key="7" class="keyword" bold="true" />
+			<style name="Register" key="8" fore="46aa03" bold="true" />
+			<style name="Directive" key="9" class="keyword" />
+			<style name="Directive Operand" key="10" class="keyword" />
+			<style name="Single Quote String" key="12" class="string" />
+			<style name="Unclosed String" key="13" fore="000000" back="E0C0E0" eolfilled="true" />
+			<style name="Extended Instructions" key="14" fore="B00040" />
+		</use-styles>
+	</language>
+</Scheme>

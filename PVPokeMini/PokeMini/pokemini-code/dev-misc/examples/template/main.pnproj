@@ -1,0 +1,1 @@
+<Project name="main" typeId="{a3dd1292-c878-4a37-89a4-b99c4757c598}"><g1:pm xmlns:g1="urn:pm_proj"><g1:general><g1:mainsrc>main.asm</g1:mainsrc><g1:outmin>main.min</g1:outmin><g1:outsym>main.sym</g1:outsym></g1:general></g1:pm><File path="main.asm"></File><File path="teampokeme.pmimage"></File><File path="Makefile"></File></Project>

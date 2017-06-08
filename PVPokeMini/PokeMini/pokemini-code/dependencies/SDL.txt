@@ -1,0 +1,10 @@
+SDL 1.2 devel package
+
+Required for:
+* PokeMini Debugger
+* PokeMini (SDL platforms)
+
+
+Latest can be downloaded in:
+
+http://www.libsdl.org/download-1.2.php

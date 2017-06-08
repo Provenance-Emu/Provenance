@@ -1,0 +1,508 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+//window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h2><span class="mw-headline" id="CALL_.3D_Call_routine">CALL = Call routine </span></h2>
+    <table id="sortable_table_id_0" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles,True</th>
+          <th>or False</th>
+          <th>Condition</th>
+        </tr>
+        <tr>
+          <td>E0 ss </td>
+          <td>CALLCB #ss<sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>E1 ss </td>
+          <td>CALLNCB #ss<sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>E2 ss </td>
+          <td>CALLZB #ss<sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>E3 ss </td>
+          <td>CALLNZB #ss<sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>E8 ss ss </td>
+          <td>CALLCW #ssss<sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>E9 ss ss </td>
+          <td>CALLNCW #ssss<sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>EA ss ss </td>
+          <td>CALLZW #ssss<sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>EB ss ss </td>
+          <td>CALLNZW #ssss<sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>F0 ss </td>
+          <td>CALLB #ss<sup>*1</sup> </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>F2 ss ss </td>
+          <td>CALLW #ssss<sup>*1</sup> </td>
+          <td>24 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>FB nn nn </td>
+          <td>CALL [#nnnn] </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>FC nn </td>
+          <td>CINT #nn </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>CE F0 ss </td>
+          <td>CALLL #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>(Overflow=1)&nbsp;!= (Sign=1) </td>
+        </tr>
+        <tr>
+          <td>CE F1 ss </td>
+          <td>CALLLE #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>((Overflow=0)&nbsp;!= (Sign=0)) OR (Zero=1) </td>
+        </tr>
+        <tr>
+          <td>CE F2 ss </td>
+          <td>CALLG #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>((Overflow=1) == (Sign=1)) AND (Zero=0) </td>
+        </tr>
+        <tr>
+          <td>CE F3 ss </td>
+          <td>CALLGE #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>(Overflow=0) == (Sign=0) </td>
+        </tr>
+        <tr>
+          <td>CE F4 ss </td>
+          <td>CALLO #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Overflow=1 </td>
+        </tr>
+        <tr>
+          <td>CE F5 ss </td>
+          <td>CALLNO #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Overflow=0 </td>
+        </tr>
+        <tr>
+          <td>CE F6 ss </td>
+          <td>CALLNS #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Sign=0 </td>
+        </tr>
+        <tr>
+          <td>CE F7 ss </td>
+          <td>CALLS #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Sign=1 </td>
+        </tr>
+        <tr>
+          <td>CE F8 ss </td>
+          <td>CALLNX0 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE F9 ss </td>
+          <td>CALLNX1 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FA ss </td>
+          <td>CALLNX2 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FB ss </td>
+          <td>CALLNX3 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FC ss </td>
+          <td>CALLX0 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FD ss </td>
+          <td>CALLX1 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FE ss </td>
+          <td>CALLX2 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FF ss </td>
+          <td>CALLX3 #ss </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>*1</b>: CALL, CALLC, CALLNC, CALLZ and CALLNZ can be used in the assembler to auto-detect the appropriate range. </p>
+    <h3><span class="mw-headline" id="Execute">Execute </span></h3>
+    <pre>#nn      = Immediate unsigned 8-Bits
+#ss      = Immediate signed 8-Bits
+#ssss    = Immediate signed 16-Bits
+U/V      = Register U or V
+SP       = Register SP (Stack Pointer)
+PC       = Register PC (Program Counter)
+[#nnnn]  = Memory: (I shl 16) or #nnnn
+    </pre>
+    <pre>; CALL*B #ss
+
+IF (Condition) THEN
+  SP = SP - 3
+  Memory[SP+2] = V
+  Memory[SP+1] = PC SHR 8
+  Memory[SP]   = PC AND 0x00FF
+  V = U
+  PC = PC + #ss - 1
+ENDIF
+    </pre>
+    <pre>; CALL*W #ssss
+
+IF (Condition) THEN
+  SP = SP - 3
+  Memory[SP+2] = V
+  Memory[SP+1] = PC SHR 8
+  Memory[SP]   = PC AND 0x00FF
+  V = U
+  PC = PC + #ssss - 1
+ENDIF
+    </pre>
+    <pre>; CALLB #ss
+
+SP = SP - 3
+Memory[SP+2] = V
+Memory[SP+1] = PC SHR 8
+Memory[SP]   = PC AND 0x00FF
+V = U
+PC = PC + #ss - 1
+    </pre>
+    <pre>; CALLW #ssss
+
+SP = SP - 3
+Memory[SP+2] = V
+Memory[SP+1] = PC SHR 8
+Memory[SP]   = PC AND 0x00FF
+V = U
+PC = PC + #ssss - 1
+    </pre>
+    <pre>; CALL [#nnnn]
+
+SP = SP - 3
+Memory[SP+2] = V
+Memory[SP+1] = PC SHR 8
+Memory[SP]   = PC AND 0x00FF
+V = U
+PC = Memory16[(I SHL 16) + #nnnn]
+    </pre>
+    <pre>; CINT #nn (<i>not fully tested</i>)
+
+SP = SP - 4
+Memory[SP+3] = V
+Memory[SP+2] = PC SHR 8
+Memory[SP+1] = PC AND 0x00FF
+Memory[SP]   = F
+V = U
+PC = Memory16[#nn SHL 1]
+    </pre>
+    <h3><span class="mw-headline" id="Description">Description </span></h3>
+    <p>Call a subroutine (CALL*) or a interrupt vector (CINT). </p>
+    <p>Use <a href="PM_Opc_RET.html" title="PM Opc RET">RET</a> to return from a subroutine and <a href="PM_Opc_RET.html" title="PM Opc RET">RETI</a> from a interrupt. </p>
+    <p>NOTE: All non-branch instructions does &quot;U &lt;= V&quot; causing U to be 
+      restored, any branch that require banking needs &quot;MOV U, A&quot; or &quot;MOV U, 
+      #nn&quot; before CALL... </p>
+    <h3><span class="mw-headline" id="Conditions">Conditions </span></h3>
+    <p>None </p>
+    <h3><span class="mw-headline" id="Examples">Examples </span></h3>
+    <pre>&nbsp;; A = 0x10
+&nbsp;; B = 0x10
+ <b>CALL somefunction</b>
+&nbsp;; A = 0x11
+&nbsp;; B = 0x0F
+ <a href="PM_Opc_TST.html" title="PM Opc TST">TST B, #0x10</a>
+&nbsp;; F = (Zero=0):(Sign=0)
+ <b>CALLZ somefunction</b>   &nbsp;; Condition fail, call not taken
+&nbsp;; A = 0x11
+&nbsp;; B = 0x0F
+&nbsp;; F = (Zero=0):(Sign=0)
+ <b>CALLNS somefunction</b>  &nbsp;; Condition succeed
+&nbsp;; A = 0x12
+&nbsp;; B = 0x0E
+
+ (...)
+
+somefunction:
+ <a href="PM_Opc_INC.html" title="PM Opc INC">INC A</a>
+ <a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC B</a>
+ <a href="PM_Opc_RET.html" title="PM Opc RET">RET</a>                  &nbsp;; Return from the call
+    </pre>
+    <pre>; Calling a subroutine at different bank
+<a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV U, $0F</a>
+<b>CALL function_at_bank_16</b>
+    </pre>
+    <p><a href="PM_InstructionList.html" title="PM InstructionList"><b>« Back to Instruction set</b></a> </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Opc_CALL">http://wiki.sublab.net/index.php/PM_Opc_CALL</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

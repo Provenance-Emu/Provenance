@@ -1,0 +1,10 @@
+OpenAL libraries package
+
+Required for:
+* PokeMini Music Converter
+
+
+
+Latest can be downloaded in:
+
+http://connect.creativelabs.com/openal/default.aspx

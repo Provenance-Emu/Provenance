@@ -459,7 +459,7 @@
         
         NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
         NSUInteger gameTitleLen;
-        if (nonCharRange.length > 0) {
+        if (nonCharRange.length > 0 && nonCharRange.location > 1) {
             gameTitleLen = nonCharRange.location - 1;
         } else {
             gameTitleLen = [fileName length];

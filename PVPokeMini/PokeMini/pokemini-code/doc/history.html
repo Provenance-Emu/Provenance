@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1> History </h1>
+    <h4>-: 0.60 Changes :-</h4>
+    <ul>
+      <li> Changed version format to only 2 fields to avoid confusion</li>
+      <li>Fixed RTC month being reported wrong from host</li>
+      <li>Adjusted graphics, now it display darker shades to match more closely the real system</li>
+      <li>Added 2 new options: LCD contrast and LCD bright</li>
+      <li>Changed the way analog LCD mode works, now it's less blurry and can do up to 5 shades without artifacts</li>
+      <li>SDL port has been upgraded to SDL 2, this brings Haptic support and other improvements</li>
+      <li>New Keyboard/Joystick option to allow checking inputs</li>
+      <li>Applying joystick settings now can (re)enable the device</li>
+      <li>Share EEPROM is now disabled by default</li>
+      <li>Emulator can be compiled for 64-bit CPU without issues now</li>
+      <li>Limited sync-cycles to 64 on 'accurancy' platforms</li>
+      <li>Win32 Only:
+        <ul>
+          <li>Corrected Direct3D issue in some GPUs</li>
+          <li>Sound write position is now handled correctly</li>
+        </ul>
+      </li>
+      <li>NDS Only: Added 3-in-1 rumble support</li>
+      <li>PSP Only:
+        <ul>
+          <li>Analog stick now works</li>
+          <li>Added FPS display under Platform... (default is off)</li>
+          <li>Reached 100% emulation by skipping 1 frame, aparently hardware is limited to 60fps max</li>
+        </ul>
+      </li>
+      <li>Dreamcast Only:
+        <ul>
+          <li>Improved sound latency (thanks BlueCrab).</li>
+          <li>Added FPS display under Platform... (default is off)</li>
+        </ul>
+      </li>
+      <li>Debugger Only:
+        <ul>
+          <li>Minor fixes</li>
+          <li>Trace history is now 10000 instructions instead of 256</li>
+          <li>Added copy &amp; paste buttons to timing counters<br />
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <h4>-: 0.5.4 Changes :-</h4>
+    <ul>
+      <li>Fixed savestates load/save</li>
+      <li>Minor changes</li>
+      <li>PSP Only:
+        <ul>
+          <li>Timezone is now handled correctly</li>
+        </ul>
+      </li>
+    </ul>
+    <h4>-: 0.5.3 Changes :-</h4>
+    <ul>
+      <li>Fixed command-line parsing which caused problems with lastest GCC</li>
+      <li>Directory '.' no longer listed</li>
+      <li>Configurations now save the directory of the last ROM loaded</li>
+      <li>Improved support on color PRC (now works on framebuffer and LCD)</li>
+      <li>Dreamcast Only:
+        <ul>
+          <li>Added read/write VMU support</li>
+          <li>EEPROM write disabled by default</li>
+        </ul>
+      </li>
+      <li>Debugger Only:
+        <ul>
+          <li>Fixed "Add watchpoint at..." in Memory Viewe</li>
+          <li>Added symbols list window</li>
+          <li>Added run trace window</li>
+          <li>Added "Go to cartridge IRQ" with ability to decode the address</li>
+          <li>Middle and Right click now set breakpoint/watchpoint</li>
+          <li>Go to address/IRQ now highlight the location</li>
+          <li>Added autorun .min after load</li>
+          <li>Fixed offset of CE jump instructions</li>
+        </ul>
+      </li>
+      <li>NDS Only: Removed real battery status</li>
+    </ul>
+    <h4>-: 0.5.2 Changes :-</h4>
+    <ul>
+      <li>Opening .minc files now opens the linked .min files</li>
+      <li>More accurant PRC timing and triggering</li>
+      <li>Minor changes</li>
+      <li>Debugger Only:
+        <ul>
+          <li>Recent ROMs list</li>
+          <li>Drag &amp; Drop ROM files support</li>
+          <li>Added file association to .min and .minc files</li>
+          <li>Moved PRC Counter from Timers Window to Misc. Window</li>
+          <li>Added more special registers for printing numbers and</li>
+          <li>clearing the debug output window</li>
+          <li>Reorganized the menu</li>
+        </ul>
+      </li>
+      <li>Win32 Only:
+        <ul>
+          <li>Fixed command-lines and closing code</li>
+          <li>Recent ROMs list</li>
+          <li>Drag &amp; Drop ROM files support</li>
+          <li>Added &quot;Pause when inactive&quot; window option</li>
+          <li>Added file association to .min and .minc files<br />
+                </li>
+        </ul>
+      </li>
+    </ul>
+    <h4>-: 0.5.1 Changes :-</h4>
+    <ul>
+      <li> Relative files are now launched from current directory</li>
+      <li>Fixed notification message display in 32bpp</li>
+      <li>Added 50% Scanline LCD filter</li>
+      <li>New Tools (Available in Debugger package):
+        <ul>
+          <li>PokeMini Image Converte</li>
+          <li>PokeMini Music Converter</li>
+        </ul>
+      </li>
+      <li>Debugger only:
+        <ul>
+          <li>F1 shortcut for documentation</li>
+          <li>Improved external launcher </li>
+        </ul>
+      </li>
+      <ul>
+        <li>IRQ Window &quot;Frames in single-row&quot; initialization fixed</li>
+        <li>Minimized windows won't be rendered now</li>
+        <li>Added &quot;Character Set -&gt; From file...&quot; in Memory viewer</li>
+        <li>Added &quot;Memory data&quot; in Memory viewer with Import, Export, Copy and Fill operations.</li>
+      </ul>
+      <li>Win32 Only: Fixed DirectDraw surface pitch<br />
+      </li>
+    </ul>
+    <h4>-: 0.5.0 Changes :-</h4>
+    <ul>
+      <li>Debugger is now complete!</li>
+      <li>Reordered menu items better</li>
+      <li>Added Dingux platform (Thanks coccijoe for the port src code)</li>
+      <li>Fixed issue of sound going out of sync</li>
+      <li>Separated piezo filtering (now works with any sound engine)</li>
+      <li>Fixed result of SUB instruction with decimal mode</li>
+      <li>Fixed PRC rate divider</li>
+      <li>Corrected some options in configurations file</li>
+      <li>Multicart support</li>
+      <li>Made sure shared EEPROM and cfg files are only saved on emulator's executable directory</li>
+      <li>Added &quot;Sync cycles&quot; option that allow to trade between performance and accurancy, higher value can speed up emulation but may cause problems</li>
+      <li>Pressing Left/Right while browsing will now page up/down, selecting drive is now C+Left and C+Right</li>
+      <li>Unofficial colors palette changed (but still backward compatible)</li>
+      <li>New zooms: 5x (480x320) and 6x (576x384)</li>
+      <li>Loading ROM from ZIP package is now supported</li>
+      <li>More palettes and 2 custom ones, they can be edited by pressing A</li>
+      <li>Win32 platform is now fixed and updated</li>
+      <li>Joystick can now be re-defined in portable devices</li>
+      <li><em>SDL Only:</em> Keyboard can now be re-defined under &quot;Platform...&quot;</li>
+      <li><em>Dreamcast Only:</em> PAL/NTSC can now be selected under &quot;Platform...&quot;</li>
+      <li><em>NDS Only:</em> Added FPS counter and rumble pak level adjustment</li>
+      <li><em>PSP Only:</em> Zoom from 1x to 4x can now be changed under &quot;Platform...&quot;</li>
+    </ul>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

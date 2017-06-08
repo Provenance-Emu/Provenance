@@ -1,0 +1,74 @@
+TITLE Galactix Music
+COMPOSER Original by Lupin
+PROGRAMMER Remix by JustBurn
+
+MTIME $00FF
+
+PAT music_galactix_p0 { w48 o4 %64
+ c %2c%64 c d+ g %2g%64 c g+
+ %2g+%64 f %2f%64 g2 %2g%64 g d
+ c %2c%64 c d+ g %2g%64 c g+
+ %2g+%64 a+ %2a+%64 g %2g%64 g %2g%64 d
+}
+
+BGM music_galactix { | music_galactix_p0 }
+
+MACRO D {
+ xt1 v15 xp-36 c12 xt3 v15
+}
+
+MACRO E {
+ %$04 xt1 v15 xp72 c9 xt3 v15
+}
+
+PAT music_galactix2_p0 { w48 s48 o5 l9 xt3
+ D
+ %$40 xa4:7 c %$80 xd c12
+ %$40 xa4:7 c %$80 xd c9
+ %$50 xa4:7 c %$80 xd c9
+ %$50 xa4:7 d+ %$80 xd d+9
+ D
+ %$60 xa4:7 d+ %$80 xd d+12
+ %$60 xa4:7 d+ %$80 xd d+9
+ %$70 xa5:7 g %$80 xd g9
+ %$70 xa5:7 g %$80 xd g9
+ D
+ %$70 xa5:7 g %$80 xd g12
+ %$70 xa5:7 g %$80 xd g9
+ %$60 xa5:7 g %$80 xd g9
+ %$60 xa5:7 g %$80 xd g9
+ D
+ %$50 xa4:7 c %$80 xd c12
+ %$50 xa4:7 c %$80 xd c9
+ %$40 xa4:7 c %$80 xd c9
+ %$40 xa4:7 c %$80 xd c9
+ D
+ %$40 xa4:7 g+ %$80 xd g+12
+ %$40 xa4:7 g+ %$80 xd g+9
+ %$50 xa4:7 g+ %$80 xd g+9
+ %$50 xa5:7 f %$80 xd f9
+ D
+ %$60 xa5:7 f %$80 xd f12
+ %$60 xa5:7 f %$80 xd f9
+ %$70 xa5:7 g %$80 xd g9
+ %$70 xa5:7 g %$80 xd g9
+ D
+ %$60 xa5:7 g %$80 xd g12
+ %$60 xa5:7 g %$80 xd g9
+ %$50 xa5:7 g %$80 xd g9
+ %$50 xa5:7 g %$80 xd g9
+ D
+ %$40 xa4:7 d %$80 xd d12
+ D
+ %$50 xa4:7 d %$80 xd d12
+ D
+ %$60 xa4:7 d %$80 xd d12
+ E
+ %$50 xa4:7 d %$80 xd d12
+}
+
+BGM music_galactix2 { | music_galactix2_p0 }
+
+/*
+c  c+  d  d+  e  f  f+  g  g+  a  a+  b
+*/

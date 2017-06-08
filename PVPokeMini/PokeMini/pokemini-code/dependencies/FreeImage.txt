@@ -1,0 +1,10 @@
+FreeImage DLL libraries package
+
+Required for:
+* PokeMini Image Converter
+
+
+
+Latest can be downloaded in:
+
+http://freeimage.sourceforge.net/download.html

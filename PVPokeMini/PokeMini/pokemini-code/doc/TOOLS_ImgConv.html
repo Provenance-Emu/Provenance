@@ -1,0 +1,496 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Tool: Image Converter</h1>
+    <p><strong>Current Version:</strong> 1.3 (Released with PokeMini 0.5.5)</p>
+    <p>Convert an image to a data format that can be used on PRC unit</p>
+    <h2>Command-Line</h2>
+    <p>Input file or conf. file must be declared</p>
+    <pre>
+Usage: pokemini_imgconv [options]
+  -tiles              Convert to tiles (def)
+  -sprites            Convert to sprites
+  -map                Convert to map
+  -exmap              Convert to map from external tileset
+  -nodither           Disable dither
+  -dither             Enable dither (def)
+  -nocolorkey         No color key
+  -colorkey #FF00FF   Color key (def)
+  -metaw 1            Meta-tile width in tiles
+  -metah 1            Meta-tile height in tiles
+  -nometashl          Don't shift map index for meta (def)
+  -metashl            Shift map index left for meta-tiles
+  -rawf               Output in raw format (def)
+  -asmf               Output in asm format
+  -cf                 Output in C format
+  -autohf             Autodetect correct header format (def)
+  -asmhf              Output header in asm format
+  -chf                Output header in C format
+  -separated          Separate data to each file (def)
+  -joined             Join all data into a single file
+  -i img.png          Image input
+  -c img.txt          Conf. file input
+  -o img.raw          Output file
+  -og img2.raw        Output file (grey)
+  -ots img.raw        Output tileset file
+  -otsg img2.raw      Output tileset file (grey)
+  -om map.raw         Output map indexes file
+  -oh img.inc         Output header file
+  -vo img             Variable name for output
+  -vog imgg           Variable name for grey output
+  -vots imgts         Variable name for tileset output
+  -votsg imgtsg       Variable name for tileset grey output
+  -vom map            Variable name for map indexes
+  -idofs 0            Map index offset
+  -idsize 0           Map index size (0=Unlimited)
+  -maxtiles 65536     Maximum number of tiles
+  -dt 96              Dark threhold, lower lum. will be full dark<br />  -lt 192             Light threhold, higher lum. will be full light<br />  -q                  Quiet
+  -v                  Verbose
+</pre>
+		<p>Supported input images are:</p>
+		<ul>
+		  <li><strong>.bmp</strong> - Bitmap</li>
+          <li><strong>.ico</strong> - Icon</li>
+	      <li><strong> .jpg,  .jpeg</strong>- Jpeg</li>
+	      <li><strong> .pcx</strong> - PCX</li>
+	      <li><strong>.png</strong> - Png</li>
+	      <li><strong>.tga</strong> - Tanga</li>
+	      <li><strong>.tif, .tiff</strong> - TIFF</li>
+	      <li><strong>.gif</strong> - Gif</li>
+	      <li><strong>.psd</strong> - Photoshop document</li>
+	      <li><strong>.dds</strong> - DirectDraw surface</li>
+	</ul>
+    <h2>Conf. file</h2>
+    <p>Command-line will take priority over the configuration file.</p>
+    <p>Keys in bold have multiple definitions with the same value, hover the mouse over to see the list</p>
+    <table border="1" width="100%" class="smallfnt">
+      <tr>
+        <th scope="col">Key</th>
+        <th scope="col">Example declaration</th>
+        <th scope="col">Command-line equivalent</th>
+        <th scope="col">Description</th>
+      </tr>
+      <tr>
+        <td>gfx</td>
+        <td>gfx=tiles</td>
+        <td>-tiles</td>
+        <td>Convert to tiles</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>gfx=sprites</td>
+        <td>-sprites</td>
+        <td>Convert to sprites</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>gfx=map</td>
+        <td>-map</td>
+        <td>Convert to map</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>gfx=exmap</td>
+        <td>-exmap</td>
+        <td>Convert to map from external tileset</td>
+      </tr>
+      <tr>
+        <td>dither</td>
+        <td>dither=no</td>
+        <td>-nodither</td>
+        <td>Disable dither (def)</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>dither=yes</td>
+        <td>-dither</td>
+        <td>Enable dither</td>
+      </tr>
+      <tr>
+        <td>colorkey</td>
+        <td>colorkey=-1</td>
+        <td>-nocolorkey</td>
+        <td>No color key</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>colorkey=#FF00FF</td>
+        <td>-colorkey #FF00FF</td>
+        <td>Color key</td>
+      </tr>
+      <tr>
+        <td><strong title="metaw, meta_w, metax, meta_x">metaw</strong></td>
+        <td>metaw=1</td>
+        <td>-metaw 1</td>
+        <td>Meta-tile width in tiles</td>
+      </tr>
+      <tr>
+        <td><strong title="metah, meta_h, metay, meta_y">metah</strong></td>
+        <td>metah=1</td>
+        <td>-metah 1</td>
+        <td>Meta-tile height in tiles</td>
+      </tr>
+      <tr>
+        <td><strong title="metashl, meta_shl">metashl</strong></td>
+        <td>metashl=no</td>
+        <td>-nometashl</td>
+        <td>Don't shift map index for meta (def)</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>metashl=yes</td>
+        <td>-metashl</td>
+        <td>Shift map index left for meta-tiles</td>
+      </tr>
+      <tr>
+        <td>format</td>
+        <td>format=raw</td>
+        <td>-rawf</td>
+        <td>Output in raw format</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>format=asm</td>
+        <td>-asmf</td>
+        <td>Output in asm format</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>format=c</td>
+        <td>-cf</td>
+        <td>Output in C format</td>
+      </tr>
+      <tr>
+        <td>headerformat</td>
+        <td>headerformat=auto</td>
+        <td>-autohf</td>
+        <td>Autodetect correct header format (def)</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>headerformat=asm</td>
+        <td>-asmhf</td>
+        <td>Output header in asm format</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>headerformat=c</td>
+        <td>-chf</td>
+        <td>Output header in C format</td>
+      </tr>
+      <tr>
+        <td>joined</td>
+        <td>joined=no</td>
+        <td>-separated</td>
+        <td>Separate data to each file (def)</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>joined=yes</td>
+        <td>-joined</td>
+        <td>Join all data into a single file</td>
+      </tr>
+      <tr>
+        <td>img</td>
+        <td>img=img.png</td>
+        <td>-i img.png</td>
+        <td>Image input</td>
+      </tr>
+      <tr>
+        <td>out</td>
+        <td>out=img.raw</td>
+        <td>-o img.raw</td>
+        <td>Output file</td>
+      </tr>
+      <tr>
+        <td>outgrey</td>
+        <td>outgrey=imgg.raw</td>
+        <td>-og imgg.raw</td>
+        <td>Output file (grey)</td>
+      </tr>
+      <tr>
+        <td>outtileset</td>
+        <td>outtileset=imgts.raw</td>
+        <td>-ots img.raw</td>
+        <td>Output tileset file</td>
+      </tr>
+      <tr>
+        <td>outtilesetgrey</td>
+        <td>outtilesetgrey=imgtsg.raw</td>
+        <td>-otsg imgg.raw</td>
+        <td>Output tileset file (grey)</td>
+      </tr>
+      <tr>
+        <td>outmap</td>
+        <td>outmap=map.raw</td>
+        <td>-om map.raw</td>
+        <td>Output map indexes file</td>
+      </tr>
+      <tr>
+        <td>outheader</td>
+        <td>outheader=img.inc</td>
+        <td>-oh img.inc</td>
+        <td>Output header file</td>
+      </tr>
+      <tr>
+        <td>vout</td>
+        <td>vout=img</td>
+        <td>-vo img</td>
+        <td>Variable name for output</td>
+      </tr>
+      <tr>
+        <td>voutgrey</td>
+        <td>voutgrey=img2</td>
+        <td>-vog img2</td>
+        <td>Variable name for grey output</td>
+      </tr>
+      <tr>
+        <td>voutmap</td>
+        <td>voutmap=map</td>
+        <td>-vom map</td>
+        <td>Variable name for map indexes</td>
+      </tr>
+      <tr>
+        <td><strong title="idofs, idoffset, id_ofs, id_offset">idofs</strong></td>
+        <td>idofs=0</td>
+        <td>-idofs 0</td>
+        <td>Map index offset</td>
+      </tr>
+      <tr>
+        <td><strong title="idsize, id_size">idsize</strong></td>
+        <td>idsize=0</td>
+        <td>-idsize 0</td>
+        <td>Map index size (0=Unlimited)</td>
+      </tr>
+      <tr>
+        <td>maxtiles</td>
+        <td>maxtiles=65536</td>
+        <td>-maxtiles 65536</td>
+        <td>Maximum number of tiles</td>
+      </tr>
+      <tr>
+        <td><strong title="dt, darkthrehold">dt</strong></td>
+        <td>dt=96</td>
+        <td>-dt 96</td>
+        <td>Dark threhold, lower lum. will be full dark</td>
+      </tr>
+      <tr>
+        <td><strong title="lt, lightthrehold">lt</strong></td>
+        <td>lt=192</td>
+        <td>-lt 192</td>
+        <td>Light threhold, higher lum. will be full light</td>
+      </tr>
+    </table>
+    <h2>Tiles format</h2>
+    <p>Image will be converted to PRC Map format (from top-left to bottom-right), meta-tiles dimension will affect how the graphics are stored</p>
+    <p><em>tileset, colorkey,  idofs and idsize are ignored</em></p>
+    <p><strong>Application:</strong> Converting tiles</p>
+    <h2>Sprites format</h2>
+    <p>Image will be converted to PRC Sprites format (from top-left to bottom-right), meta-tiles dimension is always 2x2 (16x16 pixels) and cannot be changed</p>
+    <p>Color key will define the color to be used for transparency if the image doesn't have alpha channel</p>
+    <p><em>tileset, metaw, metah, metashl, idofs and idsize are ignored</em></p>
+    <p><strong>Application:</strong> Converting sprites</p>
+    <h2>Map format</h2>
+    <p>Image will be converted to PRC Tiles format (from top-left to bottom-right) while duplicated tiles aren't saved, meta-tiles dimension will affect how the graphics and map are stored</p>
+    <p>Map indexes will point to the meta-tile (or 1st tile offset if metashl is enabled) of the output</p>
+    <p><em>tileset and colorkey are ignored</em></p>
+    <p><strong>Application:</strong> Converting an image (or sequence of images)</p>
+    <h2>External map format</h2>
+    <p>Image will be converted to PRC Tiles format (from top-left to bottom-right), meta-tiles dimension will affect how the graphics and map are stored</p>
+    <p>Tileset will be converted in the same way and will be used for map indexing</p>
+    <p>If certain tile on the image isn't found on the tileset, the tool will raise an error with the pixels position of the image</p>
+    <p>Map indexes will point to the meta-tile (or 1st tile offset if metashl is enabled) of the tileset</p>
+    <p><em>colorkey is ignored</em></p>
+    <p><strong>Application:</strong> Converting a map with shared tiles</p>
+    <p>&nbsp;</p>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

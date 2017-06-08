@@ -33,6 +33,9 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVPokeMini/PVPokeMiniEmulatorCore.h>
+#import "PVPokeMiniControllerViewController.h"
+
 @interface PVEmulatorConfiguration ()
 
 @property (nonatomic, strong) NSArray *systems;
@@ -113,6 +116,10 @@
     {
         core = [[PicodriveGameCore alloc] init];
     }
+    else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
+    {
+        core = [[PVPokeMiniEmulatorCore alloc] init];
+    }
     
 	return core;
 }
@@ -158,6 +165,10 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVPokemonMiniSystemIdentifier])
+    {
+        controller = [[PVPokeMiniControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
 	
 	return controller;
