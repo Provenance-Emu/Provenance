@@ -23,9 +23,7 @@
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
-@interface PVEmulatorViewController () {
-    UITapGestureRecognizer *_menuGestureRecognizer;
-}
+@interface PVEmulatorViewController ()
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
@@ -41,6 +39,7 @@
 
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
+@property (nonatomic, strong) UITapGestureRecognizer *menuGestureRecognizer;
 
 
 @end
@@ -75,10 +74,6 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
-    if (_menuGestureRecognizer) {
-        [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:_menuGestureRecognizer];
-    }
-    
     [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
@@ -326,15 +321,18 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-    _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
-    _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
-    [[UIApplication sharedApplication].keyWindow addGestureRecognizer:_menuGestureRecognizer];
+    if (!_menuGestureRecognizer) {
+        _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
+        _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    }
+    
+    [self.view addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
 	{
 		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-			[weakSelf controllerPauseButtonPressed];
+			[weakSelf controllerPauseButtonPressed: controller];
 		}];
 	}
 #endif
@@ -816,14 +814,16 @@ void uncaughtExceptionHandler(NSException *exception)
     UIPress *press = (UIPress *)presses.anyObject;
     if ( press && press.type == UIPressTypeMenu && !self.isShowingMenu )
     {
-        [self controllerPauseButtonPressed];
+//         [self controllerPauseButtonPressed];
     }
     else
+    {
         [super pressesBegan:presses withEvent:event];
+    }
 }
-#endif 
+#endif
 
-- (void)controllerPauseButtonPressed
+- (void)controllerPauseButtonPressed:(id)sender
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (![self isShowingMenu])
