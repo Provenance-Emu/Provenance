@@ -22,6 +22,7 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
+#import "PViCade8BitdoZeroController.h"
 
 @interface PVEmulatorViewController ()
 
@@ -841,7 +842,7 @@ void uncaughtExceptionHandler(NSException *exception)
 {
     GCController *controller = [note object];
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
-    if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
+    if (![controller isKindOfClass:[PViCade8BitdoController class]] || ![controller isKindOfClass:[PViCade8BitdoZeroController class]]) {
         [self.menuButton setHidden:YES];
     }
 }
