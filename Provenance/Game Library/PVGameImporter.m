@@ -207,8 +207,8 @@
         return nil;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:canidateFile.filePath]
-                                                 toPath:[subfolderPath stringByAppendingPathComponent:canidateFile.filePath]
+    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent]
+                                                 toPath:[subfolderPath stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent]
                                                   error:&error])
     {
         DLog(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
@@ -222,14 +222,23 @@
     }
     
     // moved the .cue, now move .bins .imgs etc
+    [self moveFilesSimiliarToFilename:canidateFile.filePath.lastPathComponent
+                        fromDirectory:[self romsPath]
+                          toDirectory:subfolderPath
+                             cuesheet:cueSheetPath];
     
-    NSString *relatedFileName = [canidateFile.filePath stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[canidateFile.filePath pathExtension]] withString:@""];
+    return [newPaths copy];
+}
+
+-(void)moveFilesSimiliarToFilename:(NSString* _Nonnull)filename fromDirectory:(NSString* _Nonnull)from toDirectory:(NSString* _Nonnull)to cuesheet:(NSString*)cueSheetPath{
+    NSError*error;
+    NSString *relatedFileName = [filename stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@".%@",[filename pathExtension]] withString:@""];
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error];
     
     if (!contents)
     {
         DLog(@"Error scanning %@, %@", [self romsPath], [error localizedDescription]);
-        return [newPaths copy];
+        return;
     }
     
     for (NSString *file in contents)
@@ -245,36 +254,34 @@
         if ([fileWithoutExtension isEqual:relatedFileName])
         {
             // Before moving the file, make sure the cue sheet's reference uses the same case.
-            NSMutableString *cuesheet = [NSMutableString stringWithContentsOfFile:cueSheetPath encoding:NSUTF8StringEncoding error:&error];
-            if (cuesheet)
-            {
-                NSRange range = [cuesheet rangeOfString:file options:NSCaseInsensitiveSearch];
-                [cuesheet replaceCharactersInRange:range withString:file];
-                if (![cuesheet writeToFile:cueSheetPath
-                                atomically:NO
-                                  encoding:NSUTF8StringEncoding
-                                     error:&error])
+            if (cueSheetPath) {
+                NSMutableString *cuesheet = [NSMutableString stringWithContentsOfFile:cueSheetPath encoding:NSUTF8StringEncoding error:&error];
+                if (cuesheet)
                 {
-                    DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                    NSRange range = [cuesheet rangeOfString:file options:NSCaseInsensitiveSearch];
+                    [cuesheet replaceCharactersInRange:range withString:file];
+                    if (![cuesheet writeToFile:cueSheetPath
+                                    atomically:NO
+                                      encoding:NSUTF8StringEncoding
+                                         error:&error])
+                    {
+                        DLog(@"Unable to rewrite cuesheet %@ because %@", cueSheetPath, [error localizedDescription]);
+                    }
+                }
+                else
+                {
+                    DLog(@"Unable to read cue sheet %@ because %@", cueSheetPath, [error localizedDescription]);
                 }
             }
-            else
+            
+            if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[to stringByAppendingPathComponent:file] error:&error])
             {
-                DLog(@"Unable to read cue sheet %@ because %@", cueSheetPath, [error localizedDescription]);
-            }
-            
-            
-            
-            if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[subfolderPath stringByAppendingPathComponent:file] error:&error])
-            {
-                DLog(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
+                DLog(@"Unable to move file from %@ to %@ - %@", filename, to, [error localizedDescription]);
             } else {
-                DLog(@"Moved file from %@ to %@", canidateFile, subfolderPath);
+                DLog(@"Moved file from %@ to %@", filename, to);
             }
         }
     }
-    
-    return [newPaths copy];
 }
 
 - (BIOSEntry*)moveIfBIOS:(ImportCanidateFile*)canidateFile {

@@ -22,6 +22,7 @@
 - (NSArray *)systemIDsForRomAtPath:(NSString *)path;
 - (BOOL)isCDROM:(NSString *)filePath;
 
+- (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error;
 @end
 
 @interface PVGameImporterTests : XCTestCase
@@ -83,6 +84,19 @@
     NSData *data = [NSData dataWithContentsOfURL:fileURL];
     NSString *sha1 = [data sha1Hash];
     XCTAssertTrue([sha1 isEqualToString:@"AAF4C61DDCC5E8A2DABEDE0F3B482CD9AEA9434D"]);
+}
+
+- (void)testMD5toRomMap {
+    NSString *fileMD5;
+    NSString *systemID = @"";
+    PVGameImporter *importer = [[PVGameImporter alloc] init];
+    NSError *error;
+    
+    [importer searchDatabaseUsingKey:@"romHashMD5"
+                               value:fileMD5
+                            systemID:@""
+                               error:&error];
+
 }
 
 @end
