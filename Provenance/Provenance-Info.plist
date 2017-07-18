@@ -16,6 +16,7 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.data</string>
+				<string>org.7-zip.7-zip-archive</string>
 			</array>
 		</dict>
 	</array>
