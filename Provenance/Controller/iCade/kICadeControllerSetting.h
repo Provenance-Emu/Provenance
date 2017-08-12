@@ -16,6 +16,7 @@ typedef NS_ENUM(NSUInteger, kICadeControllerSetting) {
     kICadeControllerSettingStandard,
     kICadeControllerSetting8Bitdo,
     kICadeControllerSettingSteelSeries,
+    kICadeControllerSettingMocute,
     kICadeControllerSetting_Count
 };
 
