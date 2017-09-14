@@ -27,8 +27,7 @@
 @property (weak, nonatomic) IBOutlet UISlider *opacitySlider;
 @property (weak, nonatomic) IBOutlet UILabel *opacityValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gitMasterShaLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gitLocalShaLabel;
+@property (weak, nonatomic) IBOutlet UILabel *revisionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 @property (weak, nonatomic) IBOutlet UISlider *volumeSlider;

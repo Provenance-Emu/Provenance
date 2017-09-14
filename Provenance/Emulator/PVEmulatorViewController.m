@@ -39,6 +39,7 @@
 
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
+@property (nonatomic, strong) UITapGestureRecognizer *menuGestureRecognizer;
 
 
 @end
@@ -73,7 +74,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
-    [self.emulatorCore stopEmulation];
+    [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
 	NSSetUncaughtExceptionHandler(NULL);
@@ -203,7 +204,11 @@ void uncaughtExceptionHandler(NSException *exception)
         _fpsLabel.text = [NSNumber numberWithInteger:self.glViewController.framesPerSecond].stringValue;
         _fpsLabel.translatesAutoresizingMaskIntoConstraints = NO;
         _fpsLabel.textAlignment = NSTextAlignmentRight;
+#if TARGET_OS_TV
+        _fpsLabel.font = [UIFont systemFontOfSize:100 weight:UIFontWeightBold];
+#else
         _fpsLabel.font = [UIFont systemFontOfSize:22 weight:UIFontWeightBold];
+#endif
         [self.glViewController.view addSubview:_fpsLabel];
         
         [self.view addConstraint:[NSLayoutConstraint constraintWithItem:_fpsLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.glViewController.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:30]];
@@ -316,15 +321,18 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-    UITapGestureRecognizer *menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
-    menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
-    [self.view addGestureRecognizer:menuGestureRecognizer];
+    if (!_menuGestureRecognizer) {
+        _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
+        _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    }
+    
+    [self.view addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
 	{
 		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-			[weakSelf controllerPauseButtonPressed];
+			[weakSelf controllerPauseButtonPressed: controller];
 		}];
 	}
 #endif
@@ -364,35 +372,30 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-    [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
-    [self.gameAudio pauseAudio];
+
 }
 
 - (void)appWillResignActive:(NSNotification *)note
 {
     [self.emulatorCore autoSaveState];
-	[self.emulatorCore setPauseEmulation:YES];
     [self.gameAudio pauseAudio];
+    [self showMenu:self];
 }
 
 - (void)appDidBecomeActive:(NSNotification *)note
 {
-	if (!self.isShowingMenu)
-	{
-		[self.emulatorCore setShouldResyncTime:YES];
-		[self.emulatorCore setPauseEmulation:NO];
-        [self.gameAudio startAudio];
-	}
+    if (!self.isShowingMenu)
+    {
+        [self.emulatorCore setPauseEmulation:NO];
+    }
+    
+    [self.emulatorCore setShouldResyncTime:YES];
+    [self.gameAudio startAudio];
 }
 
 - (void)showMenu:(id)sender
@@ -538,13 +541,17 @@ void uncaughtExceptionHandler(NSException *exception)
         [weakSelf quit];
 	}]];
     
-	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[weakSelf.emulatorCore setPauseEmulation:NO];
-		weakSelf.isShowingMenu = NO;
+    UIAlertAction *resumeAction = [UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [weakSelf.emulatorCore setPauseEmulation:NO];
+        weakSelf.isShowingMenu = NO;
 #if TARGET_OS_TV
         weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-	}]];
+    }];
+    
+    [actionsheet addAction:resumeAction];
+    
+    [actionsheet setPreferredAction:resumeAction];
 
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
@@ -784,10 +791,11 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.emulatorCore autoSaveState];
     }
 
+    [self.emulatorCore stopEmulation]; //Leave emulation loop first
+
 	[self.fpsTimer invalidate];
 	self.fpsTimer = nil;
     [self.gameAudio stopAudio];
-    [self.emulatorCore stopEmulation];
 #if !TARGET_OS_TV
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 #endif
@@ -799,7 +807,23 @@ void uncaughtExceptionHandler(NSException *exception)
 
 #pragma mark - Controllers
 
-- (void)controllerPauseButtonPressed
+#if TARGET_OS_TV
+// Ensure that override of menu gesture is caught and handled properly for tvOS
+-(void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(nullable UIPressesEvent *)event {
+    
+    UIPress *press = (UIPress *)presses.anyObject;
+    if ( press && press.type == UIPressTypeMenu && !self.isShowingMenu )
+    {
+//         [self controllerPauseButtonPressed];
+    }
+    else
+    {
+        [super pressesBegan:presses withEvent:event];
+    }
+}
+#endif
+
+- (void)controllerPauseButtonPressed:(id)sender
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (![self isShowingMenu])

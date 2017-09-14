@@ -124,18 +124,18 @@
 	for (NSDictionary *control in self.controlLayout)
 	{
 		NSString *controlType = [control objectForKey:PVControlTypeKey];
-		
+        CGSize controlSize = CGSizeFromString([control objectForKey:PVControlSizeKey]);
+
 		BOOL compactVertical = self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact;
 		CGFloat kDPadTopMargin = 96.0;
-		CGFloat controlOriginY = compactVertical ? kDPadTopMargin : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
+		CGFloat controlOriginY = compactVertical ? self.view.bounds.size.height - controlSize.height : CGRectGetWidth(self.view.frame) + (kDPadTopMargin / 2);
 		
 		if ([controlType isEqualToString:PVDPad])
 		{
 			CGFloat xPadding = 5;
 			CGFloat bottomPadding = 16;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
-			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, size.width, size.height);
+			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - controlSize.height - bottomPadding);
+			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, controlSize.width, controlSize.height);
 			
 			if (!self.dPad)
 			{
@@ -154,10 +154,9 @@
 		{
 			CGFloat xPadding = 5;
 			CGFloat bottomPadding = 16;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 			
-			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - size.height - bottomPadding);
-			CGRect buttonsFrame = CGRectMake(CGRectGetMaxX(self.view.bounds) - size.width - xPadding, buttonsOriginY, size.width, size.height);
+			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - controlSize.height - bottomPadding);
+			CGRect buttonsFrame = CGRectMake(CGRectGetMaxX(self.view.bounds) - controlSize.width - xPadding, buttonsOriginY, controlSize.width, controlSize.height);
 			
 			if (!self.buttonGroup)
 			{
@@ -191,9 +190,8 @@
 		{
 			CGFloat xPadding = 10;
 			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
 
-			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, size.width, size.height);
+			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, controlSize.width, controlSize.height);
 			
 			if (!self.leftShoulderButton)
 			{
@@ -216,8 +214,7 @@
 		{
 			CGFloat xPadding = 10;
 			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - size.width - xPadding, yPadding, size.width, size.height);
+			CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
 			
 			if (!self.rightShoulderButton)
 			{
@@ -239,8 +236,7 @@
 		else if ([controlType isEqualToString:PVStartButton])
 		{
 			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGRect startFrame = CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - size.height - yPadding, size.width, size.height);
+			CGRect startFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2, self.view.frame.size.height - controlSize.height - yPadding, controlSize.width, controlSize.height);
 			
 			if (!self.startButton)
 			{
@@ -262,8 +258,7 @@
 		else if ([controlType isEqualToString:PVSelectButton])
 		{
 			CGFloat yPadding = 10;
-			CGSize size = CGSizeFromString([control objectForKey:PVControlSizeKey]);
-			CGRect selectFrame = CGRectMake((self.view.frame.size.width - size.width) / 2, self.view.frame.size.height - (size.height * 2) - (yPadding * 2), size.width, size.height);
+			CGRect selectFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2, self.view.frame.size.height - (controlSize.height * 2) - (yPadding * 2), controlSize.width, controlSize.height);
 			
 			if (!self.selectButton)
 			{

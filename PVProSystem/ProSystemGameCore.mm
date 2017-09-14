@@ -41,6 +41,9 @@
 #include "Pokey.h"
 #include "Cartridge.h"
 
+#define VIDEO_WIDTH     320
+#define VIDEO_HEIGHT    292
+
 @interface PVProSystemGameCore () <OE7800SystemResponderClient> {
     uint32_t *_videoBuffer;
     uint32_t _displayPalette[256];
@@ -49,14 +52,15 @@
     int _videoWidth, _videoHeight;
     BOOL _isLightgunEnabled;
 }
+
 - (void)setPalette32;
 @end
 
 @implementation PVProSystemGameCore
 
-- (id)init {
+- (instancetype)init {
     if((self = [super init])) {
-        _videoBuffer = (uint32_t *)malloc(320 * 292 * 4);
+        _videoBuffer = (uint32_t *)malloc(VIDEO_WIDTH * VIDEO_HEIGHT * 4);
         _soundBuffer = (uint8_t *) malloc(8192);
     }
 
@@ -185,7 +189,7 @@
 }
 
 - (CGSize)bufferSize {
-    return CGSizeMake(320, 292);
+    return CGSizeMake(VIDEO_WIDTH, VIDEO_HEIGHT);
 }
 
 - (GLenum)pixelFormat {
@@ -254,9 +258,10 @@
         return NO;
     }
 
-    if(prosystem_Load_buffer((uint8_t *)[state bytes]))
+    if(prosystem_Load_buffer((uint8_t *)[state bytes])) {
         return YES;
-
+    }
+    
     if(outError) {
         *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read"
@@ -290,6 +295,26 @@
 // | 15       | Console      | Left Difficulty
 // | 16       | Console      | Right Difficulty
 // +----------+--------------+-------------------------------------------------
+typedef NS_ENUM(NSUInteger, PV7800MFiButton) {
+    PV7800MFiButtonJoy1Right,
+    PV7800MFiButtonJoy1Left,
+    PV7800MFiButtonJoy1Down,
+    PV7800MFiButtonJoy1Up,
+    PV7800MFiButtonJoy1Button1,
+    PV7800MFiButtonJoy1Button2,
+    PV7800MFiButtonJoy2Right,
+    PV7800MFiButtonJoy2Left,
+    PV7800MFiButtonJoy2Down,
+    PV7800MFiButtonJoy2Up,
+    PV7800MFiButtonJoy2Button1,
+    PV7800MFiButtonJoy2Button2,
+    PV7800MFiButtonConsoleReset,
+    PV7800MFiButtonConsoleSelect,
+    PV7800MFiButtonConsolePause,
+    PV7800MFiButtonConsoleLeftDifficulty,
+    PV7800MFiButtonConsoleRightDifficulty
+};
+
 const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 15, 16};
 
 #pragma mark Input
@@ -305,63 +330,67 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
             controller = self.controller2;
         }
         
+        int playerInputOffset = playerIndex * 6;
+
         if ([controller extendedGamepad]) {
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            // Up
-            _inputState[03] = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
-            // Down
-            _inputState[02] = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
-            // Left
-            _inputState[01] = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
-            // Right
-            _inputState[00] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
+                // Up
+            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed    || gamepad.leftThumbstick.up.isPressed);
+                // Down
+            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
+                // Left
+            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
+                // Right
+            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
             
-            // Button 1
-            _inputState[04] = (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed);
-            // Button 2
-            _inputState[05] = (gamepad.buttonB.isPressed || gamepad.buttonB.isPressed);
+                // Button 1
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = gamepad.buttonA.isPressed;
+                // Button 2
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed);
            
-            // Reset
-            _inputState[12] = (gamepad.rightShoulder.isPressed);
-            // Select
-            _inputState[13]  = (gamepad.leftShoulder.isPressed);
-            // Pause
-//            _inputState[14] = (gamepad.buttonY.isPressed);
-            // Left Difficulty
-            _inputState[15] = (gamepad.leftTrigger.isPressed);
-            // Right Difficulty
-            _inputState[16] = (gamepad.rightTrigger.isPressed);
+                // Reset
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.leftShoulder.isPressed);
+                // Select
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.rightShoulder.isPressed);
+                // Pause
+            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+                // Left Difficulty
+            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.leftTrigger.isPressed);
+                // Right Difficulty
+            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.rightTrigger.isPressed);
 
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            // Up
-            _inputState[03] = (dpad.up.isPressed);
-            // Down
-            _inputState[02] = (dpad.down.isPressed);
-            // Left
-            _inputState[01] = (dpad.left.isPressed);
-            // Right
-            _inputState[00] = (dpad.right.isPressed);
+                // Up
+            _inputState[PV7800MFiButtonJoy1Up + playerInputOffset] = (dpad.up.isPressed);
+                // Down
+            _inputState[PV7800MFiButtonJoy1Down + playerInputOffset] = (dpad.down.isPressed);
+                // Left
+            _inputState[PV7800MFiButtonJoy1Left + playerInputOffset] = (dpad.left.isPressed);
+                // Right
+            _inputState[PV7800MFiButtonJoy1Right + playerInputOffset] = (dpad.right.isPressed);
             
-            // Button 1
-            _inputState[04] = (gamepad.buttonA.isPressed);
-            // Button 2
-            _inputState[05] = (gamepad.buttonB.isPressed);
+                // Button 1
+            _inputState[PV7800MFiButtonJoy1Button1 + playerInputOffset] = (gamepad.buttonA.isPressed);
+                // Button 2
+            _inputState[PV7800MFiButtonJoy1Button2 + playerInputOffset] = (gamepad.buttonB.isPressed);
             
-            // Reset
-            _inputState[12] = (gamepad.rightShoulder.isPressed);
-            // Select
-            _inputState[13]  = (gamepad.leftShoulder.isPressed);
-            // Pause
-            //            _inputState[14] = (gamepad.buttonY.isPressed);
-            // Left Difficulty
-            _inputState[15] = (gamepad.buttonX.isPressed);
-            // Right Difficulty
-            _inputState[16] = (gamepad.buttonY.isPressed);
+                // Reset
+            _inputState[PV7800MFiButtonConsoleReset] = (gamepad.leftShoulder.isPressed);
+                // Select
+            _inputState[PV7800MFiButtonConsoleSelect] = (gamepad.rightShoulder.isPressed);
+
+                // Pause
+//            _inputState[PV7800MFiButtonConsolePause] = (gamepad.buttonY.isPressed);
+            
+                // Left Difficulty
+            _inputState[PV7800MFiButtonConsoleLeftDifficulty] = (gamepad.buttonX.isPressed);
+                // Right Difficulty
+            _inputState[PV7800MFiButtonConsoleRightDifficulty] = (gamepad.buttonY.isPressed);
             
         }
 #if TARGET_OS_TV
@@ -369,13 +398,13 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            _inputState[03]    = dpad.up.value > 0.5;
-            _inputState[02]  = dpad.down.value > 0.5;
-            _inputState[01]  = dpad.left.value > 0.5;
-            _inputState[00] = dpad.right.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Up]    = dpad.up.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Down]  = dpad.down.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Left]  = dpad.left.value > 0.5;
+            _inputState[PV7800MFiButtonJoy1Right] = dpad.right.value > 0.5;
             
-            _inputState[04] = gamepad.buttonX.isPressed;
-            _inputState[05] = gamepad.buttonA.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button1] = gamepad.buttonX.isPressed;
+            _inputState[PV7800MFiButtonJoy1Button2] = gamepad.buttonA.isPressed;
         }
 #endif
     }
@@ -456,8 +485,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         lightgun_scanline = (((float)aPoint.y * yratio) + (maria_visibleArea.top - maria_displayArea.top + 1) + yoffset);
         lightgun_cycle = (HBLANK_CYCLES + LG_CYCLES_INDENT + ((float)aPoint.x * xratio));
 
-        if(lightgun_cycle > CYCLES_PER_SCANLINE)
-        {
+        if(lightgun_cycle > CYCLES_PER_SCANLINE) {
             lightgun_scanline++;
             lightgun_cycle -= CYCLES_PER_SCANLINE;
         }
@@ -473,15 +501,15 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 }
 
 - (oneway void)leftMouseUp {
-    if(_isLightgunEnabled)
+    if(_isLightgunEnabled) {
         _inputState[3] = 1;
+    }
 }
 
 #pragma mark - Misc Helper Methods
 // Set palette 32bpp
 - (void)setPalette32 {
-    for(int index = 0; index < 256; index++)
-    {
+    for(int index = 0; index < 256; index++) {
         uint32_t r = CFSwapInt32LittleToHost(palette_data[(index * 3) + 0] << 16);
         uint32_t g = CFSwapInt32LittleToHost(palette_data[(index * 3) + 1] << 8);
         uint32_t b = CFSwapInt32LittleToHost(palette_data[(index * 3) + 2] << 0);

@@ -18,7 +18,8 @@
              @"originalArtworkURL" : @"",
              @"md5Hash" : @"",
              @"requiresSync" : @YES,
-             @"systemIdentifier" : @""};
+             @"systemIdentifier" : @"",
+             @"isFavorite": @NO};
 }
 
 + (NSArray<NSString *> *)requiredProperties
@@ -29,7 +30,8 @@
 			 @"customArtworkURL",
 			 @"originalArtworkURL",
 			 @"md5Hash",
-			 @"systemIdentifier"];
+			 @"systemIdentifier",
+             @"isFavorite"];
 }
 
 @end

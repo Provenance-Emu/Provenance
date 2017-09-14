@@ -107,8 +107,9 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Select a controller for Player %zd", ([indexPath row] + 1)]
-                                                                         message:@""
+    NSInteger player = [indexPath row] + 1;
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"Select a controller for Player %zd", player]
+                                                                         message:@"or press a Button on your iCade controller"
                                                                   preferredStyle:UIAlertControllerStyleActionSheet];
     if ([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPad)
     {
@@ -142,6 +143,7 @@
                                                           }
 
                                                           [self.tableView reloadData];
+                                                          [[PVControllerManager sharedManager] stopListeningForICadeControllers];
                                                       }]];
     }
 
@@ -156,13 +158,22 @@
         }
 
         [self.tableView reloadData];
+        [[PVControllerManager sharedManager] stopListeningForICadeControllers];
     }]];
 
     [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:NULL]];
 
 
 
-    [self presentViewController:actionSheet animated:YES completion:NULL];
+    __weak typeof (self) weakSelf = self;
+    __weak UIAlertController* weakActionSheet = actionSheet;
+    [self presentViewController:actionSheet animated:YES completion:^{
+        [[PVControllerManager sharedManager] listenForICadeControllersForPlayer:player
+                                                                         window:actionSheet.view.window completion:^{
+                                                                             [weakSelf.tableView reloadData];
+                                                                             [weakActionSheet dismissViewControllerAnimated:TRUE completion:nil];
+                                                                         }];
+    }];
 }
 
 @end

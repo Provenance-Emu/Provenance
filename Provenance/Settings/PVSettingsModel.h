@@ -17,7 +17,7 @@ extern NSString * const kDisableAutoLockKey;
 extern NSString * const kButtonVibrationKey;
 extern NSString * const kImageSmoothingKey;
 extern NSString * const kShowRecentGamesKey;
-extern NSString * const kiCadeControllerSettingKey;
+extern NSString * const kICadeControllerSettingKey;
 extern NSString * const kVolumeSettingKey;
 extern NSString * const kFPSCountKey;
 extern NSString * const kShowGameTitlesKey;
