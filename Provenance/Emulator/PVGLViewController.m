@@ -147,7 +147,7 @@
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    void (^renderBlock)() = ^() {
+    void (^renderBlock)(void) = ^() {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
