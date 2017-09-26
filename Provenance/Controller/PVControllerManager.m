@@ -11,6 +11,7 @@
 #import "PViCadeController.h"
 #import "kICadeControllerSetting.h"
 #import "PViCade8BitdoController.h"
+#import "PViCade8BitdoZeroController.h"
 #import "PViCadeController.h"
 
 NSString * const PVControllerManagerControllerReassignedNotification = @"PVControllerManagerControllerReassignedNotification";
@@ -111,7 +112,7 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     }
     
     BOOL assigned = NO;
-    if ([controller isKindOfClass:[PViCade8BitdoController class]]) {
+    if ([controller isKindOfClass:[PViCade8BitdoController class]] || [controller isKindOfClass:[PViCade8BitdoZeroController class]]) {
         // For 8Bitdo, we set to listen again for controllers after disconnecting
         // so we can detect when they connect again
         if (self.iCadeController) {

@@ -279,6 +279,8 @@
 		BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */; };
 		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
 		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
+		DA23818D1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA23818C1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m */; };
+		DA23818E1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m in Sources */ = {isa = PBXBuildFile; fileRef = DA23818C1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -600,6 +602,8 @@
 		BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVGame+Sizing.m"; sourceTree = "<group>"; };
 		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+Config.h"; sourceTree = "<group>"; };
 		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+Config.m"; sourceTree = "<group>"; };
+		DA23818B1F09D21F00D5FC09 /* PViCade8BitdoZeroController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PViCade8BitdoZeroController.h; sourceTree = "<group>"; };
+		DA23818C1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PViCade8BitdoZeroController.m; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -1270,6 +1274,8 @@
 				E41448901B34B9600056D80A /* PViCadeController.m */,
 				E4F936981B50829F009403C5 /* PViCade8BitdoController.h */,
 				E4F936991B50829F009403C5 /* PViCade8BitdoController.m */,
+				DA23818B1F09D21F00D5FC09 /* PViCade8BitdoZeroController.h */,
+				DA23818C1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m */,
 				F43211981BFB6AB300387909 /* PViCadeSteelSeriesController.h */,
 				F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */,
 				E41448921B34BBAB0056D80A /* PViCadeReader.h */,
@@ -1613,6 +1619,7 @@
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
+				DA23818D1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
 				B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
@@ -1680,6 +1687,7 @@
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
+				DA23818E1F09D21F00D5FC09 /* PViCade8BitdoZeroController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
