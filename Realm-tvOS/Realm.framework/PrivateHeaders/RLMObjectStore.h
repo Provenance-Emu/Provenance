@@ -32,7 +32,7 @@ extern "C" {
 void RLMRealmCreateAccessors(RLMSchema *schema);
 
 // Clear the cache of created accessor classes
-void RLMClearAccessorCache();
+	void RLMClearAccessorCache(void);
 
 
 //
