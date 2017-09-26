@@ -9,6 +9,7 @@
 #include "kICadeControllerSetting.h"
 #import "PViCade8BitdoController.h"
 #import "PViCadeSteelSeriesController.h"
+#import "PViCadeMocuteController.h"
 
 
 NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
@@ -25,6 +26,10 @@ NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
             break;
         case kICadeControllerSettingSteelSeries:
             stringRepresentation = @"SteelSeries Free Controller";
+            break;
+        case kICadeControllerSettingMocute:
+            stringRepresentation = @"Mocute Controller";
+            break;
         default:
             break;
     }
@@ -46,6 +51,9 @@ PViCadeController* kIcadeControllerSettingToPViCadeController(kICadeControllerSe
             break;
         case kICadeControllerSettingSteelSeries:
             controller = [[PViCadeSteelSeriesController alloc] init];
+            break;
+        case kICadeControllerSettingMocute:
+            controller = [[PViCadeMocuteController alloc] init];
             break;
         default:
             break;
