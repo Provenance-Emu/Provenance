@@ -21,7 +21,7 @@
 @class RLMFastEnumerator;
 
 // Disable syncing files to disk. Cannot be re-enabled. Use only for tests.
-FOUNDATION_EXTERN void RLMDisableSyncToDisk();
+FOUNDATION_EXTERN void RLMDisableSyncToDisk(void);
 
 FOUNDATION_EXTERN NSData *RLMRealmValidatedEncryptionKey(NSData *key);
 

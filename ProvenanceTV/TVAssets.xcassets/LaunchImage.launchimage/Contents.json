@@ -3,6 +3,13 @@
     {
       "orientation" : "landscape",
       "idiom" : "tv",
+      "extent" : "full-screen",
+      "minimum-system-version" : "11.0",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "landscape",
+      "idiom" : "tv",
       "filename" : "TV Launch Image.png",
       "extent" : "full-screen",
       "minimum-system-version" : "9.0",

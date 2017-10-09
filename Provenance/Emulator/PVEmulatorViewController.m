@@ -337,14 +337,14 @@ void uncaughtExceptionHandler(NSException *exception)
         _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
         _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
     }
- 
+    
     [self.view addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
 	{
 		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed:controller];
+			[weakSelf controllerPauseButtonPressed: controller];
 		}];
 	}
 #endif
@@ -826,9 +826,10 @@ void uncaughtExceptionHandler(NSException *exception)
     UIPress *press = (UIPress *)presses.anyObject;
     if ( press && press.type == UIPressTypeMenu && !self.isShowingMenu )
     {
-//        [self controllerPauseButtonPressed];
+//         [self controllerPauseButtonPressed];
     }
-    else {
+    else
+    {
         [super pressesBegan:presses withEvent:event];
     }
 }
