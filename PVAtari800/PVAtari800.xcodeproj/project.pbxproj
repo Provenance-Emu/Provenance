@@ -907,7 +907,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVAtari800;
 				PRODUCT_NAME = PVAtari800;
-				SDKROOT = appletvos10.2;
+				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -943,7 +943,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVAtari800;
 				PRODUCT_NAME = PVAtari800;
-				SDKROOT = appletvos10.2;
+				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 3;
 				VALIDATE_PRODUCT = YES;
