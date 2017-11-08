@@ -34,6 +34,7 @@
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
     [self.imageSmoothing setOn:[settings imageSmoothing]];
+    [self.crtFilterSwitch setOn:[settings crtFilterEnabled]];
 	[self.fpsCountSwitch setOn:[settings showFPSCount]];
     [self.volumeSlider setValue:[settings volume]];
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
@@ -115,6 +116,11 @@
 - (IBAction)toggleSmoothing:(id)sender
 {
     [[PVSettingsModel sharedInstance] setImageSmoothing:[self.imageSmoothing isOn]];
+}
+
+- (IBAction)toggleCRTFilter:(id)sender
+{
+    [[PVSettingsModel sharedInstance] setCrtFilterEnabled:[self.crtFilterSwitch isOn]];
 }
 
 - (IBAction)volumeChanged:(id)sender
