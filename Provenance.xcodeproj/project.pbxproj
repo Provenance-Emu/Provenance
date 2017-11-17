@@ -10,11 +10,6 @@
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
-		1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
-		1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2B1AD9FFBF004EA30B /* mztools.c */; };
-		1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2D1AD9FFBF004EA30B /* unzip.c */; };
-		1A26EE361AD9FFBF004EA30B /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2F1AD9FFBF004EA30B /* zip.c */; };
-		1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E881AD1842A005FB77C /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
@@ -113,11 +108,6 @@
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1AD481E61BA3546A00FDA50A /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
 		1AD481E81BA3547200FDA50A /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
-		1AD481E91BA3547800FDA50A /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
-		1AD481EA1BA3547B00FDA50A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
-		1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2B1AD9FFBF004EA30B /* mztools.c */; };
-		1AD481EC1BA3548200FDA50A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2D1AD9FFBF004EA30B /* unzip.c */; };
-		1AD481ED1BA3548400FDA50A /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2F1AD9FFBF004EA30B /* zip.c */; };
 		1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
 		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
 		1AD481F21BA3549400FDA50A /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
@@ -279,6 +269,56 @@
 		BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */; };
 		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
 		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
+		D2C6C59D1FBF4BEB008F40CB /* SARUnArchiveANY.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5261FBF4BEB008F40CB /* SARUnArchiveANY.m */; };
+		D2C6C59E1FBF4BEB008F40CB /* SARUnArchiveANY.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5261FBF4BEB008F40CB /* SARUnArchiveANY.m */; };
+		D2C6C5A11FBF4BEB008F40CB /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52C1FBF4BEB008F40CB /* unzip.c */; };
+		D2C6C5A21FBF4BEB008F40CB /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52C1FBF4BEB008F40CB /* unzip.c */; };
+		D2C6C5A31FBF4BEB008F40CB /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52D1FBF4BEB008F40CB /* zip.c */; };
+		D2C6C5A41FBF4BEB008F40CB /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52D1FBF4BEB008F40CB /* zip.c */; };
+		D2C6C5A51FBF4BEB008F40CB /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52E1FBF4BEB008F40CB /* ioapi.c */; };
+		D2C6C5A61FBF4BEB008F40CB /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52E1FBF4BEB008F40CB /* ioapi.c */; };
+		D2C6C5A71FBF4BEB008F40CB /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52F1FBF4BEB008F40CB /* mztools.c */; };
+		D2C6C5A81FBF4BEB008F40CB /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C52F1FBF4BEB008F40CB /* mztools.c */; };
+		D2C6C5A91FBF4BEB008F40CB /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5361FBF4BEB008F40CB /* SSZipArchive.m */; };
+		D2C6C5AA1FBF4BEB008F40CB /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5361FBF4BEB008F40CB /* SSZipArchive.m */; };
+		D2C6C5AF1FBF4BEB008F40CB /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5761FBF4BEB008F40CB /* Lzma2Dec.c */; };
+		D2C6C5B01FBF4BEB008F40CB /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5761FBF4BEB008F40CB /* Lzma2Dec.c */; };
+		D2C6C5B11FBF4BEB008F40CB /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5781FBF4BEB008F40CB /* Ppmd7Dec.c */; };
+		D2C6C5B21FBF4BEB008F40CB /* Ppmd7Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5781FBF4BEB008F40CB /* Ppmd7Dec.c */; };
+		D2C6C5B31FBF4BEB008F40CB /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C57C1FBF4BEB008F40CB /* 7zAlloc.c */; };
+		D2C6C5B41FBF4BEB008F40CB /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C57C1FBF4BEB008F40CB /* 7zAlloc.c */; };
+		D2C6C5B51FBF4BEB008F40CB /* 7zMain.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C57D1FBF4BEB008F40CB /* 7zMain.c */; };
+		D2C6C5B61FBF4BEB008F40CB /* 7zMain.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C57D1FBF4BEB008F40CB /* 7zMain.c */; };
+		D2C6C5B71FBF4BEB008F40CB /* Ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5811FBF4BEB008F40CB /* Ppmd7.c */; };
+		D2C6C5B81FBF4BEB008F40CB /* Ppmd7.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5811FBF4BEB008F40CB /* Ppmd7.c */; };
+		D2C6C5B91FBF4BEB008F40CB /* 7zIn.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5841FBF4BEB008F40CB /* 7zIn.c */; };
+		D2C6C5BA1FBF4BEB008F40CB /* 7zIn.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5841FBF4BEB008F40CB /* 7zIn.c */; };
+		D2C6C5BB1FBF4BEB008F40CB /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5871FBF4BEB008F40CB /* Alloc.c */; };
+		D2C6C5BC1FBF4BEB008F40CB /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5871FBF4BEB008F40CB /* Alloc.c */; };
+		D2C6C5BD1FBF4BEB008F40CB /* LZMAExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5881FBF4BEB008F40CB /* LZMAExtractor.m */; };
+		D2C6C5BE1FBF4BEB008F40CB /* LZMAExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5881FBF4BEB008F40CB /* LZMAExtractor.m */; };
+		D2C6C5BF1FBF4BEB008F40CB /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5891FBF4BEB008F40CB /* LzmaDec.c */; };
+		D2C6C5C01FBF4BEB008F40CB /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5891FBF4BEB008F40CB /* LzmaDec.c */; };
+		D2C6C5C11FBF4BEB008F40CB /* Ppmd8.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58A1FBF4BEB008F40CB /* Ppmd8.c */; };
+		D2C6C5C21FBF4BEB008F40CB /* Ppmd8.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58A1FBF4BEB008F40CB /* Ppmd8.c */; };
+		D2C6C5C31FBF4BEB008F40CB /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58B1FBF4BEB008F40CB /* 7zDec.c */; };
+		D2C6C5C41FBF4BEB008F40CB /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58B1FBF4BEB008F40CB /* 7zDec.c */; };
+		D2C6C5C51FBF4BEB008F40CB /* 7zBuf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58D1FBF4BEB008F40CB /* 7zBuf2.c */; };
+		D2C6C5C61FBF4BEB008F40CB /* 7zBuf2.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58D1FBF4BEB008F40CB /* 7zBuf2.c */; };
+		D2C6C5C71FBF4BEB008F40CB /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58E1FBF4BEB008F40CB /* 7zStream.c */; };
+		D2C6C5C81FBF4BEB008F40CB /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C58E1FBF4BEB008F40CB /* 7zStream.c */; };
+		D2C6C5C91FBF4BEB008F40CB /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5901FBF4BEB008F40CB /* Delta.c */; };
+		D2C6C5CA1FBF4BEB008F40CB /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5901FBF4BEB008F40CB /* Delta.c */; };
+		D2C6C5CB1FBF4BEB008F40CB /* 7zFile.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5921FBF4BEB008F40CB /* 7zFile.c */; };
+		D2C6C5CC1FBF4BEB008F40CB /* 7zFile.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5921FBF4BEB008F40CB /* 7zFile.c */; };
+		D2C6C5CD1FBF4BEB008F40CB /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5951FBF4BEB008F40CB /* CpuArch.c */; };
+		D2C6C5CE1FBF4BEB008F40CB /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5951FBF4BEB008F40CB /* CpuArch.c */; };
+		D2C6C5CF1FBF4BEB008F40CB /* Ppmd8Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5971FBF4BEB008F40CB /* Ppmd8Dec.c */; };
+		D2C6C5D01FBF4BEB008F40CB /* Ppmd8Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C5971FBF4BEB008F40CB /* Ppmd8Dec.c */; };
+		D2C6C5D11FBF4BEB008F40CB /* 7zBuf.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C59A1FBF4BEB008F40CB /* 7zBuf.c */; };
+		D2C6C5D21FBF4BEB008F40CB /* 7zBuf.c in Sources */ = {isa = PBXBuildFile; fileRef = D2C6C59A1FBF4BEB008F40CB /* 7zBuf.c */; };
+		D2C6C5D51FBF4FCF008F40CB /* Unrar4iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C6C59C1FBF4BEB008F40CB /* Unrar4iOS.framework */; };
+		D2C6C5D61FBF4FD0008F40CB /* Unrar4iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C6C59C1FBF4BEB008F40CB /* Unrar4iOS.framework */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -368,17 +408,6 @@
 		1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorViewController.h; sourceTree = "<group>"; };
 		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorViewController.m; sourceTree = "<group>"; };
 		1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1A26EE281AD9FFBF004EA30B /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
-		1A26EE291AD9FFBF004EA30B /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
-		1A26EE2A1AD9FFBF004EA30B /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
-		1A26EE2B1AD9FFBF004EA30B /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
-		1A26EE2C1AD9FFBF004EA30B /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
-		1A26EE2D1AD9FFBF004EA30B /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
-		1A26EE2E1AD9FFBF004EA30B /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
-		1A26EE2F1AD9FFBF004EA30B /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
-		1A26EE301AD9FFBF004EA30B /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
-		1A26EE311AD9FFBF004EA30B /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
-		1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
 		1A2A95A917F7682400F1CB0D /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
 		1A2B0E8A1AD187F4005FB77C /* testdata.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testdata.txt; sourceTree = "<group>"; };
 		1A2B0E8D1AD18961005FB77C /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
@@ -600,6 +629,56 @@
 		BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVGame+Sizing.m"; sourceTree = "<group>"; };
 		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+Config.h"; sourceTree = "<group>"; };
 		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+Config.m"; sourceTree = "<group>"; };
+		D2C6C5251FBF4BEB008F40CB /* SARUnArchiveANY.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SARUnArchiveANY.h; sourceTree = "<group>"; };
+		D2C6C5261FBF4BEB008F40CB /* SARUnArchiveANY.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SARUnArchiveANY.m; sourceTree = "<group>"; };
+		D2C6C52C1FBF4BEB008F40CB /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		D2C6C52D1FBF4BEB008F40CB /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		D2C6C52E1FBF4BEB008F40CB /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		D2C6C52F1FBF4BEB008F40CB /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		D2C6C5301FBF4BEB008F40CB /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		D2C6C5311FBF4BEB008F40CB /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		D2C6C5321FBF4BEB008F40CB /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		D2C6C5331FBF4BEB008F40CB /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		D2C6C5341FBF4BEB008F40CB /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		D2C6C5351FBF4BEB008F40CB /* SSZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSZipArchive.h; sourceTree = "<group>"; };
+		D2C6C5361FBF4BEB008F40CB /* SSZipArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSZipArchive.m; sourceTree = "<group>"; };
+		D2C6C5761FBF4BEB008F40CB /* Lzma2Dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Lzma2Dec.c; sourceTree = "<group>"; };
+		D2C6C5771FBF4BEB008F40CB /* LzHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzHash.h; sourceTree = "<group>"; };
+		D2C6C5781FBF4BEB008F40CB /* Ppmd7Dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ppmd7Dec.c; sourceTree = "<group>"; };
+		D2C6C5791FBF4BEB008F40CB /* Ppmd8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ppmd8.h; sourceTree = "<group>"; };
+		D2C6C57C1FBF4BEB008F40CB /* 7zAlloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zAlloc.c; sourceTree = "<group>"; };
+		D2C6C57D1FBF4BEB008F40CB /* 7zMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zMain.c; sourceTree = "<group>"; };
+		D2C6C57E1FBF4BEB008F40CB /* 7zAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zAlloc.h; sourceTree = "<group>"; };
+		D2C6C57F1FBF4BEB008F40CB /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		D2C6C5801FBF4BEB008F40CB /* CpuArch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuArch.h; sourceTree = "<group>"; };
+		D2C6C5811FBF4BEB008F40CB /* Ppmd7.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ppmd7.c; sourceTree = "<group>"; };
+		D2C6C5821FBF4BEB008F40CB /* Delta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Delta.h; sourceTree = "<group>"; };
+		D2C6C5831FBF4BEB008F40CB /* 7zFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zFile.h; sourceTree = "<group>"; };
+		D2C6C5841FBF4BEB008F40CB /* 7zIn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zIn.c; sourceTree = "<group>"; };
+		D2C6C5851FBF4BEB008F40CB /* 7zBuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zBuf.h; sourceTree = "<group>"; };
+		D2C6C5861FBF4BEB008F40CB /* 7z.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7z.h; sourceTree = "<group>"; };
+		D2C6C5871FBF4BEB008F40CB /* Alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Alloc.c; sourceTree = "<group>"; };
+		D2C6C5881FBF4BEB008F40CB /* LZMAExtractor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZMAExtractor.m; sourceTree = "<group>"; };
+		D2C6C5891FBF4BEB008F40CB /* LzmaDec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LzmaDec.c; sourceTree = "<group>"; };
+		D2C6C58A1FBF4BEB008F40CB /* Ppmd8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ppmd8.c; sourceTree = "<group>"; };
+		D2C6C58B1FBF4BEB008F40CB /* 7zDec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zDec.c; sourceTree = "<group>"; };
+		D2C6C58C1FBF4BEB008F40CB /* Lzma2Dec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lzma2Dec.h; sourceTree = "<group>"; };
+		D2C6C58D1FBF4BEB008F40CB /* 7zBuf2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zBuf2.c; sourceTree = "<group>"; };
+		D2C6C58E1FBF4BEB008F40CB /* 7zStream.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zStream.c; sourceTree = "<group>"; };
+		D2C6C58F1FBF4BEB008F40CB /* Ppmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ppmd.h; sourceTree = "<group>"; };
+		D2C6C5901FBF4BEB008F40CB /* Delta.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Delta.c; sourceTree = "<group>"; };
+		D2C6C5911FBF4BEB008F40CB /* 7zVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zVersion.h; sourceTree = "<group>"; };
+		D2C6C5921FBF4BEB008F40CB /* 7zFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zFile.c; sourceTree = "<group>"; };
+		D2C6C5931FBF4BEB008F40CB /* RotateDefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RotateDefs.h; sourceTree = "<group>"; };
+		D2C6C5941FBF4BEB008F40CB /* Ppmd7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ppmd7.h; sourceTree = "<group>"; };
+		D2C6C5951FBF4BEB008F40CB /* CpuArch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuArch.c; sourceTree = "<group>"; };
+		D2C6C5961FBF4BEB008F40CB /* LzmaDec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LzmaDec.h; sourceTree = "<group>"; };
+		D2C6C5971FBF4BEB008F40CB /* Ppmd8Dec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ppmd8Dec.c; sourceTree = "<group>"; };
+		D2C6C5981FBF4BEB008F40CB /* LZMAExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZMAExtractor.h; sourceTree = "<group>"; };
+		D2C6C5991FBF4BEB008F40CB /* Alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alloc.h; sourceTree = "<group>"; };
+		D2C6C59A1FBF4BEB008F40CB /* 7zBuf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zBuf.c; sourceTree = "<group>"; };
+		D2C6C59C1FBF4BEB008F40CB /* Unrar4iOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Unrar4iOS.framework; sourceTree = "<group>"; };
+		D2C6C5D71FBF50A2008F40CB /* Unrar4iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Unrar4iOS.h; path = Unrar/Headers/Unrar4iOS.h; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -648,6 +727,7 @@
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
+				D2C6C5D51FBF4FCF008F40CB /* Unrar4iOS.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
@@ -667,6 +747,7 @@
 			files = (
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
+				D2C6C5D61FBF4FD0008F40CB /* Unrar4iOS.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
 				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
@@ -756,32 +837,6 @@
 			path = Emulator;
 			sourceTree = "<group>";
 		};
-		1A26EE261AD9FFBF004EA30B /* SSZipArchive */ = {
-			isa = PBXGroup;
-			children = (
-				1A26EE311AD9FFBF004EA30B /* SSZipArchive.h */,
-				1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */,
-				1A26EE271AD9FFBF004EA30B /* minizip */,
-			);
-			path = SSZipArchive;
-			sourceTree = "<group>";
-		};
-		1A26EE271AD9FFBF004EA30B /* minizip */ = {
-			isa = PBXGroup;
-			children = (
-				1A26EE281AD9FFBF004EA30B /* crypt.h */,
-				1A26EE291AD9FFBF004EA30B /* ioapi.c */,
-				1A26EE2A1AD9FFBF004EA30B /* ioapi.h */,
-				1A26EE2B1AD9FFBF004EA30B /* mztools.c */,
-				1A26EE2C1AD9FFBF004EA30B /* mztools.h */,
-				1A26EE2D1AD9FFBF004EA30B /* unzip.c */,
-				1A26EE2E1AD9FFBF004EA30B /* unzip.h */,
-				1A26EE2F1AD9FFBF004EA30B /* zip.c */,
-				1A26EE301AD9FFBF004EA30B /* zip.h */,
-			);
-			path = minizip;
-			sourceTree = "<group>";
-		};
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
@@ -834,6 +889,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
+				D2C6C5241FBF4BEB008F40CB /* SARUnArchiveANY */,
 				378F4A121B63F2240065FA39 /* Reachability */,
 				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A617B2DCE4004DFFFC /* PVAppDelegate.h */,
@@ -843,7 +899,6 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
 				1A1237F217CA279900CEC788 /* User Interface */,
-				1A26EE261AD9FFBF004EA30B /* SSZipArchive */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
@@ -1256,6 +1311,119 @@
 			path = TopShelf;
 			sourceTree = "<group>";
 		};
+		D2C6C5241FBF4BEB008F40CB /* SARUnArchiveANY */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C5251FBF4BEB008F40CB /* SARUnArchiveANY.h */,
+				D2C6C5261FBF4BEB008F40CB /* SARUnArchiveANY.m */,
+				D2C6C5291FBF4BEB008F40CB /* vendor */,
+			);
+			path = SARUnArchiveANY;
+			sourceTree = "<group>";
+		};
+		D2C6C5291FBF4BEB008F40CB /* vendor */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C5D71FBF50A2008F40CB /* Unrar4iOS.h */,
+				D2C6C52A1FBF4BEB008F40CB /* ZipArchive */,
+				D2C6C5751FBF4BEB008F40CB /* LZMASDK */,
+				D2C6C59B1FBF4BEB008F40CB /* Frameworks */,
+			);
+			path = vendor;
+			sourceTree = "<group>";
+		};
+		D2C6C52A1FBF4BEB008F40CB /* ZipArchive */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C52B1FBF4BEB008F40CB /* minizip */,
+				D2C6C5351FBF4BEB008F40CB /* SSZipArchive.h */,
+				D2C6C5361FBF4BEB008F40CB /* SSZipArchive.m */,
+			);
+			path = ZipArchive;
+			sourceTree = "<group>";
+		};
+		D2C6C52B1FBF4BEB008F40CB /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C52C1FBF4BEB008F40CB /* unzip.c */,
+				D2C6C52D1FBF4BEB008F40CB /* zip.c */,
+				D2C6C52E1FBF4BEB008F40CB /* ioapi.c */,
+				D2C6C52F1FBF4BEB008F40CB /* mztools.c */,
+				D2C6C5301FBF4BEB008F40CB /* crypt.h */,
+				D2C6C5311FBF4BEB008F40CB /* zip.h */,
+				D2C6C5321FBF4BEB008F40CB /* unzip.h */,
+				D2C6C5331FBF4BEB008F40CB /* mztools.h */,
+				D2C6C5341FBF4BEB008F40CB /* ioapi.h */,
+			);
+			path = minizip;
+			sourceTree = "<group>";
+		};
+		D2C6C5751FBF4BEB008F40CB /* LZMASDK */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C5761FBF4BEB008F40CB /* Lzma2Dec.c */,
+				D2C6C5771FBF4BEB008F40CB /* LzHash.h */,
+				D2C6C5781FBF4BEB008F40CB /* Ppmd7Dec.c */,
+				D2C6C5791FBF4BEB008F40CB /* Ppmd8.h */,
+				D2C6C57A1FBF4BEB008F40CB /* Util */,
+				D2C6C57F1FBF4BEB008F40CB /* Types.h */,
+				D2C6C5801FBF4BEB008F40CB /* CpuArch.h */,
+				D2C6C5811FBF4BEB008F40CB /* Ppmd7.c */,
+				D2C6C5821FBF4BEB008F40CB /* Delta.h */,
+				D2C6C5831FBF4BEB008F40CB /* 7zFile.h */,
+				D2C6C5841FBF4BEB008F40CB /* 7zIn.c */,
+				D2C6C5851FBF4BEB008F40CB /* 7zBuf.h */,
+				D2C6C5861FBF4BEB008F40CB /* 7z.h */,
+				D2C6C5871FBF4BEB008F40CB /* Alloc.c */,
+				D2C6C5881FBF4BEB008F40CB /* LZMAExtractor.m */,
+				D2C6C5891FBF4BEB008F40CB /* LzmaDec.c */,
+				D2C6C58A1FBF4BEB008F40CB /* Ppmd8.c */,
+				D2C6C58B1FBF4BEB008F40CB /* 7zDec.c */,
+				D2C6C58C1FBF4BEB008F40CB /* Lzma2Dec.h */,
+				D2C6C58D1FBF4BEB008F40CB /* 7zBuf2.c */,
+				D2C6C58E1FBF4BEB008F40CB /* 7zStream.c */,
+				D2C6C58F1FBF4BEB008F40CB /* Ppmd.h */,
+				D2C6C5901FBF4BEB008F40CB /* Delta.c */,
+				D2C6C5911FBF4BEB008F40CB /* 7zVersion.h */,
+				D2C6C5921FBF4BEB008F40CB /* 7zFile.c */,
+				D2C6C5931FBF4BEB008F40CB /* RotateDefs.h */,
+				D2C6C5941FBF4BEB008F40CB /* Ppmd7.h */,
+				D2C6C5951FBF4BEB008F40CB /* CpuArch.c */,
+				D2C6C5961FBF4BEB008F40CB /* LzmaDec.h */,
+				D2C6C5971FBF4BEB008F40CB /* Ppmd8Dec.c */,
+				D2C6C5981FBF4BEB008F40CB /* LZMAExtractor.h */,
+				D2C6C5991FBF4BEB008F40CB /* Alloc.h */,
+				D2C6C59A1FBF4BEB008F40CB /* 7zBuf.c */,
+			);
+			path = LZMASDK;
+			sourceTree = "<group>";
+		};
+		D2C6C57A1FBF4BEB008F40CB /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C57B1FBF4BEB008F40CB /* 7z */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		D2C6C57B1FBF4BEB008F40CB /* 7z */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C57C1FBF4BEB008F40CB /* 7zAlloc.c */,
+				D2C6C57D1FBF4BEB008F40CB /* 7zMain.c */,
+				D2C6C57E1FBF4BEB008F40CB /* 7zAlloc.h */,
+			);
+			path = 7z;
+			sourceTree = "<group>";
+		};
+		D2C6C59B1FBF4BEB008F40CB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D2C6C59C1FBF4BEB008F40CB /* Unrar4iOS.framework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
@@ -1541,12 +1709,12 @@
 			files = (
 				1A3D40A417B2DCE4004DFFFC /* main.m in Sources */,
 				1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.m in Sources */,
-				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
-				1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.m in Sources */,
+				D2C6C5C11FBF4BEB008F40CB /* Ppmd8.c in Sources */,
 				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.m in Sources */,
+				D2C6C5CB1FBF4BEB008F40CB /* 7zFile.c in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
@@ -1555,7 +1723,9 @@
 				E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */,
 				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
+				D2C6C5CF1FBF4BEB008F40CB /* Ppmd8Dec.c in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				D2C6C5B31FBF4BEB008F40CB /* 7zAlloc.c in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
@@ -1563,6 +1733,7 @@
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
+				D2C6C5C51FBF4BEB008F40CB /* 7zBuf2.c in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
 				1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				BEB3BDD51E1F3EAD0063E9A9 /* RLMRealmConfiguration+Config.m in Sources */,
@@ -1570,7 +1741,12 @@
 				1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
+				D2C6C5B11FBF4BEB008F40CB /* Ppmd7Dec.c in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
+				D2C6C5A11FBF4BEB008F40CB /* unzip.c in Sources */,
+				D2C6C5B91FBF4BEB008F40CB /* 7zIn.c in Sources */,
+				D2C6C59D1FBF4BEB008F40CB /* SARUnArchiveANY.m in Sources */,
+				D2C6C5A31FBF4BEB008F40CB /* zip.c in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				1A47C97C17BC310700C27644 /* JSDPad.m in Sources */,
@@ -1581,22 +1757,26 @@
 				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
+				D2C6C5C91FBF4BEB008F40CB /* Delta.c in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
-				1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				1A9938A21BBB02590050A2B7 /* PVRecentGame.m in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
+				D2C6C5AF1FBF4BEB008F40CB /* Lzma2Dec.c in Sources */,
 				25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */,
-				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
+				D2C6C5CD1FBF4BEB008F40CB /* CpuArch.c in Sources */,
 				B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
+				D2C6C5B71FBF4BEB008F40CB /* Ppmd7.c in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
+				D2C6C5A71FBF4BEB008F40CB /* mztools.c in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
+				D2C6C5BF1FBF4BEB008F40CB /* LzmaDec.c in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
 				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
@@ -1605,6 +1785,7 @@
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
 				1A34C58A17D53C9B0058E7D1 /* PVEmulatorConfiguration.m in Sources */,
+				D2C6C5BB1FBF4BEB008F40CB /* Alloc.c in Sources */,
 				BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				1AD9AA301ACC871F00EC87A0 /* PVGameImporter.m in Sources */,
 				1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */,
@@ -1613,13 +1794,19 @@
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
+				D2C6C5BD1FBF4BEB008F40CB /* LZMAExtractor.m in Sources */,
+				D2C6C5D11FBF4BEB008F40CB /* 7zBuf.c in Sources */,
+				D2C6C5C71FBF4BEB008F40CB /* 7zStream.c in Sources */,
+				D2C6C5A91FBF4BEB008F40CB /* SSZipArchive.m in Sources */,
 				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.m in Sources */,
+				D2C6C5A51FBF4BEB008F40CB /* ioapi.c in Sources */,
+				D2C6C5C31FBF4BEB008F40CB /* 7zDec.c in Sources */,
 				B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
-				1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */,
 				B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */,
+				D2C6C5B51FBF4BEB008F40CB /* 7zMain.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1628,6 +1815,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */,
+				D2C6C5A21FBF4BEB008F40CB /* unzip.c in Sources */,
 				1AD481FF1BA354B100FDA50A /* PViCadeGamepadDirectionPad.m in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.m in Sources */,
 				1AD481F81BA354B100FDA50A /* PViCadeControllerViewController.m in Sources */,
@@ -1636,61 +1824,78 @@
 				1AD482021BA354B100FDA50A /* PVControllerViewController.m in Sources */,
 				1AD481F31BA3549700FDA50A /* NSFileManager+Hashing.m in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
+				D2C6C5BA1FBF4BEB008F40CB /* 7zIn.c in Sources */,
 				1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */,
+				D2C6C5AA1FBF4BEB008F40CB /* SSZipArchive.m in Sources */,
+				D2C6C5B61FBF4BEB008F40CB /* 7zMain.c in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.m in Sources */,
-				1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */,
 				1AD481DC1BA3544500FDA50A /* GCDWebServerDataRequest.m in Sources */,
 				1AD481FB1BA354B100FDA50A /* PViCadeController.m in Sources */,
 				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.m in Sources */,
 				B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
 				1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */,
+				D2C6C5BC1FBF4BEB008F40CB /* Alloc.c in Sources */,
 				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */,
+				D2C6C5A61FBF4BEB008F40CB /* ioapi.c in Sources */,
 				1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */,
+				D2C6C5B41FBF4BEB008F40CB /* 7zAlloc.c in Sources */,
 				1AD481CD1BA353FC00FDA50A /* PVGameImporter.m in Sources */,
 				BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */,
+				D2C6C5D01FBF4BEB008F40CB /* Ppmd8Dec.c in Sources */,
 				1AD481FE1BA354B100FDA50A /* PViCadeGamepadButtonInput.m in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.m in Sources */,
 				1AD481CE1BA353FE00FDA50A /* PVGameLibraryViewController.m in Sources */,
 				B3D2E3921D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */,
+				D2C6C5CA1FBF4BEB008F40CB /* Delta.c in Sources */,
 				1AACCAEA1BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
 				1AD481FD1BA354B100FDA50A /* PViCadeReader.m in Sources */,
 				1AD482011BA354B100FDA50A /* kICadeControllerSetting.m in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
 				1AD482071BA354C400FDA50A /* PVNESControllerViewController.m in Sources */,
+				D2C6C5B21FBF4BEB008F40CB /* Ppmd7Dec.c in Sources */,
 				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.m in Sources */,
 				1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.m in Sources */,
-				1AD481ED1BA3548400FDA50A /* zip.c in Sources */,
 				1AD481D81BA3543700FDA50A /* GCDWebServerConnection.m in Sources */,
+				D2C6C5A81FBF4BEB008F40CB /* mztools.c in Sources */,
 				1A5209891BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
 				1AD482001BA354B100FDA50A /* PViCadeInputAxis.m in Sources */,
 				1AD481D11BA3540600FDA50A /* PVConflictViewController.m in Sources */,
 				1AD482031BA354C400FDA50A /* PVGenesisControllerViewController.m in Sources */,
 				1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */,
 				1AD481F91BA354B100FDA50A /* iCadeReaderView.m in Sources */,
+				D2C6C5C41FBF4BEB008F40CB /* 7zDec.c in Sources */,
 				1AD481F21BA3549400FDA50A /* NSString+Hashing.m in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				1AD482081BA354C400FDA50A /* PVButtonGroupOverlayView.m in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				1AD4820A1BA354C400FDA50A /* JSDPad.m in Sources */,
+				D2C6C5B01FBF4BEB008F40CB /* Lzma2Dec.c in Sources */,
+				D2C6C59E1FBF4BEB008F40CB /* SARUnArchiveANY.m in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
+				D2C6C5D21FBF4BEB008F40CB /* 7zBuf.c in Sources */,
 				1AD482091BA354C400FDA50A /* JSButton.m in Sources */,
 				1AD482051BA354C400FDA50A /* PVGBAControllerViewController.m in Sources */,
-				1AD481EC1BA3548200FDA50A /* unzip.c in Sources */,
 				1AD481D71BA3543500FDA50A /* GCDWebServer.m in Sources */,
 				B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				1AD481FC1BA354B100FDA50A /* PViCade8BitdoController.m in Sources */,
 				1AD481F51BA3549C00FDA50A /* UIImage+Scaling.m in Sources */,
+				D2C6C5CC1FBF4BEB008F40CB /* 7zFile.c in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
+				D2C6C5C01FBF4BEB008F40CB /* LzmaDec.c in Sources */,
+				D2C6C5CE1FBF4BEB008F40CB /* CpuArch.c in Sources */,
 				1AD481E81BA3547200FDA50A /* PVSettingsModel.m in Sources */,
 				1AD481DF1BA3544D00FDA50A /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				1AD481D21BA3540900FDA50A /* PVGame.m in Sources */,
 				1AD481DB1BA3544100FDA50A /* GCDWebServerResponse.m in Sources */,
 				1AD482041BA354C400FDA50A /* PVSNESControllerViewController.m in Sources */,
 				1AD481B81BA350A400FDA50A /* main.m in Sources */,
+				D2C6C5BE1FBF4BEB008F40CB /* LZMAExtractor.m in Sources */,
 				1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */,
 				1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
+				D2C6C5B81FBF4BEB008F40CB /* Ppmd7.c in Sources */,
+				D2C6C5C61FBF4BEB008F40CB /* 7zBuf2.c in Sources */,
 				BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
@@ -1700,13 +1905,14 @@
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
 				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				1A9938A31BBB02590050A2B7 /* PVRecentGame.m in Sources */,
+				D2C6C5C81FBF4BEB008F40CB /* 7zStream.c in Sources */,
 				BE1E266D1C22552800499BA0 /* PVAppConstants.m in Sources */,
 				1AD481F41BA3549A00FDA50A /* NSData+Hashing.m in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.m in Sources */,
+				D2C6C5A41FBF4BEB008F40CB /* zip.c in Sources */,
+				D2C6C5C21FBF4BEB008F40CB /* Ppmd8.c in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.m in Sources */,
-				1AD481EA1BA3547B00FDA50A /* ioapi.c in Sources */,
-				1AD481E91BA3547800FDA50A /* SSZipArchive.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1881,6 +2087,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1920,6 +2127,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -1967,6 +2175,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2019,6 +2228,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2071,6 +2281,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-tvOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2312,6 +2523,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Realm-iOS",
+					"$(PROJECT_DIR)/Provenance/SARUnArchiveANY/vendor/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
