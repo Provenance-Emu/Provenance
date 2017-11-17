@@ -7,7 +7,7 @@
 //
 
 #import "PVDirectoryWatcher.h"
-#import "SSZipArchive.h"
+#import "SARUnArchiveANY.h"
 #import "PVEmulatorConfiguration.h"
 #import "NSDate+NSDate_SignificantDates.h"
 
@@ -63,7 +63,9 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
             {
                 for (NSString *file in contents)
                 {
-                    if ([[file pathExtension] isEqualToString:@"zip"])
+                    if ([[file pathExtension] isEqualToString:@"zip"]
+                        || [[file pathExtension] isEqualToString:@"rar"]
+                        || [[file pathExtension] isEqualToString:@"7z"])
                     {
                         [self extractArchiveAtPath:file];
                     }
@@ -184,7 +186,9 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     unsigned long long currentFilesize = [attributes fileSize];
     if (previousFilesize == currentFilesize)
     {
-        if ([[path pathExtension] isEqualToString:@"zip"])
+        if ([[path pathExtension] isEqualToString:@"zip"]
+            || [[path pathExtension] isEqualToString:@"rar"]
+            || [[path pathExtension] isEqualToString:@"7z"])
         {
             dispatch_async(self.serialQueue, ^{
                 [self extractArchiveAtPath:path];
@@ -216,53 +220,58 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     
     if (![[NSFileManager defaultManager] fileExistsAtPath:filePath])
     {
+        NSLog(@"File not found at path for Archive : %@",filePath);
         return;
     }
     
-    NSMutableArray *unzippedFiles = [NSMutableArray array];
-    [SSZipArchive unzipFileAtPath:filePath
-                    toDestination:self.path
-                        overwrite:YES
-                         password:nil
-                  progressHandler:^(NSString *entry, unz_file_info zipInfo, long entryNumber, long total, unsigned long long fileSize, unsigned long long bytesRead) {
-                      if ([entry length])
-                      {
-                          [unzippedFiles addObject:entry];
-                      }
-                      if (self.extractionUpdatedHandler)
-                      {
-                          dispatch_async(dispatch_get_main_queue(), ^{
-                              self.extractionUpdatedHandler(filePath, entryNumber, total, fileSize, bytesRead);
-                          });
-                      }
-                  }
-                completionHandler:^(NSString *path, BOOL succeeded, NSError *error) {
-                    if (succeeded)
-                    {
-                        if (self.extractionCompleteHandler)
-                        {
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                self.extractionCompleteHandler([unzippedFiles copy]);
-                            });
-                        }
-                        
-                        NSError *deleteError = nil;
-                        BOOL deleted = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&deleteError];
-                        
-                        if (!deleted)
-                        {
-                            DLog(@"Unable to delete file at path %@, because %@", filePath, [error localizedDescription]);
-                        }
-                    }
-                    else
-                    {
-                        DLog(@"Unable to unzip file: %@ because: %@", filePath, [error localizedDescription]);
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
-                                                                                object:self];
-                        });
-                    }
-                }];
+    SARUnArchiveANY *unarchive = [[SARUnArchiveANY alloc]initWithPath:filePath];
+    unarchive.destinationPath = self.path;
+    unarchive.completionBlock = ^(NSArray *filePaths){
+        
+        if (self.extractionCompleteHandler)
+        {
+            NSMutableArray *movedFiles = [NSMutableArray array];
+            NSLog(@"For Archive : %@",filePath);
+            for (NSString *filename in filePaths) {
+                NSLog(@"File: %@", filename);
+            }
+            
+            NSError *differentError;
+            for (NSString *file in filePaths) {\
+                NSString *newPath = [self.path stringByAppendingPathComponent:[file lastPathComponent]];
+                [[NSFileManager defaultManager] moveItemAtPath:file
+                            toPath:newPath
+                             error:&differentError];
+                if (!differentError) {
+                    DLog(@"Unable to move file at path %@, because %@", filePath, [differentError localizedDescription]);
+                } else {
+                    [movedFiles addObject:newPath];
+                }
+            }
+            
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.extractionCompleteHandler([movedFiles copy]);
+            });
+        }
+        NSError *deleteError = nil;
+        BOOL deleted = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&deleteError];
+        
+        if (!deleted)
+        {
+            DLog(@"Unable to delete file at path %@, because %@", filePath, [deleteError localizedDescription]);
+        }
+        
+    };
+    unarchive.failureBlock = ^(){
+        DLog(@"Unable to unzip file: %@", filePath);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:PVArchiveInflationFailedNotification
+                                                                object:self];
+        });
+    };
+    [unarchive decompress];
+    
 }
 
 @end
