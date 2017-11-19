@@ -53,8 +53,8 @@
     return  [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,1"] ||    //iPhone 8 (A1863/A1906/A1907)
     [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,4"] ||    //iPhone 8 (A1905)
     
-    [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,2"] ||    //iPhone 8 (A1864/A1898/A1899)
-    [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,5"]     //iPhone 8 (A1897)
+    [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,2"] ||    //iPhone 8 Plus (A1864/A1898/A1899)
+    [[[UIDevice currentDevice] modelIdentifier] isEqualToString:@"iPhone10,5"]     //iPhone 8 Plus (A1897)
     ;
 }
 
