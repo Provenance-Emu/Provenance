@@ -23,13 +23,22 @@
 #import "iCadeReaderView.h"
 #import <UIKit/UIKit.h>
 
-static const char *ON_STATES  = "wdxayhujikol"; //wdxazhujikol for German keyboard layout
-static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboard layout
+static const char *ON_STATES_EN  = "wdxayhujikol";
+static const char *OFF_STATES_EN = "eczqtrfnmpgv";
+
+static const char *ON_STATES_FR  = "zdxqyhujikol";
+static const char *OFF_STATES_FR = "ecwatrfn,pgv";
+
+static const char *ON_STATES_DE  = "wdxazhujikol";
+static const char *OFF_STATES_DE = "ecyqtrfnmpgv";
 
 @interface iCadeReaderView() <UIKeyInput>
 
 - (void)willResignActive;
 - (void)didBecomeActive;
+
+@property (nonatomic, assign) const char *onStates;
+@property (nonatomic, assign) const char *offStates;
 
 @end
 
@@ -43,7 +52,9 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActive) name:UIApplicationWillResignActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
-    
+
+    [self applyKeyMappingForCurrentLocale];
+
     return self;
 }
 
@@ -115,13 +126,32 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
 
 #pragma mark - keys
 
+- (void)applyKeyMappingForCurrentLocale {
+#if TARGET_OS_TV
+    NSString *localeIdentifier = [[NSLocale currentLocale] localeIdentifier];
+    if ([localeIdentifier hasPrefix:@"de"]) {
+        self.onStates = ON_STATES_DE;
+        self.offStates = OFF_STATES_DE;
+    } else if ([localeIdentifier hasPrefix:@"fr"]) {
+        self.onStates = ON_STATES_FR;
+        self.offStates = OFF_STATES_FR;
+    } else {
+        self.onStates = ON_STATES_EN;
+        self.offStates = OFF_STATES_EN;
+    }
+#else
+    self.onStates = ON_STATES_EN;
+    self.offStates = OFF_STATES_EN;
+#endif
+}
+
 - (NSArray * )keyCommands {
     NSMutableArray *keys = [NSMutableArray array];
     
-    int numberOfStates = (int)(strlen(ON_STATES)+strlen(OFF_STATES));
+    int numberOfStates = (int)(strlen(_onStates)+strlen(_offStates));
     char states[numberOfStates+1]; //+1 for crash on release
-    strcpy(states,ON_STATES);
-    strcat(states,OFF_STATES);
+    strcpy(states,_onStates);
+    strcat(states,_offStates);
     
     for (int i=0; i<numberOfStates; i++) {
         UIKeyCommand *keyCommand = [UIKeyCommand keyCommandWithInput: [NSString stringWithFormat:@"%c" , states[i]] modifierFlags: 0 action: @selector(keyPressed:)];
@@ -133,19 +163,19 @@ static const char *OFF_STATES = "eczqtrfnmpgv"; //ecyqtrfnmpgv for German keyboa
 
 - (void)keyPressed:(UIKeyCommand *)keyCommand {
     char ch = [keyCommand.input characterAtIndex:0];
-    char *p = strchr(ON_STATES, ch);
+    char *p = strchr(_onStates, ch);
     bool stateChanged = false;
     if (p) {
-        long index = p-ON_STATES;
+        long index = p-_onStates;
         _iCadeState |= (1 << index);
         stateChanged = true;
         if (_delegateFlags.buttonDown) {
             [_delegate buttonDown:(1 << index)];
         }
     } else {
-        p = strchr(OFF_STATES, ch);
+        p = strchr(_offStates, ch);
         if (p) {
-            long index = p-OFF_STATES;
+            long index = p-_offStates;
             _iCadeState &= ~(1 << index);
             stateChanged = true;
             if (_delegateFlags.buttonUp) {
