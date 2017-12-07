@@ -67,7 +67,7 @@ const NSUInteger A2600EmulatorValues[] = {
 
 @end
 
-__weak PVStellaGameCore *_current;
+static __weak PVStellaGameCore *_current;
 
 @implementation PVStellaGameCore
 
