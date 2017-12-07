@@ -1,0 +1,423 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Cartridge</h1>
+    <h2>Overview</h2>
+    <p>The Pokemon Mini cartridge has a 21 bit addressing bus, which up 
+      until recently has gone completely unused.  Since the PM has a 
+      relatively wide address space, it can provide up to a 2MB worth of data 
+      without additional hardware.  One of the more bizzare design choices by 
+      Nintendo is that the cartridge address space starts relative to the 
+      beginning of the Pokemon Mini's memory space, which is then overwritten 
+      by <a href="PM_IRQBios.html">BIOS</a>, <a href="PM_RAM.html" title="PM RAM">RAM</a> and <a href="PM_Registers.html" title="PM Registers">Internal Register</a>, making $2100 bytes of ROM space inaccessible except through mirrors. </p>
+    <p>After the overloaded memory space, the Pokemon Mini has $D0 byte 
+      header standard.  The vast majority of this space is reserved for IRQ 
+      jump locations.  Much of the remaining space is plain asciiz info about 
+      the game, with a couple of BIOS checked watermarks to verify a ROM is a 
+      PM image. </p>
+    <p>Following the header is completely user mapped data.  It is 
+      typical for the reset IRQ location to simply jump to $21D0.  The IRQ 
+      locations  are 6 bytes in size to accommodate for a U load (3 bytes) and
+      a long jump (3 bytes) </p>
+    <h2>Cartridge Header</h2>
+    <table border="1">
+      <tbody>
+        <tr>
+          <th> Location </th>
+          <th> Size </th>
+          <th> Required </th>
+          <th> Description </th>
+        </tr>
+        <tr>
+          <td> $2100 </td>
+          <td> 2 </td>
+          <td> No </td>
+          <td>&quot;PM&quot; marker </td>
+        </tr>
+        <tr>
+          <td> $2102 </td>
+          <td> 6 </td>
+          <td> Yes </td>
+          <td> Reset Location </td>
+        </tr>
+        <tr>
+          <td> $2108 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> PRC Frame Copy IRQ </td>
+        </tr>
+        <tr>
+          <td> $210e </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> PRC Render IRQ </td>
+        </tr>
+        <tr>
+          <td> $2114 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 2 Underflow (upper) IRQ </td>
+        </tr>
+        <tr>
+          <td> $211a </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 2 Underflow (lower) IRQ </td>
+        </tr>
+        <tr>
+          <td> $2120 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 1 Underflow (upper) IRQ </td>
+        </tr>
+        <tr>
+          <td> $2126 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 1 Underflow (lower) IRQ </td>
+        </tr>
+        <tr>
+          <td> $212c </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 3 Underflow (upper) IRQ </td>
+        </tr>
+        <tr>
+          <td> $2132 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Timer 3 Comparator IRQ </td>
+        </tr>
+        <tr>
+          <td> $2138 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> 32hz Timer (256hz linked) IRQ </td>
+        </tr>
+        <tr>
+          <td> $213e </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> 8hz Timer (256hz linked) IRQ </td>
+        </tr>
+        <tr>
+          <td> $2144 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> 2hz Timer (256hz linked) IRQ </td>
+        </tr>
+        <tr>
+          <td> $214a </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> 1hz Timer (256hz linked) IRQ </td>
+        </tr>
+        <tr>
+          <td> $2150 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> IR Receiver IRQ </td>
+        </tr>
+        <tr>
+          <td> $2156 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Shake Sensor IRQ </td>
+        </tr>
+        <tr>
+          <td> $215c </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Power Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $2162 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Right Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $2168 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Left Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $216e </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Down Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $2174 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Up Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $217a </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> C Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $2180 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> B Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $2186 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> A Key IRQ </td>
+        </tr>
+        <tr>
+          <td> $218c </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td> $2192 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td> $2198 </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td> $219e </td>
+          <td> 6 </td>
+          <td> * </td>
+          <td> Cartridge IRQ </td>
+        </tr>
+        <tr>
+          <td> $21A4 </td>
+          <td> 8 </td>
+          <td> Yes </td>
+          <td>&quot;NINTENDO&quot; in plain text </td>
+        </tr>
+        <tr>
+          <td> $21AC </td>
+          <td> 4 </td>
+          <td> No </td>
+          <td> Game Code </td>
+        </tr>
+        <tr>
+          <td> $21B0 </td>
+          <td> 12 </td>
+          <td> No </td>
+          <td> Game Title (Zero Padded) </td>
+        </tr>
+        <tr>
+          <td> $21BC </td>
+          <td> 2 </td>
+          <td> No </td>
+          <td>&quot;2P&quot; (Unknown purpose) </td>
+        </tr>
+        <tr>
+          <td> $21BE </td>
+          <td> 18 </td>
+          <td> No </td>
+          <td> Reserved (Zero) </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>* = This is only required if the IRQ is ever enabled. </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Cartridge">http://wiki.sublab.net/index.php/PM_Cartridge</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

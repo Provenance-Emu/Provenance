@@ -126,6 +126,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3D73CF11E9EAF1C0023925B"
+               BuildableName = "PVAtari800.framework"
+               BlueprintName = "PVAtari800 tvOS"
+               ReferencedContainer = "container:PVAtari800/PVAtari800.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
                BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Pierre-Olivier Latour
+ Copyright (c) 2012-2015, Pierre-Olivier Latour
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@
 
 @implementation GCDWebServerURLEncodedFormRequest
 
-@synthesize arguments=_arguments;
+@synthesize arguments = _arguments;
 
 + (NSString*)mimeType {
   return @"application/x-www-form-urlencoded";
@@ -49,12 +49,12 @@
   if (![super close:error]) {
     return NO;
   }
-  
+
   NSString* charset = GCDWebServerExtractHeaderValueParameter(self.contentType, @"charset");
   NSString* string = [[NSString alloc] initWithData:self.data encoding:GCDWebServerStringEncodingFromCharset(charset)];
   _arguments = GCDWebServerParseURLEncodedForm(string);
   GWS_DCHECK(_arguments);
-  
+
   return YES;
 }
 

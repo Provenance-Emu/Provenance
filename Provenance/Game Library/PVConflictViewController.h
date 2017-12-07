@@ -12,6 +12,6 @@
 
 @interface PVConflictViewController : UITableViewController
 
-- (instancetype)initWithGameImporter:(PVGameImporter *)gameImporter;
+- (instancetype __nonnull)initWithGameImporter:(PVGameImporter * __nonnull)gameImporter;
 
 @end

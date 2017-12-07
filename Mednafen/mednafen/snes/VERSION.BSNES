@@ -1,0 +1,5 @@
+bsnes v0.059 + Cx4 Op10 fix patch + blargg_libco_ppc64-5 + a few minor timing/scheduler related changes for Mednafen + LOTS OF OTHER CRAZY STUFF
+
+for ALT Linux:
+strlcat->nall_strlcat
+strlcpy->nall_strlcpy

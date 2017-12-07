@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<projectConfig name="Pokémon Mini" helpfile="pokemini_doc.chm" id="{a3dd1292-c878-4a37-89a4-b99c4757c598}" icon="pm_proj.ico" ns="urn:pm_proj">
+	<set type="project">
+		<group name="pm" description="Project options">
+			<category name="general" description="Project options">
+				<text name="mainsrc" description="Main source" default="test.asm" helpid="1024" />
+				<text name="outmin" description="Output filename" default="test.min" helpid="1025" />
+				<text name="outsym" description="Output symbols" default="test.sym" helpid="1026" />
+			</category>
+		</group>
+	</set>
+	<set type="file">
+		<group name="pm" description="Single file options">
+			<category name="general" description="Single file options">
+				<text name="outsym" description="Output symbols" default="" helpid="1027" />
+			</category>
+		</group>
+	</set>
+</projectConfig>

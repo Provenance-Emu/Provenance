@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2012-2014, Pierre-Olivier Latour
+ Copyright (c) 2012-2015, Pierre-Olivier Latour
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -48,19 +48,20 @@
 }
 
 - (instancetype)initWithContentType:(NSString*)type streamBlock:(GCDWebServerStreamBlock)block {
-  return [self initWithContentType:type asyncStreamBlock:^(GCDWebServerBodyReaderCompletionBlock completionBlock) {
-    
-    NSError* error = nil;
-    NSData* data = block(&error);
-    completionBlock(data, error);
-    
-  }];
+  return [self initWithContentType:type
+                  asyncStreamBlock:^(GCDWebServerBodyReaderCompletionBlock completionBlock) {
+
+                    NSError* error = nil;
+                    NSData* data = block(&error);
+                    completionBlock(data, error);
+
+                  }];
 }
 
 - (instancetype)initWithContentType:(NSString*)type asyncStreamBlock:(GCDWebServerAsyncStreamBlock)block {
   if ((self = [super init])) {
     _block = [block copy];
-    
+
     self.contentType = type;
   }
   return self;

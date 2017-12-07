@@ -137,18 +137,32 @@
 			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - controlSize.height - bottomPadding);
 			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, controlSize.width, controlSize.height);
 			
-			if (!self.dPad)
+#if 1                 // Wonderswan dual D-Pad hack.
+            if (!self.dPad2 && [[control objectForKey:PVControlTitleKey] isEqualToString:@"Y"])
+            {
+                dPadFrame.origin.y = dPadOriginY - size.height - bottomPadding;
+                self.dPad2 = [[JSDPad alloc] initWithFrame:dPadFrame];
+                [self.dPad2 setDelegate:self];
+                [self.dPad2 setAlpha:alpha];
+                [self.dPad2 setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
+                [self.view addSubview:self.dPad2];
+            }
+            else
+#endif
+            if (!self.dPad)
 			{
 				self.dPad = [[JSDPad alloc] initWithFrame:dPadFrame];
 				[self.dPad setDelegate:self];
 				[self.dPad setAlpha:alpha];
 				[self.dPad setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin];
 				[self.view addSubview:self.dPad];
-			}
+            }
 			else
 			{
 				[self.dPad setFrame:dPadFrame];
 			}
+            
+            self.dPad2.hidden = compactVertical;
 		}
 		else if ([controlType isEqualToString:PVButtonGroup])
 		{
@@ -293,6 +307,7 @@
     else
     {
         [self.dPad setHidden:NO];
+        [self.dPad2 setHidden:self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact];
         [self.buttonGroup setHidden:NO];
         [self.leftShoulderButton setHidden:NO];
         [self.rightShoulderButton setHidden:NO];
@@ -311,6 +326,7 @@
     else
     {
         [self.dPad setHidden:NO];
+        [self.dPad2 setHidden:self.traitCollection.verticalSizeClass == UIUserInterfaceSizeClassCompact];
         [self.buttonGroup setHidden:NO];
         [self.leftShoulderButton setHidden:NO];
         [self.rightShoulderButton setHidden:NO];

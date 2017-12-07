@@ -137,6 +137,8 @@
 	[realm commitWriteTransaction];
 }
 
+typedef NSDictionary<NSString*,NSString*> BiosDictionary;
+
 - (BOOL)canLoadGame:(PVGame *)game
 {
 	BOOL canLoad = YES;
@@ -145,7 +147,7 @@
 	BOOL requiresBIOS = [system[PVRequiresBIOSKey] boolValue];
 	if (requiresBIOS)
 	{
-		NSArray *biosNames = system[PVBIOSNamesKey];
+		NSArray<BiosDictionary*> *biosEntries = system[PVBIOSNamesKey];
 		NSString *biosPath = [self BIOSPathForSystemID:[game systemIdentifier]];
 		NSError *error = nil;
 		NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:biosPath error:&error];
@@ -155,8 +157,9 @@
 			canLoad = NO;
 		}
 
-		for (NSString *name in biosNames)
+		for (BiosDictionary *bios in biosEntries)
 		{
+            NSString*name = bios[@"Name"];
 			if (![contents containsObject:name])
 			{
 				canLoad = NO;
@@ -167,10 +170,11 @@
 		if (canLoad == NO)
 		{
 			NSMutableString *biosString = [NSMutableString string];
-			for (NSString *name in biosNames)
+            for (BiosDictionary *bios in biosEntries)
 			{
+                NSString *name = bios[@"Name"];
 				[biosString appendString:[NSString stringWithFormat:@"%@", name]];
-				if ([biosNames lastObject] != name)
+				if ([biosEntries lastObject] != bios)
 				{
 					[biosString appendString:@",\n"];
 				}

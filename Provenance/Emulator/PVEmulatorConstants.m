@@ -45,4 +45,17 @@ NSString * const PVSG1000SystemIdentifier       = @"com.provenance.sg1000";
 NSString * const PV2600SystemIdentifier         = @"com.provenance.2600";
 NSString * const PV7800SystemIdentifier         = @"com.provenance.7800";
 NSString * const PV32XSystemIdentifier 			= @"com.provenance.32X";
+NSString * const PV5200SystemIdentifier         = @"com.provenance.5200";
+NSString * const PVPokemonMiniSystemIdentifier  = @"com.provenance.pokemonmini";
 
+NSString * const PVPSXSystemIdentifier 			= @"com.provenance.psx";
+NSString * const PVLynxSystemIdentifier 		= @"com.provenance.lynx";
+NSString * const PVPCESystemIdentifier 			= @"com.provenance.pce";
+NSString * const PVNGPSystemIdentifier 			= @"com.provenance.ngp";
+NSString * const PVNGPCSystemIdentifier 		= @"com.provenance.ngpc";
+NSString * const PVSGFXSystemIdentifier 		= @"com.provenance.sgfx";
+NSString * const PVPCECDSystemIdentifier 		= @"com.provenance.pcecd";
+NSString * const PVPCFXSystemIdentifier 		= @"com.provenance.pcfx";
+NSString * const PVVirtualBoySystemIdentifier   = @"com.provenance.vb";
+NSString * const PVWonderSwanSystemIdentifier 	= @"com.provenance.ws";
+NSString * const PVWonderSwanColorSystemIdentifier 	= @"com.provenance.wsc";

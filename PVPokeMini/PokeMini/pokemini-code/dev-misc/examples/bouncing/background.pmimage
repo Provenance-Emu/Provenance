@@ -1,0 +1,7 @@
+format=raw
+gfx=map
+
+img=background.bmp
+out=background.bin
+outgray=backgroundG.bin
+outmap=background.map

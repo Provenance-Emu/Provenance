@@ -1,0 +1,497 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1> Information </h1>
+    <p> To include real BIOS, place &quot;bios.min&quot; on the emulator's directory.<br />
+When no &quot;bios.min&quot; is present, emulator will use Pokemon-Mini FreeBIOS.</p>
+    <h2>Supported multicarts</h2>
+    <p> <strong>Type 0 - Disabled (Commercial, Prototype)</strong><br />
+    Read only</p>
+    <p> <strong>Type 1 - Normal 512KB Flash (AM29LV040B)</strong><br />
+    Read, Erase, Write, Banking and Manufacturer ID</p>
+    <p> <strong>Type 2 - Lupin's 512KB Flash (AM29LV040B)</strong><br />
+      Read, Erase, Write, Banking and Manufacturer ID    </p>
+    <h2>Keys</h2>
+    <h3>Debugger, SDL &amp; Win32 Platforms</h3>
+    <p>Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">PC Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>Arrow Left</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>Arrow Right</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>Arrow Up</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>Arrow Down</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Keyboard X</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Keyboard Z</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Keyboard S or C</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Keyboard E</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Keyboard A</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Keyboard Esc</td>
+      </tr>
+    </table>
+    <p><strong>F9</strong> will capture the screen and save as &quot;snap_(sequence number).bmp&quot;</p>
+    <p> <strong>F10</strong> can toggle between Fullscreen and Windowed.</p>
+    <p> <strong>F11</strong> will disable/enable speed throttle</p>
+    <p> <strong>TAB</strong> can be hold to temporary disable speed throttle</p>
+    <h3>NDS - Nintendo DS </h3>
+    <p>Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">NDS Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>D-PAD Left</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>D-PAD Right</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>D-PAD Up</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>D-PAD Down</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Key A</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Key B</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Shoulder R</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Start</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Shoulder L</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Select</td>
+      </tr>
+    </table>
+    <h3>PSP - PlayStation Portable</h3>
+    <p> Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">PSP Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>D-PAD Left</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>D-PAD Right</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>D-PAD Up</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>D-PAD Down</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Circle</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Cross</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Shoulder R</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Start</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Shoulder L</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Select</td>
+      </tr>
+    </table>
+    <h3> WIZ - GP2x Wiz</h3>
+    <p> Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">Wiz Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>D-PAD Left</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>D-PAD Right</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>D-PAD Up</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>D-PAD Down</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Key B</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Key X</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Shoulder R</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Select</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Shoulder L</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Menu</td>
+      </tr>
+    </table>
+    <h3>DC - Dreamcast</h3>
+    <p> Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">DC Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>D-PAD Left or Joystick</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>D-PAD Right or Joystick</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>D-PAD Up or Joystick</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>D-PAD Down or Joystick</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Key B</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Key A</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Shoulder R</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Start</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Shoulder L</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Key X</td>
+      </tr>
+    </table>
+    <h3>Dingux - Dingoo in Linux</h3>
+    <p> Default Keys:</p>
+    <table border="1">
+      <tr>
+        <th scope="col">Pokémon-Mini</th>
+        <th scope="col">Dingoo Keys</th>
+      </tr>
+      <tr>
+        <td>D-PAD Left</td>
+        <td>D-PAD Left</td>
+      </tr>
+      <tr>
+        <td>D-PAD Right</td>
+        <td>D-PAD Right</td>
+      </tr>
+      <tr>
+        <td>D-PAD Up</td>
+        <td>D-PAD Up</td>
+      </tr>
+      <tr>
+        <td>D-PAD Down</td>
+        <td>D-PAD Down</td>
+      </tr>
+      <tr>
+        <td>Key A</td>
+        <td>Key A</td>
+      </tr>
+      <tr>
+        <td>Key B</td>
+        <td>Key B</td>
+      </tr>
+      <tr>
+        <td>Key C</td>
+        <td>Shoulder R</td>
+      </tr>
+      <tr>
+        <td>Power Button</td>
+        <td>Start</td>
+      </tr>
+      <tr>
+        <td>Shock Detector</td>
+        <td>Shoulder L</td>
+      </tr>
+      <tr>
+        <td>UI Menu</td>
+        <td>Select</td>
+      </tr>
+    </table>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,1542 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+//window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h2>MOV = Move Register (8-Bits)</h2>
+    <table>
+      <tbody>
+        <tr>
+          <td><table id="sortable_table_id_0" style="text-align: left;" class="sortable" border="1">
+              <tbody>
+                <tr>
+                  <th>Hex</th>
+                  <th>Mnemonic</th>
+                  <th>Cycles</th>
+                </tr>
+                <tr>
+                  <td>40 </td>
+                  <td>MOV A, A </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>41 </td>
+                  <td>MOV A, B </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>42 </td>
+                  <td>MOV A, L </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>43 </td>
+                  <td>MOV A, H </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>44 nn </td>
+                  <td>MOV A, [N+#nn] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>45 </td>
+                  <td>MOV A, [HL] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>46 </td>
+                  <td>MOV A, [X] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>47 </td>
+                  <td>MOV A, [Y] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>48 </td>
+                  <td>MOV B, A </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>49 </td>
+                  <td>MOV B, B </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>4A </td>
+                  <td>MOV B, L </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>4B </td>
+                  <td>MOV B, H </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>4C nn </td>
+                  <td>MOV B, [N+#nn] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>4D </td>
+                  <td>MOV B, [HL] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>4E </td>
+                  <td>MOV B, [X] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>4F </td>
+                  <td>MOV B, [Y] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>50 </td>
+                  <td>MOV L, A </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>51 </td>
+                  <td>MOV L, B </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>52 </td>
+                  <td>MOV L, L </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>53 </td>
+                  <td>MOV L, H </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>54 nn </td>
+                  <td>MOV L, [N+#nn] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>55 </td>
+                  <td>MOV L, [HL] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>56 </td>
+                  <td>MOV L, [X] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>57 </td>
+                  <td>MOV L, [Y] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>58 </td>
+                  <td>MOV H, A </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>59 </td>
+                  <td>MOV H, B </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>5A </td>
+                  <td>MOV H, L </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>5B </td>
+                  <td>MOV H, H </td>
+                  <td>4 </td>
+                </tr>
+                <tr>
+                  <td>5C nn </td>
+                  <td>MOV H, [N+#nn] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>5D </td>
+                  <td>MOV H, [HL] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>5E </td>
+                  <td>MOV H, [X] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>5F </td>
+                  <td>MOV H, [Y] </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>60 </td>
+                  <td>MOV [X], A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>61 </td>
+                  <td>MOV [X], B </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>62 </td>
+                  <td>MOV [X], L </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>63 </td>
+                  <td>MOV [X], H </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>64 nn </td>
+                  <td>MOV [X], [N+#nn] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>65 </td>
+                  <td>MOV [X], [HL] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>66 </td>
+                  <td>MOV [X], [X] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>67 </td>
+                  <td>MOV [X], [Y] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>68 </td>
+                  <td>MOV [HL], A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>69 </td>
+                  <td>MOV [HL], B </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>6A </td>
+                  <td>MOV [HL], L </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>6B </td>
+                  <td>MOV [HL], H </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>6C nn </td>
+                  <td>MOV [HL], [N+#nn] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>6D </td>
+                  <td>MOV [HL], [HL] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>6E </td>
+                  <td>MOV [HL], [X] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>6F </td>
+                  <td>MOV [HL], [Y] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>70 </td>
+                  <td>MOV [Y], A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>71 </td>
+                  <td>MOV [Y], B </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>72 </td>
+                  <td>MOV [Y], L </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>73 </td>
+                  <td>MOV [Y], H </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>74 nn </td>
+                  <td>MOV [Y], [N+#nn] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>75 </td>
+                  <td>MOV [Y], [HL] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>76 </td>
+                  <td>MOV [Y], [X] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>77 </td>
+                  <td>MOV [Y], [Y] </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>78 nn </td>
+                  <td>MOV [N+#nn], A </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>79 nn </td>
+                  <td>MOV [N+#nn], B </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>7A nn </td>
+                  <td>MOV [N+#nn], L </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>7B nn </td>
+                  <td>MOV [N+#nn], H </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>7D nn </td>
+                  <td>MOV [N+#nn], [HL] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>7E nn </td>
+                  <td>MOV [N+#nn], [X] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>7F nn </td>
+                  <td>MOV [N+#nn], [Y] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>9F nn </td>
+                  <td>MOV F, #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>B0 nn </td>
+                  <td>MOV A, #nn </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>B1 nn </td>
+                  <td>MOV B, #nn </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>B2 nn </td>
+                  <td>MOV L, #nn </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>B3 nn </td>
+                  <td>MOV H, #nn </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>B4 nn </td>
+                  <td>MOV N, #nn </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>B5 nn </td>
+                  <td>MOV [HL], #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>B6 nn </td>
+                  <td>MOV [X], #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>B7 nn </td>
+                  <td>MOV [Y], #nn </td>
+                  <td>12 </td>
+                </tr>
+              </tbody>
+          </table></td>
+          <td><table id="sortable_table_id_1" style="text-align: left;" class="sortable" border="1">
+              <tbody>
+                <tr>
+                  <th>Hex</th>
+                  <th>Mnemonic</th>
+                  <th>Cycles</th>
+                </tr>
+                <tr>
+                  <td>DD nn nn </td>
+                  <td>MOV [N+#nn], #nn </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE C4 nn </td>
+                  <td>MOV U, #nn </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE C5 nn </td>
+                  <td>MOV I, #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CE C6 nn </td>
+                  <td>MOV XI, #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CE C7 nn </td>
+                  <td>MOV YI, #nn </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CE 40 ss </td>
+                  <td>MOV A, [X+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 41 ss </td>
+                  <td>MOV A, [Y+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 42 </td>
+                  <td>MOV A, [X+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 43 </td>
+                  <td>MOV A, [Y+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 48 ss </td>
+                  <td>MOV B, [X+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 49 ss </td>
+                  <td>MOV B, [Y+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4A </td>
+                  <td>MOV B, [X+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4B </td>
+                  <td>MOV B, [Y+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 50 ss </td>
+                  <td>MOV L, [X+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 51 ss </td>
+                  <td>MOV L, [Y+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 52 </td>
+                  <td>MOV L, [X+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 53 </td>
+                  <td>MOV L, [Y+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 58 ss </td>
+                  <td>MOV H, [X+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 59 ss </td>
+                  <td>MOV H, [Y+#ss] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5A </td>
+                  <td>MOV H, [X+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5B </td>
+                  <td>MOV H, [Y+L] </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 44 ss </td>
+                  <td>MOV [X+#ss], A </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 45 ss </td>
+                  <td>MOV [Y+#ss], A </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 46 </td>
+                  <td>MOV [X+L], A </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 47 </td>
+                  <td>MOV [Y+L], A </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4C ss </td>
+                  <td>MOV [X+#ss], B </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4D ss </td>
+                  <td>MOV [Y+#ss], B </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4E </td>
+                  <td>MOV [X+L], B </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 4F </td>
+                  <td>MOV [Y+L], B </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 54 ss </td>
+                  <td>MOV [X+#ss], L </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 55 ss </td>
+                  <td>MOV [Y+#ss], L </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 56 </td>
+                  <td>MOV [X+L], L </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 57 </td>
+                  <td>MOV [Y+L], L </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5C ss </td>
+                  <td>MOV [X+#ss], H </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5D ss </td>
+                  <td>MOV [Y+#ss], H </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5E </td>
+                  <td>MOV [X+L], H </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 5F </td>
+                  <td>MOV [Y+L], H </td>
+                  <td>16 </td>
+                </tr>
+                <tr>
+                  <td>CE 60 ss </td>
+                  <td>MOV [HL], [X+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 61 ss </td>
+                  <td>MOV [HL], [Y+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 62 </td>
+                  <td>MOV [HL], [X+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 63 </td>
+                  <td>MOV [HL], [Y+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 68 ss </td>
+                  <td>MOV [X], [X+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 69 ss </td>
+                  <td>MOV [X], [Y+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 6A </td>
+                  <td>MOV [X], [X+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 6B </td>
+                  <td>MOV [X], [Y+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 78 ss </td>
+                  <td>MOV [Y], [X+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 79 ss </td>
+                  <td>MOV [Y], [Y+#ss] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 7A </td>
+                  <td>MOV [Y], [X+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE 7B </td>
+                  <td>MOV [Y], [Y+L] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE C0 </td>
+                  <td>MOV A, N </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE C1 </td>
+                  <td>MOV A, F </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE C8 </td>
+                  <td>MOV A, V </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE C9 </td>
+                  <td>MOV A, I </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE CA </td>
+                  <td>MOV A, XI </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE CB </td>
+                  <td>MOV A, YI </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE C2 </td>
+                  <td>MOV N, A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE C3 </td>
+                  <td>MOV F, A </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CE CC </td>
+                  <td>MOV U, A </td>
+                  <td>12 </td>
+                </tr>
+                <tr>
+                  <td>CE CD </td>
+                  <td>MOV I, A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE CE </td>
+                  <td>MOV XI, A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE CF </td>
+                  <td>MOV YI, A </td>
+                  <td>8 </td>
+                </tr>
+                <tr>
+                  <td>CE D0 nn nn </td>
+                  <td>MOV A, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D1 nn nn </td>
+                  <td>MOV B, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D2 nn nn </td>
+                  <td>MOV L, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D3 nn nn </td>
+                  <td>MOV H, [#nnnn] </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D4 nn nn </td>
+                  <td>MOV [#nnnn], A </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D5 nn nn </td>
+                  <td>MOV [#nnnn], B </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D6 nn nn </td>
+                  <td>MOV [#nnnn], L </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>CE D7 nn nn </td>
+                  <td>MOV [#nnnn], H </td>
+                  <td>20 </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+              </tbody>
+          </table></td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+        <b>Source as the column, and Destination as the row:</b> </p>
+    <table style="text-align: left;" border="1" class="smallfnt">
+      <tbody>
+        <tr>
+          <th> </th>
+          <th>#nn </th>
+          <th>A </th>
+          <th>B </th>
+          <th>L </th>
+          <th>H </th>
+          <th>N </th>
+          <th>F </th>
+          <th>V </th>
+          <th>I </th>
+          <th>XI </th>
+          <th>YI </th>
+        </tr>
+        <tr>
+          <th>A </th>
+          <td>B0 nn </td>
+          <td>40 </td>
+          <td>41 </td>
+          <td>42 </td>
+          <td>43 </td>
+          <td>CE C0 </td>
+          <td>CE C1 </td>
+          <td>CE C8 </td>
+          <td>CE C9 </td>
+          <td>CE CA </td>
+          <td>CE CB </td>
+        </tr>
+        <tr>
+          <th>B </th>
+          <td>B1 nn </td>
+          <td>48 </td>
+          <td>49 </td>
+          <td>4A </td>
+          <td>4B </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>L </th>
+          <td>B2 nn </td>
+          <td>50 </td>
+          <td>51 </td>
+          <td>52 </td>
+          <td>53 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>H </th>
+          <td>B3 nn </td>
+          <td>58 </td>
+          <td>59 </td>
+          <td>5A </td>
+          <td>5B </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>N </th>
+          <td>B4 nn </td>
+          <td>CE C2 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>F </th>
+          <td>9F nn </td>
+          <td>CE C3 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>U </th>
+          <td>CE C4 nn </td>
+          <td>CE CC </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>I </th>
+          <td>CE C5 nn </td>
+          <td>CE CD </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>XI </th>
+          <td>CE C6 nn </td>
+          <td>CE CE </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>YI </th>
+          <td>CE C7 nn </td>
+          <td>CE CF </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[N+#nn] </th>
+          <td>DD nn nn </td>
+          <td>78 nn </td>
+          <td>79 nn </td>
+          <td>7A nn </td>
+          <td>7B nn </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[HL] </th>
+          <td>B5 nn </td>
+          <td>68 </td>
+          <td>69 </td>
+          <td>6A </td>
+          <td>6B </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X] </th>
+          <td>B6 nn </td>
+          <td>60 </td>
+          <td>61 </td>
+          <td>62 </td>
+          <td>63 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y] </th>
+          <td>B7 nn </td>
+          <td>70 </td>
+          <td>71 </td>
+          <td>72 </td>
+          <td>73 </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[#nnnn] </th>
+          <td></td>
+          <td>CE D4 nn nn </td>
+          <td>CE D5 nn nn </td>
+          <td>CE D6 nn nn </td>
+          <td>CE D7 nn nn </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X+#ss] </th>
+          <td></td>
+          <td>CE 44 ss </td>
+          <td>CE 4C ss </td>
+          <td>CE 54 ss </td>
+          <td>CE 5C ss </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y+#ss] </th>
+          <td></td>
+          <td>CE 45 ss </td>
+          <td>CE 4D ss </td>
+          <td>CE 55 ss </td>
+          <td>CE 5D ss </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X+L] </th>
+          <td></td>
+          <td>CE 46 </td>
+          <td>CE 4E </td>
+          <td>CE 56 </td>
+          <td>CE 5E ss </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y+L] </th>
+          <td></td>
+          <td>CE 47 </td>
+          <td>CE 4F </td>
+          <td>CE 57 </td>
+          <td>CE 5F ss </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th> </th>
+          <th>[N+#nn] </th>
+          <th>[HL] </th>
+          <th>[X] </th>
+          <th>[Y] </th>
+          <th>[#nnnn] </th>
+          <th>[X+#ss] </th>
+          <th>[Y+#ss] </th>
+          <th>[X+L] </th>
+          <th>[Y+L] </th>
+        </tr>
+        <tr>
+          <th>A </th>
+          <td>44 nn </td>
+          <td>45 </td>
+          <td>46 </td>
+          <td>47 </td>
+          <td>CE D0 nn nn </td>
+          <td>CE 40 ss </td>
+          <td>CE 41 ss </td>
+          <td>CE 42 </td>
+          <td>CE 43 </td>
+        </tr>
+        <tr>
+          <th>B </th>
+          <td>4C nn </td>
+          <td>4D </td>
+          <td>4E </td>
+          <td>4F </td>
+          <td>CE D1 nn nn </td>
+          <td>CE 48 ss </td>
+          <td>CE 49 ss </td>
+          <td>CE 4A </td>
+          <td>CE 4B </td>
+        </tr>
+        <tr>
+          <th>L </th>
+          <td>54 nn </td>
+          <td>55 </td>
+          <td>56 </td>
+          <td>57 </td>
+          <td>CE D2 nn nn </td>
+          <td>CE 50 ss </td>
+          <td>CE 51 ss </td>
+          <td>CE 52 </td>
+          <td>CE 53 </td>
+        </tr>
+        <tr>
+          <th>H </th>
+          <td>5C nn </td>
+          <td>5D </td>
+          <td>5E </td>
+          <td>5F </td>
+          <td>CE D3 nn nn </td>
+          <td>CE 58 ss </td>
+          <td>CE 59 ss </td>
+          <td>CE 5A </td>
+          <td>CE 5B </td>
+        </tr>
+        <tr>
+          <th>N </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>F </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>U </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>I </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>XI </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>YI </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[N+#nn] </th>
+          <td></td>
+          <td>7D nn </td>
+          <td>7E nn </td>
+          <td>7F nn </td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[HL] </th>
+          <td>6C nn </td>
+          <td>6D </td>
+          <td>6E </td>
+          <td>6F </td>
+          <td></td>
+          <td>CE 60 ss </td>
+          <td>CE 61 ss </td>
+          <td>CE 62 </td>
+          <td>CE 63 </td>
+        </tr>
+        <tr>
+          <th>[X] </th>
+          <td>64 nn </td>
+          <td>65 </td>
+          <td>66 </td>
+          <td>67 </td>
+          <td></td>
+          <td>CE 68 ss </td>
+          <td>CE 69 ss </td>
+          <td>CE 6A </td>
+          <td>CE 6B </td>
+        </tr>
+        <tr>
+          <th>[Y] </th>
+          <td>74 nn </td>
+          <td>75 </td>
+          <td>76 </td>
+          <td>77 </td>
+          <td></td>
+          <td>CE 78 ss </td>
+          <td>CE 79 ss </td>
+          <td>CE 7A </td>
+          <td>CE 7B </td>
+        </tr>
+        <tr>
+          <th>[#nnnn] </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X+#ss] </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y+#ss] </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[X+L] </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>[Y+L] </th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><span class="mw-headline" id="Execute">Execute </span></h3>
+    <pre>#nn     = Immediate unsigned 8-Bits
+#ss     = Immediate signed 8-Bits
+A       = Register A
+B       = Register B
+L       = Register L
+H       = Register H
+N       = Register N
+F       = Register F
+U/V     = Register U or V
+I       = Register I
+XI      = Register XI
+YI      = Register YI
+[N+#nn] = Memory: (I shl 16) or (N shl 8) or #nn
+[HL]    = Memory: (I shl 16) or HL
+[X]     = Memory: (XI shl 16) or X
+[Y]     = Memory: (YI shl 16) or Y
+[#nnnn] = Memory: #nnnn
+[X+#ss] = Memory: (XI shl 16) or (X + #ss)
+[Y+#ss] = Memory: (YI shl 16) or (Y + #ss)
+[X+L]   = Memory: (XI shl 16) or (X + signed(L))
+[Y+L]   = Memory: (YI shl 16) or (Y + signed(L))
+    </pre>
+    <pre>; MOV Ds, Sc
+;
+; Ds = Destination
+; Sc = Source
+
+Ds = Sc
+    </pre>
+    <h3><span class="mw-headline" id="Description">Description </span></h3>
+    <p>8-Bits Source gets copied to the 8-Bits Destination. </p>
+    <h3><span class="mw-headline" id="Conditions">Conditions </span></h3>
+    <p>None </p>
+    <h3><span class="mw-headline" id="Examples">Examples </span></h3>
+    <pre>; A = 0x55
+<b>MOV A, $80</b>
+; A = 0x80
+    </pre>
+    <pre>; A = 0x12
+; B = 0xCF
+<b>MOV B, A</b>
+; A = 0x12
+; B = 0x12
+    </pre>
+    <pre>; [HL] = 0xDE
+; A = 0xCF
+<b>MOV A, [HL]</b>
+; [HL] = 0xDE
+; A = 0xDE
+    </pre>
+    <p><a href="PM_InstructionList.html" title="PM InstructionList"><b>« Back to Instruction set</b></a> </p>
+    <!-- 
+NewPP limit report
+Preprocessor node count: 18/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+    <!-- Saved in parser cache with key wikidb:pcache:idhash:23-0!1!0!!en!2 and timestamp 20110606165756 -->
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Opc_MOV8">http://wiki.sublab.net/index.php/PM_Opc_MOV8</a>&quot;</div>
+    <div id="catlinks" class="catlinks catlinks-allhidden"></div>
+    <!-- end content -->
+    <div class="visualClear"></div>
+    <p>&nbsp;</p>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

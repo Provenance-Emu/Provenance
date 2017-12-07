@@ -1,0 +1,2 @@
+Remember to use: __attribute__((force_align_arg_pointer));
+on callback functions from the SDL and Win32 APIs!

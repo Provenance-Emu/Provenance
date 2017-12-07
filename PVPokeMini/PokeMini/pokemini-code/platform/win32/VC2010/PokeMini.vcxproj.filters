@@ -1,0 +1,340 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Source">
+      <UniqueIdentifier>{571bc8f9-b349-4534-9eb4-e141c5e8c3bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Zip">
+      <UniqueIdentifier>{8e0a3a2f-3589-4830-acb3-c987e839d5c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Misc">
+      <UniqueIdentifier>{6c15f83e-2182-462b-8905-eec550aa87bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Source">
+      <UniqueIdentifier>{a2d75a63-a488-4d0c-bf3a-890349020d6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Misc">
+      <UniqueIdentifier>{79869ec3-1e73-45d3-b2f3-4ddc24e1562e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Zip">
+      <UniqueIdentifier>{59393cca-9d79-4f3a-b116-ad2f2ed71397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AudioRend.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AudioRend_DSound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CustomBright.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CustomContrast.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CustomPalEdit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DefineInput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Joystick_DInput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\KeybWinMap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PokeMini_Win32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VideoRend.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VideoRend_D3D.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VideoRend_DDraw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\VideoRend_GDI.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Win32Stuffz.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CommandLine.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sourcex\ExportBMP.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sourcex\ExportWAV.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Hardware.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Joystick.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Keyboard.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxAudio.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxColorPRC.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxCPU.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxCPU_CE.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxCPU_CF.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxCPU_SP.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxCPU_XX.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxIO.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxIRQ.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxLCD.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxPRC.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MinxTimers.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Multicart.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\PMCommon.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\PokeMini.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x1.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x2.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x3.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x4.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x5.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Video_x6.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\adler32.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\crc32.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\inffast.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\inflate.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\inftrees.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\minizip\ioapi.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\minizip\unzip.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\dependencies\zlib\zutil.c">
+      <Filter>Source Files\Zip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\freebios\freebios.c">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\resource\PokeMini_ColorPal.c">
+      <Filter>Source Files\Misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sourcex\NoUI.c">
+      <Filter>Source Files\Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AudioRend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CustomBright.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CustomContrast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CustomPalEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DefineInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Joystick_DInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PokeMini_Win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\VideoRend.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Win32Stuffz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\CommandLine.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sourcex\ExportBMP.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\sourcex\ExportWAV.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Hardware.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\IOMap.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Joystick.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Keyboard.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxAudio.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxColorPRC.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxCPU.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxIO.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxIRQ.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxLCD.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxPRC.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\MinxTimers.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Multicart.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\PMCommon.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\PokeMini.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\PokeMini_Version.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\UI.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x1.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x2.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x3.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x4.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x5.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Video_x6.h">
+      <Filter>Header Files\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\freebios\freebios.h">
+      <Filter>Header Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\resource\PokeMini_ColorPal.h">
+      <Filter>Header Files\Misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\dependencies\minizip\unzip.h">
+      <Filter>Header Files\Zip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\dependencies\zlib\zlib.h">
+      <Filter>Header Files\Zip</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PokeMini_Win32.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="winxp.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icon_PkBl_48.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Icon_Min1_48.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Icon_Min2_48.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

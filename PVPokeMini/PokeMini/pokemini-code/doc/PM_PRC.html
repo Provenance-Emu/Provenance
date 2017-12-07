@@ -1,0 +1,756 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>PRC (Program Rendering Chip)</h1>
+    <h2>Overview</h2>
+    <p>Since the Pokemon Mini does not drive a conventional display, it does
+      not operate like typical display driver.  The PRC was created as a 
+      method for driving a serial LCD display.  It's entire purpose is to blit images from various locations in memory to an internal frame buffer, and then force it out to GDRAM in on the <a href="LCD_Controller.html" title="LCD Controller">LCD Controller</a>.  This is all done transparently. </p>
+    <p>The PRC operates by monitoring a display counter that can be accessed by reading <a href="PM_Registers.html" title="PM Registers">PRC_CNT (Reg $8A)</a>, which overflows 65 times a frame (each frame is approx. 72 Hz), and a PRC rate divider <a href="PM_Registers.html" title="PM Registers">PRC_RATE (Reg $81)</a> that will trigger the PRC rendering process. When the counter reaches 
+      specific values between the matching rate divider, the PRC triggers 
+      various components. It can operates in 2 modes, &quot;Rendering + Frame Copy&quot;
+      and &quot;Frame Copy Only&quot;. </p>
+    <p>During these various stages, the CPU is halted, and yields the 
+      bus to the PRC.  Depending on the enabled stages, the PRC will read 
+      various locations from memory (cartridge and ram) and build a frame 
+      buffer to $1000 ~ $12FF.  Depending on the PRC rate divider and the 
+      enabled modes, developers lose varying amounts of processor time. </p>
+    <p><s>Since all three display stages can be enabled or disabled 
+      independently, users can perform a number of tricks such as multiplexing
+      sprites (by disabling frame copy on even frames, and map copy on odd 
+      frames, changing the sprites each time), running in a pure 
+      frame-buffered mode, or simply use the LCD controller manually by 
+      disabling the VPU all together.</s> - It seems disabling Frame Copy bit cause rendering to be disabled too. </p>
+    <p>The PRC shares ram with the CPU, so the more modes that are enabled, the less ram is usable by the developer (see <a href="PM_RAM.html" title="PM RAM">PM RAM Layout</a>). </p>
+    <p>Two IRQs are associated with the PRC, one associated with the Map
+      and Sprite stage, and one with the Frame Copy stage.  After Frame Copy 
+      is finished, a &quot;PRC Render Done&quot; IRQ fires.  This event latches even if 
+      the PRC has both the map and sprite renderer disabled, so this should be
+      taken into account.  After the frame is copied to the LCD, the &quot;PRC 
+      Frame Copy&quot; IRQ fires.  It is not yet known if this fires if the frame 
+      copy is disabled. </p>
+    <p>It is not uncommon for commercial games to disable the render 
+      done IRQ, and simply probe the strobe manually.  Shock tetris uses this 
+      to double the number of on screen sprites. </p>
+    <h2><a name="Map_Rendering_Stage" id="Map_Rendering_Stage"></a>Map Rendering Stage</h2>
+    <p>Stage 1 of the PRC is a map renderer.  This stage can render a 
+      variable size 8x8 tile based map to the frame buffer (located at $1000).
+      This mode operates by using a 24bit address <a href="PM_Registers.html" title="PM Registers">PRC_MAP_* (Reg $82 to $84)</a> as the base for the tile set, and a tile map located at $1360.  This stage is enabled by using bit 2 of <a href="PM_Registers.html" title="PM Registers">PRC_MODE (Reg $80)</a>. </p>
+    <table border="1">
+      <caption>
+      <b>Map Modes</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Mode </th>
+          <th> Size </th>
+        </tr>
+        <tr>
+          <td> 0 </td>
+          <td> 12 x 16 </td>
+        </tr>
+        <tr>
+          <td> 1 </td>
+          <td> 16 x 12 </td>
+        </tr>
+        <tr>
+          <td> 2 </td>
+          <td> 24 x 8 </td>
+        </tr>
+        <tr>
+          <td> 3 </td>
+          <td> 24 x 16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+      Tile maps are arranged in left to right order, wrapping around to the next line. </p>
+    <p><br />
+    </p>
+    <table border="1" class="smallfnt">
+      <caption>
+      <b>Mapping of 12x16</b>
+      </caption>
+      <tbody>
+        <tr>
+          <td style="border: medium none;"></td>
+          <th> 0 </th>
+          <th> 1 </th>
+          <th> 2 </th>
+          <th> 3 </th>
+          <th> 4 </th>
+          <th> 5 </th>
+          <th> 6 </th>
+          <th> 7 </th>
+          <th> 8 </th>
+          <th> 9 </th>
+          <th> 10 </th>
+          <th> 11 </th>
+        </tr>
+        <tr>
+          <th> 0 </th>
+          <td> $1360 </td>
+          <td> $1361 </td>
+          <td> $1362 </td>
+          <td> $1363 </td>
+          <td> $1364 </td>
+          <td> $1365 </td>
+          <td> $1366 </td>
+          <td> $1367 </td>
+          <td> $1368 </td>
+          <td> $1369 </td>
+          <td> $136A </td>
+          <td> $136B </td>
+        </tr>
+        <tr>
+          <th> 1 </th>
+          <td> $136C </td>
+          <td> $136D </td>
+          <td> $136E </td>
+          <td> $136F </td>
+          <td> $1370 </td>
+          <td> $1371 </td>
+          <td> $1372 </td>
+          <td> $1373 </td>
+          <td> $1374 </td>
+          <td> $1375 </td>
+          <td> $1376 </td>
+          <td> $1377 </td>
+        </tr>
+        <tr>
+          <th> 2 </th>
+          <td> $1378 </td>
+          <td> $1379 </td>
+          <td> $137A </td>
+          <td> $137B </td>
+          <td> $137C </td>
+          <td> $137D </td>
+          <td> $137E </td>
+          <td> $137F </td>
+          <td> $1380 </td>
+          <td> $1381 </td>
+          <td> $1382 </td>
+          <td> $1383 </td>
+        </tr>
+        <tr>
+          <th> 3 </th>
+          <td> $1384 </td>
+          <td> $1385 </td>
+          <td> $1386 </td>
+          <td> $1387 </td>
+          <td> $1388 </td>
+          <td> $1389 </td>
+          <td> $138A </td>
+          <td> $138B </td>
+          <td> $138C </td>
+          <td> $138D </td>
+          <td> $138E </td>
+          <td> $138F </td>
+        </tr>
+        <tr>
+          <th> 4 </th>
+          <td> $1390 </td>
+          <td> $1391 </td>
+          <td> $1392 </td>
+          <td> $1393 </td>
+          <td> $1394 </td>
+          <td> $1395 </td>
+          <td> $1396 </td>
+          <td> $1397 </td>
+          <td> $1398 </td>
+          <td> $1399 </td>
+          <td> $139A </td>
+          <td> $139B </td>
+        </tr>
+        <tr>
+          <th> 5 </th>
+          <td> $139C </td>
+          <td> $139D </td>
+          <td> $139E </td>
+          <td> $139F </td>
+          <td> $13A0 </td>
+          <td> $13A1 </td>
+          <td> $13A2 </td>
+          <td> $13A3 </td>
+          <td> $13A4 </td>
+          <td> $13A5 </td>
+          <td> $13A6 </td>
+          <td> $13A7 </td>
+        </tr>
+        <tr>
+          <th> 6 </th>
+          <td> $13A8 </td>
+          <td> $13A9 </td>
+          <td> $13AA </td>
+          <td> $13AB </td>
+          <td> $13AC </td>
+          <td> $13AD </td>
+          <td> $13AE </td>
+          <td> $13AF </td>
+          <td> $13B0 </td>
+          <td> $13B1 </td>
+          <td> $13B2 </td>
+          <td> $13B3 </td>
+        </tr>
+        <tr>
+          <th> 7 </th>
+          <td> $13B4 </td>
+          <td> $13B5 </td>
+          <td> $13B6 </td>
+          <td> $13B7 </td>
+          <td> $13B8 </td>
+          <td> $13B9 </td>
+          <td> $13BA </td>
+          <td> $13BB </td>
+          <td> $13BC </td>
+          <td> $13BD </td>
+          <td> $13BE </td>
+          <td> $13BF </td>
+        </tr>
+        <tr>
+          <th> 8 </th>
+          <td> $13C0 </td>
+          <td> $13C1 </td>
+          <td> $13C2 </td>
+          <td> $13C3 </td>
+          <td> $13C4 </td>
+          <td> $13C5 </td>
+          <td> $13C6 </td>
+          <td> $13C7 </td>
+          <td> $13C8 </td>
+          <td> $13C9 </td>
+          <td> $13CA </td>
+          <td> $13CB </td>
+        </tr>
+        <tr>
+          <th> 9 </th>
+          <td> $13CC </td>
+          <td> $13CD </td>
+          <td> $13CE </td>
+          <td> $13CF </td>
+          <td> $13D0 </td>
+          <td> $13D1 </td>
+          <td> $13D2 </td>
+          <td> $13D3 </td>
+          <td> $13D4 </td>
+          <td> $13D5 </td>
+          <td> $13D6 </td>
+          <td> $13D7 </td>
+        </tr>
+        <tr>
+          <th> 10 </th>
+          <td> $13D8 </td>
+          <td> $13D9 </td>
+          <td> $13DA </td>
+          <td> $13DB </td>
+          <td> $13DC </td>
+          <td> $13DD </td>
+          <td> $13DE </td>
+          <td> $13DF </td>
+          <td> $13E0 </td>
+          <td> $13E1 </td>
+          <td> $13E2 </td>
+          <td> $13E3 </td>
+        </tr>
+        <tr>
+          <th> 11 </th>
+          <td> $13E4 </td>
+          <td> $13E5 </td>
+          <td> $13E6 </td>
+          <td> $13E7 </td>
+          <td> $13E8 </td>
+          <td> $13E9 </td>
+          <td> $13EA </td>
+          <td> $13EB </td>
+          <td> $13EC </td>
+          <td> $13ED </td>
+          <td> $13EE </td>
+          <td> $13EF </td>
+        </tr>
+        <tr>
+          <th> 12 </th>
+          <td> $13F0 </td>
+          <td> $13F1 </td>
+          <td> $13F2 </td>
+          <td> $13F3 </td>
+          <td> $13F4 </td>
+          <td> $13F5 </td>
+          <td> $13F6 </td>
+          <td> $13F7 </td>
+          <td> $13F8 </td>
+          <td> $13F9 </td>
+          <td> $13FA </td>
+          <td> $13FB </td>
+        </tr>
+        <tr>
+          <th> 13 </th>
+          <td> $13FC </td>
+          <td> $13FD </td>
+          <td> $13FE </td>
+          <td> $13FF </td>
+          <td> $1400 </td>
+          <td> $1401 </td>
+          <td> $1402 </td>
+          <td> $1403 </td>
+          <td> $1404 </td>
+          <td> $1405 </td>
+          <td> $1406 </td>
+          <td> $1407 </td>
+        </tr>
+        <tr>
+          <th> 14 </th>
+          <td> $1408 </td>
+          <td> $1409 </td>
+          <td> $140A </td>
+          <td> $140B </td>
+          <td> $140C </td>
+          <td> $140D </td>
+          <td> $140E </td>
+          <td> $140F </td>
+          <td> $1410 </td>
+          <td> $1411 </td>
+          <td> $1412 </td>
+          <td> $1413 </td>
+        </tr>
+        <tr>
+          <th> 15 </th>
+          <td> $1414 </td>
+          <td> $1415 </td>
+          <td> $1416 </td>
+          <td> $1417 </td>
+          <td> $1418 </td>
+          <td> $1419 </td>
+          <td> $141A </td>
+          <td> $141B </td>
+          <td> $141C </td>
+          <td> $141D </td>
+          <td> $141E </td>
+          <td> $141F </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+      The value in the tile map then points to an 8 byte tile.  The location of the tile is specified by (Tile * 8 + <a href="PM_Registers.html" title="PM Registers">PRC_MAP_*</a>).
+      The tiles are encoded in vertical strips, each 8 pixel strip = 1 byte.
+      The strips are encoded with the least significant bit on the top, 
+      shifting by one bit right as it scans vertically.  The PRC can also 
+      invert the graphics as it renders them by setting the appropriate bit in <a href="PM_Registers.html" title="PM Registers">PRC_MODE (Reg $80)</a>. </p>
+    <p>Maps can be offset up to 127 pixels vertically or horizontally (<a href="PM_Registers.html" title="PM Registers">PRC_SCROLL_X (Reg. $86)</a> and <a href="PM_Registers.html" title="PM Registers">PRC_SCROLL_Y (Reg. $85)</a>),
+      and is clamped to the size of the map itself, writes to the scroll 
+      registers when the value is out of bounds does not update the location 
+      in which rendering begins, but the values of the registers themselves 
+      changes.  Interestingly, these values are only verified when the 
+      register is written, and changing the tile map size will result in maps 
+      rendering gibberish tiles. </p>
+    <p>Under no circumstances do the maps wrap.  To create smooth scrolling, the entire map must be rewritten to simulate wrap around. </p>
+    <h2><a name="Sprite_Rendering_Stage" id="Sprite_Rendering_Stage"></a>Sprite Rendering Stage</h2>
+    <p>After the map rendering stage, the Sprite Rendering stage takes 
+      effect.  The PRC allows for 24 16x16 on screen sprites per frame, which 
+      can be positioned anywhere on screen. </p>
+    <p>Sprites are controlled by 24, 4 byte attribute blocks located between $1300 ~ $135F. </p>
+    <p><br />
+    </p>
+    <table border="1">
+      <caption>
+      <b>Sprite Attribute Blocks</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Address </th>
+          <th> 7 </th>
+          <th> 6 </th>
+          <th> 5 </th>
+          <th> 4 </th>
+          <th> 3 </th>
+          <th> 2 </th>
+          <th> 1 </th>
+          <th> 0 </th>
+        </tr>
+        <tr>
+          <td> 0 </td>
+          <td style="border: medium none;"></td>
+          <td colspan="7">Sprite X Position </td>
+        </tr>
+        <tr>
+          <td> 1 </td>
+          <td style="border: medium none;"></td>
+          <td colspan="7">Sprite Y Position </td>
+        </tr>
+        <tr>
+          <td> 2 </td>
+          <td colspan="8">Sprite Tile </td>
+        </tr>
+        <tr>
+          <td> 3 </td>
+          <td colspan="4"></td>
+          <td> Enable </td>
+          <td> Invert Color </td>
+          <td> Vertical Flip </td>
+          <td> Horizontal Flip </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+      The Position operates on a virtual (128x128) screen, with is positioned 
+      at (-16,-16) on the frame buffer.  This allows for sprites to be 
+      positioned partially off screen on all sides.  The MSB of both 
+      coordinate elements are ignored, so it can wrap around if care is not 
+      taken. </p>
+    <p>Sprite Tiles are loaded using <a href="PM_Registers.html" title="PM Registers">PRC_SPR_* (Reg. $87 to $89)</a> as the base address, with sprites tiles being 64 bytes in length (making a full tile set 16kB). </p>
+    <p>Sprites are rendered by using 8 tiles, 4 mask and 4 graphic.  The
+      mask tiles use a set pixel to signify which bits are to be left alone 
+      and which bits are to be overwritten with the graphic bits.  A set bit 
+      leaves a pixel unchanged.  The tiles are formatted in the same way as 
+      the Map tiles. </p>
+    <p>The 8 tiles (in order) are:  Mask (0,0) Mask (0,8) Graphic (0,0) Graphic (0,8) Mask (8,0) Mask (8,8) Graphic (8,0) Graphic (8,8) </p>
+    <p><br />
+      Here is a graphical representation <small>(taken from <em>The Unofficial Poke Doc</em> as distributed with <em>PoKeKaMini</em>)</small>: </p>
+    <p><br />
+    </p>
+    <div style="text-align:center">
+      <div style="width:300px;margin:0px auto;border:1px solid #999;text-align:center;padding:12px;">
+        <table style="border: 1px solid rgb(0, 0, 0); margin: 0px auto;" border="0" cellpadding="5" cellspacing="0">
+          <tbody>
+            <tr>
+              <td style="background-color: rgb(102, 102, 102); color: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);"><b>1<sup>st</sup></b> </td>
+              <td style="background-color: rgb(102, 102, 102); color: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);"><b>5<sup>th</sup></b> </td>
+            </tr>
+            <tr>
+              <td style="background-color: rgb(102, 102, 102); color: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);"><b>2<sup>nd</sup></b> </td>
+              <td style="background-color: rgb(102, 102, 102); color: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);"><b>6<sup>th</sup></b> </td>
+            </tr>
+            <tr>
+              <td style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border: 1px solid rgb(0, 0, 0);"><b>3<sup>rd</sup></b> </td>
+              <td style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border: 1px solid rgb(0, 0, 0);"><b>7<sup>th</sup></b> </td>
+            </tr>
+            <tr>
+              <td style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border: 1px solid rgb(0, 0, 0);"><b>4<sup>th</sup></b> </td>
+              <td style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); border: 1px solid rgb(0, 0, 0);"><b>8<sup>th</sup></b> </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>White square = Draw <br />Dark square = Mask</p>
+          <p>VRAM = (VRAM &amp; MASK) | (DRAW &amp; ~MASK);</p>
+        <p style="text-align: left;width:230px"> <b>DRAW</b>: <br />
+          &nbsp;0 = white (black if inverted) <br />
+          &nbsp;1 = black (white if inverted) <br />
+          <br />
+          <b>MASK</b>: <br />
+          &nbsp;0 = opaque <br />
+          &nbsp;1 = transparent <br />
+        </p>
+      </div>
+    </div>
+    <p><br />
+      Sprites are rendered in reverse order, so Sprite #0 would always been on
+      top.  This means internally sprite #23 is drawn first, followed by #22 
+      up to #0 (painter's order) </p>
+    <h2><a name="Frame_Copy_Stage" id="Frame_Copy_Stage"></a>Frame Copy Stage</h2>
+    <p>The third and final stage is the simplest of all the PRC functions.  
+      It simply sequentially moves the $300 bytes from $1000~$12FF to the 
+      GDRAM of the <a href="LCD_Controller.html" title="LCD Controller">LCD Controller</a>. <s>This
+        mode can be disabled independently of all the other modes allowing for 
+        advanced rendering techniques by sacrificing frame rate.</s> </p>
+    <h2>PRC Timing Information</h2>
+    <p>The PRC timing is controlled by two registers, the PRC counter <a href="PM_Registers.html" title="PM Registers">PRC_CNT (Reg. $8A)</a>,
+      and a frame divider.  The frame counter move between the values $01 to 
+      $41, and overflows approximately 72 times per second (4,000,000 / 
+      55634).  As previously mentioned, this counter controls when the PRC 
+      fires the various display stages.  These stages do not fire every time, 
+      however.  The PRC is configured to skip a certain number of display 
+      cycles, only activating once every Nth frames as configured by <a href="PM_Registers.html" title="PM Registers">PRC_RATE (Reg. $81)</a>.  The top four bits of <a href="PM_Registers.html" title="PM Registers">PRC_RATE (Reg. $81)</a> is the current state of the divider, it counts up from 0, resetting 
+      when it reaches the specified divider value.  The PRC only renders and 
+      copies when the PRC divider is at it's absolute maximum for the 
+      configured divide rate. </p>
+    <table border="1">
+      <caption>
+      <b>PRC Rate Values</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Rate </th>
+          <th> Divider </th>
+        </tr>
+        <tr>
+          <td> 0 </td>
+          <td> 3 </td>
+        </tr>
+        <tr>
+          <td> 1 </td>
+          <td> 6 </td>
+        </tr>
+        <tr>
+          <td> 2 </td>
+          <td> 9 </td>
+        </tr>
+        <tr>
+          <td> 3 </td>
+          <td> 12 </td>
+        </tr>
+        <tr>
+          <td> 4 </td>
+          <td> 2 </td>
+        </tr>
+        <tr>
+          <td> 5 </td>
+          <td> 4 </td>
+        </tr>
+        <tr>
+          <td> 6 </td>
+          <td> 6 </td>
+        </tr>
+        <tr>
+          <td> 7 </td>
+          <td> 8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>There is no known way to use the PRC to use the full 72hz update 
+      frequency.  This can be circumvented by directly accessing GDRAM through
+      the <a href="LCD_Controller.html" title="LCD Controller">LCD Controller</a> </p>
+    <table border="1">
+      <caption>
+      <b>The stages trigger based on <a href="PM_Registers.html" title="PM Registers">PRC_CNT (Reg. $8A)</a> when rate divider match <a href="PM_Registers.html" title="PM Registers">PRC_RATE (Reg. $81)</a>, CPU is stalled in the middle of the process.</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Mode </th>
+          <th> <a href="PM_Registers.html" title="PM Registers">PRC_MODE (Reg $8A)</a> </th>
+          <th> PRC_CNT Start </th>
+          <th> PRC_CNT End </th>
+          <th> PRC_CNT Time </th>
+        </tr>
+        <tr>
+          <td> Rendering + Frame Copy </td>
+          <td> (7:0) xxxx101x<br />
+              <p>(7:0) xxxx110x<br />
+                (7:0) xxxx111x<br />
+            </p></td>
+          <td> $17 </td>
+          <td> $03 </td>
+          <td> 44 (67.7% PRC, 32.3% Free) </td>
+        </tr>
+        <tr>
+          <td> Frame Copy only </td>
+          <td> (7:0) xxxx100x </td>
+          <td> $38 </td>
+          <td> $03 </td>
+          <td> 11 (16.9% PRC, 83.1% Free) </td>
+        </tr>
+        <tr>
+          <td> No Rendering </td>
+          <td> (7:0) xxxx0xxx </td>
+          <td> N/A </td>
+          <td> N/A </td>
+          <td> 0 (0.0% PRC, 100.0% Free) </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>x - Not important </p>
+    <p>The time for each logical frame is 55634 cycles + a few 
+      (Determined by time between Frame Copy interrupts) and the time between 
+      each PRC counter increment is approximately between 867 Cycles and 839 
+      Cycles (855 Cycles Average). </p>
+    <p>The time was determined by: </p>
+    <p><br />
+    </p>
+    <pre>MOV BA, [0x2036]    &nbsp;;  Read Timer
+MOV [NN+0x30], $8F  &nbsp;;  Reset Timer to FFFF
+    </pre>
+    <p><br />
+      The extra cycles is the amount of time between the [0x2036] read and the
+      [NN+0x30] write, which is either or 6 and 8 cycles.  Since we are 
+      operating off a /2 divider, the error is also divided by two. </p>
+    <p>My estimation is it is 55638, since it is the first closest value divisible by $42 </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_PRC">http://wiki.sublab.net/index.php/PM_PRC</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>
