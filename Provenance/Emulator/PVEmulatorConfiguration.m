@@ -265,6 +265,20 @@
 	return nil;
 }
 
+- (NSString *)systemIDForDatabaseID:(NSString *)databaseID;
+{
+    for (NSDictionary *system in self.systems)
+    {
+        NSString *dbID = [system objectForKey:PVDatabaseIDKey];
+        if ([dbID isEqualToString:databaseID])
+        {
+            return system[PVSystemIdentifierKey];
+        }
+    }
+    
+    return nil;
+}
+
 - (NSArray *)availableSystemIdentifiers
 {
 	NSMutableArray *systemIDs = [NSMutableArray array];

@@ -35,6 +35,7 @@
 - (NSString * _Nullable)shortNameForSystemIdentifier:(NSString * _Nonnull)systemID;
 - (NSArray * _Nullable)controllerLayoutForSystem:(NSString * _Nonnull)systemID;
 - (NSString * _Nullable)databaseIDForSystemID:(NSString * _Nonnull)systemID;
+- (NSString *)systemIDForDatabaseID:(NSString *)databaseID;
 
 #pragma mark ROM IOS etc
 - (NSArray * _Nonnull)supportedROMFileExtensions;
