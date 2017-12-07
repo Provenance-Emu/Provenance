@@ -92,7 +92,7 @@ typedef struct {
 //int16_t convertSample(uint8_t);
 @end
 
-static ATR800GameCore *_currentCore;
+__weak static ATR800GameCore * _currentCore;
 
 //void ATR800WriteSoundBuffer(uint8_t *buffer, unsigned int len);
 
@@ -102,8 +102,8 @@ static ATR800GameCore *_currentCore;
 {
     if((self = [super init]))
     {
-        _videoBuffer = malloc(Screen_WIDTH * Screen_HEIGHT * 4);
-        _soundBuffer = malloc(2048); // 4096 if stereo?
+        _videoBuffer = calloc(1, Screen_WIDTH * Screen_HEIGHT * 4);
+        _soundBuffer = calloc(1, 2048); // 4096 if stereo?
     }
 
     _currentCore = self;
@@ -185,9 +185,10 @@ static ATR800GameCore *_currentCore;
         Screen_show_disk_led = FALSE;
     }
 
-    int arg = 0;
+    int arg = 4;
     int *argc = &arg;
-    char *argv[] = {};
+    char *argv[] = {"", "-sound", "-audio8", "-dsprate 44100"};
+    
     if (
 #if !defined(BASIC) && !defined(CURSES_BASIC)
         !Colours_Initialise(argc, argv) ||
@@ -281,6 +282,7 @@ static ATR800GameCore *_currentCore;
 
 - (void)stopEmulation
 {
+    Atari800_Exit(false);
     [super stopEmulation];
 }
 
