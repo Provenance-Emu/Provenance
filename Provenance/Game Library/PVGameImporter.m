@@ -507,7 +507,7 @@
         
         // moved the .cue, now move .bins .imgs etc
         NSString *cueSheetPath = [subfolder stringByAppendingPathComponent:filePath];
-        NSString *relatedFileName = [filePath stringByReplacingOccurrencesOfString:[filePath pathExtension] withString:@""];
+        NSString *relatedFileName = filePath.stringByDeletingPathExtension;
         NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self conflictPath] error:&error];
         
         for (NSString *file in contents)
