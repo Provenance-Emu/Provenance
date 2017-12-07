@@ -127,7 +127,7 @@
 			<string>cue</string>
 		</array>
 		<key>PVDatabaseID</key>
-		<string>87</string>
+		<string>38</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.psx</string>
 		<key>PVShortSystemName</key>
@@ -541,7 +541,7 @@
 			<string>pce</string>
 		</array>
 		<key>PVDatabaseID</key>
-		<integer>14</integer>
+		<string>14</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pce</string>
 		<key>PVShortSystemName</key>
