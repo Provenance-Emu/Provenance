@@ -398,8 +398,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud setMode:MBProgressHUDModeIndeterminate];
         [hud setLabelText:[NSString stringWithFormat:@"Importing %@", [path lastPathComponent]]];
     }];
-    [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
-        [weakSelf finishedImportingGameWithMD5:md5];
+    [self.gameImporter setFinishedImportHandler:^(NSString *md5, BOOL modified) {
+        // This callback is always called,
+        // even if the started handler was not called because it didn't require a refresh.
+        [weakSelf finishedImportingGameWithMD5:md5 modified:modified];
     }];
     [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
         [weakSelf finishedDownloadingArtworkForURL:url];
@@ -563,13 +565,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     self.mustRefreshDataSource = NO;
 }
 
-- (void)finishedImportingGameWithMD5:(NSString *)md5
+- (void)finishedImportingGameWithMD5:(NSString *)md5 modified:(BOOL)modified;
 {
     MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
     [hud hide:YES];
 
-    [self fetchGames];
-    [self.collectionView reloadData];
+    // Only refresh the whole collection if game was modified.
+    if (modified) {
+        [self fetchGames];
+        [self.collectionView reloadData];
+    }
 
     // code below is simply to animate updates... currently crashy
 

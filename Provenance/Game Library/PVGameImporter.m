@@ -620,6 +620,7 @@
                 [realm commitWriteTransaction];
             }
 
+            BOOL modified = NO;
             if ([game requiresSync])
             {
                 if (self.importStartedHandler)
@@ -630,13 +631,14 @@
                 }
                 
                 [self lookupInfoForGame:game];
+                modified = YES;
             }
             
             if (self.finishedImportHandler)
             {
                 NSString *md5 = [game md5Hash];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.finishedImportHandler(md5);
+                    self.finishedImportHandler(md5, modified);
                 });
             }
             
