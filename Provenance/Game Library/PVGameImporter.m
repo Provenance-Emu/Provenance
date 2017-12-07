@@ -120,7 +120,7 @@
     });
 }
 
-- (NSArray *)importFilesAtPaths:(NSArray<NSString*> *)paths
+- (NSArray<NSString*> *)importFilesAtPaths:(NSArray<NSString*> *)paths
 {
     NSMutableArray<NSString*> *newPaths = [NSMutableArray array];
     
@@ -167,6 +167,48 @@
     return newPaths;
 }
 
+-(OESQLiteDatabase*)openVGDB {
+    if (_openVGDB == nil) {
+        NSError *error;
+        _openVGDB = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
+                                        error:&error];
+        
+        if (_openVGDB == nil) {
+            DLog(@"Unable to open game database: %@", [error localizedDescription]);
+            return nil;
+        }
+    }
+
+    return _openVGDB;
+}
+
+-(NSString*)systemIdForROMCanidate:(ImportCanidateFile*)rom {
+    
+    NSString*md5 = rom.md5;
+    NSString*fileName = rom.filePath.lastPathComponent;
+    
+    NSError*error;
+    NSArray<NSDictionary<NSString*,NSObject*>*> *results = nil;
+    NSString *queryString = [NSString stringWithFormat:@"SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '%@' OR romFileName = '%@'", md5, fileName];
+    
+    results = [self.openVGDB executeQuery:queryString
+                                    error:&error];
+    
+    if (!results) {
+        DLog(@"Unable to find rom by MD5: %@", error.localizedDescription);
+    }
+    
+    if (results.count) {
+        NSString *databaseID = results[0][@"systemID"].description;
+        PVEmulatorConfiguration *config = [PVEmulatorConfiguration sharedInstance];
+        NSString *systemID = [config systemIDForDatabaseID:databaseID];
+        
+        return systemID;
+    } else {
+        return nil;
+    }
+}
+
 - (NSArray *)moveCDROMToAppropriateSubfolder:(ImportCanidateFile *)canidateFile
 {
     NSMutableArray *newPaths = [NSMutableArray array];
@@ -178,13 +220,17 @@
     
     if ([systemsForExtension count] > 1)
     {
-        // Try to match by MD5
+        // Try to match by MD5 or filename
+        NSString*systemID = [self systemIdForROMCanidate:canidateFile];
         
-        
-        
-        // No MD5 match, so move to conflict dir
-        subfolderPath = [self conflictPath];
-        self.encounteredConflicts = YES;
+        if (systemID != nil) {
+            subfolderPath = self.systemToPathMap[systemID];
+        }
+        else {
+            // No MD5 match, so move to conflict dir
+            subfolderPath = [self conflictPath];
+            self.encounteredConflicts = YES;
+        }
     }
     else
     {
