@@ -1,0 +1,208 @@
+---------------------------------
+Mid-frame dot/pixel clock change:
+---------------------------------
+
+Asuka 120%
+
+Order of the Griffon
+
+Ryuuko no Ken
+
+
+
+----------------------------------
+Rely on edge-case timer behaviour:
+----------------------------------
+
+Battle Royale
+
+
+
+----------------------------------------------------------------------------------
+Rely on edge-case VDC vblank flag/IRQ behaviour(maybe, need to investigate again):
+----------------------------------------------------------------------------------
+
+Battle Lode Runner
+
+Ryukyu
+
+
+
+---------------------------------------------
+Rely on sprite overflow to mask/hide sprites:
+---------------------------------------------
+
+Bloody Wolf
+	During first boss(submarine) battle, at least.
+
+Ninja Ryukenden
+	During cutscene(s).
+
+
+------------------------------
+Write to VRAM during VRAM DMA:
+------------------------------
+
+Bari Bari Densetsu
+
+Riot Zone
+
+
+
+-----------------------
+Uses 2-bit sprite mode:
+-----------------------
+
+Fighting Run
+
+
+
+--------------------------------------------------------------
+Requires input state that can change more than once per frame:
+--------------------------------------------------------------
+
+Takeda Shingen
+	Appears to work properly at first, but you can't break locked swords with only 1 update per frame.
+
+
+
+------------------------------------------------------------
+Requires VDC to wait-state the CPU under certain conditions:
+------------------------------------------------------------
+
+Popful Mail
+	During cutscenes, else there will be major graphics glitches and lockups in cutscenes.
+
+Star Breaker
+	When going to world map.  (For quick testing, add temporary RAM replace cheat for address $1F0E17, value $38, to bypass castle guards, but remember
+	to remove it afterwards!).
+
+Wonder Momo
+	(Hypothetically)
+
+---------------------------------------------------------------------------------------------
+Use horizontal timing registers to intentionally position active display far off from center:
+---------------------------------------------------------------------------------------------
+
+Final Blaster
+	In the intro sequence after pressing "Run" at the title screen.
+
+
+
+-------------
+Use VRAM DMA:
+-------------
+
+Bari Bari Densetsu
+
+Cosmic Fantasy IV
+	Timing sensitive.
+
+Crest of Wolf / Riot Zone
+	Timing sensitive.
+
+Fushigi no Yume no Alice
+
+Langrisser
+	Timing sensitive(status bar will glitch during map scrolling if not emulated correctly).
+
+Legendary Axe II / Ankoku Densetsu
+	Timing sensitive.  Stage 5 particularly is a timing nightmare(stage select code at title
+	screen is "I, II, I, II, II, I, II, I, I, I"; for full testing, also go to level 5 by
+	playing through the end of level 4)
+
+Magical Chase
+
+Ninja Ryukenden
+
+Ruin
+
+Takeda Shingen
+	Timing sensitive(maybe).
+
+
+
+---------------------------------
+Use streaming audio and/or video:
+---------------------------------
+
+Akumajou Dracula X
+	Cutscene(s)
+
+Beyond Shadowgate
+
+Dragon Slayer
+
+Dragonball Z
+
+Galaxy Fraulein Yuna HuVideo
+	Video
+
+It Came from the Desert
+	Video
+
+John Madden Duo Football
+	Video
+
+Kuusou Kagaku Sekai Gulliver Boy
+	Video
+
+Last Armageddon
+	Cutscene(s)
+
+Sherlock Holmes 1 and 2
+	Video
+
+The Addams Family
+
+Travelers
+
+
+
+-----------------
+Use sound LFO FM:
+-----------------
+
+Flash Hiders
+
+Forgotten Worlds
+
+Hanii in the Sky
+
+Juuoki
+
+
+
+-----------------------------------------------------------------------------------------
+Rely on sound channel volume update specifics(period, order, and update start condition):
+-----------------------------------------------------------------------------------------
+
+Hanii in the Sky
+	Failing to emulate volume update semantics at least somewhat correctly will cause crackles and
+	pops while the game is paused.
+
+
+
+-------------
+K$Q#(nH^(U$^(
+-------------
+
+Download
+	Requires the data-buffer latching effect of $0800-$17ff to be emulated, or it won't run.
+	To be specific, it reads from $1403, and expects bit 5(mask = 0x20) to be set.
+
+Youkai Douchuuki
+	JSRs to a routine to set the MPRs before the MPR corresponding to the stack page is set, and then RTSs.  KABOOM.
+
+
+
+--------------------
+Other Especially VDC Timing Sensitive(listed here so we remember to test after making any significant changes)
+--------------------
+
+Camp California (raster effects)
+Shapeshifter (raster effects)
+Shin Megami Tensei (raster effects)
+Seiya Monogatari (raster effects)
+Street Fighter II (vblank irq versus rcr irq? timing, massively glitchy frames if off, need to run tests)
+World Court Tennis (vibrascreen!)

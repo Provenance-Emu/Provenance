@@ -1,0 +1,7 @@
+format=raw
+gfx=sprites
+colorkey=#FF00FF
+
+img=pokeball.bmp
+out=pokeball.bin
+outgrey=pokeballG.bin

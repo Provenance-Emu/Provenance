@@ -8,9 +8,8 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport.h>
 #import "PVGame.h"
-#import <PVSupport/OEGameAudio.h>
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
@@ -40,7 +39,6 @@
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
 @property (nonatomic, strong) UITapGestureRecognizer *menuGestureRecognizer;
-
 
 @end
 
@@ -157,7 +155,23 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[self.game romPath]];
+
+    NSError *error = nil;
+    NSString *md5Hash, *crc32Hash;
+    if(![[NSFileManager defaultManager] hashFileAtURL:[NSURL fileURLWithPath:romPath] md5:&md5Hash crc32:&crc32Hash error:&error])
+    {
+        DLog(@"%@", error);
+        return;
+    }
+
+    self.emulatorCore.romMD5 = md5Hash;
+    
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
+
+        // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
+        // to provide the correct data for creating views.
+    BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
 
     if ([[UIScreen screens] count] > 1)
     {
@@ -197,7 +211,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.menuButton];
     
-    
     if ([[PVSettingsModel sharedInstance] showFPSCount]) {
         _fpsLabel = [UILabel new];
         _fpsLabel.textColor = [UIColor yellowColor];
@@ -236,10 +249,10 @@ void uncaughtExceptionHandler(NSException *exception)
 		[self.menuButton setHidden:YES];
 	}
 
-    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
+    if (!loaded)
     {
         __weak typeof(self) weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DLog(@"Unable to load ROM at %@", [self.game romPath]);
 #if !TARGET_OS_TV
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
@@ -318,7 +331,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	// But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
 
 	// Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
-
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
     if (!_menuGestureRecognizer) {

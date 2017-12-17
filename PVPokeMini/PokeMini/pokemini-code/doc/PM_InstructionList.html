@@ -1,0 +1,3778 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+//window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Main Content </h1>
+    <h2>NOP = No Operation</h2>
+    <table id="sortable_table_id_0" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>FF </td>
+          <td><a href="PM_Opc_NOP.html" title="PM Opc NOP">NOP</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2>MOV = Move Register</h2>
+    <p><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_1" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>40 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, A</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>41 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, B</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>42 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, L</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>43 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, H</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>44 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>45 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>46 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>47 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>48 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, A</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>49 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, B</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>4A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, L</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>4B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, H</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>4C nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>4D </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>4E </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>4F </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>50 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, A</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>51 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, B</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>52 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, L</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>53 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, H</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>54 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>55 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>56 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>57 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>58 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, A</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>59 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, B</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>5A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, L</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>5B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, H</a> </td>
+          <td>4 </td>
+        </tr>
+        <tr>
+          <td>5C nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>5D </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>5E </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>5F </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>60 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>61 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>62 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], L</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>63 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], H</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>64 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [N+#nn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>65 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>66 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [X]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>67 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [Y]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>68 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>69 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>6A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], L</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>6B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], H</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>6C nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [N+#nn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>6D </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>6E </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [X]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>6F </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [Y]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>70 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>71 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>72 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], L</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>73 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], H</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>74 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [N+#nn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>75 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>76 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [X]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>77 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [Y]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>78 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>79 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>7A nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], L</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>7B nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], H</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>7D nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>7E nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], [X]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>7F nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], [Y]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>9F nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV F, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>B0 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>B1 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>B2 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>B3 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>B4 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV N, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>B5 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>B6 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>B7 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>DD nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [N+#nn], #nn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE C4 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV U, #nn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE C5 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV I, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE C6 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV XI, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE C7 nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV YI, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 40 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 41 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 42 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 43 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 48 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 49 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 50 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 51 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 52 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 53 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 58 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 59 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 44 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+#ss], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 45 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+#ss], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 46 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+L], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 47 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+L], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4C ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+#ss], B</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4D ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+#ss], B</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4E </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+L], B</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 4F </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+L], B</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 54 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+#ss], L</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 55 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+#ss], L</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 56 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+L], L</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 57 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+L], L</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5C ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+#ss], H</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5D ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+#ss], H</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5E </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X+L], H</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 5F </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y+L], H</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 60 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [X+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 61 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [Y+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 62 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [X+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 63 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [HL], [Y+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 68 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [X+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 69 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [Y+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 6A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [X+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 6B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [X], [Y+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 78 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [X+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 79 ss </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [Y+#ss]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 7A </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [X+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 7B </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [Y], [Y+L]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>B8 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>B9 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>BA nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>BB nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 78 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, [#nnnn]</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>BC nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [#nnnn], BA</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>BD nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [#nnnn], HL</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>BE nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [#nnnn], X</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>BF nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [#nnnn], Y</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 7C nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [#nnnn], SP</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>C4 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C5 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C6 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C7 nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CF 6E nn nn </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE C0 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, N</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE C1 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, F</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE C8 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, V</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE C9 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, I</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE CA </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, XI</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE CB </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, YI</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE C2 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV N, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE C3 </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV F, A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE CC </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV U, A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE CD </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV I, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE CE </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV XI, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE CF </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV YI, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE D0 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV A, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D1 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV B, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D2 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV L, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D3 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV H, [#nnnn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D4 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [#nnnn], A</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D5 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [#nnnn], B</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D6 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [#nnnn], L</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE D7 nn nn </td>
+          <td><a href="PM_Opc_MOV8.html" title="PM Opc MOV8">MOV [#nnnn], H</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 70 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, [SP+#ss]</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 71 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, [SP+#ss]</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 72 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, [SP+#ss]</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 73 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, [SP+#ss]</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 74 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [SP+#ss], BA</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 75 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [SP+#ss], HL</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 76 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [SP+#ss], X</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF 77 ss </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [SP+#ss], Y</a> </td>
+          <td>24 </td>
+        </tr>
+        <tr>
+          <td>CF C0 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, [HL]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C1 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, [HL]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C2 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, [HL]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C3 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, [HL]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D0 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D1 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D2 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D3 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D8 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D9 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DA </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DB </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C4 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [HL], BA</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C5 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [HL], HL</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C6 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [HL], X</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF C7 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [HL], Y</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D4 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [X], BA</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D5 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [X], HL</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D6 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [X], X</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF D7 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [X], Y</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DC </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [Y], BA</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DD </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [Y], HL</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DE </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [Y], X</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF DF </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV [Y], Y</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF E0 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E1 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E2 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E3 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, Y</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E4 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E5 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E6 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E7 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, Y</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E8 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF E9 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF EA </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF EB </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, Y</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF EC </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF ED </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF EE </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF EF </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, Y</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F0 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F1 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F2 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F3 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV SP, Y</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F4 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, SP</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F5 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV HL, PC</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F8 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, SP</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF F9 </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV BA, PC</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF FA </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV X, SP</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CF FE </td>
+          <td><a href="PM_Opc_MOV16.html" title="PM Opc MOV16">MOV Y, SP</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h1>Arithmetic</h1>
+    <h2>ADD = Addition</h2>
+    <p><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_2" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>00 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>01 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>02 nn </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>03 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>04 nn </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>05 nn nn </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>06 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>07 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>C0 nn nn </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD BA, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C1 nn nn </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD HL, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C2 nn nn </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD X, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C3 nn nn </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD Y, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CF 68 nn nn </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD SP, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 00 ss </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 01 ss </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 02 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 03 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 04 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 05 nn </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 06 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 07 </td>
+          <td><a href="PM_Opc_ADD8.html" title="PM Opc ADD8">ADD [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 00 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD BA, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 01 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD BA, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 02 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD BA, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 03 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD BA, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 20 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD HL, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 21 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD HL, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 22 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD HL, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 23 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD HL, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 40 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD X, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 41 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD X, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 42 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD Y, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 43 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD Y, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 44 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD SP, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 45 </td>
+          <td><a href="PM_Opc_ADD16.html" title="PM Opc ADD16">ADD SP, HL</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="SUB_.3D_Subtraction">SUB = Subtraction </span></h2>
+    <p><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_3" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>10 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>11 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>12 nn </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>13 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>14 nn </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>15 nn nn </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>16 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>17 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>D0 nn nn </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB BA, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D1 nn nn </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB HL, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D2 nn nn </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB X, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D3 nn nn </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB Y, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CF 6A nn nn </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB SP, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 10 ss </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 11 ss </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 12 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 13 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 14 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 15 nn </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 16 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 17 </td>
+          <td><a href="PM_Opc_SUB8.html" title="PM Opc SUB8">SUB [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 08 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB BA, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 09 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB BA, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 0A </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB BA, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 0B </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB BA, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 28 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB HL, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 29 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB HL, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2A </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB HL, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2B </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB HL, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 48 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB X, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 49 </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB X, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 4A </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB Y, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 4B </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB Y, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 4C </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB SP, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 4D </td>
+          <td><a href="PM_Opc_SUB16.html" title="PM Opc SUB16">SUB SP, HL</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="ADC_.3D_Addition_with_Carry">ADC = Addition with Carry </span></h2>
+    <p><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_4" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>08 </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>09 </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0A nn </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0B </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0C nn </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>0D nn nn </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>0E </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0F </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE 08 ss </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 09 ss </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0A </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0B </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0C </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0D nn </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 0E </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 0F </td>
+          <td><a href="PM_Opc_ADC8.html" title="PM Opc ADC8">ADC [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 04 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC BA, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 05 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC BA, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 06 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC BA, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 07 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC BA, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 24 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC HL, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 25 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC HL, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 26 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC HL, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 27 </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC HL, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 60 nn nn </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC BA, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 61 nn nn </td>
+          <td><a href="PM_Opc_ADC16.html" title="PM Opc ADC16">ADC HL, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="SBC_.3D_Subtraction_with_Carry">SBC = Subtraction with Carry </span></h2>
+    <p><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_5" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>18 </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>19 </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>1A nn </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>1B </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>1C nn </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>1D nn nn </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>1E </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>1F </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE 18 ss </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 19 ss </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 1A </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 1B </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 1C </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 1D nn </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 1E </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 1F </td>
+          <td><a href="PM_Opc_SBC8.html" title="PM Opc SBC8">SBC [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CF 0C </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC BA, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 0D </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC BA, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 0E </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC BA, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 0F </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC BA, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2C </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC HL, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2D </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC HL, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2E </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC HL, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 2F </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC HL, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 62 nn nn </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC BA, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 63 nn nn </td>
+          <td><a href="PM_Opc_SBC16.html" title="PM Opc SBC16">SBC HL, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="CMP_.3D_Compare">CMP = Compare </span></h2>
+    <p><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">8 Bit Opcode overview</a> </p>
+    <p><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">16 Bit Opcode overview</a> </p>
+    <table id="sortable_table_id_6" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>30 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>31 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>32 nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>33 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>34 nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>35 nn nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>36 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>37 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>D4 nn nn </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP BA, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D5 nn nn </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP HL, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D6 nn nn </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP X, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D7 nn nn </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP Y, #nnnn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CF 6C nn nn </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP SP, #nnnn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>DB nn nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP [N+#nn], #nn</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 30 ss </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 31 ss </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 32 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 33 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 34 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 35 nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 36 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 37 </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE BC nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP B, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE BD nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP L, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE BE nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP H, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE BF nn </td>
+          <td><a href="PM_Opc_CMP8.html" title="PM Opc CMP8">CMP N, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CF 18 </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP BA, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 19 </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP BA, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 1A </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP BA, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 1B </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP BA, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 38 </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP HL, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 39 </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP HL, HL</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 3A </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP HL, X</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 3B </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP HL, Y</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 5C </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP SP, BA</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CF 5D </td>
+          <td><a href="PM_Opc_CMP16.html" title="PM Opc CMP16">CMP SP, HL</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="INC_.3D_Increase_Register_by_1">INC = Increase Register by 1 </span></h2>
+    <table id="sortable_table_id_7" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>80 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>81 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>82 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC L</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>83 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC H</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>84 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC N</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>85 nn </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC [N+#nn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>86 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>87 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC SP</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>90 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>91 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>92 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>93 </td>
+          <td><a href="PM_Opc_INC.html" title="PM Opc INC">INC Y</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero </p>
+    <h2><span class="mw-headline" id="DEC_.3D_Decrease_Register_by_1">DEC = Decrease Register by 1 </span></h2>
+    <table id="sortable_table_id_8" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>88 </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>89 </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>8A </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC L</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>8B </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC H</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>8C </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC N</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>8D nn </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC [N+#nn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>8E </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>8F </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC SP</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>98 </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC BA</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>99 </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC HL</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>9A </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC X</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>9B </td>
+          <td><a href="PM_Opc_DEC.html" title="PM Opc DEC">DEC Y</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero </p>
+    <h2><span class="mw-headline" id="NEG_.3D_Negate">NEG = Negate </span></h2>
+    <table id="sortable_table_id_9" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE A4 </td>
+          <td><a href="PM_Opc_NEG.html" title="PM Opc NEG">NEG A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE A5 </td>
+          <td><a href="PM_Opc_NEG.html" title="PM Opc NEG">NEG B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE A6 nn </td>
+          <td><a href="PM_Opc_NEG.html" title="PM Opc NEG">NEG [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE A7 </td>
+          <td><a href="PM_Opc_NEG.html" title="PM Opc NEG">NEG [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="MUL_.3D_Multiply">MUL = Multiply </span></h2>
+    <table id="sortable_table_id_10" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE D8 </td>
+          <td><a href="PM_Opc_MUL.html" title="PM Opc MUL">MUL L, A</a> </td>
+          <td>48 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="DIV_.3D_Divide">DIV = Divide </span></h2>
+    <table id="sortable_table_id_11" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE D9 </td>
+          <td><a href="PM_Opc_DIV.html" title="PM Opc DIV">DIV HL, A</a> </td>
+          <td>52 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <p><b>Note:</b> Can throw Division by Zero </p>
+    <h1><span class="mw-headline" id="Logic">Logic </span></h1>
+    <h2><span class="mw-headline" id="TST_.3D_Test_Bits">TST = Test Bits </span></h2>
+    <table id="sortable_table_id_12" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>94 </td>
+          <td><a href="PM_Opc_TST.html" title="PM Opc TST">TST A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>95 nn </td>
+          <td><a href="PM_Opc_TST.html" title="PM Opc TST">TST [HL], #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>96 nn </td>
+          <td><a href="PM_Opc_TST.html" title="PM Opc TST">TST A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>97 nn </td>
+          <td><a href="PM_Opc_TST.html" title="PM Opc TST">TST B, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>DC nn nn </td>
+          <td><a href="PM_Opc_TST.html" title="PM Opc TST">TST [N+#nn], #nn</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Sign </p>
+    <h2><span class="mw-headline" id="AND_.3D_Logical_AND">AND = Logical AND </span></h2>
+    <table id="sortable_table_id_13" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>20 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>21 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>22 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>23 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>24 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>25 nn nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>26 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>27 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>9C nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND F, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B0 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND B, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B1 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND L, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B2 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND H, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D8 nn nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND [N+#nn], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 20 ss </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 21 ss </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 22 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 23 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 24 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 25 nn </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 26 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 27 </td>
+          <td><a href="PM_Opc_AND.html" title="PM Opc AND">AND [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Sign </p>
+    <h2><span class="mw-headline" id="OR_.3D_Logical_Inclusive-OR">OR = Logical Inclusive-OR </span></h2>
+    <table id="sortable_table_id_14" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>28 </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>29 </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>2A nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>2B </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>2C nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>2D nn nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>2E </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>2F </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>9D nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR F, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B4 nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR B, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B5 nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR L, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B6 nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR H, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>D9 nn nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR [N+#nn], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 28 ss </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 29 ss </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 2A </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 2B </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 2C </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 2D nn </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 2E </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 2F </td>
+          <td><a href="PM_Opc_OR.html" title="PM Opc OR">OR [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Sign </p>
+    <h2><span class="mw-headline" id="XOR_.3D_Logical_Exclusive-OR">XOR = Logical Exclusive-OR </span></h2>
+    <table id="sortable_table_id_15" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>38 </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>39 </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>3A nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, #nn</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>3B </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [HL]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>3C nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [N+#nn]</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>3D nn nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [#nnnn]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>3E </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [X]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>3F </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [Y]</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>9E nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR F, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B8 nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR B, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE B9 nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR L, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE BA nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR H, #nn</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>DA nn nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR [N+#nn], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 38 ss </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [X+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 39 ss </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [Y+#ss]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 3A </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [X+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 3B </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR A, [Y+L]</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 3C </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR [HL], A</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 3D nn </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR [HL], #nn</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 3E </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR [HL], [X]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 3F </td>
+          <td><a href="PM_Opc_XOR.html" title="PM Opc XOR">XOR [HL], [Y]</a> </td>
+          <td>20 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Sign </p>
+    <h2><span class="mw-headline" id="NOT_.3D_Logical_NOT">NOT = Logical NOT </span></h2>
+    <table id="sortable_table_id_16" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE A0 </td>
+          <td><a href="PM_Opc_NOT.html" title="PM Opc NOT">NOT A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE A1 </td>
+          <td><a href="PM_Opc_NOT.html" title="PM Opc NOT">NOT B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE A2 nn </td>
+          <td><a href="PM_Opc_NOT.html" title="PM Opc NOT">NOT [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE A3 </td>
+          <td><a href="PM_Opc_NOT.html" title="PM Opc NOT">NOT [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Sign </p>
+    <h1><span class="mw-headline" id="Shift_.26_Rotate">Shift &amp; Rotate </span></h1>
+    <h2><span class="mw-headline" id="SHL_.3D_Shift_Left">SHL = Shift Left </span></h2>
+    <table id="sortable_table_id_17" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 84 </td>
+          <td><a href="PM_Opc_SHL.html" title="PM Opc SHL">SHL A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 85 </td>
+          <td><a href="PM_Opc_SHL.html" title="PM Opc SHL">SHL B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 86 nn </td>
+          <td><a href="PM_Opc_SHL.html" title="PM Opc SHL">SHL [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 87 </td>
+          <td><a href="PM_Opc_SHL.html" title="PM Opc SHL">SHL [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h2><span class="mw-headline" id="SAL_.3D_Shift_Arithmetic_Left">SAL = Shift Arithmetic Left </span></h2>
+    <table id="sortable_table_id_18" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 80 </td>
+          <td><a href="PM_Opc_SAL.html" title="PM Opc SAL">SAL A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 81 </td>
+          <td><a href="PM_Opc_SAL.html" title="PM Opc SAL">SAL B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 82 nn </td>
+          <td><a href="PM_Opc_SAL.html" title="PM Opc SAL">SAL [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 83 </td>
+          <td><a href="PM_Opc_SAL.html" title="PM Opc SAL">SAL [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="SHR_.3D_Shift_Right">SHR = Shift Right </span></h2>
+    <table id="sortable_table_id_19" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 8C </td>
+          <td><a href="PM_Opc_SHR.html" title="PM Opc SHR">SHR A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 8D </td>
+          <td><a href="PM_Opc_SHR.html" title="PM Opc SHR">SHR B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 8E nn </td>
+          <td><a href="PM_Opc_SHR.html" title="PM Opc SHR">SHR [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 8F </td>
+          <td><a href="PM_Opc_SHR.html" title="PM Opc SHR">SHR [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h2><span class="mw-headline" id="SAR_.3D_Shift_Arithmetic_Right">SAR = Shift Arithmetic Right </span></h2>
+    <table id="sortable_table_id_20" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 88 </td>
+          <td><a href="PM_Opc_SAR.html" title="PM Opc SAR">SAR A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 89 </td>
+          <td><a href="PM_Opc_SAR.html" title="PM Opc SAR">SAR B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 8A nn </td>
+          <td><a href="PM_Opc_SAR.html" title="PM Opc SAR">SAR [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 8B </td>
+          <td><a href="PM_Opc_SAR.html" title="PM Opc SAR">SAR [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> All </p>
+    <h2><span class="mw-headline" id="ROL_.3D_Rotate_Left">ROL = Rotate Left </span></h2>
+    <table id="sortable_table_id_21" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 94 </td>
+          <td><a href="PM_Opc_ROL.html" title="PM Opc ROL">ROL A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 95 </td>
+          <td><a href="PM_Opc_ROL.html" title="PM Opc ROL">ROL B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 96 nn </td>
+          <td><a href="PM_Opc_ROL.html" title="PM Opc ROL">ROL [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 97 </td>
+          <td><a href="PM_Opc_ROL.html" title="PM Opc ROL">ROL [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h2><span class="mw-headline" id="ROLC_.3D_Rotate_Left_through_Carry">ROLC = Rotate Left through Carry </span></h2>
+    <table id="sortable_table_id_22" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 90 </td>
+          <td><a href="PM_Opc_ROLC.html" title="PM Opc ROLC">ROLC A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 91 </td>
+          <td><a href="PM_Opc_ROLC.html" title="PM Opc ROLC">ROLC B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 92 nn </td>
+          <td><a href="PM_Opc_ROLC.html" title="PM Opc ROLC">ROLC [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 93 </td>
+          <td><a href="PM_Opc_ROLC.html" title="PM Opc ROLC">ROLC [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h2><span class="mw-headline" id="ROR_.3D_Rotate_Right">ROR = Rotate Right </span></h2>
+    <table id="sortable_table_id_23" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 9C </td>
+          <td><a href="PM_Opc_ROR.html" title="PM Opc ROR">ROR A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 9D </td>
+          <td><a href="PM_Opc_ROR.html" title="PM Opc ROR">ROR B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 9E nn </td>
+          <td><a href="PM_Opc_ROR.html" title="PM Opc ROR">ROR [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 9F </td>
+          <td><a href="PM_Opc_ROR.html" title="PM Opc ROR">ROR [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h2><span class="mw-headline" id="RORC_.3D_Rotate_Right_through_Carry">RORC = Rotate Right through Carry </span></h2>
+    <table id="sortable_table_id_24" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE 98 </td>
+          <td><a href="PM_Opc_RORC.html" title="PM Opc RORC">RORC A</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 99 </td>
+          <td><a href="PM_Opc_RORC.html" title="PM Opc RORC">RORC B</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CE 9A nn </td>
+          <td><a href="PM_Opc_RORC.html" title="PM Opc RORC">RORC [N+#nn]</a> </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 9B </td>
+          <td><a href="PM_Opc_RORC.html" title="PM Opc RORC">RORC [HL]</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> Zero, Carry, Sign </p>
+    <h1><span class="mw-headline" id="Swap_.26_Expand">Swap &amp; Expand </span></h1>
+    <h2><span class="mw-headline" id="XCHG_.3D_Exchange_Registers">XCHG = Exchange Registers </span></h2>
+    <table id="sortable_table_id_25" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>C8 </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG BA, HL</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>C9 </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG BA, X</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CA </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG BA, Y</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CB </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG BA, SP</a> </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>CC </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG A, B</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CD </td>
+          <td><a href="PM_Opc_XCHG.html" title="PM Opc XCHG">XCHG A, [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="PACK_.2F_UNPACK_.3D_Pack_and_Unpack_Nibbles">PACK / UNPACK = Pack and Unpack Nibbles </span></h2>
+    <table id="sortable_table_id_26" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>DE </td>
+          <td><a href="PM_Opc_PACK.html" title="PM Opc PACK">PACK</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>DF </td>
+          <td><a href="PM_Opc_UNPACK.html" title="PM Opc UNPACK">UNPACK</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="SWAP_.3D_Swap_Low_and_High_Nibbles">SWAP = Swap Low and High Nibbles </span></h2>
+    <table id="sortable_table_id_27" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>F6 </td>
+          <td><a href="PM_Opc_SWAP.html" title="PM Opc SWAP">SWAP A</a> </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>F7 </td>
+          <td><a href="PM_Opc_SWAP.html" title="PM Opc SWAP">SWAP [HL]</a> </td>
+          <td>12 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="EX_.3D_Expand_Register">EX = Expand Register </span></h2>
+    <table id="sortable_table_id_28" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE A8 </td>
+          <td><a href="PM_Opc_EX.html" title="PM Opc EX">EX BA, A</a> </td>
+          <td>12 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h1><span class="mw-headline" id="Stack">Stack </span></h1>
+    <h2><span class="mw-headline" id="PUSH_.3D_Push_Register_into_Stack">PUSH = Push Register into Stack </span></h2>
+    <table id="sortable_table_id_29" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+          <th>Regs stacked from top to bottom</th>
+        </tr>
+        <tr>
+          <td>A0 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH BA</a> </td>
+          <td>16 </td>
+          <td>B, A </td>
+        </tr>
+        <tr>
+          <td>A1 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH HL</a> </td>
+          <td>16 </td>
+          <td>H, L </td>
+        </tr>
+        <tr>
+          <td>A2 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH X</a> </td>
+          <td>16 </td>
+          <td>X(Hi), X(Lo) </td>
+        </tr>
+        <tr>
+          <td>A3 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH Y</a> </td>
+          <td>16 </td>
+          <td>Y(Hi), Y(Lo) </td>
+        </tr>
+        <tr>
+          <td>A4 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH N</a> </td>
+          <td>12 </td>
+          <td>N </td>
+        </tr>
+        <tr>
+          <td>A5 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH I</a> </td>
+          <td>12 </td>
+          <td>I </td>
+        </tr>
+        <tr>
+          <td>A6 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSHX</a> </td>
+          <td>16 </td>
+          <td>XI, YI </td>
+        </tr>
+        <tr>
+          <td>A7 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH F</a> </td>
+          <td>12 </td>
+          <td>F </td>
+        </tr>
+        <tr>
+          <td>CF B0 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH A</a> </td>
+          <td>12 </td>
+          <td>A </td>
+        </tr>
+        <tr>
+          <td>CF B1 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH B</a> </td>
+          <td>12 </td>
+          <td>B </td>
+        </tr>
+        <tr>
+          <td>CF B2 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH L</a> </td>
+          <td>12 </td>
+          <td>L </td>
+        </tr>
+        <tr>
+          <td>CF B3 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSH H</a> </td>
+          <td>12 </td>
+          <td>H </td>
+        </tr>
+        <tr>
+          <td>CF B8 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSHA</a> </td>
+          <td>48 </td>
+          <td>B, A, H, L, X(Hi:Lo), Y(Hi:Lo), N </td>
+        </tr>
+        <tr>
+          <td>CF B9 </td>
+          <td><a href="PM_Opc_PUSH.html" title="PM Opc PUSH">PUSHAX</a> </td>
+          <td>60 </td>
+          <td>B, A, H, L, X(Hi:Lo), Y(Hi:Lo), N, I, XI, YI </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="POP_.3D_Pop_Register_from_Stack">POP = Pop Register from Stack </span></h2>
+    <table id="sortable_table_id_30" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+          <th>Regs stacked from top to bottom</th>
+        </tr>
+        <tr>
+          <td>A8 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP BA</a> </td>
+          <td>12 </td>
+          <td>B, A </td>
+        </tr>
+        <tr>
+          <td>A9 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP HL</a> </td>
+          <td>12 </td>
+          <td>H, L </td>
+        </tr>
+        <tr>
+          <td>AA </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP X</a> </td>
+          <td>12 </td>
+          <td>X(Hi), X(Lo) </td>
+        </tr>
+        <tr>
+          <td>AB </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP Y</a> </td>
+          <td>12 </td>
+          <td>Y(Hi), Y(Lo) </td>
+        </tr>
+        <tr>
+          <td>AC </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP N</a> </td>
+          <td>8 </td>
+          <td>N </td>
+        </tr>
+        <tr>
+          <td>AD </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP I</a> </td>
+          <td>8 </td>
+          <td>I </td>
+        </tr>
+        <tr>
+          <td>AE </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POPX</a> </td>
+          <td>12 </td>
+          <td>XI, YI </td>
+        </tr>
+        <tr>
+          <td>AF </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP F</a> </td>
+          <td>8 </td>
+          <td>F </td>
+        </tr>
+        <tr>
+          <td>CF B4 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP A</a> </td>
+          <td>12 </td>
+          <td>A </td>
+        </tr>
+        <tr>
+          <td>CF B5 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP B</a> </td>
+          <td>12 </td>
+          <td>B </td>
+        </tr>
+        <tr>
+          <td>CF B6 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP L</a> </td>
+          <td>12 </td>
+          <td>L </td>
+        </tr>
+        <tr>
+          <td>CF B7 </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POP H</a> </td>
+          <td>12 </td>
+          <td>H </td>
+        </tr>
+        <tr>
+          <td>CF BC </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POPA</a> </td>
+          <td>44 </td>
+          <td>B, A, H, L, X(Hi:Lo), Y(Hi:Lo), N </td>
+        </tr>
+        <tr>
+          <td>CF BD </td>
+          <td><a href="PM_Opc_POP.html" title="PM Opc POP">POPAX</a> </td>
+          <td>56 </td>
+          <td>B, A, H, L, X(Hi:Lo), Y(Hi:Lo), N, I, XI, YI </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h1><span class="mw-headline" id="Branch">Branch </span></h1>
+    <h2><span class="mw-headline" id="CALL_.3D_Call_routine">CALL = Call routine </span></h2>
+    <table id="sortable_table_id_31" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles,True</th>
+          <th>or False</th>
+          <th>Condition</th>
+        </tr>
+        <tr>
+          <td>E0 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLCB #ss</a><sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>E1 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNCB #ss</a><sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>E2 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLZB #ss</a><sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>E3 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNZB #ss</a><sup>*1</sup> </td>
+          <td>20 </td>
+          <td>8 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>E8 ss ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLCW #ssss</a><sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>E9 ss ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNCW #ssss</a><sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>EA ss ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLZW #ssss</a><sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>EB ss ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNZW #ssss</a><sup>*1</sup> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>F0 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLB #ss</a><sup>*1</sup> </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>F2 ss ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLW #ssss</a><sup>*1</sup> </td>
+          <td>24 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>FB nn nn </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALL [#nnnn]</a> </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>FC ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CINT #nn</a> </td>
+          <td>20 </td>
+          <td>None </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>CE F0 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLL #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>(Overflow=1)&nbsp;!= (Sign=1) </td>
+        </tr>
+        <tr>
+          <td>CE F1 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLLE #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>((Overflow=0)&nbsp;!= (Sign=0)) OR (Zero=1) </td>
+        </tr>
+        <tr>
+          <td>CE F2 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLG #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>((Overflow=1) == (Sign=1)) AND (Zero=0) </td>
+        </tr>
+        <tr>
+          <td>CE F3 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLGE #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>(Overflow=0) == (Sign=0) </td>
+        </tr>
+        <tr>
+          <td>CE F4 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLO #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Overflow=1 </td>
+        </tr>
+        <tr>
+          <td>CE F5 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNO #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Overflow=0 </td>
+        </tr>
+        <tr>
+          <td>CE F6 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNS #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Sign=0 </td>
+        </tr>
+        <tr>
+          <td>CE F7 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLS #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>Sign=1 </td>
+        </tr>
+        <tr>
+          <td>CE F8 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNX0 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE F9 ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNX1 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FA ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNX2 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FB ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLNX3 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FC ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLX0 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FD ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLX1 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FE ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLX2 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE FF ss </td>
+          <td><a href="PM_Opc_CALL.html" title="PM Opc CALL">CALLX3 #ss</a> </td>
+          <td>24 </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>*1</b>: CALL, CALLC, CALLNC, CALLZ and CALLNZ can be used in the assembler to auto-detect the appropriate range. </p>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="JMP_.3D_Jump_to_routine">JMP = Jump to routine </span></h2>
+    <table id="sortable_table_id_32" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+          <th>Condition</th>
+        </tr>
+        <tr>
+          <td>E4 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JCB #ss</a><sup>*1</sup> </td>
+          <td>8 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>E5 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNCB #ss</a><sup>*1</sup> </td>
+          <td>8 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>E6 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JZB #ss</a><sup>*1</sup> </td>
+          <td>8 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>E7 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNZB #ss</a><sup>*1</sup> </td>
+          <td>8 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>EC ss ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JCW #ssss</a><sup>*1</sup> </td>
+          <td>12 </td>
+          <td>Carry=1 </td>
+        </tr>
+        <tr>
+          <td>ED ss ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNCW #ssss</a><sup>*1</sup> </td>
+          <td>12 </td>
+          <td>Carry=0 </td>
+        </tr>
+        <tr>
+          <td>EE ss ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JZW #ssss</a><sup>*1</sup> </td>
+          <td>12 </td>
+          <td>Zero=1 </td>
+        </tr>
+        <tr>
+          <td>EF ss ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNZW #ssss</a><sup>*1</sup> </td>
+          <td>12 </td>
+          <td>Zero=0 </td>
+        </tr>
+        <tr>
+          <td>F1 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JMPB #ss</a><sup>*1</sup> </td>
+          <td>8 </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>F3 ss ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JMPW #ssss</a><sup>*1</sup> </td>
+          <td>12 </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>F4 </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JMP HL</a> </td>
+          <td>8 </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>F5 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JDBNZ #ss</a> </td>
+          <td>16 </td>
+          <td>B &lt;&gt; 0x00, decrement B before check </td>
+        </tr>
+        <tr>
+          <td>FD nn </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JINT #nn</a> </td>
+          <td>8 </td>
+          <td>None </td>
+        </tr>
+        <tr>
+          <td>CE E0 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JL #ss</a> </td>
+          <td>12 </td>
+          <td>(Overflow=1)&nbsp;!= (Sign=1) </td>
+        </tr>
+        <tr>
+          <td>CE E1 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JLE #ss</a> </td>
+          <td>12 </td>
+          <td>((Overflow=0)&nbsp;!= (Sign=0)) OR (Zero=1) </td>
+        </tr>
+        <tr>
+          <td>CE E2 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JG #ss</a> </td>
+          <td>12 </td>
+          <td>((Overflow=1) == (Sign=1)) AND (Zero=0) </td>
+        </tr>
+        <tr>
+          <td>CE E3 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JGE #ss</a> </td>
+          <td>12 </td>
+          <td>(Overflow=0) == (Sign=0) </td>
+        </tr>
+        <tr>
+          <td>CE E4 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JO #ss</a> </td>
+          <td>12 </td>
+          <td>Overflow=1 </td>
+        </tr>
+        <tr>
+          <td>CE E5 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNO #ss</a> </td>
+          <td>12 </td>
+          <td>Overflow=0 </td>
+        </tr>
+        <tr>
+          <td>CE E6 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNS #ss</a> </td>
+          <td>12 </td>
+          <td>Sign=0 </td>
+        </tr>
+        <tr>
+          <td>CE E7 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JS #ss</a> </td>
+          <td>12 </td>
+          <td>Sign=1 </td>
+        </tr>
+        <tr>
+          <td>CE E8 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNX0 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE E9 ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNX1 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE EA ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNX2 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE EB ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JNX3 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE EC ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JX0 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE ED ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JX1 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE EE ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JX2 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+        <tr>
+          <td>CE EF ss </td>
+          <td><a href="PM_Opc_JMP.html" title="PM Opc JMP">JX3 #ss</a> </td>
+          <td>12 </td>
+          <td>?? </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>*1</b>: JMP, JC, JNC, JZ and JNZ can be used in the assembler to auto-detect the appropriate range. </p>
+    <p><b>Flags Affected (0xF5 - JDBNZ #ss):</b> Zero </p>
+    <p><b>Flags Affected (Others):</b> None </p>
+    <h2><span class="mw-headline" id="RET_.3D_Return_from_routine">RET = Return from routine </span></h2>
+    <table id="sortable_table_id_33" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>F8 </td>
+          <td><a href="PM_Opc_RET.html" title="PM Opc RET">RET</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>F9 </td>
+          <td><a href="PM_Opc_RET.html" title="PM Opc RET">RETI</a> </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>FA </td>
+          <td><a href="PM_Opc_RET.html" title="PM Opc RET">RETSKIP</a> </td>
+          <td>16 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h1><span class="mw-headline" id="System">System </span></h1>
+    <h2><span class="mw-headline" id="HALT_.3D_Halt_CPU">HALT = Halt CPU </span></h2>
+    <table id="sortable_table_id_34" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE AE </td>
+          <td><a href="PM_Opc_HALT.html" title="PM Opc HALT">HALT</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h2><span class="mw-headline" id="STOP_.3D_Stop_CPU">STOP = Stop CPU </span></h2>
+    <table id="sortable_table_id_35" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>CE AF </td>
+          <td><a href="PM_Opc_STOP.html" title="PM Opc STOP">STOP</a> </td>
+          <td>8 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><b>Flags Affected:</b> None </p>
+    <h1><span class="mw-headline" id="Illegal_Instructions">Illegal Instructions </span></h1>
+    <p>The entire opcode table has been evaluated on Pokemon Mini units and new and exotic illegal opcodes have been found. </p>
+    <p>These opcodes are not officially supported (they are not used by 
+      commercial games and not even found in the Pokemon Channel emulator) and
+      can produce random results or crashes in some cases.
+      The illegal opcodes have been documented on <a href="http://wiki.sublab.net/index.php/Talk:PM_InstructionList" title="Talk:PM InstructionList">this page's Discussion page</a>. </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_InstructionList">http://wiki.sublab.net/index.php/PM_InstructionList</a>&quot;;</div    ><!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

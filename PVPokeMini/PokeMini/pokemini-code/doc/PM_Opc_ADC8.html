@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+//window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h2>ADC = Addition with Carry (8-Bits)</h2>
+    <table id="sortable_table_id_0" style="text-align: left;" class="sortable" border="1">
+      <tbody>
+        <tr>
+          <th>Hex</th>
+          <th>Mnemonic</th>
+          <th>Cycles</th>
+        </tr>
+        <tr>
+          <td>08 </td>
+          <td>ADC A, A </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>09 </td>
+          <td>ADC A, B </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0A nn </td>
+          <td>ADC A, #nn </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0B </td>
+          <td>ADC A, [HL] </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0C nn </td>
+          <td>ADC A, [N+#nn] </td>
+          <td>12 </td>
+        </tr>
+        <tr>
+          <td>0D nn nn </td>
+          <td>ADC A, [#nnnn] </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>0E </td>
+          <td>ADC A, [X] </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>0F </td>
+          <td>ADC A, [Y] </td>
+          <td>8 </td>
+        </tr>
+        <tr>
+          <td>CE 08 ss </td>
+          <td>ADC A, [X+#ss] </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 09 ss </td>
+          <td>ADC A, [Y+#ss] </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0A </td>
+          <td>ADC A, [X+L] </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0B </td>
+          <td>ADC A, [Y+L] </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0C </td>
+          <td>ADC [HL], A </td>
+          <td>16 </td>
+        </tr>
+        <tr>
+          <td>CE 0D nn </td>
+          <td>ADC [HL], #nn </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 0E </td>
+          <td>ADC [HL], [X] </td>
+          <td>20 </td>
+        </tr>
+        <tr>
+          <td>CE 0F </td>
+          <td>ADC [HL], [Y] </td>
+          <td>20 </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3><span class="mw-headline" id="Execute">Execute </span></h3>
+    <pre>#nn     = Immediate unsigned 8-Bits
+#ss     = Immediate signed 8-Bits
+A       = Register A
+B       = Register B
+[N+#nn] = Memory: (I shl 16) or (N shl 8) or #nn
+[HL]    = Memory: (I shl 16) or HL
+[X]     = Memory: (XI shl 16) or X
+[Y]     = Memory: (YI shl 16) or Y
+[#nnnn] = Memory: (I shl 16) or #nnnn
+[X+#ss] = Memory: (XI shl 16) or (X + #ss)
+[Y+#ss] = Memory: (YI shl 16) or (Y + #ss)
+[X+L]   = Memory: (XI shl 16) or (X + signed(L))
+[Y+L]   = Memory: (YI shl 16) or (Y + signed(L))
+    </pre>
+    <pre>; ADC Ds, Sc
+;
+; Ds = Destination
+; Sc = Source
+
+; (If flags BCD=0 and NIBBLE=0)
+Ds = Ds + Sc + Carry
+
+;------------------------------------------------ 
+
+; (If flags BCD=0 and NIBBLE=1)
+Ds &amp; 0x0F = (Ds &amp; 0x0F) + (Sc &amp; 0x0F) + Carry
+
+;------------------------------------------------
+
+; (If flags BCD=1 and NIBBLE=0)
+IF (((Ds &amp; 15) + (Sc &amp; 15) + Carry) &gt;= 10) THEN
+  Ds = Ds + Sc + Carry + 6
+ELSE
+  Ds = Ds + Sc + Carry
+ENDIF
+IF (Ds &gt;= 0xA0) Ds = Ds + 0x60
+
+;------------------------------------------------
+
+; (If flags BCD=1 and NIBBLE=1)
+IF (((Ds &amp; 15) + (Sc &amp; 15) + Carry) &gt;= 10) THEN
+  Ds &amp; 0x0F = (Ds &amp; 0x0F) + (Sc &amp; 0x0F) + Carry + 6
+ELSE
+  Ds &amp; 0x0F = (Ds &amp; 0x0F) + (Sc &amp; 0x0F) + Carry
+ENDIF
+    </pre>
+    <h3><span class="mw-headline" id="Description">Description </span></h3>
+    <p>8-Bits Source and Carry adds to the 8-Bits Destination. </p>
+    <h3><span class="mw-headline" id="Conditions">Conditions </span></h3>
+    <h4><span class="mw-headline" id="If_flags_BCD.3D0_and_NIBBLE.3D0">If flags BCD=0 and NIBBLE=0 </span></h4>
+    <p>Zero: Set when result is 0 </p>
+    <p>Carry: Set when result is &gt;= 256 </p>
+    <p>Overflow: Set when result overflow 8-bits signed range (&lt; -128 OR &gt; 127) </p>
+    <p>Sign: Set when bit 7 of the result is 1 </p>
+    <h4><span class="mw-headline" id="If_flags_BCD.3D0_and_NIBBLE.3D1">If flags BCD=0 and NIBBLE=1 </span></h4>
+    <p>Zero: Set when result is 0 </p>
+    <p>Carry: Set when result is &gt;= 16 </p>
+    <p>Overflow: Set when result overflow 4-bits signed range (&lt; -16 OR &gt; 15) </p>
+    <p>Sign: Set when bit 3 of the result is 1 </p>
+    <h4><span class="mw-headline" id="If_flags_BCD.3D1_and_NIBBLE.3D0">If flags BCD=1 and NIBBLE=0 </span></h4>
+    <p>Zero: Set when result is 0 </p>
+    <p>Carry: Set when result is &gt;= 100 </p>
+    <p>Overflow: Always Reset </p>
+    <p>Sign: Always Reset </p>
+    <h4><span class="mw-headline" id="If_flags_BCD.3D1_and_NIBBLE.3D1">If flags BCD=1 and NIBBLE=1 </span></h4>
+    <p>Zero: Set when result is 0 </p>
+    <p>Carry: Set when result is &gt;= 10 </p>
+    <p>Overflow: Always Reset </p>
+    <p>Sign: Always Reset </p>
+    <h3><span class="mw-headline" id="Examples">Examples </span></h3>
+    <pre>; A = 0x55
+; F = (Carry=1)
+<b>ADC A, $80</b>
+; A = 0xD6 (0x55 + 0x80 + 0x01 = 0x(0)D6)
+; F = (Zero=0):(Carry=0):(Overflow=1):(Sign=1)
+    </pre>
+    <pre>; B = 0x31
+; A = 0xCF
+; F = (Carry=0)
+<b>ADC A, B</b>
+; B = 0x31
+; A = 0x00 (0xCF + 0x31 + 0x00 = 0x(1)00)
+; F = (Zero=1):(Carry=1):(Overflow=0):(Sign=0)
+    </pre>
+    <pre>; [HL] = 0xDE
+; A = 0xCF
+; F = (Carry=0)
+<b>ADC A, [HL]</b>
+; [HL] = 0xDE
+; A = 0xAD (0xCF + 0xDE + 0x00 = 0x(1)AD)
+; F = (Zero=0):(Carry=1):(Overflow=0):(Sign=1)
+    </pre>
+    <pre>; ( BCD = 1, NIBBLE = 0 )
+; A = 0x09
+; F = (Carry=1)
+<b>ADC A, $01</b>
+; A = 0x11 (09 + 01 + 01 = 11)
+; F = (Zero=0):(Carry=0):(Overflow=0):(Sign=0)
+    </pre>
+    <pre>; ( BCD = 0, NIBBLE = 1 )
+; A = 0x3F (Note, in &quot;nibble mode&quot; the high nibble is always discarded)
+; F = (Carry=1)
+<b>ADC A, $01</b>
+; A = 0x01 (0xF + 0x1 + 0x1 = 0x(1)1)
+; F = (Zero=1):(Carry=1):(Overflow=0):(Sign=0)
+    </pre>
+    <p><a href="PM_InstructionList.html" title="PM InstructionList"><b>« Back to Instruction set</b></a> </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Opc_ADC8">http://wiki.sublab.net/index.php/PM_Opc_ADC8</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

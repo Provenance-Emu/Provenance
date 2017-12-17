@@ -22,6 +22,7 @@
 - (NSArray *)systemIDsForRomAtPath:(NSString *)path;
 - (BOOL)isCDROM:(NSString *)filePath;
 
+- (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error;
 @end
 
 @interface PVGameImporterTests : XCTestCase
@@ -41,13 +42,14 @@
 - (void)testIsCDROM {
     PVGameImporter *importer = [[PVGameImporter alloc] init];
     BOOL isCDROM = [importer isCDROM:@"game.cue"];
-    XCTAssertTrue(isCDROM == YES, @".cue should be a CDROM");
-    
-    isCDROM = [importer isCDROM:@"game.iso"];
-    XCTAssertTrue(isCDROM == YES, @".iso should be a CDROM");
+    XCTAssertTrue(isCDROM, @".cue should be a CDROM");
+
+    // No cores use .iso without .cue nativaly as far as I know.
+//    isCDROM = [importer isCDROM:@"game.iso"];
+//    XCTAssertTrue(isCDROM == YES, @".iso should be a CDROM");
     
     isCDROM = [importer isCDROM:@"game.bin"];
-    XCTAssertTrue(isCDROM == NO, @".bin should not be a CDROM");
+    XCTAssertFalse(isCDROM, @".bin should not be a CDROM");
 }
 
 - (void)testRomToSystemMap {
@@ -59,7 +61,8 @@
 - (void)testSystemToPathMap {
     PVGameImporter *importer = [[PVGameImporter alloc] init];
     NSString *path = [importer pathForSystemID:@"com.provenance.gbc"];
-    XCTAssertTrue(([path isEqualToString:[NSString stringWithFormat:@"%@/com.provenance.gbc", [importer romsPath]]]), @"Path should be documents/com.provenance.gbc, but it is not.");
+    NSString *expected = [NSString stringWithFormat:@"%@/com.provenance.gbc", [importer documentsPath]];
+    XCTAssertEqualObjects(path, expected, @"Path should be documents/com.provenance.gbc, but it is not.");
 }
 
 - (void)testPerformanceUpdateSystemToPathMap {
@@ -81,6 +84,19 @@
     NSData *data = [NSData dataWithContentsOfURL:fileURL];
     NSString *sha1 = [data sha1Hash];
     XCTAssertTrue([sha1 isEqualToString:@"AAF4C61DDCC5E8A2DABEDE0F3B482CD9AEA9434D"]);
+}
+
+- (void)testMD5toRomMap {
+    NSString *fileMD5;
+    NSString *systemID = @"";
+    PVGameImporter *importer = [[PVGameImporter alloc] init];
+    NSError *error;
+    
+    [importer searchDatabaseUsingKey:@"romHashMD5"
+                               value:fileMD5
+                            systemID:@""
+                               error:&error];
+
 }
 
 @end

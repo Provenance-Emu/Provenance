@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Authors: Wa <admin@logicplace.com>
+          JustBurn <justburner@gmail.com>
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the GNU
+ Library General Public License for more details.
+
+ You should have received a copy of the GNU Library General Public
+ License along with this library; if not, write to the
+ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ Boston, MA 02111-1307, USA.
+
+-->
+<language id="pm_asm" _name="Pokémon-Mini Assembly" version="2.0" _section="Sources">
+	<metadata>
+		<property name="mimetypes">text/x-asm;text/x-assembler</property>
+		<property name="globs">*.asm;*.s</property>
+		<property name="line-comment-start">;</property>
+	</metadata>
+
+	<styles>
+		<style id="comment" _name="Comment" map-to="def:comment"/>
+		<style id="string" _name="String" map-to="def:string"/>
+		<style id="label" _name="Label" map-to="def:function"/>
+		<style id="directive" _name="Directive" map-to="def:preprocessor"/>
+		<style id="key" _name="Key" map-to="def:function"/>
+		<style id="op" _name="Operator" map-to="def:operator"/>
+		<style id="macro" _name="Macro" map-to="c:common-defines"/>
+		<style id="opcode" _name="Opcode" map-to="def:statement"/>
+		<style id="symbol" _name="Symbol" map-to="def:identifier"/>
+		<style id="register" _name="Build-in" map-to="def:character"/>
+		<style id="error" _name="Error" map-to="def:error"/>
+		<style id="binary" _name="Binary number" map-to="def:base-n-integer"/>
+		<style id="hexadecimal" _name="Hexadecimal" map-to="def:base-n-integer"/>
+	</styles>
+
+	<definitions>
+		<context id="pm_asm"><include>
+			<context ref="def:decimal"/>
+			<context ref="def:hexadecimal"/>
+			<context ref="def:octal"/>
+
+			<context id="binary" style-ref="binary">
+				<match>0[bB][01]+</match>
+			</context>
+
+			<context id="hexadecimal" style-ref="hexadecimal">
+				<match>\$[0-9a-fA-F]+</match>
+			</context>
+
+			<context id="string-double" end-at-line-end="true" style-ref="string">
+				<start>"</start>
+				<end>"</end>
+				<include>
+					<context ref="def:escape"/>
+				</include>
+			</context>
+
+			<context id="string-single" end-at-line-end="true" style-ref="string">
+				<start>'</start>
+				<end>'</end>
+				<include>
+					<context ref="def:escape"/>
+				</include>
+			</context>
+
+			<context id="comment" style-ref="comment" end-at-line-end="true">
+				<start>;</start>
+				<end>$</end>
+				<include>
+					<context ref="def:in-comment"/>
+				</include>
+			</context>
+
+			<context id="labels" style-ref="label">
+				<match>^([a-zA-Z_][a-zA-Z_0-9]*)?:</match>
+			</context>
+
+			<context id="directive" style-ref="directive">
+				<match>\.[a-zA-Z][a-zA-Z_0-9]*</match>
+			</context>
+
+			<context id="opcode" style-ref="opcode">
+				<match>(^|(?&lt;=:))\s+(?i)(nop|mov|add|sub|adc|sbc|cmp|inc|dec|neg|mul|div|tst|and|or|xor|not|shl|sal|shr|sar|rol|rolc|ror|rorc|xchg|pack|unpack|swap|ex|push|pop|reti|retskip|ret|halt|stop|pushx|pushax|pusha|popx|popax|popa|callb|callw|call|cint|callcb|callncb|callzb|callnzb|callcw|callncw|callzw|callnzw|callc|callnc|callz|callnz|calll|callle|callg|callge|callo|callno|callns|calls|callnx0|callnx1|callnx2|callnx3|callx0|callx1|callx2|callx3|jmpb|jmpw|jmp|jcb|jncb|jzb|jnzb|jcw|jncw|jzw|jnzw|jc|jnc|jz|jnz|jdbnz|jint|jl|jle|jg|jge|jo|jno|jns|js|jnx0|jnx1|jnx2|jnx3|jx0|jx1|jx2|jx3)\b</match>
+			</context>
+
+			<context id="macro" style-ref="macro">
+				<match>(^|(?&lt;=:))\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*</match>
+			</context>
+
+			<context id="register" style-ref="register">
+				<match>(?i)\b(ba|hl|x|y|f|a|b|l|h|i|xi|yi|n)\b</match>
+			</context>
+
+			<context id="sym" style-ref="symbol">
+				<match>[a-zA-Z_][a-zA-Z_0-9]*</match>
+			</context>
+
+			<context id="op" style-ref="op">
+				<match>[+\-*/|&amp;^]|&lt;&lt;|&gt;&gt;</match>
+			</context>
+
+		</include></context>
+	</definitions>
+
+</language>

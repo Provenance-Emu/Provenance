@@ -1,0 +1,1 @@
+<Project name="mapview" typeId="{a3dd1292-c878-4a37-89a4-b99c4757c598}"><g1:pm xmlns:g1="urn:pm_proj"><g1:general><g1:mainsrc>mapview.asm</g1:mainsrc><g1:outmin>mapview.min</g1:outmin><g1:outsym>mapview.sym</g1:outsym></g1:general></g1:pm><File path="mapview.asm"></File><File path="pokemap.pmimage"></File><File path="pokemap.inc"></File><File path="Makefile"></File></Project>

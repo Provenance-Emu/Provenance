@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>LIB: pm_music</h1>
+    <p>Background Music (BGM) and sound effects (SFX) playback</p>
+    <p>Note: <span class="code_def">IRQ_MUSIC</span> must be included in <a href="LIB_pm_init.html">PM_HEADER</a> IRQ flags list for the mixer to work</p>
+    <p class="code_dire">pmrom_music.s</p>
+    <p class="smallfnt"><strong>Type:</strong> Source File</p>
+    <p class="smallfnt"><strong>Dependency:</strong> <span class="code_dire">pm_init.s</span></p>
+    <p class="smallfnt"><strong>Including Rules:</strong> Must be after ROM (<a href="LIB_pm_init.html">PM_HEADER</a>) declaration and inside Bank 0</p>
+    <p class="smallfnt"><strong>ROM/RAM Usage:</strong> 1.2KB of ROM &amp; 67 Bytes of RAM</p>
+    <h2>Functions</h2>
+    <table border="1" width="100%" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Functions</th>
+        <th scope="col" width="30%">Parameters</th>
+        <th scope="col" width="40%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>Initialize</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_init</span></td>
+        <td>BA = RAM Pointer<br />
+        HL = Master time<br />
+        No return</td>
+        <td>Initialize tracker<br />
+          Master time is Tmr 2 Preset with Prescale 6<br />
+          TicksPerSec = 3906.25 / (Master Time + 1);</td>
+      </tr>
+      <tr>
+        <td><strong>Manage master time</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_setmastertime</span></td>
+        <td>HL = Master time<br />
+          No return</td>
+        <td>Modify master time (affects both BGM and SFX)</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_getmastertime</span></td>
+        <td>No parameters<br />
+          Return HL = Master Timer</td>
+        <td>Get master time</td>
+      </tr>
+      <tr>
+        <td><strong>Manage RAM pointer</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_setrampointer</span></td>
+        <td>HL = RAM pointer<br />
+          No return</td>
+        <td>Modify RAM pointer (affects both BGM and SFX)</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_getrampointer</span></td>
+        <td>No parameters<br />
+          Return HL = RAM pointer</td>
+        <td>Get RAM pointer</td>
+      </tr>
+      <tr>
+        <td><strong>Manage master volume</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_setvolbgm</span></td>
+        <td>A = Volume<br />
+        No return</td>
+        <td><p>Set BGM master volume<br />
+        0 (Silence) to 3 (Max), default is 3<br />
+        If out of range, the call will be ignored</p></td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_getvolbgm</span></td>
+        <td>No parameters<br />
+        Return A = Volume</td>
+        <td>Get BGM master volume</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_setvolsfx</span></td>
+        <td>A = Volume<br />
+          No return</td>
+        <td><p>Set SFX master volume<br />
+        0 (Silence) to 3 (Max), default is 3<br />
+        If out of range, the call will be ignored</p></td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_getvolsfx</span></td>
+        <td>No parameters<br />
+          Return A = Volume</td>
+        <td>Get SFX master volume</td>
+      </tr>
+      <tr>
+        <td><strong>Play music (BGM)</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_playbgm</span></td>
+        <td>I = BGM Address (Hi)<br />
+        HL = BGM Address (Med &amp; Lo)<br />
+        No return</td>
+        <td>Play BGM, address must be a list of patterns</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_stopbgm</span></td>
+        <td>No parameters<br />
+          No return</td>
+        <td>Stop BGM</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_isplayingbgm</span></td>
+        <td>No parameters<br />
+          Return Non-Zero if playing<br />
+          Return A != 0 if playing</td>
+        <td>Is playing BGM?</td>
+      </tr>
+      <tr>
+        <td><strong>Play sound effect (SFX)</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_playsfx</span></td>
+        <td>I = SFX Address (Hi)<br />
+          HL = SFX Address (Med &amp; Lo)<br />
+          No return</td>
+        <td>Play SFX, address must be a patterns</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_stopsfx</span></td>
+        <td>No parameters<br />
+          No return</td>
+        <td>Stop SFX</td>
+      </tr>
+      <tr>
+        <td><span class="code_opc">call </span><span class="code_func">pmmusic_isplayingsfx</span></td>
+        <td>No parameters<br />
+          Return Non-Zero if playing<br />
+          Return A != 0 if playing</td>
+        <td>Is playing SFX?</td>
+      </tr>
+    </table>
+    <h2>Macros</h2>
+    <p class="smallfnt">Note: Macros names are case insensitive</p>
+    <table border="1" width="100%" class="smallfnt">
+      <tr>
+        <th scope="col" width="50%">Macro</th>
+        <th scope="col" width="50%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_ALIGN</span></td>
+        <td>Align data for music data, equivalent to &quot;<span class="code_dire">.align</span> 2&quot; but doesn't override assembler's aligment </td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_PATTERN</span> pataddr</td>
+        <td>Must be inside BGM<br />
+          Define pattern, BGM must have at least 1 pattern<br />
+          <span class="code_def">pataddr</span> = Label of pattern</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_ROW</span> note_id, pwm_amt, volume, wait_amt</td>
+        <td>Must be inside SFX or Pattern<br />
+          Define row inside pattern<br />
+          <span class="code_def">note_id</span> = <span class="code_def">N_*</span> definition<br />
+          <span class="code_def">pwm_amt</span> = Pulse-Width, 0 to 255, 128 = 50% (Square)<br />
+          <span class="code_def">volume</span> = Volume, 0 to 3<br />
+          <span class="code_def">wait_amt</span> = Wait ticks, 1 to 255<br />
+          Set <span class="code_def">note_id</span> to <span class="code_def">N____</span> and <span class="code_def">pwm_amt</span> to -1 to not update note (saves 4 bytes)<br />
+          Pulse-width changing require note definition!</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_WRITE_RAM</span> address, value</td>
+        <td>Must be inside SFX or Pattern<br />
+          Write to RAM<br />
+          <span class="code_def">address</span> = Relative adress<br />
+          <span class="code_def">pwm_amt</span> = Pulse-Width, 0 to 255, 128 = 50% (Square)</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_MARK</span> loop_id</td>
+        <td>Must be inside SFX or Pattern<br />
+          Mark position for loop<br />
+          <span class="code_def">loop_id</span> = Loop identification, 0 to 3</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_LOOP</span> loop_id, loop_num</td>
+        <td>Must be inside SFX or Pattern<br /> 
+          Loop back
+<br />
+<span class="code_def">loop_id</span> = Loop identification, 0 to 3<br />
+<span class="code_def">loop_num</span> = Number of loops, 0 to 255</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_NEXT</span></td>
+        <td>Must be inside Pattern<br /> 
+          Go to next pattern</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_GOBACK</span> pattnum</td>
+        <td>Must be inside Pattern<br />
+          Mark position for loop<br />
+          <span class="code_def">pattnum</span> = Number of patterns to go back<br />0 will repeat same pattern over and over<br />1 will jump to the previous pattern</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PMMUSIC_END</span></td>
+        <td>Must be inside SFX or Pattern<br />
+        End BGM/SFX playback</td>
+      </tr>
+    </table>
+    <h2>Defines</h2>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_def">IRQ_MUSIC</span></td>
+        <td>Interrupt for handling the music, must be defined in <a href="LIB_pm_init.html">PM_HEADER</a> IRQ flags list for the mixer to work. This definition is equivalent to <span class="code_def">IRQ_TMR2_HI</span></td>
+      </tr>
+    </table>
+    <h3 align="center">Notes for PMMUSIC_ROW</h3>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_def">N____</span></td>
+        <td>Don't change note</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_C_n</span></td>
+        <td>Play C, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_CSn</span></td>
+        <td>Play C#, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_D_n</span></td>
+        <td>Play D, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_DSn</span></td>
+        <td>Play D#, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_E_n</span></td>
+        <td>Play E, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_F_n</span></td>
+        <td>Play F, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_FSn</span></td>
+        <td>Play F#, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_G_n</span></td>
+        <td>Play G, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_GSn</span></td>
+        <td>Play G#, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_A_n</span></td>
+        <td>Play A, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_ASn</span></td>
+        <td>Play A#, n is octave number between 1 and 7</td>
+      </tr>
+      <tr>
+        <td><span class="code_def">N_B_n</span></td>
+        <td>Play B, n is octave number between 1 and 7</td>
+      </tr>
+    </table>
+    <h2>Example</h2>
+    <pre>
+  <span class="code_dire">.include</span> <span class="code_string">&quot;pm_libs/pm_init.s&quot;</span>
+
+  <em class="code_comm">; 1st: Game Title string, must be 12 characters</em>
+  <em class="code_comm">; 2nd: Interrupts to map, OR flags for multiple interrupts</em>
+  <em class="code_comm">; 3rd: Extra flags</em>
+  <span class="code_macro">pm_header</span> <span class="code_string"></span><span class="code_string">&quot;PMMusic TsT &quot;</span>, <span class="code_def">IRQ_KEY_POWER</span> | <span class="code_def">IRQ_MUSIC</span>, 0
+
+  <em class="code_comm">; Note! For pm_music to work you MUST define IRQ_MUSIC (or IRQ_TMR2_HI)</em>
+  <em class="code_comm">; in PM_HEADER IRQs flag list!</em>
+  <span class="code_dire">.include</span> <span class="code_string">&quot;pm_libs/pmrom_music.s&quot;</span>
+
+  <em class="code_comm">; Power button, shutdown PM</em>
+<span class="code_def">irq_key_power:</span>	<em class="code_comm">; Interrupt function (same name as definition but in lowercase)</em>
+  <span class="code_opc">cint</span> <span class="code_def">CINT_SHUTDOWN</span>	<em class="code_comm">; Call shutdown in BIOS</em>
+
+  <em class="code_comm">; Code starts here</em>
+<span class="code_def">main:</span>
+  <em class="code_comm">; Enable power key interrupt</em>
+  <span class="code_macro">enable_irqs</span> <span class="code_def">IRQ_KEY_POWER</span>
+
+  <em class="code_comm">; Initialize PM Music</em>
+  <span class="code_opc">mov</span> ba, 0	<em class="code_comm">; RAM pointer isn't needed</em>
+  <span class="code_opc">mov</span> hl, $00FF	<em class="code_comm">; Master time of 255 (approx. 61 Hz)</em>
+  <span class="code_opc">call</span> <span class="code_func">pmmusic_init</span>
+
+  <em class="code_comm">; Enable interrupts</em>
+  <span class="code_opc">mov</span> f, <span class="code_def">ENABLE_IRQ</span>
+
+  <em class="code_comm">; Play PM Intro sound</em>
+  <span class="code_opc">mov</span> hl, <span class="code_def">pm_intro</span>
+  <span class="code_opc">call</span> <span class="code_func">pmmusic_playbgm</span>
+
+<span class="code_def">:</span> <span class="code_opc">halt</span>
+  <span class="code_opc">jmp</span> <span class="code_def">:b</span>
+
+  <em class="code_comm">; 2 bytes alignment is recommended before any pmmusic data</em>
+  <em class="code_comm">; data can be located anywhere in 2MB range and support bank crossing</em>
+  <span class="code_macro">pmmusic_align</span>
+
+  <em class="code_comm">; PM Intro list of patterns</em>
+<span class="code_def">pm_intro:</span>
+  <span class="code_macro">pmmusic_pattern</span> <span class="code_def">pm_intro_pat</span>
+
+  <em class="code_comm">; PM Intro pattern</em>
+<span class="code_def">pm_intro_pat:</span>
+  <em class="code_comm">;           Note    Pw  V  Wait</em>
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_E_5</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_A_5</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 0, 9
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_D_6</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_CS6</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_A_5</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_E_6</span>, $80, 3, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 2, 4
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 0, 24
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_D_6</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_A_6</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_E_7</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_B_7</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_E_7</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N_B_7</span>, $80, 3, 3
+  <span class="code_macro">pmmusic_row</span> <span class="code_def">N____</span>,  -1, 0, 6
+  <span class="code_macro">pmmusic_end</span>
+
+  <b class="code_macro">pm_rominfo</b>	<i class="code_comm">; Optional, report ROM and RAM size</i></pre>
+<!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

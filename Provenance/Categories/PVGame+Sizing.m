@@ -23,7 +23,13 @@ CGFloat const PVGameBoxArtAspectRatioTall = 0.7;
         imageAspectRatio = PVGameBoxArtAspectRatioWide;
     }
     else if ([self.systemIdentifier isEqualToString:PVNESSystemIdentifier] ||
-             [self.systemIdentifier isEqualToString:PVGenesisSystemIdentifier]) {
+             [self.systemIdentifier isEqualToString:PVGenesisSystemIdentifier] ||
+             [self.systemIdentifier isEqualToString:PV32XSystemIdentifier] ||
+             [self.systemIdentifier isEqualToString:PV2600SystemIdentifier] ||
+             [self.systemIdentifier isEqualToString:PV5200SystemIdentifier] ||
+             [self.systemIdentifier isEqualToString:PV7800SystemIdentifier] ||
+             [self.systemIdentifier isEqualToString:PVWonderSwanSystemIdentifier])
+    {
         imageAspectRatio = PVGameBoxArtAspectRatioTall;
     }
     

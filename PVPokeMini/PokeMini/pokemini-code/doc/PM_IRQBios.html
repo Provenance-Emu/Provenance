@@ -1,0 +1,754 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Interrupt / BIOS </h1>
+    <h2><span class="mw-headline" id="Interrupt_Overview">Interrupt Overview </span></h2>
+    <p>The Minx provides up to 32 hardware mapped interrupts and up to 96 
+      software interrupts (for bios calls).  The full list is defined in the <a href="#Bios" title="PM Bios">BIOS section</a> of the standard.  Out of the 32 interrupts, three are not maskable, $00~$02. </p>
+    <p>On startup, <b>IRQ 0 (reset)</b> fires. Since BIOS resets the processor state, it is unknown if this behaves like a normal IRQ. </p>
+    <h2>Interrupt Priority</h2>
+    <p>The Minx interrupt hardware is impressive in it's configurability.  
+      The 29 maskable interrupts are divided into 9 groups.  Each of these 
+      groups are then provided a 2 bit priority encoder.  These encoders 
+      define the order in which IRQs are processed.  IRQs are processed by 
+      priority first, then by the internal IRQ number.  If an IRQ group is 
+      assigned a priority of 0, all the IRQs for the group are implicity 
+      disabled. </p>
+    <h2>Enabling Interrupts</h2>
+    <p>All 29 of the maskable interrupts can be disabled in 3 ways.  The 
+      first way is if the interrupt disable flag or interrupt branch flag is 
+      set in the Flag register.  This will prevent all maskable IRQs from 
+      occuring.  The 2nd is by setting the IRQ group priority to zero.  
+      Finally, you can reset the effective bit in the IRQ_ENA_* register.  If 
+      any of these three conditions occur, the IRQ is effectively disabled. </p>
+    <p>Note: If registers V and U are different, IRQ will not be called. </p>
+    <h2>When Interrupts Occur</h2>
+    <p>IRQs are set to &quot;pending&quot; on the rising edge of an event.  Since IRQs
+      are not nessessarly processed immediately, they will remain in a 
+      waiting state.  This is where the IRQ_ACT_* registers come in.  At any 
+      point an IRQ is enabled, and the respective bit in an IRQ_ACT_* is set. 
+      The down side to this is the IRQ will continue to fire until software 
+      clears the bit by writing a logical '1' to the bit in IRQ_ACT_*. </p>
+    <p>After an IRQ branch occurs, the interrupt branch flag is set, preventing IRQs from colliding with one another. </p>
+    <h2>What is Not Known</h2>
+    <p>It is unknown which interrupts are masked by the interrupt disable 
+      flag.  Additionally, there are aproximately 7 hardware interrupts which 
+      have not been mapped and as such we don't know entire know all the 
+      details of their behavior. </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_IRQs">http://wiki.sublab.net/index.php/PM_IRQs</a>&quot;</div>
+	<h2><a name="Bios" id="Bios"></a>The BIOS Overview</h2>
+	<p>The internal BIOS consists of a 4kB program image built to initialize
+	  the system, bring it out of sleep and various other system specific 
+	  tasks.  Since the Pokemon Mini is never technically off, only suspended,
+	  BIOS is used for tasks like enabling power to the system and responding
+	  to various at rest IRQs. </p>
+	<p>The BIOS image begins with a 256 byte IRQ vector table, 
+	  consisting of 128 16-bit vectors (only first 76 are valid).  The system 
+	  reserves 32 vectors for hardware IRQs, the rest are used for software 
+	  calls.  It is worth noting that all IRQs are latched on the rising edge 
+	  of an event, so button presses and IR receive is only latched when the 
+	  IR receiver is active 1 or if a button has been press, but not released. </p>
+	<h2>The IRQ Vector Table</h2>
+	<table style="text-align: left;" border="1" class="smallfnt">
+      <caption>
+      <b>Bios IRQ Vector Table</b>
+      </caption>
+	  <tbody>
+	    <tr>
+          <th>IRQ </th>
+	      <th>BIOS </th>
+	      <th>Cart IRQ </th>
+	      <th>IRQ Group </th>
+	      <th>Hardware Strobe </th>
+	      <th>Description </th>
+        </tr>
+        <tr>
+          <td>$00 </td>
+          <td>0000:009A </td>
+          <td>0 </td>
+          <td colspan="2"> Non-Maskable </td>
+          <td>System Start-up / System Reset </td>
+        </tr>
+        <tr>
+          <td>$01 </td>
+          <td>0002:00AB </td>
+          <td></td>
+          <td colspan="2"> Non-Maskable </td>
+          <td>Unused </td>
+        </tr>
+        <tr>
+          <td>$02 </td>
+          <td>0004:00AB </td>
+          <td></td>
+          <td colspan="2"> Non-Maskable </td>
+          <td>Unused </td>
+        </tr>
+        <tr>
+          <td>$03 </td>
+          <td>0006:01CF </td>
+          <td>1 </td>
+          <td>$20[7..6] </td>
+          <td>$27,7 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Copy Complete</a> </td>
+        </tr>
+        <tr>
+          <td>$04 </td>
+          <td>0008:01E0 </td>
+          <td>2 </td>
+          <td>$20[7..6] </td>
+          <td>$27,6 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Frame Divider Overflow</a> </td>
+        </tr>
+        <tr>
+          <td>$05 </td>
+          <td>000A:01F1 </td>
+          <td>3 </td>
+          <td>$20[5..4] </td>
+          <td>$27,5 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer2 Upper-8 Underflow</a> </td>
+        </tr>
+        <tr>
+          <td>$06 </td>
+          <td>000C:0202 </td>
+          <td>4 </td>
+          <td>$20[5..4] </td>
+          <td>$27,4 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer2 Lower-8 Underflow (8-bit only)</a> </td>
+        </tr>
+        <tr>
+          <td>$07 </td>
+          <td>000E:0213 </td>
+          <td>5 </td>
+          <td>$20[3..2] </td>
+          <td>$27,3 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer1 Upper-8 Underflow</a> </td>
+        </tr>
+        <tr>
+          <td>$08 </td>
+          <td>0010:0224 </td>
+          <td>6 </td>
+          <td>$20[3..2] </td>
+          <td>$27,2 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer1 Lower-8 Underflow (8-bit only)</a> </td>
+        </tr>
+        <tr>
+          <td>$09 </td>
+          <td>0012:0235 </td>
+          <td>7 </td>
+          <td>$20[1..0] </td>
+          <td>$27,1 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer3 Upper-8 Underflow</a> </td>
+        </tr>
+        <tr>
+          <td>$0A </td>
+          <td>0014:0246 </td>
+          <td>8 </td>
+          <td>$20[1..0] </td>
+          <td>$27,0 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer3 Pivot</a> </td>
+        </tr>
+        <tr>
+          <td>$0B </td>
+          <td>0016:025A </td>
+          <td>9 </td>
+          <td>$21[7..6] </td>
+          <td>$28,5 </td>
+          <td>32Hz (From 256Hz Timer) </td>
+        </tr>
+        <tr>
+          <td>$0C </td>
+          <td>0018:026B </td>
+          <td>10 </td>
+          <td>$21[7..6] </td>
+          <td>$28,4 </td>
+          <td>8Hz (From 256Hz Timer) </td>
+        </tr>
+        <tr>
+          <td>$0D </td>
+          <td>001A:027C </td>
+          <td>11 </td>
+          <td>$21[7..6] </td>
+          <td>$28,3 </td>
+          <td>2Hz (From 256Hz Timer) </td>
+        </tr>
+        <tr>
+          <td>$0E </td>
+          <td>001C:028D </td>
+          <td>12 </td>
+          <td>$21[7..6] </td>
+          <td>$28,2 </td>
+          <td>1Hz (From 256Hz Timer) </td>
+        </tr>
+        <tr>
+          <td>$0F </td>
+          <td>001E:029E </td>
+          <td>13 </td>
+          <td>$22[1..0] </td>
+          <td>$2A,7 </td>
+          <td>IR Receiver </td>
+        </tr>
+        <tr>
+          <td>$10 </td>
+          <td>0020:02AF </td>
+          <td>14 </td>
+          <td>$22[1..0] </td>
+          <td>$2A,6 </td>
+          <td>Shock Sensor </td>
+        </tr>
+        <tr>
+          <td>$11 </td>
+          <td>0022:00AB </td>
+          <td></td>
+          <td></td>
+          <td>$2A,5 </td>
+          <td>Unused </td>
+        </tr>
+        <tr>
+          <td>$12 </td>
+          <td>0024:00AB </td>
+          <td></td>
+          <td></td>
+          <td>$2A,4 </td>
+          <td>Unused </td>
+        </tr>
+        <tr>
+          <td>$13 </td>
+          <td>0026:043E </td>
+          <td></td>
+          <td>$21[5..4] </td>
+          <td>$28,1 </td>
+          <td>Cartridge Ejected </td>
+        </tr>
+        <tr>
+          <td>$14 </td>
+          <td>0028:02C0 </td>
+          <td>26 </td>
+          <td>$21[5..4] </td>
+          <td>$28,0 </td>
+          <td>Cartridge IRQ </td>
+        </tr>
+        <tr>
+          <td>$15 </td>
+          <td>002A:03BA </td>
+          <td>15 </td>
+          <td>$21[3..2] </td>
+          <td>$29,7 </td>
+          <td>Power Key </td>
+        </tr>
+        <tr>
+          <td>$16 </td>
+          <td>002C:02D1 </td>
+          <td>16 </td>
+          <td>$21[3..2] </td>
+          <td>$29,6 </td>
+          <td>Right Key </td>
+        </tr>
+        <tr>
+          <td>$17 </td>
+          <td>002E:02E2 </td>
+          <td>17 </td>
+          <td>$21[3..2] </td>
+          <td>$29,5 </td>
+          <td>Left Key </td>
+        </tr>
+        <tr>
+          <td>$18 </td>
+          <td>0030:02F3 </td>
+          <td>18 </td>
+          <td>$21[3..2] </td>
+          <td>$29,4 </td>
+          <td>Down Key </td>
+        </tr>
+        <tr>
+          <td>$19 </td>
+          <td>0032:0304 </td>
+          <td>19 </td>
+          <td>$21[3..2] </td>
+          <td>$29,3 </td>
+          <td>Up Key </td>
+        </tr>
+        <tr>
+          <td>$1A </td>
+          <td>0034:0315 </td>
+          <td>20 </td>
+          <td>$21[3..2] </td>
+          <td>$29,2 </td>
+          <td>C Key </td>
+        </tr>
+        <tr>
+          <td>$1B </td>
+          <td>0036:0326 </td>
+          <td>21 </td>
+          <td>$21[3..2] </td>
+          <td>$29,1 </td>
+          <td>B Key </td>
+        </tr>
+        <tr>
+          <td>$1C </td>
+          <td>0038:0337 </td>
+          <td>22 </td>
+          <td>$21[3..2] </td>
+          <td>$29,0 </td>
+          <td>A Key </td>
+        </tr>
+        <tr>
+          <td>$1D </td>
+          <td>003A:0348 </td>
+          <td>23 </td>
+          <td></td>
+          <td>$2A,2 </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>$1E </td>
+          <td>003C:035C </td>
+          <td>24 </td>
+          <td></td>
+          <td>$2A,1 </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>$1F </td>
+          <td>003E:036D </td>
+          <td>25 </td>
+          <td></td>
+          <td>$2A,0 </td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>IRQ </th>
+          <th>BIOS </th>
+          <th colspan="4"> (Software only) Description </th>
+        </tr>
+        <tr>
+          <td>$20 </td>
+          <td>0040:FFF1 </td>
+          <td colspan="4"> User IRQ Routine at PC 0xFFF1 </td>
+        </tr>
+        <tr>
+          <td>$21 </td>
+          <td>0042:0713 </td>
+          <td colspan="4"> Suspend System </td>
+        </tr>
+        <tr>
+          <td>$22 </td>
+          <td>0044:077C </td>
+          <td colspan="4"> Sleep&nbsp;?? </td>
+        </tr>
+        <tr>
+          <td>$23 </td>
+          <td>0046:078B </td>
+          <td colspan="4"> Sleep with display on&nbsp;?? </td>
+        </tr>
+        <tr>
+          <td>$24 </td>
+          <td>0048:079D </td>
+          <td colspan="4"> Shutdown System (Use this to exit your game!) </td>
+        </tr>
+        <tr>
+          <td>$25 </td>
+          <td>004A:07B1 </td>
+          <td colspan="4">&nbsp;?? (Involves Cartridge Eject) </td>
+        </tr>
+        <tr>
+          <td>$26 </td>
+          <td>004C:07E9 </td>
+          <td colspan="4"> Set default LCD Constrast (A = Contrast level 0x00 to 0x3F) </td>
+        </tr>
+        <tr>
+          <td>$27 </td>
+          <td>004E:0802 </td>
+          <td colspan="4"> Increase or decrease Contrast based of Zero flag (0 = Increase, 1 = Decrease)<br />
+              <p>Return A = 0x00 if succeed, 0xFF if not. </p></td>
+        </tr>
+        <tr>
+          <td>$28 </td>
+          <td>0050:081B </td>
+          <td colspan="4"> Apply default LCD Constrast </td>
+        </tr>
+        <tr>
+          <td>$29 </td>
+          <td>0052:0821 </td>
+          <td colspan="4"> Get default LCD Contrast (return A) </td>
+        </tr>
+        <tr>
+          <td>$2A </td>
+          <td>0054:0830 </td>
+          <td colspan="4"> Set temporary LCD Constrast (A = Contrast level 0x00 to 0x3F) </td>
+        </tr>
+        <tr>
+          <td>$2B </td>
+          <td>0056:084E </td>
+          <td colspan="4"> Turn LCD On </td>
+        </tr>
+        <tr>
+          <td>$2C </td>
+          <td>0058:0871 </td>
+          <td colspan="4"> Initialize LCD </td>
+        </tr>
+        <tr>
+          <td>$2D </td>
+          <td>005A:08CB </td>
+          <td colspan="4"> Turn LCD Off </td>
+        </tr>
+        <tr>
+          <td>$2E </td>
+          <td>005C:08EC </td>
+          <td colspan="4"> Enable RAM vector. (Check if Register 0x01 Bit 7 is set, if not, it set bit 6 and 7) </td>
+        </tr>
+        <tr>
+          <td>$2F </td>
+          <td>005E:0904 </td>
+          <td colspan="4"> Disable RAM vector </td>
+        </tr>
+        <tr>
+          <td>$30 </td>
+          <td>0060:0923 </td>
+          <td colspan="4"> Disable Cart Eject IRQ 13 (with abort) </td>
+        </tr>
+        <tr>
+          <td>$31 </td>
+          <td>0062:092E </td>
+          <td colspan="4"> Enable Cart Eject IRQ 13 (with abort) </td>
+        </tr>
+        <tr>
+          <td>$32 </td>
+          <td>0064:0949 </td>
+          <td colspan="4">&nbsp;?? (Involves Cartridge Eject) </td>
+        </tr>
+        <tr>
+          <td>$33 </td>
+          <td>0066:0961 </td>
+          <td colspan="4">&nbsp;?? (Involves Cartridge Eject) </td>
+        </tr>
+        <tr>
+          <td>$34 </td>
+          <td>0068:097D </td>
+          <td colspan="4"> Nintendo Dev Card (??) </td>
+        </tr>
+        <tr>
+          <td>$35 </td>
+          <td>006A:09E4 </td>
+          <td colspan="4"> Nintendo Dev Card (??) </td>
+        </tr>
+        <tr>
+          <td>$36 </td>
+          <td>006C:0A4F </td>
+          <td colspan="4">&nbsp;?? (Involves Cartridge Eject) </td>
+        </tr>
+        <tr>
+          <td>$37 </td>
+          <td>006E:0A76 </td>
+          <td colspan="4"> Disable Cartridge Eject IRQ (Reg 0x24, Bit 1 = 0) </td>
+        </tr>
+        <tr>
+          <td>$38 </td>
+          <td>0070:0A81 </td>
+          <td colspan="4">&nbsp;?? (Involves Cartridge Eject) </td>
+        </tr>
+        <tr>
+          <td>$39 </td>
+          <td>0072:0AA6 </td>
+          <td colspan="4"> Rumored to speed up CPU? </td>
+        </tr>
+        <tr>
+          <td>$3A </td>
+          <td>0074:0ACD </td>
+          <td colspan="4"> Recover from IRQ $39? </td>
+        </tr>
+        <tr>
+          <td>$3B </td>
+          <td>0076:0AE6 </td>
+          <td colspan="4"> Cart power off and update state </td>
+        </tr>
+        <tr>
+          <td>$3C </td>
+          <td>0078:0AF9 </td>
+          <td colspan="4"> Cart power on and update state </td>
+        </tr>
+        <tr>
+          <td>$3D </td>
+          <td>007A:0B20 </td>
+          <td colspan="4"> Cart detect. Z: No cart, NZ: Cart inserted (Test Register 0x53 Bit 1 and invert Zero flag) </td>
+        </tr>
+        <tr>
+          <td>$3E </td>
+          <td>007C:0B2E </td>
+          <td colspan="4"> Read structure, write 0xFF, compare values and optionally jump to subroutine<br />
+              <pre>X point to a structure in memory:
+structure {
+  byte   type            ; 0x01 = Call subroutine
+                         ; 0x00 = Don't call subroutine
+  triple write_0xFF_addr ; Address that 0xFF will be written
+  triple compare_addr    ; Address to read for compare
+  byte   compare_value   ; Value that must match the compare
+  triple subroutine      ; Use byte POP to receive flag of the compare
+}
+if type is 0x00, register A return 0x01 if compare is equal
+      </pre>          </td>
+        </tr>
+        <tr>
+          <td>$3F </td>
+          <td>007E:0B8F </td>
+          <td colspan="4"> Set PRC Rate (A = 0 to 7) </td>
+        </tr>
+        <tr>
+          <td>$40 </td>
+          <td>0080:0BA3 </td>
+          <td colspan="4"> Get PRC Rate (return A) </td>
+        </tr>
+        <tr>
+          <td>$41 </td>
+          <td>0082:0BB1 </td>
+          <td colspan="4"> Test cart type. Returns Z: non multi cart, NZ: multi cart (Register 0x01 Bit 3) </td>
+        </tr>
+        <tr>
+          <td>$42 </td>
+          <td>0084:047A </td>
+          <td colspan="4"> Nintendo Dev Card (Read IDs) </td>
+        </tr>
+        <tr>
+          <td>$43 </td>
+          <td>0086:0493 </td>
+          <td colspan="4"> Nintendo Dev Card (Reset) </td>
+        </tr>
+        <tr>
+          <td>$44 </td>
+          <td>0088:04A4 </td>
+          <td colspan="4"> Nintendo Dev Card (Program Byte) </td>
+        </tr>
+        <tr>
+          <td>$45 </td>
+          <td>008A:04C8 </td>
+          <td colspan="4"> Nintendo Dev Card (Erase Sector) </td>
+        </tr>
+        <tr>
+          <td>$46 </td>
+          <td>008C:04F5 </td>
+          <td colspan="4"> Nintendo Dev Card (Unlock flash page register. Command 0xD0) </td>
+        </tr>
+        <tr>
+          <td>$47 </td>
+          <td>008E:0506 </td>
+          <td colspan="4"> Nintendo Dev Card (Select flash bank. A=bank Nr, X last address of flash page) </td>
+        </tr>
+        <tr>
+          <td>$48 </td>
+          <td>0090:0517 </td>
+          <td colspan="4"> Nintendo Dev Card (Command 0xC9) </td>
+        </tr>
+        <tr>
+          <td>$49 </td>
+          <td>0092:0529 </td>
+          <td colspan="4"> Nintendo Dev Card (Prepare Manufacturer and device ID readout. Command 0xC0) </td>
+        </tr>
+        <tr>
+          <td>$4A </td>
+          <td>0094:053A </td>
+          <td colspan="4"> Nintendo Dev Card (Select flash game. A = game Nr. ([0x041048 + 96 * A] if 0x08 -&gt; Command 0xC9) </td>
+        </tr>
+        <tr>
+          <td>$4B </td>
+          <td>0096:0000 </td>
+          <td colspan="4"> Nintendo SDK </td>
+        </tr>
+        <tr>
+          <td>$4C </td>
+          <td>0098:0BBD </td>
+          <td colspan="4"> IR pulse  MOV [Y], $02&nbsp;; wait B*16 Cycles&nbsp;; MOV [Y], $00 </td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Bios">http://wiki.sublab.net/index.php/PM_Bios</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

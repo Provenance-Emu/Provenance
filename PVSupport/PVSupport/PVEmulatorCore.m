@@ -37,6 +37,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 		NSUInteger count = [self audioBufferCount];
         ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
         self.emulationLoopThreadLock = [NSLock new];
+        _gameSpeed = GameSpeedNormal;
 	}
 	
 	return self;
@@ -195,10 +196,15 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	[self doesNotImplementOptionalSelector:_cmd];
 }
 
-- (BOOL)loadFileAtPath:(NSString*)path
+- (BOOL)loadFileAtPath:(NSString *)path
 {
-	[self doesNotImplementSelector:_cmd];
-	return NO;
+    [self doesNotImplementSelector:_cmd];
+    return NO;
+}
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+{
+    return [self loadFileAtPath:path];
 }
 
 - (BOOL)supportsDiskSwapping
@@ -258,6 +264,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 - (NSTimeInterval)frameInterval
 {
 	return defaultFrameInterval;
+}
+
+- (BOOL)wideScreen {
+    return NO;
 }
 
 #pragma mark - Audio

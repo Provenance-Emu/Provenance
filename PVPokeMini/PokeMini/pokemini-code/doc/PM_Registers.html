@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Hardware Registers </h1>
+    <h2><span class="mw-headline" id="Register_Overview">Overview </span></h2>
+    <p>The Pokemon Mini maps $2000 ~ $20FF as hardware control registers.  
+      This area is reserved for hardware related functions such as video, 
+      audio, general purpose timers, hardware I/O and system control. </p>
+    <p>Much of this address space is mapped as Open-Bus,
+      leading us to beleive that this area is not used for any purpose.  
+      Other areas respond to requests but their purpose is yet undetermined. </p>
+    <p>Registers tend to be controlled on a bit level, so for the sanity
+      purposes, they will be broken down to this level.  At any point they 
+      are shown spanning multiple columns, that indicates that it is a 
+      multi-bit value and should be treated as if they were a number. </p>
+    <p>The bits themselves come in four flavors:  Read-only, Write-Only,
+      Read-Write, and S-R Strobe.  Write-Only registers typically return a 
+      zero value, and are generally only used for things such as resetting 
+      timers.  S-R Strobes are used for clearing interrupt events, writting a 
+      logical '1' to any bit that is set will result in a bit being cleared, 
+      where as '0' leaves them unchanged.  Unused bits always return '0'. </p>
+    <p>Any register not included on this list reads as Open-Bus and will be excluded unless a function has otherwise been determined. </p>
+    <h2>Register Mapping</h2>
+    <table class="smallfnt">
+      <caption>
+      <b>Register Map Legend</b>
+      </caption>
+      <tbody>
+        <tr>
+          <td style="background-color: rgb(128, 128, 128);"> Unused </td>
+          <td style="background-color: rgb(128, 255, 128);"> Read/Write </td>
+          <td style="background-color: rgb(0, 255, 255);"> Read Only </td>
+          <td style="background-color: rgb(255, 255, 0);"> Write Only </td>
+          <td style="background-color: rgb(255, 204, 0);"> S-R Strobe </td>
+          <td style="background-color: rgb(0, 255, 192);"> Read/Write (BIOS, Software only) </td>
+          <td style="background-color: rgb(192, 255, 0);"> Unknown (Read/Write) </td>
+          <td style="background-color: rgb(192, 255, 192);"> Unknown (Weird) </td>
+          <td style="background-color: rgb(192, 192, 192);"> Unknown (Unused) </td>
+        </tr>
+      </tbody>
+    </table>
+	<br />
+    <table class="smallfnt" style="text-align: center;" border="1">
+      <caption>
+      <b>Registers ($2000 to $20FF)</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Address </th>
+          <th> Register </th>
+          <th> Const Name </th>
+          <th> Bit 7 </th>
+          <th> Bit 6 </th>
+          <th> Bit 5 </th>
+          <th> Bit 4 </th>
+          <th> Bit 3 </th>
+          <th> Bit 2 </th>
+          <th> Bit 1 </th>
+          <th> Bit 0 </th>
+        </tr>
+        <tr>
+          <td> $00 </td>
+          <td> System Control 1 </td>
+          <td> SYS_CTRL1 </td>
+          <td colspan="6" style="background-color: rgb(0, 255, 192);"> Startup Contrast </td>
+          <td style="background-color: rgb(128, 255, 128);"> Cartridge I/O<br />
+            Enable </td>
+          <td style="background-color: rgb(128, 255, 128);"> LCD I/O<br />
+            Enable </td>
+        </tr>
+        <tr>
+          <td> $01 </td>
+          <td> System Control 2 </td>
+          <td> SYS_CTRL2 </td>
+          <td style="background-color: rgb(0, 255, 192);"> Ram vector </td>
+          <td style="background-color: rgb(0, 255, 192);"> Int abort </td>
+          <td style="background-color: rgb(0, 255, 192);"> Enable cart interrupts </td>
+          <td style="background-color: rgb(0, 255, 192);"> Power on reset </td>
+          <td colspan="4" style="background-color: rgb(0, 255, 192);"> Cart type </td>
+        </tr>
+        <tr>
+          <td> $02 </td>
+          <td> System Control 3 </td>
+          <td> SYS_CTRL3 </td>
+          <td style="background-color: rgb(0, 255, 192);"> Cart power state </td>
+          <td style="background-color: rgb(0, 255, 192);"> Cart power required </td>
+          <td style="background-color: rgb(0, 255, 192);"> Suspend mode </td>
+          <td colspan="3" style="background-color: rgb(0, 255, 192);">&nbsp;??? </td>
+          <td style="background-color: rgb(0, 255, 192);"> RTC Timer valid </td>
+          <td style="background-color: rgb(0, 255, 192);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $08 </td>
+          <td><a href="PM_Timers.html#PM_Second_Counter.html" title="PM Second Counter">Second Counter Control</a> </td>
+          <td> SEC_CTRL </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+        </tr>
+        <tr>
+          <td> $09 </td>
+          <td><a href="PM_Timers.html#PM_Second_Counter.html" title="PM Second Counter">Second Counter Low</a> </td>
+          <td> SEC_CNT_LO </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Counter </td>
+        </tr>
+        <tr>
+          <td> $0A </td>
+          <td><a href="PM_Timers.html#PM_Second_Counter.html" title="PM Second Counter">Second Counter Middle</a> </td>
+          <td> SEC_CNT_MID </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Counter </td>
+        </tr>
+        <tr>
+          <td> $0B </td>
+          <td><a href="PM_Timers.html#PM_Second_Counter.html" title="PM Second Counter">Second Counter High</a> </td>
+          <td> SEC_CNT_HI </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Counter </td>
+        </tr>
+        <tr>
+          <td> $10 </td>
+          <td> Battery Sensor </td>
+          <td> SYS_BATT </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(0, 255, 255);"> Low Battery </td>
+          <td style="background-color: rgb(128, 255, 128);"> Battery ADC control </td>
+          <td colspan="4" style="background-color: rgb(128, 255, 128);"> Battery ADC threshold value </td>
+        </tr>
+        <tr>
+          <td> $18 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Prescalars</a> </td>
+          <td> TMR1_SCALE </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Hi </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Hi Scalar </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Lo </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Lo Scalar </td>
+        </tr>
+        <tr>
+          <td> $19 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timers Osc. Enable<br />
+            Timer 1 Osc. Select</a> </td>
+          <td> TMR1_ENA_OSC<br />
+            TMR1_OSC </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Osc. 1 </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Osc. 2 </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Hi) </td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Lo) </td>
+        </tr>
+        <tr>
+          <td> $1A </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Prescalars</a> </td>
+          <td> TMR2_SCALE </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Hi </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Hi Scalar </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Lo </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Lo Scalar </td>
+        </tr>
+        <tr>
+          <td> $1B </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Osc. Select</a> </td>
+          <td> TMR2_OSC </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Hi) </td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Lo) </td>
+        </tr>
+        <tr>
+          <td> $1C </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Prescalars</a> </td>
+          <td> TMR3_SCALE </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Hi </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Hi Scalar </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable Lo </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Lo Scalar </td>
+        </tr>
+        <tr>
+          <td> $1D </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Osc. Select</a> </td>
+          <td> TMR3_OSC </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Hi) </td>
+          <td style="background-color: rgb(128, 255, 128);"> 2nd Osc. (Lo) </td>
+        </tr>
+        <tr>
+          <td> $20 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Priority 1</a> </td>
+          <td> IRQ_PRI1 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $03 ~ $04 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $05 ~ $06 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $07 ~ $08 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $09 ~ $0A </td>
+        </tr>
+        <tr>
+          <td> $21 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Priority 2</a> </td>
+          <td> IRQ_PRI2 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $0B ~ $0E </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $13 ~ $14 </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $15 ~ $1C </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ&nbsp;??? ($1D ~ $1F?) </td>
+        </tr>
+        <tr>
+          <td> $22 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Priority 3</a> </td>
+          <td> IRQ_PRI3 </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> IRQ $0F~$10 </td>
+        </tr>
+        <tr>
+          <td> $23 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Enable 1</a> </td>
+          <td> IRQ_ENA1 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $03 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $04 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $05 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $06 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $07 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $08 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $09 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0A </td>
+        </tr>
+        <tr>
+          <td> $24 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Enable 2</a> </td>
+          <td> IRQ_ENA2 </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0B </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0C </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0D </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0E </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $13 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $14 </td>
+        </tr>
+        <tr>
+          <td> $25 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Enable 3</a> </td>
+          <td> IRQ_ENA3 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $15 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $16 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $17 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $18 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $19 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1A </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1B </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1C </td>
+        </tr>
+        <tr>
+          <td> $26 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Enable 4</a> </td>
+          <td> IRQ_ENA4 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $0F </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $10 </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ&nbsp;??? </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1D </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1E </td>
+          <td style="background-color: rgb(128, 255, 128);"> IRQ $1F </td>
+        </tr>
+        <tr>
+          <td> $27 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Active 1</a> </td>
+          <td> IRQ_ACT1 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $03 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $04 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $05 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $06 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $07 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $08 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $09 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0A </td>
+        </tr>
+        <tr>
+          <td> $28 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Active 2</a> </td>
+          <td> IRQ_ACT2 </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0B </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0C </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0D </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0E </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $13 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $14 </td>
+        </tr>
+        <tr>
+          <td> $29 </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Active 3</a> </td>
+          <td> IRQ_ACT3 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $15 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $16 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $17 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $18 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $19 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1A </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1B </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1C </td>
+        </tr>
+        <tr>
+          <td> $2A </td>
+          <td><a href="PM_IRQBios.html" title="PM IRQs">IRQ Active 4</a> </td>
+          <td> IRQ_ACT4 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $0F </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $10 </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ&nbsp;??? </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ&nbsp;??? </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1D </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1E </td>
+          <td style="background-color: rgb(255, 204, 0);"> IRQ $1F </td>
+        </tr>
+        <tr>
+          <td> $30 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Control (Lo)</a> </td>
+          <td> TMR1_CTRL_L </td>
+          <td style="background-color: rgb(128, 255, 128);"> 16-bit Mode </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $31 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Control (Hi)</a> </td>
+          <td> TMR1_CTRL_H </td>
+          <td colspan="4" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $32 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Preset (Lo)</a> </td>
+          <td> TMR1_PRE_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $33 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Preset (Hi)</a> </td>
+          <td> TMR1_PRE_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $34 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Pivot (Lo)</a> </td>
+          <td> TMR1_PVT_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $35 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Pivot (Hi)</a> </td>
+          <td> TMR1_PVT_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $36 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Count (Lo)</a> </td>
+          <td> TMR1_CNT_L </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $37 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 1 Count (Hi)</a> </td>
+          <td> TMR1_CNT_H </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $38 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Control (Lo)</a> </td>
+          <td> TMR2_CTRL_L </td>
+          <td style="background-color: rgb(128, 255, 128);"> 16-bit Mode </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $39 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Control (Hi)</a> </td>
+          <td> TMR2_CTRL_H </td>
+          <td colspan="4" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $3A </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Preset (Lo)</a> </td>
+          <td> TMR2_PRE_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $3B </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Preset (Hi)</a> </td>
+          <td> TMR2_PRE_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $3C </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Pivot (Lo)</a> </td>
+          <td> TMR2_PVT_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $3D </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Pivot (Hi)</a> </td>
+          <td> TMR2_PVT_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $3E </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Count (Lo)</a> </td>
+          <td> TMR2_CNT_L </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $3F </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 2 Count (Hi)</a> </td>
+          <td> TMR2_CNT_H </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $40 </td>
+          <td><a href="PM_Timers.html#256Hz_Timer" title="256Hz Timer">256Hz Timer Control</a> </td>
+          <td> TMR256_CTRL </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+        </tr>
+        <tr>
+          <td> $41 </td>
+          <td><a href="PM_Timers.html#256Hz_Timer" title="256Hz Timer">256Hz Timer Counter</a> </td>
+          <td> TMR256_CNT </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $44 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="4" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="3" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $45 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="4" style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 255, 192);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 255, 192);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $46 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $47 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="4" style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="4" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $48 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Control (Lo)</a> </td>
+          <td> TMR3_CTRL_L </td>
+          <td style="background-color: rgb(128, 255, 128);"> 16-bit Mode </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $49 </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Control (Hi)</a> </td>
+          <td> TMR3_CTRL_H </td>
+          <td colspan="4" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> Enable </td>
+          <td style="background-color: rgb(255, 255, 0);"> Reset </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $4A </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Preset (Lo)</a> </td>
+          <td> TMR3_PRE_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $4B </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Preset (Hi)</a> </td>
+          <td> TMR3_PRE_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Preset </td>
+        </tr>
+        <tr>
+          <td> $4C </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Pivot (Lo)</a> </td>
+          <td> TMR3_PVT_L </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $4D </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Pivot (Hi)</a> </td>
+          <td> TMR3_PVT_H </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Pivot </td>
+        </tr>
+        <tr>
+          <td> $4E </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Count (Lo)</a> </td>
+          <td> TMR3_CNT_L </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $4F </td>
+          <td><a href="PM_Timers.html" title="Timers">Timer 3 Count (Hi)</a> </td>
+          <td> TMR3_CNT_H </td>
+          <td colspan="8" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $50 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $51 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="6" style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="2" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $52 </td>
+          <td> Key-Pad Status (Active 0) </td>
+          <td> KEY_PAD </td>
+          <td style="background-color: rgb(0, 255, 255);"> Power </td>
+          <td style="background-color: rgb(0, 255, 255);"> Right </td>
+          <td style="background-color: rgb(0, 255, 255);"> Left </td>
+          <td style="background-color: rgb(0, 255, 255);"> Down </td>
+          <td style="background-color: rgb(0, 255, 255);"> Up </td>
+          <td style="background-color: rgb(0, 255, 255);"> C </td>
+          <td style="background-color: rgb(0, 255, 255);"> B </td>
+          <td style="background-color: rgb(0, 255, 255);"> A </td>
+        </tr>
+        <tr>
+          <td> $53 </td>
+          <td> Cart Bus </td>
+          <td> CART_BUS </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(0, 255, 255);"> CARD_N </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $54 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="3" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+          <td style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="3" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $55 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="5" style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+          <td colspan="3" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $60 </td>
+          <td><a href="PM_IO_Port.html" title="PM I/O Port">I/O Direction Select</a> </td>
+          <td> IO_DIR </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Disable </td>
+          <td style="background-color: rgb(128, 255, 128);"> Rumble </td>
+          <td style="background-color: rgb(128, 255, 128);"> EEPROM Clock </td>
+          <td style="background-color: rgb(128, 255, 128);"> EEPROM Data </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Rx </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Tx </td>
+        </tr>
+        <tr>
+          <td> $61 </td>
+          <td><a href="PM_IO_Port.html" title="PM I/O Port">I/O Data Register</a> </td>
+          <td> IO_DATA </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Disable </td>
+          <td style="background-color: rgb(128, 255, 128);"> Rumble </td>
+          <td style="background-color: rgb(128, 255, 128);"> EEPROM Clock </td>
+          <td style="background-color: rgb(128, 255, 128);"> EEPROM Data </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Rx </td>
+          <td style="background-color: rgb(128, 255, 128);"> IR Tx </td>
+        </tr>
+        <tr>
+          <td> $62 </td>
+          <td> Unknown </td>
+          <td style="border: medium none;"></td>
+          <td colspan="4" style="background-color: rgb(192, 255, 0);">&nbsp;??? </td>
+          <td colspan="4" style="background-color: rgb(192, 192, 192);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $70 </td>
+          <td><a href="PM_Audio.html" title="PM Audio">Audio Control</a> </td>
+          <td> AUD_CTRL </td>
+          <td colspan="5" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> Mutes audio if not 0!? </td>
+        </tr>
+        <tr>
+          <td> $71 </td>
+          <td><a href="PM_Audio.html" title="PM Audio">Audio Volume</a> </td>
+          <td> AUD_VOL </td>
+          <td colspan="5" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td style="background-color: rgb(128, 255, 128);"> Cart Power (1=Off;0=On) </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> Volume </td>
+        </tr>
+        <tr>
+          <td> $80 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Stage Control</a> </td>
+          <td> PRC_MODE </td>
+          <td colspan="2" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> Map Size </td>
+          <td style="background-color: rgb(128, 255, 128);">Ena Copy </td>
+          <td style="background-color: rgb(128, 255, 128);">Ena Sprites </td>
+          <td style="background-color: rgb(128, 255, 128);">Ena Map </td>
+          <td style="background-color: rgb(128, 255, 128);">Invert Map </td>
+        </tr>
+        <tr>
+          <td> $81 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Rate Control</a> </td>
+          <td> PRC_RATE </td>
+          <td colspan="4" style="background-color: rgb(0, 255, 255);"> Frame counter </td>
+          <td colspan="3" style="background-color: rgb(128, 255, 128);"> Rate divider </td>
+          <td style="background-color: rgb(128, 255, 128);">&nbsp;??? </td>
+        </tr>
+        <tr>
+          <td> $82 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Map Tile Base Low</a> </td>
+          <td> PRC_MAP_LO </td>
+          <td colspan="5" style="background-color: rgb(128, 255, 128);"> Map Tile Base </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $83 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Map Tile Base Middle</a> </td>
+          <td> PRC_MAP_MID </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Map Tile Base </td>
+        </tr>
+        <tr>
+          <td> $84 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Map Tile Base High</a> </td>
+          <td> PRC_MAP_HI </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="5" style="background-color: rgb(128, 255, 128);"> Map Tile Base </td>
+        </tr>
+        <tr>
+          <td> $85 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Map Vertical Scroll</a> </td>
+          <td> PRC_SCROLL_Y </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="7" style="background-color: rgb(128, 255, 128);"> Map Scroll Y </td>
+        </tr>
+        <tr>
+          <td> $86 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Map Horizontal Scroll</a> </td>
+          <td> PRC_SCROLL_X </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="7" style="background-color: rgb(128, 255, 128);"> Map Scroll X </td>
+        </tr>
+        <tr>
+          <td> $87 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Sprite Tile Base Low</a> </td>
+          <td> PRC_SPR_LO </td>
+          <td colspan="2" style="background-color: rgb(128, 255, 128);"> Sprite Tile Base </td>
+          <td colspan="6" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $88 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Sprite Tile Base Middle</a> </td>
+          <td> PRC_SPR_MID </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> Sprite Tile Base </td>
+        </tr>
+        <tr>
+          <td> $89 </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Sprite Tile Base Hi</a> </td>
+          <td> PRC_SPR_HI </td>
+          <td colspan="3" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="5" style="background-color: rgb(128, 255, 128);"> Sprite Tile Base </td>
+        </tr>
+        <tr>
+          <td> $8A </td>
+          <td><a href="PM_PRC.html" title="PM PRC">PRC Counter</a> </td>
+          <td> PRC_CNT </td>
+          <td style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+          <td colspan="7" style="background-color: rgb(0, 255, 255);"> Count </td>
+        </tr>
+        <tr>
+          <td> $8B </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $8C </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $8D </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $8E </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $8F </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F0 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F1 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F2 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F3 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F4 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F5 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F6 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $F7 </td>
+          <td> Unused </td>
+          <td style="border: medium none;"></td>
+          <td colspan="8" style="border: medium none; background-color: rgb(128, 128, 128);"></td>
+        </tr>
+        <tr>
+          <td> $FE </td>
+          <td><a href="LCD_Controller.html" title="LCD Controller">LCD Raw Control Byte</a> </td>
+          <td> LCD_CTRL </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> LCD Control I/O </td>
+        </tr>
+        <tr>
+          <td> $FF </td>
+          <td><a href="LCD_Controller.html" title="LCD Controller">LCD Raw Data Byte</a> </td>
+          <td> LCD_DATA </td>
+          <td colspan="8" style="background-color: rgb(128, 255, 128);"> LCD Data I/O </td>
+        </tr>
+      </tbody>
+    </table>
+    <br />
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Registers">http://wiki.sublab.net/index.php/PM_Registers</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

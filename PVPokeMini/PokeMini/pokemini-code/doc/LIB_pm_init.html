@@ -1,0 +1,3159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>LIB: pm_init</h1>
+    <p>Initialize Pokemon-Mini and provide common declarations</p>
+    <p class="code_dire">pm_init.s</p>
+    <p class="smallfnt"><strong>Type:</strong> Header File</p>
+    <p class="smallfnt"><strong>Dependency:</strong> None</p>
+    <p class="smallfnt"><strong>Including Rules:</strong> Must be on top of the main file</p>
+    <p class="smallfnt"><strong>ROM/RAM Usage:</strong> None</p>
+    <h2>Initialization</h2>
+    <p>When the extra flag 
+      <span class="code_def">IRQF_NOSTARTUP</span> isn't expecified in <span class="code_macro">PM_HEADER</span>,
+    the following will be executed:</p>
+    <ol>
+      <li>Interrupts are disabled</li>
+      <li>Upper addresses (Indexes) are cleared</li>
+      <li>Register N and stack are initialized</li>
+      <li>Upper address of map and sprite bases are set to 0</li>
+      <li>Seed of rand is set to 1</li>
+      <li>Interrupts enable are all cleared</li>
+      <li>Interrupts priorities set: <span class="smallfnt">PRC=1, Timers=2, Tmr256=1, Cartridge=3, Keypad=1, IR/Shock=2</span></li>
+      <li>Jump to <span class="code_func">main</span></li>
+    </ol>
+    <p>Otherwise only step 8 is executed.<br/>
+    </p>
+    <h2>Macros</h2>
+    <p class="smallfnt">Note: Macros names are case insensitive</p>
+    <table border="1" width="100%" class="smallfnt">
+      <tr>
+        <th scope="col" width="50%">Macro</th>
+        <th scope="col" width="50%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PM_HEADER</span> game_title, irq_flags, ex_flags</td>
+        <td>Declare pokémon-mini header, ROM start<br />
+        <span class="code_def">game_title</span> = Maximum of  12 Characters<br />
+          <span class="code_def">irq_flags</span> = or <span class="code_def">IRQ_*</span> flags<br />
+          <span class="code_def">ex_flags</span> = or <span class="code_def">IRQF_*</span> flags<br />        </td>
+      </tr>
+      <tr>
+        <td class="code_macro">PM_ROMINFO</td>
+        <td>Optional, report ROM and RAM size, must be included on the bottom of the main file.</td>
+      </tr>
+      <tr>
+        <td class="code_macro">CPU_CLEAR</td>
+        <td>Clear   BCD   and NIBBLE modes</td>
+      </tr>
+      <tr>
+        <td class="code_macro">COLORPM_INIT</td>
+        <td>Initialize Color PM Interface</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">RIRQ</span> rirq_flag</td>
+        <td>Return from IRQ, single <span class="code_def">IRQ_*</span> only</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">PRIORITY_IRQS</span> priority, irqs_select</td>
+        <td>Setup IRQ priorities, multiple <span class="code_def">IRQ_*</span> allowed<br />
+          priority = 0 - IRQs Disabled<br />
+          priority = 1 - Low Priority<br />
+          priority = 2 - Medium Priority<br />
+          priority = 3 - High Priority<br />        </td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">ENABLE_IRQS</span> irqs_select</td>
+        <td>Enable IRQ(s), multiple <span class="code_def">IRQ_*</span> allowed</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">DISABLE_IRQS</span> irqs_select</td>
+        <td>Disable IRQ(s), multiple <span class="code_def">IRQ_*</span> allowed</td>
+      </tr>
+      <tr>
+        <td class="code_macro">ENABLE_MIRQ</td>
+        <td>Enable Master Interrupt, same as "<span class="code_opc">and</span> f, ~<span class="code_def">FLAG_ID</span>"</td>
+      </tr>
+      <tr>
+        <td class="code_macro">DISABLE_MIRQ</td>
+        <td>Disable Master Interrupt, same as &quot;<span class="code_opc">or</span> f, <span class="code_def">FLAG_ID</span>&quot;</td>
+      </tr>
+      <tr>
+        <td class="code_macro">PM_ALIGN_MAP<br />
+          PM_ALIGN_TILES</td>
+        <td>Align data for PRC map tiles, equivalent to &quot;<span class="code_dire">.align</span> 8&quot; but doesn't override assembler's aligment</td>
+      </tr>
+      <tr>
+        <td class="code_macro">PM_ALIGN_SPR<br />
+          PM_ALIGN_OAM</td>
+        <td>Align data for PRC sprites tiles, equivalent to "<span class="code_dire">.align</span> 64" but doesn't override assembler's aligment</td>
+      </tr>
+    </table>
+    <p>Peudo-instructions, automatically manage banks before jumping:</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="50%">Macro</th>
+        <th scope="col" width="50%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjmp</span> label</td>
+        <td>Far version of JMP</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjc</span> label</td>
+        <td>Far version of JC</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjnc</span> label</td>
+        <td>Far version of JNC</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjz</span> label</td>
+        <td>Far version of JZ</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjnz</span> label</td>
+        <td>Far version of JNZ</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjdbnz</span> label</td>
+        <td>Far version of JBDNZ</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjl</span> label</td>
+        <td>Far version of JL</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjle</span> label</td>
+        <td>Far version of JLE</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjg</span> label</td>
+        <td>Far version of JG</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjge</span> label</td>
+        <td>Far version of JGE</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjo</span> label</td>
+        <td>Far version of JO</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjno</span> label</td>
+        <td>Far version of JNO</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjns</span> label</td>
+        <td>Far version of JNS</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fjs</span> label</td>
+        <td>Far version of JS</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcall</span> label</td>
+        <td>Far version of CALL</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallc</span> label</td>
+        <td>Far version of CALLC</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallnc</span> label</td>
+        <td>Far version of CALLNC</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallz</span> label</td>
+        <td>Far version of CALLZ</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallnz</span> label</td>
+        <td>Far version of CALLNZ</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcalll</span> label</td>
+        <td>Far version of CALLL</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallle</span> label</td>
+        <td>Far version of CALLLE</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallg</span> label</td>
+        <td>Far version of CALLG</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallge</span> label</td>
+        <td>Far version of CALLGE</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallo</span> label</td>
+        <td>Far version of CALLO</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallno</span> label</td>
+        <td>Far version of CALLNO</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcallns</span> label</td>
+        <td>Far version of CALLNS</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">fcalls</span> label</td>
+        <td>Far version of CALLS</td>
+      </tr>
+    </table>
+    <p>Peudo-instructions, automatically update upper address:</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="50%">Macro</th>
+        <th scope="col" width="50%">Description</th>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24x</span> number</td>
+        <td>Add/Sub XI:X by number</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24y</span> number</td>
+        <td>Add/Sub YI:Y by number</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24hl</span> number</td>
+        <td>Add/Sub I:HL by number</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24x_a</span> number</td>
+        <td>Add/Sub XI:X by number, trash A on page cross</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24y_a</span> number</td>
+        <td>Add/Sub YI:Y by number, trash A on page cross</td>
+      </tr>
+      <tr>
+        <td><span class="code_macro">add24hl_a</span> number</td>
+        <td>Add/Sub I:HL by number, trash A on page cross</td>
+      </tr>
+    </table>
+    <p>number value must be between -65535 and 65535<br />
+      "INC" instruction will be used if number is 1<br />
+    No code will be generated if number is 0</p>
+    <h2>Defines</h2>
+    <p>Definitions in bold have multiple definitions with the same value, hover the mouse over to see the list</p>
+    <h3 align="center">RAM variables</h3>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="10%">Init</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td class="code_def">PMINIT_RAND</td>
+        <td>0x0001</td>
+        <td>16-Bits Random Generator Seed</td>
+      </tr>
+      <tr>
+        <td class="code_def">PMINIT_KEYPAD</td>
+        <td>0x??</td>
+        <td>Keypad status at start of ROM</td>
+      </tr>
+      <tr>
+        <td class="code_def">PMINIT_FRAMECNT</td>
+        <td>0x00</td>
+        <td>Frame counter, used in CLib PRC wait routines</td>
+      </tr>
+    </table>
+    <h3 align="center">Memory bases</h3>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="10%">Value</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>Registers bases</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">SSTACK_BASE</td>
+        <td>$1FFC</td>
+        <td>Safe stack base (for RAM vector)</td>
+      </tr>
+      <tr>
+        <td class="code_def">STACK_BASE</td>
+        <td>$2000</td>
+        <td>Stack base</td>
+      </tr>
+      <tr>
+        <td class="code_def">REG_BASE</td>
+        <td>$2000</td>
+        <td>Registers base</td>
+      </tr>
+      <tr>
+        <td class="code_def">N_BASE</td>
+        <td>$20</td>
+        <td>N register base</td>
+      </tr>
+      <tr>
+        <td><strong>Memory bases</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="VRAM_BASE, VRAM">VRAM_BASE</strong></td>
+        <td>$1000</td>
+        <td>Videobuffer RAM base</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_BASE, OAM_BASE">SPR_BASE</strong></td>
+        <td>$1300</td>
+        <td>Sprites base</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="MAP_BASE, MAP, TILEMAP">MAP_BASE</strong></td>
+        <td>$1360</td>
+        <td>MAP base</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="RAM_BASE, RAM">RAM_BASE</strong></td>
+        <td>$1500</td>
+        <td>RAM base</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_MAP_BASE</td>
+        <td>$2082</td>
+        <td>PRC Map base</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_SPR_BASE</td>
+        <td>$2085</td>
+        <td>PRC Sprite base</td>
+      </tr>
+      <tr>
+        <td><strong>Version</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">PMINIT_VER</td>
+        <td>5</td>
+        <td>pminit library revision number</td>
+      </tr>
+    </table>
+    <h3 align="center">Registers</h3>
+    <p>For more information about registers, check <a href="PM_Registers.html">here</a></p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="10%">Value</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>BIOS</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">SYS_CTRL1</td>
+        <td>$00</td>
+        <td>System Control 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">SYS_CTRL2</td>
+        <td>$01</td>
+        <td>System Control 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">SYS_CTRL3</td>
+        <td>$02</td>
+        <td>System Control 3</td>
+      </tr>
+      <tr>
+        <td><strong>Seconds Timer</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_CTRL</td>
+        <td>$08</td>
+        <td>Second Counter Control</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_CNT_LO</td>
+        <td>$09</td>
+        <td>Second Counter Low</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_CNT_MID</td>
+        <td>$0A</td>
+        <td>Second Counter Middle</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_CNT_HI</td>
+        <td>$0B</td>
+        <td>Second Counter High</td>
+      </tr>
+      <tr>
+        <td><strong>Battery status</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">SYS_BATT</td>
+        <td>$10</td>
+        <td>Battery Sensor</td>
+      </tr>
+      <tr>
+        <td><strong>Timers control</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_SCALE</td>
+        <td>$18</td>
+        <td>Timer 1 Prescalar</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR1_ENA_OSC, TMR1_OSC">TMR1_ENA_OSC</strong></td>
+        <td>$19</td>
+        <td>Timers Osc. Enable<br />
+Timer 1 Osc. Select</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_SCALE</td>
+        <td>$1A</td>
+        <td>Timer 2 Prescalar</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_OSC</td>
+        <td>$1B</td>
+        <td>Timer 2 Osc. Select</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_SCALE</td>
+        <td>$1C</td>
+        <td>Timer 3 Prescalar</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_OSC</td>
+        <td>$1D</td>
+        <td>Timer 3 Osc. Select</td>
+      </tr>
+      <tr>
+        <td><strong>Interrupts</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI1</td>
+        <td>$20</td>
+        <td>IRQ Priority 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI2</td>
+        <td>$21</td>
+        <td>IRQ Priority 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI3</td>
+        <td>$22</td>
+        <td>IRQ Priority 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1</td>
+        <td>$23</td>
+        <td>IRQ Enable 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2</td>
+        <td>$24</td>
+        <td>IRQ Enable 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3</td>
+        <td>$25</td>
+        <td>IRQ Enable 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4</td>
+        <td>$26</td>
+        <td>IRQ Enable 4</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1</td>
+        <td>$27</td>
+        <td>IRQ Active 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2</td>
+        <td>$28</td>
+        <td>IRQ Active 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3</td>
+        <td>$29</td>
+        <td>IRQ Active 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4</td>
+        <td>$2A</td>
+        <td>IRQ Active 4</td>
+      </tr>
+      <tr>
+        <td><strong>Timer 1</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_CTRL_L</td>
+        <td>$30</td>
+        <td>Timer 1 Control (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_CTRL_H</td>
+        <td>$31</td>
+        <td>Timer 1 Control (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_PRE_L</td>
+        <td>$32</td>
+        <td>Timer 1 Preset (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_PRE_H</td>
+        <td>$33</td>
+        <td>Timer 1 Preset (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_PVT_L</td>
+        <td>$34</td>
+        <td>Timer 1 Pivot (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_PVT_H</td>
+        <td>$35</td>
+        <td>Timer 1 Pivot (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_CNT_L</td>
+        <td>$36</td>
+        <td>Timer 1 Count (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR1_CNT_H</td>
+        <td>$37</td>
+        <td>Timer 1 Count (Hi)</td>
+      </tr>
+      <tr>
+        <td><strong>Timer 2</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_CTRL_L</td>
+        <td>$38</td>
+        <td>Timer 2 Control (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_CTRL_H</td>
+        <td>$39</td>
+        <td>Timer 2 Control (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_PRE_L</td>
+        <td>$3A</td>
+        <td>Timer 2 Preset (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_PRE_H</td>
+        <td>$3B</td>
+        <td>Timer 2 Preset (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_PVT_L</td>
+        <td>$3C</td>
+        <td>Timer 2 Pivot (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_PVT_H</td>
+        <td>$3D</td>
+        <td>Timer 2 Pivot (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_CNT_L</td>
+        <td>$3E</td>
+        <td>Timer 2 Count (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR2_CNT_H</td>
+        <td>$3F</td>
+        <td>Timer 2 Count (Hi)</td>
+      </tr>
+      <tr>
+        <td><strong>256 Hz Timer</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR256_CTRL</td>
+        <td>$40</td>
+        <td>256Hz Timer Control</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR256_CNT</td>
+        <td>$41</td>
+        <td>256Hz Timer Counter</td>
+      </tr>
+      <tr>
+        <td><strong>Timer 3</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_CTRL_L</td>
+        <td>$48</td>
+        <td>Timer 3 Control (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_CTRL_H</td>
+        <td>$49</td>
+        <td>Timer 3 Control (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_PRE_L</td>
+        <td>$4A</td>
+        <td>Timer 3 Preset (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_PRE_H</td>
+        <td>$4B</td>
+        <td>Timer 3 Preset (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_PVT_L</td>
+        <td>$4C</td>
+        <td>Timer 3 Pivot (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_PVT_H</td>
+        <td>$4D</td>
+        <td>Timer 3 Pivot (Hi)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_CNT_L</td>
+        <td>$4E</td>
+        <td>Timer 3 Count (Lo)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR3_CNT_H</td>
+        <td>$4F</td>
+        <td>Timer 3 Count (Hi)</td>
+      </tr>
+      <tr>
+        <td><strong>Inputs</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="KEY_PAD, KEYPAD">KEY_PAD</strong></td>
+        <td>$52</td>
+        <td>Key-Pad Status (Active 0)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CART_BUS</td>
+        <td>$53</td>
+        <td>Cart Bus</td>
+      </tr>
+      <tr>
+        <td><strong>IO</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">IO_DIR</td>
+        <td>$60</td>
+        <td>I/O Direction Select</td>
+      </tr>
+      <tr>
+        <td class="code_def">IO_DATA</td>
+        <td>$61</td>
+        <td>I/O Data Register</td>
+      </tr>
+      <tr>
+        <td><strong>Audio</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">AUD_CTRL</td>
+        <td>$70</td>
+        <td>Audio Control</td>
+      </tr>
+      <tr>
+        <td class="code_def">AUD_VOL</td>
+        <td>$71</td>
+        <td>Audio Volume</td>
+      </tr>
+      <tr>
+        <td><strong>PRC</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_MODE</td>
+        <td>$80</td>
+        <td>PRC Stage Control</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_RATE</td>
+        <td>$81</td>
+        <td>PRC Rate Control</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_MAP_LO</td>
+        <td>$82</td>
+        <td>PRC Map Tile Base Low</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_MAP_MID</td>
+        <td>$83</td>
+        <td>PRC Map Tile Base Middle</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_MAP_HI</td>
+        <td>$84</td>
+        <td>PRC Map Tile Base High</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_SCROLL_Y</td>
+        <td>$85</td>
+        <td>PRC Map Vertical Scroll</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_SCROLL_X</td>
+        <td>$86</td>
+        <td>PRC Map Horizontal Scroll</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_SPR_LO, PRC_OAM_LO">PRC_SPR_LO</strong></td>
+        <td>$87</td>
+        <td>PRC Sprite Tile Base Low</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_SPR_MID, PRC_OAM_MID">PRC_SPR_MID</strong></td>
+        <td>$88</td>
+        <td>PRC Sprite Tile Base Middle</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_SPR_HI, PRC_OAM_HI">PRC_SPR_HI</strong></td>
+        <td>$89</td>
+        <td>PRC Sprite Tile Base High</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_CNT</td>
+        <td>$8A</td>
+        <td>PRC Counter</td>
+      </tr>
+      <tr>
+        <td><strong>PokeMini</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_CHR</td>
+        <td>$D0</td>
+        <td>Debug output a character</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_HEX</td>
+        <td>$D1</td>
+        <td>Debug output a 8-bits hexadecimal</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="POKEMINI_UINTB, POKEMINI_NUM">POKEMINI_UINTB</strong></td>
+        <td>$D2</td>
+        <td>Debug output a unsigned 8-bits number</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_SINTB</td>
+        <td>$D3</td>
+        <td>Debug output a signed 8-bits number</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="POKEMINI_UINTWL, POKEMINI_UINTW">POKEMINI_UINTWL</strong></td>
+        <td>$D4</td>
+        <td>Debug output a unsigned 16-bits number (Low Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_UINTWH</td>
+        <td>$D5</td>
+        <td>Debug output a unsigned 16-bits number (High Byte)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="POKEMINI_SINTWL, POKEMINI_SINTW">POKEMINI_SINTWL</strong></td>
+        <td>$D6</td>
+        <td>Debug output a signed 16-bits number (Low Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_SINTWH</td>
+        <td>$D7</td>
+        <td>Debug output a signed 16-bits number (High Byte)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="POKEMINI_FX8_8, POKEMINI_FX8_8L">POKEMINI_FX8_8</strong></td>
+        <td>$DE</td>
+        <td>Debug output a fixed point 8.8 number (Low Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">POKEMINI_FX8_8H</td>
+        <td>$DF</td>
+        <td>Debug output a fixed point 8.8 number (High Byte)</td>
+      </tr>
+      <tr>
+        <td><strong>Color PM Interface</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="COLORPM_CMD, COLORPM_CTRL">COLORPM_CMD</strong></td>
+        <td>$F0</td>
+        <td>Color PM Command, writing send a command.<br />
+        Reading will check unlock status: $00 (Locked), $CE (Unlocked)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="COLORPM_ADDR, COLORPM_ADDRL">COLORPM_ADDR</strong></td>
+        <td>$F1</td>
+        <td>CVRAM Address (Low Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_ADDRH</td>
+        <td>$F2</td>
+        <td>CVRAM Address (High Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_DATA</td>
+        <td>$F3</td>
+        <td>CVRAM Data</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_LP0</td>
+        <td>$F4</td>
+        <td>Low Nibble Pixel 0 Color</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_HP0</td>
+        <td>$F5</td>
+        <td>High Nibble Pixel 0 Color</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_LP1</td>
+        <td>$F6</td>
+        <td>Low Nibble Pixel 1 Color</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_HP1</td>
+        <td>$F7</td>
+        <td>Hig Nibble Pixel 1 Color</td>
+      </tr>
+      <tr>
+        <td><strong>LCD Raw</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_CTRL</td>
+        <td>$FE</td>
+        <td>LCD Raw Control Byte</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DATA</td>
+        <td>$FF</td>
+        <td>LCD Raw Data Byte</td>
+      </tr>
+    </table>
+    <h3 align="center">Misc. defines</h3>
+    <p>Definitions to be used to comunicate with the hardware<br />
+    For more information about registers, check <a href="PM_Registers.html">here</a></p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="20%">Definition</th>
+        <th scope="col">Value</th>
+        <th scope="col" width="45%">Usage</th>
+        <th scope="col" width="30%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>Master Interrupt</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">DISABLE_IRQ</td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov</span> f, <span class="code_def">DISABLE_IRQ</span></td>
+        <td>Disable Master Interrupt</td>
+      </tr>
+      <tr>
+        <td class="code_def">ENABLE_IRQ</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov</span> f, <span class="code_def">ENABLE_IRQ</span></td>
+        <td>Enable Master Interrupt</td>
+      </tr>
+
+      <tr>
+        <td><strong> Timers Enable</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMRS_ENABLE, TMRS_ON">TMRS_ENABLE</strong></td>
+        <td>$30</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], <span class="code_def">TMRS_ENABLE</span></td>
+        <td>Timers Enable</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><span class="code_opc">and</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], ~<span class="code_def">TMRS_ENABLE</span></td>
+        <td>Timers Disable</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMRS_OSC1</td>
+        <td>$20</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], <span class="code_def">TMRS_OSC1</span></td>
+        <td>Timers 2Mhz Oscillator On</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><span class="code_opc">and</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], ~<span class="code_def">TMRS_OSC1</span></td>
+        <td>Timers 2Mhz Oscillator Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMRS_OSC2</td>
+        <td>$10</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], <span class="code_def">TMRS_OSC2</span></td>
+        <td>Timers 32Khz Oscillator On</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><span class="code_opc">and</span> [n+<span class="code_def">TMR1_ENA_OSC</span>], ~<span class="code_def">TMRS_OSC2</span></td>
+        <td>Timers 32Khz Oscillator Off</td>
+      </tr>
+
+      <tr>
+        <td><strong>Seconds Timer</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_ENABLE</td>
+        <td>$01</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">SEC_CTRL</span>], <span class="code_def">SEC_ENABLE</span></td>
+        <td>Second Counter Enable</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><span class="code_opc">and</span> [n+<span class="code_def">SEC_CTRL</span>], ~<span class="code_def">SEC_ENABLE</span></td>
+        <td>Second Counter Disable</td>
+      </tr>
+      <tr>
+        <td class="code_def">SEC_RESET</td>
+        <td>$02</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">SEC_CTRL</span>], <span class="code_def">SEC_RESET</span></td>
+        <td>Second Counter Reset</td>
+      </tr>
+      <tr>
+        <td><strong>Battery status</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">LOW_BATTERY</td>
+        <td>$20</td>
+        <td><span class="code_opc">tst</span> [n+<span class="code_def">SYS_BATT</span>], <span class="code_def">LOW_BATTERY</span></td>
+        <td>Low battery indicator</td>
+      </tr>
+      <tr>
+        <td><strong>256Hz Timer</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR256_ENABLE</td>
+        <td>$01</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR256_CTRL</span>], <span class="code_def">TMR256_ENABLE</span></td>
+        <td>256Hz Timer Enable</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><span class="code_opc">and</span> [n+<span class="code_def">TMR256_CTRL</span>], ~<span class="code_def">TMR256_ENABLE</span></td>
+        <td>256Hz Timer Disable</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR256_RESET</td>
+        <td>$02</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR256_CTRL</span>], <span class="code_def">TMR256_RESET</span></td>
+        <td>256Hz Timer Reset</td>
+      </tr>
+      <tr>
+        <td><strong>Timer 1-3 Control</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_8BITS</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_CTRL_L</span>], <span class="code_def">TMR8_BITS</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_CTRL_L</span>], <span class="code_def">TMR8_BITS</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_CTRL_L</span>], <span class="code_def">TMR8_BITS</span> | ..</td>
+        <td>8-Bits Timer 1-3</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_16BITS</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_CTRL_L</span>], <span class="code_def">TMR16_BITS</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_CTRL_L</span>], <span class="code_def">TMR16_BITS</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_CTRL_L</span>], <span class="code_def">TMR16_BITS</span> | ..</td>
+        <td>16-Bits Timer 1-3</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_PRESET, TMR_RESET">TMR_PRESET</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">or</span> [n+<span class="code_def">TMR1_CTRL_L</span>], <span class="code_def">TMR_PRESET</span><br />
+        <span class="code_opc">or</span> [n+<span class="code_def">TMR1_CTRL_H</span>],<span class="code_def">TMR_PRESET</span><br />
+        <span class="code_opc">or</span> [n+<span class="code_def">TMR2_CTRL_L</span>],<span class="code_def">TMR_PRESET</span><br />
+        <span class="code_opc">or</span> [n+<span class="code_def">TMR2_CTRL_H</span>],<span class="code_def">TMR_PRESET</span><br />
+        <span class="code_opc">or</span> [n+<span class="code_def">TMR3_CTRL_L</span>],<span class="code_def">TMR_PRESET</span><br />
+        <span class="code_opc">or</span> [n+<span class="code_def">TMR3_CTRL_H</span>],<span class="code_def">TMR_PRESET</span></td>
+        <td>Timer 1-3 Preset</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_ENABLE</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_CTRL_L</span>], <span class="code_def">TMR_ENABLE</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR1_CTRL_H</span>], <span class="code_def">TMR_ENABLE</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_CTRL_L</span>], <span class="code_def">TMR_ENABLE</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_CTRL_H</span>], <span class="code_def">TMR_ENABLE</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_CTRL_L</span>], <span class="code_def">TMR_ENABLE</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_CTRL_H</span>], <span class="code_def">TMR_ENABLE</span> | ..</td>
+        <td>Timer 1-3 Enable</td>
+      </tr>
+
+      <tr>
+        <td><strong>Timer 1-3 Scale</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_OFF, TMR_DIV_DISABLE, TMR_LO_DIV_OFF, TMR_LO_DIV_DISABLE">TMR_DIV_OFF</strong></td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_OFF</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_OFF</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_OFF</span></td>
+        <td>Prescalar Off</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_2, TMR_LO_DIV_2">TMR_DIV_2</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_2</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_2</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_2</span></td>
+        <td>Prescalar /2 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_8, TMR_LO_DIV_8">TMR_DIV_8</strong></td>
+        <td>$09</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_8</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_8</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_8</span></td>
+        <td>Prescalar /8 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_32, TMR_LO_DIV_32">TMR_DIV_32</strong></td>
+        <td>$0A</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_32</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_32</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_32</span></td>
+        <td>Prescalar /32 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_64, TMR_LO_DIV_64">TMR_DIV_64</strong></td>
+        <td>$0B</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_64</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_64</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_64</span></td>
+        <td>Prescalar /64 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_128, TMR_LO_DIV_128">TMR_DIV_128</strong></td>
+        <td>$0C</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_128</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_128</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_128</span></td>
+        <td>Prescalar /128 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_256, TMR_LO_DIV_256">TMR_DIV_256</strong></td>
+        <td>$0D</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_256</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_256</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_256</span></td>
+        <td>Prescalar /256 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_1024, TMR_LO_DIV_1024">TMR_DIV_1024</strong></td>
+        <td>$0E</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_1024</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_1024</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_1024</span></td>
+        <td>Prescalar /1024 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV_4096, TMR_LO_DIV_4096">TMR_DIV_4096</strong></td>
+        <td>$0F</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV_4096</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV_4096</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV_4096</span></td>
+        <td>Prescalar /4096 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_OFF, TMR_DIV2_DISABLE, TMR_LO_DIV2_OFF, TMR_LO_DIV2_DISABLE">TMR_DIV2_OFF</strong></td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_OFF</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_OFF</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_OFF</span></td>
+        <td>Prescalar Off</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_1, TMR_LO_DIV2_1">TMR_DIV2_1</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_1</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_1</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_1</span></td>
+        <td>Prescalar /1 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_2, TMR_LO_DIV2_2">TMR_DIV2_2</strong></td>
+        <td>$09</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_2</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_2</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_2</span></td>
+        <td>Prescalar /2 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_4, TMR_LO_DIV2_4">TMR_DIV2_4</strong></td>
+        <td>$0A</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_4</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_4</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_4</span></td>
+        <td>Prescalar /4 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_8, TMR_LO_DIV2_8">TMR_DIV2_8</strong></td>
+        <td>$0B</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_8</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_8</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_8</span></td>
+        <td>Prescalar /8 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_16, TMR_LO_DIV2_16">TMR_DIV2_16</strong></td>
+        <td>$0C</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_16</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_16</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_16</span></td>
+        <td>Prescalar /16 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_32, TMR_LO_DIV2_32">TMR_DIV2_32</strong></td>
+        <td>$0D</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_32</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_32</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_32</span></td>
+        <td>Prescalar /32 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_64, TMR_LO_DIV2_64">TMR_DIV2_64</strong></td>
+        <td>$0E</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_64</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_64</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_64</span></td>
+        <td>Prescalar /64 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="TMR_DIV2_128, TMR_LO_DIV2_128">TMR_DIV2_128</strong></td>
+        <td>$0F</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_DIV2_128</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_DIV2_128</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_DIV2_128</span></td>
+        <td>Prescalar /128 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_OFF</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_OFF</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_OFF</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_OFF</span> | ..</td>
+        <td>Prescalar Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_2</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_2</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_2</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_2</span> | ..</td>
+        <td>Prescalar /2 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_8</td>
+        <td>$90</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_8</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_8</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_8</span> | ..</td>
+        <td>Prescalar /8 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_32</td>
+        <td>$A0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_32</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_32</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_32</span> | ..</td>
+        <td>Prescalar /32 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_64</td>
+        <td>$B0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_64</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_64</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_64</span> | ..</td>
+        <td>Prescalar /64 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_128</td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_128</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_128</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_128</span> | ..</td>
+        <td>Prescalar /128 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_256</td>
+        <td>$D0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_256</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_256</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_256</span> | ..</td>
+        <td>Prescalar /256 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_1024</td>
+        <td>$E0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_1024</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_1024</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_1024</span> | ..</td>
+        <td>Prescalar /1024 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV_4096</td>
+        <td>$F0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV_4096</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV_4096</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV_4096</span> | ..</td>
+        <td>Prescalar /4096 (Osc. 1)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_OFF</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_OFF</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_OFF</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_OFF</span> | ..</td>
+        <td>Prescalar Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_1</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_1</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_1</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_1</span> | ..</td>
+        <td>Prescalar /1 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_2</td>
+        <td>$90</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_2</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_2</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_2</span> | ..</td>
+        <td>Prescalar /2 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_4</td>
+        <td>$A0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_4</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_4</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_4</span> | ..</td>
+        <td>Prescalar /4 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_8</td>
+        <td>$B0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_8</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_8</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_8</span> | ..</td>
+        <td>Prescalar /8 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_16</td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_16</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_16</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_16</span> | ..</td>
+        <td>Prescalar /16 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_32</td>
+        <td>$D0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_32</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_32</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_32</span> | ..</td>
+        <td>Prescalar /32 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_64</td>
+        <td>$E0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_64</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_64</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_64</span> | ..</td>
+        <td>Prescalar /64 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_HI_DIV2_128</td>
+        <td>$F0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_SCALE</span>], <span class="code_def">TMR_HI_DIV2_128</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_SCALE</span>], <span class="code_def">TMR_HI_DIV2_128</span> | ..<br />
+            <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_SCALE</span>], <span class="code_def">TMR_HI_DIV2_128</span> | ..</td>
+        <td>Prescalar /128 (Osc. 2)</td>
+      </tr>
+      <tr>
+        <td><strong>Timer 1-3 Osc. Select</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_OSC1_LO</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_OSC</span>], <span class="code_def">TMR_OSC1_LO</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_OSC</span>], <span class="code_def">TMR_OSC1_LO</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_OSC</span>], <span class="code_def">TMR_OSC1_LO</span> | ..</td>
+        <td>Timer 1-3 Osc. 1 for Lo / 16Bits</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_OSC1_HI</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_OSC</span>], <span class="code_def">TMR_OSC1_HI</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_OSC</span>], <span class="code_def">TMR_OSC1_HI</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_OSC</span>], <span class="code_def">TMR_OSC1_HI</span> | ..</td>
+        <td>Timer 1-3 Osc. 1 for Hi</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_OSC2_LO</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_OSC</span>], <span class="code_def">TMR_OSC2_LO</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_OSC</span>], <span class="code_def">TMR_OSC2_LO</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_OSC</span>], <span class="code_def">TMR_OSC2_LO</span> | ..</td>
+        <td>Timer 1-3 Osc. 2 for Lo / 16Bits</td>
+      </tr>
+      <tr>
+        <td class="code_def">TMR_OSC2_HI</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">TMR1_OSC</span>], <span class="code_def">TMR_OSC2_HI</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR2_OSC</span>], <span class="code_def">TMR_OSC2_HI</span> | ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">TMR3_OSC</span>], <span class="code_def">TMR_OSC2_HI</span> | ..</td>
+        <td>Timer 1-3 Osc. 2 for Hi</td>
+      </tr>
+
+      <tr>
+        <td><strong>Interrupts Priority</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI1_TMR3</td>
+        <td>$03</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI1</span>],<span class="code_def">IRQ_PRI1_TMR3</span>| ..</td>
+        <td>IRQ Priority - Timer 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI1_TMR1</td>
+        <td>$0C</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI1</span>],<span class="code_def">IRQ_PRI1_TMR1</span>| ..</td>
+        <td>IRQ Priority - Timer 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI1_TMR2</td>
+        <td>$30</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI1</span>] ,<span class="code_def">IRQ_PRI1_TMR2</span>| ..</td>
+        <td>IRQ Priority - Timer 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI1_PRC</td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI1</span>], <span class="code_def">IRQ_PRI1_PRC</span>| ..</td>
+        <td>IRQ Priority - PRC</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI2_UNKNOWN</td>
+        <td>$03</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI2</span>], <span class="code_def">IRQ_PRI2_UNKNOWN</span>| ..</td>
+        <td>IRQ Priority - Unknown</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI2_KEY_PAD</td>
+        <td>$0C</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI2</span>], <span class="code_def">IRQ_PRI2_KEY_PAD</span>| ..</td>
+        <td>IRQ Priority - Keypad</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRI2_CARTRIDGE</td>
+        <td>$30</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI2</span>], <span class="code_def">IRQ_PRI2_CARTRIDGE</span>| ..</td>
+        <td>IRQ Priority - Cartridge</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IRQ_PRI2_TMR256, IRQ_PRI2_HZ">IRQ_PRI2_TMR256</strong></td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI2</span>], <span class="code_def">IRQ_PRI2_TMR256</span>| ..</td>
+        <td>IRQ Priority - 256 Hz Timer</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IRQ_PRI3_IO, IRQ_PRI3_PIO">IRQ_PRI3_IO</strong></td>
+        <td>$03</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_PRI3</span>], <span class="code_def">IRQ_PRI3_IO</span>| ..</td>
+        <td>IRQ Priority - I/O</td>
+      </tr>
+      <tr>
+        <td><strong>Interrupts Enable</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR3_PVT</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR3_PVT</span>| ..</td>
+        <td>IRQ Enable - Timer 3 Pivot</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR3_HI</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR3_HI</span>| ..</td>
+        <td>IRQ Enable - Timer 3 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR1_LO</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR1_LO</span>| ..</td>
+        <td>IRQ Enable - Timer 1 Lower-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR1_HI</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR1_HI</span>| ..</td>
+        <td>IRQ Enable - Timer 1 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR2_LO</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR2_LO</span>| ..</td>
+        <td>IRQ Enable - Timer 2 Lower-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_TMR2_HI</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_TMR2_HI</span>| ..</td>
+        <td>IRQ Enable - Timer 2 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_PRC_DIV</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_PRC_DIV</span>| ..</td>
+        <td>IRQ Enable - PRC Frame Divider</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA1_PRC_COPY</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA1</span>], <span class="code_def">IRQ_ENA1_PRC_COPY</span>| ..</td>
+        <td>IRQ Enable - PRC Frame Copy</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_CARTRIDGE</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_CARTRIDGE</span>| ..</td>
+        <td>IRQ Enable - Cartridge IRQ</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_CART_EJECT</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_CARTRIDGE</span>| ..</td>
+        <td>IRQ Enable - Cartridge Eject</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_1HZ</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_1HZ</span>| ..</td>
+        <td>IRQ Enable - 1Hz<br />(From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_2HZ</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_2HZ</span>| ..</td>
+        <td>IRQ Enable - 2 Hz<br />(From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_8HZ</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_8HZ</span>| ..</td>
+        <td>IRQ Enable - 8 Hz<br />(From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA2_32HZ</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA2</span>], <span class="code_def">IRQ_ENA2_32HZ</span>| ..</td>
+        <td>IRQ Enable - 32 Hz<br />(From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_A</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_A</span>| ..</td>
+        <td>IRQ Enable - A Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_B</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_B</span>| ..</td>
+        <td>IRQ Enable - B Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_C</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_C</span>| ..</td>
+        <td>IRQ Enable - C Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_UP</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_UP</span>| ..</td>
+        <td>IRQ Enable - Up Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_DOWN</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_DOWN</span>| ..</td>
+        <td>IRQ Enable - Down Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_LEFT</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_LEFT</span>| ..</td>
+        <td>IRQ Enable - Left Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_RIGHT</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_RIGHT</span>| ..</td>
+        <td>IRQ Enable - Right Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEY_POWER</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEY_POWER</span>| ..</td>
+        <td>IRQ Enable - Power Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA3_KEYS</td>
+        <td>$FF</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA3</span>], <span class="code_def">IRQ_ENA3_KEYS</span></td>
+        <td>IRQ Enable - All Keys</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_UNKNOWN1</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_UNKNOWN1</span></td>
+        <td>IRQ Enable - Unknown 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_UNKNOWN2</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_UNKNOWN2</span></td>
+        <td>IRQ Enable - Unknown 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_UNKNOWN3</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_UNKNOWN3</span></td>
+        <td>IRQ Enable - Unknown 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_UNMAPPED1</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_UNMAPPED1</span></td>
+        <td>IRQ Enable - Unmapped 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_UNMAPPED2</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_UNMAPPED2</span></td>
+        <td>IRQ Enable - Unmapped 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_SHOCK</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_SHOCK</span></td>
+        <td>IRQ Enable - Shock Detector</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ENA4_IR_RX</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ENA4</span>], <span class="code_def">IRQ_ENA4_IR_RX</span></td>
+        <td>IRQ Enable - IR Receiver</td>
+      </tr>
+      <tr>
+        <td><strong>Interrupts Active</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR3_PVT</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR3_PVT</span>| ..</td>
+        <td>IRQ Active - Timer 3 Pivot</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR3_HI</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR3_HI</span>| ..</td>
+        <td>IRQ Active - Timer 3 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR1_LO</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR1_LO</span>| ..</td>
+        <td>IRQ Active - Timer 1 Lower-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR1_HI</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR1_HI</span>| ..</td>
+        <td>IRQ Active - Timer 1 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR2_LO</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR2_LO</span>| ..</td>
+        <td>IRQ Active - Timer 2 Lower-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_TMR2_HI</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_TMR2_HI</span>| ..</td>
+        <td>IRQ Active - Timer 2 Upper-8</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_PRC_DIV</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_PRC_DIV</span>| ..</td>
+        <td>IRQ Active - PRC Frame Divider</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT1_PRC_COPY</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT1</span>], <span class="code_def">IRQ_ACT1_PRC_COPY</span>| ..</td>
+        <td>IRQ Active - PRC Frame Copy</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_CARTRIDGE</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_CARTRIDGE</span>| ..</td>
+        <td>IRQ Active - Cartridge IRQ</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_CART_EJECT</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_CARTRIDGE</span>| ..</td>
+        <td>IRQ Active - Cartridge Eject</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_1HZ</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_1HZ</span>| ..</td>
+        <td>IRQ Active - 1Hz<br />
+          (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_2HZ</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_2HZ</span>| ..</td>
+        <td>IRQ Active - 2 Hz<br />
+          (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_8HZ</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_8HZ</span>| ..</td>
+        <td>IRQ Active - 8 Hz<br />
+          (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT2_32HZ</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT2</span>], <span class="code_def">IRQ_ACT2_32HZ</span>| ..</td>
+        <td>IRQ Active - 32 Hz<br />
+          (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_A</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_A</span>| ..</td>
+        <td>IRQ Active - A Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_B</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_B</span>| ..</td>
+        <td>IRQ Active - B Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_C</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_C</span>| ..</td>
+        <td>IRQ Active - C Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_UP</td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_UP</span>| ..</td>
+        <td>IRQ Active - Up Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_DOWN</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_DOWN</span>| ..</td>
+        <td>IRQ Active - Down Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_LEFT</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_LEFT</span>| ..</td>
+        <td>IRQ Active - Left Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_RIGHT</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_RIGHT</span>| ..</td>
+        <td>IRQ Active - Right Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEY_POWER</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEY_POWER</span>| ..</td>
+        <td>IRQ Active - Power Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT3_KEYS</td>
+        <td>$FF</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT3</span>], <span class="code_def">IRQ_ACT3_KEYS</span></td>
+        <td>IRQ Active - All Keys</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_UNKNOWN1</td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_UNKNOWN1</span></td>
+        <td>IRQ Active - Unknown 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_UNKNOWN2</td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_UNKNOWN2</span></td>
+        <td>IRQ Active - Unknown 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_UNKNOWN3</td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_UNKNOWN3</span></td>
+        <td>IRQ Active - Unknown 3</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_UNMAPPED1</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_UNMAPPED1</span></td>
+        <td>IRQ Active - Unmapped 1</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_UNMAPPED2</td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_UNMAPPED2</span></td>
+        <td>IRQ Active - Unmapped 2</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_SHOCK</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_SHOCK</span></td>
+        <td>IRQ Active - Shock Detector</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ACT4_IR_RX</td>
+        <td>$80</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IRQ_ACT4</span>], <span class="code_def">IRQ_ACT4_IR_RX</span></td>
+        <td>IRQ Active - IR Receiver</td>
+      </tr>
+      <tr>
+        <td><strong>Keypad Input</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_A</td>
+        <td>$01</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_A</span></td>
+        <td>A Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_B</td>
+        <td>$02</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_B</span></td>
+        <td>B Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_C</td>
+        <td>$04</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_C</span></td>
+        <td>C Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_UP</td>
+        <td>$08</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_UP</span></td>
+        <td>Up Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_DOWN</td>
+        <td>$10</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_DOWN</span></td>
+        <td>Down Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_LEFT</td>
+        <td>$20</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_LEFT</span></td>
+        <td>Left Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_RIGHT</td>
+        <td>$40</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_RIGHT</span></td>
+        <td>Right Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td class="code_def">KEY_POWER</td>
+        <td>$80</td>
+        <td><span class="code_opc">tst </span>[n+<span class="code_def">KEY_PAD</span>], <span class="code_def">KEY_POWER</span></td>
+        <td>Power Key (Active Low)</td>
+      </tr>
+      <tr>
+        <td><strong>Parallel I/O</strong></td>
+        <td>&nbsp;</td>
+        <td><strong>IO_DIR: 0 = Output / 1 = Input</strong></td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IO_IR_TX, IO_IR_TRANSMIT">IO_IR_TX</strong></td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_IR_TX</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_IR_TX</span>| ..</td>
+        <td>IR Transmitter</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IO_IR_RX, IO_IR_RECEIVE">IO_IR_RX</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_IR_RX</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_IR_RX</span>| ..</td>
+        <td>IR Receiver</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IO_EEPROM_DAT, IO_EEPROM_DATA">IO_EEPROM_DAT</strong></td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_EEPROM_DAT</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_EEPROM_DAT</span>| ..</td>
+        <td>EEPROM Data</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IO_EEPROM_CLK, IO_EEPROM_CLOCK">IO_EEPROM_CLK</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_EEPROM_CLK</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_EEPROM_CLK</span>| ..</td>
+        <td>EEPROM Clock</td>
+      </tr>
+      <tr>
+        <td class="code_def">IO_RUMBLE</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_RUMBLE</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_RUMBLE</span>| ..</td>
+        <td>Rumble</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IO_IR_DISABLE, IO_IR_OFF">IO_IR_DISABLE</strong></td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">IO_DIR</span>], <span class="code_def">IO_IR_DISABLE</span>| ..<br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">IO_DATA</span>], <span class="code_def">IO_IR_DISABLE</span>| ..</td>
+        <td>IR Disable</td>
+      </tr>
+      <tr>
+        <td><strong>PRC Mode</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_INVERTMAP, PRC_INVERTBG">PRC_INVERTMAP</strong></td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_INVERTMAP</span>| ..</td>
+        <td>PRC Mode - Invert Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_ENABLEMAP, PRC_ENABLEBG, PRC_MAP, PRC_BG">PRC_ENABLEMAP</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_ENABLEMAP</span>| ..</td>
+        <td>PRC Mode - Enable Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_ENABLESPR, PRC_ENABLEOAM, PRC_SPR, PRC_OAM">PRC_ENABLESPR</strong></td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_ENABLESPR</span>| ..</td>
+        <td>PRC Mode - Enable Sprite</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_ENABLE, PRC_ENABLECOPY, PRC_ENABLECPY">PRC_ENABLE</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_ENABLE</span>| ..</td>
+        <td>PRC Mode - Enable</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_MAP12X16, PRC_BG12X16, PRC_MAP12x16, PRC_BG12x16">PRC_MAP12X16</strong></td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_MAP12X16</span>| ..</td>
+        <td>PRC Mode - 12 x 16 Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_MAP16X12, PRC_BG16X12, PRC_MAP16x12, PRC_BG16x12">PRC_MAP16X12</strong></td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_MAP16X12</span>| ..</td>
+        <td>PRC Mode - 16 x 12 Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_MAP24X8, PRC_BG24X8, PRC_MAP24x8, PRC_BG24x8">PRC_MAP24X8</strong></td>
+        <td>$20</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_MAP24X8</span>| ..</td>
+        <td>PRC Mode - 24 x 8 Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_MAP24X16, PRC_BG24X16, PRC_MAP24x16, PRC_BG24x16">PRC_MAP24X16</strong></td>
+        <td>$30</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_MAP24X16</span>| ..</td>
+        <td>PRC Mode - 24 x 16 Map</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_MAPMASK, PRC_BGMASK">PRC_MAPMASK</strong></td>
+        <td>$30</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_MODE</span>], ~<span class="code_def">PRC_MAPMASK</span><br />
+        <span class="code_opc">or </span>[n+<span class="code_def">PRC_MODE</span>], <span class="code_def">PRC_MAPnXn</span>...</td>
+        <td>PRC Mode - Map Mask</td>
+      </tr>
+      <tr>
+        <td><strong>PRC Rate</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_3, PRC_24FPS">PRC_RATE_3</strong></td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_3</span>| ..</td>
+        <td>PRC Rate - /3, 24 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_6, PRC_12FPS">PRC_RATE_6</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_6</span>| ..</td>
+        <td>PRC Rate - /6, 12 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_9, PRC_8FPS">PRC_RATE_9</strong></td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_9</span>| ..</td>
+        <td>PRC Rate - /9, 8 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_12, PRC_6FPS">PRC_RATE_12</strong></td>
+        <td>$06</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_12</span>| ..</td>
+        <td>PRC Rate - /12, 6 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_2, PRC_36FPS">PRC_RATE_2</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_2</span>| ..</td>
+        <td>PRC Rate - /2, 36 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_4, PRC_18FPS">PRC_RATE_4</strong></td>
+        <td>$0A</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_4</span>| ..</td>
+        <td>PRC Rate - /4, 18 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_6ALT, PRC_12FPSALT">PRC_RATE_6ALT</strong></td>
+        <td>$0C</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_6ALT</span>| ..</td>
+        <td>PRC Rate - /6, 12 fps</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="PRC_RATE_8, PRC_9FPS">PRC_RATE_8</strong></td>
+        <td>$0E</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_8</span>| ..</td>
+        <td>PRC Rate - /8, 9 fps</td>
+      </tr>
+      <tr>
+        <td class="code_def">PRC_RATEMASK</td>
+        <td>$0E</td>
+        <td><span class="code_opc">and </span>[n+<span class="code_def">PRC_RATE</span>], ~<span class="code_def">PRC_RATEMASK</span><br />
+        <span class="code_opc">or </span>[n+<span class="code_def">PRC_RATE</span>], <span class="code_def">PRC_RATE_n</span></td>
+        <td>PRC Rate - Mask</td>
+      </tr>
+      <tr>
+        <td><strong>LCD Data</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_COLUMN_LO</td>
+        <td>$00</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_COLUMN_LO</span> + #n</td>
+        <td>LCD - Set Column Low</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_COLUMN_HI</td>
+        <td>$10</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_COLUMN_HI</span> + #n</td>
+        <td>LCD - Set Column High</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_STARTLINE</td>
+        <td>$40</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_STARTLINE</span> + #n</td>
+        <td>LCD - Set Start line</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_PAGE</td>
+        <td>$B0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_PAGE</span> + #n</td>
+        <td>LCD - Set Page</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_CONTRAST</td>
+        <td>$81</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_CONTRAST</span><br />
+        <span class="code_opc">mov </span>[n+<span class="code_def">LCD_DATA</span>], #n</td>
+        <td>LCD - Set Contrast</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_SEGDIR</td>
+        <td>$A0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_SEGDIR</span></td>
+        <td>LCD - Segment Direction (Normal)</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_INVSEGDIR</td>
+        <td>$A1</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_INVSEGDIR</span></td>
+        <td>LCD - Segment Direction (Inverted)</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPSEL_ON</td>
+        <td>$A4</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPSEL_ON</span></td>
+        <td>LCD - Display Selection On</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPSEL_OFF</td>
+        <td>$A5</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPSEL_OFF</span></td>
+        <td>LCD - Display Selection Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPINV_ON</td>
+        <td>$A6</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPINV_ON</span></td>
+        <td>LCD - Display Invert On</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPINV_OFF</td>
+        <td>$A7</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPINV_OFF</span></td>
+        <td>LCD - Display Invert Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPENABLE</td>
+        <td>$AE</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPENABLE</span></td>
+        <td>LCD - Display Enable</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_DISPDISABLE</td>
+        <td>$AF</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_DISPDISABLE</span></td>
+        <td>LCD - Display Disable</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_ROWNORMAL</td>
+        <td>$C0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_ROWNORMAL</span></td>
+        <td>LCD - Row Normal</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_ROWINVERT</td>
+        <td>$C4</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_ROWINVERT</span></td>
+        <td>LCD - Row Inverted</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="LCD_START_RMW, LCD_BEGIN_RMW">LCD_START_RMW</strong></td>
+        <td>$E0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_START_RMW</span></td>
+        <td>LCD - Start Read-Modify-Write</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_END_RMW</td>
+        <td>$EE</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_END_RMW</span></td>
+        <td>LCD - End Read-Modify-Write</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_RESET</td>
+        <td>$E2</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_RESET</span></td>
+        <td>LCD - Reset</td>
+      </tr>
+      <tr>
+        <td class="code_def">LCD_NOP</td>
+        <td>$E3</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">LCD_CTRL</span>], <span class="code_def">LCD_NOP</span></td>
+        <td>LCD - No Operation</td>
+      </tr>
+      <tr>
+        <td><strong>Color PM Interface</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_UNLOCK1</td>
+        <td>$5A</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_UNLOCK1</span></td>
+        <td>1st Unlock Code</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_UNLOCK2</td>
+        <td>$CE</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_UNLOCK2</span></td>
+        <td>2nd Unlock Code</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_UNLOCKED</td>
+        <td>$CE</td>
+        <td><span class="code_opc">mov </span>a, <span class="code_def">COLORPM_UNLOCKED</span><br />
+        <span class="code_opc">cmp </span>a, [n+<span class="code_def">COLORPM_CMD</span>]<br />
+        <span class="code_comm">; Zero if Color PM Interface is unlocked</span></td>
+        <td>Check if Color PM interface is unlocked</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_LOCK</td>
+        <td>$CF</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_LOCK</span></td>
+        <td>Lock Color PM interface</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_FIXED</td>
+        <td>$A0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_FIXED</span></td>
+        <td>Set CVRAM Access fixed<br />Address won't change when data R/W</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_POSTINC</td>
+        <td>$A1</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_POSTINC</span></td>
+        <td>Set CVRAM Access post-increment<br />
+          Address add 1 after data R/W</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_POSTDEC</td>
+        <td>$A2</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_POSTINC</span></td>
+        <td>Set CVRAM Access post-decrement<br />
+          Address subtract 1 after data R/W</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_PREINC</td>
+        <td>$A3</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_POSTINC</span></td>
+        <td>Set CVRAM Access pre-increment<br />
+        Address add 1 before data R/W</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_VRAM_ON</td>
+        <td>$D0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_VRAM_ON</span></td>
+        <td>Enable VRAM updates<br />
+          Any access to VRAM will update CVRAM</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_LCD_ON</td>
+        <td>$D1</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_LCD_ON</span></td>
+        <td>Enable LCD updates<br />
+          Any access to LCD will update CVRAM</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_PRC_ON</td>
+        <td>$D2</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_PRC_ON</span></td>
+        <td>Enable PRC updates<br />
+          Any PRC rendering will update CVRAM</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_VRAM_OFF</td>
+        <td>$D8</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_VRAM_OFF</span></td>
+        <td>Disable VRAM updates<br />
+          Any access to VRAM will be ignored</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_LCD_OFF</td>
+        <td>$D9</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_LCD_OFF</span></td>
+        <td>Disable LCD updates<br />
+        Any access to LCD will be ignred</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_PRC_OFF</td>
+        <td>$DA</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_PRC_OFF</span></td>
+        <td>Disable PRC updates<br />
+        Any PRC rendering will be ignored</td>
+      </tr>
+      <tr>
+        <td class="code_def">COLORPM_FLIP</td>
+        <td>$F0</td>
+        <td><span class="code_opc">mov </span>[n+<span class="code_def">COLORPM_CMD</span>], <span class="code_def">COLORPM_FLIP</span></td>
+        <td>Flip CVRAM page</td>
+      </tr>
+    </table>
+    <h3 align="center">Sprites</h3>
+    <p>Sprites should be updated after IRQ_PRC_COPY.</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="20%">Definition</th>
+        <th scope="col">Value</th>
+        <th scope="col" width="45%">Usage</th>
+        <th scope="col" width="30%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>Sprite Content</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_X, OAM_X">SPR_X</strong></td>
+        <td>$00</td>
+        <td><span class="code_opc">mov</span> x, #sprite_id &lt;&lt; 2<span class="code_def"></span><br />
+        <span class="code_opc">mov</span> [x+<span class="code_def">SPR_X</span>], a</td>
+        <td>Sprite X Position<br />Starting from -16</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_Y, OAM_Y">SPR_Y</strong></td>
+        <td>$01</td>
+        <td><span class="code_opc">mov</span> x, #sprite_id &lt;&lt; 2<span class="code_def"></span><br />
+            <span class="code_opc">mov</span> [x+<span class="code_def">SPR_Y</span>], a</td>
+        <td>Sprite Y Position<br />Starting from -16</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_TILE, OAM_TILE">SPR_TILE</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">mov</span> x, #sprite_id &lt;&lt; 2<span class="code_def"></span><br />
+          <span class="code_opc">mov</span> [x+<span class="code_def">SPR_TILE</span>], a</td>
+        <td>Sprite Tile Number<br />0 to 255</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_CTRL, OAM_CTRL">SPR_CTRL</strong></td>
+        <td>$03</td>
+        <td><span class="code_opc">mov</span> x, #sprite_id &lt;&lt; 2<span class="code_def"></span><br />
+          <span class="code_opc">mov</span> [x+<span class="code_def">SPR_CTRL</span>], a</td>
+        <td>Sprite Control</td>
+      </tr>
+      <tr>
+        <td><strong> Sprite Control</strong></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td><strong class="code_def" title="SPR_HFLIP, OAM_HFLIP">SPR_HFLIP</strong></td>
+        <td>$01</td>
+        <td><span class="code_opc">mov </span>a, <span class="code_def">SPR_HFLIP</span>|..<br />
+        <span class="code_opc">mov </span>[x+<span class="code_def">SPR_CTRL</span>], a</td>
+        <td>Sprite Horizontal Flip</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_VFLIP, OAM_VFLIP">SPR_VFLIP</strong></td>
+        <td>$02</td>
+        <td><span class="code_opc">mov </span>a, <span class="code_def">SPR_VFLIP</span>|..<br />
+          <span class="code_opc">mov </span>[x+<span class="code_def">SPR_CTRL</span>], a</td>
+        <td>Sprite Vertical Flip</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_INVERT, OAM_INVERT">SPR_INVERT</strong></td>
+        <td>$04</td>
+        <td><span class="code_opc">mov </span>a, <span class="code_def">SPR_INVERT</span>|..<br />
+          <span class="code_opc">mov </span>[x+<span class="code_def">SPR_CTRL</span>], a</td>
+        <td>Sprite Invert Pixels</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="SPR_ENABLE, OAM_ENABLE">SPR_ENABLE</strong></td>
+        <td>$08</td>
+        <td><span class="code_opc">mov </span>a, <span class="code_def">SPR_ENABLE</span>|..<br />
+          <span class="code_opc">mov </span>[x+<span class="code_def">SPR_CTRL</span>], a</td>
+        <td>Sprite Enabled (Visible)</td>
+      </tr>
+    </table>
+    <h3 align="center">Call BIOS IRQs</h3>
+    <p>This defines are used on <a href="PM_Opc_CALL.html">CINT</a> instruction</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="10%">Value</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_HARDRESET</td>
+        <td>$00</td>
+        <td>Hard Reset</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SOFTRESET</td>
+        <td>$01</td>
+        <td>Soft Reset</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SOFTRESET2</td>
+        <td>$02</td>
+        <td>Soft Reset</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_PRC_COPY</td>
+        <td>$03</td>
+        <td>IRQ PRC Copy Complete</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_PRC_DIV</td>
+        <td>$04</td>
+        <td>IRQ PRC Frame Divider Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR2_HI</td>
+        <td>$05</td>
+        <td>Timer 2 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR2_LO</td>
+        <td>$06</td>
+        <td>Timer 2 Lower-8 Overflow (8b only)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR1_HI</td>
+        <td>$07</td>
+        <td>Timer 1 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR1_LO</td>
+        <td>$08</td>
+        <td>Timer 1 Lower-8 Overflow (8b only)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR3_HI</td>
+        <td>$09</td>
+        <td>Timer 3 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMR3_PVT</td>
+        <td>$0A</td>
+        <td>Timer 3 Pivot</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_32HZ</td>
+        <td>$0B</td>
+        <td>32Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_8HZ</td>
+        <td>$0C</td>
+        <td>8Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_2HZ</td>
+        <td>$0D</td>
+        <td>2Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_1HZ</td>
+        <td>$0E</td>
+        <td>1Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_IR_RX</td>
+        <td>$0F</td>
+        <td>IR Receiver</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SHOCK</td>
+        <td>$10</td>
+        <td>Shock Sensor</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_CART_EJECT</td>
+        <td>$13</td>
+        <td>Cartridge Eject</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_CARTRIDGE</td>
+        <td>$14</td>
+        <td>Cartridge IRQ</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_POWER</td>
+        <td>$15</td>
+        <td>Power Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_RIGHT</td>
+        <td>$16</td>
+        <td>Right Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_LEFT</td>
+        <td>$17</td>
+        <td>Left Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_DOWN</td>
+        <td>$18</td>
+        <td>Down Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_UP</td>
+        <td>$19</td>
+        <td>Up Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_C</td>
+        <td>$1A</td>
+        <td>C Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_B</td>
+        <td>$1B</td>
+        <td>B Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_KEY_A</td>
+        <td>$1C</td>
+        <td>A Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN1D</td>
+        <td>$1D</td>
+        <td>Unknown $1D</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN1E</td>
+        <td>$1E</td>
+        <td>Unknown $1E</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN1F</td>
+        <td>$1F</td>
+        <td>Unknown $1F</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_IRQ_FFF1</td>
+        <td>$20</td>
+        <td>User IRQ Routine at PC 0xFFF1</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SUSPEND</td>
+        <td>$21</td>
+        <td>Suspend System</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SLEEP_LCDOFF</td>
+        <td>$22</td>
+        <td>Sleep ??</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SLEEP_LCDON</td>
+        <td>$23</td>
+        <td>Sleep with display on ??</td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="CINT_SHUTDOWN, CINT_EXIT">CINT_SHUTDOWN</strong></td>
+        <td>$24</td>
+        <td>Shutdown System<br />
+          (Use this to exit your game!)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN25</td>
+        <td>$25</td>
+        <td>?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SET_CONTRAST</td>
+        <td>$26</td>
+        <td>Set default LCD Constrast<br />
+          A = Contrast level 0x00 to 0x3F</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_ADD_CONTRAST</td>
+        <td>$27</td>
+        <td>Increase or decrease Contrast based of Zero flag<br />
+          0 = Increase, 1 = Decrease<br />
+          Return A = 0x00 if succeed, 0xFF if not.</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_APPLY_CONTRAST</td>
+        <td>$28</td>
+        <td>Apply default LCD Constrast</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_GET_CONTRAST</td>
+        <td>$29</td>
+        <td>Get default LCD Contrast<br />
+          return A</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_TMP_CONTRAST</td>
+        <td>$2A</td>
+        <td>Set temporary LCD Constrast<br />
+          A = Contrast level 0x00 to 0x3F</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_LCD_ON</td>
+        <td>$2B</td>
+        <td>Turn LCD On</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_LCD_INIT</td>
+        <td>$2C</td>
+        <td>Initialize LCD</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_LCD_OFF</td>
+        <td>$2D</td>
+        <td>Turn LCD Off</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_ENABLE_RAMVECTOR</td>
+        <td>$2E</td>
+        <td>Enable RAM vector.<br />
+          (Check if Register 0x01 Bit 7 is set, if not, it set bit 6 and 7)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DISABLE_RAMVECTOR</td>
+        <td>$2F</td>
+        <td>Disable RAM vector</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_ENABLE_CART_EJECT</td>
+        <td>$30</td>
+        <td>Disable Cart Eject IRQ 13 (with abort)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DISABLE_CART_EJECT</td>
+        <td>$31</td>
+        <td>Enable Cart Eject IRQ 13 (with abort)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN32</td>
+        <td>$32</td>
+        <td> ?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN33</td>
+        <td>$33</td>
+        <td> ?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN34</td>
+        <td>$34</td>
+        <td>Nintendo Dev Card (??)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN35</td>
+        <td>$35</td>
+        <td>Nintendo Dev Card (??)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN36</td>
+        <td>$36</td>
+        <td> ?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN37</td>
+        <td>$37</td>
+        <td>Disable Cartridge Eject IRQ<br />
+          (Reg 0x24, Bit 1 = 0)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN38</td>
+        <td>$38</td>
+        <td> ?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN39</td>
+        <td>$39</td>
+        <td>?? (Involves Cartridge Eject)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_UNKNOWN3A</td>
+        <td>$3A</td>
+        <td>Rumored to speed up CPU?</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_CART_DISABLE</td>
+        <td>$3B</td>
+        <td>Recover from IRQ $39?</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_CART_ENABLE</td>
+        <td>$3C</td>
+        <td>Cart power on and update state</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_CART_DETECT</td>
+        <td>$3D</td>
+        <td> Cart detect. Z: No cart, NZ: Cart inserted<br />
+          (Test Register 0x53 Bit 1 and invert Zero flag)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_ROUTINE</td>
+        <td>$3E</td>
+        <td>Read structure, write 0xFF, compare values and optionally jump to subroutine<br />
+            <br />
+          <pre>X point to a structure in memory:
+structure {
+  byte   type            ; 0x01 = Call subroutine
+                         ; 0x00 = Don't call subroutine
+  triple write_0xFF_addr ; Address that 0xFF will be written
+  triple compare_addr    ; Address to read for compare
+  byte   compare_value   ; Value that must match the compare
+  triple subroutine      ; Use byte POP to receive flag of the compare
+}
+if type is 0x00, register A return 0x01 if compare is equal</pre>        </td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_SET_PRC_RATE</td>
+        <td>$3F</td>
+        <td> Set PRC Rate<br />
+          A = 0 to 7</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_GET_PRC_RATE</td>
+        <td>$40</td>
+        <td>Get PRC Rate<br />
+          Return A</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_MULTICART</td>
+        <td>$41</td>
+        <td>Test cart type.<br />
+          Returns Z: non multi cart, NZ: multi cart<br />
+          (Register 0x01 Bit 3)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_READID</td>
+        <td>$42</td>
+        <td>Nintendo Dev Card (Read IDs)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_RESET</td>
+        <td>$43</td>
+        <td>Nintendo Dev Card (Reset)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_PROGRAM</td>
+        <td>$44</td>
+        <td> Nintendo Dev Card (Program Byte)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_ERASE</td>
+        <td>$45</td>
+        <td> Nintendo Dev Card (Erase Sector)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_UNLOCK</td>
+        <td>$46</td>
+        <td>Nintendo Dev Card (Unlock flash page register. Command 0xD0)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_BANK</td>
+        <td>$47</td>
+        <td>Nintendo Dev Card (Select flash bank. A=bank Nr, X last address of flash page)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_CMD_C9</td>
+        <td>$48</td>
+        <td> Nintendo Dev Card (Command 0xC9)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_PREPID</td>
+        <td>$49</td>
+        <td>Nintendo Dev Card (Prepare Manufacturer and device ID readout. Command 0xC0)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_SELGAME</td>
+        <td>$4A</td>
+        <td> Nintendo Dev Card (Select flash game. A = game Nr. ([0x041048 + 96 * A] if 0x08 -&gt; Command 0xC9)</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_DEVCART_NSDK</td>
+        <td>$4B</td>
+        <td>Nintendo SDK</td>
+      </tr>
+      <tr>
+        <td class="code_def">CINT_IR_PULSE</td>
+        <td>$4C</td>
+        <td>IR pulse<br />
+          MOV [Y], $02 ; <br />
+          wait B*16 Cycles ; <br />
+          MOV [Y], $00 </td>
+      </tr>
+    </table>
+    <h3 align="center">IRQ Handling</h3>
+    <p>This defines are used on macro <span class="code_macro">PM_HEADER</span> in the 3rd parameter and macros <span class="code_macro">RIRQ</span>, <span class="code_macro">PRIORITY_IRQS</span>, <span class="code_macro">ENABLE_IRQS</span> and <span class="code_macro">DISABLE_IRQS</span>. They can be combined with logic OR (character | ). Function name is the same as the definition but in lowercase.</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+      <tr>
+        <td><strong>Individual</strong></td>
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td class="code_def">IRQ_PRC_COPY</td>
+        <td>IRQ PRC Copy Complete</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRC_DIV</td>
+        <td>IRQ PRC Frame Divider Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR2_HI</td>
+        <td>Timer 2 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR2_LO</td>
+        <td>Timer 2 Lower-8 Overflow (8b only)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR1_HI</td>
+        <td>Timer 1 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR1_LO</td>
+        <td>Timer 1 Lower-8 Overflow (8b only)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR3_HI</td>
+        <td>Timer 3 Upper-8 Overflow</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR3_PVT</td>
+        <td>Timer 3 Pivot</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_32HZ</td>
+        <td>32Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_8HZ</td>
+        <td>8Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_2HZ</td>
+        <td>2Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_1HZ</td>
+        <td>1Hz (From 256 Hz Timer)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_IR_RX</td>
+        <td>IR Receiver</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_SHOCK</td>
+        <td>Shock Sensor</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_UNKNOWN</td>
+        <td>Unknown $1D</td>
+      </tr>
+
+      <tr>
+        <td class="code_def">IRQ_CARTRIDGE</td>
+        <td>Cartridge IRQ</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_POWER</td>
+        <td>Power Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_RIGHT</td>
+        <td>Right Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_LEFT</td>
+        <td>Left Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_DOWN</td>
+        <td>Down Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_UP</td>
+        <td>Up Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_C</td>
+        <td>C Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_B</td>
+        <td>B Key</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY_A</td>
+        <td>A Key</td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>Combined</strong></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_PRC</td>
+        <td><span class="code_def">INT_PRC_COPY</span> and <span class="code_def">INT_PRC_DIV</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR2</td>
+        <td><span class="code_def">INT_TMR2_HI</span> and <span class="code_def">INT_TMR2_LO</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR1</td>
+        <td><span class="code_def">INT_TMR1_HI</span> and <span class="code_def">INT_TMR1_LO</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TMR3</td>
+        <td><span class="code_def">INT_TMR3_HI</span> and <span class="code_def">INT_TMR3_PVT</span></td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IRQ_TMR256, IRQ_HZ">IRQ_TMR256</strong></td>
+        <td><span class="code_def">INT_32HZ</span>, <span class="code_def">INT_8HZ</span>, <span class="code_def">INT_2HZ</span> and <span class="code_def">INT_1HZ</span></td>
+      </tr>
+      <tr>
+        <td><strong class="code_def" title="IRQ_IO, IRQ_PIO">IRQ_IO</strong></td>
+        <td><span class="code_def">IRQ_IR_RX</span> and <span class="code_def">IRQ_SHOCK</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_KEY</td>
+        <td><span class="code_def">INT_KEY_POWER</span>, <span class="code_def">INT_KEY_RIGHT</span>, <span class="code_def">INT_KEY_LEFT</span>, <span class="code_def">INT_KEY_DOWN</span>, <span class="code_def">INT_KEY_UP</span>, <span class="code_def">INT_KEY_C</span>, <span class="code_def">INT_KEY_B</span> and <span class="code_def">INT_KEY_A</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_ALL</td>
+        <td>All <span class="code_def">INT_*</span> except <span class="code_def">IRQ_UNKNOWN</span> and <span class="code_def">IRQ_CARTRIDGE</span></td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQ_TOTALLYALL</td>
+        <td>All <span class="code_def">INT_*</span> including <span class="code_def">IRQ_UNKNOWN</span> and <span class="code_def">IRQ_CARTRIDGE</span></td>
+      </tr>
+    </table>
+    <h3 align="center">Header Extra Flags</h3>
+    <p>This defines are used on macro <span class="code_macro">PM_HEADER</span> in the 4th parameter, they can be combined with logic OR (character | ).</p>
+    <table width="100%" border="1" class="smallfnt">
+      <tr>
+        <th scope="col" width="30%">Definition</th>
+        <th scope="col" width="60%">Description</th>
+      </tr>
+
+      <tr>
+        <td class="code_def">IRQF_FAR</td>
+        <td>Allow interrupt handlers to be over 32KB boundary</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQF_NORIRQ</td>
+        <td>Don't generate RIRQ Handling (Not recommended)</td>
+      </tr>
+      <tr>
+        <td class="code_def">IRQF_NOSTARTUP</td>
+        <td>Don't generate initialization (Not recommended)</td>
+      </tr>
+    </table>
+    <h2>Example</h2>
+    <pre>
+  <span class="code_dire">.include</span> <span class="code_string">"pm_libs/pm_init.s"</span>
+
+  <span class="code_dire">.ram</span> <span class="code_def">variable</span>  1
+  <span class="code_dire">.ram</span> <span class="code_def">var16bits</span> 2
+<span class="code_def"></span>
+  <em class="code_comm">; 1st: Game Title string, must be 12 characters</em>
+  <em class="code_comm">; 2nd: Interrupts to map, OR flags for multiple interrupts</em>
+  <em class="code_comm">; 3rd: Extra flags</em>
+  <span class="code_macro">pm_header</span> <span class="code_string"></span><span class="code_string">&quot;HelloWorld  &quot;</span>, <span class="code_def">IRQ_KEY_POWER</span> | <span class="code_def">IRQ_PRC_COPY</span>, 0
+
+  <em class="code_comm">; Power button, shutdown PM</em>
+<span class="code_def">irq_key_power:</span>	<em class="code_comm">; Interrupt function (same name as definition but in lowercase)</em>
+  <span class="code_opc">cint</span> <span class="code_def">CINT_SHUTDOWN</span>	<em class="code_comm">; Call shutdown in BIOS</em>
+
+  <em class="code_comm">; PRC copy (for the example)</em>
+<span class="code_def">irq_prc_copy:</span>	<em class="code_comm">; Interrupt function (same name as definition but in lowercase)</em>
+  <span class="code_opc">mov</span> hl, <span class="code_def">variable</span></span>
+  <span class="code_opc">inc</span> [hl</span>]
+  <span class="code_macro">rirq</span> <span class="code_def">IRQ_PRC_COPY</span></em>
+
+  <em class="code_comm">; Code starts here</em>
+<span class="code_def">main:</span>
+  <em class="code_comm">; Enable power key and PRC copy interrupts</em>
+  <span class="code_macro">enable_irqs</span> <span class="code_def">IRQ_KEY_POWER</span> | <span class="code_def">IRQ_PRC_COPY</span>
+
+  <em class="code_comm">; Enable interrupts</em>
+  <span class="code_opc">mov</span> f, <span class="code_def">ENABLE_IRQ</span>
+
+<span class="code_def">:</span> <span class="code_opc">halt</span>
+  <span class="code_opc">jmp</span> <span class="code_def">:b</span>
+
+  <b class="code_macro">pm_rominfo</b>	<i class="code_comm">; Optional, report ROM and RAM size</i></pre>
+  <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

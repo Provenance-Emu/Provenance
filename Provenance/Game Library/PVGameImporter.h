@@ -46,3 +46,7 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 + (PVGame *)importArtworkFromPath:(NSString *)imageFullPath;
 
 @end
+
+@interface PVGameImporter (Private)
+- (NSString *)documentsPath;
+@end

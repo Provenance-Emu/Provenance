@@ -1,0 +1,106 @@
+# PokeMini Makefile for SDL
+
+CC = gcc
+LD = gcc
+STRIP = strip
+POKEROOT = ../../
+BUILD = Build
+TARGET = PokeMini
+
+WINTARGET = PokeMini.exe
+WINRES_TRG = $(BUILD)/pokemini_rc.o
+WINRES_SRC = $(POKEROOT)resource/pokemini.rc
+
+CFLAGS = -O -Wall `$(SDL_BASE)sdl-config --cflags` $(INCLUDE) -DNO_ZIP
+SLFLAGS = -O `$(SDL_BASE)sdl-config --libs` -lm
+
+INCDIRS = source sourcex resource freebios dependencies/minizip
+
+OBJS = \
+ PokeMini_uSDL.o	\
+ sourcex/KeybMapSDL.o	\
+ freebios/freebios.o	\
+ source/PMCommon.o	\
+ source/PokeMini.o	\
+ source/Multicart.o	\
+ source/Hardware.o	\
+ source/Video.o	\
+ source/Video_x4.o	\
+ source/CommandLine.o	\
+ source/MinxCPU.o	\
+ source/MinxCPU_XX.o	\
+ source/MinxCPU_CE.o	\
+ source/MinxCPU_CF.o	\
+ source/MinxCPU_SP.o \
+ source/MinxTimers.o	\
+ source/MinxIO.o	\
+ source/MinxIRQ.o	\
+ source/MinxPRC.o	\
+ source/MinxColorPRC.o	\
+ source/MinxLCD.o	\
+ source/MinxAudio.o	\
+ source/UI.o	\
+ source/Joystick.o	\
+ source/Keyboard.o	\
+ resource/PokeMini_ColorPal.o	\
+ resource/PokeMini_Font12.o	\
+ resource/PokeMini_Icons12.o	\
+ resource/PokeMini_BG4.o
+
+DEPENDS = \
+ sourcex/KeybMapSDL.h	\
+ freebios/freebios.h	\
+ source/IOMap.h	\
+ source/PMCommon.h	\
+ source/PokeMini.h	\
+ source/PokeMini_Version.h	\
+ source/Multicart.h	\
+ source/Hardware.h	\
+ source/Video.h	\
+ source/Video_x4.h	\
+ source/CommandLine.h	\
+ source/MinxCPU.h	\
+ source/MinxTimers.h	\
+ source/MinxIO.h	\
+ source/MinxIRQ.h	\
+ source/MinxPRC.h	\
+ source/MinxColorPRC.h	\
+ source/MinxLCD.h	\
+ source/MinxAudio.h	\
+ source/UI.h	\
+ source/Joystick.h	\
+ source/Keyboard.h	\
+ resource/PokeMini_ColorPal.h	\
+ resource/PokeMini_Font12.h	\
+ resource/PokeMini_Icons12.h	\
+ resource/PokeMini_BG4.h
+
+BUILDOBJS = $(addprefix $(BUILD)/, $(notdir $(OBJS)))
+DEPENDSHDR = $(addprefix $(POKEROOT), $(DEPENDS))
+INCLUDE = $(foreach inc, $(INCDIRS), -I$(POKEROOT)$(inc))
+VPATH = $(addprefix $(POKEROOT),$(INCDIRS))
+
+.PHONY: all win clean
+
+all: $(BUILD) $(TARGET)
+
+$(BUILD):
+	@[ -d @ ] || mkdir -p $@
+
+$(BUILD)/%.o: %.c $(DEPENDSHDR)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(TARGET): $(BUILDOBJS)
+	$(LD) -o $(TARGET) $(BUILDOBJS) $(SLFLAGS)
+	$(STRIP) $(TARGET)
+
+win: $(BUILD) $(WINTARGET)
+
+$(WINTARGET): $(BUILDOBJS) $(WINRES_SRC)
+	windres $(INCLUDE) $(WINRES_SRC) $(WINRES_TRG)
+	$(LD) -o $(WINTARGET) $(BUILDOBJS) $(WINRES_TRG) $(SLFLAGS)
+	$(STRIP) $(WINTARGET)
+
+clean:
+	-rm -f $(BUILDOBJS) $(TARGET) $(WINTARGET) $(WINRES_TRG)
+	-rmdir --ignore-fail-on-non-empty $(BUILD)

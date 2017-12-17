@@ -1,0 +1,11 @@
+#!/bin/sh
+
+sync
+echo 3 > /proc/sys/vm/drop_caches
+
+./PokeMiniSDL 1>./stdoutSDL.txt 2>./stderrSDL.txt
+/mnt/nand/logview ./stderrSDL.txt ./stdoutSDL.txt
+
+sync
+cd /usr/gp2x
+exec ./gp2xmenu
