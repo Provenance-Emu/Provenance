@@ -252,6 +252,14 @@
 	return controller;
 }
 
+- (BOOL)systemIDWantsStartAndSelectInMenu:(NSString *)systemID {
+	if ([systemID isEqualToString:PVPSXSystemIdentifier]) {
+		return YES;
+	}
+	
+	return NO;
+}
+
 - (NSDictionary *)systemForIdentifier:(NSString *)systemID
 {
 	for (NSDictionary *system in self.systems)

@@ -125,24 +125,28 @@
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     [psxCore didPushPSXButton:PVPSXButtonStart forPlayer:player];
+	psxCore.isStartPressed = YES;
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     [psxCore didReleasePSXButton:PVPSXButtonStart forPlayer:player];
+	psxCore.isStartPressed = NO;
 }
 
 - (void)pressSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     [psxCore didPushPSXButton:PVPSXButtonSelect forPlayer:player];
+	psxCore.isSelectPressed = YES;
 }
 
 - (void)releaseSelectForPlayer:(NSUInteger)player
 {
     MednafenGameCore *psxCore = (MednafenGameCore *)self.emulatorCore;
     [psxCore didReleasePSXButton:PVPSXButtonSelect forPlayer:player];
+	psxCore.isSelectPressed = NO;
 }
 
 @end

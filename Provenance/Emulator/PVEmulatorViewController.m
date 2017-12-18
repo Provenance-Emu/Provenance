@@ -444,61 +444,66 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
     }
 
-#if TARGET_OS_TV
     PVControllerManager *controllerManager = [PVControllerManager sharedManager];
-    if (![[controllerManager player1] extendedGamepad])
-    {
-        // left trigger bound to Start
-        // right trigger bound to Select
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressStartForPlayer:0];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseStartForPlayer:0];
-            });
+	BOOL wantsStartSelectInMenu = [[PVEmulatorConfiguration sharedInstance] systemIDWantsStartAndSelectInMenu: self.systemID];
+	
+	if ([controllerManager player1]) {
+		if (![[controllerManager player1] extendedGamepad] || wantsStartSelectInMenu)
+		{
+			// left trigger bound to Start
+			// right trigger bound to Select
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressStartForPlayer:0];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseStartForPlayer:0];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressSelectForPlayer:0];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseSelectForPlayer:0];
-            });
+			}]];
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressSelectForPlayer:0];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseSelectForPlayer:0];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-    }
-    if (![[controllerManager player2] extendedGamepad])
-    {
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressStartForPlayer:1];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseStartForPlayer:1];
-            });
+			}]];
+		}
+	}
+	
+	if ([controllerManager player2]) {
+		if (![[controllerManager player2] extendedGamepad] || wantsStartSelectInMenu)
+		{
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressStartForPlayer:1];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseStartForPlayer:1];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressSelectForPlayer:1];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseSelectForPlayer:1];
-            });
+			}]];
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressSelectForPlayer:1];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseSelectForPlayer:1];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-    }
-#endif
+			}]];
+		}
+	}
 
     if ([self.emulatorCore supportsDiskSwapping])
     {

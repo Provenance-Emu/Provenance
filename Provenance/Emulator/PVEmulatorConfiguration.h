@@ -34,6 +34,7 @@
 - (NSString * _Nullable)nameForSystemIdentifier:(NSString* _Nonnull)systemID;
 - (NSString * _Nullable)shortNameForSystemIdentifier:(NSString * _Nonnull)systemID;
 - (NSArray * _Nullable)controllerLayoutForSystem:(NSString * _Nonnull)systemID;
+- (BOOL)systemIDWantsStartAndSelectInMenu:(NSString * _Nonnull)systemID;
 - (NSString * _Nullable)databaseIDForSystemID:(NSString * _Nonnull)systemID;
 - (NSString *)systemIDForDatabaseID:(NSString *)databaseID;
 

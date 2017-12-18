@@ -11,7 +11,7 @@
 #import "JSButton.h"
 #import "PVControllerViewController.h"
 
-@class PVEmulatorCore, PVGame;
+@class PVEmulatorCore, PVGame, PVEmulatorConfiguration;
 
 #if TARGET_OS_TV
 @interface PVEmulatorViewController : GCEventViewController
@@ -22,6 +22,7 @@
 
 @property (nonatomic, strong) PVEmulatorCore *emulatorCore;
 @property (nonatomic, strong) PVGame *game;
+@property (nonatomic, strong)  NSString *systemID;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *saveStatePath;
 @property (nonatomic, copy) NSString *BIOSPath;

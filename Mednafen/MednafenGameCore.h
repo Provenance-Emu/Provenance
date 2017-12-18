@@ -170,6 +170,9 @@ typedef NS_ENUM(NSInteger, OENGPButton) {
 __attribute__((visibility("default")))
 @interface MednafenGameCore : PVEmulatorCore
 
+@property (nonatomic) BOOL isStartPressed;
+@property (nonatomic) BOOL isSelectPressed;
+
 // Atari Lynx
 - (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;

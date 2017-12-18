@@ -828,6 +828,7 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
             [emulatorViewController setBatterySavesPath:[config batterySavesPathForROM:[[config romsPath] stringByAppendingPathComponent:[game romPath]]]];
             [emulatorViewController setSaveStatePath:[config saveStatePathForROM:[[config romsPath] stringByAppendingPathComponent:[game romPath]]]];
             [emulatorViewController setBIOSPath:[config BIOSPathForSystemID:[game systemIdentifier]]];
+			[emulatorViewController setSystemID:[game systemIdentifier]];
             [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
             [self presentViewController:emulatorViewController animated:YES completion:NULL];
