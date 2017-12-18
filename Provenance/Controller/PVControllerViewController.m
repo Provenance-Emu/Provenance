@@ -140,7 +140,7 @@
 #if 1                 // Wonderswan dual D-Pad hack.
             if (!self.dPad2 && [[control objectForKey:PVControlTitleKey] isEqualToString:@"Y"])
             {
-                dPadFrame.origin.y = dPadOriginY - size.height - bottomPadding;
+                dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding;
                 self.dPad2 = [[JSDPad alloc] initWithFrame:dPadFrame];
                 [self.dPad2 setDelegate:self];
                 [self.dPad2 setAlpha:alpha];
