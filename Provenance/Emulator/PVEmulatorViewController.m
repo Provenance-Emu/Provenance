@@ -860,6 +860,14 @@ void uncaughtExceptionHandler(NSException *exception)
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
     if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
         [self.menuButton setHidden:YES];
+
+    // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
+#if !TARGET_OS_TV
+        __weak PVEmulatorViewController *weakSelf = self;
+        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+            [weakSelf controllerPauseButtonPressed];
+        }];
+#endif
     }
 }
 
