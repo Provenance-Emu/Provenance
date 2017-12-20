@@ -166,13 +166,11 @@
     {
         core = [[MednafenGameCore alloc] init];
     }
-	
-    core.systemIdentifier = systemID;
-    
     else if ([systemID isEqualToString:PVN64SystemIdentifier])
     {
         core = [[MupenGameCore alloc] init];
     }
+    core.systemIdentifier = systemID;
 
 	return core;
 }

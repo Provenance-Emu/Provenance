@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#import <CoreFoundation/CoreFoundation.h>
+
 #ifdef WIN32
 #include <windows.h>
 #endif
