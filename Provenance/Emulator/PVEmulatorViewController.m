@@ -865,7 +865,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #if !TARGET_OS_TV
         __weak PVEmulatorViewController *weakSelf = self;
         [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-            [weakSelf controllerPauseButtonPressed];
+            [weakSelf controllerPauseButtonPressed:weakSelf];
         }];
 #endif
     }

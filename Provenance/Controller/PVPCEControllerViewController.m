@@ -50,14 +50,10 @@
         {
             [button setTag:OEPCEButton6];
         }
-
     }
-    
-//    [self.leftShoulderButton setTag:PVPSXButtonL1];
-//    [self.rightShoulderButton setTag:PVPSXButtonR1];
-
+	
     [self.selectButton setTag:OEPCEButtonSelect];
-    [self.startButton setTag:OEPCEButtonMode];
+    [self.startButton setTag:OEPCEButtonRun];
 }
 
 - (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction

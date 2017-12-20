@@ -589,7 +589,7 @@
 				<key>PVControlType</key>
 				<string>PVStartButton</string>
 				<key>PVControlTitle</key>
-				<string>Start</string>
+				<string>Run</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
@@ -598,22 +598,6 @@
 				<string>PVSelectButton</string>
 				<key>PVControlTitle</key>
 				<string>Select</string>
-				<key>PVControlSize</key>
-				<string>{62,22}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVLeftShoulderButton</string>
-				<key>PVControlTitle</key>
-				<string>L</string>
-				<key>PVControlSize</key>
-				<string>{62,22}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVRightShoulderButton</string>
-				<key>PVControlTitle</key>
-				<string>R</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
