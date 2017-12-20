@@ -387,7 +387,7 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
 	{
 		// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
 		// everything else should fall back to the vibration motor.
-		if ([UIDevice isIphone7or7Plus])
+		if ([UIDevice hasTapticMotor])
 		{
 			[self.feedbackGenerator selectionChanged];
 		}

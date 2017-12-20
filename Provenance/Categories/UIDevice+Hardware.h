@@ -11,6 +11,6 @@
 @interface UIDevice (Hardware)
 
 - (NSString *)modelIdentifier;
-+ (BOOL)isIphone7or7Plus;
++ (BOOL)hasTapticMotor;
 
 @end
