@@ -24,19 +24,22 @@
 #import "iCadeState.h"
 
 /*
- UP ON,OFF  = w,e
- RT ON,OFF  = d,c
- DN ON,OFF  = x,z
- LT ON,OFF  = a,q
- A  ON,OFF  = y,t
- B  ON,OFF  = h,r
- C  ON,OFF  = u,f
- D  ON,OFF  = j,n
- E  ON,OFF  = i,m
- F  ON,OFF  = k,p
- G  ON,OFF  = o,g
- H  ON,OFF  = l,v
+                EN      FR      DE
+ UP ON,OFF  =   w,e     z,e     w,e
+ RT ON,OFF  =   d,c     d,c     d,c
+ DN ON,OFF  =   x,z     x,w     x,y
+ LT ON,OFF  =   a,q     q,a     a,q
+ A  ON,OFF  =   y,t     y,t     z,t
+ B  ON,OFF  =   h,r     h,r     h,r
+ C  ON,OFF  =   u,f     u,f     u,f
+ D  ON,OFF  =   j,n     j,n     j,n
+ E  ON,OFF  =   i,m     i,,     i,m
+ F  ON,OFF  =   k,p     k,p     k,p
+ G  ON,OFF  =   o,g     o,g     o,g
+ H  ON,OFF  =   l,v     l,v     l,v
 */
+
+
 
 @protocol iCadeEventDelegate <NSObject>
 
