@@ -21,6 +21,7 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
+#import "UIDevice+Hardware.h"
 
 @interface PVEmulatorViewController ()
 
@@ -198,7 +199,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-	[self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, 10, 62, 22)];
+    [self.menuButton setFrame:CGRectMake( ([UIDevice isIphoneX] ? 10 : ([[self view] bounds].size.width - 62) / 2 ), ([UIDevice isIphoneX] ? [[self view] bounds].size.height - 60 : 10), 62, 22)];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
 	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
 	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];

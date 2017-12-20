@@ -12,5 +12,8 @@
 
 - (NSString *)modelIdentifier;
 + (BOOL)isIphone7or7Plus;
++ (BOOL)isIphone8or8Plus;
++ (BOOL)isIphoneX;
++ (BOOL)hasTapticEngine;
 
 @end
