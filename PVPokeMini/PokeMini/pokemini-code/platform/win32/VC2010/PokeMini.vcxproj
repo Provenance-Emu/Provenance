@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A9E4D423-8C5B-4F1B-AE80-DA4F848ECBA9}</ProjectGuid>
+    <RootNamespace>PokeMini</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.;..\..\..\freebios;..\..\..\source;..\..\..\sourcex;..\..\..\resource;..\..\..\dependencies\minizip;..\..\..\dependencies\zlib;$(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;NO_SCANDIRS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;ddraw.lib;d3d9.lib;dxguid.lib;dsound.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.;..\..\..\freebios;..\..\..\source;..\..\..\sourcex;..\..\..\resource;..\..\..\dependencies\minizip;..\..\..\dependencies\zlib;$(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;NO_SCANDIRS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>comctl32.lib;winmm.lib;ddraw.lib;d3d9.lib;dxguid.lib;dsound.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\AudioRend.c" />
+    <ClCompile Include="..\AudioRend_DSound.c" />
+    <ClCompile Include="..\CustomBright.c" />
+    <ClCompile Include="..\CustomContrast.c" />
+    <ClCompile Include="..\CustomPalEdit.c" />
+    <ClCompile Include="..\DefineInput.c" />
+    <ClCompile Include="..\Joystick_DInput.c" />
+    <ClCompile Include="..\KeybWinMap.c" />
+    <ClCompile Include="..\PokeMini_Win32.c" />
+    <ClCompile Include="..\VideoRend.c" />
+    <ClCompile Include="..\VideoRend_D3D.c" />
+    <ClCompile Include="..\VideoRend_DDraw.c" />
+    <ClCompile Include="..\VideoRend_GDI.c" />
+    <ClCompile Include="..\Win32Stuffz.c" />
+    <ClCompile Include="..\..\..\source\CommandLine.c" />
+    <ClCompile Include="..\..\..\sourcex\ExportBMP.c" />
+    <ClCompile Include="..\..\..\sourcex\ExportWAV.c" />
+    <ClCompile Include="..\..\..\source\Hardware.c" />
+    <ClCompile Include="..\..\..\source\Joystick.c" />
+    <ClCompile Include="..\..\..\source\Keyboard.c" />
+    <ClCompile Include="..\..\..\source\MinxAudio.c" />
+    <ClCompile Include="..\..\..\source\MinxColorPRC.c" />
+    <ClCompile Include="..\..\..\source\MinxCPU.c" />
+    <ClCompile Include="..\..\..\source\MinxCPU_CE.c" />
+    <ClCompile Include="..\..\..\source\MinxCPU_CF.c" />
+    <ClCompile Include="..\..\..\source\MinxCPU_SP.c" />
+    <ClCompile Include="..\..\..\source\MinxCPU_XX.c" />
+    <ClCompile Include="..\..\..\source\MinxIO.c" />
+    <ClCompile Include="..\..\..\source\MinxIRQ.c" />
+    <ClCompile Include="..\..\..\source\MinxLCD.c" />
+    <ClCompile Include="..\..\..\source\MinxPRC.c" />
+    <ClCompile Include="..\..\..\source\MinxTimers.c" />
+    <ClCompile Include="..\..\..\source\Multicart.c" />
+    <ClCompile Include="..\..\..\source\PMCommon.c" />
+    <ClCompile Include="..\..\..\source\PokeMini.c" />
+    <ClCompile Include="..\..\..\sourcex\NoUI.c" />
+    <ClCompile Include="..\..\..\source\Video.c" />
+    <ClCompile Include="..\..\..\source\Video_x1.c" />
+    <ClCompile Include="..\..\..\source\Video_x2.c" />
+    <ClCompile Include="..\..\..\source\Video_x3.c" />
+    <ClCompile Include="..\..\..\source\Video_x4.c" />
+    <ClCompile Include="..\..\..\source\Video_x5.c" />
+    <ClCompile Include="..\..\..\source\Video_x6.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\adler32.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\crc32.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\inffast.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\inflate.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\inftrees.c" />
+    <ClCompile Include="..\..\..\dependencies\minizip\ioapi.c" />
+    <ClCompile Include="..\..\..\dependencies\minizip\unzip.c" />
+    <ClCompile Include="..\..\..\dependencies\zlib\zutil.c" />
+    <ClCompile Include="..\..\..\freebios\freebios.c" />
+    <ClCompile Include="..\..\..\resource\PokeMini_ColorPal.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\AudioRend.h" />
+    <ClInclude Include="..\CustomBright.h" />
+    <ClInclude Include="..\CustomContrast.h" />
+    <ClInclude Include="..\CustomPalEdit.h" />
+    <ClInclude Include="..\DefineInput.h" />
+    <ClInclude Include="..\Joystick_DInput.h" />
+    <ClInclude Include="..\PokeMini_Win32.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\VideoRend.h" />
+    <ClInclude Include="..\Win32Stuffz.h" />
+    <ClInclude Include="..\..\..\source\CommandLine.h" />
+    <ClInclude Include="..\..\..\sourcex\ExportBMP.h" />
+    <ClInclude Include="..\..\..\sourcex\ExportWAV.h" />
+    <ClInclude Include="..\..\..\source\Hardware.h" />
+    <ClInclude Include="..\..\..\source\IOMap.h" />
+    <ClInclude Include="..\..\..\source\Joystick.h" />
+    <ClInclude Include="..\..\..\source\Keyboard.h" />
+    <ClInclude Include="..\..\..\source\MinxAudio.h" />
+    <ClInclude Include="..\..\..\source\MinxColorPRC.h" />
+    <ClInclude Include="..\..\..\source\MinxCPU.h" />
+    <ClInclude Include="..\..\..\source\MinxIO.h" />
+    <ClInclude Include="..\..\..\source\MinxIRQ.h" />
+    <ClInclude Include="..\..\..\source\MinxLCD.h" />
+    <ClInclude Include="..\..\..\source\MinxPRC.h" />
+    <ClInclude Include="..\..\..\source\MinxTimers.h" />
+    <ClInclude Include="..\..\..\source\Multicart.h" />
+    <ClInclude Include="..\..\..\source\PMCommon.h" />
+    <ClInclude Include="..\..\..\source\PokeMini.h" />
+    <ClInclude Include="..\..\..\source\PokeMini_Version.h" />
+    <ClInclude Include="..\..\..\source\UI.h" />
+    <ClInclude Include="..\..\..\source\Video.h" />
+    <ClInclude Include="..\..\..\source\Video_x1.h" />
+    <ClInclude Include="..\..\..\source\Video_x2.h" />
+    <ClInclude Include="..\..\..\source\Video_x3.h" />
+    <ClInclude Include="..\..\..\source\Video_x4.h" />
+    <ClInclude Include="..\..\..\source\Video_x5.h" />
+    <ClInclude Include="..\..\..\source\Video_x6.h" />
+    <ClInclude Include="..\..\..\freebios\freebios.h" />
+    <ClInclude Include="..\..\..\resource\PokeMini_ColorPal.h" />
+    <ClInclude Include="..\..\..\dependencies\minizip\unzip.h" />
+    <ClInclude Include="..\..\..\dependencies\zlib\zlib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PokeMini_Win32.rc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\resource;..\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\resource;..\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="winxp.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icon_Min1_48.ico" />
+    <None Include="Icon_Min2_48.ico" />
+    <None Include="Icon_PkBl_48.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

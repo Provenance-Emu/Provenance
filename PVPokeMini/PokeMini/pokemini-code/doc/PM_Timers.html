@@ -1,0 +1,387 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Template.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>PokeMini Documentation</title>
+<!-- InstanceEndEditable -->
+<style type="text/css"> 
+<!-- 
+body  {
+	font: 100% Verdana, Arial, Helvetica, sans-serif;
+	background: #E8E8E0;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	color: #000000;
+}
+
+#container { 
+    overflow: auto;
+    clear: both;
+	width: 52em;
+	background: #FFFFFF;
+	margin: 0 auto;
+	border: 1px solid #000000;
+	text-align: left;
+} 
+
+#sidebar {
+	float: left;
+	width: 12em;
+	background: #FFFFFF;
+	padding: 16px 0px;
+	font-size: 0.75em;
+}
+
+#sidebar h3, #sidebar p {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#mainContent {
+ 	margin: 0em 1.5em 0em 10em;
+}
+
+.clearfloat {
+	clear: both;
+    height: 0;
+    font-size: 1px;
+    line-height: 0px;
+}
+
+.printfooter {
+	border: 1px solid #000000;
+	background: #F0F0F0;
+}
+
+.smallfnt {font-size: 0.6em;}
+.smallfnt pre {font-size: 1.2em;}
+.copyright {font-size: 0.6em;}
+
+a:link {color:#930;}
+a:visited {color:#930;}
+a:hover {color:#C63;}
+a:active {color:#C99;}
+
+.code_comm {color: #777;}
+.code_def {color: #690;}
+.code_cptr {color: #848;}
+.code_cvar {color: #488;}
+.code_dire {color: #069; font-weight:bold;}
+.code_macro {color: #096; font-weight:bold;}
+.code_func {color: #696; font-weight:bold;}
+.code_opc {color: #663; font-weight:bold;}
+.code_string {color: #930;}
+--> 
+</style>
+<script type="text/javascript">
+function InstructionSet_CheckItem()
+{
+	var icoEl = document.getElementById('InstructionSet_Ico');
+	var divEl = document.getElementById('InstructionSet_Div');
+	if (divEl.style.display == "none") {
+		icoEl.alt = "-";
+		icoEl.src = "ico_minus.gif";
+		divEl.style.display = "inline";
+	} else {
+		icoEl.alt = "+";
+		icoEl.src = "ico_plus.gif";
+		divEl.style.display = "none";
+	}
+}
+</script>
+<!-- InstanceBeginEditable name="Collapse_InstructionSet" -->
+<script type="text/javascript">
+window.onload = InstructionSet_CheckItem;
+</script>
+<!-- InstanceEndEditable -->
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head><body>
+
+<div id="container">
+  <div id="sidebar">
+    <h3 style="text-align:center"><img src="logo.png" alt="Logo" width="41" height="55" /><br />PokeMini</h3>
+    <p><a href="index.html">Overview</a></p>
+    <p><a href="http://code.google.com/p/pokemini/">Website</a></p>
+    <p><a href="history.html">History</a></p>
+    <p><a href="keys_info.html">Keys and Info</a></p>
+    <p><a href="commandline.html">Command-Line</a></p>
+    <p><a href="about_links.html">About / Links</a></p>
+    <h3 style="text-align:center">Libraries</h3>
+    <p><a href="LIB_pm_init.html">pm_init</a></p>
+    <p><a href="LIB_pm_music.html">pm_music</a></p>
+    <h3 style="text-align:center">Tools</h3>
+    <p><a href="TOOLS_colormapper.html">Color Mapper</a></p>
+    <p><a href="TOOLS_ImgConv.html">Image Converter</a></p>
+    <p><a href="TOOLS_MusicConv.html">Music Converter</a></p>
+    <p>Last Updated:<br />
+      <strong>Jun. 12, 2014</strong></p>
+    <br /><br />
+    <h3 style="text-align:center"><img src="cpudie.gif" alt="CPU Die" width="73" height="55" /><br />
+      Hardware</h3>
+    <p><a href="Minx_Cpu.html">Minx CPU</a></p>
+    <p><img src="ico_minus.gif" alt="-" name="InstructionSet_Ico" width="11" height="11" id="InstructionSet_Ico"  onclick="javascript:InstructionSet_CheckItem()" /> <a href="PM_InstructionList.html">Instruction Set:</a></p>
+    <div id="InstructionSet_Div">
+    	<ul>
+    	  <li><a href="PM_Opc_NOP.html">NOP</a></li>
+    	  <li><a href="PM_Opc_MOV8.html">MOV (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_MOV16.html">MOV (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD8.html">ADD (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADD16.html">ADD (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB8.html">SUB (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SUB16.html">SUB (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC8.html">ADC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_ADC16.html">ADC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC8.html">SBC (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_SBC16.html">SBC (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP8.html">CMP (8-Bits)</a></li>
+    	  <li><a href="PM_Opc_CMP16.html">CMP (16-Bits)</a></li>
+    	  <li><a href="PM_Opc_INC.html">INC</a></li>
+    	  <li><a href="PM_Opc_DEC.html">DEC</a></li>
+    	  <li><a href="PM_Opc_NEG.html">NEG</a></li>
+    	  <li><a href="PM_Opc_MUL.html">MUL</a></li>
+    	  <li><a href="PM_Opc_DIV.html">DIV</a></li>
+    	  <li><a href="PM_Opc_TST.html">TST</a></li>
+    	  <li><a href="PM_Opc_AND.html">AND</a></li>
+    	  <li><a href="PM_Opc_OR.html">OR</a></li>
+    	  <li><a href="PM_Opc_XOR.html">XOR</a></li>
+    	  <li><a href="PM_Opc_NOT.html">NOT</a></li>
+    	  <li><a href="PM_Opc_SHL.html">SHL</a></li>
+    	  <li><a href="PM_Opc_SAL.html">SAL</a></li>
+    	  <li><a href="PM_Opc_SHR.html">SHR</a></li>
+    	  <li><a href="PM_Opc_SAR.html">SAR</a></li>
+    	  <li><a href="PM_Opc_ROL.html">ROL</a></li>
+    	  <li><a href="PM_Opc_ROLC.html">ROLC</a></li>
+    	  <li><a href="PM_Opc_ROR.html">ROR</a></li>
+    	  <li><a href="PM_Opc_RORC.html">RORC</a></li>
+    	  <li><a href="PM_Opc_XCHG.html">XCHG</a></li>
+    	  <li><a href="PM_Opc_PACK.html">PACK</a></li>
+    	  <li><a href="PM_Opc_UNPACK.html">UNPACK</a></li>
+    	  <li><a href="PM_Opc_SWAP.html">SWAP</a></li>
+    	  <li><a href="PM_Opc_EX.html">EX</a></li>
+    	  <li><a href="PM_Opc_PUSH.html">PUSH</a></li>
+    	  <li><a href="PM_Opc_POP.html">POP</a></li>
+    	  <li><a href="PM_Opc_CALL.html">CALL</a></li>
+    	  <li><a href="PM_Opc_JMP.html">JMP</a></li>
+    	  <li><a href="PM_Opc_RET.html">RET</a></li>
+    	  <li><a href="PM_Opc_HALT.html">HALT</a></li>
+    	  <li><a href="PM_Opc_STOP.html">STOP</a></li>
+  	  </ul>
+   	</div>
+    <p><a href="PM_Memory.html">Memory Map</a></p>
+    <p><a href="PM_Cartridge.html">Cartridge </a></p>
+    <p><a href="PM_RAM.html">RAM</a></p>
+    <p><a href="PM_IRQBios.html">Interrupt / BIOS</a></p>
+    <p><a href="PM_Registers.html">Hardware Registers</a></p>
+    <p><a href="PM_Timers.html">Timers</a></p>
+    <p><a href="PM_IO_Port.html">Hardware I/O Port</a></p>
+    <p><a href="PM_Audio.html">Audio / Sound</a></p>
+    <p><a href="PM_PRC.html">PRC (Program Rendering Chip)</a></p>
+    <p><a href="LCD_Controller.html">LCD Controller</a></p>
+    <p><a href="PM_Pinouts.html">Cartridge Pinsout</a></p>
+    <p>Last Updated:<br />
+      <strong>Dec. 16, 2011</strong></p>
+  </div>
+  <div id="mainContent">
+  <!-- InstanceBeginEditable name="Content" -->
+    <h1>Timers </h1>
+    <h2><span class="mw-headline" id="Timer_Overview">Timers 1~3 Overview </span></h2>
+    <p>The Pokemon Mini offers 3 general purpose timer units.  Each timer is
+      broken down into several blocks to provide it with variable clock 
+      rates, the ability to be broken down into two independent 8-bit timers, 
+      and each timer can generate two unique interrupts. </p>
+    <h2><span class="mw-headline" id="Timer_Control">Timers 1~3 Control </span></h2>
+    <p>Each timer is configured using 6 registers, TIM_SCALE*, TIM_OSCI*, 
+      TIM_CTL*_L, TIM_CTL*_H, TIM_PRE*_L and TIM_PRE*_H.  These registers 
+      provide the ability to change the clock rate of both the low and high 
+      8-bits of the counter, set if there is a borrow chain to the upper 
+      8-bits (16-bit counter mode) as well as enable and reset the timer (load
+      counter from the preset).  Beginning with the TIM_OSCI*, each timer has
+      the ability to run from oscillator 1 (System Clock) or oscillator 2 
+      (32768 Hz RTC Clock).  The pre-scale is further decided by selecting one
+      of 8 different pre-scale values from a table in the TIM_SCALE* 
+      register. </p>
+    <p>Further more, timers must be enabled individually (by setting the
+      enable flag in TIM_SCALE* TIM_CTL*_L and TIM_CTL*_H) as well as by 
+      group (Upper half of TIM_ENA_OSCI1).   TIM_ENA_OSCI1 disables oscillator
+      1 or 2 if either respective bit is clear ($10 and $20). </p>
+    <p><br />
+    </p>
+    <table style="text-align: center;" border="1">
+      <caption>
+      <b>Timer Prescale (Oscillator 1)</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Prescale </th>
+          <th> Clk Div. </th>
+          <th> Hz </th>
+        </tr>
+        <tr>
+          <th> 0 </th>
+          <td> CPU / 2 </td>
+          <td> 2000000 </td>
+        </tr>
+        <tr>
+          <th> 1 </th>
+          <td> CPU / 8 </td>
+          <td> 500000 </td>
+        </tr>
+        <tr>
+          <th> 2 </th>
+          <td> CPU / 32 </td>
+          <td> 125000 </td>
+        </tr>
+        <tr>
+          <th> 3 </th>
+          <td> CPU / 64 </td>
+          <td> 62500 </td>
+        </tr>
+        <tr>
+          <th> 4 </th>
+          <td> CPU / 128 </td>
+          <td> 31250 </td>
+        </tr>
+        <tr>
+          <th> 5 </th>
+          <td> CPU / 256 </td>
+          <td> 15625 </td>
+        </tr>
+        <tr>
+          <th> 6 </th>
+          <td> CPU / 1024 </td>
+          <td> 3906.25 </td>
+        </tr>
+        <tr>
+          <th> 7 </th>
+          <td> CPU / 4096 </td>
+          <td> 976.5625 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><br />
+    </p>
+    <table style="text-align: center;" border="1">
+      <caption>
+      <b>Timer Prescale (Oscillator 2)</b>
+      </caption>
+      <tbody>
+        <tr>
+          <th> Prescale </th>
+          <th> Clk Div. </th>
+          <th> Hz </th>
+        </tr>
+        <tr>
+          <th> 0 </th>
+          <td> 32768 / 1 </td>
+          <td> 32768 </td>
+        </tr>
+        <tr>
+          <th> 1 </th>
+          <td> 32768 / 2 </td>
+          <td> 16384 </td>
+        </tr>
+        <tr>
+          <th> 2 </th>
+          <td> 32768 / 4 </td>
+          <td> 8192 </td>
+        </tr>
+        <tr>
+          <th> 3 </th>
+          <td> 32768 / 8 </td>
+          <td> 4096 </td>
+        </tr>
+        <tr>
+          <th> 4 </th>
+          <td> 32768 / 16 </td>
+          <td> 2048 </td>
+        </tr>
+        <tr>
+          <th> 5 </th>
+          <td> 32768 / 32 </td>
+          <td> 1024 </td>
+        </tr>
+        <tr>
+          <th> 6 </th>
+          <td> 32768 / 64 </td>
+          <td> 512 </td>
+        </tr>
+        <tr>
+          <th> 7 </th>
+          <td> 32768 / 128 </td>
+          <td> 256 </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The timer control registers affect the values of the timers 
+      themselves.  Enable must be set for timing, this means there are a total
+      of 3 bits that must be enabled for any timer to begin counting.  
+      writing a logical 1 to a reset bit in a control register will cause that
+      respective 8-bit section to copy the respective value out of preset.  
+      All timers count down.  When any timer underflows, it's value is copied 
+      from the preset value. </p>
+    <h2>Timers 1~3 in 16-bit mode</h2>
+    <p>When a timer is operating in 16-bit mode, all the upper-8 bit 
+      settings are unceremoniously ignored.  Enables, reset and and everything
+      no longer control the behavior of the timer. They remain writable, but 
+      they no longer actively function.  This includes enables, resets and 
+      pre-scale values.  The lower-8 bit configuration is effective over the 
+      full 16-bit value.  Additionally, all lower-8 underflow IRQs are 
+      effectively disabled.  The timer only presets when the full 16-bit value
+      underflows. </p>
+    <h2>Timers 1~3 IRQ Operation</h2>
+    <p>Each timer provides two irqs.  These IRQs appear to be fixed 
+      function, which provides the only known difference between Timers 1-2 
+      and Timer 3. </p>
+    <p>Timers 1-3 have a primary IRQ, this fires anytime the upper 8-bit
+      of the counter underflows (16- or 8-bit operations)
+      The secondary IRQ of Timer 1-2 occurs when the lower 8-bit counter 
+      underflows (8-bit mode only)
+      The secondary IRQ of Timer 3 occurs when the value of the counter 
+      becomes less than or equal-to the value in it's comparator.  In 8-bit 
+      mode only the upper 8-bit of the value is used. </p>
+    <h2>Sound</h2>
+    <p>Timer 3 is also used for <a href="PM_Audio.html" title="PM Audio">sound</a> within the Pokemon Mini. </p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/Timers">http://wiki.sublab.net/index.php/Timers</a>&quot;</div>
+    <h2><a name="256Hz_Timer" id="256Hz_Timer"></a>256Hz Timer Operation</h2>
+    <p>The 256Hz Timer is enabled by writing the LSB of TIM256_CTL to 1. 
+      This activates the timer. It might be a good idea to also reset the 
+      timer by writing the 2nd bit to 1 also. </p>
+    <p>When the timer is active register TIM256_CNT is incremented 256 
+      times a second. Since it's an 8 bit register counting from 0 to 255 it 
+      overflows exactly 1 time a second. </p>
+    <h2>IRQs tied to 256 Hz timer</h2>
+    <p>The counter register TIM256_CNT is also used to fire some interrupts at frequencies derived from the 256 Hz clock: </p>
+    <p>When TIM256_CNT overflows the 1 Hz IRQ $0E is fired.<br />
+      When TIM256_CNT bit 8 increments (overflow from bit 7) the 2 Hz IRQ $0D is fired.<br />
+      When TIM256_CNT bit 6 increments (overflow from bit 5) the 8 Hz IRQ $0C is fired.<br />
+    When TIM256_CNT bit 4 increments (overflow from bit 3) the 32 Hz IRQ $0B is fired.</p>
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/256Hz_Timer">http://wiki.sublab.net/index.php/256Hz_Timer</a>&quot;</div>
+    <h2><a name="PM_Second_Counter" id="PM_Second_Counter"></a>Second Counter Overview</h2>
+    <p>The second timer, while simple, was misunderstood for a good portion 
+      of the initial reverse engineering process.  SEC_CNT_* provides a 24 bit
+      second counter that increments with a one second period (based of a 
+      32768hz crystal) and can be enabled, disabled or reset to zero using the
+      SEC_CTL register.  Initially, these registers were thought to be a 
+      general purpose counter, but is actually one half of the system's real 
+      time clock. </p>
+    <p>When a commercial game sets the time, it resets the timer and stores the current time and date in the <a href="http://wiki.sublab.net/index.php?title=PM_EEPROM&amp;action=edit&amp;redlink=1" class="new" title="PM EEPROM (page does not exist)">EEPROM</a>.
+      Calculating the current time consists of simply adding the number of 
+      elapsed seconds to the second counter.  Each time the system boots, 
+      commercial games compare the current seconds against a 24 bit value 
+      stored in EEPROM.  This was the last known valid time.  If the current 
+      second counter is less than the previous know valid, it is assumed that 
+      the clock is valid and a game resumes running normally. </p>
+    <p>Under no circumstances should any homebrew software reset or 
+      pause the second counter, as it will invalidate the time on the system. 
+      This counter continues to tick even when the system is suspended. </p>
+	<br />
+    <div class="printfooter"> Retrieved from &quot;<a href="http://wiki.sublab.net/index.php/PM_Second_Counter">http://wiki.sublab.net/index.php/PM_Second_Counter</a>&quot;</div>
+    <!-- InstanceEndEditable -->
+    <span class="clearfloat"></span>
+  </div>
+</div>
+<p class="copyright">&copy; 2011-2015 by JustBurn - Hardware documentation copy from Sublab by Team-Pokémé</p>
+</body>
+<!-- InstanceEnd --></html>

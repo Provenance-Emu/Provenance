@@ -18,7 +18,7 @@
 
 @interface PVTVSettingsViewController ()
 
-@property (nonatomic, strong) PVGameImporter *gameImporter;
+@property (nonatomic, strong, nonnull) PVGameImporter *gameImporter;
 
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoLoadValueLabel;
@@ -27,10 +27,29 @@
 @property (weak, nonatomic) IBOutlet UILabel *modeValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
+@property (weak, nonatomic) IBOutlet UILabel *crtFilterLabel;
 
 @end
 
 @implementation PVTVSettingsViewController
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        _gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:nil];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    self = [super initWithCoder:coder];
+    if (self) {
+        _gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:nil];
+    }
+    return self;
+}
 
 - (void)viewDidLoad
 {
@@ -45,6 +64,7 @@
     [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
     [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
+    [self.crtFilterLabel setText:([settings crtFilterEnabled]) ? @"On" : @"Off"];
 	NSString *versionText = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
 	versionText = [versionText stringByAppendingFormat:@" (%@)", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]];
 	[self.versionValueLabel setText:versionText];
@@ -93,6 +113,10 @@
                     [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
                     break;
                 case 2:
+                    [settings setCrtFilterEnabled:![settings crtFilterEnabled]];
+                    [self.crtFilterLabel setText:([settings crtFilterEnabled]) ? @"On" : @"Off"];
+                    break;
+                case 3:
                     [settings setShowFPSCount:![settings showFPSCount]];
                     [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
                 default:

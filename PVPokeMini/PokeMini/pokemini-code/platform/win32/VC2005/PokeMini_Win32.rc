@@ -1,0 +1,474 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "Resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "pokemini.rc"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "Icon_PkBl_48.ico"
+IDI_ICON2               ICON                    "Icon_Min1_48.ico"
+IDI_ICON3               ICON                    "Icon_Min2_48.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "Resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""pokemini.rc""\r\n"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open Min...\tCtrl+O",        ID_FILE_OPENMIN
+        POPUP "Recent"
+        BEGIN
+            MENUITEM "---\tCtrl+F1",                ID_RECENT0
+            MENUITEM "---\tCtrl+F2",                ID_RECENT1
+            MENUITEM "---\tCtrl+F3",                ID_RECENT2
+            MENUITEM "---\tCtrl+F4",                ID_RECENT3
+            MENUITEM "---\tCtrl+F5",                ID_RECENT4
+            MENUITEM "---\tCtrl+F6",                ID_RECENT5
+            MENUITEM "---\tCtrl+F7",                ID_RECENT6
+            MENUITEM "---\tCtrl+F8",                ID_RECENT7
+            MENUITEM "---\tCtrl+F9",                ID_RECENT8
+            MENUITEM "---\tCtrl+F10",               ID_RECENT9
+            MENUITEM SEPARATOR
+            MENUITEM "Clear List",                  ID_RECENT_CLEARLIST
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Load State...\tCtrl+L",      ID_FILE_LOADSTATE
+        MENUITEM "&Save State...\tCtrl+K",      ID_FILE_SAVESTATE
+        MENUITEM SEPARATOR
+        POPUP "Capture"
+        BEGIN
+            MENUITEM "Snapshot 1x preview",         ID_CAPTURE_SNAPSHOT1XPREVIEW
+            MENUITEM "Snapshot from LCD",           ID_CAPTURE_SNAPSHOTFROMLCD
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Quit\tCtrl+Q",               ID_FILE_QUIT
+    END
+    POPUP "&Options"
+    BEGIN
+        POPUP "&Zoom"
+        BEGIN
+            MENUITEM "1x (96x64)",                  ID_ZOOM_1X
+            MENUITEM "2x (192x128)",                ID_ZOOM_2X
+            MENUITEM "3x (288x192)",                ID_ZOOM_3X
+            MENUITEM "4x (384x256)",                ID_ZOOM_4X
+            MENUITEM "5x (480x320)",                ID_ZOOM_5X
+            MENUITEM "6x (576x384)",                ID_ZOOM_6X
+        END
+        POPUP "&Palette"
+        BEGIN
+            MENUITEM "Original",                    ID_PALETTE_0
+            MENUITEM "Old PokeMini",                ID_PALETTE_1
+            MENUITEM "Black && White",              ID_PALETTE_2
+            MENUITEM "Green Palette",               ID_PALETTE_3
+            MENUITEM "Green Vector",                ID_PALETTE_4
+            MENUITEM "Red Palette",                 ID_PALETTE_5
+            MENUITEM "Red Vector",                  ID_PALETTE_6
+            MENUITEM "Blue LCD",                    ID_PALETTE_7
+            MENUITEM "LED Backlight",               ID_PALETTE_8
+            MENUITEM "Girlish",                     ID_PALETTE_9
+            MENUITEM "Blue Palette",                ID_PALETTE_10
+            MENUITEM "Blue Vector",                 ID_PALETTE_11
+            MENUITEM "Sepia",                       ID_PALETTE_12
+            MENUITEM "Inverted B&&W",               ID_PALETTE_13
+            MENUITEM "Custom 1",                    ID_PALETTE_14
+            MENUITEM "Custom 2",                    ID_PALETTE_15
+        END
+        POPUP "&LCD Mode"
+        BEGIN
+            MENUITEM "Analog",                      ID_LCDMODE_ANALOG
+            MENUITEM "3-Shades",                    ID_LCDMODE_3SHADES
+            MENUITEM "2-Shades",                    ID_LCDMODE_2SHADES
+            MENUITEM "Colors*",                     ID_LCDMODE_COLORS
+        END
+        POPUP "LCD &Filter"
+        BEGIN
+            MENUITEM "None",                        ID_LCDFILTER_NONE
+            MENUITEM "Dot-Matrix / High",           ID_LCDFILTER_MATRIX
+            MENUITEM "50% Scanline",                ID_LCDFILTER_SCANLINE
+        END
+        POPUP "LCD Contrast"
+        BEGIN
+            MENUITEM "Default",                     ID_LCDCONTRAST_DEFAULT
+            MENUITEM "Lowest",                      ID_LCDCONTRAST_LOWEST
+            MENUITEM "Low",                         ID_LCDCONTRAST_LOW
+            MENUITEM "Medium",                      ID_LCDCONTRAST_MEDIUM
+            MENUITEM "High",                        ID_LCDCONTRAST_HIGH
+            MENUITEM "Highest",                     ID_LCDCONTRAST_HIGHEST
+            MENUITEM "Custom...",                   ID_LCDCONTRAST_CUSTOM
+        END
+        POPUP "LCD Brightness"
+        BEGIN
+            MENUITEM "Default",                     ID_LCDBRIGHT_DEFAULT
+            MENUITEM "Lighter",                     ID_LCDBRIGHT_LIGHTER
+            MENUITEM "Light",                       ID_LCDBRIGHT_LIGHT
+            MENUITEM "Dark",                        ID_LCDBRIGHT_DARK
+            MENUITEM "Darker",                      ID_LCDBRIGHT_DARKER
+            MENUITEM "Custom...",                   ID_LCDBRIGHT_CUSTOM
+        END
+        POPUP "Rumble Level"
+        BEGIN
+            MENUITEM "None",                        ID_RUMBLELEVEL_0
+            MENUITEM "Weak",                        ID_RUMBLELEVEL_1
+            MENUITEM "Medium",                      ID_RUMBLELEVEL_2
+            MENUITEM "Strong",                      ID_RUMBLELEVEL_3
+        END
+        MENUITEM "Fullscreen\tF10",             ID_OPTIONS_FULLSCREEN
+        MENUITEM SEPARATOR
+        POPUP "&Sound"
+        BEGIN
+            MENUITEM "Disabled",                    ID_SOUND_DISABLED
+            MENUITEM "Generated",                   ID_SOUND_GENERATED
+            MENUITEM "Direct",                      ID_SOUND_DIRECT
+            MENUITEM "Emulated",                    ID_SOUND_EMULATED
+            MENUITEM "Direct PWM",                  ID_SOUND_DIRECTPWM
+        END
+        MENUITEM "Pie&zo Filter",               ID_OPTIONS_PIEZOFILTER
+        MENUITEM SEPARATOR
+        POPUP "&Sync Cycles"
+        BEGIN
+            MENUITEM "8 (Accurancy)",               ID_SYNCCYCLES_8
+            MENUITEM "16",                          ID_SYNCCYCLES_16
+            MENUITEM "32",                          ID_SYNCCYCLES_32
+            MENUITEM "64 (Performance)",            ID_SYNCCYCLES_64
+            MENUITEM "128 (Not recommended)",       ID_SYNCCYCLES_128
+            MENUITEM "256 (Not recommended)",       ID_SYNCCYCLES_256
+            MENUITEM "512 (Not recommended)",       ID_SYNCCYCLES_512
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Low Battery",                ID_OPTIONS_LOWBATTERY
+        POPUP "&RTC"
+        BEGIN
+            MENUITEM "No RTC",                      ID_RTC_NORTC
+            MENUITEM "State time difference",       ID_RTC_STATE
+            MENUITEM "RTC from Host",               ID_RTC_HOST
+        END
+        MENUITEM "Share &EEPROM",               ID_OPTIONS_SHAREEEPROM
+        POPUP "&Multicart"
+        BEGIN
+            MENUITEM "Disabled",                    ID_MULTICART_DISABLED
+            MENUITEM "Flash 512KB (AM29LV040B)",    ID_MULTICART_FLASH512KB
+            MENUITEM "Lupin 512KB (AM29LV040B)",    ID_MULTICART_LUPIN512KB
+        END
+        MENUITEM "Force Free&BIOS",             ID_OPTIONS_FORCEFREEBIOS
+        MENUITEM SEPARATOR
+        POPUP "File association"
+        BEGIN
+            MENUITEM "Register",                    ID_FILEASSOCIATION_REGISTER
+            MENUITEM "Unregister",                  ID_FILEASSOCIATION_UNREGISTER
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Custom Palette Edit...",     ID_OPTIONS_CUSTOMPALETTEEDIT
+        MENUITEM "Define &Keyboard...",         ID_OPTIONS_DEFINEKEYBOARD
+        MENUITEM "Define &Joystick...",         ID_OPTIONS_DEFINEJOYSTICK
+        MENUITEM "&Update EEPROM",              ID_OPTIONS_UPDATEEEPROM
+    END
+    POPUP "&Emulator"
+    BEGIN
+        MENUITEM "Start\tF5",                   ID_EMULATOR_START
+        MENUITEM "Stop\tF2",                    ID_EMULATOR_STOP
+        MENUITEM SEPARATOR
+        POPUP "&Reset"
+        BEGIN
+            MENUITEM "&Soft (Partial)\tShift+R",    ID_RESET_SOFT
+            MENUITEM "&Hard (Full)\tCtrl+R",        ID_RESET_HARD
+        END
+        POPUP "Video"
+        BEGIN
+            MENUITEM "GDI",                         ID_VIDEO_GDI
+            MENUITEM "DirectDraw",                  ID_VIDEO_DIRECTDRAW
+            MENUITEM "Direct3D",                    ID_VIDEO_DIRECT3D
+        END
+        MENUITEM "Autorun",                     ID_EMULATOR_AUTORUN
+        MENUITEM "Pause when inactive",         ID_EMULATOR_PAUSEWHENINACTIVE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Visit website",               ID_HELP_VISITWEBSITE
+        MENUITEM SEPARATOR
+        MENUITEM "&Command-Line switches...",   ID_HELP_COMMANDLINE
+        MENUITEM "&About",                      ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+IDR_WINXP               RT_MANIFEST             "winxp.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR ACCELERATORS 
+BEGIN
+    VK_F5,          ID_EMULATOR_START,      VIRTKEY, NOINVERT
+    VK_F2,          ID_EMULATOR_STOP,       VIRTKEY, NOINVERT
+    "O",            ID_FILE_OPENMIN,        VIRTKEY, CONTROL, NOINVERT
+    "Q",            ID_FILE_QUIT,           VIRTKEY, CONTROL, NOINVERT
+    VK_F10,         ID_OPTIONS_FULLSCREEN,  VIRTKEY, NOINVERT
+    "R",            ID_RESET_HARD,          VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_RESET_SOFT,          VIRTKEY, SHIFT, NOINVERT
+    VK_F1,          ID_RECENT0,             VIRTKEY, CONTROL, NOINVERT
+    VK_F2,          ID_RECENT1,             VIRTKEY, CONTROL, NOINVERT
+    VK_F3,          ID_RECENT2,             VIRTKEY, CONTROL, NOINVERT
+    VK_F4,          ID_RECENT3,             VIRTKEY, CONTROL, NOINVERT
+    VK_F5,          ID_RECENT4,             VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_RECENT5,             VIRTKEY, CONTROL, NOINVERT
+    VK_F7,          ID_RECENT6,             VIRTKEY, CONTROL, NOINVERT
+    VK_F8,          ID_RECENT7,             VIRTKEY, CONTROL, NOINVERT
+    VK_F9,          ID_RECENT8,             VIRTKEY, CONTROL, NOINVERT
+    VK_F10,         ID_RECENT9,             VIRTKEY, CONTROL, NOINVERT
+    "L",            ID_FILE_LOADSTATE,      VIRTKEY, CONTROL, NOINVERT
+    "K",            ID_FILE_SAVESTATE,      VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_KEYDEF DIALOGEX 0, 0, 267, 185
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Define Keyboard"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,157,164,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,210,164,50,14
+    RTEXT           "Key Menu:",IDC_KEYL_MENU,7,7,40,10,SS_CENTERIMAGE
+    RTEXT           "Key A:",IDC_KEYL_A,7,22,40,10,SS_CENTERIMAGE
+    RTEXT           "Key B:",IDC_KEYL_B,7,37,40,10,SS_CENTERIMAGE
+    RTEXT           "Key C:",IDC_KEYL_C,7,52,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Up:",IDC_KEYL_UP,7,67,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Down:",IDC_KEYL_DOWN,7,82,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Left:",IDC_KEYL_LEFT,7,97,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Right:",IDC_KEYL_RIGHT,7,112,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Power:",IDC_KEYL_POWER,7,127,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Shake:",IDC_KEYL_SHAKE,7,142,40,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_KEYC1_MENU,56,7,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_MENU,160,7,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_A,56,22,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_A,160,22,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_B,56,37,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_B,160,37,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_C,56,52,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_C,160,52,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_UP,56,67,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_UP,160,67,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_DOWN,56,82,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_DOWN,160,82,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_LEFT,56,97,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_LEFT,160,97,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_RIGHT,56,112,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_RIGHT,160,112,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_POWER,56,127,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_POWER,160,127,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_SHAKE,56,142,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC2_SHAKE,160,142,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_JOYDEF DIALOGEX 0, 0, 163, 262
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Define Joystick"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,53,241,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,106,241,50,14
+    CONTROL         "Enable Joystick",IDC_ENABLEJOY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,65,10
+    COMBOBOX        IDC_JOYDEVSELECT,56,20,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Device:",IDC_JOYDEVLABEL,7,23,40,10,SS_CENTERIMAGE
+    CONTROL         "Axis as D-Pad",IDC_AXISASDPAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,55,60,10
+    CONTROL         "Hats as D-Pad",IDC_HATSASDPAD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,68,61,10
+    RTEXT           "Key Menu:",IDC_KEYL_MENU,7,84,40,10,SS_CENTERIMAGE
+    RTEXT           "Key A:",IDC_KEYL_A,7,100,40,10,SS_CENTERIMAGE
+    RTEXT           "Key B:",IDC_KEYL_B,7,115,40,10,SS_CENTERIMAGE
+    RTEXT           "Key C:",IDC_KEYL_C,7,130,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Up:",IDC_KEYL_UP,7,145,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Down:",IDC_KEYL_DOWN,7,160,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Left:",IDC_KEYL_LEFT,7,175,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Right:",IDC_KEYL_RIGHT,7,190,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Power:",IDC_KEYL_POWER,7,205,40,10,SS_CENTERIMAGE
+    RTEXT           "Key Shake:",IDC_KEYL_SHAKE,7,220,40,10,SS_CENTERIMAGE
+    COMBOBOX        IDC_KEYC1_MENU,56,85,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_A,56,100,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_B,56,115,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_C,56,130,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_UP,56,145,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_DOWN,56,160,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_LEFT,56,175,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_RIGHT,56,190,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_POWER,56,205,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_KEYC1_SHAKE,56,220,100,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Force-Feedback for Rumble",IDC_FORCEFEEDBACK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,42,104,10
+END
+
+IDD_CUSTOMPALEDIT DIALOGEX 0, 0, 190, 330
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Custom Palette Edit..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,78,309,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,131,309,50,14
+    CTEXT           "Custom 1 (Light Pixel):",IDC_STATIC,7,7,174,8
+    CONTROL         "Custom 1 (Light Pixel)",IDC_CUSTOM1LIGHTP,
+                    "POKEMINI_cpaledit",WS_TABSTOP,7,17,174,24
+    CONTROL         "",IDC_CUSTOM1LIGHTRS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,42,58,16
+    CONTROL         "",IDC_CUSTOM1LIGHTGS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,65,42,58,16
+    CONTROL         "",IDC_CUSTOM1LIGHTBS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,42,58,16
+    CTEXT           "Red: 255",IDC_CUSTOM1LIGHTRL,7,60,58,16
+    CTEXT           "Green: 255",IDC_CUSTOM1LIGHTGL,65,60,58,16
+    CTEXT           "Blue: 255",IDC_CUSTOM1LIGHTBL,123,60,58,16
+    CTEXT           "Custom 1 (Dark Pixel):",IDC_STATIC,7,83,174,8
+    CONTROL         "Custom 1 (Dark Pixel)",IDC_CUSTOM1DARKP,
+                    "POKEMINI_cpaledit",WS_TABSTOP,7,93,174,24
+    CONTROL         "",IDC_CUSTOM1DARKRS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,118,58,16
+    CONTROL         "",IDC_CUSTOM1DARKGS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,65,118,58,16
+    CONTROL         "",IDC_CUSTOM1DARKBS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,118,58,16
+    CTEXT           "Red: 255",IDC_CUSTOM1DARKRL,7,136,58,16
+    CTEXT           "Green: 255",IDC_CUSTOM1DARKGL,65,136,58,16
+    CTEXT           "Blue: 255",IDC_CUSTOM1DARKBL,123,136,58,16
+    CTEXT           "Custom 2 (Light Pixel):",IDC_STATIC,7,158,174,8
+    CONTROL         "Custom 2 (Light Pixel)",IDC_CUSTOM2LIGHTP,
+                    "POKEMINI_cpaledit",WS_TABSTOP,7,167,174,24
+    CONTROL         "",IDC_CUSTOM2LIGHTRS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,193,58,16
+    CONTROL         "",IDC_CUSTOM2LIGHTGS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,65,193,58,16
+    CONTROL         "",IDC_CUSTOM2LIGHTBS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,193,58,16
+    CTEXT           "Red: 255",IDC_CUSTOM2LIGHTRL,7,210,58,16
+    CTEXT           "Green: 255",IDC_CUSTOM2LIGHTGL,65,210,58,16
+    CTEXT           "Blue: 255",IDC_CUSTOM2LIGHTBL,123,210,58,16
+    CTEXT           "Custom 2 (Dark Pixel):",IDC_STATIC,7,233,174,8
+    CONTROL         "Custom 1 (Dark Pixel)",IDC_CUSTOM2DARKP,
+                    "POKEMINI_cpaledit",WS_TABSTOP,7,242,174,24
+    CONTROL         "",IDC_CUSTOM2DARKRS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,267,58,16
+    CONTROL         "",IDC_CUSTOM2DARKGS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,65,267,58,16
+    CONTROL         "",IDC_CUSTOM2DARKBS,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,267,58,16
+    CTEXT           "Red: 255",IDC_CUSTOM2DARKRL,7,286,58,16
+    CTEXT           "Green: 255",IDC_CUSTOM2DARKGL,65,286,58,16
+    CTEXT           "Blue: 255",IDC_CUSTOM2DARKBL,123,286,58,16
+END
+
+IDD_CUSTOMSLIDER DIALOGEX 0, 0, 186, 49
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Set custom value..."
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,75,28,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,28,50,14
+    CONTROL         "",IDC_CUSTOMSLIDER,"msctls_trackbar32",TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,7,172,15
+    CTEXT           "Value: 0",IDC_CUSTOMSLIDERT,7,26,58,16
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_KEYDEF, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 260
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 178
+    END
+
+    IDD_JOYDEF, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 156
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 255
+    END
+
+    IDD_CUSTOMPALEDIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 181
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 323
+    END
+
+    IDD_CUSTOMSLIDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 42
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

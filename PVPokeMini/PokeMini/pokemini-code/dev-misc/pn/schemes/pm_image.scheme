@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme>
+	<keyword-classes>
+		<keyword-class name="pmimage_directives">
+			gfx dither colorkey metaw metah meta_w meta_h metax metay meta_x meta_w
+			meatshl meat_shl format headerformat joined img tileset
+			out outgrey outgray outtileset outtilesetgrey outtilesetgray outmap
+			vout voutgrey voutgray vouttileset vouttilesetgrey vouttilesetgray voutmap
+			wout woutgrey woutgray wouttileset wouttilesetgrey wouttilesetgray woutmap
+			outheader woutheader idofs idsize maxtiles
+		</keyword-class>
+		<keyword-class name="pmimage_defines">
+			tiles oam spr sprites map exmap external externalmap no yes auto raw bin asm c
+		</keyword-class>
+	</keyword-classes>
+
+	<language name="pm_image" title=".:PokeMini Image:." folding="false">
+		<lexer name="asm" />
+		<comments line=";" />
+		<use-keywords>
+			<keyword key="4" name="Directives" class="pmimage_directives"/>
+			<keyword key="5" name="Defines" class="pmimage_defines"/>
+		</use-keywords>
+		<use-styles>
+			<style name="Default" key="32" fore="#808080" />
+			<style name="Whitespace" key="0"  />
+			<style name="Comment" key="1" class="comment" />
+			<style name="Number" key="2" class="number" />
+			<style name="String" key="3" class="string" />
+			<style name="Operator" key="4" class="operator" />
+			<style name="Identifier" key="5" class="identifier" />
+			<style name="Instructions" key="6" class="keyword" />
+			<style name="Misc." key="7" class="keyword" bold="true" />
+			<style name="Register" key="8" fore="46aa03" bold="true" />
+			<style name="Directive" key="9" class="keyword" />
+			<style name="Directive Operand" key="10" class="keyword" />
+			<style name="Single Quote String" key="12" class="string" />
+			<style name="Unclosed String" key="13" fore="000000" back="E0C0E0" eolfilled="true" />
+			<style name="Extended Instructions" key="14" fore="B00040" />
+		</use-styles>
+	</language>
+</Scheme>

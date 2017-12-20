@@ -15,6 +15,7 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kImageSmoothingKey = @"kImageSmoothingKey";
+NSString * const kCRTFilterKey = @"kCRTFilterKey";
 NSString * const kShowRecentGamesKey = @"kShowRecentGamesKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
@@ -42,12 +43,13 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
 {
 	if ((self = [super init]))
 	{
-		[[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES),
+        [[NSUserDefaults standardUserDefaults] registerDefaults:@{kAutoSaveKey : @(YES), kAskToAutoLoadKey: @(YES),
                                                                   kAutoLoadAutoSavesKey : @(NO),
                                                                   kControllerOpacityKey : @(0.2),
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
                                                                   kImageSmoothingKey : @(NO),
+                                                                  kCRTFilterKey : @(NO),
                                                                   kShowRecentGamesKey : @YES,
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
                                                                   kVolumeSettingKey : @(1.0),
@@ -61,6 +63,7 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
         _imageSmoothing = [[NSUserDefaults standardUserDefaults] boolForKey:kImageSmoothingKey];
+        _crtFilterEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:kCRTFilterKey];
         _showRecentGames = [[NSUserDefaults standardUserDefaults] boolForKey:kShowRecentGamesKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
@@ -136,6 +139,13 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
 {
     _imageSmoothing = imageSmoothing;
     [[NSUserDefaults standardUserDefaults] setBool:_imageSmoothing forKey:kImageSmoothingKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)setCrtFilterEnabled:(BOOL)crtFilterEnabled
+{
+    _crtFilterEnabled = crtFilterEnabled;
+    [[NSUserDefaults standardUserDefaults] setBool:_crtFilterEnabled forKey:kCRTFilterKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 

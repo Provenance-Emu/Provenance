@@ -43,7 +43,7 @@ typedef NS_ENUM(NSUInteger, OE2600Button) {
 	OE2600ButtonCount
 };
 
-@protocol OE2600SystemResponderClient <OESystemResponderClient, NSObject>
+@protocol OE2600SystemResponderClient <NSObject>
 
 - (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
 - (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;

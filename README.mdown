@@ -3,10 +3,10 @@ An iOS & tvOS Frontend for multiple emulators
 
 ![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
 
-###Building Provenance
+### Building Provenance
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
-###Why 'Provenance'?
+### Why 'Provenance'?
 
 I was looking for a word with a similar meaning to Genesis and came across Provenance:
 
@@ -15,7 +15,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 > **Noun**  
 > > The beginning of something's existence; something's origin.
 
-###Systems currently supported by Provenance:
+### Systems currently supported by Provenance:
 
 - Sega
     - SG-1000
@@ -30,11 +30,25 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - SNES (Super Nintendo)
     - Gameboy / Gameboy Color
     - Gameboy Advance
+    - Pokémon Mini
+    - Virtual Boy
 - Atari
     - 2600
+    - 5200
     - 7800
+    - Lynx
+- Sony
+	- PlayStation
+- SNK
+	- Neo Geo Pocket / Neo Geo Pocket Color
+- NEC
+	- PC Engine / TurboGrafx-16 (CD)
+	- SuperGrafx
+	- PC-FX
+- Bandai
+	- WonderSwan
 
-###Features
+### Features
 
 - Very accurate & full speed emulation
 - Stereo sound
@@ -63,16 +77,16 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 
 Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
 
-###Importing ROMs
+### Importing ROMs
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
 
-###Screenshots
+### Screenshots
 [Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
 
-#Contributor Discussion
+# Contributor Discussion
 If you're a contributor, or would like to contribute, there is a developer-focussed Slack at [provenance-dev.slack.com](http://provenance-dev.slack.com). Request an invite to join the conversation.
 
-#Attributions
+# Attributions
 
 Sega system emulation is provided by [Genesis Plus GX](https://bitbucket.org/eke/genesis-plus-gx/), originally written by Charles Mac Donald, and later improved by Eke-Eke.
 
@@ -86,13 +100,19 @@ Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.source
 
 Atari 2600 emulation is provided by [Stella](http://stella.sourceforge.net/).
 
+Atari 5200 emulation is provided by [Atari 800](http://atari800.sourceforge.net).
+
 Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSystem1_3/).
 
 Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
 
+Pokémon Mini is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
+
+Atari Lynx, Sony PlayStation, Nintendo VirtualBoy, SNK Neo Geo Pocket + Color, NEC PC Engine family and Bandai WonderSwan are provided by [Mednafen](https://mednafen.github.io)
+
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 
-#Provenance License
+# Provenance License
 
 Copyright (c) 2016, James Addyman (JamSoft). All rights reserved.
 
@@ -117,7 +137,7 @@ The views and conclusions contained in the software and documentation are those 
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of James Addyman (JamSoft).
 
-#OpenEmu License
+# OpenEmu License
 
 Copyright (c) 2016, OpenEmu Team
 

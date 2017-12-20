@@ -8,9 +8,8 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport.h>
 #import "PVGame.h"
-#import <PVSupport/OEGameAudio.h>
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
@@ -23,9 +22,7 @@
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
-@interface PVEmulatorViewController () {
-    UITapGestureRecognizer *_menuGestureRecognizer;
-}
+@interface PVEmulatorViewController ()
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
@@ -41,7 +38,7 @@
 
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
-
+@property (nonatomic, strong) UITapGestureRecognizer *menuGestureRecognizer;
 
 @end
 
@@ -75,10 +72,6 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
-    if (_menuGestureRecognizer) {
-        [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:_menuGestureRecognizer];
-    }
-    
     [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
@@ -162,7 +155,23 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[self.game romPath]];
+
+    NSError *error = nil;
+    NSString *md5Hash, *crc32Hash;
+    if(![[NSFileManager defaultManager] hashFileAtURL:[NSURL fileURLWithPath:romPath] md5:&md5Hash crc32:&crc32Hash error:&error])
+    {
+        DLog(@"%@", error);
+        return;
+    }
+
+    self.emulatorCore.romMD5 = md5Hash;
+    
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
+
+        // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
+        // to provide the correct data for creating views.
+    BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
 
     if ([[UIScreen screens] count] > 1)
     {
@@ -202,7 +211,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
 	[self.view addSubview:self.menuButton];
     
-    
     if ([[PVSettingsModel sharedInstance] showFPSCount]) {
         _fpsLabel = [UILabel new];
         _fpsLabel.textColor = [UIColor yellowColor];
@@ -241,10 +249,10 @@ void uncaughtExceptionHandler(NSException *exception)
 		[self.menuButton setHidden:YES];
 	}
 
-    if (![self.emulatorCore loadFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[self.game romPath]]])
+    if (!loaded)
     {
         __weak typeof(self) weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             DLog(@"Unable to load ROM at %@", [self.game romPath]);
 #if !TARGET_OS_TV
             [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
@@ -323,18 +331,20 @@ void uncaughtExceptionHandler(NSException *exception)
 	// But of course, this isn't the case on iOS 9.3. YAY FRAGMENTATION. ¬_¬
 
 	// Conditionally handle the pause menu differently dependning on tvOS or iOS. FFS.
-
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
-    _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed)];
-    _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
-    [[UIApplication sharedApplication].keyWindow addGestureRecognizer:_menuGestureRecognizer];
+    if (!_menuGestureRecognizer) {
+        _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
+        _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+    }
+    
+    [self.view addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
 	{
 		[controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
-			[weakSelf controllerPauseButtonPressed];
+			[weakSelf controllerPauseButtonPressed: controller];
 		}];
 	}
 #endif
@@ -434,61 +444,66 @@ void uncaughtExceptionHandler(NSException *exception)
 		}]];
     }
 
-#if TARGET_OS_TV
     PVControllerManager *controllerManager = [PVControllerManager sharedManager];
-    if (![[controllerManager player1] extendedGamepad])
-    {
-        // left trigger bound to Start
-        // right trigger bound to Select
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressStartForPlayer:0];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseStartForPlayer:0];
-            });
+	BOOL wantsStartSelectInMenu = [[PVEmulatorConfiguration sharedInstance] systemIDWantsStartAndSelectInMenu: self.systemID];
+	
+	if ([controllerManager player1]) {
+		if (![[controllerManager player1] extendedGamepad] || wantsStartSelectInMenu)
+		{
+			// left trigger bound to Start
+			// right trigger bound to Select
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressStartForPlayer:0];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseStartForPlayer:0];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressSelectForPlayer:0];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseSelectForPlayer:0];
-            });
+			}]];
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressSelectForPlayer:0];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseSelectForPlayer:0];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-    }
-    if (![[controllerManager player2] extendedGamepad])
-    {
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressStartForPlayer:1];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseStartForPlayer:1];
-            });
+			}]];
+		}
+	}
+	
+	if ([controllerManager player2]) {
+		if (![[controllerManager player2] extendedGamepad] || wantsStartSelectInMenu)
+		{
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Start" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressStartForPlayer:1];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseStartForPlayer:1];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [weakSelf.emulatorCore setPauseEmulation:NO];
-            weakSelf.isShowingMenu = NO;
-            [weakSelf.controllerViewController pressSelectForPlayer:1];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [weakSelf.controllerViewController releaseSelectForPlayer:1];
-            });
+			}]];
+			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+				[weakSelf.emulatorCore setPauseEmulation:NO];
+				weakSelf.isShowingMenu = NO;
+				[weakSelf.controllerViewController pressSelectForPlayer:1];
+				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+					[weakSelf.controllerViewController releaseSelectForPlayer:1];
+				});
 #if TARGET_OS_TV
-            weakSelf.controllerUserInteractionEnabled = NO;
+				weakSelf.controllerUserInteractionEnabled = NO;
 #endif
-        }]];
-    }
-#endif
+			}]];
+		}
+	}
 
     if ([self.emulatorCore supportsDiskSwapping])
     {
@@ -816,14 +831,16 @@ void uncaughtExceptionHandler(NSException *exception)
     UIPress *press = (UIPress *)presses.anyObject;
     if ( press && press.type == UIPressTypeMenu && !self.isShowingMenu )
     {
-        [self controllerPauseButtonPressed];
+//         [self controllerPauseButtonPressed];
     }
     else
+    {
         [super pressesBegan:presses withEvent:event];
+    }
 }
-#endif 
+#endif
 
-- (void)controllerPauseButtonPressed
+- (void)controllerPauseButtonPressed:(id)sender
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (![self isShowingMenu])
@@ -843,6 +860,14 @@ void uncaughtExceptionHandler(NSException *exception)
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
     if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
         [self.menuButton setHidden:YES];
+
+    // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
+#if !TARGET_OS_TV
+        __weak PVEmulatorViewController *weakSelf = self;
+        [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
+            [weakSelf controllerPauseButtonPressed:weakSelf];
+        }];
+#endif
     }
 }
 

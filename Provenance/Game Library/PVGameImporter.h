@@ -10,7 +10,7 @@
 
 typedef void (^PVGameImporterImportStartedHandler)(NSString *path);
 typedef void (^PVGameImporterCompletionHandler)(BOOL encounteredConflicts);
-typedef void (^PVGameImporterFinishedImportingGameHandler)(NSString *md5Hash);
+typedef void (^PVGameImporterFinishedImportingGameHandler)(NSString *md5Hash, BOOL modified);
 typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL);
 
 @class PVGame;
@@ -45,4 +45,8 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
  */
 + (PVGame *)importArtworkFromPath:(NSString *)imageFullPath;
 
+@end
+
+@interface PVGameImporter (Private)
+- (NSString *)documentsPath;
 @end

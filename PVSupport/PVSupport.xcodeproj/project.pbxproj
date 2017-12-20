@@ -33,6 +33,10 @@
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D73D3F1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
+		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
 		B3FA5D491D6B859800060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FA5D481D6B859800060D71 /* Foundation.framework */; };
@@ -75,6 +79,8 @@
 		B3C96EBA1D62C54D003F1E93 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C96EBB1D62C54D003F1E93 /* PVSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSupport.h; sourceTree = "<group>"; };
 		B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
+		B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
 		B3FA5D451D6B858E00060D71 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B3FA5D481D6B859800060D71 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3FA5D4A1D6B859C00060D71 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
@@ -169,6 +175,8 @@
 				B3C96EBB1D62C54D003F1E93 /* PVSupport.h */,
 				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
+				B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */,
+				B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */,
 				0592894D1DC194FD0012644D /* RealTimeThread.h */,
 				0592894E1DC194FD0012644D /* RealTimeThread.m */,
 				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
@@ -216,6 +224,7 @@
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
+				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
@@ -232,6 +241,7 @@
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
+				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
@@ -283,7 +293,7 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					B3C96E9D1D62C3A3003F1E93 = {
@@ -340,6 +350,7 @@
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
+				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
 			);
@@ -354,6 +365,7 @@
 				B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D651D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
+				B3D73D3F1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3C96EC31D62C5E7003F1E93 /* OEGameAudio.m in Sources */,
 				059289501DC194FD0012644D /* RealTimeThread.m in Sources */,
 			);
@@ -370,14 +382,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -414,14 +432,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -451,13 +475,19 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;

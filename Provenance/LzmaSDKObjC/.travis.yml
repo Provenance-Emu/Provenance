@@ -1,0 +1,14 @@
+language: objective-c
+osx_image: xcode8.3
+xcode_sdk: iphonesimulator9.3
+podfile: tests/ios/Podfile
+
+before_install:
+  - gem install xcpretty --no-rdoc --no-ri --no-document
+
+script:
+- open -b com.apple.iphonesimulator
+- set -o pipefail && xcodebuild test -workspace tests/ios/LzmaSDK-ObjC.xcworkspace -scheme LzmaSDK-ObjC -destination 'platform=iOS Simulator,name=iPhone 4s,OS=8.4' | xcpretty -c
+- set -o pipefail && xcodebuild test -workspace tests/ios/LzmaSDK-ObjC.xcworkspace -scheme LzmaSDK-ObjC -destination 'platform=iOS Simulator,name=iPhone 6,OS=9.0' | xcpretty -c
+- set -o pipefail && xcodebuild test -workspace tests/ios/LzmaSDK-ObjC.xcworkspace -scheme LzmaSDK-ObjC -destination 'platform=iOS Simulator,name=iPhone 6 Plus,OS=9.3' | xcpretty -c
+- set -o pipefail && xcodebuild test -workspace tests/ios/LzmaSDK-ObjC.xcworkspace -scheme LzmaSDK-ObjC-OSX -destination 'platform=OS X,arch=x86_64' | xcpretty -c

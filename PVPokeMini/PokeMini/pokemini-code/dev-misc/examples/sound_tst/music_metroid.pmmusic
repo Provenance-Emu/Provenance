@@ -1,0 +1,33 @@
+TITLE Metroid
+COMPOSER Nintendo
+PROGRAMMER JustBurn
+
+MTIME $00FF
+
+VOLLVL system
+
+PAT music_metroid_p0 { w64 o4 %112
+ q56 s32 l2 [ dddv2d v3b-b-b-v2b- v3fffv2f rrrr v3dddv2d v3>cccv2c< v3b-b-b-v2b- rrrr ]
+}
+
+PAT music_metroid_p1 { w128 o4 %120
+ s48 l4 [ a<a>g<g>f#<f#>e<e> g<g>f#<f#>e<e>d<d ]
+}
+
+PAT music_metroid_p2 { w128 o4 %128
+ s48 l4 f#gab> def#g a2.l8gf# g2.f#e
+ d2.a4> d1 <l2b-a gf#
+ l4e2.f# a2.>d <e2.f#4 d1<
+ l2ab >de d.<b-4 g1
+}
+
+PAT music_metroid_p3 { w96 o4 %120
+ s48 o5 l2 ef#a>d<df>c<a e-g>d<b- ae<b>e a-e<b>e
+}
+
+BGM music_metroid { |
+music_metroid_p0
+music_metroid_p1
+music_metroid_p2
+music_metroid_p3
+}

@@ -16,6 +16,7 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.data</string>
+				<string>org.7-zip.7-zip-archive</string>
 			</array>
 		</dict>
 	</array>
@@ -34,11 +35,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3.2</string>
+	<string>1.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>656</string>
+	<string>823</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -48,10 +49,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for album artwork</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>Revision</key>
-	<string>64d067e</string>
+	<string>78dc628</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

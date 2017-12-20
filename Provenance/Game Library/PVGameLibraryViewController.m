@@ -259,98 +259,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 #pragma mark - Filesystem Helpers
 
-- (NSString *)documentsPath
-{
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-    
-    return documentsDirectoryPath;
-}
-
-- (NSString *)romsPath
-{
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	
-	return [documentsDirectoryPath stringByAppendingPathComponent:@"roms"];
-}
-
-- (NSString *)coverArtPath
-{
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-
-    return [paths.firstObject stringByAppendingPathComponent:@"Cover Art"];
-}
-
-- (NSString *)batterySavesPathForROM:(NSString *)romPath
-{
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-	NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	NSString *batterySavesDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Battery States"];
-	
-	NSString *romName = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
-	batterySavesDirectory = [batterySavesDirectory stringByAppendingPathComponent:romName];
-	
-	NSError *error = nil;
-	
-	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:&error];
-	if (error)
-	{
-		DLog(@"Error creating save state directory: %@", [error localizedDescription]);
-	}
-	
-	return batterySavesDirectory;
-}
-
-- (NSString *)saveStatePathForROM:(NSString *)romPath
-{
-#if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-#else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-#endif
-    NSString *documentsDirectoryPath = [paths objectAtIndex:0];
-	NSString *saveStateDirectory = [documentsDirectoryPath stringByAppendingPathComponent:@"Save States"];
-	
-    NSMutableArray *filenameComponents = [[[romPath lastPathComponent] componentsSeparatedByString:@"."] mutableCopy];
-    // remove extension
-    [filenameComponents removeLastObject];
-    
-	NSString *romName = [filenameComponents componentsJoinedByString:@"."];
-	saveStateDirectory = [saveStateDirectory stringByAppendingPathComponent:romName];
-	
-	NSError *error = nil;
-	
-	[[NSFileManager defaultManager] createDirectoryAtPath:saveStateDirectory
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:&error];
-	if (error)
-	{
-		DLog(@"Error creating save state directory: %@", [error localizedDescription]);
-	}
-	
-	return saveStateDirectory;
-}
 
 - (IBAction)getMoreROMs
 {
@@ -391,11 +299,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
-- (NSString *)BIOSPathForSystemID:(NSString *)systemID
-{
-    return [[[self documentsPath] stringByAppendingPathComponent:@"BIOS"] stringByAppendingPathComponent:systemID];
-}
-
 #pragma mark - Game Library Management
 
 - (void)migrateLibrary
@@ -421,7 +324,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         DLog(@"Unable to delete PVGame.sqlite-wal because %@", [error localizedDescription]);
     }
     
-    if (![[NSFileManager defaultManager] createDirectoryAtPath:[self romsPath]
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+    
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:[config romsPath]
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:&error])
@@ -430,7 +335,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         return; // dunno what else can be done if this fails
     }
     
-    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self documentsPath] error:&error];
+    NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[config documentsPath] error:&error];
     if (!contents)
     {
         DLog(@"Unable to get contents of documents because %@", [error localizedDescription]);
@@ -438,16 +343,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     for (NSString *path in contents)
     {
-        NSString *fullPath = [[self documentsPath] stringByAppendingPathComponent:path];
+        NSString *fullPath = [[config documentsPath] stringByAppendingPathComponent:path];
         BOOL isDir = NO;
         BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDir];
         if (exists && !isDir && ![[path lowercaseString] containsString:@"realm"])
         {
             if (![[NSFileManager defaultManager] moveItemAtPath:fullPath
-                                                         toPath:[[self romsPath] stringByAppendingPathComponent:path]
+                                                         toPath:[[config romsPath] stringByAppendingPathComponent:path]
                                                           error:&error])
             {
-                DLog(@"Unable to move %@ to %@ because %@", fullPath, [[self romsPath] stringByAppendingPathComponent:path], [error localizedDescription]);
+                DLog(@"Unable to move %@ to %@ because %@", fullPath, [[config romsPath] stringByAppendingPathComponent:path], [error localizedDescription]);
             }
         }
     }
@@ -457,7 +362,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:PVRequiresMigrationKey];
     
     [self setUpGameLibrary];
-    [self.gameImporter startImportForPaths:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self romsPath] error:&error]];
+    [self.gameImporter startImportForPaths:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:[config romsPath] error:&error]];
 }
 
 - (void)setUpGameLibrary
@@ -466,6 +371,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     __weak typeof(self) weakSelf = self;
     
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
     self.gameImporter = [[PVGameImporter alloc] initWithCompletionHandler:^(BOOL encounteredConflicts) {
         if (encounteredConflicts)
         {
@@ -491,14 +398,20 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud setMode:MBProgressHUDModeIndeterminate];
         [hud setLabelText:[NSString stringWithFormat:@"Importing %@", [path lastPathComponent]]];
     }];
-    [self.gameImporter setFinishedImportHandler:^(NSString *md5) {
-        [weakSelf finishedImportingGameWithMD5:md5];
+    [self.gameImporter setFinishedImportHandler:^(NSString *md5, BOOL modified) {
+        // This callback is always called,
+        // even if the started handler was not called because it didn't require a refresh.
+        [weakSelf finishedImportingGameWithMD5:md5 modified:modified];
     }];
     [self.gameImporter setFinishedArtworkHandler:^(NSString *url) {
         [weakSelf finishedDownloadingArtworkForURL:url];
     }];
     
-    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[self romsPath]
+    NSArray *existingFiles = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[config romsPath]
+                                                                                 error:nil];
+    [self.gameImporter startImportForPaths:existingFiles];
+    
+    self.watcher = [[PVDirectoryWatcher alloc] initWithPath:[config romsPath]
                                    extractionStartedHandler:^(NSString *path) {
                                        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        if (!hud)
@@ -508,14 +421,24 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
                                        [hud setProgress:0];
-                                       [hud setLabelText:@"Extracting Archive..."];
+#if TARGET_OS_TV
+                                       NSString *label = [NSString stringWithFormat:@"Extracting Archive: %@", path.lastPathComponent];
+#else
+                                       NSString *label = @"Extracting Archive...";
+#endif
+                                       [hud setLabelText:label];
                                    }
-                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+                                   extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, float progress) {
                                        MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
                                        [hud setUserInteractionEnabled:NO];
                                        [hud setMode:MBProgressHUDModeAnnularDeterminate];
-                                       [hud setProgress:(float)bytesRead / (float)fileSize];
-                                       [hud setLabelText:@"Extracting Archive..."];
+                                       [hud setProgress:progress];
+#if TARGET_OS_TV
+                                       NSString *label = [NSString stringWithFormat:@"Extracting Archive: %@", path.lastPathComponent];
+#else
+                                       NSString *label = @"Extracting Archive...";
+#endif
+                                       [hud setLabelText:label];
                                    }
                                   extractionCompleteHandler:^(NSArray *paths) {
                                       MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
@@ -528,7 +451,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
                                   }];
     [self.watcher startMonitoring];
 
-    self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:self.coverArtPath extractionStartedHandler:^(NSString *path) {
+    self.coverArtWatcher = [[PVDirectoryWatcher alloc] initWithPath:config.coverArtPath extractionStartedHandler:^(NSString *path) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
 
         if (!hud) {
@@ -539,9 +462,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud setMode:MBProgressHUDModeAnnularDeterminate];
         [hud setProgress:0];
         [hud setLabelText:@"Extracting Archive…"];
-    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, unsigned long long fileSize, unsigned long long bytesRead) {
+    } extractionUpdatedHandler:^(NSString *path, NSInteger entryNumber, NSInteger total, float progress) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
-        [hud setProgress:(float)bytesRead / (float)fileSize];
+        [hud setProgress:progress];
     } extractionCompleteHandler:^(NSArray *paths) {
         MBProgressHUD *hud = [MBProgressHUD HUDForView:weakSelf.view];
         [hud setProgress:1];
@@ -549,7 +472,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [hud hide:YES afterDelay:0.5];
 
         for (NSString *imageFilepath in paths) {
-            NSString *imageFullPath = [weakSelf.coverArtPath stringByAppendingPathComponent:imageFilepath];
+            NSString *imageFullPath = [config.coverArtPath stringByAppendingPathComponent:imageFilepath];
             PVGame *game = [PVGameImporter importArtworkFromPath:imageFullPath];
             NSArray *indexPaths = [weakSelf indexPathsForGameWithMD5Hash:game.md5Hash];
             [weakSelf.collectionView reloadItemsAtIndexPaths:indexPaths];
@@ -561,7 +484,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSArray *systems = [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers];
     for (NSString *systemID in systems)
     {
-        NSString *systemDir = [[self documentsPath] stringByAppendingPathComponent:systemID];
+        NSString *systemDir = [[config documentsPath] stringByAppendingPathComponent:systemID];
         if ([[NSFileManager defaultManager] fileExistsAtPath:systemDir])
         {
             NSError *error = nil;
@@ -642,13 +565,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     self.mustRefreshDataSource = NO;
 }
 
-- (void)finishedImportingGameWithMD5:(NSString *)md5
+- (void)finishedImportingGameWithMD5:(NSString *)md5 modified:(BOOL)modified;
 {
     MBProgressHUD *hud = [MBProgressHUD HUDForView:self.view];
     [hud hide:YES];
 
-    [self fetchGames];
-    [self.collectionView reloadData];
+    // Only refresh the whole collection if game was modified.
+    if (modified) {
+        [self fetchGames];
+        [self.collectionView reloadData];
+    }
 
     // code below is simply to animate updates... currently crashy
 
@@ -786,7 +712,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)handleRefreshLibrary:(NSNotification *)note
 {
-    NSString *documentsPath = [self documentsPath];
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
+    NSString *documentsPath = [config documentsPath];
     NSMutableArray *romPaths = [NSMutableArray array];
 
     for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
@@ -812,16 +740,33 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 //    });
 }
 
+-(void)createBiosDirectoryAtPath:(NSString*)biosPath {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:biosPath]) {
+        NSError *error;
+        BOOL success = [fm createDirectoryAtPath:biosPath
+                     withIntermediateDirectories:YES
+                                      attributes:nil
+                                           error:&error];
+        if (!success) {
+            NSLog(@"Error creating BIOS dir: %@", error.localizedDescription);
+        }
+    }
+}
+
+typedef NSDictionary<NSString*,NSString*> BiosDictionary;
+
 - (BOOL)canLoadGame:(PVGame *)game
 {
     BOOL canLoad = YES;
-    
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
     NSDictionary *system = [[PVEmulatorConfiguration sharedInstance] systemForIdentifier:[game systemIdentifier]];
     BOOL requiresBIOS = [system[PVRequiresBIOSKey] boolValue];
     if (requiresBIOS)
     {
-        NSArray *biosNames = system[PVBIOSNamesKey];
-        NSString *biosPath = [self BIOSPathForSystemID:[game systemIdentifier]];
+        NSArray<BiosDictionary*> *biosNames = system[PVBIOSNamesKey];
+        NSString *biosPath = [config BIOSPathForSystemID:[game systemIdentifier]];
         NSError *error = nil;
         NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:biosPath error:&error];
         if (!contents)
@@ -830,22 +775,26 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             canLoad = NO;
         }
         
-        for (NSString *name in biosNames)
+        for (BiosDictionary* bios in biosNames)
         {
-            if (![contents containsObject:name])
+            if (![contents containsObject:bios[@"Name"]])
             {
                 canLoad = NO;
                 break;
             }
         }
-        
+    
         if (canLoad == NO)
         {
+            // Create missing BIOS directory to help user out
+            [self createBiosDirectoryAtPath:biosPath];
+            
             NSMutableString *biosString = [NSMutableString string];
-            for (NSString *name in biosNames)
+            for (BiosDictionary* bios in biosNames)
             {
+                NSString *name = bios[@"Name"];
                 [biosString appendString:[NSString stringWithFormat:@"%@", name]];
-                if ([biosNames lastObject] != name)
+                if (biosNames.lastObject != bios)
                 {
                     [biosString appendString:@",\n"];
                 }
@@ -871,12 +820,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)loadGame:(PVGame *)game
 {
     void (^loadGame)(void) = ^void(void) {
+        PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
         if ([self canLoadGame:game])
         {
             PVEmulatorViewController *emulatorViewController = [[PVEmulatorViewController alloc] initWithGame:game];
-            [emulatorViewController setBatterySavesPath:[self batterySavesPathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
-            [emulatorViewController setSaveStatePath:[self saveStatePathForROM:[[self romsPath] stringByAppendingPathComponent:[game romPath]]]];
-            [emulatorViewController setBIOSPath:[self BIOSPathForSystemID:[game systemIdentifier]]];
+            [emulatorViewController setBatterySavesPath:[config batterySavesPathForROM:[[config romsPath] stringByAppendingPathComponent:[game romPath]]]];
+            [emulatorViewController setSaveStatePath:[config saveStatePathForROM:[[config romsPath] stringByAppendingPathComponent:[game romPath]]]];
+            [emulatorViewController setBIOSPath:[config BIOSPathForSystemID:[game systemIdentifier]]];
+			[emulatorViewController setSystemID:[game systemIdentifier]];
             [emulatorViewController setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
 
             [self presentViewController:emulatorViewController animated:YES completion:NULL];
@@ -1195,7 +1147,9 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)deleteGame:(PVGame *)game
 {
-    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
+    NSString *romPath = [[config documentsPath] stringByAppendingPathComponent:[game romPath]];
     NSArray *indexPaths = [self indexPathsForGameWithMD5Hash:[game md5Hash]];
     
     [PVMediaCache deleteImageForKey:[game originalArtworkURL]];
@@ -1203,16 +1157,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     
     NSError *error = nil;
     
-    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[self saveStatePathForROM:romPath] error:&error];
+    BOOL success = [[NSFileManager defaultManager] removeItemAtPath:[config saveStatePathForROM:romPath] error:&error];
     if (!success)
     {
-        DLog(@"Unable to delete save states at path: %@ because: %@", [self saveStatePathForROM:romPath], [error localizedDescription]);
+        DLog(@"Unable to delete save states at path: %@ because: %@", [config saveStatePathForROM:romPath], [error localizedDescription]);
     }
     
-    success = [[NSFileManager defaultManager] removeItemAtPath:[self batterySavesPathForROM:romPath] error:&error];
+    success = [[NSFileManager defaultManager] removeItemAtPath:[config batterySavesPathForROM:romPath] error:&error];
     if (!success)
     {
-        DLog(@"Unable to delete battery saves at path: %@ because: %@", [self batterySavesPathForROM:romPath], [error localizedDescription]);
+        DLog(@"Unable to delete battery saves at path: %@ because: %@", [config batterySavesPathForROM:romPath], [error localizedDescription]);
     }
     
     success = [[NSFileManager defaultManager] removeItemAtPath:romPath error:&error];
@@ -1249,8 +1203,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)deleteRelatedFilesGame:(PVGame *)game
 {
+    PVEmulatorConfiguration* config = [PVEmulatorConfiguration sharedInstance];
+
     NSString *romPath = [game romPath];
-    NSString *romDirectory = [[self documentsPath] stringByAppendingPathComponent:[game systemIdentifier]];
+    NSString *romDirectory = [[config documentsPath] stringByAppendingPathComponent:[game systemIdentifier]];
     NSString *relatedFileName = [[romPath lastPathComponent] stringByReplacingOccurrencesOfString:[romPath pathExtension] withString:@""];
     NSError *error = nil;
     NSArray *contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:romDirectory error:&error];

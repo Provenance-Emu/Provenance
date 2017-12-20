@@ -17,6 +17,12 @@
       location = "group:PVPicoDrive/PVPicoDrive.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PVAtari800/PVAtari800.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Mednafen/PVMednafen.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PVSNES/PVSNES.xcodeproj">
    </FileRef>
    <FileRef
@@ -24,6 +30,9 @@
    </FileRef>
    <FileRef
       location = "group:PVStella/PVStella.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:PVPokeMini/PVPokeMini.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:PVGB/PVGB.xcodeproj">

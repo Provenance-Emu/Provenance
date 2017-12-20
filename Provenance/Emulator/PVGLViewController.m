@@ -21,6 +21,13 @@
 	GLKVector3 triangleVertices[6];
 	GLKVector2 triangleTexCoords[6];
 
+    GLuint crtVertexShader;
+    GLuint crtFragmentShader;
+    GLuint crtShaderProgram;
+    int crtUniform_EmulatedImage;
+    int crtUniform_EmulatedImageRes;
+    int crtUniform_FinalRes;
+    
 	GLuint texture;
     
     // Alternate-thread rendering
@@ -84,6 +91,7 @@ EAGLContext* CreateBestEAGLContext()
 	self.effect = [[GLKBaseEffect alloc] init];
 	
 	[self setupTexture];
+    [self setupCRTShader];
 }
 
 - (void)viewWillLayoutSubviews
@@ -146,12 +154,112 @@ EAGLContext* CreateBestEAGLContext()
     }
 }
 
+- (GLuint)compileShaderResource:(NSString*)shaderResourceName ofType:(GLenum)shaderType
+{
+    NSString* shaderPath = [[NSBundle mainBundle] pathForResource:shaderResourceName ofType:@"glsl"];
+    if ( shaderPath == NULL )
+    {
+        return 0;
+    }
+    
+    NSString* shaderSource = [NSString stringWithContentsOfFile:shaderPath encoding:NSASCIIStringEncoding error:nil];
+    if ( shaderSource == NULL )
+    {
+        return 0;
+    }
+    
+    const char* shaderSourceCString = [shaderSource cStringUsingEncoding:NSASCIIStringEncoding];
+    if ( shaderSourceCString == NULL )
+    {
+        return 0;
+    }
+    
+    GLuint shader = glCreateShader( shaderType );
+    if ( shader == 0 )
+    {
+        return 0;
+    }
+    
+    glShaderSource( shader, 1, &shaderSourceCString, NULL );
+    glCompileShader( shader );
+    
+    GLint compiled;
+    glGetShaderiv( shader, GL_COMPILE_STATUS, &compiled );
+    if ( compiled == 0 )
+    {
+        GLint infoLogLength = 0;
+        glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &infoLogLength );
+        if ( infoLogLength > 1 )
+        {
+            char* infoLog = (char*)malloc( infoLogLength );
+            glGetShaderInfoLog( shader, infoLogLength, NULL, infoLog );
+            printf( "Error compiling shader: %s", infoLog );
+            free( infoLog );
+        }
+        
+        glDeleteShader( shader );
+        return 0;
+    }
+    
+    return shader;
+}
+
+- (GLuint)linkVertexShader:(GLuint)vertexShader withFragmentShader:(GLuint)fragmentShader
+{
+    GLuint shaderProgram = glCreateProgram();
+    if ( shaderProgram == 0 )
+    {
+        return 0;
+    }
+    
+    glAttachShader( shaderProgram, vertexShader );
+    glAttachShader( shaderProgram, fragmentShader );
+    
+    glBindAttribLocation( shaderProgram, GLKVertexAttribPosition, "vPosition" );
+    glBindAttribLocation( shaderProgram, GLKVertexAttribTexCoord0, "vTexCoord" );
+    
+    glLinkProgram( shaderProgram );
+    
+    GLint linkStatus;
+    glGetProgramiv( shaderProgram, GL_LINK_STATUS, &linkStatus );
+    if ( linkStatus == 0 )
+    {
+        GLint infoLogLength = 0;
+        glGetProgramiv( shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength );
+        if ( infoLogLength > 1 )
+        {
+            char* infoLog = (char*)malloc( infoLogLength );
+            glGetProgramInfoLog( shaderProgram, infoLogLength, NULL, infoLog );
+            printf( "Error linking program: %s", infoLog );
+            free( infoLog );
+        }
+        
+        glDeleteProgram( shaderProgram );
+        return 0;
+    }
+    
+    return shaderProgram;
+}
+
+- (void)setupCRTShader
+{
+    crtVertexShader = [self compileShaderResource:@"shader_crt_vertex" ofType:GL_VERTEX_SHADER];
+    crtFragmentShader = [self compileShaderResource:@"shader_crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    crtShaderProgram = [self linkVertexShader:crtVertexShader withFragmentShader:crtFragmentShader];
+    crtUniform_EmulatedImage = glGetUniformLocation( crtShaderProgram, "EmulatedImage" );
+    crtUniform_EmulatedImageRes = glGetUniformLocation( crtShaderProgram, "EmulatedImageRes" );
+    crtUniform_FinalRes = glGetUniformLocation( crtShaderProgram, "FinalRes" );
+}
+
 - (void)setupTexture
 {
+    //GLenum error;
 	glGenTextures(1, &texture);
+    //error = glGetError();
 	glBindTexture(GL_TEXTURE_2D, texture);
+    //error = glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-	if ([[PVSettingsModel sharedInstance] imageSmoothing])
+	if ([[PVSettingsModel sharedInstance] imageSmoothing] || [[PVSettingsModel sharedInstance] crtFilterEnabled])
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -162,12 +270,14 @@ EAGLContext* CreateBestEAGLContext()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //error = glGetError();
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    void (^renderBlock)() = ^() {
+    void (^renderBlock)(void) = ^() {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -177,15 +287,30 @@ EAGLContext* CreateBestEAGLContext()
         CGFloat texWidth = (screenSize.width / bufferSize.width);
         CGFloat texHeight = (screenSize.height / bufferSize.height);
 
-        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
-        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
-
-        textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-        textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
-        textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
-        textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+        // Determine if core wants special sizing
+        BOOL widescreen = [self.emulatorCore wideScreen];
+        
+        if(widescreen) {
+            vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
+            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+            vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
+            
+            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+            textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
+            textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
+            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+        } else {
+            vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+            vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+            
+            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+            textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
+            textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); //
+        }
 
         int vertexIndices[6] = {
             // Front
@@ -222,6 +347,39 @@ EAGLContext* CreateBestEAGLContext()
 //        }
 //
 //        [self.effect prepareToDraw];
+  //      error = glGetError();
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
+//error = glGetError();
+        if (texture)
+        {
+            if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+            {
+                glActiveTexture( GL_TEXTURE0 );
+                glBindTexture( GL_TEXTURE_2D, texture );
+            }
+            else
+            {
+                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+                self.effect.texture2d0.target = GLKTextureTarget2D;
+                self.effect.texture2d0.name = texture;
+                self.effect.texture2d0.enabled = YES;
+                self.effect.useConstantColor = YES;
+            }
+        }
+
+        if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+        {
+            glUseProgram( crtShaderProgram );
+            glUniform1i( crtUniform_EmulatedImage, 0 );
+            glUniform4f( crtUniform_EmulatedImageRes, screenSize.width, screenSize.height, bufferSize.width, bufferSize.height );
+            float finalResWidth = view.drawableWidth;
+            float finalResHeight = view.drawableHeight;
+            glUniform2f( crtUniform_FinalRes, finalResWidth, finalResHeight );
+        }
+        else
+        {
+            [self.effect prepareToDraw];
+        }
 
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
