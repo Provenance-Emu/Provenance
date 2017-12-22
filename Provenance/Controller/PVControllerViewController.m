@@ -119,6 +119,12 @@
 - (void)setupTouchControls
 {
 #if !TARGET_OS_TV
+    
+    UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
+    if (@available(iOS 11.0, *)) {
+        safeAreaInsets = self.view.safeAreaInsets;
+    }
+    
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	
 	for (NSDictionary *control in self.controlLayout)
@@ -132,7 +138,7 @@
 		
 		if ([controlType isEqualToString:PVDPad])
 		{
-			CGFloat xPadding = 5;
+			CGFloat xPadding = safeAreaInsets.left + 5;
 			CGFloat bottomPadding = 16;
 			CGFloat dPadOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - controlSize.height - bottomPadding);
 			CGRect dPadFrame = CGRectMake(xPadding, dPadOriginY, controlSize.width, controlSize.height);
@@ -166,7 +172,7 @@
 		}
 		else if ([controlType isEqualToString:PVButtonGroup])
 		{
-			CGFloat xPadding = 5;
+			CGFloat xPadding = safeAreaInsets.right + 5;
 			CGFloat bottomPadding = 16;
 			
 			CGFloat buttonsOriginY = MIN(controlOriginY - bottomPadding, CGRectGetHeight(self.view.frame) - controlSize.height - bottomPadding);
@@ -202,8 +208,8 @@
 		}
 		else if ([controlType isEqualToString:PVLeftShoulderButton])
 		{
-			CGFloat xPadding = 10;
-			CGFloat yPadding = 10;
+			CGFloat xPadding = safeAreaInsets.left + 10;
+			CGFloat yPadding = safeAreaInsets.top + 10;
 
 			CGRect leftShoulderFrame = CGRectMake(xPadding, yPadding, controlSize.width, controlSize.height);
 			
@@ -226,8 +232,8 @@
 		}
 		else if ([controlType isEqualToString:PVRightShoulderButton])
 		{
-			CGFloat xPadding = 10;
-			CGFloat yPadding = 10;
+			CGFloat xPadding = safeAreaInsets.right + 10;
+			CGFloat yPadding = safeAreaInsets.top + 10;
 			CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
 			
 			if (!self.rightShoulderButton)
@@ -249,8 +255,11 @@
 		}
 		else if ([controlType isEqualToString:PVStartButton])
 		{
-			CGFloat yPadding = 10;
-			CGRect startFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2, self.view.frame.size.height - controlSize.height - yPadding, controlSize.width, controlSize.height);
+            CGFloat yPadding = MAX(safeAreaInsets.bottom , 10);
+			CGRect startFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2,
+                                           self.view.frame.size.height - controlSize.height - yPadding,
+                                           controlSize.width,
+                                           controlSize.height);
 			
 			if (!self.startButton)
 			{
@@ -271,8 +280,12 @@
 		}
 		else if ([controlType isEqualToString:PVSelectButton])
 		{
-			CGFloat yPadding = 10;
-			CGRect selectFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2, self.view.frame.size.height - (controlSize.height * 2) - (yPadding * 2), controlSize.width, controlSize.height);
+            CGFloat yPadding = MAX(safeAreaInsets.bottom, 10);
+			CGFloat ySeparation = 10;
+			CGRect selectFrame = CGRectMake((self.view.frame.size.width - controlSize.width) / 2,
+                                            self.view.frame.size.height - yPadding - (controlSize.height * 2) - ySeparation,
+                                            controlSize.width,
+                                            controlSize.height);
 			
 			if (!self.selectButton)
 			{
