@@ -387,11 +387,15 @@ void uncaughtExceptionHandler(NSException *exception)
     return YES;
 }
 
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
+{
+    return UIRectEdgeBottom;
+}
+
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskAll;
 }
-
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
