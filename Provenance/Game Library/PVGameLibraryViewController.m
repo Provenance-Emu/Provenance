@@ -310,11 +310,11 @@ NSURL *ipURL;
         [alert.view addSubview:ipButton];
         
         UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
-        importNote.font = [UIFont boldSystemFontOfSize:10];
+        importNote.font = [UIFont boldSystemFontOfSize:11];
         importNote.textColor = [UIColor whiteColor];
         importNote.textAlignment = NSTextAlignmentCenter;
         importNote.backgroundColor = [UIColor clearColor];
-        importNote.text = @"Upload multi-file ROMs as single-file .zip archives.";
+        importNote.text = @"Upload multi-file ROMs as\nsingle-file .zip archives.";
         [alert.view addSubview:importNote];
         
         [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

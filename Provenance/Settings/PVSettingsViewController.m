@@ -209,14 +209,6 @@ NSURL *ipURL2;
             ipButton.backgroundColor = [UIColor clearColor];
             ipButton.titleLabel.font = [UIFont systemFontOfSize:13];
             [alert.view addSubview:ipButton];
-
-            UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
-            importNote.font = [UIFont boldSystemFontOfSize:10];
-            importNote.textColor = [UIColor whiteColor];
-            importNote.textAlignment = NSTextAlignmentCenter;
-            importNote.backgroundColor = [UIColor clearColor];
-            importNote.text = @"Upload multi-file ROMs as single-file .zip archives.";
-            [alert.view addSubview:importNote];
             
             [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [[PVWebServer sharedInstance] stopServer];
