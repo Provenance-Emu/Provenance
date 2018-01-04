@@ -21,6 +21,7 @@
 
 @implementation PVSettingsViewController
 
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -56,7 +57,19 @@
         [self.revisionLabel setTextColor:color];
         [self.revisionLabel setText:@"(none)"];
     }
+    
 }
+
+//Hide Dummy Cell Separator
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (cell && indexPath.row == 1 && indexPath.section == 4) {
+        cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0);
+    } else if (cell && indexPath.row == 2 && indexPath.section == 4) {
+        cell.hidden = YES;
+    }
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -70,9 +83,24 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+NSURL *ipURL2;
+
+-(void) ipButtonClicked
+{
+    [[UIApplication sharedApplication] openURL:ipURL2];
+}
+
 - (IBAction)help:(id)sender
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
+- (IBAction)psxInfoButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Playstation-Instructions"]];
+}
+
+- (IBAction)segacdInfoButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions"]];
 }
 
 - (IBAction)done:(id)sender
@@ -168,13 +196,32 @@
             ipAddress = [ipAddress stringByAppendingString:@":8080"];
 #endif
 
-            NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
+            NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
+            ipURL2 = [NSURL URLWithString:ipURLString];
+            NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n"];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
                                                             message: message
                                                                     preferredStyle:UIAlertControllerStyleAlert];
+            UIButton *ipButton = [[UIButton alloc] initWithFrame:CGRectMake(20,76,231,21)];
+            [ipButton addTarget:self action:@selector(ipButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+            [ipButton setTitle:ipURLString forState:UIControlStateNormal];
+            [ipButton setTitleColor:[UIColor colorWithRed:0.01 green:0.48 blue:0.98 alpha:1.0] forState:UIControlStateNormal];
+            ipButton.backgroundColor = [UIColor clearColor];
+            ipButton.titleLabel.font = [UIFont systemFontOfSize:13];
+            [alert.view addSubview:ipButton];
+
+            UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
+            importNote.font = [UIFont boldSystemFontOfSize:10];
+            importNote.textColor = [UIColor whiteColor];
+            importNote.textAlignment = NSTextAlignmentCenter;
+            importNote.backgroundColor = [UIColor clearColor];
+            importNote.text = @"Upload multi-file ROMs as single-file .zip archives.";
+            [alert.view addSubview:importNote];
+            
             [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [[PVWebServer sharedInstance] stopServer];
             }]];
+            
             [self presentViewController:alert animated:YES completion:NULL];
         }
 
