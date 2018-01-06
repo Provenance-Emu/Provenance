@@ -304,9 +304,12 @@ NSURL *ipURL;
         UIButton *ipButton = [[UIButton alloc] initWithFrame:CGRectMake(20,76,231,21)];
         [ipButton addTarget:self action:@selector(ipButtonClicked) forControlEvents:UIControlEventTouchUpInside];
         [ipButton setTitle:ipURLString forState:UIControlStateNormal];
-        [ipButton setTitleColor:[UIColor colorWithRed:0.01 green:0.48 blue:0.98 alpha:1.0] forState:UIControlStateNormal];
         ipButton.backgroundColor = [UIColor clearColor];
         ipButton.titleLabel.font = [UIFont systemFontOfSize:13];
+        [ipButton setTitleColor:[UIColor colorWithRed:0.01 green:0.48 blue:0.98 alpha:1.0] forState:UIControlStateNormal];
+        // Disabling button functionality until background app webserver is resolved, if possible…
+        [ipButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        ipButton.enabled = NO;
         [alert.view addSubview:ipButton];
         
         UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
