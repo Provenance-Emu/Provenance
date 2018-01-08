@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <SafariServices/SafariServices.h>
 
 @class PVGame;
 
