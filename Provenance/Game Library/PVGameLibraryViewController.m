@@ -259,6 +259,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
+#if !TARGET_OS_TV
 // Show web server (stays on)
 - (void)showServer {
 	NSURL *ipURL = [[PVWebServer sharedInstance] getURL];
@@ -277,6 +278,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self.navigationController popViewControllerAnimated:YES];
 	[[PVWebServer sharedInstance] stopServer];
 }
+#endif
 
 // Show "Web Server Active" alert view
 - (void)showServerActiveAlert {
@@ -284,7 +286,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
 																   message: message
 															preferredStyle:UIAlertControllerStyleAlert];
-
 	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,31)];
 	ipField.backgroundColor = [UIColor clearColor];
 	ipField.textAlignment = NSTextAlignmentCenter;
@@ -308,14 +309,13 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[[PVWebServer sharedInstance] stopServer];
 	}]];
-
+#if !TARGET_OS_TV
 	UIAlertAction *viewAction = [UIAlertAction actionWithTitle: @"View" style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action)
 	{
 		[self showServer];
 	}];
-
 	[alert addAction:viewAction];
-
+#endif
 	[self presentViewController:alert animated:YES completion:NULL];
 	
 }
