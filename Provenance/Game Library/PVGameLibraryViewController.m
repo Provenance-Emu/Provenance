@@ -22,6 +22,7 @@
 #import "PVEmulatorConfiguration.h"
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
+	#import <SafariServices/SafariServices.h>
     #import "PVSettingsViewController.h"
 #else
 #import "PVGame+Sizing.h"
@@ -38,7 +39,7 @@
 #import "RLMRealmConfiguration+Config.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
-#import <SafariServices/SafariServices.h>
+
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
