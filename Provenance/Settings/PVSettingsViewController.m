@@ -190,18 +190,6 @@
 	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
 	[alert.view addSubview:ipField];
 	
-	UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
-	importNote.font = [UIFont systemFontOfSize:11];
-	importNote.textColor = [UIColor whiteColor];
-	importNote.textAlignment = NSTextAlignmentCenter;
-	importNote.backgroundColor = [UIColor clearColor];
-	importNote.text = @"Upload multi-file ROMs as\nsingle-file .zip archives.";
-	importNote.layer.shadowOpacity = 0.8;
-	importNote.layer.shadowRadius = 3.0;
-	importNote.layer.shadowColor = [UIColor blackColor].CGColor;
-	importNote.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-	[alert.view addSubview:importNote];
-	
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[[PVWebServer sharedInstance] stopServer];
 		_importLabel.text = @"Web server: OFF";
