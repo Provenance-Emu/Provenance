@@ -93,12 +93,8 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
 }
 
-- (IBAction)psxInfoButton:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Playstation-Instructions"]];
-}
-
-- (IBAction)segacdInfoButton:(id)sender {
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions"]];
+- (IBAction)wikiLinkButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Importing-ROMs"]];
 }
 
 - (IBAction)done:(id)sender
@@ -188,6 +184,7 @@
 	ipField.font = [UIFont systemFontOfSize:13];
 	ipField.textColor = [UIColor grayColor];
 	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
+	[ipField setUserInteractionEnabled:NO];
 	[alert.view addSubview:ipField];
 	
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {

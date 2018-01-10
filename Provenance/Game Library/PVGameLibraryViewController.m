@@ -292,14 +292,16 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	ipField.font = [UIFont systemFontOfSize:13];
 	ipField.textColor = [UIColor grayColor];
 	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
+	[ipField setUserInteractionEnabled:NO];
 	[alert.view addSubview:ipField];
 
 	UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
+	[importNote setUserInteractionEnabled:NO];
 	importNote.font = [UIFont systemFontOfSize:11];
 	importNote.textColor = [UIColor whiteColor];
 	importNote.textAlignment = NSTextAlignmentCenter;
 	importNote.backgroundColor = [UIColor clearColor];
-	importNote.text = @"Upload multi-file ROMs as\nsingle-file .zip archives.";
+	importNote.text = @"Check the wiki for information\nabout Importing ROMs.";
 	importNote.layer.shadowOpacity = 0.8;
 	importNote.layer.shadowRadius = 3.0;
 	importNote.layer.shadowColor = [UIColor blackColor].CGColor;

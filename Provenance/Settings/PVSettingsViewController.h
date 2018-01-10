@@ -38,8 +38,7 @@
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 
-- (IBAction)psxInfoButton:(id)sender;
-- (IBAction)segacdInfoButton:(id)sender;
+- (IBAction)wikiLinkButton:(id)sender;
 
 - (IBAction)done:(id)sender;
 
