@@ -1,3 +1,3 @@
-"PROLOGUE" = "<p><span class=\"nowrap\">Drag &amp; drop files here or use the Upload button.</span> <span class=\"nowrap\">Upload multi-file ROMs as single-file .zip archives.</span> <span class=\"nowrap\">How to add disc-based games: <a href=\"https://github.com/jasarien/Provenance/wiki/Playstation-Instructions\">Playstation</a> | <a href=\"https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions\">Sega CD</a></span></p>";
+"PROLOGUE" = "<p><span class=\"nowrap\">Drag &amp; drop files here or use the Upload button.</span> <span class=\"nowrap\">Upload multi-file ROMs as single-file .zip or .7z archives.</span> <span class=\"nowrap\">Check the wiki for more info about <a href=\"https://github.com/jasarien/Provenance/wiki/Importing-ROMs\">Importing ROMs.</a></span></p>";
 "EPILOGUE" = "";
 "FOOTER_FORMAT" = "%@ %@";
