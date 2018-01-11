@@ -22,15 +22,10 @@
 @interface PVControllerViewController ()
 
 @property (nonatomic, strong) NSArray *controlLayout;
-@property (nonatomic, assign) BOOL shouldHideHomeIndicator;
 
 @end
 
 @implementation PVControllerViewController
-
--(BOOL)prefersHomeIndicatorAutoHidden{
-	return self.shouldHideHomeIndicator;
-}
 
 - (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier
 {
@@ -65,10 +60,6 @@
 - (void) viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-	//Notifies UIKit that your view controller updated its preference regarding the Home Indicator
-	if (@available(iOS 11.0, *)) {
-		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
-	}
 }
 
 - (void)viewDidLoad
@@ -354,7 +345,6 @@
         [self.rightShoulderButton setHidden:NO];
         [self.startButton setHidden:NO];
         [self.selectButton setHidden:NO];
-		self.shouldHideHomeIndicator = NO;
     }
 }
 
@@ -447,7 +437,6 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
         [self.startButton setHidden:YES];
         [self.selectButton setHidden:YES];
     }
-	self.shouldHideHomeIndicator = YES;
 }
 
 @end
