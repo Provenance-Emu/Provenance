@@ -8,3 +8,10 @@ build
 .svn
 xcuserdata
 *.mode1v3
+Provenance.xcodeproj/project.pbxproj
+Provenance/Provenance-Info.plist
+Provenance/Provenance-Info.plist
+ProvenanceTV/Info.plist
+ProvenanceTV/Provenance.entitlements
+ProvenanceTV/PVAppConstants.m
+TopShelf/TopShelf.entitlements

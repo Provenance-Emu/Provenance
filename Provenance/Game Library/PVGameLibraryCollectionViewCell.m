@@ -59,6 +59,10 @@ static const CGFloat LabelHeight = 44.0;
 		[_titleLabel setBackgroundColor:[UIColor clearColor]];
 		[_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleBody]];
 		[_titleLabel setTextAlignment:NSTextAlignmentCenter];
+#if !TARGET_OS_TV
+		//Downsize label text size for iPhone (matches iOS app icon text size)
+		_titleLabel.font=[_titleLabel.font fontWithSize:12];
+#endif
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
 		[_titleLabel setMinimumScaleFactor:0.75];
 
