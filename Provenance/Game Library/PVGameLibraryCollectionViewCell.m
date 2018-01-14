@@ -62,8 +62,9 @@ static const CGFloat LabelHeight = 44.0;
 #if !TARGET_OS_TV
 		_titleLabel.font=[_titleLabel.font fontWithSize:12];
 #endif
+		[_titleLabel setAllowsDefaultTighteningForTruncation:YES];
 		[_titleLabel setAdjustsFontSizeToFitWidth:YES];
-		[_titleLabel setMinimumScaleFactor:0.75];
+		[_titleLabel setMinimumScaleFactor:0.85];
 
         if ([[PVSettingsModel sharedInstance] showGameTitles]) {
             [[self contentView] addSubview:_titleLabel];
