@@ -9,10 +9,19 @@
 #import "PVGLViewController.h"
 #import <PVSupport/PVEmulatorCore.h>
 #import "PVSettingsModel.h"
+#import <OpenGLES/ES3/gl.h>
+#import <OpenGLES/ES3/glext.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()
 {
+    CGSize screenSize;
+    void* videoBufferCopy;
+    int videoBufferCopyLength;
+    GLenum videoBufferPixelFormat;
+    GLenum videoBufferPixelType;
+    CGSize videoBufferSize;
+    
 	GLKVector3 vertices[8];
 	GLKVector2 textureCoordinates[8];
 	GLKVector3 triangleVertices[6];
@@ -41,6 +50,12 @@
 - (void)dealloc
 {
 	glDeleteTextures(1, &texture);
+    if ( videoBufferCopy != NULL )
+    {
+        free( videoBufferCopy );
+        videoBufferCopy = NULL;
+        videoBufferCopyLength = 0;
+    }
 	self.effect = nil;
 	self.glContext = nil;
 	self.emulatorCore = nil;
@@ -69,6 +84,9 @@
     view.context = self.glContext;
 
 	self.effect = [[GLKBaseEffect alloc] init];
+    
+    videoBufferCopy = NULL;
+    videoBufferCopyLength = 0;
 
 	[self setupTexture];
     [self setupCRTShader];
@@ -262,120 +280,140 @@
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    void (^renderBlock)(void) = ^() {
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        CGSize screenSize = [self.emulatorCore screenRect].size;
-        CGSize bufferSize = [self.emulatorCore bufferSize];
-
-        CGFloat texWidth = (screenSize.width / bufferSize.width);
-        CGFloat texHeight = (screenSize.height / bufferSize.height);
-
-        // Determine if core wants special sizing
-        BOOL widescreen = [self.emulatorCore wideScreen];
+    void (^copyVideoBuffer)(void) = ^()
+    {
+        screenSize = [self.emulatorCore screenRect].size;
+        videoBufferPixelFormat = [self.emulatorCore pixelFormat];
+        videoBufferPixelType = [self.emulatorCore pixelType];
+        videoBufferSize = [self.emulatorCore bufferSize];
         
-        if(widescreen) {
-            vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
-            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-            vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
-            
-            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-            textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
-            textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
-            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
-        } else {
-            vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
-            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-            vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
-            
-            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-            textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
-            textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
-            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); //
-        }
-
-        int vertexIndices[6] = {
-            // Front
-            0, 1, 2,
-            0, 2, 3,
-        };
-
-        for (int i = 0; i < 6; i++) {
-            triangleVertices[i]  = vertices[vertexIndices[i]];
-            triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
-        }
-//GLenum error;
-        glBindTexture(GL_TEXTURE_2D, texture);
-  //      error = glGetError();
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-//error = glGetError();
-        if (texture)
+        int pixelSize = 4;
+        if ( videoBufferPixelFormat == GL_RGB )
         {
-            if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
-            {
-                glActiveTexture( GL_TEXTURE0 );
-                glBindTexture( GL_TEXTURE_2D, texture );
-            }
-            else
-            {
-                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
-                self.effect.texture2d0.target = GLKTextureTarget2D;
-                self.effect.texture2d0.name = texture;
-                self.effect.texture2d0.enabled = YES;
-                self.effect.useConstantColor = YES;
-            }
+            pixelSize = 3;
         }
-
-        if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+        
+        switch ( videoBufferPixelType )
         {
-            glUseProgram( crtShaderProgram );
-            glUniform1i( crtUniform_EmulatedImage, 0 );
-            glUniform4f( crtUniform_EmulatedImageRes, screenSize.width, screenSize.height, bufferSize.width, bufferSize.height );
-            float finalResWidth = view.drawableWidth;
-            float finalResHeight = view.drawableHeight;
-            glUniform2f( crtUniform_FinalRes, finalResWidth, finalResHeight );
+            case GL_UNSIGNED_SHORT:
+            case GL_SHORT:
+                pixelSize *= 2;
+                break;
+                
+            case GL_UNSIGNED_SHORT_5_6_5:
+                pixelSize = 2;
+                break;
         }
-        else
+        
+        int videoBufferLength = pixelSize * videoBufferSize.width * videoBufferSize.height;
+        if ( videoBufferLength != videoBufferCopyLength && videoBufferCopy != NULL )
         {
-            [self.effect prepareToDraw];
+            free( videoBufferCopy );
+            videoBufferCopy = NULL;
         }
-
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-
-        glEnableVertexAttribArray(GLKVertexAttribPosition);
-        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
-
-        if (texture)
+        
+        if ( videoBufferCopy == NULL )
         {
-            glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
-            glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
+            videoBufferCopy = malloc( videoBufferLength );
+            videoBufferCopyLength = videoBufferLength;
         }
-
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-
-        if (texture)
-        {
-            glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
-        }
-
-        glDisableVertexAttribArray(GLKVertexAttribPosition);
+        
+        memcpy( videoBufferCopy, [self.emulatorCore videoBuffer], videoBufferCopyLength );
     };
-
+    
     if (self.emulatorCore.isSpeedModified)
     {
-        renderBlock();
+        copyVideoBuffer();
     }
     else
     {
         @synchronized(self.emulatorCore)
         {
-            renderBlock();
+            copyVideoBuffer();
         }
     }
+    
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    CGFloat texWidth = (screenSize.width / videoBufferSize.width);
+    CGFloat texHeight = (screenSize.height / videoBufferSize.height);
+    
+    vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+    vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+    vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+    vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+    
+    textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
+    textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
+    textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
+    textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
+    
+    int vertexIndices[6] = {
+        // Front
+        0, 1, 2,
+        0, 2, 3,
+    };
+    
+    for (int i = 0; i < 6; i++) {
+        triangleVertices[i]  = vertices[vertexIndices[i]];
+        triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
+    }
+    
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBufferCopy);
+    
+    if (texture)
+    {
+        if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+        {
+            glActiveTexture( GL_TEXTURE0 );
+            glBindTexture( GL_TEXTURE_2D, texture );
+        }
+        else
+        {
+            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
+            self.effect.texture2d0.target = GLKTextureTarget2D;
+            self.effect.texture2d0.name = texture;
+            self.effect.texture2d0.enabled = YES;
+            self.effect.useConstantColor = YES;
+        }
+    }
+    
+    if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+    {
+        glUseProgram( crtShaderProgram );
+        glUniform1i( crtUniform_EmulatedImage, 0 );
+        glUniform4f( crtUniform_EmulatedImageRes, screenSize.width, screenSize.height, videoBufferSize.width, videoBufferSize.height );
+        float finalResWidth = view.drawableWidth;
+        float finalResHeight = view.drawableHeight;
+        glUniform2f( crtUniform_FinalRes, finalResWidth, finalResHeight );
+    }
+    else
+    {
+        [self.effect prepareToDraw];
+    }
+    
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    
+    glEnableVertexAttribArray(GLKVertexAttribPosition);
+    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
+    
+    if (texture)
+    {
+        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
+    }
+    
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    
+    if (texture)
+    {
+        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+    }
+    
+    glDisableVertexAttribArray(GLKVertexAttribPosition);
 }
 
 @end
