@@ -110,11 +110,29 @@
         }
     }
     
+#if TARGET_IPHONE_SIMULATOR
+    address = [address stringByAppendingString:@":8080"];
+#endif
+    
     // Free memory
     freeifaddrs(interfaces);
     return address;
 }
 
+-(NSString *)getURLString
+{
+    NSString *ipAddress = self.getIPAddress;
+    NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
+    return ipURLString;
+}
+
+-(NSURL *)getURL
+{
+    NSString *ipURLString = self.getURLString;
+    NSURL *url = [NSURL URLWithString:ipURLString];
+    return url;
+}
+ 
 - (NSURL *)bonjourServerURL
 {
     return self.webServer.bonjourServerURL;

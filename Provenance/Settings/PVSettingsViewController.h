@@ -34,8 +34,11 @@
 @property (weak, nonatomic) IBOutlet UISlider *volumeSlider;
 @property (weak, nonatomic) IBOutlet UILabel *volumeValueLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *fpsCountSwitch;
+@property (weak, nonatomic) IBOutlet UILabel *importLabel;
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
+
+- (IBAction)wikiLinkButton:(id)sender;
 
 - (IBAction)done:(id)sender;
 

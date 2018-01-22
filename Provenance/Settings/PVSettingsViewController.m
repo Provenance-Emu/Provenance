@@ -14,12 +14,15 @@
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
 #import "PVLicensesViewController.h"
+#import <SafariServices/SafariServices.h>
+#import "PVWebServer.h"
 
 @interface PVSettingsViewController ()
 
 @end
 
 @implementation PVSettingsViewController
+
 
 - (void)viewDidLoad
 {
@@ -58,6 +61,17 @@
     }
 }
 
+//Hide Dummy Cell Separator
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (cell && indexPath.row == 1 && indexPath.section == 4) {
+        cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0);
+    } else if (cell && indexPath.row == 2 && indexPath.section == 4) {
+        cell.hidden = YES;
+    }
+}
+
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -70,9 +84,17 @@
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
 }
 
+- (void)viewDidAppear:(BOOL)animated{
+// placed for animation use later…
+}
+
 - (IBAction)help:(id)sender
 {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki"]];
+}
+
+- (IBAction)wikiLinkButton:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/jasarien/Provenance/wiki/Importing-ROMs"]];
 }
 
 - (IBAction)done:(id)sender
@@ -129,6 +151,57 @@
     [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
 }
 
+// Show web server (stays on)
+- (void)showServer {
+	NSURL *ipURL = [[PVWebServer sharedInstance] getURL];
+	SFSafariViewController *safariVC = [[SFSafariViewController alloc]initWithURL:ipURL entersReaderIfAvailable:NO];
+	safariVC.delegate = self;
+	[self presentViewController:safariVC animated:YES completion:nil];
+}
+
+- (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
+	// Load finished
+}
+
+// Dismiss and shut down web server
+- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
+	// Done button pressed
+	[self.navigationController popViewControllerAnimated:YES];
+	[[PVWebServer sharedInstance] stopServer];
+	_importLabel.text = @"Web server: OFF";
+}
+
+// Show "Web Server Active" alert view
+- (void)showServerActiveAlert {
+	NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n"];
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
+																   message: message
+															preferredStyle:UIAlertControllerStyleAlert];
+	
+	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,31)];
+	ipField.backgroundColor = [UIColor clearColor];
+	ipField.textAlignment = NSTextAlignmentCenter;
+	ipField.font = [UIFont systemFontOfSize:13];
+	ipField.textColor = [UIColor grayColor];
+	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
+	[ipField setUserInteractionEnabled:NO];
+	[alert.view addSubview:ipField];
+	
+	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+		[[PVWebServer sharedInstance] stopServer];
+		_importLabel.text = @"Web server: OFF";
+	}]];
+	
+	UIAlertAction *viewAction = [UIAlertAction actionWithTitle: @"View" style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action)
+	{
+		[self showServer];
+	}];
+	
+	[alert addAction:viewAction];
+	
+	[self presentViewController:alert animated:YES completion:NULL];
+	
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -156,27 +229,15 @@
             }]];
             [self presentViewController:alert animated:YES completion:NULL];
         } else {
-            // connected via wifi, let's continue
-
-            // start web transfer service
-            [[PVWebServer sharedInstance] startServer];
-
-            // get the IP address of the device
-            NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
-
-#if TARGET_IPHONE_SIMULATOR
-            ipAddress = [ipAddress stringByAppendingString:@":8080"];
-#endif
-
-            NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
-                                                            message: message
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
-            [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [[PVWebServer sharedInstance] stopServer];
-            }]];
-            [self presentViewController:alert animated:YES completion:NULL];
-        }
+			// connected via wifi, let's continue
+			
+			// start web transfer service
+			[[PVWebServer sharedInstance] startServer];
+			_importLabel.text = @"Web server: ON";
+	
+			//show alert view
+			[self showServerActiveAlert];
+		}
 
     }
     else if (indexPath.section == 5 && indexPath.row == 0)
