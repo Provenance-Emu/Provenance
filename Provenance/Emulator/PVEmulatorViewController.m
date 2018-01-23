@@ -349,6 +349,25 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 }
 
+#if !TARGET_OS_TV
+//Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
+-(BOOL)prefersHomeIndicatorAutoHidden{
+	BOOL shouldHideHomeIndicator = [[PVControllerManager sharedManager] hasControllers];
+	return shouldHideHomeIndicator;
+}
+
+-(void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:YES];
+	//Notifies UIKit that your view controller updated its preference regarding the visual indicator
+	if (@available(iOS 11.0, *))
+	{
+		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
+	}
+}
+
+#endif
+
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
@@ -882,6 +901,10 @@ void uncaughtExceptionHandler(NSException *exception)
         [controller setControllerPausedHandler:^(GCController * _Nonnull controller) {
             [weakSelf controllerPauseButtonPressed:weakSelf];
         }];
+		if (@available(iOS 11.0, *))
+		{
+			[self setNeedsUpdateOfHomeIndicatorAutoHidden];
+		}
 #endif
     }
 }
@@ -889,6 +912,12 @@ void uncaughtExceptionHandler(NSException *exception)
 - (void)controllerDidDisconnect:(NSNotification *)note
 {
 	[self.menuButton setHidden:NO];
+#if !TARGET_OS_TV
+	if (@available(iOS 11.0, *))
+	{
+		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
+	}
+#endif
 }
 
 - (void)handleControllerManagerControllerReassigned:(NSNotification *)notification
