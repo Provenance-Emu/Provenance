@@ -23,14 +23,15 @@ precision highp float;
 
 varying vec2 fTexCoord;
 
+uniform vec4 DisplayRect;
 uniform sampler2D EmulatedImage;
-uniform vec4 EmulatedImageRes;
+uniform vec2 EmulatedImageSize;
 uniform vec2 FinalRes;
 
 #define FINAL_RES FinalRes
-#define INPUT_RES EmulatedImageRes.xy
+#define INPUT_RES DisplayRect.zw
 #define INPUT_SAMPLER EmulatedImage
-#define UV_TO_INPUTCOORD( uv ) ( uv / EmulatedImageRes.zw * EmulatedImageRes.xy )
+#define UV_TO_INPUTCOORD( uv ) ( ( DisplayRect.xy + uv * DisplayRect.zw ) / EmulatedImageSize )
 
 #define USE_SCANLINES 1
 #define USE_SHADOWMASK 1
@@ -132,7 +133,7 @@ vec3 crtFilter( vec2 uv )
 
 void main( void )
 {
-    vec2 uv = fTexCoord / EmulatedImageRes.xy * EmulatedImageRes.zw;
+    vec2 uv = ( fTexCoord * EmulatedImageSize - DisplayRect.xy ) / DisplayRect.zw;
     gl_FragColor.rgb = crtFilter( uv );
     gl_FragColor.a = 1.0;
 }

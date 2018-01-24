@@ -266,7 +266,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	return defaultFrameInterval;
 }
 
-- (BOOL)wideScreen {
+- (BOOL)isDoubleBuffered {
     return NO;
 }
 
