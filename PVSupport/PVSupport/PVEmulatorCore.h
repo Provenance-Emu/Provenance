@@ -55,6 +55,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 }
 
 @property (nonatomic, assign) double emulationFPS;
+@property (nonatomic, assign) double renderFPS;
 
 @property(weak)     id<PVRenderDelegate>   renderDelegate;
 
@@ -79,6 +80,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong) GCController *controller2;
 
 @property (nonatomic, strong) NSLock  *emulationLoopThreadLock;
+@property (nonatomic, strong) NSCondition  *frontBufferCondition;
+@property (nonatomic, strong) NSLock  *frontBufferLock;
+@property (nonatomic, assign) BOOL isFrontBufferReady;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation;
@@ -98,7 +102,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (CGRect)screenRect;
 - (CGSize)aspectSize;
 - (CGSize)bufferSize;
-- (BOOL)wideScreen;
+- (BOOL)isDoubleBuffered;
+- (void)swapBuffers;
 - (GLenum)pixelFormat;
 - (GLenum)pixelType;
 - (GLenum)internalPixelFormat;

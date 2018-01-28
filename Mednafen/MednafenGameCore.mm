@@ -1241,6 +1241,13 @@ static void emulation_run() {
     }
 }
 
+- (void)swapBuffers
+{
+    MDFN_Surface *tempSurf = backBufferSurf;
+    backBufferSurf = frontBufferSurf;
+    frontBufferSurf = tempSurf;
+}
+
 # pragma mark - Audio
 
 static size_t update_audio_batch(const int16_t *data, size_t frames)
