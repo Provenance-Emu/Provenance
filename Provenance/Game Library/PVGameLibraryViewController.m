@@ -22,6 +22,7 @@
 #import "PVEmulatorConfiguration.h"
 #if !TARGET_OS_TV
     #import <AssetsLibrary/AssetsLibrary.h>
+	#import <SafariServices/SafariServices.h>
     #import "PVSettingsViewController.h"
 #else
 #import "PVGame+Sizing.h"
@@ -38,6 +39,7 @@
 #import "RLMRealmConfiguration+Config.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
+
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -257,8 +259,70 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     }
 }
 
-#pragma mark - Filesystem Helpers
+#if !TARGET_OS_TV
+// Show web server (stays on)
+- (void)showServer {
+	NSURL *ipURL = [[PVWebServer sharedInstance] getURL];
+	SFSafariViewController *safariVC = [[SFSafariViewController alloc]initWithURL:ipURL entersReaderIfAvailable:NO];
+	safariVC.delegate = self;
+	[self presentViewController:safariVC animated:YES completion:nil];
+}
 
+- (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
+	// Load finished
+}
+
+// Dismiss and shut down web server
+- (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
+	// Done button pressed
+	[self.navigationController popViewControllerAnimated:YES];
+	[[PVWebServer sharedInstance] stopServer];
+}
+#endif
+
+// Show "Web Server Active" alert view
+- (void)showServerActiveAlert {
+	NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n"];
+	UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
+																   message: message
+															preferredStyle:UIAlertControllerStyleAlert];
+	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,31)];
+	ipField.backgroundColor = [UIColor clearColor];
+	ipField.textAlignment = NSTextAlignmentCenter;
+	ipField.font = [UIFont systemFontOfSize:13];
+	ipField.textColor = [UIColor grayColor];
+	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
+	[ipField setUserInteractionEnabled:NO];
+	[alert.view addSubview:ipField];
+
+	UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
+	[importNote setUserInteractionEnabled:NO];
+	importNote.font = [UIFont systemFontOfSize:11];
+	importNote.textColor = [UIColor whiteColor];
+	importNote.textAlignment = NSTextAlignmentCenter;
+	importNote.backgroundColor = [UIColor clearColor];
+	importNote.text = @"Check the wiki for information\nabout Importing ROMs.";
+	importNote.layer.shadowOpacity = 0.8;
+	importNote.layer.shadowRadius = 3.0;
+	importNote.layer.shadowColor = [UIColor blackColor].CGColor;
+	importNote.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+	[alert.view addSubview:importNote];
+
+	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+		[[PVWebServer sharedInstance] stopServer];
+	}]];
+#if !TARGET_OS_TV
+	UIAlertAction *viewAction = [UIAlertAction actionWithTitle: @"View" style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action)
+	{
+		[self showServer];
+	}];
+	[alert addAction:viewAction];
+#endif
+	[self presentViewController:alert animated:YES completion:NULL];
+	
+}
+
+#pragma mark - Filesystem Helpers
 
 - (IBAction)getMoreROMs
 {
@@ -281,21 +345,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         // start web transfer service
         [[PVWebServer sharedInstance] startServer];
 
-        // get the IP address of the device
-        NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
-
-#if TARGET_IPHONE_SIMULATOR
-        ipAddress = [ipAddress stringByAppendingString:@":8080"];
-#endif
-
-        NSString *message = [NSString stringWithFormat: @"You can now upload ROMs or download saves by visiting:\nhttp://%@/\non your computer", ipAddress];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web server started!"
-                                                                       message: message
-                                                                preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [[PVWebServer sharedInstance] stopServer];
-        }]];
-        [self presentViewController:alert animated:YES completion:NULL];
+        //show alert view
+		[self showServerActiveAlert];
     }
 }
 

@@ -94,10 +94,15 @@ EAGLContext* CreateBestEAGLContext()
     [self setupCRTShader];
 }
 
-- (void)viewWillLayoutSubviews
+- (void)viewDidLayoutSubviews
 {
-    [super viewWillLayoutSubviews];
+    [super viewDidLayoutSubviews];
 
+    UIEdgeInsets parentSafeAreaInsets = UIEdgeInsetsZero;
+    if (@available(iOS 11.0, *)) {
+        parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
+    }
+    
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))
     {
         CGSize aspectSize = [self.emulatorCore aspectSize];
@@ -143,7 +148,7 @@ EAGLContext* CreateBestEAGLContext()
         CGPoint origin = CGPointMake(roundf((parentSize.width - width) / 2.0), 0);
         if (([self.traitCollection userInterfaceIdiom] == UIUserInterfaceIdiomPhone) && (parentSize.height > parentSize.width))
         {
-            origin.y = 40.0f; // directly below menu button at top of screen
+            origin.y = parentSafeAreaInsets.top + 40.0f; // directly below menu button at top of screen
         }
         else
         {

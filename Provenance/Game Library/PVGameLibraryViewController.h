@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <GameController/GameController.h>
+#import <QuartzCore/QuartzCore.h>
 
 extern NSString * const PVGameLibraryHeaderView;
 extern NSString * const kRefreshLibraryNotification;

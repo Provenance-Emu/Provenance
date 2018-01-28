@@ -21,8 +21,11 @@
 
 - (NSString *)getDocumentDirectory;
 - (NSString *)getIPAddress;
+- (NSString *)getURLString;
+- (NSURL *)getURL;
 - (NSURL *)bonjourServerURL;
 - (void)startServer;
 - (void)stopServer;
+
 
 @end
