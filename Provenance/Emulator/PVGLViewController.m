@@ -9,8 +9,6 @@
 #import "PVGLViewController.h"
 #import <PVSupport/PVEmulatorCore.h>
 #import "PVSettingsModel.h"
-#import <OpenGLES/ES3/gl.h>
-#import <OpenGLES/ES3/glext.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController ()
@@ -371,17 +369,24 @@
     }
     else
     {
-        @synchronized(self.emulatorCore)
+        if (self.emulatorCore.isDoubleBuffered)
         {
+            [self.emulatorCore.frontBufferCondition lock];
+            while (!self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+            [self.emulatorCore setIsFrontBufferReady:NO];
+            [self.emulatorCore.frontBufferLock lock];
             fetchVideoBuffer();
-            if ( !self.emulatorCore.isDoubleBuffered )
+            renderBlock();
+            [self.emulatorCore.frontBufferLock unlock];
+            [self.emulatorCore.frontBufferCondition unlock];
+        }
+        else
+        {
+            @synchronized(self.emulatorCore)
             {
+                fetchVideoBuffer();
                 renderBlock();
             }
-        }
-        if ( self.emulatorCore.isDoubleBuffered )
-        {
-            renderBlock();
         }
     }
 }

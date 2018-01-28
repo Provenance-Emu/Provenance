@@ -231,7 +231,11 @@ void uncaughtExceptionHandler(NSException *exception)
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
             // Block-based NSTimer method is only available on iOS 10 and later
             self.fpsTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                self.fpsLabel.text = [NSString stringWithFormat:@"%2.02f", self.emulatorCore.emulationFPS];
+                if (self.emulatorCore.renderFPS == self.emulatorCore.emulationFPS) {
+                    self.fpsLabel.text = [NSString stringWithFormat:@"%2.02f", self.emulatorCore.renderFPS];
+                } else {
+                    self.fpsLabel.text = [NSString stringWithFormat:@"%2.02f (%2.02f)", self.emulatorCore.renderFPS, self.emulatorCore.emulationFPS];
+                }
             }];
         } else {
 #endif

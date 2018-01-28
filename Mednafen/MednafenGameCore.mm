@@ -948,11 +948,6 @@ static void emulation_run() {
     current->videoOffsetY = spec.DisplayRect.y;
 
     update_audio_batch(spec.SoundBuf, spec.SoundBufSize);
-    
-    // Swap back and front buffers
-    MDFN_Surface *tempSurf = backBufferSurf;
-    backBufferSurf = frontBufferSurf;
-    frontBufferSurf = tempSurf;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path
@@ -1236,6 +1231,13 @@ static void emulation_run() {
 
 - (BOOL)isDoubleBuffered {
     return YES;
+}
+
+- (void)swapBuffers
+{
+    MDFN_Surface *tempSurf = backBufferSurf;
+    backBufferSurf = frontBufferSurf;
+    frontBufferSurf = tempSurf;
 }
 
 # pragma mark - Audio
