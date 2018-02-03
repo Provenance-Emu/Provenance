@@ -120,7 +120,7 @@
 - (void)pressStartForPlayer:(NSUInteger)player
 {
     MupenGameCore *n64Core = (MupenGameCore *)self.emulatorCore;
-    [n64Core didPushN64Button:OEN64ButtonDPadRight forPlayer:player];
+    [n64Core didPushN64Button:OEN64ButtonStart forPlayer:player];
 }
 
 - (void)releaseStartForPlayer:(NSUInteger)player

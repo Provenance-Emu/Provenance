@@ -87,16 +87,6 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
-    
-    // GL Hack
-    GLKVector3 vertices[8];
-    GLKVector2 textureCoordinates[8];
-    GLKVector3 triangleVertices[6];
-    GLKVector2 triangleTexCoords[6];
-    
-    GLuint texture;
-
-    GLKView *glview;
 }
 
 - (instancetype)init
@@ -185,6 +175,8 @@ static void *dlopen_myself()
 static void MupenGetKeys(int Control, BUTTONS *Keys)
 {
     GET_CURRENT_AND_RETURN();
+    
+    [current pollControllers];
 
     Keys->R_DPAD = current->padData[Control][OEN64ButtonDPadRight];
     Keys->L_DPAD = current->padData[Control][OEN64ButtonDPadLeft];
@@ -214,6 +206,77 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
     ControlInfo.Controls[2].Plugin = 2;
     ControlInfo.Controls[3].Present = 1;
     ControlInfo.Controls[3].Plugin = 2;
+}
+
+- (void)pollControllers
+{
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
+    {
+        GCController *controller = nil;
+        
+        if (self.controller1 && playerIndex == 0)
+        {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && playerIndex == 1)
+        {
+            controller = self.controller2;
+        }
+        
+        if ([controller extendedGamepad])
+        {
+            GCExtendedGamepad *gamepad     = [controller extendedGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * 127;
+            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * 127;
+            
+            padData[playerIndex][OEN64ButtonDPadUp] = dpad.up.isPressed;
+            padData[playerIndex][OEN64ButtonDPadDown] = dpad.down.isPressed;
+            padData[playerIndex][OEN64ButtonDPadLeft] = dpad.left.isPressed;
+            padData[playerIndex][OEN64ButtonDPadRight] = dpad.right.isPressed;
+            
+            padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][OEN64ButtonStart] = gamepad.rightTrigger.isPressed;
+            
+            padData[playerIndex][OEN64ButtonL] = gamepad.leftShoulder.isPressed;
+            padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
+            padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
+            
+            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.isPressed;
+            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.isPressed;
+            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.isPressed;
+            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.isPressed;
+        } else if ([controller gamepad]) {
+            GCGamepad *gamepad = [controller gamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -127 : 0) + (dpad.right.value > 0.5 ? 127 : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -127 : 0) + (dpad.up.value > 0.5 ? 127 : 0);
+            
+            padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
+            
+            padData[playerIndex][OEN64ButtonCLeft] = gamepad.buttonY.isPressed;
+            padData[playerIndex][OEN64ButtonCDown] = gamepad.buttonB.isPressed;
+            
+            padData[playerIndex][OEN64ButtonZ] = gamepad.leftShoulder.isPressed;
+            padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
+        }
+#if TARGET_OS_TV
+        else if ([controller microGamepad]) {
+            GCMicroGamepad *gamepad = [controller microGamepad];
+            GCControllerDirectionPad *dpad = [gamepad dpad];
+            
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -127 : 0) + (dpad.right.value > 0.5 ? 127 : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -127 : 0) + (dpad.up.value > 0.5 ? 127 : 0);
+            
+            padData[playerIndex][OEN64ButtonB] = gamepad.buttonA.isPressed;
+            padData[playerIndex][OEN64ButtonA] = gamepad.buttonX.isPressed;
+        }
+#endif
+    }
 }
 
 static AUDIO_INFO AudioInfo;
@@ -357,25 +420,22 @@ static void MupenSetAudioSpeed(int percent)
     
     // Load Video
     LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
-    //LoadPlugin(M64PLUGIN_GFX, @"mupen64plus-video-glide64mk2.so");
     
     ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");
     
     // Load Audio
-//TODO :Fix auido and input
     audio.aiDacrateChanged = MupenAudioSampleRateChanged;
     audio.aiLenChanged = MupenAudioLenChanged;
     audio.initiateAudio = MupenOpenAudio;
     audio.setSpeedFactor = MupenSetAudioSpeed;
     plugin_start(M64PLUGIN_AUDIO);
-//
-//    // Load Input
-//    input.getKeys = MupenGetKeys;
-//    input.initiateControllers = MupenInitiateControllers;
-//    plugin_start(M64PLUGIN_INPUT);
-    // Load RSP
-//    LoadPlugin(M64PLUGIN_RSP, @"mupen64plus-rsp-hle.so");
+
+    // Load Input
+    input.getKeys = MupenGetKeys;
+    input.initiateControllers = MupenInitiateControllers;
+    plugin_start(M64PLUGIN_INPUT);
     
+    // Load RSP
     // Configure if using rsp-cxd4 plugin
     m64p_handle configRSP;
     ConfigOpenSection("rsp-cxd4", &configRSP);
@@ -645,13 +705,11 @@ static void MupenSetAudioSpeed(int percent)
 
 - (oneway void)didPushN64Button:(OEN64Button)button forPlayer:(NSUInteger)player
 {
-    player -= 1;
     padData[player][button] = 1;
 }
 
 - (oneway void)didReleaseN64Button:(OEN64Button)button forPlayer:(NSUInteger)player
 {
-    player -= 1;
     padData[player][button] = 0;
 }
 
