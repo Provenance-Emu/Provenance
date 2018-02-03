@@ -36,8 +36,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 @required
 - (void)startRenderingOnAlternateThread;
-
-- (void)willRenderFrameOnAlternateThread;
 - (void)didRenderFrameOnAlternateThread;
 @end
 

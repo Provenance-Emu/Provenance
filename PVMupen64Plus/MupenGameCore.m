@@ -399,7 +399,6 @@ static void MupenSetAudioSpeed(int percent)
 {
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
     
-    [self.renderDelegate willRenderFrameOnAlternateThread];
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, DISPATCH_TIME_FOREVER);
 }
 

@@ -360,7 +360,6 @@
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
-            glFlush();
             frontBufferTex = alternateThreadColorTextureFront;
         }
         else
@@ -408,7 +407,7 @@
         glEnableVertexAttribArray(GLKVertexAttribPosition);
         glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
         
-        if (texture)
+        if (frontBufferTex)
         {
             glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
             glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
@@ -416,7 +415,7 @@
         
         glDrawArrays(GL_TRIANGLES, 0, 6);
         
-        if (texture)
+        if (frontBufferTex)
         {
             glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
         }
@@ -424,6 +423,8 @@
         glDisableVertexAttribArray(GLKVertexAttribPosition);
         
         glBindTexture(GL_TEXTURE_2D, 0);
+        
+        glFlush();
     };
     
     if ([self.emulatorCore rendersToOpenGL])
@@ -481,10 +482,7 @@
     [EAGLContext setCurrentContext:self.alternateThreadGLContext];
     
     self.alternateThreadEffect = [[GLKBaseEffect alloc] init];
-}
-
-- (void)willRenderFrameOnAlternateThread
-{
+    
     // Setup framebuffer
     if (alternateThreadFramebuffer == 0)
     {
@@ -492,7 +490,7 @@
     }
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebuffer);
     
-    // Setup back buffer color texture
+    // Setup color textures to render into
     if (alternateThreadColorTextureBack == 0)
     {
         glGenTextures(1, &alternateThreadColorTextureBack);
@@ -500,6 +498,14 @@
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.width & ((unsigned int)self.emulatorCore.bufferSize.width - 1)), @"Emulator buffer width is not a power of two!" );
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    if (alternateThreadColorTextureFront == 0)
+    {
+        glGenTextures(1, &alternateThreadColorTextureFront);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureFront);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -514,86 +520,6 @@
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, alternateThreadDepthRenderbuffer);
     }
     
-    // Copy front buffer to back buffer
-    if (alternateThreadColorTextureFront > 0)
-    {
-        glViewport(0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height);
-        
-        self.alternateThreadEffect.texture2d0.envMode = GLKTextureEnvModeReplace;
-        self.alternateThreadEffect.texture2d0.target = GLKTextureTarget2D;
-        self.alternateThreadEffect.texture2d0.name = alternateThreadColorTextureFront;
-        self.alternateThreadEffect.texture2d0.enabled = YES;
-        self.alternateThreadEffect.useConstantColor = YES;
-        [self.effect prepareToDraw];
-        
-        GLboolean wasDepthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
-        GLboolean wasCullingEnabled = glIsEnabled(GL_CULL_FACE);
-        GLboolean wasDepthWriteEnabled;
-        glGetBooleanv( GL_DEPTH_WRITEMASK, &wasDepthWriteEnabled );
-    
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glDepthMask(GL_FALSE);
-        
-        GLKVector3 fullscreenVertices[] =
-        {
-            GLKVector3Make(-1.0, -1.0,  1.0),   // Left  bottom
-            GLKVector3Make( 1.0, -1.0,  1.0),   // Right bottom
-            GLKVector3Make( 1.0,  1.0,  1.0),   // Right top
-            GLKVector3Make(-1.0,  1.0,  1.0)    // Left  top
-        };
-        
-        GLKVector2 fullscreenTextureCoords[] =
-        {
-            GLKVector2Make(0.0, 0.0),   // Left bottom
-            GLKVector2Make(1.0, 0.0),   // Right bottom
-            GLKVector2Make(1.0, 1.0),   // Right top
-            GLKVector2Make(0.0, 1.0)    // Left top
-        };
-        
-        int vertexIndices[] =
-        {
-            // Front
-            0, 1, 2,
-            0, 2, 3,
-        };
-        
-        GLKVector3 fullscreenTriangleVertices[6];
-        GLKVector2 fullscreenTriangleTexCoords[6];
-        for (int i = 0; i < 6; i++)
-        {
-            fullscreenTriangleVertices[i]  = fullscreenVertices[vertexIndices[i]];
-            fullscreenTriangleTexCoords[i] = fullscreenTextureCoords[vertexIndices[i]];
-        }
-        
-        glEnableVertexAttribArray(GLKVertexAttribPosition);
-        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, fullscreenTriangleVertices);
-        
-        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
-        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, fullscreenTriangleTexCoords);
-        
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        
-        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
-        
-        glDisableVertexAttribArray(GLKVertexAttribPosition);
-        
-        glBindTexture(GL_TEXTURE_2D, 0);
-        
-        if (wasDepthTestEnabled)
-        {
-            glEnable(GL_DEPTH_TEST);
-        }
-        if (wasCullingEnabled)
-        {
-            glEnable(GL_CULL_FACE);
-        }
-        if (wasDepthWriteEnabled)
-        {
-            glDepthMask(GL_TRUE);
-        }
-    }
-    
     glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
 }
 
@@ -602,11 +528,11 @@
     if (alternateThreadColorTextureBack > 0)
     {
         [self.emulatorCore.frontBufferLock lock];
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-        glFlush();
         GLuint temp = alternateThreadColorTextureBack;
         alternateThreadColorTextureBack = alternateThreadColorTextureFront;
         alternateThreadColorTextureFront = temp;
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
+        glFlush();
         [self.emulatorCore.frontBufferLock unlock];
         
         [self.emulatorCore.frontBufferCondition lock];
@@ -614,9 +540,7 @@
         [self.emulatorCore.frontBufferCondition signal];
         [self.emulatorCore.frontBufferCondition unlock];
         
-        [self.emulatorCore.frontBufferCondition lock];
-        while (self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
-        [self.emulatorCore.frontBufferCondition unlock];
+        glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
     }
 }
 
