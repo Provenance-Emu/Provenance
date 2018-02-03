@@ -32,6 +32,11 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 #define GetSecondsSince(x) (-[x timeIntervalSinceNow])
 
+@protocol PVAudioDelegate
+@required
+- (void)audioSampleRateDidChange;
+@end
+
 @protocol PVRenderDelegate
 
 @required
@@ -55,6 +60,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;
 
+@property(weak)     id<PVAudioDelegate>    audioDelegate;
 @property(weak)     id<PVRenderDelegate>   renderDelegate;
 
 @property (nonatomic, copy) NSString *romName;
