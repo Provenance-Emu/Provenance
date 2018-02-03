@@ -375,6 +375,7 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
         for( int channel=0; channel<2; channel++)
         {
             char* (*func)(uint8) = channel==0?MuxToOC:MuxToOA;
+            char *castType = channel==0?(char*)"vec3":(char*)"float";
             char *dst = channel==0?(char*)"rgb":(char*)"a";
             N64CombinerType &m = mux.m_n64Combiners[cycle*2+channel];
             switch( mux.splitType[cycle*2+channel] )
@@ -383,26 +384,26 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
                 tempstr[0] = 0;
                 break;
             case CM_FMT_TYPE_D:
-                sprintf(tempstr, "comb.%s = %s;\n", dst, func(m.d));
+                sprintf(tempstr, "comb.%s = %s(%s);\n", dst, castType, func(m.d));
                 CheckFpVars(m.d, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_MOD_C:
-                sprintf(tempstr, "comb.%s = %s * %s;\n", dst, func(m.a), func(m.c));
+                sprintf(tempstr, "comb.%s = %s(%s * %s);\n", dst, castType, func(m.a), func(m.c));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.c, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_ADD_D:
-                sprintf(tempstr, "comb.%s = saturate(%s + %s);\n", dst, func(m.a), func(m.d));
+                sprintf(tempstr, "comb.%s = saturate(%s(%s + %s));\n", dst, castType, func(m.a), func(m.d));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.d, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_SUB_B:
-                sprintf(tempstr, "comb.%s = %s - %s;\n", dst, func(m.a), func(m.b));
+                sprintf(tempstr, "comb.%s = %s(%s - %s);\n", dst, castType, func(m.a), func(m.b));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.b, bNeedT0, bNeedT1);
                 break;
             case CM_FMT_TYPE_A_MOD_C_ADD_D:
-                sprintf(tempstr, "comb.%s = saturate(%s * %s + %s);\n", dst, func(m.a), func(m.c),func(m.d));
+                sprintf(tempstr, "comb.%s = saturate(%s(%s * %s + %s));\n", dst, castType, func(m.a), func(m.c),func(m.d));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.c, bNeedT0, bNeedT1);
                 CheckFpVars(m.d, bNeedT0, bNeedT1);
@@ -410,14 +411,14 @@ void COGL_FragmentProgramCombiner::GenerateProgramStr()
             case CM_FMT_TYPE_A_LERP_B_C:
                 //ARB ASM LERP and mix have different parameter ordering.
                 //sprintf(tempstr, "comb.%s = saturate(mix(%s, %s, %s));\n", dst,func(m.a),func(m.b), func(m.c));
-                sprintf(tempstr, "comb.%s = (%s - %s) * %s + %s;\n", dst,func(m.a),func(m.b), func(m.c),func(m.b));
+                sprintf(tempstr, "comb.%s = %s((%s - %s) * %s + %s);\n", dst, castType,func(m.a),func(m.b), func(m.c),func(m.b));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.b, bNeedT0, bNeedT1);
                 CheckFpVars(m.c, bNeedT0, bNeedT1);
                 //sprintf(tempstr, "SUB comb.%s, %s, %s;\nMAD_SAT comb.%s, comb, %s, %s;\n", dst, func(m.a), func(m.b), dst, func(m.c), func(m.b));
                 break;
             default:
-                sprintf(tempstr, "comb2.%s = %s - %s;\ncomb.%s = saturate(comb2.%s * %s + %s);\n", dst, func(m.a), func(m.b),  dst,dst, func(m.c),func(m.d));
+                sprintf(tempstr, "comb2.%s = %s(%s - %s);\ncomb.%s = saturate(comb2.%s * %s + %s);\n", dst, castType, func(m.a), func(m.b),  dst,dst, func(m.c),func(m.d));
                 CheckFpVars(m.a, bNeedT0, bNeedT1);
                 CheckFpVars(m.b, bNeedT0, bNeedT1);
                 CheckFpVars(m.c, bNeedT0, bNeedT1);

@@ -336,7 +336,7 @@ static void MupenSetAudioSpeed(int percent)
     void (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
-        NSString *rspPath = [[coreBundle privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
+        NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
         
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_NOW);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
@@ -381,7 +381,6 @@ static void MupenSetAudioSpeed(int percent)
     if(!isRunning)
     {
         [super startEmulation];
-        [self.renderDelegate willRenderOnAlternateThread];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }
 }
@@ -550,7 +549,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (CGSize)bufferSize
 {
-    return CGSizeMake(videoWidth, videoHeight);
+    return CGSizeMake(1024, 512);
 }
 
 - (CGRect)screenRect

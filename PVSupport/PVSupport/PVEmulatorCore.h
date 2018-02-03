@@ -35,17 +35,10 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @protocol PVRenderDelegate
 
 @required
-- (void)willExecute;
-- (void)didExecute;
-
-- (void)willRenderOnAlternateThread;
 - (void)startRenderingOnAlternateThread;
 
 - (void)willRenderFrameOnAlternateThread;
 - (void)didRenderFrameOnAlternateThread;
-
-- (void)setEnableVSync:(BOOL)flag;
-
 @end
 
 @interface PVEmulatorCore : NSObject {

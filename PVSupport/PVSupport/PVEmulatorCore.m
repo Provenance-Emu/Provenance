@@ -37,6 +37,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 		NSUInteger count = [self audioBufferCount];
         ringBuffers = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
         self.emulationLoopThreadLock = [NSLock new];
+        self.frontBufferCondition = [NSCondition new];
+        self.frontBufferLock = [NSLock new];
+        [self setIsFrontBufferReady:NO];
         _gameSpeed = GameSpeedNormal;
 	}
 	
@@ -67,7 +70,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
             [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
-
 		}
 	}
 }
@@ -120,6 +122,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 
     // For FPS computation
     int frameCount = 0;
+    int framesTorn = 0;
     NSDate *fpsCounter = [NSDate date];
     
     //Setup Initial timing
@@ -139,8 +142,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         
         @synchronized (self) {
             if (isRunning) {
-                [_renderDelegate willExecute];
-                
                 if (self.isSpeedModified)
                 {
                     [self executeFrame];
@@ -152,13 +153,34 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
                         [self executeFrame];
                     }
                 }
-                [_renderDelegate didExecute];
             }
         }
         frameCount += 1;
 
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
+        
+        if ([self isDoubleBuffered])
+        {
+            NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
+            if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
+                [self swapBuffers];
+                [self.frontBufferLock unlock];
+                
+                [self.frontBufferCondition lock];
+                [self setIsFrontBufferReady:YES];
+                [self.frontBufferCondition signal];
+                [self.frontBufferCondition unlock];
+            } else {
+                [self swapBuffers];
+                ++framesTorn;
+                
+                [self setIsFrontBufferReady:YES];
+            }
+
+            sleepTime = nextEmuTick - GetSecondsSince(origin);
+        }
+        
         if(sleepTime >= 0) {
             [NSThread sleepForTimeInterval:sleepTime];
         }
@@ -173,7 +195,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         NSTimeInterval timeSinceLastFPS = GetSecondsSince(fpsCounter);
         if (timeSinceLastFPS >= 0.5) {
             self.emulationFPS = (double)frameCount / timeSinceLastFPS;
+            self.renderFPS = (double)(frameCount - framesTorn) / timeSinceLastFPS;
             frameCount = 0;
+            framesTorn = 0;
             fpsCounter = [NSDate date];
         }
         
@@ -206,11 +230,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 
 - (void)setFramerateMultiplier:(CGFloat)framerateMultiplier
 {
-	_framerateMultiplier = framerateMultiplier;
-
-    NSLog(@"multiplier: %.1f", framerateMultiplier);
+    if ( _framerateMultiplier != framerateMultiplier )
+    {
+        _framerateMultiplier = framerateMultiplier;
+        NSLog(@"multiplier: %.1f", framerateMultiplier);
+    }
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
-    [_renderDelegate setEnableVSync:framerateMultiplier == 1.0];
 }
 
 - (void)executeFrame
@@ -288,8 +313,13 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	return defaultFrameInterval;
 }
 
-- (BOOL)wideScreen {
+- (BOOL)isDoubleBuffered {
     return NO;
+}
+
+- (void)swapBuffers
+{
+    NSAssert(!self.isDoubleBuffered, @"Cores that are double-buffered must implement swapBuffers!");
 }
 
 #pragma mark - Audio

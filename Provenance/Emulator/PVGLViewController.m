@@ -11,12 +11,9 @@
 #import "PVSettingsModel.h"
 #import <QuartzCore/QuartzCore.h>
 
-#import <OpenGLES/ES3/gl.h>
-#import <OpenGLES/ES3/glext.h>
-
-@interface PVGLViewController() <PVRenderDelegate>
+@interface PVGLViewController () <PVRenderDelegate>
 {
-	GLKVector3 vertices[8];
+    GLKVector3 vertices[8];
 	GLKVector2 textureCoordinates[8];
 	GLKVector3 triangleVertices[6];
 	GLKVector2 triangleTexCoords[6];
@@ -24,31 +21,26 @@
     GLuint crtVertexShader;
     GLuint crtFragmentShader;
     GLuint crtShaderProgram;
+    int crtUniform_DisplayRect;
     int crtUniform_EmulatedImage;
-    int crtUniform_EmulatedImageRes;
+    int crtUniform_EmulatedImageSize;
     int crtUniform_FinalRes;
     
-	GLuint texture;
+    GLuint alternateThreadFramebuffer;
+    GLuint alternateThreadColorTextureBack;
+    GLuint alternateThreadColorTextureFront;
+    GLuint alternateThreadDepthRenderbuffer;
     
-    // Alternate-thread rendering
-    GLuint RenderBuffer;
-    EAGLContext*          _alternateContext;
+	GLuint texture;
 }
 
 @property (nonatomic, strong) EAGLContext *glContext;
+@property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) GLKBaseEffect *effect;
+@property (nonatomic, strong) GLKBaseEffect *alternateThreadEffect;
 @end
 
 @implementation PVGLViewController
-
-EAGLContext* CreateBestEAGLContext()
-{
-    EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    if (context == nil) {
-        context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-    }
-    return context;
-}
 
 + (void)initialize
 {
@@ -56,11 +48,40 @@ EAGLContext* CreateBestEAGLContext()
 
 - (void)dealloc
 {
-	glDeleteTextures(1, &texture);
+    if (alternateThreadDepthRenderbuffer > 0)
+    {
+        glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer);
+    }
+    if (alternateThreadColorTextureBack > 0)
+    {
+        glDeleteTextures(1, &alternateThreadColorTextureBack);
+    }
+    if (alternateThreadColorTextureFront > 0)
+    {
+        glDeleteTextures(1, &alternateThreadColorTextureFront);
+    }
+    if (alternateThreadFramebuffer > 0)
+    {
+        glDeleteFramebuffers(1, &alternateThreadFramebuffer);
+    }
+    if (crtShaderProgram > 0)
+    {
+        glDeleteProgram(crtShaderProgram);
+    }
+    if (crtFragmentShader > 0)
+    {
+        glDeleteShader(crtFragmentShader);
+    }
+    if (crtVertexShader > 0)
+    {
+        glDeleteShader(crtVertexShader);
+    }
+    glDeleteTextures(1, &texture);
 	self.effect = nil;
 	self.glContext = nil;
 	self.emulatorCore = nil;
-    _alternateContext = nil;
+    self.alternateThreadGLContext = nil;
+    self.alternateThreadEffect = nil;
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
@@ -68,8 +89,9 @@ EAGLContext* CreateBestEAGLContext()
 	if ((self = [super init]))
 	{
 		self.emulatorCore = emulatorCore;
-        if([emulatorCore rendersToOpenGL]) {
-            emulatorCore.renderDelegate = self;
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            self.emulatorCore.renderDelegate = self;
         }
 	}
 
@@ -79,19 +101,24 @@ EAGLContext* CreateBestEAGLContext()
 - (void)viewDidLoad
 {
 	[super viewDidLoad];
-	
+
 	[self setPreferredFramesPerSecond:60];
-	
-    self.glContext = CreateBestEAGLContext();
+
+	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 	[EAGLContext setCurrentContext:self.glContext];
-	
+
 	GLKView *view = (GLKView *)self.view;
     view.context = self.glContext;
-	
+
 	self.effect = [[GLKBaseEffect alloc] init];
-	
+
 	[self setupTexture];
     [self setupCRTShader];
+    
+    alternateThreadFramebuffer = 0;
+    alternateThreadColorTextureBack = 0;
+    alternateThreadColorTextureFront = 0;
+    alternateThreadDepthRenderbuffer = 0;
 }
 
 - (void)viewDidLayoutSubviews
@@ -251,18 +278,16 @@ EAGLContext* CreateBestEAGLContext()
     crtVertexShader = [self compileShaderResource:@"shader_crt_vertex" ofType:GL_VERTEX_SHADER];
     crtFragmentShader = [self compileShaderResource:@"shader_crt_fragment" ofType:GL_FRAGMENT_SHADER];
     crtShaderProgram = [self linkVertexShader:crtVertexShader withFragmentShader:crtFragmentShader];
+    crtUniform_DisplayRect = glGetUniformLocation( crtShaderProgram, "DisplayRect" );
     crtUniform_EmulatedImage = glGetUniformLocation( crtShaderProgram, "EmulatedImage" );
-    crtUniform_EmulatedImageRes = glGetUniformLocation( crtShaderProgram, "EmulatedImageRes" );
+    crtUniform_EmulatedImageSize = glGetUniformLocation( crtShaderProgram, "EmulatedImageSize" );
     crtUniform_FinalRes = glGetUniformLocation( crtShaderProgram, "FinalRes" );
 }
 
 - (void)setupTexture
 {
-    //GLenum error;
 	glGenTextures(1, &texture);
-    //error = glGetError();
 	glBindTexture(GL_TEXTURE_2D, texture);
-    //error = glGetError();
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
 	if ([[PVSettingsModel sharedInstance] imageSmoothing] || [[PVSettingsModel sharedInstance] crtFilterEnabled])
 	{
@@ -275,258 +300,324 @@ EAGLContext* CreateBestEAGLContext()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //error = glGetError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //error = glGetError();
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
-    void (^renderBlock)(void) = ^() {
+    __block CGRect screenRect;
+    __block const void* videoBuffer;
+    __block GLenum videoBufferPixelFormat;
+    __block GLenum videoBufferPixelType;
+    __block CGSize videoBufferSize;
+    
+    void (^fetchVideoBuffer)(void) = ^()
+    {
+        screenRect = [self.emulatorCore screenRect];
+        videoBufferPixelFormat = [self.emulatorCore pixelFormat];
+        videoBufferPixelType = [self.emulatorCore pixelType];
+        videoBufferSize = [self.emulatorCore bufferSize];
+        videoBuffer = [self.emulatorCore videoBuffer];
+    };
+    
+    void (^renderBlock)(void) = ^()
+    {
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        CGSize screenSize = [self.emulatorCore screenRect].size;
-        CGSize bufferSize = [self.emulatorCore bufferSize];
-
-        CGFloat texWidth = (screenSize.width / bufferSize.width);
-        CGFloat texHeight = (screenSize.height / bufferSize.height);
-
-        // Determine if core wants special sizing
-        BOOL widescreen = [self.emulatorCore wideScreen];
         
-        if(widescreen) {
-            vertices[0] = GLKVector3Make(-1.2, -1.0,  1.0); // Left  bottom
-            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-            vertices[3] = GLKVector3Make(-1.2,  1.0,  1.0); // Left  top
-            
-            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-            textureCoordinates[1] = GLKVector2Make(texWidth*1.1f, texHeight); // Right bottom
-            textureCoordinates[2] = GLKVector2Make(texWidth*1.1f, 0.0f); // Right top
-            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); // Left top
-        } else {
-            vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
-            vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-            vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-            vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
-            
-            textureCoordinates[0] = GLKVector2Make(0.0f, texHeight); // Left bottom
-            textureCoordinates[1] = GLKVector2Make(texWidth, texHeight); // Right bottom
-            textureCoordinates[2] = GLKVector2Make(texWidth, 0.0f); // Right top
-            textureCoordinates[3] = GLKVector2Make(0.0f, 0.0f); //
+        CGFloat texLeft = screenRect.origin.x / videoBufferSize.width;
+        CGFloat texTop = screenRect.origin.y / videoBufferSize.height;
+        CGFloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
+        CGFloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            // Rendered textures are flipped upside down
+            texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+            texBottom = screenRect.origin.y / videoBufferSize.height;
         }
-
+        
+        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
+        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
+        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
+        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
+        
+        textureCoordinates[0] = GLKVector2Make(texLeft, texBottom); // Left bottom
+        textureCoordinates[1] = GLKVector2Make(texRight, texBottom); // Right bottom
+        textureCoordinates[2] = GLKVector2Make(texRight, texTop); // Right top
+        textureCoordinates[3] = GLKVector2Make(texLeft, texTop); // Left top
+        
         int vertexIndices[6] = {
             // Front
             0, 1, 2,
             0, 2, 3,
         };
-
+        
         for (int i = 0; i < 6; i++) {
             triangleVertices[i]  = vertices[vertexIndices[i]];
             triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
         }
-
-        CGFloat width = self.emulatorCore.bufferSize.width;
-        CGFloat height = self.emulatorCore.bufferSize.height;
-        GLenum pixelFormat = [self.emulatorCore pixelFormat];
-        GLenum pixelType  =  [self.emulatorCore pixelType];
-        GLenum internalPixelFormat = [self.emulatorCore internalPixelFormat];
         
-        glBindTexture(GL_TEXTURE_2D, texture);
-// Some stuff i'm playing with from various docs on texture shring -joem
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexImage2D(GL_TEXTURE_2D, 0, internalPixelFormat,  width, height, 0, pixelFormat, pixelType, NULL);
-//        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, pixelFormat, pixelType, self.emulatorCore.videoBuffer);
-
-        // Apple Open GL has an effect for rendering a tetxture. 
-//        if (texture)
-//        {
-//            self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
-//            self.effect.texture2d0.target = GLKTextureTarget2D;
-//            self.effect.texture2d0.name = texture;
-//            self.effect.texture2d0.enabled = YES;
-//            self.effect.useConstantColor = YES;
-//        }
-//
-//        [self.effect prepareToDraw];
-  //      error = glGetError();
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-//error = glGetError();
-        if (texture)
+        GLuint frontBufferTex;
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            glFlush();
+            frontBufferTex = alternateThreadColorTextureFront;
+        }
+        else
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, videoBufferSize.width, videoBufferSize.height, videoBufferPixelFormat, videoBufferPixelType, videoBuffer);
+            frontBufferTex = texture;
+        }
+        
+        if (frontBufferTex)
         {
             if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
             {
-                glActiveTexture( GL_TEXTURE0 );
-                glBindTexture( GL_TEXTURE_2D, texture );
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, frontBufferTex);
             }
             else
             {
                 self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
                 self.effect.texture2d0.target = GLKTextureTarget2D;
-                self.effect.texture2d0.name = texture;
+                self.effect.texture2d0.name = frontBufferTex;
                 self.effect.texture2d0.enabled = YES;
                 self.effect.useConstantColor = YES;
             }
         }
-
-        if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
+        
+        if ([[PVSettingsModel sharedInstance] crtFilterEnabled])
         {
-            glUseProgram( crtShaderProgram );
-            glUniform1i( crtUniform_EmulatedImage, 0 );
-            glUniform4f( crtUniform_EmulatedImageRes, screenSize.width, screenSize.height, bufferSize.width, bufferSize.height );
+            glUseProgram(crtShaderProgram);
+            glUniform4f(crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
+            glUniform1i(crtUniform_EmulatedImage, 0);
+            glUniform2f(crtUniform_EmulatedImageSize, videoBufferSize.width, videoBufferSize.height);
             float finalResWidth = view.drawableWidth;
             float finalResHeight = view.drawableHeight;
-            glUniform2f( crtUniform_FinalRes, finalResWidth, finalResHeight );
+            glUniform2f(crtUniform_FinalRes, finalResWidth, finalResHeight);
         }
         else
         {
             [self.effect prepareToDraw];
         }
-
+        
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
-
+        
         glEnableVertexAttribArray(GLKVertexAttribPosition);
         glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
-
+        
         if (texture)
         {
             glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
             glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
         }
-
+        
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        
         if (texture)
         {
             glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
         }
-
+        
         glDisableVertexAttribArray(GLKVertexAttribPosition);
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
     };
-
-    if (self.emulatorCore.isSpeedModified)
+    
+    if ([self.emulatorCore rendersToOpenGL])
     {
-        renderBlock();
+        if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
+        {
+            [self.emulatorCore.frontBufferCondition lock];
+            while (!self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+            [self.emulatorCore setIsFrontBufferReady:NO];
+            [self.emulatorCore.frontBufferCondition signal];
+            [self.emulatorCore.frontBufferLock lock];
+            fetchVideoBuffer();
+            renderBlock();
+            [self.emulatorCore.frontBufferLock unlock];
+            [self.emulatorCore.frontBufferCondition unlock];
+        }
     }
     else
     {
-        @synchronized(self.emulatorCore)
+        if (self.emulatorCore.isSpeedModified)
         {
+            fetchVideoBuffer();
             renderBlock();
+        }
+        else
+        {
+            if (self.emulatorCore.isDoubleBuffered)
+            {
+                [self.emulatorCore.frontBufferCondition lock];
+                while (!self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+                [self.emulatorCore setIsFrontBufferReady:NO];
+                [self.emulatorCore.frontBufferLock lock];
+                fetchVideoBuffer();
+                renderBlock();
+                [self.emulatorCore.frontBufferLock unlock];
+                [self.emulatorCore.frontBufferCondition unlock];
+            }
+            else
+            {
+                @synchronized(self.emulatorCore)
+                {
+                    fetchVideoBuffer();
+                    renderBlock();
+                }
+            }
         }
     }
 }
 
 #pragma mark - PVRenderDelegate protocol methods
 
-- (void)setEnableVSync:(BOOL)flag
-{
-//    [self updateEnableVSync:flag];
-}
-
-- (void)willExecute
-{
-    if([_emulatorCore rendersToOpenGL]) {
-        [self beginDrawToIOSurface];
-    }
-}
-
-- (void)didExecute
-{
-    [self endDrawToIOSurface];
-}
-
-- (void)willRenderOnAlternateThread
-{
-    if(_alternateContext == NULL) {
-        _alternateContext = [[EAGLContext alloc] initWithAPI:_glContext.API sharegroup:[_glContext sharegroup]];
-
-        if (!_alternateContext || ![EAGLContext setCurrentContext:_alternateContext]) {
-            // Handle errors here
-            NSLog(@"Failed to create alternate context");
-        }
-    }
-}
-
 - (void)startRenderingOnAlternateThread
 {
-    [self renderStart];
+    self.alternateThreadGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
+    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+    
+    self.alternateThreadEffect = [[GLKBaseEffect alloc] init];
 }
 
 - (void)willRenderFrameOnAlternateThread
 {
-    [EAGLContext setCurrentContext:_alternateContext];
+    // Setup framebuffer
+    if (alternateThreadFramebuffer == 0)
+    {
+        glGenFramebuffers(1, &alternateThreadFramebuffer);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebuffer);
+    
+    // Setup back buffer color texture
+    if (alternateThreadColorTextureBack == 0)
+    {
+        glGenTextures(1, &alternateThreadColorTextureBack);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        NSAssert( !((unsigned int)self.emulatorCore.bufferSize.width & ((unsigned int)self.emulatorCore.bufferSize.width - 1)), @"Emulator buffer width is not a power of two!" );
+        NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
+    
+    // Setup depth buffer
+    if (alternateThreadDepthRenderbuffer == 0)
+    {
+        glGenRenderbuffers(1, &alternateThreadDepthRenderbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, alternateThreadDepthRenderbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, alternateThreadDepthRenderbuffer);
+    }
+    
+    // Copy front buffer to back buffer
+    if (alternateThreadColorTextureFront > 0)
+    {
+        glViewport(0, 0, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height);
+        
+        self.alternateThreadEffect.texture2d0.envMode = GLKTextureEnvModeReplace;
+        self.alternateThreadEffect.texture2d0.target = GLKTextureTarget2D;
+        self.alternateThreadEffect.texture2d0.name = alternateThreadColorTextureFront;
+        self.alternateThreadEffect.texture2d0.enabled = YES;
+        self.alternateThreadEffect.useConstantColor = YES;
+        [self.effect prepareToDraw];
+        
+        GLboolean wasDepthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+        GLboolean wasCullingEnabled = glIsEnabled(GL_CULL_FACE);
+        GLboolean wasDepthWriteEnabled;
+        glGetBooleanv( GL_DEPTH_WRITEMASK, &wasDepthWriteEnabled );
+    
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        glDepthMask(GL_FALSE);
+        
+        GLKVector3 fullscreenVertices[] =
+        {
+            GLKVector3Make(-1.0, -1.0,  1.0),   // Left  bottom
+            GLKVector3Make( 1.0, -1.0,  1.0),   // Right bottom
+            GLKVector3Make( 1.0,  1.0,  1.0),   // Right top
+            GLKVector3Make(-1.0,  1.0,  1.0)    // Left  top
+        };
+        
+        GLKVector2 fullscreenTextureCoords[] =
+        {
+            GLKVector2Make(0.0, 0.0),   // Left bottom
+            GLKVector2Make(1.0, 0.0),   // Right bottom
+            GLKVector2Make(1.0, 1.0),   // Right top
+            GLKVector2Make(0.0, 1.0)    // Left top
+        };
+        
+        int vertexIndices[] =
+        {
+            // Front
+            0, 1, 2,
+            0, 2, 3,
+        };
+        
+        GLKVector3 fullscreenTriangleVertices[6];
+        GLKVector2 fullscreenTriangleTexCoords[6];
+        for (int i = 0; i < 6; i++)
+        {
+            fullscreenTriangleVertices[i]  = fullscreenVertices[vertexIndices[i]];
+            fullscreenTriangleTexCoords[i] = fullscreenTextureCoords[vertexIndices[i]];
+        }
+        
+        glEnableVertexAttribArray(GLKVertexAttribPosition);
+        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, fullscreenTriangleVertices);
+        
+        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, fullscreenTriangleTexCoords);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
+        
+        glDisableVertexAttribArray(GLKVertexAttribPosition);
+        
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
+        if (wasDepthTestEnabled)
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        if (wasCullingEnabled)
+        {
+            glEnable(GL_CULL_FACE);
+        }
+        if (wasDepthWriteEnabled)
+        {
+            glDepthMask(GL_TRUE);
+        }
+    }
+    
+    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
 }
 
 - (void)didRenderFrameOnAlternateThread
 {
-    [self renderEnd];
-    
-    if([_alternateContext presentRenderbuffer:GL_RENDERBUFFER] == NO)
+    if (alternateThreadColorTextureBack > 0)
     {
-        NSLog(@"SwapBuffers: [_alternateContext presentRenderbuffer:GL_RENDERBUFFER_OES] failed");
+        [self.emulatorCore.frontBufferLock lock];
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+        glFlush();
+        GLuint temp = alternateThreadColorTextureBack;
+        alternateThreadColorTextureBack = alternateThreadColorTextureFront;
+        alternateThreadColorTextureFront = temp;
+        [self.emulatorCore.frontBufferLock unlock];
+        
+        [self.emulatorCore.frontBufferCondition lock];
+        [self.emulatorCore setIsFrontBufferReady:YES];
+        [self.emulatorCore.frontBufferCondition signal];
+        [self.emulatorCore.frontBufferCondition unlock];
+        
+        [self.emulatorCore.frontBufferCondition lock];
+        while (self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+        [self.emulatorCore.frontBufferCondition unlock];
     }
 }
 
-#pragma mark - gl
-
-- (void)renderStart {
-//    @synchronized(self.emulatorCore) {
-        // 1. Ensure context A is not bound to the texture
-        [EAGLContext setCurrentContext:_glContext];
-        glBindTexture(GL_TEXTURE_2D, 0);
-        
-        // 2. Call flush on context A
-        glFlush();
-        
-        // 3. Modify the texture on context B
-        [EAGLContext setCurrentContext:_alternateContext];
-        glBindTexture(GL_TEXTURE_2D, texture);
-//    }
-}
-
--(void)renderEnd {
-//    @synchronized(self.emulatorCore) {
-    // 4. Call flush on context B
-        glFlush();
-        
-        // 5. Rebind the texture on context A
-        [EAGLContext setCurrentContext:_glContext];
-        glBindTexture(GL_TEXTURE_2D, texture);
-//    }
-}
-
-- (void)beginDrawToIOSurface
-{
-
-    [self renderStart];
-    [EAGLContext setCurrentContext:_glContext];
-    
-    GLenum status = glGetError();
-    if(status)
-    {
-        NSLog(@"drawIntoIOSurface: OpenGL error %04X", status);
-//        glDeleteTextures(1, &texture);
-//        texture = 0;
-//        
-//        glDeleteRenderbuffers(1, &_depthStencilRB);
-//        _depthStencilRB = 0;
-    }
-    
-}
-
-- (void)endDrawToIOSurface
-{
-
-    [self renderEnd];
-    [_glContext presentRenderbuffer:GL_RENDERBUFFER];
-    GLKView *view = (GLKView *)self.view;
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [view display];
-    });
-}
 @end
