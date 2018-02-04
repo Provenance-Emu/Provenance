@@ -228,8 +228,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * 127;
-            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * 127;
+            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * INT8_MAX;
+            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * INT8_MAX;
             
             padData[playerIndex][OEN64ButtonDPadUp] = dpad.up.isPressed;
             padData[playerIndex][OEN64ButtonDPadDown] = dpad.down.isPressed;
@@ -252,8 +252,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -127 : 0) + (dpad.right.value > 0.5 ? 127 : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -127 : 0) + (dpad.up.value > 0.5 ? 127 : 0);
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? INT8_MIN : 0) + (dpad.right.value > 0.5 ? INT8_MAX : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? INT8_MIN : 0) + (dpad.up.value > 0.5 ? INT8_MAX : 0);
             
             padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
             padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
@@ -269,8 +269,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -127 : 0) + (dpad.right.value > 0.5 ? 127 : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -127 : 0) + (dpad.up.value > 0.5 ? 127 : 0);
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? INT8_MIN : 0) + (dpad.right.value > 0.5 ? INT8_MAX : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? INT8_MIN : 0) + (dpad.up.value > 0.5 ? INT8_MAX : 0);
             
             padData[playerIndex][OEN64ButtonB] = gamepad.buttonA.isPressed;
             padData[playerIndex][OEN64ButtonA] = gamepad.buttonX.isPressed;
@@ -683,7 +683,6 @@ static void MupenSetAudioSpeed(int percent)
 
 - (oneway void)didMoveN64JoystickDirection:(OEN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
 {
-    player -= 1;
     switch (button)
     {
         case OEN64AnalogUp:

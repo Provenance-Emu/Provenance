@@ -34,16 +34,27 @@
         {
             [button setTag:OEN64ButtonB];
         }
-        else if ([[[button titleLabel] text] isEqualToString:@"Z"])
+        else if ([[[button titleLabel] text] isEqualToString:@"C▲"])
         {
-            [button setTag:OEN64ButtonZ];
+            [button setTag:OEN64ButtonCUp];
         }
-
+        else if ([[[button titleLabel] text] isEqualToString:@"C▼"])
+        {
+            [button setTag:OEN64ButtonCDown];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"C◀"])
+        {
+            [button setTag:OEN64ButtonCLeft];
+        }
+        else if ([[[button titleLabel] text] isEqualToString:@"C▶"])
+        {
+            [button setTag:OEN64ButtonCRight];
+        }
     }
     
     [self.leftShoulderButton setTag:OEN64ButtonL];
     [self.rightShoulderButton setTag:OEN64ButtonR];
-//    [self.selectButton setTag:OEN64ButtonStart];
+    [self.selectButton setTag:OEN64ButtonZ];
     [self.startButton setTag:OEN64ButtonStart];
 }
 
@@ -51,40 +62,40 @@
 {
     MupenGameCore *n64Core = (MupenGameCore *)self.emulatorCore;
     
-    [n64Core didReleaseN64Button:OEN64ButtonDPadUp forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadDown forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadLeft forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadRight forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogUp withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogLeft withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogRight withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogDown withValue:0 forPlayer:0];
     
     switch (direction)
     {
         case JSDPadDirectionUpLeft:
-            [n64Core didPushN64Button:OEN64ButtonDPadUp forPlayer:0];
-            [n64Core didPushN64Button:OEN64ButtonDPadLeft forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogUp withValue:1 forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogLeft withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionUp:
-            [n64Core didPushN64Button:OEN64ButtonDPadUp forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogUp withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionUpRight:
-            [n64Core didPushN64Button:OEN64ButtonDPadUp forPlayer:0];
-            [n64Core didPushN64Button:OEN64ButtonDPadRight forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogUp withValue:1 forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogRight withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionLeft:
-            [n64Core didPushN64Button:OEN64ButtonDPadLeft forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogLeft withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionRight:
-            [n64Core didPushN64Button:OEN64ButtonDPadRight forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogRight withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionDownLeft:
-            [n64Core didPushN64Button:OEN64ButtonDPadDown forPlayer:0];
-            [n64Core didPushN64Button:OEN64ButtonDPadLeft forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogDown withValue:1 forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogLeft withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionDown:
-            [n64Core didPushN64Button:OEN64ButtonDPadDown forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogDown withValue:1 forPlayer:0];
             break;
         case JSDPadDirectionDownRight:
-            [n64Core didPushN64Button:OEN64ButtonDPadDown forPlayer:0];
-            [n64Core didPushN64Button:OEN64ButtonDPadRight forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogDown withValue:1 forPlayer:0];
+            [n64Core didMoveN64JoystickDirection:OEN64AnalogRight withValue:1 forPlayer:0];
             break;
         default:
             break;
@@ -97,16 +108,16 @@
 {
     MupenGameCore *n64Core = (MupenGameCore *)self.emulatorCore;
     
-    [n64Core didReleaseN64Button:OEN64ButtonDPadUp forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadDown forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadLeft forPlayer:0];
-    [n64Core didReleaseN64Button:OEN64ButtonDPadRight forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogUp withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogLeft withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogRight withValue:0 forPlayer:0];
+    [n64Core didMoveN64JoystickDirection:OEN64AnalogDown withValue:0 forPlayer:0];
 }
 
 - (void)buttonPressed:(JSButton *)button
 {
     MupenGameCore *n64Core = (MupenGameCore *)self.emulatorCore;
-    [n64Core didReleaseN64Button:(OEN64Button)[button tag] forPlayer:0];
+    [n64Core didPushN64Button:(OEN64Button)[button tag] forPlayer:0];
     
     [self vibrate];
 }
