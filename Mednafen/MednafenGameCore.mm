@@ -74,7 +74,8 @@ static inline OEIntRect OEIntRectMake(int x, int y, int width, int height)
 }
 
 static MDFNGI *game;
-static MDFN_Surface *surf;
+static MDFN_Surface *backBufferSurf;
+static MDFN_Surface *frontBufferSurf;
 
 namespace MDFN_IEN_VB
 {
@@ -892,7 +893,8 @@ static void mednafen_init(MednafenGameCore* current)
         free(inputBuffer[i]);
     }
 
-    delete surf;
+    delete backBufferSurf;
+    delete frontBufferSurf;
     
     if (_current == self) {
         _current = nil;
@@ -909,7 +911,7 @@ static void emulation_run() {
     rects[0] = ~0;
 
     EmulateSpecStruct spec = {0};
-    spec.surface = surf;
+    spec.surface = backBufferSurf;
     spec.SoundRate = current->sampleRate;
     spec.SoundBuf = sound_buf;
     spec.LineWidths = rects;
@@ -921,24 +923,10 @@ static void emulation_run() {
 
     current->mednafenCoreTiming = current->masterClock / spec.MasterCycles;
     
-    // Fix for game stutter. mednafenCoreTiming flutters on init before settling and we only read it
-    // after the first frame wot set the current->gameInterval in the super class. This work around
-    // resets the value after a few frames. -Joe M
-    static int fixCount = 0;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        // The looping counter wasn't enough sometimes, just adding a 2 second one time trigger to rsset frame timing
-        // Need to investigate more why this happens at all but this seems to resolve with no known side effects - jm
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            current->gameInterval = 1.0 / current->mednafenCoreTiming;
-        });
-    });
-    
-    if(fixCount < 10) {
-        current->gameInterval = 1.0 / current->mednafenCoreTiming;
-        NSLog(@"%f", current->mednafenCoreTiming);
-        fixCount++;
-    }
+    // Fix for game stutter. mednafenCoreTiming flutters on init before settling so
+    // now we reset the game speed each frame to make sure current->gameInterval
+    // is up to date while respecting the current game speed setting
+    [current setGameSpeed:[current gameSpeed]];
 
     if(current->systemType == psx)
     {
@@ -1047,7 +1035,8 @@ static void emulation_run() {
     
     // BGRA pixel format
     MDFN_PixelFormat pix_fmt(MDFN_COLORSPACE_RGB, 16, 8, 0, 24);
-    surf = new MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
+    backBufferSurf = new MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
+    frontBufferSurf = new MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
 
     masterClock = game->MasterClock >> 32;
 
@@ -1198,8 +1187,14 @@ static void emulation_run() {
 
 - (CGSize)bufferSize
 {
-    
-    return CGSizeMake(game->fb_width, game->fb_height);
+    if ( game == NULL )
+    {
+        return CGSizeMake(0, 0);
+    }
+    else
+    {
+        return CGSizeMake(game->fb_width, game->fb_height);
+    }
 }
 
 - (CGSize)aspectSize
@@ -1209,7 +1204,14 @@ static void emulation_run() {
 
 - (const void *)videoBuffer
 {
-    return surf->pixels;
+    if ( frontBufferSurf == NULL )
+    {
+        return NULL;
+    }
+    else
+    {
+        return frontBufferSurf->pixels;
+    }
 }
 
 - (GLenum)pixelFormat
@@ -1227,18 +1229,15 @@ static void emulation_run() {
     return GL_RGBA;
 }
 
-- (BOOL)wideScreen {
-    switch (systemType) {
-        case psx:
-            return YES;
-        case neogeo:
-        case lynx:
-        case pce:
-        case pcfx:
-        case vb:
-        case wswan:
-            return NO;
-    }
+- (BOOL)isDoubleBuffered {
+    return YES;
+}
+
+- (void)swapBuffers
+{
+    MDFN_Surface *tempSurf = backBufferSurf;
+    backBufferSurf = frontBufferSurf;
+    frontBufferSurf = tempSurf;
 }
 
 # pragma mark - Audio
