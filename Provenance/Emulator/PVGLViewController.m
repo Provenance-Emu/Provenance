@@ -448,6 +448,8 @@
         {
             fetchVideoBuffer();
             renderBlock();
+            [self.emulatorCore.frontBufferLock unlock];
+            [self.emulatorCore.frontBufferCondition unlock];
         }
         else
         {
