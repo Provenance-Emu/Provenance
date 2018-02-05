@@ -490,10 +490,25 @@ static void MupenSetAudioSpeed(int percent)
     [self executeFrameSkippingFrame:NO];
 }
 
+- (void)setPauseEmulation:(BOOL)flag
+{
+    [super setPauseEmulation:flag];
+    if (flag)
+    {
+        dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+        [self.frontBufferCondition lock];
+        [self.frontBufferCondition signal];
+        [self.frontBufferCondition unlock];
+    }
+}
+
 - (void)stopEmulation
 {
     CoreDoCommand(M64CMD_STOP, 0, NULL);
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    [self.frontBufferCondition lock];
+    [self.frontBufferCondition signal];
+    [self.frontBufferCondition unlock];
 }
 
 - (void)resetEmulation
@@ -501,38 +516,48 @@ static void MupenSetAudioSpeed(int percent)
     // FIXME: do we want/need soft reset? It doesn’t seem to work well with sending M64CMD_RESET alone
     // FIXME: (astrange) should this method worry about this instance’s dispatch semaphores?
     CoreDoCommand(M64CMD_RESET, 1 /* hard reset */, NULL);
+    dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    [self.frontBufferCondition lock];
+    [self.frontBufferCondition signal];
+    [self.frontBufferCondition unlock];
 }
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-    [self saveStateToFileAtPath:fileName completionHandler:nil];
-    // FIXME: Return real save result
-    return YES;
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_group_enter(group);
+    __block BOOL savedSuccessfully = NO;
+    [self saveStateToFileAtPath:fileName completionHandler:^(BOOL success, NSError *error)
+     {
+         savedSuccessfully = success;
+         dispatch_group_leave(group);
+     }];
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    return savedSuccessfully;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
+    __block BOOL wasPaused = [self isEmulationPaused];
     [self OE_addHandlerForType:M64CORE_STATE_SAVECOMPLETE usingBlock:
      ^ BOOL (m64p_core_param paramType, int newValue)
      {
-         [self setPauseEmulation:YES];
+         [self setPauseEmulation:wasPaused];
          NSAssert(paramType == M64CORE_STATE_SAVECOMPLETE, @"This block should only be called for save completion!");
-         dispatch_async(dispatch_get_main_queue(), ^{
-             if(newValue == 0)
-             {
-                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-5 userInfo:@{
-                     NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
-                     NSFilePathErrorKey : fileName
-                 }];
-                 if (block) {
-                     block(NO, error);
-                 }
-                 return;
-             }
-
+         if(newValue == 0)
+         {
+             NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-5 userInfo:@{
+                 NSLocalizedDescriptionKey : @"Mupen Could not save the current state.",
+                 NSFilePathErrorKey : fileName
+             }];
              if (block) {
-                 block(YES, nil);
+                 block(NO, error);
              }
-         });
+             return NO;
+         }
+
+         if (block) {
+             block(YES, nil);
+         }
          return NO;
      }];
 
@@ -563,32 +588,39 @@ static void MupenSetAudioSpeed(int percent)
 
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    [self loadStateFromFileAtPath:fileName completionHandler:nil];
-    return YES;
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_group_enter(group);
+    __block BOOL loadedSuccessfully = NO;
+    [self loadStateFromFileAtPath:fileName completionHandler:^(BOOL success, NSError *error)
+     {
+         loadedSuccessfully = success;
+         dispatch_group_leave(group);
+     }];
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    return loadedSuccessfully;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block
 {
+    __block BOOL wasPaused = [self isEmulationPaused];
     [self OE_addHandlerForType:M64CORE_STATE_LOADCOMPLETE usingBlock:
      ^ BOOL (m64p_core_param paramType, int newValue)
      {
          NSAssert(paramType == M64CORE_STATE_LOADCOMPLETE, @"This block should only be called for load completion!");
 
-         [self setPauseEmulation:YES];
-         dispatch_async(dispatch_get_main_queue(), ^{
-             if(newValue == 0)
-             {
-                 NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-3 userInfo:@{
-                     NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
-                     NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
-                     NSFilePathErrorKey : fileName
-                 }];
-                 block(NO, error);
-                 return;
-             }
+         [self setPauseEmulation:wasPaused];
+         if(newValue == 0)
+         {
+             NSError *error = [NSError errorWithDomain:@"org.openemu.GameCore.ErrorDomain" code:-3 userInfo:@{
+                 NSLocalizedDescriptionKey : @"Mupen Could not load the save state",
+                 NSLocalizedRecoverySuggestionErrorKey : @"The loaded file is probably corrupted.",
+                 NSFilePathErrorKey : fileName
+             }];
+             block(NO, error);
+             return NO;
+         }
 
-             block(YES, nil);
-         });
+         block(YES, nil);
          return NO;
      }];
 

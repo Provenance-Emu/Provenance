@@ -432,12 +432,16 @@
         if ((!self.emulatorCore.isSpeedModified && ![self.emulatorCore isEmulationPaused]) || self.emulatorCore.isFrontBufferReady)
         {
             [self.emulatorCore.frontBufferCondition lock];
-            while (!self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+            while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
+            BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
             [self.emulatorCore setIsFrontBufferReady:NO];
             [self.emulatorCore.frontBufferCondition signal];
             [self.emulatorCore.frontBufferLock lock];
-            fetchVideoBuffer();
-            renderBlock();
+            if (isFrontBufferReady)
+            {
+                fetchVideoBuffer();
+                renderBlock();
+            }
             [self.emulatorCore.frontBufferLock unlock];
             [self.emulatorCore.frontBufferCondition unlock];
         }
