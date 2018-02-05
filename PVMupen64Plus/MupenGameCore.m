@@ -389,7 +389,7 @@ static void MupenSetAudioSpeed(int percent)
 
     // Disable dynarec (for debugging)
     m64p_handle section;
-#ifdef DEBUG
+#if 1 // defined(DEBUG)
     int ival = 0;
 #else
     int ival = 2;
