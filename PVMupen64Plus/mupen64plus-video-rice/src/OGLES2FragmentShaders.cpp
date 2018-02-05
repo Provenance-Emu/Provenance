@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define ALPHA_TEST "    if(gl_FragColor.a < AlphaRef) discard;       \n"
 
-GLuint vertexProgram = 9999;
 const char *vertexShader =
 "#version " GLSL_VERSION                                   "\n"\
 "attribute mediump vec4 aPosition;                          \n"\
@@ -449,18 +448,11 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
     OGLShaderCombinerSaveType res;
     GLint success;
 
-    if(vertexProgram == 9999)
-    {
-        vertexProgram = res.vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(res.vertexShaderID, 1, &vertexShader,NULL);
-        OPENGL_CHECK_ERRORS;
-        glCompileShader(res.vertexShaderID);
-        OPENGL_CHECK_ERRORS;
-    }
-    else
-    {
-        res.vertexShaderID = vertexProgram;
-    }
+    res.vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(res.vertexShaderID, 1, &vertexShader,NULL);
+    OPENGL_CHECK_ERRORS;
+    glCompileShader(res.vertexShaderID);
+    OPENGL_CHECK_ERRORS;
 
 
     //Create 4 shaders, with and without alphatest + with and without fog
@@ -530,7 +522,7 @@ int COGL_FragmentProgramCombiner::ParseDecodedMux()
         {
             char Log[1024];
             GLint nLength;
-            glGetShaderInfoLog(res.fragmentShaderID, 1024, &nLength, Log);
+            glGetProgramInfoLog(res.programID, 1024, &nLength, Log);
             printf("Error linking program!\n");
             printf("%s\n",Log);
         }
