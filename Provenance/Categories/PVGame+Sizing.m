@@ -19,7 +19,8 @@ CGFloat const PVGameBoxArtAspectRatioTall = 0.7;
 {
     CGFloat imageAspectRatio = PVGameBoxArtAspectRatioSquare;
     
-    if ([self.systemIdentifier isEqualToString:PVSNESSystemIdentifier]) {
+    if ([self.systemIdentifier isEqualToString:PVSNESSystemIdentifier] ||
+        [self.systemIdentifier isEqualToString:PVN64SystemIdentifier]) {
         imageAspectRatio = PVGameBoxArtAspectRatioWide;
     }
     else if ([self.systemIdentifier isEqualToString:PVNESSystemIdentifier] ||

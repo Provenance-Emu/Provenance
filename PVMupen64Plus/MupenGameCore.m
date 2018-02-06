@@ -244,10 +244,12 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
             padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
             
-            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.isPressed;
-            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.isPressed;
-            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.isPressed;
-            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.isPressed;
+            float rightJoystickDeadZone = 0.15;
+            
+            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -437,13 +439,14 @@ static void MupenSetAudioSpeed(int percent)
     
     // Load RSP
     // Configure if using rsp-cxd4 plugin
-    m64p_handle configRSP;
-    ConfigOpenSection("rsp-cxd4", &configRSP);
-    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
-    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
-    
-    LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
-    
+//    m64p_handle configRSP;
+//    ConfigOpenSection("rsp-cxd4", &configRSP);
+//    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
+//    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
+//    
+//    LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
+    LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
+
     return YES;
 }
 
