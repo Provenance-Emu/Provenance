@@ -56,6 +56,8 @@ NSString *MupenControlNames[] = {
     @"N64_B", @"N64_A", @"N64_R", @"N64_L", @"N64_Z", @"N64_Start"
 }; // FIXME: missing: joypad X, joypad Y, mempak switch, rumble switch
 
+#define N64_ANALOG_MAX 80
+
 @interface MupenGameCore () <OEN64SystemResponderClient, GLKViewDelegate>
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
 
@@ -228,8 +230,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * INT8_MAX;
-            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * INT8_MAX;
+            xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
+            yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
             
             padData[playerIndex][OEN64ButtonDPadUp] = dpad.up.isPressed;
             padData[playerIndex][OEN64ButtonDPadDown] = dpad.down.isPressed;
@@ -254,8 +256,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? INT8_MIN : 0) + (dpad.right.value > 0.5 ? INT8_MAX : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? INT8_MIN : 0) + (dpad.up.value > 0.5 ? INT8_MAX : 0);
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
             
             padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
             padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
@@ -271,8 +273,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
             
-            xAxis[playerIndex] = (dpad.left.value > 0.5 ? INT8_MIN : 0) + (dpad.right.value > 0.5 ? INT8_MAX : 0);
-            yAxis[playerIndex] = (dpad.down.value > 0.5 ? INT8_MIN : 0) + (dpad.up.value > 0.5 ? INT8_MAX : 0);
+            xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
+            yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
             
             padData[playerIndex][OEN64ButtonB] = gamepad.buttonA.isPressed;
             padData[playerIndex][OEN64ButtonA] = gamepad.buttonX.isPressed;
@@ -722,16 +724,16 @@ static void MupenSetAudioSpeed(int percent)
     switch (button)
     {
         case OEN64AnalogUp:
-            yAxis[player] = value * INT8_MAX;
+            yAxis[player] = value * N64_ANALOG_MAX;
             break;
         case OEN64AnalogDown:
-            yAxis[player] = value * INT8_MIN;
+            yAxis[player] = value * -N64_ANALOG_MAX;
             break;
         case OEN64AnalogLeft:
-            xAxis[player] = value * INT8_MIN;
+            xAxis[player] = value * -N64_ANALOG_MAX;
             break;
         case OEN64AnalogRight:
-            xAxis[player] = value * INT8_MAX;
+            xAxis[player] = value * N64_ANALOG_MAX;
             break;
         default:
             break;
