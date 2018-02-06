@@ -256,12 +256,14 @@ DECLARE_INSTRUCTION(ADD)
    rrd = SE32(rrs32 + rrt32);
    ADD_TO_PC(1);
 }
+#pragma clang optimize off
 
 DECLARE_INSTRUCTION(ADDU)
 {
    rrd = SE32(rrs32 + rrt32);
    ADD_TO_PC(1);
 }
+#pragma clang optimize on
 
 DECLARE_INSTRUCTION(SUB)
 {

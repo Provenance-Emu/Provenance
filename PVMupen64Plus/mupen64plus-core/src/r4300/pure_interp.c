@@ -45,8 +45,6 @@
 #include "debugger/dbg_types.h"
 #endif
 
-#pragma clang optimize off
-
 static precomp_instr interp_PC;
 
 static void InterpretOpcode(void);
@@ -742,4 +740,3 @@ void pure_interpreter(void)
    }
 }
 
-#pragma clang optimize on

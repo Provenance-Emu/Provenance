@@ -387,19 +387,18 @@ static void MupenSetAudioSpeed(int percent)
     ConfigOpenSection("Core", &config);
     ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [batterySavesDirectory UTF8String]);
     ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
-    ConfigSaveSection("Core");
 
     // Disable dynarec (for debugging)
     m64p_handle section;
-#if 1 // defined(DEBUG)
+#if 0 // defined(DEBUG)
     int ival = 0;
 #else
-    int ival = 2;
+    int ival = 1;
 #endif
     
-    ConfigOpenSection("Core", &section);
-    ConfigSetParameter(section, "R4300Emulator", M64TYPE_INT, &ival);
-        
+    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &ival);
+    ConfigSaveSection("Core");
+
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
     
