@@ -529,23 +529,35 @@
 
 - (void)didRenderFrameOnAlternateThread
 {
-    if (alternateThreadColorTextureBack > 0)
+    [self.emulatorCore.frontBufferLock lock];
+    
+    // Copy back buffer to front buffer
+    GLint activeTextureUnit;
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTextureUnit);
+    glActiveTexture(GL_TEXTURE0);
+    GLboolean texturingEnabled;
+    glGetBooleanv(GL_TEXTURE_2D, &texturingEnabled);
+    glEnable(GL_TEXTURE_2D);
+    GLint textureBinding;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D,&textureBinding);
+    glBindTexture(GL_TEXTURE_2D,alternateThreadColorTextureFront);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
+    glBindTexture(GL_TEXTURE_2D,textureBinding);
+    if (!texturingEnabled)
     {
-        [self.emulatorCore.frontBufferLock lock];
-        GLuint temp = alternateThreadColorTextureBack;
-        alternateThreadColorTextureBack = alternateThreadColorTextureFront;
-        alternateThreadColorTextureFront = temp;
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
-        glFlush();
-        [self.emulatorCore.frontBufferLock unlock];
-        
-        [self.emulatorCore.frontBufferCondition lock];
-        [self.emulatorCore setIsFrontBufferReady:YES];
-        [self.emulatorCore.frontBufferCondition signal];
-        [self.emulatorCore.frontBufferCondition unlock];
-        
-        glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
+        glDisable(GL_TEXTURE_2D);
     }
+    glActiveTexture(activeTextureUnit);
+    
+    glFlush();
+    [self.emulatorCore.frontBufferLock unlock];
+    
+    [self.emulatorCore.frontBufferCondition lock];
+    [self.emulatorCore setIsFrontBufferReady:YES];
+    [self.emulatorCore.frontBufferCondition signal];
+    [self.emulatorCore.frontBufferCondition unlock];
+    
+    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
 }
 
 @end
