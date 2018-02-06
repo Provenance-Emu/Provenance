@@ -27,8 +27,7 @@
     int crtUniform_FinalRes;
     
     GLuint alternateThreadFramebuffer;
-    GLuint alternateThreadColorTextureBack;
-    GLuint alternateThreadColorTextureFront;
+    GLuint alternateThreadColorTexture;
     GLuint alternateThreadDepthRenderbuffer;
     
 	GLuint texture;
@@ -52,13 +51,9 @@
     {
         glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer);
     }
-    if (alternateThreadColorTextureBack > 0)
+    if (alternateThreadColorTexture > 0)
     {
-        glDeleteTextures(1, &alternateThreadColorTextureBack);
-    }
-    if (alternateThreadColorTextureFront > 0)
-    {
-        glDeleteTextures(1, &alternateThreadColorTextureFront);
+        glDeleteTextures(1, &alternateThreadColorTexture);
     }
     if (alternateThreadFramebuffer > 0)
     {
@@ -116,8 +111,7 @@
     [self setupCRTShader];
     
     alternateThreadFramebuffer = 0;
-    alternateThreadColorTextureBack = 0;
-    alternateThreadColorTextureFront = 0;
+    alternateThreadColorTexture = 0;
     alternateThreadDepthRenderbuffer = 0;
 }
 
@@ -360,7 +354,7 @@
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
-            frontBufferTex = alternateThreadColorTextureFront;
+            frontBufferTex = alternateThreadColorTexture;
         }
         else
         {
@@ -434,8 +428,6 @@
             [self.emulatorCore.frontBufferCondition lock];
             while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
             BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
-            [self.emulatorCore setIsFrontBufferReady:NO];
-            [self.emulatorCore.frontBufferCondition signal];
             [self.emulatorCore.frontBufferLock lock];
             if (isFrontBufferReady)
             {
@@ -443,6 +435,8 @@
                 renderBlock();
             }
             [self.emulatorCore.frontBufferLock unlock];
+            [self.emulatorCore setIsFrontBufferReady:NO];
+            [self.emulatorCore.frontBufferCondition signal];
             [self.emulatorCore.frontBufferCondition unlock];
         }
     }
@@ -495,25 +489,17 @@
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebuffer);
     
     // Setup color textures to render into
-    if (alternateThreadColorTextureBack == 0)
+    if (alternateThreadColorTexture == 0)
     {
-        glGenTextures(1, &alternateThreadColorTextureBack);
-        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+        glGenTextures(1, &alternateThreadColorTexture);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTexture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.width & ((unsigned int)self.emulatorCore.bufferSize.width - 1)), @"Emulator buffer width is not a power of two!" );
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-    if (alternateThreadColorTextureFront == 0)
-    {
-        glGenTextures(1, &alternateThreadColorTextureFront);
-        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureFront);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTexture, 0);
     
     // Setup depth buffer
     if (alternateThreadDepthRenderbuffer == 0)
@@ -529,32 +515,15 @@
 
 - (void)didRenderFrameOnAlternateThread
 {
-    [self.emulatorCore.frontBufferLock lock];
-    
-    // Copy back buffer to front buffer
-    GLint activeTextureUnit;
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTextureUnit);
-    glActiveTexture(GL_TEXTURE0);
-    GLboolean texturingEnabled;
-    glGetBooleanv(GL_TEXTURE_2D, &texturingEnabled);
-    glEnable(GL_TEXTURE_2D);
-    GLint textureBinding;
-    glGetIntegerv(GL_TEXTURE_BINDING_2D,&textureBinding);
-    glBindTexture(GL_TEXTURE_2D,alternateThreadColorTextureFront);
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
-    glBindTexture(GL_TEXTURE_2D,textureBinding);
-    if (!texturingEnabled)
-    {
-        glDisable(GL_TEXTURE_2D);
-    }
-    glActiveTexture(activeTextureUnit);
-    
     glFlush();
-    [self.emulatorCore.frontBufferLock unlock];
     
     [self.emulatorCore.frontBufferCondition lock];
     [self.emulatorCore setIsFrontBufferReady:YES];
     [self.emulatorCore.frontBufferCondition signal];
+    [self.emulatorCore.frontBufferCondition unlock];
+    
+    [self.emulatorCore.frontBufferCondition lock];
+    while (self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
     [self.emulatorCore.frontBufferCondition unlock];
     
     glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
