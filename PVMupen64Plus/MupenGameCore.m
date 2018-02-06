@@ -244,10 +244,12 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
             padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
             
-            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.isPressed;
-            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.isPressed;
-            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.isPressed;
-            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.isPressed;
+            float rightJoystickDeadZone = 0.15;
+            
+            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
+            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
