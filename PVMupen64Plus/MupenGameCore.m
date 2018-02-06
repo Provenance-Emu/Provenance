@@ -519,12 +519,12 @@ static void MupenSetAudioSpeed(int percent)
 {
     CoreDoCommand(M64CMD_STOP, 0, NULL);
     
-    [super stopEmulation];
-    
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
+    
+    [super stopEmulation];
 }
 
 - (void)resetEmulation

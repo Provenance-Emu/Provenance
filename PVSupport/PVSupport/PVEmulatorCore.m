@@ -112,8 +112,8 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
     
-    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
-    [self.emulationLoopThreadLock unlock];
+//    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
+//    [self.emulationLoopThreadLock unlock];
 }
 
 - (void)updateControllers
