@@ -72,11 +72,6 @@
         glDeleteShader(crtVertexShader);
     }
     glDeleteTextures(1, &texture);
-	self.effect = nil;
-	self.glContext = nil;
-	self.emulatorCore = nil;
-    self.alternateThreadGLContext = nil;
-    self.alternateThreadEffect = nil;
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
