@@ -541,9 +541,8 @@
 		B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3AD68A71D6EA7220021B949 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
-		B3AD68A91D6EA7220021B949 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
-		B3AD68AA1D6EA7220021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
+		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
+		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; };
 		B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; };
@@ -563,8 +562,6 @@
 		B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */; };
 		B3BDEC931DED60A1002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */; };
 		B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */; };
-		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
-		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C0EE4A1EA853A600C6414C /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.m */; };
 		B3C0EE4B1EA853A700C6414C /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.m */; };
 		B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; };
@@ -601,6 +598,8 @@
 		B3D2E3921D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; };
+		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
 		B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
@@ -678,6 +677,7 @@
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
 				1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
@@ -937,7 +937,6 @@
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = mupen64plusRice.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/mupen64plusRice.framework"; sourceTree = "<absolute>"; };
 		B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVMupen64PlusDynamic.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMupen64PlusDynamic.framework"; sourceTree = "<absolute>"; };
-		B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVRSPCXD4.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVRSPCXD4.framework"; sourceTree = "<absolute>"; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B349ACED1E9ABCF800ACD416 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1263,6 +1262,7 @@
 		B35469361DECD8570018B6F3 /* PVAtari5200ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari5200ControllerViewController.h; sourceTree = "<group>"; };
 		B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari5200ControllerViewController.m; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVRSPCXD4.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVRSPCXD4.framework"; sourceTree = "<absolute>"; };
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
 		B39578C01E6D2D8B00854D7A /* PVPCEControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVPCEControllerViewController.h; path = Provenance/Controller/PVPCEControllerViewController.h; sourceTree = "<group>"; };
@@ -1301,6 +1301,7 @@
 		B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVPokeMiniControllerViewController.m; sourceTree = "<group>"; };
 		B3D2E38F1D6E8B3C0058544D /* PV32XControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PV32XControllerViewController.h; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
+		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
 		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
@@ -1411,6 +1412,7 @@
 				B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */,
 				1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */,
+				B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */,
 				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
 				1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */,
@@ -1523,6 +1525,7 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */,
 				B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */,
 				B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
@@ -2472,15 +2475,6 @@
 			name = Atari7800;
 			sourceTree = "<group>";
 		};
-		B3B3B89A1DECF9A700602746 /* N64 */ = {
-			isa = PBXGroup;
-			children = (
-				B3B3B89B1DECF9D700602746 /* PVN64ControllerViewController.h */,
-				B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.m */,
-			);
-			name = N64;
-			sourceTree = "<group>";
-		};
 		B39578BF1E6D2D5700854D7A /* PCE */ = {
 			isa = PBXGroup;
 			children = (
@@ -2498,6 +2492,15 @@
 				B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m */,
 			);
 			name = "Neo Geo";
+			sourceTree = "<group>";
+		};
+		B3B3B89A1DECF9A700602746 /* N64 */ = {
+			isa = PBXGroup;
+			children = (
+				B3B3B89B1DECF9D700602746 /* PVN64ControllerViewController.h */,
+				B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.m */,
+			);
+			name = N64;
 			sourceTree = "<group>";
 		};
 		B3CB85C41E9BFB4B009155A6 /* PokeMini */ = {
@@ -3351,16 +3354,7 @@
 			files = (
 				1AD9AA3A1ACC988F00EC87A0 /* Provenance_Tests.m in Sources */,
 				1AD9AA431ACC98F500EC87A0 /* PVGameImporterTests.m in Sources */,
-				1AD9AA471ACC99BD00EC87A0 /* PVGenesisControllerViewController.m in Sources */,
-				B3D2E3931D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */,
-				B36DE7CC1D6B80D4002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
-				1AD9AA491ACC99C900EC87A0 /* PVGBAControllerViewController.m in Sources */,
-				1A2B0E881AD1842A005FB77C /* NSData+Hashing.m in Sources */,
 				B3B3B89F1DECF9D700602746 /* PVN64ControllerViewController.m in Sources */,
-				1AD9AA461ACC99B900EC87A0 /* PVControllerViewController.m in Sources */,
-				1AD9AA451ACC999700EC87A0 /* PVEmulatorConfiguration.m in Sources */,
-				1AD9AA4A1ACC99C900EC87A0 /* PVGBControllerViewController.m in Sources */,
-				1AD9AA4B1ACC99C900EC87A0 /* PVNESControllerViewController.m in Sources */,
 				B32D8F7D1EA7F79900175FBF /* PVEmulatorConfigurationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
