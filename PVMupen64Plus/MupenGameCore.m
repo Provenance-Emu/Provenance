@@ -87,6 +87,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
+    
+    m64p_dynlib_handle core_handle;
 }
 
 - (instancetype)init
@@ -388,24 +390,29 @@ static void MupenSetAudioSpeed(int percent)
     ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [batterySavesDirectory UTF8String]);
     ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
 
-    // Disable dynarec (for debugging)
     m64p_handle section;
 #if 0 // defined(DEBUG)
+    // Use standard interpretor
     int ival = 0;
 #else
+    // Use the cached interpretor
     int ival = 1;
 #endif
     
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &ival);
     ConfigSaveSection("Core");
+    
 
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
     
-    if (CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]) != M64ERR_SUCCESS)
+    m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
+    if ( openStatus != M64ERR_SUCCESS) {
+        NSLog(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
         return NO;
+    }
     
-    m64p_dynlib_handle core_handle = dlopen_myself();
+    core_handle = dlopen_myself();
     
     // Assistane block to load frameworks
     void (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
