@@ -128,8 +128,3 @@
 .uploading {
   display: none;
 }
-
-/* Cleaner breaks in Prologue, etc… */
-span.nowrap {
-	white-space: nowrap ;
-}

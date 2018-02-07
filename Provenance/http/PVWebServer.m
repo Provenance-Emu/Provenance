@@ -8,15 +8,26 @@
 
 #import "PVWebServer.h"
 
+// Web Server
+#import "GCDWebUploader.h"
+#import "GCDWebDAVServer.h"
+
 @interface PVWebServer ()
 
 @property (nonatomic, strong) GCDWebUploader *webServer;
+@property (nonatomic, strong) GCDWebDAVServer *webDavServer;
 @property (nonatomic, strong) NSUserActivity *handoffActivity;
 
 @end
 
-@implementation PVWebServer
+@interface PVWebServer () <GCDWebUploaderDelegate>
+@end
 
+@interface PVWebServer () <GCDWebDAVServerDelegate>
+@end
+
+@implementation PVWebServer
+@dynamic documentsDirectory, IPAddress, URLString, WebDavURLString, URL, bonjourSeverURL;
 + (PVWebServer *)sharedInstance
 {
     static PVWebServer *_sharedInstance;
@@ -39,6 +50,10 @@
         self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory: [self getDocumentDirectory]];
         self.webServer.delegate = self;
         self.webServer.allowHiddenItems = NO;
+        
+        self.webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:[self getDocumentDirectory]];
+        self.webDavServer.delegate = self;
+        self.webDavServer.allowHiddenItems = NO;
     }
     
     return self;
@@ -60,7 +75,7 @@
 {
     if (!_handoffActivity) {
         _handoffActivity = [[NSUserActivity alloc] initWithActivityType:@"com.app.browser"];
-        _handoffActivity.webpageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", [self getIPAddress]]];
+        _handoffActivity.webpageURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", self.IPAddress]];
     }
     
     return _handoffActivity;
@@ -69,7 +84,49 @@
 - (void)startServer
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
-    [self.webServer start];
+    
+#if TARGET_IPHONE_SIMULATOR
+    NSUInteger webUploadPort = 8080;
+#else
+    NSUInteger webUploadPort = 80;
+#endif
+
+    NSError *error;
+    NSDictionary *webSeverOptions = @{
+                                      GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
+                                      GCDWebServerOption_ServerName : @"Provenance",
+                                      GCDWebServerOption_BonjourName : @"Provenance WWW",
+                                      GCDWebServerOption_Port : @(webUploadPort)
+                                      };
+    
+    BOOL success = [self.webServer startWithOptions:webSeverOptions
+                                              error:&error];
+    if (!success) {
+        NSLog(@"Failed to start Web Sever with error: %@", error.localizedDescription);
+    }
+    
+    // Reset vars
+    success = NO;
+    error = NULL;
+
+#if TARGET_IPHONE_SIMULATOR
+    NSUInteger webDavPort = 8081;
+#else
+    NSUInteger webDavPort = 81;
+#endif
+
+    NSDictionary *webDavSeverOptions = @{
+                                      GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
+                                      GCDWebServerOption_ServerName : @"Provenance",
+                                      GCDWebServerOption_BonjourName : @"Provenance WebDav",
+                                      GCDWebServerOption_Port : @(webDavPort)
+                                      };
+    success = [self.webDavServer startWithOptions:webDavSeverOptions
+                                            error:&error];
+    if (!success) {
+        NSLog(@"Failed to start WebDav Sever with error: %@", error.localizedDescription);
+    }
+    
     [self.handoffActivity becomeCurrent];
 }
 
@@ -77,10 +134,11 @@
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
     [self.webServer stop];
+    [self.webDavServer stop];
     [self.handoffActivity resignCurrent];
 }
 
-- (NSString *)getIPAddress
+- (NSString *)IPAddress
 {
     NSString *address = @"error";
     struct ifaddrs *interfaces = NULL;
@@ -110,25 +168,40 @@
         }
     }
     
-#if TARGET_IPHONE_SIMULATOR
-    address = [address stringByAppendingString:@":8080"];
-#endif
-    
     // Free memory
     freeifaddrs(interfaces);
     return address;
 }
 
--(NSString *)getURLString
+-(NSString *)URLString
 {
-    NSString *ipAddress = self.getIPAddress;
+    NSString *ipAddress = self.IPAddress;
+    
+#if TARGET_IPHONE_SIMULATOR
+    ipAddress = [ipAddress stringByAppendingString:@":8080"];
+#endif
+
     NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
     return ipURLString;
 }
 
--(NSURL *)getURL
+-(NSString *)WebDavURLString
 {
-    NSString *ipURLString = self.getURLString;
+    NSString *ipAddress = self.IPAddress;
+    
+#if TARGET_IPHONE_SIMULATOR
+    ipAddress = [ipAddress stringByAppendingString:@":8081"];
+#else
+    ipAddress = [ipAddress stringByAppendingString:@":81"];
+#endif
+    
+    NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
+    return ipURLString;
+}
+
+-(NSURL *)URL
+{
+    NSString *ipURLString = self.URLString;
     NSURL *url = [NSURL URLWithString:ipURLString];
     return url;
 }
@@ -138,7 +211,7 @@
     return self.webServer.bonjourServerURL;
 }
 
-#pragma mark - Web Server Delegate
+#pragma mark - GCDWebServerDelegate
 
 - (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path
 {
@@ -158,6 +231,49 @@
 - (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path
 {
     NSLog(@"[CREATE] %@", path);
+}
+
+#pragma mark - GCDWebDAVServerDelegate
+/**
+ *  This method is called whenever a file has been downloaded.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didDownloadFileAtPath:(NSString*)path {
+    
+}
+
+/**
+ *  This method is called whenever a file has been uploaded.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path {
+    NSLog(@"[DAV UPLOAD] %@", path);
+}
+
+/**
+ *  This method is called whenever a file or directory has been moved.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+    NSLog(@"[DAV MOVE] %@ -> %@", fromPath, toPath);
+}
+
+/**
+ *  This method is called whenever a file or directory has been copied.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath {
+    NSLog(@"[DAV COPY] %@ -> %@", fromPath, toPath);
+}
+
+/**
+ *  This method is called whenever a file or directory has been deleted.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path {
+    NSLog(@"[DAV DELETE] %@", path);
+}
+
+/**
+ *  This method is called whenever a directory has been created.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path {
+    NSLog(@"[DAV CREATE] %@", path);
 }
 
 @end

@@ -29,64 +29,66 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class GCDWebUploader;
+@class GCDWebDAVServer;
 
 /**
- *  Delegate methods for GCDWebUploader.
+ *  Delegate methods for GCDWebDAVServer.
  *
  *  @warning These methods are always called on the main thread in a serialized way.
  */
-@protocol GCDWebUploaderDelegate <GCDWebServerDelegate>
+@protocol GCDWebDAVServerDelegate <GCDWebServerDelegate>
 @optional
 
 /**
  *  This method is called whenever a file has been downloaded.
  */
-- (void)webUploader:(GCDWebUploader*)uploader didDownloadFileAtPath:(NSString*)path;
+- (void)davServer:(GCDWebDAVServer*)server didDownloadFileAtPath:(NSString*)path;
 
 /**
  *  This method is called whenever a file has been uploaded.
  */
-- (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path;
+- (void)davServer:(GCDWebDAVServer*)server didUploadFileAtPath:(NSString*)path;
 
 /**
  *  This method is called whenever a file or directory has been moved.
  */
-- (void)webUploader:(GCDWebUploader*)uploader didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath;
+- (void)davServer:(GCDWebDAVServer*)server didMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath;
+
+/**
+ *  This method is called whenever a file or directory has been copied.
+ */
+- (void)davServer:(GCDWebDAVServer*)server didCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath;
 
 /**
  *  This method is called whenever a file or directory has been deleted.
  */
-- (void)webUploader:(GCDWebUploader*)uploader didDeleteItemAtPath:(NSString*)path;
+- (void)davServer:(GCDWebDAVServer*)server didDeleteItemAtPath:(NSString*)path;
 
 /**
  *  This method is called whenever a directory has been created.
  */
-- (void)webUploader:(GCDWebUploader*)uploader didCreateDirectoryAtPath:(NSString*)path;
+- (void)davServer:(GCDWebDAVServer*)server didCreateDirectoryAtPath:(NSString*)path;
 
 @end
 
 /**
- *  The GCDWebUploader subclass of GCDWebServer implements an HTML 5 web browser
- *  interface for uploading or downloading files, and moving or deleting files
- *  or directories.
+ *  The GCDWebDAVServer subclass of GCDWebServer implements a class 1 compliant
+ *  WebDAV server. It is also partially class 2 compliant but only when the
+ *  client is the OS X WebDAV implementation (so it can work with the OS X Finder).
  *
- *  See the README.md file for more information about the features of GCDWebUploader.
- *
- *  @warning For GCDWebUploader to work, "GCDWebUploader.bundle" must be added
- *  to the resources of the Xcode target.
+ *  See the README.md file for more information about the features of GCDWebDAVServer.
  */
-@interface GCDWebUploader : GCDWebServer
+@interface GCDWebDAVServer : GCDWebServer
 
 /**
- *  Returns the upload directory as specified when the uploader was initialized.
+ *  Returns the upload directory as specified when the server was initialized.
  */
 @property(nonatomic, readonly) NSString* uploadDirectory;
 
 /**
- *  Sets the delegate for the uploader.
+ *  Sets the delegate for the server.
  */
-@property(nonatomic, weak, nullable) id<GCDWebUploaderDelegate> delegate;
+@property(nonatomic, weak, nullable) id<GCDWebDAVServerDelegate> delegate;
 
 /**
  *  Sets which files are allowed to be operated on depending on their extension.
@@ -104,56 +106,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL allowHiddenItems;
 
 /**
- *  Sets the title for the uploader web interface.
- *
- *  The default value is the application name.
- *
- *  @warning Any reserved HTML characters in the string value for this property
- *  must have been replaced by character entities e.g. "&" becomes "&amp;".
- */
-@property(nonatomic, copy) NSString* title;
-
-/**
- *  Sets the header for the uploader web interface.
- *
- *  The default value is the same as the title property.
- *
- *  @warning Any reserved HTML characters in the string value for this property
- *  must have been replaced by character entities e.g. "&" becomes "&amp;".
- */
-@property(nonatomic, copy) NSString* header;
-
-/**
- *  Sets the prologue for the uploader web interface.
- *
- *  The default value is a short help text.
- *
- *  @warning The string value for this property must be raw HTML
- *  e.g. "<p>Some text</p>"
- */
-@property(nonatomic, copy) NSString* prologue;
-
-/**
- *  Sets the epilogue for the uploader web interface.
- *
- *  The default value is nil i.e. no epilogue.
- *
- *  @warning The string value for this property must be raw HTML
- *  e.g. "<p>Some text</p>"
- */
-@property(nonatomic, copy) NSString* epilogue;
-
-/**
- *  Sets the footer for the uploader web interface.
- *
- *  The default value is the application name and version.
- *
- *  @warning Any reserved HTML characters in the string value for this property
- *  must have been replaced by character entities e.g. "&" becomes "&amp;".
- */
-@property(nonatomic, copy) NSString* footer;
-
-/**
  *  This method is the designated initializer for the class.
  */
 - (instancetype)initWithUploadDirectory:(NSString*)path;
@@ -161,11 +113,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /**
- *  Hooks to customize the behavior of GCDWebUploader.
+ *  Hooks to customize the behavior of GCDWebDAVServer.
  *
  *  @warning These methods can be called on any GCD thread.
  */
-@interface GCDWebUploader (Subclassing)
+@interface GCDWebDAVServer (Subclassing)
 
 /**
  *  This method is called to check if a file upload is allowed to complete.
@@ -181,6 +133,13 @@ NS_ASSUME_NONNULL_BEGIN
  *  The default implementation returns YES.
  */
 - (BOOL)shouldMoveItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath;
+
+/**
+ *  This method is called to check if a file or directory is allowed to be copied.
+ *
+ *  The default implementation returns YES.
+ */
+- (BOOL)shouldCopyItemFromPath:(NSString*)fromPath toPath:(NSString*)toPath;
 
 /**
  *  This method is called to check if a file or directory is allowed to be deleted.

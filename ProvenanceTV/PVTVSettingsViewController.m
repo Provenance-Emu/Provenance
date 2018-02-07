@@ -152,13 +152,10 @@
 						[[PVWebServer sharedInstance] startServer];
 
 						// get the IP address of the device
-						NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
-
-#if TARGET_IPHONE_SIMULATOR
-						ipAddress = [ipAddress stringByAppendingString:@":8080"];
-#endif
-                        NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
-						NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@", ipURLString];
+						NSString *webServerAddress = PVWebServer.sharedInstance.URLString;
+                        NSString *webDavAddress = PVWebServer.sharedInstance.WebDavURLString;
+                        
+                        NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@\n Or WebDav at:\n%@", webServerAddress, webDavAddress];
 						UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
 																					   message: message
 																				preferredStyle:UIAlertControllerStyleAlert];

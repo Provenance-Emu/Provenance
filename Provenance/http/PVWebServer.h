@@ -12,20 +12,23 @@
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 
-// Web Server
-#import "GCDWebUploader.h"
 
-@interface PVWebServer : NSObject <GCDWebUploaderDelegate>
+@interface PVWebServer : NSObject
 
-+ (PVWebServer *)sharedInstance;
+NS_ASSUME_NONNULL_BEGIN;
 
-- (NSString *)getDocumentDirectory;
-- (NSString *)getIPAddress;
-- (NSString *)getURLString;
-- (NSURL *)getURL;
-- (NSURL *)bonjourServerURL;
++ (instancetype)sharedInstance;
+
+@property (nonatomic, retain, readonly) NSString *documentsDirectory;
+@property (nonatomic, retain, readonly) NSString *IPAddress;
+@property (nonatomic, retain, readonly) NSString *URLString;
+@property (nonatomic, retain, readonly) NSString *WebDavURLString;
+@property (nonatomic, retain, readonly) NSURL *URL;
+@property (nonatomic, retain, readonly) NSURL *bonjourSeverURL;
+
 - (void)startServer;
 - (void)stopServer;
 
+NS_ASSUME_NONNULL_END;
 
 @end
