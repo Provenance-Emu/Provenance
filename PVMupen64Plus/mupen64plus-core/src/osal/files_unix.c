@@ -239,6 +239,28 @@ const char * osal_get_user_datapath(void)
     static char retpath[PATH_MAX];
     int rval;
     
+#ifdef __APPLE__
+    CFURLRef homeDirectoryUrl = CFCopyHomeDirectoryURL(); assert(homeDirectoryUrl);
+#if TARGET_OS_TV
+    CFStringRef relativePath = CFSTR("Library/Caches/com.provenance.n64/");
+#else
+    CFStringRef relativePath = CFSTR("Documents/com.provenance.n64/");
+#endif
+    CFURLRef userDataURL = CFURLCreateCopyAppendingPathComponent(nil, homeDirectoryUrl, relativePath, true);
+    
+    CFStringRef cf_string_ref = CFURLCopyFileSystemPath( userDataURL, kCFURLPOSIXPathStyle); assert(cf_string_ref);
+    CFStringGetCString(cf_string_ref, &retpath, PATH_MAX, kCFStringEncodingASCII);
+    
+    CFRelease(homeDirectoryUrl);
+    CFRelease(relativePath);
+    CFRelease(userDataURL);
+    CFRelease(cf_string_ref);
+    
+    DebugMessage(M64MSG_INFO, "Got URL of ", &retpath);
+    
+    return retpath;
+#endif
+    
     /* first, try the XDG_DATA_HOME environment variable */
     rval = get_xdg_dir(retpath, "XDG_DATA_HOME", "mupen64plus/");
     if (rval == 0)
@@ -248,7 +270,7 @@ const char * osal_get_user_datapath(void)
     rval = get_xdg_dir(retpath, "HOME", ".local/share/mupen64plus/");
     if (rval == 0)
         return retpath;
-
+    
     /* otherwise we are in trouble */
     if (rval < 3)
         DebugMessage(M64MSG_ERROR, "Failed to get data directory; $HOME is undefined or invalid.");
