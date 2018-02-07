@@ -91,6 +91,8 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     NSMutableDictionary *_callbackHandlers;
     
     m64p_dynlib_handle core_handle;
+    
+    m64p_dynlib_handle plugins[4];
 }
 
 - (instancetype)init
@@ -119,10 +121,27 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
+    
+    [self pluginsUnload];
+    [self detachCoreLib];
+    
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
     dispatch_release(coreWaitToEndFrameSemaphore);
 #endif
+}
+
+-(void)detachCoreLib {
+    if (core_handle != NULL) {
+        // Note: DL close doesn't really work as expected on iOS. The framework will still essentially be loaded
+        // take care to reset static variables that are expected to have cleared memory between uses.
+        if(dlclose(core_handle) != 0) {
+            NSLog(@"Failed to dlclose core framework.");
+        } else {
+            NSLog(@"dlclosed core framework.");
+        }
+        core_handle = NULL;
+    }
 }
 
 // Pass 0 as paramType to receive all state changes.
@@ -422,10 +441,13 @@ static void MupenSetAudioSpeed(int percent)
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
         NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
         
-        rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_NOW);
+        rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
         rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
         CoreAttachPlugin(pluginType, rsp_handle);
+        
+        // Store handle for later unload
+        plugins[pluginType] = rsp_handle;
     };
     
     // Load Video
@@ -472,11 +494,77 @@ static void MupenSetAudioSpeed(int percent)
     @autoreleasepool
     {
         [self.renderDelegate startRenderingOnAlternateThread];
-        CoreDoCommand(M64CMD_EXECUTE, 0, NULL);
-        CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL);
-        CoreShutdown();
+        if(CoreDoCommand(M64CMD_EXECUTE, 0, NULL) != M64ERR_SUCCESS) {
+            NSLog(@"Core execture did not exit correctly");
+        } else {
+            NSLog(@"Core finished executing main");
+        }
+        
+        if(CoreDetachPlugin(M64PLUGIN_GFX) != M64ERR_SUCCESS) {
+            NSLog(@"Failed to detach GFX plugin");
+        } else {
+            NSLog(@"Detached GFX plugin");
+        }
+        
+        if(CoreDetachPlugin(M64PLUGIN_RSP) != M64ERR_SUCCESS) {
+            NSLog(@"Failed to detach RSP plugin");
+        } else {
+            NSLog(@"Detached RSP plugin");
+        }
+        
+        [self pluginsUnload];
+        
+        if(CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL) != M64ERR_SUCCESS) {
+            NSLog(@"Filed to close ROM");
+        } else {
+            NSLog(@"ROM closed");
+        }
+        
+        if(CoreShutdown() != M64ERR_SUCCESS) {
+            NSLog(@"Core shutdown failed");
+        }else {
+            NSLog(@"Core shutdown successfully");
+        }
+        
+        // Unlock rendering thread
+        dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
         [super stopEmulation];
     }
+}
+
+- (m64p_error)pluginsUnload
+{
+    // shutdown and unload frameworks for plugins
+    
+    typedef m64p_error (*ptr_PluginShutdown)(void);
+    ptr_PluginShutdown PluginShutdown;
+    int i;
+    
+    /* shutdown each type of plugin */
+    for (i = 0; i < 4; i++)
+    {
+        if (plugins[i] == NULL)
+            continue;
+        /* call the destructor function for the plugin and release the library */
+        PluginShutdown = (ptr_PluginShutdown) osal_dynlib_getproc(plugins[i], "PluginShutdown");
+        if (PluginShutdown != NULL) {
+            m64p_error status = (*PluginShutdown)();
+            if (status == M64ERR_SUCCESS) {
+                NSLog(@"Shutdown plugin");
+            } else {
+                NSLog(@"Shutdown plugin type %i failed: %i", i, status);
+            }
+        }
+        if(dlclose(plugins[i]) != 0) {
+            NSLog(@"Failed to dlclose plugin type %i", i);
+        } else {
+            NSLog(@"dlclosed plugin type %i", i);
+        }
+        plugins[i] = NULL;
+    }
+    
+    return M64ERR_SUCCESS;
 }
 
 - (void)videoInterrupt
