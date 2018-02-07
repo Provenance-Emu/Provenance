@@ -675,6 +675,11 @@ bool MDFNI_SaveState(const char *fname, const char *suffix, const MDFN_Surface *
 
  try
  {
+  if(MDFNGameInfo == NULL)
+  {
+   throw MDFN_Error(0, _(""));
+  }
+     
   if(!MDFNGameInfo->StateAction)
   {
    throw MDFN_Error(0, _("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
