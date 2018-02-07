@@ -81,61 +81,102 @@
     return _handoffActivity;
 }
 
-- (void)startServer
+- (BOOL)startServers
 {
-    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
+    BOOL success;
     
+    success = [self startWWWUploadServer];
+    if (!success) {
+        return NO;
+    }
+    
+    success = [self startWebDavServer];
+    if (!success) {
+        [self stopWWWUploadServer];
+        return NO;
+    }
+
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
+    [self.handoffActivity becomeCurrent];
+    
+    return YES;
+}
+
+-(BOOL)startWWWUploadServer {
+    if (_webServer.isRunning) {
+        NSLog(@"Web Server alreading running");
+        return YES;
+    }
+    
+    // Set start port based on target type
+    // Simulator can't open ports below 1024
 #if TARGET_IPHONE_SIMULATOR
     NSUInteger webUploadPort = 8080;
 #else
     NSUInteger webUploadPort = 80;
 #endif
 
-    NSError *error;
+    // Settings dictionary
     NSDictionary *webSeverOptions = @{
                                       GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
                                       GCDWebServerOption_ServerName : @"Provenance",
                                       GCDWebServerOption_BonjourName : @"Provenance WWW",
                                       GCDWebServerOption_Port : @(webUploadPort)
                                       };
-    
+    NSError *error;
     BOOL success = [self.webServer startWithOptions:webSeverOptions
                                               error:&error];
     if (!success) {
         NSLog(@"Failed to start Web Sever with error: %@", error.localizedDescription);
     }
     
-    // Reset vars
-    success = NO;
-    error = NULL;
+    return success;
+}
 
+-(BOOL)startWebDavServer {
+    if (_webDavServer.isRunning) {
+        NSLog(@"WebDav Server alreading running");
+        return YES;
+    }
+    
 #if TARGET_IPHONE_SIMULATOR
     NSUInteger webDavPort = 8081;
 #else
     NSUInteger webDavPort = 81;
 #endif
-
+    
     NSDictionary *webDavSeverOptions = @{
-                                      GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
-                                      GCDWebServerOption_ServerName : @"Provenance",
-                                      GCDWebServerOption_BonjourName : @"Provenance WebDav",
-                                      GCDWebServerOption_Port : @(webDavPort)
-                                      };
-    success = [self.webDavServer startWithOptions:webDavSeverOptions
+                                         GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
+                                         GCDWebServerOption_ServerName : @"Provenance",
+                                         GCDWebServerOption_BonjourName : @"Provenance WebDav",
+                                         GCDWebServerOption_Port : @(webDavPort)
+                                         };
+    NSError *error;
+    BOOL success = [self.webDavServer startWithOptions:webDavSeverOptions
                                             error:&error];
     if (!success) {
         NSLog(@"Failed to start WebDav Sever with error: %@", error.localizedDescription);
     }
-    
-    [self.handoffActivity becomeCurrent];
+
+    return success;
 }
 
-- (void)stopServer
+- (void)stopServers
 {
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
-    [self.webServer stop];
-    [self.webDavServer stop];
+    
+    [self stopWWWUploadServer];
+    [self stopWebDavServer];
+    
     [self.handoffActivity resignCurrent];
+}
+
+-(void)stopWWWUploadServer {
+    [self.webServer stop];
+}
+
+-(void)stopWebDavServer {
+    [self.webDavServer stop];
 }
 
 - (NSString *)IPAddress

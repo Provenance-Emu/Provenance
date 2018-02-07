@@ -168,7 +168,7 @@
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
 	// Done button pressed
 	[self.navigationController popViewControllerAnimated:YES];
-	[[PVWebServer sharedInstance] stopServer];
+	[[PVWebServer sharedInstance] stopServers];
 	_importLabel.text = @"Web server: OFF";
 }
 
@@ -204,7 +204,7 @@
     [alert.view addSubview:importNote];
     
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[[PVWebServer sharedInstance] stopServer];
+		[[PVWebServer sharedInstance] stopServers];
 		_importLabel.text = @"Web server: OFF";
 	}]];
 	
@@ -248,11 +248,20 @@
 			// connected via wifi, let's continue
 			
 			// start web transfer service
-			[[PVWebServer sharedInstance] startServer];
-			_importLabel.text = @"Web server: ON";
-	
-			//show alert view
-			[self showServerActiveAlert];
+            if([[PVWebServer sharedInstance] startServers]) {
+                _importLabel.text = @"Web server: ON";
+                
+                //show alert view
+                [self showServerActiveAlert];
+            } else {
+                // Display error
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                               message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                }]];
+                [self presentViewController:alert animated:YES completion:NULL];
+            }
 		}
 
     }

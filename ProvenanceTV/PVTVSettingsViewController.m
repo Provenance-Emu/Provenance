@@ -148,21 +148,30 @@
 					} else {
 						// connected via wifi, let's continue
 
-						// start web transfer service
-						[[PVWebServer sharedInstance] startServer];
+                        // start web transfer service
+                        if([[PVWebServer sharedInstance] startServers]) {                            
 
-						// get the IP address of the device
-						NSString *webServerAddress = PVWebServer.sharedInstance.URLString;
-                        NSString *webDavAddress = PVWebServer.sharedInstance.WebDavURLString;
-                        
-                        NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@\n Or WebDav at:\n%@", webServerAddress, webDavAddress];
-						UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
-																					   message: message
-																				preferredStyle:UIAlertControllerStyleAlert];
-						[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-							[[PVWebServer sharedInstance] stopServer];
-						}]];
-						[self presentViewController:alert animated:YES completion:NULL];
+                            // get the IP address of the device
+                            NSString *webServerAddress = PVWebServer.sharedInstance.URLString;
+                            NSString *webDavAddress = PVWebServer.sharedInstance.WebDavURLString;
+                            
+                            NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@\n Or WebDav at:\n%@", webServerAddress, webDavAddress];
+                            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
+                                                                                           message: message
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                [[PVWebServer sharedInstance] stopServers];
+                            }]];
+                            [self presentViewController:alert animated:YES completion:NULL];
+                        } else {
+                            // Display error
+                            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                                           message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                            }]];
+                            [self presentViewController:alert animated:YES completion:NULL];
+                        }
 					}
 				}
                 default:

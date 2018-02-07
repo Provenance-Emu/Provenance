@@ -26,8 +26,14 @@ NS_ASSUME_NONNULL_BEGIN;
 @property (nonatomic, retain, readonly) NSURL *URL;
 @property (nonatomic, retain, readonly) NSURL *bonjourSeverURL;
 
-- (void)startServer;
-- (void)stopServer;
+- (BOOL)startServers;
+- (void)stopServers;
+
+- (BOOL)startWWWUploadServer;
+- (void)stopWWWUploadServer;
+
+- (BOOL)startWebDavServer;
+- (void)stopWebDavServer;
 
 NS_ASSUME_NONNULL_END;
 

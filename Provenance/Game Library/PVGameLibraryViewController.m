@@ -277,7 +277,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
 	// Done button pressed
 	[self.navigationController popViewControllerAnimated:YES];
-	[[PVWebServer sharedInstance] stopServer];
+	[[PVWebServer sharedInstance] stopServer]s;
 }
 #endif
 
@@ -312,7 +312,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[alert.view addSubview:importNote];
 
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[[PVWebServer sharedInstance] stopServer];
+		[[PVWebServer sharedInstance] stopServers];
 	}]];
 #if !TARGET_OS_TV
 	UIAlertAction *viewAction = [UIAlertAction actionWithTitle: @"View" style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action)
@@ -346,10 +346,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         // connected via wifi, let's continue
 
         // start web transfer service
-        [[PVWebServer sharedInstance] startServer];
-
-        //show alert view
-		[self showServerActiveAlert];
+        if([[PVWebServer sharedInstance] startServers]) {
+            //show alert view
+            [self showServerActiveAlert];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                           message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            }]];
+            [self presentViewController:alert animated:YES completion:NULL];
+        }
     }
 }
 
