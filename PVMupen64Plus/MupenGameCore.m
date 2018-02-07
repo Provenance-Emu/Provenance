@@ -27,6 +27,10 @@
 // We need to mess with core internals
 #define M64P_CORE_PROTOTYPES 1
 
+// Change to 1 to use the CXD4 plugin for the Reality Coprocessor
+// Some games will run much slower or not at all. Others may run better if you have faster hardware.
+#define USE_RSP_CXD4 0
+
 #import "MupenGameCore.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -495,22 +499,36 @@ static void MupenSetAudioSpeed(int percent)
     core_handle = dlopen_myself();
     
     // Assistane block to load frameworks
-    void (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
+    BOOL (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
         NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
         
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
-        rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
-        CoreAttachPlugin(pluginType, rsp_handle);
+        m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
+        if (err != M64ERR_SUCCESS) {
+            NSLog(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
+            return NO;
+        }
+        
+        err = CoreAttachPlugin(pluginType, rsp_handle);
+        if (err != M64ERR_SUCCESS) {
+            NSLog(@"Error code %i attaching plugin of type %i, name: %@", err, pluginType, pluginType);
+            return NO;
+        }
         
         // Store handle for later unload
         plugins[pluginType] = rsp_handle;
+        
+        return YES;
     };
     
     // Load Video
-    LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    if (!success) {
+        return NO;
+    }
     
     ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");
     
@@ -526,16 +544,22 @@ static void MupenSetAudioSpeed(int percent)
     input.initiateControllers = MupenInitiateControllers;
     plugin_start(M64PLUGIN_INPUT);
     
+#if USE_RSP_CXD4
     // Load RSP
     // Configure if using rsp-cxd4 plugin
-//    m64p_handle configRSP;
-//    ConfigOpenSection("rsp-cxd4", &configRSP);
-//    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
-//    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
-//    
-//    LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
-    LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
-
+    m64p_handle configRSP;
+    ConfigOpenSection("rsp-cxd4", &configRSP);
+    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
+    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
+    
+    success = LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
+#else
+    success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
+#endif
+    if (!success) {
+        return NO;
+    }
+    
     return YES;
 }
 
