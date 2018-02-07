@@ -10,6 +10,7 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 #import "PVSearchViewController.h"
+#import "PVWebServer.h"
 
 #if TARGET_OS_TV
 #import "PVAppConstants.h"
@@ -56,6 +57,8 @@
 	}
 #endif
 
+    [self startOptionalWebDavServer];
+    
 	return YES;
 }
 
@@ -128,7 +131,31 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+    [self stopOptionalWebDavServer];
+}
 
+#pragma mark - Helpers
+- (BOOL)isWebDavServerEnviromentVariableSet {
+    // Start optional always on WebDav server using enviroment variable
+    // See XCode run scheme enviroment varialbes settings.
+    
+    // Note: ENV variables are only passed when when from XCode scheme.
+    // Users clicking the app icon won't be passed this variable when run outside of XCode
+    NSString *buildConfiguration = [[[NSProcessInfo processInfo] environment] objectForKey:@"ALWAYS_ON_WEBDAV"];
+    
+    return [buildConfiguration isEqualToString:@"1"];
+}
+
+- (void)startOptionalWebDavServer {
+    if ([self isWebDavServerEnviromentVariableSet]) {
+        [PVWebServer.sharedInstance startWebDavServer];
+    }
+}
+
+- (void)stopOptionalWebDavServer {
+    if ([self isWebDavServerEnviromentVariableSet]) {
+        [PVWebServer.sharedInstance stopWebDavServer];
+    }
 }
 
 @end
