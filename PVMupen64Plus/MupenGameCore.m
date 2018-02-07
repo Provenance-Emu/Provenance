@@ -451,8 +451,20 @@ static void MupenSetAudioSpeed(int percent)
     ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
 
     // Enable hi-resolution texture file loading
-    int hiResTextures = 0;
+    int hiResTextures = 1;
     ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
+    // Create the directory if this option is enabled to make it easier for users to upload packs
+    if (hiResTextures == 1) {
+        // Find where we're storing roms
+        NSString *romPath = path;
+        // Create the directory for hires_texture, this is a constant in mupen source
+        NSString *highResPath = [[romPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"/hires_texture/"];
+        NSError *error;
+        BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (!success) {
+            NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
+        }
+    }
     
     // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
     int mipmapping = 0;
