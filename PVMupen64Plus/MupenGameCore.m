@@ -405,24 +405,83 @@ static void MupenSetAudioSpeed(int percent)
     // open core here
     CoreStartup(FRONTEND_API_VERSION, [configPath fileSystemRepresentation], dataPath, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
     
-    // set SRAM path
+    /** Core Config **/
     m64p_handle config;
     ConfigOpenSection("Core", &config);
+    
+    // set SRAM path
     ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [batterySavesDirectory UTF8String]);
+    // set data path
     ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
 
-    m64p_handle section;
-#if 0 // defined(DEBUG)
-    // Use standard interpretor
-    int ival = 0;
-#else
-    // Use the cached interpretor
-    int ival = 1;
-#endif
-    
-    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &ival);
+    // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
+    int emulator = 1;
+    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
+
+    // Draw on-screen display if True, otherwise don't draw OSD
+    int osd = 0;
+    ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+
+    /** End Core Config **/
     ConfigSaveSection("Core");
     
+    /** RICE CONFIG **/
+    m64p_handle rice;
+    ConfigOpenSection("Video-Rice", &rice);
+    
+    // Use a faster algorithm to speed up texture loading and CRC computation
+    int fastTextureLoading = 0;
+    ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
+
+    // Enable this option to have better render-to-texture quality
+    int doubleSizeForSmallTextureBuffer = 0;
+    ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
+
+    // N64 Texture Memory Full Emulation (may fix some games, may break others)
+    int fullTEMEmulation = 0;
+    ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
+
+    // Use fullscreen mode if True, or windowed mode if False
+    int fullscreen = 0;
+    ConfigSetParameter(rice, "Fullscreen", M64TYPE_BOOL, &fullscreen);
+
+    // If this option is enabled, the plugin will skip every other frame
+    // Breaks some games in my testing -jm
+    int skipFrame = 0;
+    ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
+
+    // Enable hi-resolution texture file loading
+    int hiResTextures = 0;
+    ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
+    
+    // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
+    int mipmapping = 0;
+    ConfigSetParameter(rice, "Mipmapping", M64TYPE_INT, &mipmapping);
+
+    // Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality).
+    // This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering
+    int anisotropicFiltering = 16;
+    ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
+    
+    // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
+    int fogMethod = 0;
+    ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
+    
+    // Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
+    // 16 bit breaks some games like GoldenEye
+    int textureQuality = 1;
+    ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
+
+    // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
+    int multiSampling = 0;
+    ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
+
+    // Color bit depth for rendering window (0=32 bits, 1=16 bits)
+    int colorQuality = 0;
+    ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
+
+    /** End RICE CONFIG **/
+    ConfigSaveSection("Video-Rice");
 
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
