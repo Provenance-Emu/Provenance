@@ -256,8 +256,6 @@ const char * osal_get_user_datapath(void)
     CFRelease(userDataURL);
     CFRelease(cf_string_ref);
     
-    DebugMessage(M64MSG_INFO, "Got URL of ", &retpath);
-    
     return retpath;
 #endif
     
