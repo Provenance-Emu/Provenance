@@ -48,9 +48,10 @@ NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
 #if TARGET_OS_TV
 static const CGFloat CellWidth = 308.0;
-#endif
-
+@interface PVGameLibraryViewController ()
+#else
 @interface PVGameLibraryViewController () <SFSafariViewControllerDelegate>
+#endif
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
