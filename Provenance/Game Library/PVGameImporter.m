@@ -569,9 +569,12 @@
 {
     RLMRealm *realm = [RLMRealm defaultRealm];
     [realm refresh];
+    NSFileManager *fm = [NSFileManager defaultManager];
     for (NSString *path in paths)
     {
-        if ([path hasPrefix:@"."])
+        BOOL isDirectory = ![path containsString:@"."];
+
+        if ([path hasPrefix:@"."] || isDirectory)
         {
             continue;
         }
