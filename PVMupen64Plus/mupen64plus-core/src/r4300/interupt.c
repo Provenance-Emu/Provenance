@@ -488,7 +488,7 @@ static void nmi_int_handler(void)
 
 void gen_interupt(void)
 {
-    if (r4300_stop == 1)
+    if (stop == 1)
     {
         g_gs_vi_counter = 0; // debug
         dyna_stop();

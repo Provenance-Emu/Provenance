@@ -236,7 +236,7 @@ DECLARE_INSTRUCTION(ERET)
    if (g_cp0_regs[CP0_STATUS_REG] & UINT32_C(0x4))
    {
      DebugMessage(M64MSG_ERROR, "error in ERET");
-     r4300_stop=1;
+     stop=1;
    }
    else
    {

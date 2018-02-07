@@ -328,25 +328,25 @@ void genbgezl_idle(void)
 
 static void genbranchlink(void)
 {
-   int r31_64bit = is64((unsigned int*)&r4300_reg[31]);
+   int r31_64bit = is64((unsigned int*)&reg[31]);
    
    if (r31_64bit == 0)
      {
-    int r31 = allocate_register_32_w((unsigned int *)&r4300_reg[31]);
+    int r31 = allocate_register_32_w((unsigned int *)&reg[31]);
     
     mov_reg32_imm32(r31, dst->addr+8);
      }
    else if (r31_64bit == -1)
      {
-    mov_m32rel_imm32((unsigned int *)&r4300_reg[31], dst->addr + 8);
+    mov_m32rel_imm32((unsigned int *)&reg[31], dst->addr + 8);
     if (dst->addr & 0x80000000)
-      mov_m32rel_imm32(((unsigned int *)&r4300_reg[31])+1, 0xFFFFFFFF);
+      mov_m32rel_imm32(((unsigned int *)&reg[31])+1, 0xFFFFFFFF);
     else
-      mov_m32rel_imm32(((unsigned int *)&r4300_reg[31])+1, 0);
+      mov_m32rel_imm32(((unsigned int *)&reg[31])+1, 0);
      }
    else
      {
-    int r31 = allocate_register_64_w((unsigned long long *)&r4300_reg[31]);
+    int r31 = allocate_register_64_w((unsigned long long *)&reg[31]);
     
     mov_reg32_imm32(r31, dst->addr+8);
     movsxd_reg64_reg32(r31, r31);

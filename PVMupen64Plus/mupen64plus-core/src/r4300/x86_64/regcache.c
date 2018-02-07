@@ -50,7 +50,7 @@ void init_cache(precomp_instr* start)
     dirty[i] = 0;
     is64bits[i] = 0;
   }
-  r0 = (unsigned long long *) r4300_reg;
+  r0 = (unsigned long long *) reg;
 }
 
 void free_all_registers(void)
@@ -569,7 +569,7 @@ void allocate_register_32_manually_w(int reg, unsigned int *addr)
 // 0x48 0xA1           0xXXXXXXXXXXXXXXXX mov rax, qword (&code start)
 // 0x48 0x05                   0xXXXXXXXX add rax, dword (local_addr)
 // 0x48 0x89 0x04 0x24                    mov [rsp], rax
-// 0x48 0xB8           0xXXXXXXXXXXXXXXXX mov rax, &r4300_reg[0]
+// 0x48 0xB8           0xXXXXXXXXXXXXXXXX mov rax, &reg[0]
 // 0x48 0x8B (reg<<3)|0x80     0xXXXXXXXX mov rdi, [rax + XXXXXXXX]
 // 0x48 0x8B (reg<<3)|0x80     0xXXXXXXXX mov rsi, [rax + XXXXXXXX]
 // 0x48 0x8B (reg<<3)|0x80     0xXXXXXXXX mov rbp, [rax + XXXXXXXX]
@@ -614,7 +614,7 @@ static void build_wrapper(precomp_instr *instr, unsigned char* pCode, precomp_bl
 
    *pCode++ = 0x48;
    *pCode++ = 0xB8;
-   *((unsigned long long *) pCode) = (unsigned long long) &r4300_reg[0];
+   *((unsigned long long *) pCode) = (unsigned long long) &reg[0];
    pCode += 8;
 
    for (i=7; i>=0; i--)
@@ -625,13 +625,13 @@ static void build_wrapper(precomp_instr *instr, unsigned char* pCode, precomp_bl
        *pCode++ = 0x48;
        *pCode++ = 0x8B;
        *pCode++ = 0x80 | (i << 3);
-       riprel = (long long) ((unsigned char *) instr->reg_cache_infos.needed_registers[i] - (unsigned char *) &r4300_reg[0]);
+       riprel = (long long) ((unsigned char *) instr->reg_cache_infos.needed_registers[i] - (unsigned char *) &reg[0]);
        *((int *) pCode) = (int) riprel;
        pCode += 4;
        if (riprel >= 0x7fffffffLL || riprel < -0x80000000LL)
        {
-         DebugMessage(M64MSG_ERROR, "build_wrapper error: r4300_reg[%i] offset too big for relative address from %p to %p",
-                i, (&r4300_reg[0]), instr->reg_cache_infos.needed_registers[i]);
+         DebugMessage(M64MSG_ERROR, "build_wrapper error: reg[%i] offset too big for relative address from %p to %p",
+                i, (&reg[0]), instr->reg_cache_infos.needed_registers[i]);
          asm(" int $3; ");
        }
      }

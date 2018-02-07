@@ -62,8 +62,8 @@ unsigned int count_per_op = COUNT_PER_OP_DEFAULT;
 int rompause;
 unsigned int llbit;
 #if NEW_DYNAREC != NEW_DYNAREC_ARM
-int r4300_stop;
-int64_t r4300_reg[32], hi, lo;
+int stop;
+int64_t reg[32], hi, lo;
 uint32_t next_interupt;
 precomp_instr *PC;
 #endif
@@ -99,7 +99,7 @@ void r4300_reset_hard(void)
     // clear r4300 registers and TLB entries
     for (i = 0; i < 32; i++)
     {
-        r4300_reg[i]=0;
+        reg[i]=0;
         g_cp0_regs[i]=0;
         reg_cop1_fgr_64[i]=0;
 
@@ -197,11 +197,11 @@ void r4300_reset_soft(void)
 
     memcpy((unsigned char*)g_sp.mem+0x40, g_rom+0x40, 0xfc0);
 
-    r4300_reg[19] = rom_type;     /* s3 */
-    r4300_reg[20] = tv_type;      /* s4 */
-    r4300_reg[21] = reset_type;   /* s5 */
-    r4300_reg[22] = g_si.pif.cic.seed;/* s6 */
-    r4300_reg[23] = s7;           /* s7 */
+    reg[19] = rom_type;     /* s3 */
+    reg[20] = tv_type;      /* s4 */
+    reg[21] = reset_type;   /* s5 */
+    reg[22] = g_si.pif.cic.seed;/* s6 */
+    reg[23] = s7;           /* s7 */
 
     /* required by CIC x105 */
     g_sp.mem[0x1000/4] = 0x3c0dbfc0;
@@ -214,9 +214,9 @@ void r4300_reset_soft(void)
     g_sp.mem[0x101c/4] = 0x3c0bb000;
 
     /* required by CIC x105 */
-    r4300_reg[11] = INT64_C(0xffffffffa4000040); /* t3 */
-    r4300_reg[29] = INT64_C(0xffffffffa4001ff0); /* sp */
-    r4300_reg[31] = INT64_C(0xffffffffa4001550); /* ra */
+    reg[11] = INT64_C(0xffffffffa4000040); /* t3 */
+    reg[29] = INT64_C(0xffffffffa4001ff0); /* sp */
+    reg[31] = INT64_C(0xffffffffa4001550); /* ra */
 
     /* ready to execute IPL3 */
 }
@@ -243,7 +243,7 @@ void r4300_execute(void)
     current_instruction_table = cached_interpreter_table;
 
     delay_slot=0;
-    r4300_stop = 0;
+    stop = 0;
     rompause = 0;
 
     /* clear instruction counters */
@@ -308,7 +308,7 @@ void r4300_execute(void)
             return;
 
         last_addr = PC->addr;
-        while (!r4300_stop)
+        while (!stop)
         {
 #ifdef COMPARE_CORE
             if (PC->ops == cached_interpreter_table.FIN_BLOCK && (PC->addr < 0x80000000 || PC->addr >= 0xc0000000))

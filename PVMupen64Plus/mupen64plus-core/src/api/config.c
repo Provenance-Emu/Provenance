@@ -42,6 +42,11 @@
 
 #define SECTION_MAGIC 0xDBDC0580
 
+struct external_config {
+  char *file;
+  size_t length;
+};
+
 typedef struct _config_var {
   char                 *name;
   m64p_type             type;
@@ -611,6 +616,114 @@ m64p_error ConfigShutdown(void)
 /* ------------------------------------------------ */
 /* Selector functions, exported outside of the Core */
 /* ------------------------------------------------ */
+
+EXPORT m64p_error CALL ConfigExternalOpen(const char *FileName, m64p_handle *Handle)
+{
+    FILE *fPtr;
+    struct external_config* ext_config;
+    long ftell_result;
+    size_t filelen = 0;
+    if (FileName == NULL || (fPtr = fopen(FileName, "rb")) == NULL)
+    {
+        DebugMessage(M64MSG_ERROR, "Unable to open config file '%s'.", FileName);
+        return M64ERR_INPUT_INVALID;
+    }
+    /* read the entire config file */
+    if (fseek(fPtr, 0L, SEEK_END) != 0)
+    {
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    ftell_result = ftell(fPtr);
+    if (ftell_result == -1)
+    {
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    filelen = (size_t)ftell_result;
+    if (fseek(fPtr, 0L, SEEK_SET) != 0)
+    {
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    ext_config = malloc(sizeof(struct external_config));
+    if (ext_config == NULL)
+    {
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    ext_config->file = malloc(filelen + 1);
+    if (ext_config->file == NULL)
+    {
+        free(ext_config);
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    if (fread(ext_config->file, 1, filelen, fPtr) != filelen)
+    {
+        free(ext_config->file);
+        free(ext_config);
+        fclose(fPtr);
+        return M64ERR_INPUT_INVALID;
+    }
+    fclose(fPtr);
+    ext_config->length = filelen;
+    *Handle = ext_config;
+    return M64ERR_SUCCESS;
+}
+
+EXPORT m64p_error CALL ConfigExternalClose(m64p_handle Handle)
+{
+    struct external_config* ext_config = Handle;
+    if (ext_config != NULL) {
+        if (ext_config->file != NULL)
+            free(ext_config->file);
+        free(ext_config);
+        return M64ERR_SUCCESS;
+    }
+    return M64ERR_INPUT_INVALID;
+}
+
+EXPORT m64p_error CALL ConfigExternalGetParameter(m64p_handle Handle, const char *SectionName, const char *ParamName, char* ParamPtr, int ParamMaxLength)
+{
+    struct external_config* ext_config = Handle;
+    int foundSection = 0;
+    if (ParamPtr == NULL || SectionName == NULL || ParamName == NULL)
+        return M64ERR_INPUT_INVALID;
+
+    void *buffer = malloc(ext_config->length + 1);
+    memcpy(buffer, ext_config->file, ext_config->length + 1);
+    char *line = buffer;
+    char *end = line + ext_config->length;
+    while (line < end)
+    {
+        ini_line l = ini_parse_line(&line);
+        switch (l.type)
+        {
+            case INI_SECTION:
+                if (osal_insensitive_strcmp(SectionName, l.name) == 0)
+                    foundSection = 1;
+                else
+                    foundSection = 0;
+                break;
+            case INI_PROPERTY:
+                if (foundSection)
+                {
+                    if (osal_insensitive_strcmp(ParamName, l.name) == 0)
+                    {
+                        strncpy(ParamPtr, l.value, ParamMaxLength);
+                        free(buffer);
+                        return M64ERR_SUCCESS;
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    free(buffer);
+    return M64ERR_INPUT_NOT_FOUND;
+}
 
 EXPORT m64p_error CALL ConfigListSections(void *context, void (*SectionListCallback)(void * context, const char * SectionName))
 {

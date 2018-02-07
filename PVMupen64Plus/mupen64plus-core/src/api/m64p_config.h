@@ -244,9 +244,37 @@ typedef const char * (*ptr_ConfigGetUserCachePath)(void);
 EXPORT const char * CALL ConfigGetUserCachePath(void);
 #endif
 
+/* ConfigExternalOpen()
+ *
+ * This function reads the contents of the config file into memory
+ * and returns M64ERR_SUCCESS if successful.
+ */
+typedef m64p_error (*ptr_ConfigExternalOpen)(const char *, m64p_handle *);
+#if defined(M64P_CORE_PROTOTYPES)
+EXPORT m64p_error CALL ConfigExternalOpen(const char *, m64p_handle *);
+#endif
+
+/* ConfigExternalClose()
+ *
+ * Frees the memory pointer created by ConfigExternalOpen.
+ */
+typedef m64p_error (*ptr_ConfigExternalClose)(m64p_handle);
+#if defined(M64P_CORE_PROTOTYPES)
+EXPORT m64p_error CALL ConfigExternalClose(m64p_handle);
+#endif
+
+/* ConfigExternalGetParameter()
+ *
+ * This functions allows a plugin to leverage the built-in ini parser to read
+ * any cfg/ini file. It will return M64ERR_SUCCESS if the item was found.
+ */
+typedef m64p_error (*ptr_ConfigExternalGetParameter)(m64p_handle, const char *, const char *, char *, int);
+#if defined(M64P_CORE_PROTOTYPES)
+EXPORT m64p_error CALL ConfigExternalGetParameter(m64p_handle, const char *, const char *, char *, int);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* #define M64P_CONFIG_H */
-

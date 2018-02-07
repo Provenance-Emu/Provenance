@@ -37,7 +37,7 @@ static unsigned long long *return_address;
 
 void dyna_jump(void)
 {
-    if (r4300_stop == 1)
+    if (stop == 1)
     {
         dyna_stop();
         return;
@@ -69,7 +69,7 @@ void dyna_start(void *code)
      " push %%r15              \n"
      " push %%rbp              \n"
      " mov  %%rsp, %[save_rsp] \n"
-     " lea  %[r4300_reg], %%r15      \n" /* store the base location of the r4300 registers in r15 for addressing */
+     " lea  %[reg], %%r15      \n" /* store the base location of the r4300 registers in r15 for addressing */
      " call 1f                 \n"
      " jmp 2f                  \n"
      "1:                       \n"
@@ -92,7 +92,7 @@ void dyna_start(void *code)
      " pop  %%r12              \n"
      " pop  %%rbx              \n"
      : [save_rsp]"=m"(save_rsp), [save_rip]"=m"(save_rip), [return_address]"=m"(return_address)
-     : "b" (code), [r4300_reg]"m"(*r4300_reg)
+     : "b" (code), [reg]"m"(*reg)
      : "%rax", "memory"
      );
 #endif
