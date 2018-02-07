@@ -40,6 +40,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.provenance-emu.webserver</string>
+	</array>
 	<key>Revision</key>
 	<string>3889340</string>
 	<key>UIMainStoryboardFile</key>
