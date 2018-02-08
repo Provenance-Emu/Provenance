@@ -12,6 +12,7 @@
 #import "GCDWebUploader.h"
 #import "GCDWebDAVServer.h"
 
+
 @interface PVWebServer ()
 
 @property (nonatomic, strong) GCDWebUploader *webServer;
@@ -47,11 +48,11 @@
 {
     if ((self = [super init]))
     {
-        self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory: [self getDocumentDirectory]];
+        self.webServer = [[GCDWebUploader alloc] initWithUploadDirectory: self.documentsDirectory];
         self.webServer.delegate = self;
         self.webServer.allowHiddenItems = NO;
         
-        self.webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:[self getDocumentDirectory]];
+        self.webDavServer = [[GCDWebDAVServer alloc] initWithUploadDirectory:self.documentsDirectory];
         self.webDavServer.delegate = self;
         self.webDavServer.allowHiddenItems = NO;
     }
@@ -59,14 +60,18 @@
     return self;
 }
 
-- (NSString*)getDocumentDirectory
+- (NSString*)documentsDirectory
 {
+    static NSString* documentPath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
 #if TARGET_OS_TV
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 #else
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 #endif
-    NSString *documentPath = [paths objectAtIndex: 0];
+        documentPath = [paths objectAtIndex: 0];
+    });
     
     return documentPath;
 }
@@ -102,6 +107,14 @@
     [self.handoffActivity becomeCurrent];
     
     return YES;
+}
+
+- (BOOL)isWWWUploadServerRunning {
+    return _webServer.isRunning;
+}
+
+- (BOOL)isIsWebDavServerRunning {
+    return _webDavServer.isRunning;
 }
 
 -(BOOL)startWWWUploadServer {

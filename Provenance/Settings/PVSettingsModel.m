@@ -21,6 +21,7 @@ NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
 NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 NSString * const kFPSCountKey = @"kFPSCountKey";
 NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
+NSString * const kWebDayAlwwaysOnKey = @"kWebDavAlwaysOnKey";
 
 @implementation PVSettingsModel
 
@@ -54,7 +55,9 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
                                                                   kVolumeSettingKey : @(1.0),
 																  kFPSCountKey : @(NO),
-                                                                  kShowGameTitlesKey: @(YES)}];
+                                                                  kShowGameTitlesKey: @(YES),
+                                                                  kWebDayAlwwaysOnKey: @(NO)
+                                                                  }];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -69,6 +72,7 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
         _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
         _showFPSCount = [[NSUserDefaults standardUserDefaults] boolForKey:kFPSCountKey];
         _showGameTitles = [[NSUserDefaults standardUserDefaults] boolForKey:kShowGameTitlesKey];
+        _webDavAlwaysOn = [[NSUserDefaults standardUserDefaults] boolForKey:kWebDayAlwwaysOnKey];
 	}
 
 	return self;
@@ -167,6 +171,12 @@ NSString * const kShowGameTitlesKey = @"kShowGameTitlesKey";
 {
     _volume = volume;
     [[NSUserDefaults standardUserDefaults] setFloat:volume forKey:kVolumeSettingKey];
+}
+
+-(void)setWebDavAlwaysOn:(BOOL)webDavAlwaysOn {
+    _webDavAlwaysOn = webDavAlwaysOn;
+    [[NSUserDefaults standardUserDefaults] setBool:_webDavAlwaysOn forKey:kWebDayAlwwaysOnKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 @end

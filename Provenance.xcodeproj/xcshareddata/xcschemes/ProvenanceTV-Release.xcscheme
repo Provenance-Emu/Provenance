@@ -235,7 +235,7 @@
          <EnvironmentVariable
             key = "ALWAYS_ON_WEBDAV"
             value = "1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>

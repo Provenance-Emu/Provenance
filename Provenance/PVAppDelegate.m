@@ -10,7 +10,10 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 #import "PVSearchViewController.h"
+
+// Needed to autoload WebDav
 #import "PVWebServer.h"
+#import "PVSettingsModel.h"
 
 #if TARGET_OS_TV
 #import "PVAppConstants.h"
@@ -131,7 +134,6 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [self stopOptionalWebDavServer];
 }
 
 #pragma mark - Helpers
@@ -147,14 +149,9 @@
 }
 
 - (void)startOptionalWebDavServer {
-    if ([self isWebDavServerEnviromentVariableSet]) {
+    // Check if the user setting is set or the optional ENV variable
+    if (PVSettingsModel.sharedInstance.webDavAlwaysOn || [self isWebDavServerEnviromentVariableSet]) {
         [PVWebServer.sharedInstance startWebDavServer];
-    }
-}
-
-- (void)stopOptionalWebDavServer {
-    if ([self isWebDavServerEnviromentVariableSet]) {
-        [PVWebServer.sharedInstance stopWebDavServer];
     }
 }
 

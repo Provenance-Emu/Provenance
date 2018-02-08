@@ -19,12 +19,15 @@ NS_ASSUME_NONNULL_BEGIN;
 
 + (instancetype)sharedInstance;
 
-@property (nonatomic, retain, readonly) NSString *documentsDirectory;
-@property (nonatomic, retain, readonly) NSString *IPAddress;
-@property (nonatomic, retain, readonly) NSString *URLString;
-@property (nonatomic, retain, readonly) NSString *WebDavURLString;
-@property (nonatomic, retain, readonly) NSURL *URL;
-@property (nonatomic, retain, readonly) NSURL *bonjourSeverURL;
+@property (nonatomic, strong, readonly) NSString *documentsDirectory;
+@property (nonatomic, strong, readonly) NSString *IPAddress;
+@property (nonatomic, strong, readonly) NSString *URLString;
+@property (nonatomic, strong, readonly) NSString *WebDavURLString;
+@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, strong, readonly) NSURL *bonjourSeverURL;
+
+@property (nonatomic, assign, readonly) BOOL isWWWUploadServerRunning;
+@property (nonatomic, assign, readonly) BOOL isWebDavServerRunning;
 
 - (BOOL)startServers;
 - (void)stopServers;
