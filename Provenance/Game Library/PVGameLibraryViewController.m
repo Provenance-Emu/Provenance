@@ -17,7 +17,6 @@
 #import "PVGame.h"
 #import "PVRecentGame.h"
 #import "PVMediaCache.h"
-#import "UIAlertView+BlockAdditions.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "PVEmulatorConfiguration.h"
 #if !TARGET_OS_TV
@@ -1394,12 +1393,11 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
                                           }
                                           else
                                           {
-                                              UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Photos"
-                                                                                              message:@"There are no photos in your library to choose from"
-                                                                                             delegate:nil
-                                                                                    cancelButtonTitle:nil
-                                                                                    otherButtonTitles:@"OK", nil];
-                                              [alert show];
+                                              UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"No Photos"
+                                                                                                             message:@"There are no photos in your library to choose from"
+                                                                                                      preferredStyle:UIAlertControllerStyleAlert];
+                                              [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
+                                              [self presentViewController:alert animated:YES completion:nil];
                                           }
                                       } failureBlock:^(NSError *error) {
                                           if (cameraIsAvailable || photoLibraryIsAvaialble)

@@ -13,7 +13,6 @@
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
-#import "UIAlertView+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
 #import "PVSettingsModel.h"
 #import "UIView+FrameAdditions.h"
