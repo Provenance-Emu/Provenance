@@ -543,6 +543,14 @@
 		B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; };
 		B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B340E6091E088CF900AD0E8B /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */; };
+		B3B923AB202D2EAE00580FFC /* UITraitCollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */; };
+		B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */; };
+		B3B923AD202D2EAE00580FFC /* UIWindowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */; };
+		B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */; };
+		B3B923AF202D2EAE00580FFC /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */; };
+		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
+		B3B923B3202D417700580FFC /* Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923B2202D417700580FFC /* Spotlight.swift */; };
 		B3C0EE4A1EA853A600C6414C /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.m */; };
 		B3C0EE4B1EA853A700C6414C /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.m */; };
 		B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; };
@@ -1237,6 +1245,16 @@
 		B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVNeoGeoPocketControllerViewController.m; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
+		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
+		B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppearanceExtensions.swift; sourceTree = "<group>"; };
+		B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITraitCollectionExtensions.swift; sourceTree = "<group>"; };
+		B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleable.swift; sourceTree = "<group>"; };
+		B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
+		B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
+		B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceScope.swift; sourceTree = "<group>"; };
+		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		B3B923B2202D417700580FFC /* Spotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotlight.swift; sourceTree = "<group>"; };
 		B3C653071E6F73450096053B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMednafen.framework"; sourceTree = "<group>"; };
 		B3C9D42F1DEA1B260068D057 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1406,6 +1424,7 @@
 		1A1237F217CA279900CEC788 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				B3B923A1202D2EAE00580FFC /* Themes */,
 				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
 				7556CF7919DC15C1007F8F97 /* Default.xib */,
 			);
@@ -1479,6 +1498,8 @@
 				1AACCADD1BB60D8200DC21AE /* Realm-iOS */,
 				1AACCADF1BB60D8200DC21AE /* Realm-tvOS */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
+				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
+				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1601,6 +1622,7 @@
 		1A48696917C8C0C60019F6D2 /* Game Library */ = {
 			isa = PBXGroup;
 			children = (
+				B3B923B1202D415900580FFC /* Spotlight */,
 				1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */,
 				1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */,
 				1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */,
@@ -2428,6 +2450,36 @@
 			name = "Neo Geo";
 			sourceTree = "<group>";
 		};
+		B3B923A1202D2EAE00580FFC /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				B3B923A2202D2EAE00580FFC /* SwiftyAppearance */,
+				B3B923A9202D2EAE00580FFC /* Theme.swift */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
+		B3B923A2202D2EAE00580FFC /* SwiftyAppearance */ = {
+			isa = PBXGroup;
+			children = (
+				B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */,
+				B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */,
+				B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */,
+				B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */,
+				B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */,
+				B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */,
+			);
+			path = SwiftyAppearance;
+			sourceTree = "<group>";
+		};
+		B3B923B1202D415900580FFC /* Spotlight */ = {
+			isa = PBXGroup;
+			children = (
+				B3B923B2202D417700580FFC /* Spotlight.swift */,
+			);
+			path = Spotlight;
+			sourceTree = "<group>";
+		};
 		B3CB85C41E9BFB4B009155A6 /* PokeMini */ = {
 			isa = PBXGroup;
 			children = (
@@ -2599,12 +2651,12 @@
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
 						DevelopmentTeam = 63497P68S6;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0920;
 					};
 					1AD481B31BA350A400FDA50A = {
 						CreatedOnToolsVersion = 7.1;
 						DevelopmentTeam = 63497P68S6;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.ApplicationGroups.iOS = {
@@ -2783,6 +2835,7 @@
 				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
 				B349AEA31E9ABCF900ACD416 /* 7zOut.cpp in Sources */,
 				B349AEF51E9ABCF900ACD416 /* BranchMisc.cpp in Sources */,
+				B3B923AB202D2EAE00580FFC /* UITraitCollectionExtensions.swift in Sources */,
 				B349AEFF1E9ABCF900ACD416 /* CopyRegister.cpp in Sources */,
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
 				B3CB85C71E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m in Sources */,
@@ -2846,6 +2899,7 @@
 				B349AEFD1E9ABCF900ACD416 /* CopyCoder.cpp in Sources */,
 				B349AEA71E9ABCF900ACD416 /* 7zRegister.cpp in Sources */,
 				B349AF131E9ABCF900ACD416 /* PpmdRegister.cpp in Sources */,
+				B3B923B3202D417700580FFC /* Spotlight.swift in Sources */,
 				1AFA7C9F1D10B06D0058C637 /* PVAppConstants.m in Sources */,
 				B349AF491E9ABCF900ACD416 /* PropVariantConv.cpp in Sources */,
 				B349AEAF1E9ABCF900ACD416 /* CoderMixer2.cpp in Sources */,
@@ -2858,6 +2912,7 @@
 				B349AEF91E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
 				B349AF171E9ABCF900ACD416 /* 7zAesRegister.cpp in Sources */,
 				B349AF411E9ABCF900ACD416 /* Wildcard.cpp in Sources */,
+				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				B349AEB31E9ABCF900ACD416 /* HandlerOut.cpp in Sources */,
 				B349AE6D1E9ABCF900ACD416 /* Lzma86Dec.c in Sources */,
 				B349AF071E9ABCF900ACD416 /* Lzma2Register.cpp in Sources */,
@@ -2900,6 +2955,7 @@
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				B349AE9B1E9ABCF900ACD416 /* 7zHandler.cpp in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
+				B3B923AD202D2EAE00580FFC /* UIWindowExtensions.swift in Sources */,
 				1AADCDBA17BD998A00F53CFE /* UIAlertView+BlockAdditions.m in Sources */,
 				1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */,
 				1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */,
@@ -2930,12 +2986,14 @@
 				B349AED91E9ABCF900ACD416 /* MethodProps.cpp in Sources */,
 				1A48697517C8C0DE0019F6D2 /* PVGameLibraryViewController.m in Sources */,
 				B349AE711E9ABCF900ACD416 /* LzmaDec.c in Sources */,
+				B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */,
 				B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
 				B349AEE31E9ABCF900ACD416 /* StreamBinder.cpp in Sources */,
 				B349AE7D1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
 				1A48697717C8C0DE0019F6D2 /* PVGame.m in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
+				B3B923AF202D2EAE00580FFC /* AppearanceScope.swift in Sources */,
 				B349AE751E9ABCF900ACD416 /* LzmaLib.c in Sources */,
 				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
@@ -2959,7 +3017,9 @@
 				B349AED31E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
 				B349AE911E9ABCF900ACD416 /* 7zCompressionMode.cpp in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
+				B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */,
 				B349AF6D1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
+				B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */,
 				B349AE571E9ABCF900ACD416 /* Bcj2.c in Sources */,
 				B349AE5F1E9ABCF900ACD416 /* BraIA64.c in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
@@ -3435,6 +3495,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3477,6 +3538,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
@@ -3530,6 +3592,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -3584,6 +3647,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -3637,6 +3701,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
@@ -3646,6 +3711,7 @@
 		1AD9AA3E1ACC988F00EC87A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3700,6 +3766,7 @@
 		1AD9AA3F1ACC988F00EC87A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3752,6 +3819,7 @@
 		1AD9AA401ACC988F00EC87A0 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -3874,6 +3942,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;

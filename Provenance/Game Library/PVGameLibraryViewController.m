@@ -70,12 +70,15 @@ static const CGFloat CellWidth = 308.0;
 @property (nonatomic, strong) NSArray *sectionInfo;
 @property (nonatomic, strong) RLMResults *searchResults;
 
-@property (nonatomic, assign) IBOutlet UITextField *searchField;
+@property (nonatomic, weak) IBOutlet UITextField *searchField;
 
 @property (nonatomic, assign) BOOL initialAppearance;
 
 @property (nonatomic, assign) BOOL mustRefreshDataSource;
 
+@end
+
+@interface PVGameLibraryViewController () <UISearchResultsUpdating>
 @end
 
 @implementation PVGameLibraryViewController
@@ -93,6 +96,22 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         [RLMRealmConfiguration setRealmConfig];
 
         self.realm = [RLMRealm defaultRealm];
+        
+        if (@available(iOS 11.0, *)) {
+            // Hide the pre iOS 11 search bar
+            self.navigationItem.titleView = nil;
+            
+            // Navigation bar large titles
+            self.navigationController.navigationBar.prefersLargeTitles = NO;
+            self.navigationItem.title = nil;
+
+            // Create a search contorller
+            UISearchController *searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+            searchController.searchBar.placeholder = @"Search";
+            searchController.searchResultsUpdater = self;
+            self.navigationItem.hidesSearchBarWhenScrolling = YES;
+            self.navigationItem.searchController = searchController;
+        }
     }
     
     return self;
@@ -181,7 +200,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	[self.collectionView addGestureRecognizer:longPressRecognizer];
 	
 	[self.collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:_reuseIdentifier];
-	[self.collectionView setBackgroundColor:[UIColor clearColor]];
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:PVRequiresMigrationKey])
     {
@@ -1032,6 +1050,8 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 
     [self fetchGames];
     [self.collectionView reloadData];
+    
+    
 }
 
 - (void)renameGame:(PVGame *)game
@@ -1393,6 +1413,12 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
     self.searchResults = nil;
     [self.collectionView reloadData];
 }
+
+#pragma mark - UISearchResultsUpdating
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    [self searchLibrary:searchController.searchBar.text];
+}
+
 
 #pragma mark - UICollectionViewDataSource
 

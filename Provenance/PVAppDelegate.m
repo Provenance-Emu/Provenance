@@ -10,6 +10,7 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 #import "PVSearchViewController.h"
+#import "Provenance-Swift.h"
 
 #if TARGET_OS_TV
 #import "PVAppConstants.h"
@@ -55,6 +56,8 @@
 		[tabBarController setViewControllers:viewControllers];
 	}
 #endif
+    
+    [Theme setDarkMode];
 
 	return YES;
 }
