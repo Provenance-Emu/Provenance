@@ -18,14 +18,13 @@
 		_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(30, 0, [self bounds].size.width - 30, [self bounds].size.height)];
         [_titleLabel setTextAlignment:NSTextAlignmentLeft];
         [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleTitle1]];
+        [_titleLabel setTextColor:[self colorForText]];
 #else
         [_titleLabel setFont:[UIFont preferredFontForTextStyle:UIFontTextStyleHeadline]];
         UIView *topSeparator = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [self bounds].size.width, 0.5)];
         [topSeparator setBackgroundColor:[UIColor colorWithWhite:0.7 alpha:0.6]];
         [topSeparator setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [self addSubview:topSeparator];
-
-        [self setBackgroundColor:[UIColor colorWithWhite:0.9 alpha:0.6]];
 
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, [self bounds].size.width - 40, [self bounds].size.height)];
         [_titleLabel setTextAlignment:NSTextAlignmentCenter];
@@ -36,7 +35,6 @@
         [self addSubview:bottomSeparator];
 #endif
 		[_titleLabel setNumberOfLines:0];
-        [_titleLabel setTextColor:[self colorForText]];
 		[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 		[self addSubview:_titleLabel];
 	}

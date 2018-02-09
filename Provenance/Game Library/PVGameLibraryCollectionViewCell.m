@@ -51,7 +51,6 @@ static const CGFloat LabelHeight = 44.0;
         [_titleLabel setShadowColor:[[UIColor blackColor] colorWithAlphaComponent:0.8]];
         [_titleLabel setShadowOffset:CGSizeMake(-1, 1)];
 #else
-        [_titleLabel setTextColor:[UIColor blackColor]];
         [_titleLabel setNumberOfLines:0];
 #endif
         [_titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
@@ -172,9 +171,6 @@ static const CGFloat LabelHeight = 44.0;
 - (void)dealloc
 {
     [self.operation cancel];
-    
-    _imageView = nil;
-	_titleLabel = nil;
 }
 
 - (void)prepareForReuse

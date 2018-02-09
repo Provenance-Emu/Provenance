@@ -10,6 +10,7 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 #import "PVSearchViewController.h"
+#import "Provenance-Swift.h"
 
 // Needed to autoload WebDav
 #import "PVWebServer.h"
@@ -59,6 +60,8 @@
 		[tabBarController setViewControllers:viewControllers];
 	}
 #endif
+    
+    [Theme setDarkMode];
 
     [self startOptionalWebDavServer];
     
