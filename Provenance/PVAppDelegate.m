@@ -20,6 +20,8 @@
 #import "PVAppConstants.h"
 #endif
 
+#define TEST_THEMES 0
+
 @interface PVAppDelegate ()
 
 @end
@@ -60,7 +62,11 @@
 		[tabBarController setViewControllers:viewControllers];
 	}
 #else
+    
+#if TEST_THEMES
     [Theme setDarkMode];
+#endif
+    
 #endif
     
     [self startOptionalWebDavServer];
