@@ -59,10 +59,10 @@
 		[viewControllers insertObject:navController atIndex:1];
 		[tabBarController setViewControllers:viewControllers];
 	}
+#else
+    [Theme setDarkMode];
 #endif
     
-    [Theme setDarkMode];
-
     [self startOptionalWebDavServer];
     
 	return YES;

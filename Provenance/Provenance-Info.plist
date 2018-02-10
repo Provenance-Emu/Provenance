@@ -53,6 +53,10 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.provenance-emu.webserver</string>
+	</array>
 	<key>Revision</key>
 	<string>78dc628</string>
 	<key>UIFileSharingEnabled</key>
@@ -81,10 +85,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-	</array>
-	<key>NSUserActivityTypes</key>
-	<array>
-		<string>com.provenance-emu.webserver</string>
 	</array>
 </dict>
 </plist>

@@ -7,7 +7,6 @@
 //
 
 #import "PVSearchViewController.h"
-#import <Realm/Realm.h>
 #import "PVGame.h"
 #import "PVGameLibraryCollectionViewCell.h"
 #import "PVMediaCache.h"
@@ -17,10 +16,10 @@
 #import "PVEmulatorConfiguration.h"
 #import "PVRecentGame.h"
 #import "PVControllerManager.h"
+#import "Provenance-Swift.h"
 
 @interface PVSearchViewController ()
 
-@property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) RLMResults *searchResults;
 
 @end
@@ -30,8 +29,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-	self.realm = [RLMRealm defaultRealm];
-	[self.realm refresh];
+    [RomDatabase.sharedInstance refresh];
 
 	[(UICollectionViewFlowLayout *)self.collectionViewLayout setSectionInset:UIEdgeInsetsMake(20, 0, 20, 0)];
 	[self.collectionView registerClass:[PVGameLibraryCollectionViewCell class] forCellWithReuseIdentifier:@"SearchResultCell"];
@@ -110,31 +108,24 @@
 
 - (void)updateRecentGames:(PVGame *)game
 {
-	RLMRealm *realm = [RLMRealm defaultRealm];
-	[realm refresh];
+    [RomDatabase.sharedInstance refresh];
 
-	RLMResults *recents = [PVRecentGame allObjects];
+    RLMResults *recents = [PVRecentGame allObjects];
 
 	PVRecentGame *recentToDelete = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", [game md5Hash]]] firstObject];
 	if (recentToDelete)
 	{
-		[realm beginWriteTransaction];
-		[realm deleteObject:recentToDelete];
-		[realm commitWriteTransaction];
+        [RomDatabase.sharedInstance deleteWithObject:recentToDelete error:nil];
 	}
 
 	if ([recents count] >= PVMaxRecentsCount)
 	{
 		PVRecentGame *oldestRecent = [[recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO] lastObject];
-		[realm beginWriteTransaction];
-		[realm deleteObject:oldestRecent];
-		[realm commitWriteTransaction];
+        [RomDatabase.sharedInstance deleteWithObject:oldestRecent error:nil];
 	}
 
 	PVRecentGame *newRecent = [[PVRecentGame alloc] initWithGame:game];
-	[realm beginWriteTransaction];
-	[realm addObject:newRecent];
-	[realm commitWriteTransaction];
+    [RomDatabase.sharedInstance addWithObject:newRecent error:nil];
 }
 
 typedef NSDictionary<NSString*,NSString*> BiosDictionary;

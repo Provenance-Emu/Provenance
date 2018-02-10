@@ -6,7 +6,6 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
-#import <Realm/Realm.h>
 #import "PVAppDelegate.h"
 #import "PVGameImporter.h"
 #import "PVGameLibraryViewController.h"
@@ -35,9 +34,9 @@
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "PVControllerManager.h"
-#import "RLMRealmConfiguration+Config.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
+#import "Provenance-Swift.h"
 
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
@@ -52,7 +51,6 @@ static const CGFloat CellWidth = 308.0;
 @interface PVGameLibraryViewController () <SFSafariViewControllerDelegate>
 #endif
 
-@property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
 @property (nonatomic, strong) PVDirectoryWatcher *coverArtWatcher;
 @property (nonatomic, strong) PVGameImporter *gameImporter;
@@ -94,11 +92,8 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     if ((self = [super initWithCoder:aDecoder]))
     {
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
-
-        [RLMRealmConfiguration setRealmConfig];
-
-        self.realm = [RLMRealm defaultRealm];
         
+#if !TARGET_OS_TV
         if (@available(iOS 11.0, *)) {
             // Hide the pre iOS 11 search bar
             self.navigationItem.titleView = nil;
@@ -114,6 +109,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             self.navigationItem.hidesSearchBarWhenScrolling = YES;
             self.navigationItem.searchController = searchController;
         }
+#endif
     }
     
     return self;
@@ -122,19 +118,6 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
-	self.renameOverlay = nil;
-	self.renameTextField = nil;
-#if !TARGET_OS_TV
-    self.renameToolbar = nil;
-#endif
-	self.gameToRename = nil;
-	self.gamesInSections = nil;
-	
-	self.watcher = nil;
-    self.coverArtWatcher = nil;
-	self.collectionView = nil;
-    self.realm = nil;
 }
 
 - (void)handleAppDidBecomeActive:(NSNotification *)note
@@ -582,10 +565,10 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 
 - (void)fetchGames
 {
-    [self.realm refresh];
+    [RomDatabase.sharedInstance refresh];
 
     // Favorite Games
-    RLMResults *allSortedGames = [[PVGame allObjectsInRealm:self.realm] sortedResultsUsingProperty:@"title" ascending:YES];
+    RLMResults *allSortedGames = [RomDatabase.sharedInstance allGamesWithSortedByKey:@"title" ascending:YES];
     NSMutableArray *favoriteGames = [[NSMutableArray alloc] init];
     for (PVGame *game in allSortedGames) {
         if (game.isFavorite) {
@@ -760,19 +743,22 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 {
     __weak typeof(self) weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        RLMRealm *realm = [RLMRealm defaultRealm];
-        [realm refresh];
-        for (PVGame *game in [PVGame allObjectsInRealm:realm])
+        RomDatabase* database = RomDatabase.sharedInstance;
+        [database refresh];
+
+        for (PVGame *game in database.allGames)
         {
-            [realm beginWriteTransaction];
-            [game setCustomArtworkURL:@""];
-            [realm commitWriteTransaction];
+            [database writeTransactionAndReturnError:nil
+                                                    :^{
+                                                        [game setCustomArtworkURL:@""];
+                                                    }];
+            
             NSString *originalArtworkURL = [game originalArtworkURL];
             [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf.realm refresh];
+            [RomDatabase.sharedInstance refresh];
             [weakSelf fetchGames];
         });
 
@@ -795,15 +781,15 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     NSString *documentsPath = [config documentsPath];
     NSMutableArray *romPaths = [NSMutableArray array];
 
-    for (PVGame *game in [PVGame allObjectsInRealm:self.realm])
+    RomDatabase* database = RomDatabase.sharedInstance;
+    
+    for (PVGame *game in database.allGames)
     {
         NSString *path = [documentsPath stringByAppendingPathComponent:[game romPath]];
         [romPaths addObject:path];
     }
 
-    [self.realm beginWriteTransaction];
-    [self.realm deleteAllObjects];
-    [self.realm commitWriteTransaction];
+    [database deleteAllObjectsAndReturnError:nil];
     [self fetchGames];
     [self.collectionView reloadData];
 
@@ -923,32 +909,27 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 
 - (void)updateRecentGames:(PVGame *)game
 {
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    [realm refresh];
+    [RomDatabase.sharedInstance refresh];
     
     RLMResults *recents = [PVRecentGame allObjects];
     
     PVRecentGame *recentToDelete = [[PVRecentGame objectsWithPredicate:[NSPredicate predicateWithFormat:@"game.md5Hash == %@", [game md5Hash]]] firstObject];
     if (recentToDelete)
     {
-        [realm beginWriteTransaction];
-        [realm deleteObject:recentToDelete];
-        [realm commitWriteTransaction];
+        [RomDatabase.sharedInstance deleteWithObject:recentToDelete error:nil];
     }
     
     if ([recents count] >= PVMaxRecentsCount)
     {
         PVRecentGame *oldestRecent = [[recents sortedResultsUsingProperty:@"lastPlayedDate" ascending:NO] lastObject];
-        [realm beginWriteTransaction];
-        [realm deleteObject:oldestRecent];
-        [realm commitWriteTransaction];
+        
+        [RomDatabase.sharedInstance deleteWithObject:oldestRecent error:nil];
     }
     
     PVRecentGame *newRecent = [[PVRecentGame alloc] initWithGame:game];
-    [realm beginWriteTransaction];
-    [realm addObject:newRecent];
-    [realm commitWriteTransaction];
     
+    [RomDatabase.sharedInstance addWithObject:newRecent error:nil];
+
     [self registerRecentGames:recents];
     
     self.mustRefreshDataSource = YES;
@@ -1067,9 +1048,11 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
                                                             style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * _Nonnull action) {
                                                               [PVMediaCache deleteImageForKey:[game customArtworkURL]];
-                                                              [weakSelf.realm beginWriteTransaction];
-                                                              [game setCustomArtworkURL:@""];
-                                                              [weakSelf.realm commitWriteTransaction];
+                                                              
+                                                              [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+                                                                  [game setCustomArtworkURL:@""];
+                                                              }];
+
                                                               NSString *originalArtworkURL = [game originalArtworkURL];
                                                               dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                                                                   [weakSelf.gameImporter getArtworkFromURL:originalArtworkURL];
@@ -1104,14 +1087,12 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 }
 
 - (void)toggleFavoriteForGame:(PVGame *)game {
-    [self.realm beginWriteTransaction];
-    game.isFavorite = !game.isFavorite;
-    [self.realm commitWriteTransaction];
+    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+        game.isFavorite = !game.isFavorite;
+    }];
 
     [self fetchGames];
     [self.collectionView reloadData];
-    
-    
 }
 
 - (void)renameGame:(PVGame *)game
@@ -1216,10 +1197,10 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 {
     if (title.length)
     {
-        [self.realm beginWriteTransaction];
-        [game setTitle:title];
-        [self.realm commitWriteTransaction];
-        
+        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+            [game setTitle:title];
+        }];
+
         [self fetchGames];
         [self.collectionView reloadData];
     }
@@ -1256,10 +1237,8 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
     }
     
     [self deleteRelatedFilesGame:game];
-    
-    [self.realm beginWriteTransaction];
-    [self.realm deleteObject:game];
-    [self.realm commitWriteTransaction];
+  
+    [RomDatabase.sharedInstance deleteWithObject:game error:nil];
     
     NSArray *oldSectionInfo = self.sectionInfo;
     NSDictionary *oldGamesInSections = self.gamesInSections;
@@ -1364,9 +1343,10 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
                                                                                                                   orientation:(UIImageOrientation)[rep orientation]];
                                                                                [PVMediaCache writeImageToDisk:lastPhoto
                                                                                                       withKey:[[rep url] absoluteString]];
-                                                                               [self.realm beginWriteTransaction];
-                                                                               [game setCustomArtworkURL:[[rep url] absoluteString]];
-                                                                               [self.realm commitWriteTransaction];
+                                                                               [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+                                                                                   [game setCustomArtworkURL:[[rep url] absoluteString]];
+                                                                               }];
+
                                                                                NSArray *indexPaths = [self indexPathsForGameWithMD5Hash:[game md5Hash]];
                                                                                [self fetchGames];
                                                                                [self.collectionView reloadItemsAtIndexPaths:indexPaths];
@@ -1436,9 +1416,11 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
         }
         [PVMediaCache writeImageToDisk:pastedImage
                                withKey:key];
-        [self.realm beginWriteTransaction];
-        [game setCustomArtworkURL:key];
-        [self.realm commitWriteTransaction];
+        
+        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+            [game setCustomArtworkURL:key];
+        }];
+
         NSArray *indexPaths = [self indexPathsForGameWithMD5Hash:[game md5Hash]];
         [self fetchGames];
         [self.collectionView reloadItemsAtIndexPaths:indexPaths];
@@ -1753,9 +1735,11 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
         NSData *imageData = UIImagePNGRepresentation(image);
 		NSString *hash = [imageData md5Hash];
 		[PVMediaCache writeDataToDisk:imageData withKey:hash];
-        [self.realm beginWriteTransaction];
-		[self.gameForCustomArt setCustomArtworkURL:hash];
-        [self.realm commitWriteTransaction];
+        
+        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+            [self.gameForCustomArt setCustomArtworkURL:hash];
+        }];
+
         NSArray *indexPaths = [self indexPathsForGameWithMD5Hash:[self.gameForCustomArt md5Hash]];
 		[self.collectionView reloadItemsAtIndexPaths:indexPaths];
 	}
@@ -1813,4 +1797,5 @@ typedef NSDictionary<NSString*,NSString*> BiosDictionary;
 - (BOOL)canBecomeFirstResponder {
     return YES;
 }
+
 @end

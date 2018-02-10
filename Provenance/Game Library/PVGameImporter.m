@@ -12,13 +12,12 @@
 #import "OESQLiteDatabase.h"
 #import "NSFileManager+Hashing.h"
 #import "PVMediaCache.h"
-#import <Realm/Realm.h>
 #import "PVSynchronousURLSession.h"
 #import "PVEmulatorConstants.h"
 #import "PVAppConstants.h"
 #import "UIImage+Scaling.h"
 #import "NSData+Hashing.h"
-
+#import "Provenance-Swift.h"
 
 @interface NSArray (Map)
 
@@ -567,9 +566,9 @@
 
 - (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)chosenSystemID
 {
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    [realm refresh];
-    NSFileManager *fm = [NSFileManager defaultManager];
+    RomDatabase *database = [RomDatabase temporaryDatabaseContext];
+    [database refresh];
+    
     for (NSString *path in paths)
     {
         BOOL isDirectory = ![path containsString:@"."];
@@ -601,7 +600,8 @@
             NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
             PVGame *game = nil;
 
-            RLMResults *results = [PVGame objectsInRealm:realm withPredicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
+            RLMResults *results = [database objectsOfType:[PVGame class] predicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
+
             if ([results count])
             {
                 game = [results firstObject];
@@ -618,9 +618,9 @@
                 [game setTitle:title];
                 [game setSystemIdentifier:systemID];
                 [game setRequiresSync:YES];
-                [realm beginWriteTransaction];
-                [realm addObject:game];
-                [realm commitWriteTransaction];
+                
+                [database addWithObject:game
+                                  error:nil];
             }
 
             BOOL modified = NO;
@@ -652,8 +652,7 @@
 
 - (void)lookupInfoForGame:(PVGame *)game
 {
-    RLMRealm *realm = [RLMRealm defaultRealm];
-    [realm refresh];
+    [RomDatabase.sharedInstance refresh];
     
     if (![[game md5Hash] length])
     {
@@ -667,9 +666,9 @@
         NSString *md5Hash = [[NSFileManager defaultManager] MD5ForFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]
                                                                    fromOffset:offset];
         
-        [realm beginWriteTransaction];
-        [game setMd5Hash:md5Hash];
-        [realm commitWriteTransaction];
+        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+            [game setMd5Hash:md5Hash];
+        }];
     }
     
     NSError *error = nil;
@@ -712,10 +711,11 @@
     if (![results count])
     {
         DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
-        [realm beginWriteTransaction];
-        [game setRequiresSync:NO];
-        [realm commitWriteTransaction];
         
+        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+            [game setRequiresSync:NO];
+        }];
+
         return;
     }
     
@@ -734,17 +734,17 @@
         chosenResult = [results firstObject];
     }
     
-    [realm beginWriteTransaction];
-    [game setRequiresSync:NO];
-    if ([chosenResult[@"gameTitle"] length])
-    {
-        [game setTitle:chosenResult[@"gameTitle"]];
-    }
-    if ([chosenResult[@"boxImageURL"] length])
-    {
-        [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
-    }
-    [realm commitWriteTransaction];
+    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+        [game setRequiresSync:NO];
+        if ([chosenResult[@"gameTitle"] length])
+        {
+            [game setTitle:chosenResult[@"gameTitle"]];
+        }
+        if ([chosenResult[@"boxImageURL"] length])
+        {
+            [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+        }
+    }];
 }
 
 - (void)getArtworkFromURL:(NSString *)url
@@ -951,11 +951,8 @@
     if (!gamePartialPath) {
         return nil;
     }
-
-    RLMRealm *realm = [RLMRealm defaultRealm];
-
     NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
-    RLMResults *games = [PVGame objectsInRealm:realm withPredicate:gamePredicate];
+    RLMResults *games = [RomDatabase.sharedInstance objectsOfType:[PVGame class] predicate:gamePredicate];
 
     if (games.count < 1) {
         return nil;
@@ -963,9 +960,9 @@
 
     PVGame *game = games.firstObject;
 
-    [realm beginWriteTransaction];
-    [game setCustomArtworkURL:hash];
-    [realm commitWriteTransaction];
+    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+        [game setCustomArtworkURL:hash];
+    }];
 
     [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
 
