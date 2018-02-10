@@ -38,6 +38,7 @@
 #import "PVAppConstants.h"
 #import "Provenance-Swift.h"
 
+#define USE_IOS_11_SEARCHBAR 0
 
 NSString * const PVGameLibraryHeaderView = @"PVGameLibraryHeaderView";
 NSString * const kRefreshLibraryNotification = @"kRefreshLibraryNotification";
@@ -93,6 +94,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
     {
         [[NSUserDefaults standardUserDefaults] registerDefaults:@{PVRequiresMigrationKey : @(YES)}];
         
+#if USE_IOS_11_SEARCHBAR
 #if !TARGET_OS_TV
         if (@available(iOS 11.0, *)) {
             // Hide the pre iOS 11 search bar
@@ -109,6 +111,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
             self.navigationItem.hidesSearchBarWhenScrolling = YES;
             self.navigationItem.searchController = searchController;
         }
+#endif
 #endif
     }
     
