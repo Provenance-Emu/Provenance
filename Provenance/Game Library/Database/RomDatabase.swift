@@ -7,13 +7,11 @@
 //
 
 import Foundation
-import Realm
+import RealmSwift
 
-public extension RLMRealmConfiguration {
-
-    
+fileprivate class RealmConfiguration {
     class public var supportsAppGroups : Bool {
-        return !PVAppGroupId.isEmpty && RLMRealmConfiguration.appGroupContainer != nil
+        return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
     }
     
     class public var appGroupContainer : URL? {
@@ -21,38 +19,58 @@ public extension RLMRealmConfiguration {
     }
     
     class public var appGroupPath : String? {
-        guard let appGroupContainer = RLMRealmConfiguration.appGroupContainer else {
+        guard let appGroupContainer = RealmConfiguration.appGroupContainer else {
             return nil
         }
 
-        let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/").absoluteString
+        let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/").path
         return appGroupPath
     }
 }
 
 public final class RomDatabase : NSObject {
     
-    public static var sharedInstance : RomDatabase =  {
+    // Private shared instance that propery initializes
+    private static var _sharedInstance : RomDatabase =  {
         setDefaultRealmConfig()
         return RomDatabase()
     }()
+
+    // Public shared instance that makes sure threads are handeled right
+    // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
+    // this helper might do more damage than just putting a fatalError() around isMainThread
+    // and simply fixing any threaded callst to call temporaryDatabaseContext
+    // Or maybe there should be no public sharedInstance and instead only a
+    // databaseContext object that must be used for all calls. It would be another class
+    // and RomDatabase would just exist to provide context instances and init the initial database - jm
+    @objc
+    public static var sharedInstance : RomDatabase {
+        // Make sure real shared is inited first
+        let shared = RomDatabase._sharedInstance
+        
+        if Thread.isMainThread {
+            return shared
+        } else {
+            return RomDatabase.temporaryDatabaseContext()
+        }
+    }
     
     private class func setDefaultRealmConfig() {
         let config = RomDatabase.realmConfig
-        RLMRealmConfiguration.setDefault(config)
+        Realm.Configuration.defaultConfiguration = config
     }
     
     // For multi-threading
+    @objc
     public static func temporaryDatabaseContext() -> RomDatabase {
         return RomDatabase()
     }
     
-    private static var realmConfig : RLMRealmConfiguration = {
-        let config = RLMRealmConfiguration()
+    private static var realmConfig : Realm.Configuration = {
         #if TARGET_OS_TV
             var path: String? = nil
-            if RLMRealmConfiguration.supportsAppGroups() {
-                path = RLMRealmConfiguration.appGroupPath()
+            if RealmConfiguration.supportsAppGroups {
+                path = RealmConfiguration.appGroupPath
             }
             else {
                 let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
@@ -62,22 +80,27 @@ public final class RomDatabase : NSObject {
             let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
             let path: String? = paths.first
         #endif
-        let pathString = URL(fileURLWithPath: path!).appendingPathComponent("default.realm").path
-        config.path = pathString
-        // Bump schema version to migrate new PVGame property, isFavorite
-        config.schemaVersion = 1
-        config.migrationBlock = nil
-        //        {(_ migration: RLMMigration, _ oldSchemaVersion: UInt64) -> Void in
-        //            // Nothing to do, Realm handles migration automatically when we set an empty migration block
-        //        }
+        let realmURL = URL(fileURLWithPath: path!).appendingPathComponent("default.realm")
         
+        let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
+            if oldSchemaVersion < 2 {
+                ILOG("Migrating to version 2.")
+            }
+            ILOG("Migration complete.")
+        }
+        
+        let config = Realm.Configuration(fileURL: realmURL, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: 2, migrationBlock: migrationBlock, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
         return config
     }()
 
-    fileprivate var realm : RLMRealm
+    fileprivate var realm : Realm
     
     override init() {
-        self.realm = RLMRealm.default()
+        do {
+            self.realm = try Realm()
+        } catch {
+            fatalError("\(error.localizedDescription)")
+        }
 
         super.init()
     }
@@ -85,59 +108,95 @@ public final class RomDatabase : NSObject {
 
 // MARK: - Queries
 public extension RomDatabase {
-    public var allGames : RLMResults<PVGame> {
-        return PVGame.allObjects(in: self.realm) as! RLMResults<PVGame>
+    // Generics
+    public func all<T:Object>(_ type : T.Type) -> Results<T> {
+        return realm.objects(type)
     }
     
-    public func allGames(sortedByKey sortKey: String = "title", ascending: Bool = true) -> RLMResults<PVGame> {
-        return allGames.sortedResults(usingProperty: sortKey, ascending: ascending)
+    
+    // Testing a Swift hack to make Swift 4 keypaths work with KVC keypaths
+/*
+    public func all<T:Object>(sorthedByKeyPath keyPath : KeyPath<T, AnyKeyPath>, ascending: Bool = true) -> Results<T> {
+        return realm.objects(T.self).sorted(byKeyPath: keyPath._kvcKeyPathString!, ascending: ascending)
     }
     
-    // This should be a generic, but can't be for Obj-C
-    public func objectsOfType(_ type : AnyClass, predicate: NSPredicate) -> RLMResults<RLMObject> {
-        return type.objects(in: self.realm, with: predicate)
+    public func all<T:Object>(where keyPath: KeyPath<T, AnyKeyPath>, value : String) -> Results<T> {
+        return T.objects(in: self.realm, with: NSPredicate(format: "\(keyPath._kvcKeyPathString) == %@", value))
+    }
+     
+     public func allGames(sortedByKeyPath keyPath: KeyPath<PVGame, AnyKeyPath>, ascending: Bool = true) -> Results<PVGame> {
+        return all(sorthedByKeyPath: keyPath, ascending: ascending)
+     }
+
+*/
+    
+    public func all<T:Object>(_ type : T.Type, sorthedByKeyPath keyPath : String, ascending: Bool = true) -> Results<T> {
+        return realm.objects(T.self).sorted(byKeyPath: keyPath, ascending: ascending)
     }
     
-    // Can use keyPaths here - Probbly not correct i nthis form
-    public func all<T:RLMObject>(where keyPath: KeyPath<T, AnyKeyPath>, value : String) -> RLMResults<T> {
-        return T.objects(in: self.realm, with: NSPredicate(format: "\(keyPath) == %@", value)) as! RLMResults<T>
+    public func all<T:Object>(_ type : T.Type, where keyPath: String, value : String) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
+    }
+    
+    public func all<T:Object>(_ type : T.Type, filter: NSPredicate) -> Results<T> {
+        return realm.objects(T.self).filter(filter)
+    }
+    
+    // HELPERS -- TODO: Get rid once we're all swift
+    public var allGames : Results<PVGame> {
+        return self.all(PVGame.self)
+    }
+    
+    public func allGames(sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<PVGame> {
+        return all(PVGame.self, sorthedByKeyPath: keyPath, ascending: ascending)
     }
 }
 
 // MARK: - Update
 public extension RomDatabase {
+    @objc
     public func writeTransaction(_ block: () -> Void) throws {
-        realm.beginWriteTransaction()
-        block()
-        try realm.commitWriteTransaction()
+        try realm.write {
+            block()
+        }
     }
     
-    public func add(object: RLMObject) throws {
-        realm.beginWriteTransaction()
-        realm.add(object)
-        try realm.commitWriteTransaction()
+    @objc
+    public func add(object: Object) throws {
+        try realm.write {
+            realm.add(object, update: true)
+        }
     }
     
-    public func add<T:NSFastEnumeration>(objects: T) throws {
-        realm.beginWriteTransaction()
-        realm.addObjects(objects)
-        try realm.commitWriteTransaction()
+    public func add<T:Object>(objects: [T]) throws {
+        try realm.write {
+            realm.add(objects, update: true)
+        }
     }
     
-    public func deleteAllObjects() throws {
-        realm.beginWriteTransaction()
-        realm.deleteAllObjects()
-        try realm.commitWriteTransaction()
+    @objc
+    public func deleteAll() throws {
+        try realm.write {
+            realm.deleteAll()
+        }
     }
     
-    public func delete(object: RLMObject) throws {
-        realm.beginWriteTransaction()
-        realm.delete(object)
-        try realm.commitWriteTransaction()
+    public func deleteAll<T:Object>(_ type : T.Type) throws {
+        try realm.write {
+            realm.delete(realm.objects(type))
+        }
+    }
+    
+    @objc
+    public func delete(object: Object) throws {
+        try realm.write {
+            realm.delete(object)
+        }
     }
 }
 
 public extension RomDatabase {
+    @objc
     public func refresh() {
         realm.refresh()
     }

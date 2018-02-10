@@ -30,7 +30,7 @@ public extension AppearanceStyleable where Self.Style.RawValue == String {
 
     /// <#Description#>
     public var style: Style? {
-        get { return Style(rawValueOrNil: Self._styleName(class: object_getClass(self))) }
+        get { return Style(rawValueOrNil: Self._styleName(class: object_getClass(self)!)) }
         set { setStyle(newValue, animated: false) }
     }
     

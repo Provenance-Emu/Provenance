@@ -180,7 +180,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         unsigned long long filesize = [attributes fileSize];
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [NSTimer scheduledTimerWithTimeInterval:0.5 target:weakSelf selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(filesize)} repeats:NO];
+            [NSTimer scheduledTimerWithTimeInterval:0.5 target:weakSelf selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(filesize), @"wasZeroBefore" : @(NO)} repeats:NO];
         });
 //    }
 }
@@ -192,7 +192,11 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
     NSError *error = nil;
     NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:&error];
     unsigned long long currentFilesize = [attributes fileSize];
-    if (previousFilesize == currentFilesize)
+    
+    // This is because webDAv will show 0 for both values on the first write
+    BOOL wasZeroBefore = [[timer userInfo][@"wasZeroBefore"] boolValue];
+    
+    if (previousFilesize == currentFilesize && (currentFilesize != 0 || wasZeroBefore))
     {
         if ([[path pathExtension].lowercaseString isEqualToString:@"zip"] || [[path pathExtension].lowercaseString isEqualToString:@"7z"])
         {
@@ -212,7 +216,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         return;
     }
 
-    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(currentFilesize)} repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(checkFileProgress:) userInfo:@{@"path": path, @"filesize": @(currentFilesize), @"wasZeroBefore" : @(currentFilesize == 0)} repeats:NO];
 }
 
 - (void)extractArchiveAtPath:(NSString *)filePath
@@ -332,7 +336,7 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
         
         if (!deleted)
         {
-            DLog(@"Unable to delete file at path %@, because %@", reader.fileURL.absoluteString , [deleteError localizedDescription]);
+            DLog(@"Unable to delete file at path %@, because %@", reader.fileURL.path , [deleteError localizedDescription]);
         }
 
         [_unzippedFiles removeAllObjects];

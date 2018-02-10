@@ -68,7 +68,7 @@
 
 @interface PVEmulatorConfiguration ()
 
-@property (nonatomic, strong) NSArray *systems;
+@property (nonatomic, strong) NSArray<NSDictionary<NSString*,id>*> *systems;
 
 @end
 

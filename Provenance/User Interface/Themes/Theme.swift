@@ -14,20 +14,24 @@ protocol tvOSTheme {
 }
 
 protocol iOSTheme {
-    var defaultTintColor : UIColor {get}
     
-    var keyboardAppearance : UIKeyboardAppearance {get}
-    
+    // Mandatory
     var gameLibraryBackground : UIColor {get}
     var gameLibraryText : UIColor {get}
     
     var gameLibraryHeaderBackground : UIColor {get}
     var gameLibraryHeaderText : UIColor {get}
+
+    // Optional - Defaults to nil (OS chooses)
+    var defaultTintColor : UIColor? {get}
     
-    var barButtonItemTint : UIColor {get}
-    var navigationBarBackgroundColor : UIColor {get}
+    var keyboardAppearance : UIKeyboardAppearance {get}
     
-    var switchON : UIColor {get}
+    
+    var barButtonItemTint : UIColor? {get}
+    var navigationBarBackgroundColor : UIColor? {get}
+    
+    var switchON : UIColor? {get}
     var switchThumb : UIColor? {get}
 
     // Doesn't seem to be themeable
@@ -40,10 +44,15 @@ protocol iOSTheme {
 extension iOSTheme  {
     var keyboardAppearance : UIKeyboardAppearance {return .default}
 
-    var switchON: UIColor {return defaultTintColor}
+    // Defaults to NIL will use iOS defaults
+    var defaultTintColor: UIColor? {return nil}
     var switchThumb: UIColor? {return nil}
-    var barButtonItemTint: UIColor {return defaultTintColor}
-    var alertViewTintColor: UIColor {return defaultTintColor}
+    var navigationBarBackgroundColor: UIColor? {return nil}
+
+    // Default to default tint (which defaults to nil)
+    var barButtonItemTint: UIColor? {return defaultTintColor}
+    var alertViewTintColor: UIColor? {return defaultTintColor}
+    var switchON: UIColor? {return defaultTintColor}
 }
 
 struct DarkTheme : iOSTheme {
@@ -66,20 +75,13 @@ struct DarkTheme : iOSTheme {
     let alertViewText: UIColor = UIColor.lightGray
 }
 
-//struct LightTheme : iOSTheme {
-//    var defaultTintColor: UIColor
-//
-//    var navigationBarBackgroundColor: UIColor
-//
-//    var alertViewBackground: UIColor
-//
-//    var alertViewText: UIColor
-//
-//    let gameLibraryBackground = UIColor.clear
-//
-//    let gameLibraryHeaderBackground = UIColor.init(white: 0.9, alpha: 0.6)
-//    let gameLibraryHeaderText = UIColor.darkGray
-//}
+struct LightTheme : iOSTheme {
+    let gameLibraryBackground = UIColor.clear
+    var gameLibraryText : UIColor = UIColor.black
+
+    let gameLibraryHeaderBackground = UIColor.init(white: 0.9, alpha: 0.6)
+    let gameLibraryHeaderText = UIColor.darkGray
+}
 
 @available(iOS 9.0, *)
 public class Theme : NSObject {
@@ -123,11 +125,12 @@ public class Theme : NSObject {
         // Search bar
         
             // Text color
-        appearance(inAny: [UISearchBar.self]) {
-            UITextField.appearance {
-                $0.defaultTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-            }
-        }
+// Swift 4 compiler error
+        //        appearance(inAny: [UISearchBar.self]) {
+//            UITextField.appearance {
+//                $0.defaultTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+//            }
+//        }
 
         // Game Library Headers
         PVGameLibrarySectionHeaderView.appearance {
@@ -160,9 +163,9 @@ public class Theme : NSObject {
         setTheme(DarkTheme())
     }
     
-//    @objc class func setLightMode() {
-//        setTheme(LightTheme())
-//    }
+    @objc class func setLightMode() {
+        setTheme(LightTheme())
+    }
 }
 
 extension UIColor {

@@ -9,7 +9,7 @@
 #import "PVSettingsViewController.h"
 #import "PVSettingsModel.h"
 #import "PVMediaCache.h"
-#import "PVGameLibraryViewController.h"
+#import "Provenance-Swift.h"
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
 #import "PVLicensesViewController.h"
@@ -271,7 +271,7 @@
                                                                        message:@"Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kRefreshLibraryNotification
+            [[NSNotificationCenter defaultCenter] postNotificationName:NSNotification.PVRefreshLibraryNotification
                                                                 object:nil];
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];

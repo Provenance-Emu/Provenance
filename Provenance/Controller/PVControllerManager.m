@@ -24,15 +24,11 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
 + (PVControllerManager *)sharedManager
 {
     static PVControllerManager *_sharedManager;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _sharedManager = [[PVControllerManager alloc] init];
+    });
 
-    if (!_sharedManager)
-    {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            _sharedManager = [[PVControllerManager alloc] init];
-        });
-    }
-    
     return _sharedManager;
 }
 

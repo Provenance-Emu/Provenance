@@ -31,7 +31,7 @@
         <!--Library-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
-                <viewController id="In9-6L-5FX" customClass="PVGameLibraryViewController" sceneMemberID="viewController">
+                <viewController id="In9-6L-5FX" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Avm-Rx-1XD"/>
                         <viewControllerLayoutGuide type="bottom" id="X4Z-7U-xUA"/>

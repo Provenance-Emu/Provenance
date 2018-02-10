@@ -8,7 +8,7 @@
 
 #import "PVGameImporter.h"
 #import "PVEmulatorConfiguration.h"
-#import "PVGame.h"
+#import "Provenance-Swift.h"
 #import "OESQLiteDatabase.h"
 #import "NSFileManager+Hashing.h"
 #import "PVMediaCache.h"
@@ -123,11 +123,27 @@
 {
     NSMutableArray<NSString*> *newPaths = [NSMutableArray array];
     
-    // Reorder .cue's first.this is so we find cue's before their bins.
+    // Reorder .m3u's, then .cue's first.this is so we find cue's before their bins.
     paths = [paths sortedArrayUsingComparator:^NSComparisonResult(NSString*  _Nonnull obj1, NSString*  _Nonnull obj2) {
-        if ([obj1.pathExtension isEqualToString:@"cue"]) {
+        NSString *aExtension = obj1.pathExtension.lowercaseString;
+        NSString *bExtension = obj2.pathExtension.lowercaseString;
+
+        BOOL aIsCue = [aExtension isEqualToString:@"cue"];
+        BOOL bIsCue = [bExtension isEqualToString:@"cue"];
+
+        BOOL aIsM3u = [aExtension isEqualToString:@"m3u"];
+        BOOL bIsM3u = [bExtension isEqualToString:@"m3u"];
+
+        // Check if only 1 is m3u
+        // Check if only 1 is then cue
+        // At that point, just do a regular comparesound
+        if (aIsM3u && !bIsM3u) {
             return NSOrderedAscending;
-        } else if ([obj2.pathExtension isEqualToString:@"cue"]) {
+        } else if (bIsM3u && !aIsM3u){
+            return NSOrderedDescending;
+        } else if (aIsCue && !bIsCue) {
+            return NSOrderedAscending;
+        } else if (bIsCue && !aIsCue) {
             return NSOrderedDescending;
         } else {
             return [obj1 compare:obj2];
@@ -564,112 +580,132 @@
 
 #pragma mark - ROM Lookup
 
-- (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)chosenSystemID
-{
-    RomDatabase *database = [RomDatabase temporaryDatabaseContext];
-    [database refresh];
+//- (void)getRomInfoForFilesAtPaths:(NSArray *)paths userChosenSystem:(NSString *)chosenSystemID
+//{
+//    RomDatabase *database = [RomDatabase temporaryDatabaseContext];
+//    [database refresh];
+//
+//    for (NSString *path in paths)
+//    {
+//        BOOL isDirectory = ![path containsString:@"."];
+//
+//        if ([path hasPrefix:@"."] || isDirectory)
+//        {
+//            continue;
+//        }
+//
+//        @autoreleasepool {
+//            NSString *systemID = nil;
+//            if (![chosenSystemID length])
+//            {
+//                systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
+//            }
+//            else
+//            {
+//                systemID = chosenSystemID;
+//            }
+//
+//            NSArray * cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
+//            if ([cdBasedSystems containsObject:systemID] &&
+//                ([[path pathExtension] isEqualToString:@"cue"] == NO))
+//            {
+//                continue;
+//            }
+//
+//            NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
+//            NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
+//            PVGame *game = nil;
+//
+//            RLMResults *results = [database objectsOfType:[PVGame class] predicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
+//
+//            if ([results count])
+//            {
+//                game = [results firstObject];
+//            }
+//            else
+//            {
+//                if (![systemID length])
+//                {
+//                    continue;
+//                }
+//
+//                game = [[PVGame alloc] init];
+//                [game setRomPath:partialPath];
+//                [game setTitle:title];
+//                [game setSystemIdentifier:systemID];
+//                [game setRequiresSync:YES];
+//
+//                [database addWithObject:game
+//                                  error:nil];
+//            }
+//
+//            BOOL modified = NO;
+//            if ([game requiresSync])
+//            {
+//                if (self.importStartedHandler)
+//                {
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        self.importStartedHandler(path);
+//                    });
+//                }
+//
+//                [self lookupInfoForGame:game];
+//                modified = YES;
+//            }
+//
+//            if (self.finishedImportHandler)
+//            {
+//                NSString *md5 = [game md5Hash];
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    self.finishedImportHandler(md5, modified);
+//                });
+//            }
+//
+//            [self getArtworkFromURL:[game originalArtworkURL]];
+//        }
+//    }
+//}
+
+- (NSString* _Nullable)calculateMD5ForGame:(PVGame * _Nonnull)game {
+    NSUInteger offset = 0;
     
-    for (NSString *path in paths)
+    if ([[game systemIdentifier] isEqualToString:PVNESSystemIdentifier])
     {
-        BOOL isDirectory = ![path containsString:@"."];
-
-        if ([path hasPrefix:@"."] || isDirectory)
-        {
-            continue;
-        }
-        
-        @autoreleasepool {
-            NSString *systemID = nil;
-            if (![chosenSystemID length])
-            {
-                systemID = [[PVEmulatorConfiguration sharedInstance] systemIdentifierForFileExtension:[path pathExtension]];
-            }
-            else
-            {
-                systemID = chosenSystemID;
-            }
-
-            NSArray * cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
-            if ([cdBasedSystems containsObject:systemID] &&
-                ([[path pathExtension] isEqualToString:@"cue"] == NO))
-            {
-                continue;
-            }
-
-            NSString *partialPath = [systemID stringByAppendingPathComponent:[path lastPathComponent]];
-            NSString *title = [[path lastPathComponent] stringByReplacingOccurrencesOfString:[@"." stringByAppendingString:[path pathExtension]] withString:@""];
-            PVGame *game = nil;
-
-            RLMResults *results = [database objectsOfType:[PVGame class] predicate:[NSPredicate predicateWithFormat:@"romPath == %@", ([partialPath length]) ? partialPath : @""]];
-
-            if ([results count])
-            {
-                game = [results firstObject];
-            }
-            else
-            {
-                if (![systemID length])
-                {
-                    continue;
-                }
-
-                game = [[PVGame alloc] init];
-                [game setRomPath:partialPath];
-                [game setTitle:title];
-                [game setSystemIdentifier:systemID];
-                [game setRequiresSync:YES];
-                
-                [database addWithObject:game
-                                  error:nil];
-            }
-
-            BOOL modified = NO;
-            if ([game requiresSync])
-            {
-                if (self.importStartedHandler)
-                {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        self.importStartedHandler(path);
-                    });
-                }
-                
-                [self lookupInfoForGame:game];
-                modified = YES;
-            }
-            
-            if (self.finishedImportHandler)
-            {
-                NSString *md5 = [game md5Hash];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self.finishedImportHandler(md5, modified);
-                });
-            }
-            
-            [self getArtworkFromURL:[game originalArtworkURL]];
-        }
+        offset = 16; // make this better
     }
+    
+    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[game romPath]];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    
+    if (![fm fileExistsAtPath:romPath]) {
+        ELOG(@"Cannot find file at path: \%@", romPath);
+        return nil;
+    }
+    
+    NSString *md5Hash = [[NSFileManager defaultManager] MD5ForFileAtPath:romPath
+                                                              fromOffset:offset];
+    return md5Hash;
 }
 
 - (void)lookupInfoForGame:(PVGame *)game
 {
-    [RomDatabase.sharedInstance refresh];
-    
-    if (![[game md5Hash] length])
-    {
-        NSUInteger offset = 0;
-        
-        if ([[game systemIdentifier] isEqualToString:PVNESSystemIdentifier])
-        {
-            offset = 16; // make this better
-        }
-        
-        NSString *md5Hash = [[NSFileManager defaultManager] MD5ForFileAtPath:[[self documentsPath] stringByAppendingPathComponent:[game romPath]]
-                                                                   fromOffset:offset];
-        
-        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
-            [game setMd5Hash:md5Hash];
-        }];
-    }
+    RomDatabase *database = RomDatabase.temporaryDatabaseContext;
+    [database refresh];
+
+    // Not sure if still needed unless you're creating PVGame's that aren't imported
+    // since MD5 has to be set before import
+//    if (![[game md5Hash] length])
+//    {
+//        NSString *_Nullable md5 = [self calculateMD5ForGame:game];
+//
+//        if (md5Hash != nil) {
+//            [database writeTransactionAndReturnError:nil :^{
+//                [game setMd5Hash:md5Hash];
+//            }];
+//        } else {
+//            ELOG("MD5 for Rom was nil at path: %@", romPath);
+//        }
+//    }
     
     NSError *error = nil;
     NSArray *results = nil;
@@ -915,58 +951,58 @@
 
 #pragma mark -
 
-+ (PVGame *)importArtworkFromPath:(NSString *)imageFullPath
-{
-    BOOL isDirectory = NO;
-
-    if (![NSFileManager.defaultManager fileExistsAtPath:imageFullPath isDirectory:&isDirectory] || isDirectory) {
-        return nil;
-    }
-
-    NSData *coverArtFullData = [NSData dataWithContentsOfFile:imageFullPath];
-    UIImage *coverArtFullImage = [UIImage imageWithData:coverArtFullData];
-    UIImage *coverArtScaledImage = [coverArtFullImage scaledImageWithMaxResolution:PVThumbnailMaxResolution];
-
-    if (!coverArtScaledImage) {
-        return nil;
-    }
-
-    NSData *coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage);
-    NSString *hash = [coverArtScaledData md5Hash];
-    [PVMediaCache writeDataToDisk:coverArtScaledData withKey:hash];
-
-    NSString *imageFilename = imageFullPath.lastPathComponent;
-    NSString *imageFileExtension = [@"." stringByAppendingString:imageFilename.pathExtension];
-    NSString *gameFilename = [imageFilename stringByReplacingOccurrencesOfString:imageFileExtension withString:@""];
-
-    NSString *systemID = [PVEmulatorConfiguration.sharedInstance systemIdentifierForFileExtension:gameFilename.pathExtension];
-    NSArray *cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
-
-    if ([cdBasedSystems containsObject:systemID] && ![gameFilename.pathExtension isEqualToString:@"cue"]) {
-        return nil;
-    }
-
-    NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
-
-    if (!gamePartialPath) {
-        return nil;
-    }
-    NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
-    RLMResults *games = [RomDatabase.sharedInstance objectsOfType:[PVGame class] predicate:gamePredicate];
-
-    if (games.count < 1) {
-        return nil;
-    }
-
-    PVGame *game = games.firstObject;
-
-    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
-        [game setCustomArtworkURL:hash];
-    }];
-
-    [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
-
-    return game;
-}
+//+ (PVGame *)importArtworkFromPath:(NSString *)imageFullPath
+//{
+//    BOOL isDirectory = NO;
+//
+//    if (![NSFileManager.defaultManager fileExistsAtPath:imageFullPath isDirectory:&isDirectory] || isDirectory) {
+//        return nil;
+//    }
+//
+//    NSData *coverArtFullData = [NSData dataWithContentsOfFile:imageFullPath];
+//    UIImage *coverArtFullImage = [UIImage imageWithData:coverArtFullData];
+//    UIImage *coverArtScaledImage = [coverArtFullImage scaledImageWithMaxResolution:PVThumbnailMaxResolution];
+//
+//    if (!coverArtScaledImage) {
+//        return nil;
+//    }
+//
+//    NSData *coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage);
+//    NSString *hash = [coverArtScaledData md5Hash];
+//    [PVMediaCache writeDataToDisk:coverArtScaledData withKey:hash];
+//
+//    NSString *imageFilename = imageFullPath.lastPathComponent;
+//    NSString *imageFileExtension = [@"." stringByAppendingString:imageFilename.pathExtension];
+//    NSString *gameFilename = [imageFilename stringByReplacingOccurrencesOfString:imageFileExtension withString:@""];
+//
+//    NSString *systemID = [PVEmulatorConfiguration.sharedInstance systemIdentifierForFileExtension:gameFilename.pathExtension];
+//    NSArray *cdBasedSystems = [[PVEmulatorConfiguration sharedInstance] cdBasedSystemIDs];
+//
+//    if ([cdBasedSystems containsObject:systemID] && ![gameFilename.pathExtension isEqualToString:@"cue"]) {
+//        return nil;
+//    }
+//
+//    NSString *gamePartialPath = [systemID stringByAppendingPathComponent:gameFilename];
+//
+//    if (!gamePartialPath) {
+//        return nil;
+//    }
+//    NSPredicate *gamePredicate = [NSPredicate predicateWithFormat:@"romPath == %@", gamePartialPath];
+//    RLMResults *games = [RomDatabase.sharedInstance objectsOfType:[PVGame class] predicate:gamePredicate];
+//
+//    if (games.count < 1) {
+//        return nil;
+//    }
+//
+//    PVGame *game = games.firstObject;
+//
+//    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+//        [game setCustomArtworkURL:hash];
+//    }];
+//
+//    [NSFileManager.defaultManager removeItemAtPath:imageFullPath error:nil];
+//
+//    return game;
+//}
 
 @end

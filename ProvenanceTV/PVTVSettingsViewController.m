@@ -8,7 +8,7 @@
 
 #import "PVTVSettingsViewController.h"
 #import "PVSettingsModel.h"
-#import "PVGameLibraryViewController.h"
+#import "Provenance-Swift.h"
 #import "PVGameImporter.h"
 #import "PVMediaCache.h"
 #import "PVConflictViewController.h"

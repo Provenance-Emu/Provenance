@@ -65,6 +65,8 @@
     
 #if TEST_THEMES
     [Theme setDarkMode];
+#else
+    [Theme setLightMode];
 #endif
     
 #endif

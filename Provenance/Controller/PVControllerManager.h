@@ -15,14 +15,14 @@ extern NSString * const PVControllerManagerControllerReassignedNotification;
 
 @interface PVControllerManager : NSObject
 
-+ (PVControllerManager *)sharedManager;
++ (PVControllerManager * _Nonnull)sharedManager;
 
-@property (nonatomic, strong) GCController *player1;
-@property (nonatomic, strong) GCController *player2;
-@property (nonatomic, strong) PViCadeController *iCadeController;
+@property (nonatomic, strong, nullable) GCController *player1;
+@property (nonatomic, strong, nullable) GCController *player2;
+@property (nonatomic, strong, nullable) PViCadeController *iCadeController;
 
 - (BOOL)hasControllers;
-- (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *)window completion:(void (^)(void))completion;
+- (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *_Nonnull)window completion:(void (^)(void))completion;
 - (void)stopListeningForICadeControllers;
 
 @end

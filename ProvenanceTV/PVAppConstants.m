@@ -22,3 +22,11 @@ NSString *const PVAppURLKey = @"provenance";
 #else
     float const PVThumbnailMaxResolution = 200.0;
 #endif
+
+int PVMaxRecentsCount() {
+#if TARGET_OS_TV
+    return 12;
+#else
+    return (UIApplication.sharedApplication.keyWindow.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone ? 6 : 9);
+#endif
+}

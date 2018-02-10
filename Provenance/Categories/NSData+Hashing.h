@@ -10,7 +10,7 @@
 
 @interface NSData (Hashing)
 
-- (NSString *)md5Hash;
-- (NSString *)sha1Hash;
+@property (nonatomic, readonly, strong, nonnull) NSString *md5Hash;
+@property (nonatomic, readonly, strong, nonnull) NSString *sha1Hash;
 
 @end
