@@ -1667,6 +1667,7 @@
 		1A48696917C8C0C60019F6D2 /* Game Library */ = {
 			isa = PBXGroup;
 			children = (
+				B3E3B5C9202E74BE00A11871 /* Models */,
 				B3E3B5C2202E1EC400A11871 /* Database */,
 				B3B923B1202D415900580FFC /* Spotlight */,
 				1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */,
@@ -1685,10 +1686,6 @@
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */,
 				1A4850B91AE1A6C500F7EF2E /* PVConflictViewController.h */,
 				1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */,
-				1A48697017C8C0DE0019F6D2 /* PVGame.h */,
-				1A48697117C8C0DE0019F6D2 /* PVGame.m */,
-				1A9938A01BBB02590050A2B7 /* PVRecentGame.h */,
-				1A9938A11BBB02590050A2B7 /* PVRecentGame.m */,
 				1AACCAE71BB615FE00DC21AE /* PVSynchronousURLSession.h */,
 				1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */,
 			);
@@ -2578,6 +2575,17 @@
 				B3E3B5C3202E21B400A11871 /* RomDatabase.swift */,
 			);
 			path = Database;
+			sourceTree = "<group>";
+		};
+		B3E3B5C9202E74BE00A11871 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1A48697017C8C0DE0019F6D2 /* PVGame.h */,
+				1A48697117C8C0DE0019F6D2 /* PVGame.m */,
+				1A9938A01BBB02590050A2B7 /* PVRecentGame.h */,
+				1A9938A11BBB02590050A2B7 /* PVRecentGame.m */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		B3EFD10F1C76D5A1000DD650 /* Cores */ = {
