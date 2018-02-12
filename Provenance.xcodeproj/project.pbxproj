@@ -620,13 +620,11 @@
 		B3E3B5C5202E21B400A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
 		B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
 		B3E3B5CB202ED22100A11871 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; };
-		B3E3B5CD202ED24600A11871 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3E3B5CE202ED24600A11871 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3F9CDA120315599007F808D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3F9CDA220315599007F808D /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FF744D202F7C4D008C964A /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; };
 		B3FF744E202F7C4D008C964A /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
@@ -1376,7 +1374,6 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
-				B3FF744D202F7C4D008C964A /* RealmSwift.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
@@ -1422,7 +1419,6 @@
 				1AD482351BA35A0B00FDA50A /* CoreGraphics.framework in Frameworks */,
 				B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */,
-				B3E3B5CD202ED24600A11871 /* RealmSwift.framework in Frameworks */,
 				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
 				1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */,
 				1AD4822F1BA359DA00FDA50A /* OpenGLES.framework in Frameworks */,
@@ -2677,9 +2673,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
+				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
-				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
 				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
@@ -2698,11 +2694,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
+				B3F9CDA320315CA8007F808D /* Create Version.h */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
+				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Set Build Number */,
 				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
-				1AD481B21BA350A400FDA50A /* Resources */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -2756,7 +2753,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "James Addyman";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
@@ -2907,7 +2904,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
+		};
+		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Create Version.h";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
 		};
 		B3FF744F202F7D67008C964A /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3588,6 +3599,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
