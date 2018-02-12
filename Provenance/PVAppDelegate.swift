@@ -5,7 +5,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-let TEST_THEMES = 0
+let TEST_THEMES = false
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,11 +15,11 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.sharedInstance().disableAutoLock
+        
 #if os(iOS)
-        if NSClassFromString("UIApplicationShortcutItem") {
-            let shortcut = launchOptions[.shortcutItem] as? UIApplicationShortcutItem
-            if (shortcut.type == "kRecentGameShortcut") {
-                shortcutItemMD5 = (shortcut.userInfo["PVGameHash"] as? String) ?? ""
+        if #available(iOS 9.0, *) {
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut" {
+                shortcutItemMD5 = shortcut.userInfo?["PVGameHash"] as? String
             }
         }
 #endif
@@ -40,10 +40,12 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 #else
 
-        if TESS_THEMES {
-            Theme.setDarkMode()
-        } else {
-            Theme.setLightMode()
+        if #available(iOS 9.0, *) {
+            if TEST_THEMES {
+                Theme.setDarkMode()
+            } else {
+                Theme.setLightMode()
+            }
         }
 #endif
         
@@ -78,9 +80,10 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 #if os(iOS)
+    @available(iOS 9.0, *)
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
         if (shortcutItem.type == "kRecentGameShortcut") {
-            shortcutItemMD5 = (shortcutItem.userInfo["PVGameHash"] as? String) ?? ""
+            shortcutItemMD5 = shortcutItem.userInfo?["PVGameHash"] as? String
         }
         completionHandler(true)
     }

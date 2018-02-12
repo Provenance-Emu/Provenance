@@ -54,9 +54,9 @@ extension iOSTheme  {
     var alertViewTintColor: UIColor? {return defaultTintColor}
     var switchON: UIColor? {return defaultTintColor}
     
-    func setGlobalTint() ->  {
+    func setGlobalTint() {
         // Get app delegate
-        let sharedApp = UIApplication.sharedApplication()
+        let sharedApp = UIApplication.shared
         
         // Set tint color
         sharedApp.delegate?.window??.tintColor = self.defaultTintColor

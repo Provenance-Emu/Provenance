@@ -4,7 +4,6 @@
 
 #import "PVGameLibrarySectionHeaderView.h"
 #import "PVGameLibraryCollectionViewCell.h"
-#import "PVAppConstants.h"
 #import "NSData+Hashing.h"
 #import "PVGameImporter.h"
 
@@ -36,7 +35,6 @@
 #import "NSData+Hashing.h"
 #import "NSFileManager+Hashing.h"
 #import "OESQLiteDatabase.h"
-#import "PVAppDelegate.h"
 #import "PVDirectoryWatcher.h"
 #import "PVGameLibrarySectionHeaderView.h"
 #import "PVSettingsViewController.h"

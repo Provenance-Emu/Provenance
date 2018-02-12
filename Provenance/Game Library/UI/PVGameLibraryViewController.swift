@@ -103,6 +103,7 @@ public extension NSNotification {
 
 public extension Notification.Name {
     static let PVRefreshLibrary = Notification.Name("kRefreshLibraryNotification")
+    static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
 #if os(tvOS)
@@ -183,7 +184,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: .UITextFieldTextDidChange, object: searchField)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
         #if os(iOS)
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.interfaceDidChange, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
             DispatchQueue.main.async {
                 self.collectionView?.collectionViewLayout.invalidateLayout()
                 self.collectionView?.reloadData()

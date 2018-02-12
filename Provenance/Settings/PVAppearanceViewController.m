@@ -58,7 +58,7 @@
         [[PVSettingsModel sharedInstance] setShowRecentGames:[switchItem isOn]];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:kInterfaceDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"kInterfaceDidChangeNotification" object:nil];
 }
 #endif
 
