@@ -57,7 +57,7 @@ typedef enum : NSInteger {
 } NetworkStatus;
 
 
-extern NSString *kReachabilityChangedNotification;
+extern NSString * _Nonnull kReachabilityChangedNotification;
 
 
 @interface Reachability : NSObject
@@ -65,12 +65,12 @@ extern NSString *kReachabilityChangedNotification;
 /*!
  * Use to check the reachability of a given host name.
  */
-+ (instancetype _Nonnull)reachabilityWithHostName:(NSString *)hostName;
++ (instancetype _Nonnull)reachabilityWithHostName:(NSString *_Nonnull)hostName;
 
 /*!
  * Use to check the reachability of a given IP address.
  */
-+ (instancetype _Nonnull)reachabilityWithAddress:(const struct sockaddr_in *)hostAddress;
++ (instancetype _Nonnull)reachabilityWithAddress:(const struct sockaddr_in *_Nonnull)hostAddress;
 
 /*!
  * Checks whether the default route is available. Should be used by applications that do not connect to a particular host.

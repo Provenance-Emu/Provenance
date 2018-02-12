@@ -52,7 +52,7 @@
         <!--Settings-->
         <scene sceneID="FmV-8E-kTS">
             <objects>
-                <splitViewController id="0as-LN-cS4" customClass="PVTVSplitViewController" sceneMemberID="viewController">
+                <splitViewController id="0as-LN-cS4" customClass="PVTVSplitViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Settings" id="CO1-nQ-39N"/>
                     <connections>
                         <segue destination="ech-XT-alx" kind="relationship" relationship="masterViewController" id="Sfz-Qr-C2s"/>
@@ -109,7 +109,7 @@
         <!--Settings View Controller-->
         <scene sceneID="YH6-Ht-HEo">
             <objects>
-                <tableViewController id="Byn-yn-0f6" customClass="PVTVSettingsViewController" sceneMemberID="viewController">
+                <tableViewController id="Byn-yn-0f6" customClass="PVTVSettingsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="UtW-MP-SZ2">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

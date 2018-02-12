@@ -45,7 +45,8 @@ let PVGameBoxArtAspectRatioSquare: CGFloat = 1.0
 let PVGameBoxArtAspectRatioWide: CGFloat = 1.45
 let PVGameBoxArtAspectRatioTall: CGFloat = 0.7
 
-extension PVGame {
+public extension PVGame {
+    @objc
     var boxartAspectRatio : CGFloat {
         var imageAspectRatio: CGFloat = PVGameBoxArtAspectRatioSquare
         if (systemIdentifier == PVSNESSystemIdentifier) || (systemIdentifier == PVN64SystemIdentifier) {

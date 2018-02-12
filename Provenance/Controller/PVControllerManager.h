@@ -11,7 +11,7 @@
 
 @class PViCadeController;
 
-extern NSString * const PVControllerManagerControllerReassignedNotification;
+extern NSString * _Nonnull const PVControllerManagerControllerReassignedNotification;
 
 @interface PVControllerManager : NSObject
 
@@ -22,7 +22,7 @@ extern NSString * const PVControllerManagerControllerReassignedNotification;
 @property (nonatomic, strong, nullable) PViCadeController *iCadeController;
 
 - (BOOL)hasControllers;
-- (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *_Nonnull)window completion:(void (^)(void))completion;
+- (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *_Nonnull)window completion:(void (^_Nonnull)(void))completion;
 - (void)stopListeningForICadeControllers;
 
 @end

@@ -67,7 +67,7 @@ public final class RomDatabase : NSObject {
     }
     
     private static var realmConfig : Realm.Configuration = {
-        #if TARGET_OS_TV
+        #if os(tvOS)
             var path: String? = nil
             if RealmConfiguration.supportsAppGroups {
                 path = RealmConfiguration.appGroupPath
@@ -162,15 +162,15 @@ public extension RomDatabase {
     }
     
     @objc
-    public func add(object: Object) throws {
+    public func add(object: Object, update: Bool = true) throws {
         try realm.write {
-            realm.add(object, update: true)
+            realm.add(object, update: update)
         }
     }
     
-    public func add<T:Object>(objects: [T]) throws {
+    public func add<T:Object>(objects: [T], update: Bool = true) throws {
         try realm.write {
-            realm.add(objects, update: true)
+            realm.add(objects, update: update)
         }
     }
     

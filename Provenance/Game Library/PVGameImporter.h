@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic, copy, nullable) PVGameImporterFinishedGettingArtworkHandler finishedArtworkHandler;
 @property (nonatomic, assign) BOOL encounteredConflicts;
 
-- (instancetype _Nonnull )initWithCompletionHandler:(PVGameImporterCompletionHandler __nonnull)completionHandler;
+- (instancetype _Nonnull )initWithCompletionHandler:(PVGameImporterCompletionHandler __nullable)completionHandler;
 
 NS_ASSUME_NONNULL_BEGIN
 - (void)startImportForPaths:(NSArray *)paths;

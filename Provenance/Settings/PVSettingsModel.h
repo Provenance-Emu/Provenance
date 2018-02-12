@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "kICadeControllerSetting.h"
 
+NS_ASSUME_NONNULL_BEGIN
 extern NSString * const kAutoSaveKey;
 extern NSString * const kAskToAutoLoadKey;
 extern NSString * const kAutoLoadAutoSavesKey;
@@ -23,6 +24,7 @@ extern NSString * const kVolumeSettingKey;
 extern NSString * const kFPSCountKey;
 extern NSString * const kShowGameTitlesKey;
 extern NSString * const kWebDayAlwwaysOnKey;
+NS_ASSUME_NONNULL_END
 
 @interface PVSettingsModel : NSObject
 
@@ -42,6 +44,6 @@ extern NSString * const kWebDayAlwwaysOnKey;
 @property (nonatomic, assign) CGFloat controllerOpacity;
 @property (nonatomic, assign) float volume;
 
-+ (PVSettingsModel *)sharedInstance;
++ (instancetype _Nonnull)sharedInstance;
 
 @end

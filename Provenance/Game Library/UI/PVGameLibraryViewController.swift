@@ -7,10 +7,12 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
+#if os(iOS)
 import AssetsLibrary
+import SafariServices
+#endif
 import GameController
 import QuartzCore
-import SafariServices
 import UIKit
 import RealmSwift
 
@@ -98,27 +100,32 @@ public extension NSNotification {
         return "kRefreshLibraryNotification"
     }
 }
-extension Notification.Name {
+
+public extension Notification.Name {
     static let PVRefreshLibrary = Notification.Name("kRefreshLibraryNotification")
 }
 
-#if TARGET_OS_TV
+#if os(tvOS)
 private let CellWidth: CGFloat = 308.0
 #else
 let USE_IOS_11_SEARCHBAR = 0
 #endif
-    
-class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
+
+class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UINavigationControllerDelegate {
+
     var watcher: PVDirectoryWatcher?
     var coverArtWatcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
     var collectionView: UICollectionView?
+
+    #if os(iOS)
     var renameToolbar: UIToolbar?
+    var assetsLibrary: ALAssetsLibrary?
+    #endif
     var renameOverlay: UIView?
     var renameTextField: UITextField?
     var gameToRename: PVGame?
     var gameForCustomArt: PVGame?
-    var assetsLibrary: ALAssetsLibrary?
     var gamesInSections = [String: [PVLibraryEntry]]()
     var sectionInfo = [String]()
     var searchResults: Results<PVGame>?
@@ -138,7 +145,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
 
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
 #if USE_IOS_11_SEARCHBAR
-#if !TARGET_OS_TV
+#if os(iOS)
         if #available(iOS 11.0, *) {
             // Hide the pre iOS 11 search bar
             navigationItem.titleView = nil
@@ -175,12 +182,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: .UITextFieldTextDidChange, object: searchField)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        #if os(iOS)
         NotificationCenter.default.addObserver(forName: NSNotification.Name.interfaceDidChange, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
             DispatchQueue.main.async {
                 self.collectionView?.collectionViewLayout.invalidateLayout()
                 self.collectionView?.reloadData()
             }
         })
+        #endif
         
         PVEmulatorConfiguration.sharedInstance()
         //load the config file
@@ -196,7 +205,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         collectionView?.delaysContentTouches = false
         collectionView?.keyboardDismissMode = .interactive
         collectionView?.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
-#if TARGET_OS_TV
+#if os(tvOS)
         collectionView?.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
 #endif
         view.addSubview(collectionView!)
@@ -241,7 +250,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         PVControllerManager.shared()
         if isInitialAppearance {
             isInitialAppearance = false
-#if TARGET_OS_TV
+#if os(tvOS)
             let cell: UICollectionViewCell? = collectionView?.cellForItem(at: IndexPath(item: 0, section: 0))
             cell?.setNeedsFocusUpdate()
             cell?.updateFocusIfNeeded()
@@ -249,13 +258,15 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
     }
 
+    #if os(iOS)
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
     }
+    #endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "SettingsSegue") {
-#if !TARGET_OS_TV
+#if os(iOS)
         if let settingsVC = (segue.destination as! UINavigationController).topViewController as? PVSettingsViewController {
             settingsVC.gameImporter = gameImporter
         }
@@ -265,7 +276,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
     }
 
-#if !TARGET_OS_TV
+#if os(iOS)
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -330,7 +341,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }))
         
         if #available(iOS 9.0, *) {
-            #if !TARGET_OS_TV
+            #if os(iOS)
                 let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.showServer()
                 })
@@ -493,8 +504,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 hud.isUserInteractionEnabled = false
                 hud.mode = .annularDeterminate
                 hud.progress = 0
-                #if TARGET_OS_TV
-                    let label = "Extracting Archive: \(path.lastPathComponent)"
+                #if os(tvOS)
+                    let lastPathComponent = URL(fileURLWithPath: path).lastPathComponent
+                    let label = "Extracting Archive: \(lastPathComponent)"
                 #else
                     let label = "Extracting Archive..."
                 #endif
@@ -510,8 +522,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 hud.isUserInteractionEnabled = false
                 hud.mode = .annularDeterminate
                 hud.progress = progress
-                #if TARGET_OS_TV
-                    let label = "Extracting Archive: \(path.lastPathComponent)"
+                #if os(tvOS)
+                    let lastPathComponent = URL(fileURLWithPath: path).lastPathComponent
+                    let label = "Extracting Archive: \(lastPathComponent)"
                 #else
                     let label = "Extracting Archive..."
                 #endif
@@ -807,15 +820,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     @objc func handleRefreshLibrary(_ note: Notification) {
-        let config = PVEmulatorConfiguration.sharedInstance()
-        let documentsPath: String = config.documentsPath
-        let database = RomDatabase.temporaryDatabaseContext()
-        
-        let romPaths = database.all(PVGame.self).map { (game) -> String in
-            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
-            return path
-        }
+//        let config = PVEmulatorConfiguration.sharedInstance()
+//        let documentsPath: String = config.documentsPath
+//        let romPaths = database.all(PVGame.self).map { (game) -> String in
+//            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
+//            return path
+//        }
 
+        let database = RomDatabase.temporaryDatabaseContext()
         do {
             try database.deleteAll()
         } catch {
@@ -973,36 +985,32 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             }
         }
 
-        // TODO: Some reason this crashes but I can't get the execption
-//        let newRecent = PVRecentGame()
-//        newRecent.game = game
-//        do {
-//            try database.add(object: newRecent)
-//        } catch {
-//            ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
-//        }
+        let newRecent = PVRecentGame(withGame: game)
+        do {
+            try database.add(object: newRecent, update:false)
+        } catch {
+            ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
+        }
         registerRecentGames(recents)
         isMustRefreshDataSource = true
     }
 
     func registerRecentGames(_ recents: Results<PVRecentGame>) {
         if #available(iOS 9.0, *) {
-            #if !TARGET_OS_TV
-                if NSClassFromString("UIApplicationShortcutItem") != nil {
-                    var shortcuts = [UIApplicationShortcutItem]()
-                    
-                    let sortedRecents: Results<PVRecentGame> = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-                    
-                    for recentGame in sortedRecents {
-                        if let game = recentGame.game {
-                            let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: nil, userInfo: ["PVGameHash": game.md5Hash])
-                            shortcuts.append(shortcut)
-                        }
+            #if os(iOS)
+                // Add 3D touch shortcuts to recent games
+                var shortcuts = [UIApplicationShortcutItem]()
+                
+                let sortedRecents: Results<PVRecentGame> = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+                
+                for recentGame in sortedRecents {
+                    if let game = recentGame.game {
+                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: nil, userInfo: ["PVGameHash": game.md5Hash])
+                        shortcuts.append(shortcut)
                     }
-
-                    UIApplication.shared.shortcutItems = shortcuts
-    
                 }
+
+                UIApplication.shared.shortcutItems = shortcuts
             #endif
         } else {
             // Fallback on earlier versions
@@ -1024,7 +1032,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             let point: CGPoint = recognizer.location(in: collectionView)
             var maybeIndexPath: IndexPath? = collectionView?.indexPathForItem(at: point)
 
-#if TARGET_OS_TV
+#if os(tvOS)
             if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
                 maybeIndexPath = collectionView?.indexPath(for: focusedView)
             }
@@ -1051,7 +1059,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.renameGame(game)
             }))
-#if !TARGET_OS_TV
+#if os(iOS)
             actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
@@ -1079,8 +1087,8 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 }))
             }
 #endif
-#if TARGET_OS_TV
-            actionSheet.message = "Options for \(game?.title())"
+#if os(tvOS)
+            actionSheet.message = "Options for \(game.title)"
 #endif
             actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
@@ -1112,15 +1120,16 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func renameGame(_ game: PVGame) {
-#if TARGET_OS_TV
-        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title())", preferredStyle: .alert)
+#if os(tvOS)
+        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title)", preferredStyle: .alert)
         alert.addTextField(configurationHandler: {(_ textField: UITextField) -> Void in
-            textField.placeholder = game.title()
+            textField.placeholder = game.title
         })
-        weak var weakSelf: PVGameLibraryViewController? = self
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            let title: String? = alert.textFields?.first?.text
-            self.renameGame(game, toTitle: title)
+
+    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            if let title = alert.textFields?.first?.text {
+                self.renameGame(game, toTitle: title)
+            }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true) {() -> Void in }
@@ -1158,7 +1167,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
 #endif
     }
 
-    #if !TARGET_OS_TV
+    #if os(iOS)
     func doneRenaming(_ sender: Any) {
         defer {
             UIView.animate(withDuration: 0.3, delay: 0.0, options: .beginFromCurrentState, animations: {() -> Void in
@@ -1273,7 +1282,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
     }
 
-    #if !TARGET_OS_TV
+    #if os(iOS)
     func chooseCustomArtwork(for game: PVGame) {
         weak var weakSelf: PVGameLibraryViewController? = self
         let imagePickerActionSheet = UIActionSheet()
@@ -1494,7 +1503,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
 // MARK: - UICollectionViewDelegate & UICollectionViewDelegateFlowLayout
-#if TARGET_OS_TV
+#if os(tvOS)
     func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -1505,9 +1514,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
 
 #endif
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-#if TARGET_OS_TV
-        let game: PVGame? = self.game(at: indexPath)
-        let boxartSize = CGSize(width: CellWidth, height: CellWidth / game?.boxartAspectRatio)
+#if os(tvOS)
+        let game = self.game(at: indexPath)!
+        let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio)
         return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
 #else
         if PVSettingsModel.sharedInstance().showGameTitles {
@@ -1517,14 +1526,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
 #endif
     }
 
-#if TARGET_OS_TV
+#if os(tvOS)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 88
     }
 #endif
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-#if TARGET_OS_TV
+#if os(tvOS)
         return 50
 #else
         return 5.0
@@ -1532,7 +1541,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-#if TARGET_OS_TV
+#if os(tvOS)
         return UIEdgeInsetsMake(40, 0, 120, 0)
 #else
         return UIEdgeInsetsMake(5, 5, 5, 5)
@@ -1565,11 +1574,11 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         if (kind == UICollectionElementKindSectionHeader) {
             var headerView: PVGameLibrarySectionHeaderView? = nil
             if  searchResults != nil {
-                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as! PVGameLibrarySectionHeaderView
+                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
                 headerView?.titleLabel?.text = "Search Results"
             }
             else {
-                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as! PVGameLibrarySectionHeaderView
+                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
                 let title: String = nameForSection(at: indexPath.section)
                 headerView?.titleLabel?.text = title
             }
@@ -1584,7 +1593,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-#if TARGET_OS_TV
+#if os(tvOS)
         return CGSize(width: view.bounds.size.width, height: 90)
 #else
         return CGSize(width: view.bounds.size.width, height: 40)
@@ -1592,7 +1601,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
 // MARK: - Text Field and Keyboard Delegate
-#if !TARGET_OS_TV
+#if os(iOS)
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField != searchField {
             doneRenaming(self)
@@ -1620,7 +1629,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
     }
 
-#if !TARGET_OS_TV
+#if os(iOS)
     @objc func keyboardWillShow(_ note: Notification) {
         guard let userInfo = note.userInfo else {
             return
@@ -1638,7 +1647,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
 #endif
-#if !TARGET_OS_TV
+#if os(iOS)
     @objc func keyboardWillHide(_ note: Notification) {
         guard let userInfo = note.userInfo else {
             return
@@ -1659,7 +1668,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 #endif
 // MARK: - Image Picker Delegate
-#if !TARGET_OS_TV
+#if os(iOS)
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         guard let gameForCustomArt = self.gameForCustomArt else {
             ELOG("gameForCustomArt pointer was null.")
@@ -1731,3 +1740,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         return true
     }
 }
+
+#if os(iOS)
+    extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
+        
+    }
+#endif

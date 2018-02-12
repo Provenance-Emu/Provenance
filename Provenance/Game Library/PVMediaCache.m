@@ -8,7 +8,7 @@
 #import "PVMediaCache.h"
 #import "NSString+Hashing.h"
 #import "UIImage+Scaling.h"
-#import "PVAppConstants.h"
+#import "Provenance-Swift.h"
 
 NSString * const kPVCachePath = @"PVCache";
 

@@ -12,7 +12,7 @@
 #import "Provenance-Swift.h"
 #import "PVMediaCache.h"
 #import "PVSettingsModel.h"
-#import "PVAppConstants.h"
+#import "Provenance-Swift.h"
 #import "PVEmulatorConfiguration.h"
 
 static const CGFloat LabelHeight = 44.0;

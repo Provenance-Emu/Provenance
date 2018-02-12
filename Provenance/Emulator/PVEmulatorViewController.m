@@ -376,12 +376,11 @@ void uncaughtExceptionHandler(NSException *exception)
     [super viewDidLayoutSubviews];
     
     UIEdgeInsets safeArea = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         safeArea = self.view.safeAreaInsets;
     }
     
     [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22)];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated

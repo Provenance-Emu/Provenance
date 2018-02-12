@@ -8,7 +8,7 @@
 
 #import "PVAppearanceViewController.h"
 #import "PVSettingsModel.h"
-#import "PVAppConstants.h"
+#import "Provenance-Swift.h"
 
 @interface PVAppearanceViewController ()
 

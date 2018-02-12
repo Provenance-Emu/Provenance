@@ -53,6 +53,14 @@ extension iOSTheme  {
     var barButtonItemTint: UIColor? {return defaultTintColor}
     var alertViewTintColor: UIColor? {return defaultTintColor}
     var switchON: UIColor? {return defaultTintColor}
+    
+    func setGlobalTint() ->  {
+        // Get app delegate
+        let sharedApp = UIApplication.sharedApplication()
+        
+        // Set tint color
+        sharedApp.delegate?.window??.tintColor = self.defaultTintColor
+    }
 }
 
 struct DarkTheme : iOSTheme {
@@ -76,8 +84,10 @@ struct DarkTheme : iOSTheme {
 }
 
 struct LightTheme : iOSTheme {
+    let defaultTintColor = UIColor.init(hex: "#007aff") // iOS Blue
+    
     let gameLibraryBackground = UIColor.clear
-    var gameLibraryText : UIColor = UIColor.black
+    let gameLibraryText : UIColor = UIColor.black
 
     let gameLibraryHeaderBackground = UIColor.init(white: 0.9, alpha: 0.6)
     let gameLibraryHeaderText = UIColor.darkGray
