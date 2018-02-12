@@ -6,6 +6,7 @@
 //  Copyright (c) 2018 JamSoft. All rights reserved.
 //
 
+import Foundation
 import RealmSwift
 
 public class PVRecentGame : Object, PVLibraryEntry {

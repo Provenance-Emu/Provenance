@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-fileprivate class RealmConfiguration {
+public class RealmConfiguration {
     class public var supportsAppGroups : Bool {
         return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
     }
@@ -26,44 +26,10 @@ fileprivate class RealmConfiguration {
         let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/").path
         return appGroupPath
     }
-}
-
-public final class RomDatabase : NSObject {
     
-    // Private shared instance that propery initializes
-    private static var _sharedInstance : RomDatabase =  {
-        setDefaultRealmConfig()
-        return RomDatabase()
-    }()
-
-    // Public shared instance that makes sure threads are handeled right
-    // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
-    // this helper might do more damage than just putting a fatalError() around isMainThread
-    // and simply fixing any threaded callst to call temporaryDatabaseContext
-    // Or maybe there should be no public sharedInstance and instead only a
-    // databaseContext object that must be used for all calls. It would be another class
-    // and RomDatabase would just exist to provide context instances and init the initial database - jm
-    @objc
-    public static var sharedInstance : RomDatabase {
-        // Make sure real shared is inited first
-        let shared = RomDatabase._sharedInstance
-        
-        if Thread.isMainThread {
-            return shared
-        } else {
-            return RomDatabase.temporaryDatabaseContext()
-        }
-    }
-    
-    private class func setDefaultRealmConfig() {
-        let config = RomDatabase.realmConfig
+    class public func setDefaultRealmConfig() {
+        let config = RealmConfiguration.realmConfig
         Realm.Configuration.defaultConfiguration = config
-    }
-    
-    // For multi-threading
-    @objc
-    public static func temporaryDatabaseContext() -> RomDatabase {
-        return RomDatabase()
     }
     
     private static var realmConfig : Realm.Configuration = {
@@ -92,7 +58,41 @@ public final class RomDatabase : NSObject {
         let config = Realm.Configuration(fileURL: realmURL, inMemoryIdentifier: nil, syncConfiguration: nil, encryptionKey: nil, readOnly: false, schemaVersion: 2, migrationBlock: migrationBlock, deleteRealmIfMigrationNeeded: false, shouldCompactOnLaunch: nil, objectTypes: nil)
         return config
     }()
+}
 
+public final class RomDatabase : NSObject {
+    
+    // Private shared instance that propery initializes
+    private static var _sharedInstance : RomDatabase =  {
+        RealmConfiguration.setDefaultRealmConfig()
+        return RomDatabase()
+    }()
+
+    // Public shared instance that makes sure threads are handeled right
+    // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
+    // this helper might do more damage than just putting a fatalError() around isMainThread
+    // and simply fixing any threaded callst to call temporaryDatabaseContext
+    // Or maybe there should be no public sharedInstance and instead only a
+    // databaseContext object that must be used for all calls. It would be another class
+    // and RomDatabase would just exist to provide context instances and init the initial database - jm
+    @objc
+    public static var sharedInstance : RomDatabase {
+        // Make sure real shared is inited first
+        let shared = RomDatabase._sharedInstance
+        
+        if Thread.isMainThread {
+            return shared
+        } else {
+            return RomDatabase.temporaryDatabaseContext()
+        }
+    }
+    
+    // For multi-threading
+    @objc
+    public static func temporaryDatabaseContext() -> RomDatabase {
+        return RomDatabase()
+    }
+    
     fileprivate var realm : Realm
     
     override init() {

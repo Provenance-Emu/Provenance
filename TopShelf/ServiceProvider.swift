@@ -5,7 +5,7 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 import Foundation
-import Realm
+import RealmSwift
 import TVServices
 
 /** Enabling Top Shelf
@@ -21,8 +21,8 @@ class ServiceProvider: NSObject, TVTopShelfProvider {
     override init() {
         super.init()
         
-        if RLMRealmConfiguration.supportsAppGroup {
-            RLMRealmConfiguration.setRealmConfig()
+        if RealmConfiguration.supportsAppGroups {
+            RealmConfiguration.setDefaultRealmConfig()
         }
     }
     
@@ -33,23 +33,31 @@ class ServiceProvider: NSObject, TVTopShelfProvider {
     }
     
     var topShelfItems: [TVContentItem] {
-        var topShelfItems = [AnyHashable]()
-        if RLMRealmConfiguration.supportsAppGroup {
+        var topShelfItems = [TVContentItem]()
+        if RealmConfiguration.supportsAppGroups {
             let identifier = TVContentIdentifier(identifier: "id", container: nil)!
-            let recentItems = TVContentItem(contentIdentifier: identifier)
-            recentItems?.title = "Recently Played"
             
-            let recents: RLMResults? = PVRecentGame.allObjects
-            let recentGames: NSFastEnumeration? = recents?.sortedResults(usingProperty: "lastPlayedDate", ascending: false)
+            guard let recentItems = TVContentItem(contentIdentifier: identifier) else {
+                ELOG("Couldnt get TVContentItem for idenitifer \(identifier)")
+                return topShelfItems
+            }
+            recentItems.title = "Recently Played"
+            
+            let database = RomDatabase.temporaryDatabaseContext()
+        
+            let recentGames = database.all(PVRecentGame.self, sorthedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
             
             var items = [TVContentItem]()
             for game: PVRecentGame in recentGames {
-                items.append(game.contentItem(with: identifier))
+                if let contentItem = game.contentItem(with: identifier) {
+                    items.append(contentItem)
+                }
             }
             
-            recentItems?.topShelfItems = items
+            recentItems.topShelfItems = items
             topShelfItems.append(recentItems)
         }
+
         return topShelfItems
     }
 }

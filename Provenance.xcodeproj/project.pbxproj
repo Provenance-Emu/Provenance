@@ -616,6 +616,9 @@
 		B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
 		B3DF87661D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */; };
+		B3E21D6420320E6C009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
+		B3E21D6520320E6E009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
+		B3E21D6620320E6F009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E3B5C4202E21B400A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
 		B3E3B5C5202E21B400A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
 		B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
@@ -625,6 +628,7 @@
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3F9CDA120315599007F808D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3F9CDA220315599007F808D /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3FF744E202F7C4D008C964A /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE1E26671C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
 		BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = BE1E26661C2252CA00499BA0 /* PVEmulatorConstants.m */; };
@@ -633,7 +637,7 @@
 		BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.swift */; };
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
-		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.m in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */; };
+		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		DF0561C31FB1051100F499B9 /* shader_crt_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */; };
 		DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */; };
@@ -661,6 +665,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1A3D409317B2DCE4004DFFFC;
 			remoteInfo = Provenance;
+		};
+		B3F9CDA52031FF4E007F808D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -719,6 +730,17 @@
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3F9CDA72031FF4E007F808D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1308,6 +1330,7 @@
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
 		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVStellaControllerViewController.m; sourceTree = "<group>"; };
+		B3E21D602032074F009939D3 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		B3E3B5C3202E21B400A11871 /* RomDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomDatabase.swift; sourceTree = "<group>"; };
 		B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TopShelf-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3E3B5CA202ED22100A11871 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
@@ -1318,11 +1341,9 @@
 		BE1E266C1C22552800499BA0 /* PVAppConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppConstants.swift; sourceTree = "<group>"; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCB81C210B9E0046DF0E /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
-		BE9FDCBB1C210B9F0046DF0E /* ServiceProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceProvider.h; sourceTree = "<group>"; };
 		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BE9FDCC71C210C470046DF0E /* PVRecentGame+TopShelf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRecentGame+TopShelf.h"; sourceTree = "<group>"; };
-		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRecentGame+TopShelf.m"; sourceTree = "<group>"; };
+		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_crt_fragment.glsl; sourceTree = "<group>"; };
@@ -1615,6 +1636,7 @@
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
+				B3E21D602032074F009939D3 /* Logging.swift */,
 			);
 			path = Provenance;
 			sourceTree = "<group>";
@@ -2618,11 +2640,9 @@
 			isa = PBXGroup;
 			children = (
 				BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */,
-				BE9FDCBB1C210B9F0046DF0E /* ServiceProvider.h */,
 				BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */,
+				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */,
 				BE9FDCBE1C210B9F0046DF0E /* Info.plist */,
-				BE9FDCC71C210C470046DF0E /* PVRecentGame+TopShelf.h */,
-				BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.m */,
 			);
 			path = TopShelf;
 			sourceTree = "<group>";
@@ -2701,10 +2721,12 @@
 				1A44C0AE1D0A1E730018751A /* Set Build Number */,
 				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
+				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B3F9CDA62031FF4E007F808D /* PBXTargetDependency */,
 			);
 			name = ProvenanceTV;
 			productName = ProvenanceTV;
@@ -3180,6 +3202,7 @@
 				B349AF1B1E9ABCF900ACD416 /* MyAesReg.cpp in Sources */,
 				B349AF5F1E9ABCFA00ACD416 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
 				378F4A151B63F2240065FA39 /* Reachability.m in Sources */,
+				B3E21D6620320E6F009939D3 /* Logging.swift in Sources */,
 				1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
 				B349AE591E9ABCF900ACD416 /* Bcj2Enc.c in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */,
@@ -3444,6 +3467,7 @@
 				B349AE9E1E9ABCF900ACD416 /* 7zHandlerOut.cpp in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
 				B349AF2E1E9ABCF900ACD416 /* MyVector.cpp in Sources */,
+				B3E21D6420320E6C009939D3 /* Logging.swift in Sources */,
 				B349AF5A1E9ABCFA00ACD416 /* LzmaSDKObjCError.mm in Sources */,
 				B349AE881E9ABCF900ACD416 /* XzCrc64.c in Sources */,
 				B35BB7FF202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
@@ -3479,9 +3503,10 @@
 				B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
-				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.m in Sources */,
+				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */,
 				B35BB7F8202F3CE500FCB513 /* RLMSupport.swift in Sources */,
 				B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */,
+				B3E21D6520320E6E009939D3 /* Logging.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3493,6 +3518,11 @@
 			isa = PBXTargetDependency;
 			target = 1A3D409317B2DCE4004DFFFC /* Provenance */;
 			targetProxy = 1AD9AA511ACC9FA800EC87A0 /* PBXContainerItemProxy */;
+		};
+		B3F9CDA62031FF4E007F808D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B3F9CDA52031FF4E007F808D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3694,6 +3724,7 @@
 		1AD481C51BA350A500FDA50A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
@@ -3747,6 +3778,7 @@
 		1AD481C61BA350A500FDA50A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
@@ -3801,6 +3833,7 @@
 		1AD481C71BA350A500FDA50A /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;

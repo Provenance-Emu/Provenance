@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 JamSoft. All rights reserved.
 //
 
+import Foundation
+import CoreGraphics
 import RealmSwift
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
