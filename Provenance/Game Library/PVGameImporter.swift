@@ -9,6 +9,8 @@
 
 import Foundation
 
+import CoreSpotlight
+
 public extension PVGameImporter {
     
     /**
@@ -124,7 +126,9 @@ public extension PVGameImporter {
     func getRomInfoForFiles(atPaths paths: [String], userChosenSystem chosenSystemID: String? = nil) {
         let database = RomDatabase.temporaryDatabaseContext()
         database.refresh()
-                
+        
+        var spotlightItems = [Any]()
+
         paths.forEach { (path) in
             let isDirectory: Bool = !path.contains(".")
             if path.hasPrefix(".") || isDirectory {
@@ -192,6 +196,14 @@ public extension PVGameImporter {
                     
                     do {
                         try database.add(object: game)
+                        
+                        #if os(iOS)
+                        // Add to split database
+                        if #available(iOS 9.0, *) {
+                            let spotlightItem = CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
+                            spotlightItems.append(spotlightItem)
+                        }
+                        #endif
                     } catch {
                         ELOG("Couldn't add new game \(title): \(error.localizedDescription)")
                         return
@@ -223,8 +235,18 @@ public extension PVGameImporter {
                     })
                 }
                 getArtworkFromURL(game.originalArtworkURL)
+            } // autorelease pool
+        } // for each
+        
+        #if os(iOS)
+        if #available(iOS 9.0, *) {
+            CSSearchableIndex.default().indexSearchableItems(spotlightItems as! [CSSearchableItem]) { error in
+                if let error = error {
+                    ELOG("indexing error: \(error)")
+                }
             }
         }
+        #endif
     }
 }
 

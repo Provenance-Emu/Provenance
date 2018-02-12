@@ -24,8 +24,12 @@ public let PVThumbnailMaxResolution: Float = 200.0
 public func PVMaxRecentsCount() -> Int {
 #if os(tvOS)
     return 12
-#else
+#elseif os(iOS)
+    #if EXTENSION
+        return 12
+    #else
     return UIApplication.shared.keyWindow?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
+    #endif
 #endif
 }
 

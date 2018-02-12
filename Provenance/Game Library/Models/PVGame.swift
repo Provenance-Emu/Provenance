@@ -61,3 +61,72 @@ public extension PVGame {
     }
 }
 
+import CoreSpotlight
+import MobileCoreServices
+
+public extension PVGame {
+    
+    #if os(iOS)
+    @available(iOS 9.0, *)
+    var spotlightContentSet : CSSearchableItemAttributeSet {
+        let systemName = self.systemName(systemID: systemIdentifier)
+        
+        var description = "\(systemName ?? "")"
+        if isFavorite {
+            description += "\n⭐"
+        }
+        
+        let artworkURL = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+
+        let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
+        contentSet.title                   = title
+        contentSet.relatedUniqueIdentifier = md5Hash
+        contentSet.contentDescription      = description
+        contentSet.rating                  = NSNumber(booleanLiteral: isFavorite)
+        contentSet.thumbnailURL            = URL(fileURLWithPath: artworkURL)
+        //            contentSet.contentURL              = URL(fileURLWithPath: romPath)
+        contentSet.path                    = romPath
+        
+        //            contentSet.authorNames             = [data.authorName]
+        // Could generate small thumbnail here
+        //contentSet.thumbnailData = NSData()
+        return contentSet
+    }
+    #endif
+    
+    var spotlightActivity : NSUserActivity {
+        let activity = NSUserActivity(activityType: "com.provenance-emu.game.play")
+        activity.title = title
+        activity.userInfo = ["md5" : md5Hash]
+
+        if #available(iOS 9.0, tvOS 10.0, *) {
+            activity.requiredUserInfoKeys = ["md5"]
+            activity.isEligibleForSearch = true
+            activity.isEligibleForHandoff = false
+            
+            #if os(iOS)
+            activity.contentAttributeSet  = spotlightContentSet
+            #endif
+            activity.requiredUserInfoKeys = ["md5"]
+//            activity.expirationDate       =
+        }
+
+        return activity
+    }
+
+    // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
+    private func systemName(systemID : String) -> String? {
+        
+        guard let plist = Bundle.main.url(forResource: "systems", withExtension: "plist"), let systems = NSArray.init(contentsOf: plist) as? [[String: Any]] else {
+            ELOG("Couldn't read systems plist")
+            return nil
+        }
+
+        for system in systems {
+            if let ident = system[PVSystemIdentifierKey] as? String, ident == systemID {
+                return system[PVShortSystemNameKey] as? String
+            }
+        }
+        return nil
+    }
+}

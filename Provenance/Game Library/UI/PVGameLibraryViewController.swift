@@ -916,6 +916,10 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         let newRecent = PVRecentGame(withGame: game)
         do {
             try database.add(object: newRecent, update:false)
+            
+            let activity = game.spotlightActivity
+            // Make active, causes it to index also
+            self.userActivity = activity
         } catch {
             ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
         }
