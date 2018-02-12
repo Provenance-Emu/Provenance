@@ -8,7 +8,6 @@
 
 #import "PVSettingsViewController.h"
 #import "PVSettingsModel.h"
-#import "PVMediaCache.h"
 #import "Provenance-Swift.h"
 #import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
@@ -284,7 +283,7 @@
                                                                        message:@"Empty the image cache to free up disk space. Images will be redownload on demand."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [PVMediaCache emptyCache];
+            [PVMediaCache emptyAndReturnError:nil];
         }]];
         [alert addAction:[UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleCancel handler:NULL]];
         [self presentViewController:alert animated:YES completion:NULL];

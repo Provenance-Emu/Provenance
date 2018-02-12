@@ -178,7 +178,7 @@ class PVTVSettingsViewController: UITableViewController {
                             // Empty Cache
                         let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                            PVMediaCache.empty()
+                            try? PVMediaCache.empty()
                         }))
                         alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
                         present(alert, animated: true) {() -> Void in }

@@ -9,8 +9,12 @@
 import Foundation
 import UIKit
 
+public enum AvailableThemes : String {
+    case light = "Light"
+    case dark  = "Dark"
+}
+
 protocol tvOSTheme {
-    
 }
 
 protocol iOSTheme {

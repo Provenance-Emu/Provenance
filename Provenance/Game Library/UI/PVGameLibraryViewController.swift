@@ -15,6 +15,7 @@ import GameController
 import QuartzCore
 import UIKit
 import RealmSwift
+import CoreSpotlight
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
@@ -614,6 +615,27 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 self.collectionView?.reloadData()
             }
         }
+        
+        #if os(iOS)
+            // Add to split database
+            if #available(iOS 9.0, *) {
+                // TODO: Would be better to pass the PVGame direclty using threads.
+                // https://realm.io/blog/obj-c-swift-2-2-thread-safe-reference-sort-properties-relationships/
+                // let realm = try! Realm()
+                // if let game = realm.resolve(gameRef) { }
+                
+                // Have to do the import here so the images are ready
+                if let game = RomDatabase.temporaryDatabaseContext().all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first {
+                    let spotlightItem = CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
+                    CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
+                        if let error = error {
+                            ELOG("indexing error: \(error)")
+                        }
+                    }
+                }
+            }
+        #endif
+        
         // code below is simply to animate updates... currently crashy
         //    NSArray *oldSectionInfo = [self.sectionInfo copy];
         //    NSIndexPath *indexPath = [self indexPathForGameWithMD5Hash:md5];
@@ -928,6 +950,8 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func registerRecentGames(_ recents: Results<PVRecentGame>) {
+        // TODO: Maybe should add favorite games first, then recent games?
+        
         if #available(iOS 9.0, *) {
             #if os(iOS)
                 // Add 3D touch shortcuts to recent games
@@ -937,7 +961,15 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 
                 for recentGame in sortedRecents {
                     if let game = recentGame.game {
-                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: nil, userInfo: ["PVGameHash": game.md5Hash])
+                        
+                        let icon : UIApplicationShortcutIcon?
+                        if #available(iOS 9.1, *) {
+                            icon  = UIApplicationShortcutIcon(type: .favorite)
+                        } else {
+                            icon = UIApplicationShortcutIcon(type: .play)
+                        }
+                        
+                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
                         shortcuts.append(shortcut)
                     }
                 }
@@ -1001,7 +1033,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     
             if !game.originalArtworkURL.isEmpty && game.originalArtworkURL != game.customArtworkURL {
                 actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+                    try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
                     
                     try! RomDatabase.temporaryDatabaseContext().writeTransaction {
                         game.customArtworkURL = ""
@@ -1025,6 +1057,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+                    // Delete from Realm
                     self.delete(game: game)
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -1034,6 +1067,30 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             self.present(actionSheet, animated: true) {() -> Void in }
         }
     }
+    
+    #if os(iOS)
+    @available(iOS 9.0, *)
+    private func deleteFromSpotlight(game : PVGame) {
+        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
+            if let error = error {
+                print("Error deleting game spotlight item: \(error)")
+            } else {
+                print("Game indexing deleted.")
+            }
+        })
+    }
+    
+    @available(iOS 9.0, *)
+    private func deleteAllGamesFromSpotlight() {
+        CSSearchableIndex.default().deleteAllSearchableItems() { (error) in
+            if let error = error {
+                print("Error deleting all games spotlight index: \(error)")
+            } else {
+                print("Game indexing deleted.")
+            }
+        }
+    }
+    #endif
 
     func toggleFavorite(for game: PVGame) {
         do {
@@ -1142,7 +1199,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         
         let romPath: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(game.romPath).path
         let indexPaths = indexPathsForGame(withMD5Hash: game.md5Hash)
-        PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+        try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
         let savesPath = config.saveStatePath(forROM: romPath)
         do {
@@ -1164,6 +1221,13 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             WLOG("Unable to delete rom at path: \(romPath) because: \(error.localizedDescription)")
         }
 
+        // Delete from Spotlight search
+        #if os(iOS)
+        if #available(iOS 9.0, *) {
+           deleteFromSpotlight(game: game)
+        }
+        #endif
+        
         deleteRelatedFilesGame(game)
         try? RomDatabase.temporaryDatabaseContext().delete(object: game)
         let oldSectionInfo = sectionInfo
@@ -1254,9 +1318,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                             let orientation : UIImageOrientation = UIImageOrientation(rawValue: rep.orientation().rawValue)!
 
                             let lastPhoto = UIImage(cgImage: rep.fullScreenImage().takeUnretainedValue(), scale: CGFloat(rep.scale()), orientation: orientation)
-                            PVMediaCache.writeImage(toDisk: lastPhoto, withKey: rep.url().path)
                             
                             do {
+                                try PVMediaCache.writeImage(toDisk: lastPhoto, withKey: rep.url().path)
                                 try RomDatabase.temporaryDatabaseContext().writeTransaction {
                                     game.customArtworkURL = rep.url().path
                                 }
@@ -1334,9 +1398,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             else {
                 key = UUID().uuidString
             }
-            PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
             
             do {
+                try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
                 try RomDatabase.temporaryDatabaseContext().writeTransaction {
                     game.customArtworkURL = key
                 }
@@ -1430,7 +1494,12 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             let games = gamesInSections[sectionInfo[indexPath.section]]
             game = games?[indexPath.item] as? PVGame
         }
-        cell.setup(with: game)
+        
+        if let game = game {
+            cell.setup(with: game)
+        } else {
+            WLOG("Can't setup PVGameLibraryCollectionViewCell wil nil game reference")
+        }
         return cell
     }
 
@@ -1612,9 +1681,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = UIImagePNGRepresentation(scaledImage) {
 
             let hash = (imageData as NSData).md5Hash
-            PVMediaCache.writeData(toDisk: imageData, withKey: hash)
             
             do {
+                try PVMediaCache.writeData(toDisk: imageData, withKey: hash)
                 try RomDatabase.temporaryDatabaseContext().writeTransaction {
                     gameForCustomArt.customArtworkURL = hash
                 }

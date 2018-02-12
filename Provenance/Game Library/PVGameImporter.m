@@ -11,7 +11,6 @@
 #import "Provenance-Swift.h"
 #import "OESQLiteDatabase.h"
 #import "NSFileManager+Hashing.h"
-#import "PVMediaCache.h"
 #import "PVSynchronousURLSession.h"
 #import "PVEmulatorConstants.h"
 #import "UIImage+Scaling.h"
@@ -784,7 +783,7 @@
 
 - (void)getArtworkFromURL:(NSString *)url
 {
-    if (![url length] || [[PVMediaCache filePathForKey:url] length])
+    if (![url length] || [PVMediaCache filePathForKey:url] != nil )
     {
         return;
     }
@@ -816,7 +815,7 @@
     UIImage *artwork = [[UIImage alloc] initWithData:data];
     if (artwork)
     {
-        [PVMediaCache writeImageToDisk:artwork withKey:url];
+        [PVMediaCache writeImageToDisk:artwork withKey:url error:nil];
     }
     
     if (self.finishedArtworkHandler)

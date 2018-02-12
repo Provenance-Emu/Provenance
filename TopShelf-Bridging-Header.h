@@ -3,3 +3,5 @@
 //
 
 #import "PVEmulatorConstants.h"
+#import "UIImage+Scaling.h"
+

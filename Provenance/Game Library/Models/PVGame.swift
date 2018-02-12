@@ -63,34 +63,46 @@ public extension PVGame {
 
 import CoreSpotlight
 import MobileCoreServices
+import UIKit
 
 public extension PVGame {
     
     #if os(iOS)
     @available(iOS 9.0, *)
     var spotlightContentSet : CSSearchableItemAttributeSet {
-        let systemName = self.systemName(systemID: systemIdentifier)
+        let systemName = self.systemName
         
         var description = "\(systemName ?? "")"
         if isFavorite {
             description += "\n⭐"
         }
         
-        let artworkURL = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-
+        // Maybe should use kUTTypeData?
         let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
         contentSet.title                   = title
         contentSet.relatedUniqueIdentifier = md5Hash
         contentSet.contentDescription      = description
         contentSet.rating                  = NSNumber(booleanLiteral: isFavorite)
-        contentSet.thumbnailURL            = URL(fileURLWithPath: artworkURL)
-        //            contentSet.contentURL              = URL(fileURLWithPath: romPath)
-        contentSet.path                    = romPath
+        contentSet.thumbnailURL            = pathOfCachedImage
+        contentSet.keywords                = ["rom", systemName ?? ""]
+//        contentSet.path                    = romPath
         
         //            contentSet.authorNames             = [data.authorName]
         // Could generate small thumbnail here
-        //contentSet.thumbnailData = NSData()
+        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+            contentSet.thumbnailData = UIImagePNGRepresentation(s)
+        }
         return contentSet
+    }
+    
+    var pathOfCachedImage : URL? {
+        let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
+        return artworkURL
+    }
+    
+    var spotlightUniqueIdentifier : String {
+        return "com.provenance-emu.game.\(md5Hash)"
     }
     #endif
     
@@ -115,7 +127,7 @@ public extension PVGame {
     }
 
     // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
-    private func systemName(systemID : String) -> String? {
+    private var systemName : String? {
         
         guard let plist = Bundle.main.url(forResource: "systems", withExtension: "plist"), let systems = NSArray.init(contentsOf: plist) as? [[String: Any]] else {
             ELOG("Couldn't read systems plist")
@@ -123,7 +135,7 @@ public extension PVGame {
         }
 
         for system in systems {
-            if let ident = system[PVSystemIdentifierKey] as? String, ident == systemID {
+            if let ident = system[PVSystemIdentifierKey] as? String, ident == systemIdentifier {
                 return system[PVShortSystemNameKey] as? String
             }
         }

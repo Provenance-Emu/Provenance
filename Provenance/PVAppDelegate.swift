@@ -6,6 +6,7 @@
 //
 
 let TEST_THEMES = false
+import CoreSpotlight
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
@@ -88,6 +89,26 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         completionHandler(true)
     }
 #endif
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+
+        // Spotlight search click-through
+        #if os(iOS)
+        if #available(iOS 9.0, *) {
+            if userActivity.activityType == CSSearchableItemActionType {
+                if let md5 = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String {
+                    // Comes in a format of "com....md5"
+                    shortcutItemMD5 = md5.components(separatedBy: ".").last
+                    return true
+                } else {
+                    WLOG("Spotlight activity didn't contain the MD5 I was looking for")
+                }
+            }
+        }
+        #endif
+
+        return false
+    }
     
     func applicationWillResignActive(_ application: UIApplication) {
     }

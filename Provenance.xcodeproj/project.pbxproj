@@ -36,8 +36,8 @@
 		1A47C97C17BC310700C27644 /* JSDPad.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A47C96417BC310700C27644 /* JSDPad.m */; };
 		1A4850BB1AE1A6C500F7EF2E /* PVConflictViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */; };
 		1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */; };
-		1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */; };
-		1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
+		1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
+		1A48697817C8C0DE0019F6D2 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
 		1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
 		1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -76,9 +76,9 @@
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
-		1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */; };
+		1AD481CB1BA353F600FDA50A /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */; };
-		1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */; };
+		1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
 		1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
 		1AD481D11BA3540600FDA50A /* PVConflictViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */; };
 		1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
@@ -168,8 +168,6 @@
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
 		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
-		25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
-		25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 25A64E161CB1C41100EDD19D /* UIImage+Color.m */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
@@ -530,6 +528,7 @@
 		B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */; };
 		B35BB803202F62DC00FCB513 /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B35BB802202F62DC00FCB513 /* PVGameImporter.m */; };
 		B35BB804202F62DC00FCB513 /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B35BB802202F62DC00FCB513 /* PVGameImporter.m */; };
+		B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -819,10 +818,8 @@
 		1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVConflictViewController.m; sourceTree = "<group>"; };
 		1A48696A17C8C0DE0019F6D2 /* PVDirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDirectoryWatcher.h; sourceTree = "<group>"; };
 		1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVDirectoryWatcher.m; sourceTree = "<group>"; };
-		1A48696E17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameLibraryCollectionViewCell.h; sourceTree = "<group>"; };
-		1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameLibraryCollectionViewCell.m; sourceTree = "<group>"; };
-		1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVMediaCache.h; sourceTree = "<group>"; };
-		1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVMediaCache.m; sourceTree = "<group>"; };
+		1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibraryCollectionViewCell.swift; sourceTree = "<group>"; };
+		1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMediaCache.swift; sourceTree = "<group>"; };
 		1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Hashing.h"; sourceTree = "<group>"; };
 		1A48698017C8C1170019F6D2 /* NSString+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Hashing.m"; sourceTree = "<group>"; };
 		1A4869D517C8D5450019F6D2 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -1743,8 +1740,7 @@
 				B3B923B1202D415900580FFC /* Spotlight */,
 				1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */,
 				1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */,
-				1A48697217C8C0DE0019F6D2 /* PVMediaCache.h */,
-				1A48697317C8C0DE0019F6D2 /* PVMediaCache.m */,
+				1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */,
 				1A48696A17C8C0DE0019F6D2 /* PVDirectoryWatcher.h */,
 				1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */,
 				B35BB801202F62DC00FCB513 /* PVGameImporter.h */,
@@ -2669,8 +2665,7 @@
 			children = (
 				B3608A41202F814F00387DA1 /* Legacy Code for Reference */,
 				B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */,
-				1A48696E17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.h */,
-				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m */,
+				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */,
 				42BC83A717E6775E00E9A607 /* PVGameLibrarySectionHeaderView.h */,
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */,
 				1A4850B91AE1A6C500F7EF2E /* PVConflictViewController.h */,
@@ -3218,7 +3213,6 @@
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
 				B349AECB1E9ABCF900ACD416 /* FileStreams.cpp in Sources */,
-				25A64E171CB1C41100EDD19D /* UIImage+Color.m in Sources */,
 				B349AF031E9ABCF900ACD416 /* Lzma2Decoder.cpp in Sources */,
 				B349AF631E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
 				B349AEAD1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
@@ -3238,7 +3232,7 @@
 				B349AE711E9ABCF900ACD416 /* LzmaDec.c in Sources */,
 				B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */,
 				B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */,
-				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.m in Sources */,
+				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AEE31E9ABCF900ACD416 /* StreamBinder.cpp in Sources */,
 				B349AE7D1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
@@ -3265,7 +3259,7 @@
 				B349AED71E9ABCF900ACD416 /* MethodId.cpp in Sources */,
 				B349AED31E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
 				B349AE911E9ABCF900ACD416 /* 7zCompressionMode.cpp in Sources */,
-				1A48697817C8C0DE0019F6D2 /* PVMediaCache.m in Sources */,
+				1A48697817C8C0DE0019F6D2 /* PVMediaCache.swift in Sources */,
 				B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */,
 				B349AF6D1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
 				B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */,
@@ -3334,7 +3328,7 @@
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */,
 				1AD481FF1BA354B100FDA50A /* PViCadeGamepadDirectionPad.m in Sources */,
 				B349AEFA1E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
-				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.m in Sources */,
+				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AF241E9ABCF900ACD416 /* CRC.cpp in Sources */,
 				B349AF681E9ABCFA00ACD416 /* LzmaSDKObjCMutableItem.mm in Sources */,
 				1AD481F81BA354B100FDA50A /* PViCadeControllerViewController.m in Sources */,
@@ -3524,7 +3518,7 @@
 				B349AE641E9ABCF900ACD416 /* Delta.c in Sources */,
 				B349AF6E1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
 				B349AE781E9ABCF900ACD416 /* MtCoder.c in Sources */,
-				1AD481CB1BA353F600FDA50A /* PVMediaCache.m in Sources */,
+				1AD481CB1BA353F600FDA50A /* PVMediaCache.swift in Sources */,
 				B349AF101E9ABCF900ACD416 /* PpmdDecoder.cpp in Sources */,
 				1A52098D1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				B349AEF01E9ABCF900ACD416 /* Bcj2Register.cpp in Sources */,
@@ -3536,7 +3530,6 @@
 				BE1E26681C2252CA00499BA0 /* PVEmulatorConstants.m in Sources */,
 				B349AED01E9ABCF900ACD416 /* InBuffer.cpp in Sources */,
 				B349AE821E9ABCF900ACD416 /* Sort.c in Sources */,
-				25A64E181CB1C57900EDD19D /* UIImage+Color.m in Sources */,
 				1AD481F61BA3549F00FDA50A /* UIImage+ImageEffects.m in Sources */,
 				B349AE7A1E9ABCF900ACD416 /* Ppmd7.c in Sources */,
 				B349AF081E9ABCF900ACD416 /* Lzma2Register.cpp in Sources */,
@@ -3586,6 +3579,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */,
 				B3E21D7F20322643009939D3 /* PVEmulatorConstants.m in Sources */,
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
 				B3E21D7B20321B53009939D3 /* PVGame.swift in Sources */,

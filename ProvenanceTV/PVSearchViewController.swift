@@ -188,8 +188,9 @@ class PVSearchViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
         
-        let game = searchResults?[indexPath.item]
-        cell.setup(with: game)
+        if let game = searchResults?[indexPath.item] {
+            cell.setup(with: game)
+        }
         cell.setNeedsLayout()
         return cell
     }

@@ -10,15 +10,15 @@ import MobileCoreServices
 import CoreSpotlight
 import RealmSwift
 
-enum SpotlightError: Error {
+public enum SpotlightError: Error {
     case appGroupsNotSupported
     case dontHandleDatatype
     case notFound
 }
 
-class IndexRequestHandler: CSIndexExtensionRequestHandler {
+public class IndexRequestHandler: CSIndexExtensionRequestHandler {
     
-    override init() {
+    public override init() {
         super.init()
         
         if RealmConfiguration.supportsAppGroups {
@@ -26,7 +26,7 @@ class IndexRequestHandler: CSIndexExtensionRequestHandler {
         }
     }
 
-    override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
+    public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
         
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.temporaryDatabaseContext()
@@ -41,7 +41,7 @@ class IndexRequestHandler: CSIndexExtensionRequestHandler {
         acknowledgementHandler()
     }
     
-    override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexSearchableItemsWithIdentifiers identifiers: [String], acknowledgementHandler: @escaping () -> Void) {
+    public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexSearchableItemsWithIdentifiers identifiers: [String], acknowledgementHandler: @escaping () -> Void) {
         // Reindex any items with the given identifiers and the provided index
         
         if RealmConfiguration.supportsAppGroups {
@@ -57,24 +57,26 @@ class IndexRequestHandler: CSIndexExtensionRequestHandler {
         acknowledgementHandler()
     }
     
-    override func data(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String) throws -> Data {
-        if !RealmConfiguration.supportsAppGroups {
-            throw SpotlightError.appGroupsNotSupported
-        }
-        
-        if typeIdentifier == (kUTTypeImage as String) {
-            do {
-                let url = try fileURL(for: searchableIndex, itemIdentifier: itemIdentifier, typeIdentifier: typeIdentifier, inPlace: true)
-                return try Data(contentsOf: url)
-            } catch {
-                throw error
-            }
-        } else {
-            throw SpotlightError.dontHandleDatatype
-        }
-    }
+//    public override func data(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String) throws -> Data {
+//        if !RealmConfiguration.supportsAppGroups {
+//            throw SpotlightError.appGroupsNotSupported
+//        }
+// Could make a scaled image too and supply the data
+//        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+//
+//        if typeIdentifier == (kUTTypeImage as String) {
+//            do {
+//                let url = try fileURL(for: searchableIndex, itemIdentifier: itemIdentifier, typeIdentifier: typeIdentifier, inPlace: true)
+//                return try Data(contentsOf: url)
+//            } catch {
+//                throw error
+//            }
+//        } else {
+//            throw SpotlightError.dontHandleDatatype
+//        }
+//    }
     
-    override func fileURL(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String, inPlace: Bool) throws -> URL {
+    public override func fileURL(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String, inPlace: Bool) throws -> URL {
         
         if !RealmConfiguration.supportsAppGroups {
             throw SpotlightError.appGroupsNotSupported
@@ -84,9 +86,10 @@ class IndexRequestHandler: CSIndexExtensionRequestHandler {
         
         // I think it's looking for the image path
         if typeIdentifier == (kUTTypeImage as String) {
-            if let game = RomDatabase.temporaryDatabaseContext().all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: itemIdentifier).first {
-                let artworkURL = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
-                return URL.init(fileURLWithPath: artworkURL)
+            let md5 = itemIdentifier.components(separatedBy: ".").last ?? ""
+            
+            if let game = RomDatabase.temporaryDatabaseContext().all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first, let artworkURL = game.pathOfCachedImage {
+                return artworkURL
             } else {
                 throw SpotlightError.notFound
             }

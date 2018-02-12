@@ -4,3 +4,5 @@
 
 #import "PVEmulatorConstants.h"
 #import "PVEmulatorConfiguration.h"
+#import "UIImage+Scaling.h"
+#import "NSString+Hashing.h"
