@@ -17,8 +17,8 @@ import TVServices
  
  */
 
-class ServiceProvider: NSObject, TVTopShelfProvider {
-    override init() {
+public class ServiceProvider: NSObject, TVTopShelfProvider {
+    public override init() {
         super.init()
         
         if RealmConfiguration.supportsAppGroups {
@@ -27,12 +27,12 @@ class ServiceProvider: NSObject, TVTopShelfProvider {
     }
     
     // MARK: - TVTopShelfProvider protocol
-    var topShelfStyle: TVTopShelfContentStyle {
+    public var topShelfStyle: TVTopShelfContentStyle {
         // Return desired Top Shelf style.
         return .sectioned
     }
     
-    var topShelfItems: [TVContentItem] {
+    public var topShelfItems: [TVContentItem] {
         var topShelfItems = [TVContentItem]()
         if RealmConfiguration.supportsAppGroups {
             let identifier = TVContentIdentifier(identifier: "id", container: nil)!

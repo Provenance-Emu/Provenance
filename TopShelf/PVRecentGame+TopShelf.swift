@@ -22,7 +22,7 @@ extension PVRecentGame {
         }
         
         item.title = game.title
-        item.imageURL = URL(string: game.originalArtworkURL)
+        item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
         item.imageShape = imageType
         item.displayURL = self.displayURL
         item.lastAccessedDate = lastPlayedDate

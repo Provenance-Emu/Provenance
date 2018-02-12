@@ -34,7 +34,7 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.tv-services</string>
 		<key>NSExtensionPrincipalClass</key>
-		<string>ServiceProvider</string>
+		<string>$(PRODUCT_MODULE_NAME).ServiceProvider</string>
 	</dict>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
