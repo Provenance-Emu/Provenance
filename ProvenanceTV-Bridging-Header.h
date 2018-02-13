@@ -30,7 +30,6 @@
 #import "PVEmulatorConstants.h"
 #import "PVEmulatorViewController.h"
 #import "PVGameImporter.h"
-#import "PVGameLibrarySectionHeaderView.h"
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "UIActionSheet+BlockAdditions.h"

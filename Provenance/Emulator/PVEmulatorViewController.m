@@ -358,17 +358,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	BOOL shouldHideHomeIndicator = [[PVControllerManager sharedManager] hasControllers];
 	return shouldHideHomeIndicator;
 }
-
--(void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:YES];
-	//Notifies UIKit that your view controller updated its preference regarding the visual indicator
-	if (@available(iOS 11.0, *))
-	{
-		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
-	}
-}
-
 #endif
 
 - (void)viewDidLayoutSubviews {
@@ -380,15 +369,6 @@ void uncaughtExceptionHandler(NSException *exception)
     }
     
     [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22)];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-#if !TARGET_OS_TV
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-#endif
 }
 
 - (NSString *)documentsPath

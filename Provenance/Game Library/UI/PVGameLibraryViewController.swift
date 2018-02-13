@@ -144,6 +144,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         else {
             setUpGameLibrary()
         }
+        
         loadGameFromShortcut()
         becomeFirstResponder()
     }
