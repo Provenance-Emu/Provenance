@@ -42,6 +42,7 @@
 	return self;
 }
 
+#if TARGET_OS_TV
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection
 {
     [_titleLabel setTextColor:[self colorForText]];
@@ -49,14 +50,13 @@
 
 - (UIColor *)colorForText
 {
-#if TARGET_OS_TV
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         return [UIColor lightGrayColor];
     }
-#endif
     
     return [UIColor darkGrayColor];
 }
+#endif
 
 - (void)prepareForReuse
 {

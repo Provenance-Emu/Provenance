@@ -9,7 +9,7 @@
 #import "PVControllerViewController.h"
 #import "PVEmulatorConfiguration.h"
 #import "PVButtonGroupOverlayView.h"
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 #import <PVSupport/NSObject+PVAbstractAdditions.h>
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>

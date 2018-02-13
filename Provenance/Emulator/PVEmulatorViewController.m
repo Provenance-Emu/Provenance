@@ -14,7 +14,6 @@
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
-#import "PVSettingsModel.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import "PVEmulatorConfiguration.h"

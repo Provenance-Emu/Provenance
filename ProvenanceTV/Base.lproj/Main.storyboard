@@ -589,7 +589,7 @@ This is a test</string>
         <!--Appearance View Controller-->
         <scene sceneID="H1R-55-1vb">
             <objects>
-                <tableViewController id="Fqw-ef-HBA" customClass="PVAppearanceViewController" sceneMemberID="viewController">
+                <tableViewController id="Fqw-ef-HBA" customClass="PVAppearanceViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="66" sectionFooterHeight="66" id="h2F-Su-JkG">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

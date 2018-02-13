@@ -7,7 +7,7 @@
 //
 
 #import "PVControllerManager.h"
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 #import "PViCadeController.h"
 #import "kICadeControllerSetting.h"
 #import "PViCade8BitdoController.h"
@@ -45,7 +45,7 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
                                                      name:GCControllerDidDisconnectNotification
                                                    object:nil];
         [[NSUserDefaults standardUserDefaults] addObserver:self
-                                                forKeyPath:kICadeControllerSettingKey
+                                                forKeyPath:@"kICadeControllerSettingKey"
                                                    options:NSKeyValueObservingOptionNew context:nil];
 
         // automatically assign the first connected controller to player 1
@@ -128,7 +128,7 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (keyPath == kICadeControllerSettingKey) {
+    if ([keyPath isEqualToString:@"kICadeControllerSettingKey"]) {
         [self setupICade];
     } else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

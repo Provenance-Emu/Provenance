@@ -46,6 +46,5 @@ NS_ASSUME_NONNULL_END
 @interface PVGameImporter()
 - (NSString* _Nullable)calculateMD5ForGame:(PVGame *_Nonnull)game;
 - (NSString * _Nonnull)documentsPath;
-- (void)lookupInfoForGame:(PVGame *_Nonnull)game;
 @property (nonatomic, strong) OESQLiteDatabase * _Nullable openVGDB;
 @end

@@ -7,6 +7,7 @@
 #import "NSString+Hashing.h"
 #import "OESQLiteDatabase.h"
 #import "NSFileManager+Hashing.h"
+#import "kICadeControllerSetting.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
@@ -30,7 +31,6 @@
 #import "PVEmulatorViewController.h"
 #import "PVGameImporter.h"
 #import "PVGameLibrarySectionHeaderView.h"
-#import "PVSettingsModel.h"
 #import "PVWebServer.h"
 #import "Reachability.h"
 #import "UIActionSheet+BlockAdditions.h"

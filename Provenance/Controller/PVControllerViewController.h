@@ -10,7 +10,6 @@
 #import "JSDPad.h"
 #import "JSButton.h"
 #import "PViCadeController.h"
-#import "PVSettingsModel.h"
 
 @import GameController;
 

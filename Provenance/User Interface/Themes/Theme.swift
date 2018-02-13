@@ -9,15 +9,30 @@
 import Foundation
 import UIKit
 
-public enum AvailableThemes : String {
+public enum Themes : String {
     case light = "Light"
     case dark  = "Dark"
+    
+    public static var defaultTheme : Themes {
+        return .light
+    }
+    
+    public var theme : iOSTheme {
+        switch self {
+        case .light:
+            return LightTheme()
+        case .dark:
+            return DarkTheme()
+        }
+    }
 }
 
 protocol tvOSTheme {
 }
 
-protocol iOSTheme {
+public protocol iOSTheme {
+    
+    var theme : Themes {get}
     
     // Mandatory
     var gameLibraryBackground : UIColor {get}
@@ -37,6 +52,14 @@ protocol iOSTheme {
     
     var switchON : UIColor? {get}
     var switchThumb : UIColor? {get}
+    
+    var statusBarStyle : UIStatusBarStyle {get}
+
+    var settingsHeaderBackground : UIColor? {get}
+    var settingsHeaderText: UIColor? {get}
+
+    var settingsCellBackground: UIColor? {get}
+    var settingsCellText: UIColor? {get}
 
     // Doesn't seem to be themeable
 //    var alertViewBackground : UIColor {get}
@@ -52,6 +75,12 @@ extension iOSTheme  {
     var defaultTintColor: UIColor? {return nil}
     var switchThumb: UIColor? {return nil}
     var navigationBarBackgroundColor: UIColor? {return nil}
+    
+    var settingsHeaderBackground: UIColor? {return nil}
+    var settingsHeaderText: UIColor? {return nil}
+    var settingsCellBackground: UIColor? {return nil}
+    var settingsCellText: UIColor? {return nil}
+
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? {return defaultTintColor}
@@ -65,29 +94,45 @@ extension iOSTheme  {
         // Set tint color
         sharedApp.delegate?.window??.tintColor = self.defaultTintColor
     }
+    
+    var statusBarStyle : UIStatusBarStyle {
+        return UIStatusBarStyle.default
+    }
 }
 
 struct DarkTheme : iOSTheme {
+    let theme = Themes.dark
+    
     let defaultTintColor: UIColor = UIColor(hex: "#32c")!
     let keyboardAppearance: UIKeyboardAppearance = .dark
     
     let switchON = UIColor(hex: "#32c")!
     let switchThumb = UIColor(hex: "#111")!
     
-    let gameLibraryBackground = UIColor.init(white: 0.1, alpha: 1)
-    let gameLibraryText = UIColor.init(white: 0.8, alpha: 1)
+    let gameLibraryBackground = UIColor(hex: "#292929")!
+    let gameLibraryText = UIColor(hex: "#6F6F6F")!
 
-    let gameLibraryHeaderBackground = UIColor.init(white: 0.5, alpha: 0.6)
-    let gameLibraryHeaderText = UIColor.lightGray
+    let gameLibraryHeaderBackground = UIColor.black
+    let gameLibraryHeaderText = UIColor(hex: "#333")!
     
     let barButtonItemTint : UIColor = UIColor.darkGray
-    let navigationBarBackgroundColor: UIColor = UIColor.darkGray
+    let navigationBarBackgroundColor: UIColor = UIColor(hex: "#1C1C1C")!
     
     let alertViewBackground: UIColor = UIColor.darkGray
     let alertViewText: UIColor = UIColor.lightGray
+    
+    let statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.lightContent
+    
+    let settingsHeaderBackground: UIColor = UIColor.black
+    let settingsHeaderText: UIColor = UIColor(hex: "#343434")!
+
+    let settingsCellBackground: UIColor = UIColor(hex: "#292929")!
+    let settingsCellText: UIColor = UIColor(hex: "#5A5A5A")!
 }
 
 struct LightTheme : iOSTheme {
+    let theme = Themes.light
+
     let defaultTintColor = UIColor.init(hex: "#007aff") // iOS Blue
     
     let gameLibraryBackground = UIColor.clear
@@ -100,9 +145,14 @@ struct LightTheme : iOSTheme {
 @available(iOS 9.0, *)
 public class Theme : NSObject {
     
+    public static var currentTheme : iOSTheme = LightTheme()
     
     class func setTheme(_ theme : iOSTheme) {
-        UINavigationBar.appearance().backgroundColor = theme.navigationBarBackgroundColor
+        currentTheme = theme
+        
+        UINavigationBar.appearance {
+            $0.backgroundColor = theme.navigationBarBackgroundColor
+        }
         
         UIView.appearance {
             $0.tintColor = theme.defaultTintColor
@@ -117,32 +167,41 @@ public class Theme : NSObject {
             $0.thumbTintColor = theme.switchThumb
         }
 
-        // Alert views
-//        appearance(inAny: [UIAlertView.self, UIAlertController.self]) {
-//            UILabel.appearance {
-//                $0.textColor = theme.alertViewText
-//            }
-//
-//            UITextView.appearance {
-//                $0.textColor = theme.alertViewText
-//            }
-//
-//            UIButton.appearance {
-//                $0.tintColor = theme.alertViewText
-//            }
-//        }
-//        UIAlertView.appearance {
-//            $0.backgroundColor = theme.alertViewBackground
-//            $0.tintColor = theme.alertViewTintColor
-//        }
+
+        // Settings
+        UITableViewCell.appearance {
+            $0.backgroundColor = theme.settingsCellBackground
+            $0.textLabel?.textColor = theme.settingsCellText
+            $0.detailTextLabel?.textColor = theme.settingsCellText
+        }
+        
+        appearance(in: UITableViewCell.self) {
+            UILabel.appearance {
+                $0.textColor = theme.settingsCellText
+            }
+        }
+
+        UITableViewHeaderFooterView.appearance {
+            $0.backgroundColor = theme.settingsHeaderBackground
+        }
+
+        appearance(in: UITableViewHeaderFooterView.self) {
+            UILabel.appearance {
+                $0.textColor = theme.settingsHeaderText
+            }
+        }
+        
+        UITableView.appearance {
+            // TODO
+            $0.backgroundColor = theme.settingsHeaderBackground
+        }
+        
+        
         
         // Search bar
-        
-            // Text color
-// Swift 4 compiler error
-        //        appearance(inAny: [UISearchBar.self]) {
-//            UITextField.appearance {
-//                $0.defaultTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+//        appearance(in: UISearchBar.self) {
+//            UITextView.appearance {
+//                $0.textColor = theme.searchTextColor
 //            }
 //        }
 
@@ -171,15 +230,10 @@ public class Theme : NSObject {
         UITextField.appearance {
             $0.keyboardAppearance = theme.keyboardAppearance
         }
-    }
-    
-    @objc class func setDarkMode() {
-        setTheme(DarkTheme())
-    }
-    
-    @objc class func setLightMode() {
-        setTheme(LightTheme())
-    }
+        
+        // Status bar
+        UIApplication.shared.statusBarStyle = theme.statusBarStyle
+    }    
 }
 
 extension UIColor {

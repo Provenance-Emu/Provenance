@@ -8,7 +8,7 @@
 
 #import "PVGLViewController.h"
 #import <PVSupport/PVEmulatorCore.h>
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface PVGLViewController () <PVRenderDelegate>

@@ -42,11 +42,8 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 #else
 
         if #available(iOS 9.0, *) {
-            if TEST_THEMES {
-                Theme.setDarkMode()
-            } else {
-                Theme.setLightMode()
-            }
+            let currentTheme = PVSettingsModel.sharedInstance().theme
+            Theme.setTheme(currentTheme.theme)
         }
 #endif
         

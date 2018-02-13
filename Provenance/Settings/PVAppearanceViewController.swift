@@ -10,24 +10,25 @@
 import UIKit
 
 class PVAppearanceViewController: UITableViewController {
-#if !TARGET_OS_TV
-
+    
+    #if os(iOS)
     var hideTitlesSwitch: UISwitch?
     var recentlyPlayedSwitch: UISwitch?
-
+    #endif
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Appearance"
-#if !TARGET_OS_TV
+#if os(iOS)
         let settings = PVSettingsModel.sharedInstance()
         hideTitlesSwitch = UISwitch()
         hideTitlesSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
-        hideTitlesSwitch?.isOn = settings.showGameTitles()
-        hideTitlesSwitch?.addTarget(self, action: Selector("switchChangedValue:"), for: .valueChanged)
+        hideTitlesSwitch?.isOn = settings.showGameTitles
+    hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
         recentlyPlayedSwitch = UISwitch()
         recentlyPlayedSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
-        recentlyPlayedSwitch?.isOn = settings.showRecentGames()
-        recentlyPlayedSwitch?.addTarget(self, action: Selector("switchChangedValue:"), for: .valueChanged)
+        recentlyPlayedSwitch?.isOn = settings.showRecentGames
+    recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 #endif
     }
 
@@ -36,13 +37,13 @@ class PVAppearanceViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
 
-#if !TARGET_OS_TV
+#if os(iOS)
     @objc func switchChangedValue(_ switchItem: UISwitch) {
         if switchItem == hideTitlesSwitch {
-            PVSettingsModel.sharedInstance().setShowGameTitles(switchItem.isOn())
+            PVSettingsModel.sharedInstance().showGameTitles = switchItem.isOn
         }
         else if switchItem == recentlyPlayedSwitch {
-            PVSettingsModel.sharedInstance().setShowRecentGames(switchItem.isOn())
+            PVSettingsModel.sharedInstance().showRecentGames = switchItem.isOn
         }
 
         NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
@@ -69,16 +70,16 @@ class PVAppearanceViewController: UITableViewController {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 cell?.textLabel?.text = "Show Game Titles"
-#if TARGET_OS_TV
-                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showGameTitles() ? "On" : "Off"
+#if os(tvOS)
+                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showGameTitles ? "On" : "Off"
 #else
                 cell?.accessoryView = hideTitlesSwitch
 #endif
             }
             else if indexPath.row == 1 {
                 cell?.textLabel?.text = "Show recently played games"
-#if TARGET_OS_TV
-                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showRecentGames() ? "On" : "Off"
+#if os(tvOS)
+                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showRecentGames ? "On" : "Off"
 #else
                 cell?.accessoryView = recentlyPlayedSwitch
 #endif
@@ -89,17 +90,17 @@ class PVAppearanceViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-#if TARGET_OS_TV
+#if os(tvOS)
         let cell: UITableViewCell? = tableView.cellForRow(at: indexPath)
         let settings = PVSettingsModel.sharedInstance()
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                settings.setShowGameTitles(!settings.showGameTitles())
-                cell?.detailTextLabel?.text = settings.showGameTitles() ? "On" : "Off"
+                settings.showGameTitles = !settings.showGameTitles
+                cell?.detailTextLabel?.text = settings.showGameTitles ? "On" : "Off"
             }
             else if indexPath.row == 1 {
-                settings.setShowRecentGames(!settings.showRecentGames())
-                cell?.detailTextLabel?.text = settings.showRecentGames() ? "On" : "Off"
+                settings.showRecentGames = !settings.showRecentGames
+                cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
             }
         }
 #endif

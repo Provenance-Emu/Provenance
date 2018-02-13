@@ -378,7 +378,7 @@ public extension PVGameImporter {
         var openVGDB = self.openVGDB
         if openVGDB == nil {
             do {
-                openVGDB = try OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite"))
+                openVGDB = try OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!)
                 self.openVGDB = openVGDB
             } catch {
                 ELOG("Unable to open game database: \(error.localizedDescription)")
