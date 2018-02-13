@@ -138,6 +138,10 @@ public extension RomDatabase {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
     }
     
+    public func all<T:Object>(_ type : T.Type, where keyPath: String, value : Bool) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(booleanLiteral: value)))
+    }
+    
     public func all<T:Object>(_ type : T.Type, filter: NSPredicate) -> Results<T> {
         return realm.objects(T.self).filter(filter)
     }

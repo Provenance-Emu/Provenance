@@ -945,11 +945,11 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         } catch {
             ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
         }
-        registerRecentGames(recents)
+        register3DTouchShortcuts()
         isMustRefreshDataSource = true
     }
 
-    func registerRecentGames(_ recents: Results<PVRecentGame>) {
+    func register3DTouchShortcuts() {
         // TODO: Maybe should add favorite games first, then recent games?
         
         if #available(iOS 9.0, *) {
@@ -957,17 +957,29 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 // Add 3D touch shortcuts to recent games
                 var shortcuts = [UIApplicationShortcutItem]()
                 
-                let sortedRecents: Results<PVRecentGame> = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+                let database = RomDatabase.temporaryDatabaseContext()
+                
+                let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
+                for game in favorites {
+                    let icon : UIApplicationShortcutIcon?
+                    if #available(iOS 9.1, *) {
+                        icon  = UIApplicationShortcutIcon(type: .favorite)
+                    } else {
+                        icon = UIApplicationShortcutIcon(type: .play)
+                    }
+                    
+                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
+                    shortcuts.append(shortcut)
+                }
+                
+                
+                let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
                 
                 for recentGame in sortedRecents {
                     if let game = recentGame.game {
                         
                         let icon : UIApplicationShortcutIcon?
-                        if #available(iOS 9.1, *) {
-                            icon  = UIApplicationShortcutIcon(type: .favorite)
-                        } else {
-                            icon = UIApplicationShortcutIcon(type: .play)
-                        }
+                        icon = UIApplicationShortcutIcon(type: .play)
                         
                         let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
                         shortcuts.append(shortcut)
@@ -1097,6 +1109,8 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             try RomDatabase.temporaryDatabaseContext().writeTransaction {
                 game.isFavorite = !game.isFavorite
             }
+            
+            register3DTouchShortcuts()
             
             fetchGames()
             
