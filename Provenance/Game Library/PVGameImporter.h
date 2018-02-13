@@ -16,6 +16,7 @@ typedef void (^PVGameImporterFinishedGettingArtworkHandler)(NSString *artworkURL
 NS_ASSUME_NONNULL_END
 
 @class PVGame;
+@class OESQLiteDatabase;
 
 @interface PVGameImporter : NSObject
 
@@ -41,8 +42,10 @@ NS_ASSUME_NONNULL_END
 
 @end
 
-@interface PVGameImporter (Private)
+// Private
+@interface PVGameImporter()
 - (NSString* _Nullable)calculateMD5ForGame:(PVGame *_Nonnull)game;
 - (NSString * _Nonnull)documentsPath;
 - (void)lookupInfoForGame:(PVGame *_Nonnull)game;
+@property (nonatomic, strong) OESQLiteDatabase * _Nullable openVGDB;
 @end

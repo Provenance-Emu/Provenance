@@ -228,6 +228,193 @@ public extension PVGameImporter {
             } // autorelease pool
         } // for each
     }
+    
+    // MARK: - ROM Lookup
+    
+    @objc
+    public func lookupInfo(for game: PVGame) {
+        let database = RomDatabase.temporaryDatabaseContext()
+        database.refresh()
+        if game.md5Hash.isEmpty {
+            var offset: UInt = 0
+            if (game.systemIdentifier == PVNESSystemIdentifier) {
+                offset = 16
+                // make this better
+            }
+            let romFullPath = URL(fileURLWithPath: documentsPath()).appendingPathComponent(game.romPath).path
+            
+            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
+                try? database.writeTransaction {
+                    game.md5Hash = md5Hash
+                }
+            }
+        }
+        
+        guard !game.md5Hash.isEmpty else {
+            ELOG("Game md5 has was empty")
+            return
+        }
+        
+        var resultsMaybe:[[String : Any]]? = nil
+        do {
+            resultsMaybe = try self.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
+        
+        
+        if resultsMaybe == nil || resultsMaybe!.isEmpty {
+            let fileName: String = URL(fileURLWithPath:game.romPath).lastPathComponent
+            // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
+
+            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: PVGameImporter.charset)
+            var gameTitleLen: Int
+            if nonCharRange.length > 0 && nonCharRange.location > 1 {
+                gameTitleLen = nonCharRange.location - 1
+            }
+            else {
+                gameTitleLen = fileName.count
+            }
+            let subfileName = String(fileName.prefix(gameTitleLen))
+            resultsMaybe = try? self.searchDatabase(usingKey: "romFileName", value: subfileName, systemID: game.systemIdentifier)
+        }
+        
+        guard let results = resultsMaybe, !results.isEmpty else {
+            DLOG("Unable to find ROM \(game.romPath) in DB");
+            try? database.writeTransaction {
+                game.requiresSync = false
+            }
+            return
+        }
+        
+        var chosenResultMaybse: [AnyHashable: Any]? = nil
+        for result: [AnyHashable: Any] in results {
+            if let region = result["region"] as? String, region == "USA" {
+                chosenResultMaybse = result
+                break
+            }
+        }
+        
+        if chosenResultMaybse == nil {
+            chosenResultMaybse = results.first
+        }
+        
+        guard let chosenResult = chosenResultMaybse else {
+            DLOG("Unable to find ROM \(game.romPath) in DB");
+            return
+        }
+        
+        do {
+            try database.writeTransaction {
+                game.requiresSync = false
+                
+                /* Optional results
+                     gameTitle
+                     boxImageURL
+                     region
+                     gameDescription
+                     boxBackURL
+                     developer
+                     publisher
+                     year
+                     genres [comma array string]
+                     referenceURL
+                     releaseID
+                     systemShortName
+                 */
+                
+                if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
+                    game.title = title
+                }
+                
+                if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty {
+                    game.originalArtworkURL = boxImageURL
+                }
+                
+                if let regionName = chosenResult["region"] as? String, !regionName.isEmpty {
+                    game.regionName = regionName
+                }
+
+                if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty {
+                    game.gameDescription = gameDescription
+                }
+
+                if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty {
+                    game.boxBackArtworkURL = boxBackURL
+                }
+
+                if let developer = chosenResult["developer"] as? String, !developer.isEmpty {
+                    game.developer = developer
+                }
+
+                if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty {
+                    game.publisher = publisher
+                }
+
+                if let genres = chosenResult["genres"] as? String, !genres.isEmpty {
+                    game.genres = genres
+                }
+
+                if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty {
+                    game.referenceURL = referenceURL
+                }
+
+                if let releaseID = chosenResult["releaseID"] as? String, !releaseID.isEmpty {
+                    game.releaseID = releaseID
+                }
+
+                if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty {
+                    game.systemShortName = systemShortName
+                }                
+            }
+        } catch {
+            ELOG("Failed to update game \(game.title) : \(error.localizedDescription)")
+        }
+     }
+    
+    @objc
+    public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]] {
+        
+        var openVGDB = self.openVGDB
+        if openVGDB == nil {
+            do {
+                openVGDB = try OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite"))
+                self.openVGDB = openVGDB
+            } catch {
+                ELOG("Unable to open game database: \(error.localizedDescription)")
+                throw error
+            }
+        }
+        
+        var results: [Any]? = nil
+        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
+        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
+        
+        let dbSystemID: String = PVEmulatorConfiguration.sharedInstance().databaseID(forSystemID: systemID)!
+        
+        let queryString: String
+        if key == "romFileName" {
+            queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
+        }
+        else {
+            queryString = String(format: exactQuery, key, value)
+        }
+        
+        do {
+            results = try openVGDB!.executeQuery(queryString)
+        } catch {
+            ELOG("Failed to execute query: \(error.localizedDescription)")
+            throw error
+        }
+        
+        return results as? [[String: NSObject]] ?? [[String: NSObject]]()
+    }
+    
+    static var charset : CharacterSet = {
+        var c = CharacterSet.punctuationCharacters
+        c.remove(charactersIn: "-+&.'")
+        return c
+    }()
 }
 
 // The complete but error filled auto-transition is below. Going to pick out parts to use as category extension for now

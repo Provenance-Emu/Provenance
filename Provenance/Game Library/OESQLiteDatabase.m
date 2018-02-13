@@ -64,7 +64,7 @@ NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
     }
 }
 
-- (id)executeQuery:(NSString*)sql error:(NSError *__autoreleasing *)error
+- (NSArray<NSDictionary<NSString*, NSObject*>*> *_Nullable)executeQuery:(NSString* _Nonnull)sql error:(NSError *__autoreleasing *)error
 {
     NSMutableArray *result = nil;
     @synchronized(self)

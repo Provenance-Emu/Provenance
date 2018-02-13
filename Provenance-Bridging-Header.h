@@ -7,6 +7,7 @@
 #import "UIImage+Scaling.h"
 #import "PVGameImporter.h"
 #import "NSString+Hashing.h"
+#import "OESQLiteDatabase.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports

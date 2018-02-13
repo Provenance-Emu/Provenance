@@ -53,11 +53,21 @@ public class PVMediaCache: NSObject {
         }
         
         let keyHash: String = key.md5Hash()
-
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
 //        let fileExists: Bool = FileManager.default.fileExists(atPath: filePath.path)
 
         return filePath //(fileExists ? filePath : nil)
+    }
+    
+    @objc
+    public class func fileExists(forKey key: String) -> Bool {
+        if key.isEmpty {
+            return false
+        }
+        
+        let keyHash: String = key.md5Hash()
+        let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
+        return FileManager.default.fileExists(atPath: filePath.path)
     }
     
     @objc

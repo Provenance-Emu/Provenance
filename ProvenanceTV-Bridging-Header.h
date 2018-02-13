@@ -5,7 +5,7 @@
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "NSString+Hashing.h"
-
+#import "OESQLiteDatabase.h"
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
 

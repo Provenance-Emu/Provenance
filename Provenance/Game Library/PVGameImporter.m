@@ -76,7 +76,6 @@
 @property (nonatomic, readwrite, strong) dispatch_queue_t serialImportQueue;
 @property (nonatomic, strong) NSDictionary *systemToPathMap;
 @property (nonatomic, strong) NSDictionary *romToSystemMap;
-@property (nonatomic, strong) OESQLiteDatabase *openVGDB;
 
 @end
 
@@ -685,105 +684,105 @@
     return md5Hash;
 }
 
-- (void)lookupInfoForGame:(PVGame *)game
-{
-    RomDatabase *database = RomDatabase.temporaryDatabaseContext;
-    [database refresh];
-
-    // Not sure if still needed unless you're creating PVGame's that aren't imported
-    // since MD5 has to be set before import
-//    if (![[game md5Hash] length])
-//    {
-//        NSString *_Nullable md5 = [self calculateMD5ForGame:game];
+//- (void)lookupInfoForGame:(PVGame *)game
+//{
+//    RomDatabase *database = RomDatabase.temporaryDatabaseContext;
+//    [database refresh];
 //
-//        if (md5Hash != nil) {
-//            [database writeTransactionAndReturnError:nil :^{
-//                [game setMd5Hash:md5Hash];
-//            }];
+//    // Not sure if still needed unless you're creating PVGame's that aren't imported
+//    // since MD5 has to be set before import
+////    if (![[game md5Hash] length])
+////    {
+////        NSString *_Nullable md5 = [self calculateMD5ForGame:game];
+////
+////        if (md5Hash != nil) {
+////            [database writeTransactionAndReturnError:nil :^{
+////                [game setMd5Hash:md5Hash];
+////            }];
+////        } else {
+////            ELOG("MD5 for Rom was nil at path: %@", romPath);
+////        }
+////    }
+//
+//    NSError *error = nil;
+//    NSArray *results = nil;
+//
+//    if ([[game md5Hash] length])
+//    {
+//        results = [self searchDatabaseUsingKey:@"romHashMD5"
+//                                         value:[[game md5Hash] uppercaseString]
+//                                      systemID:[game systemIdentifier]
+//                                         error:&error];
+//    }
+//
+//    if (![results count])
+//    {
+//        NSString *fileName = [[game romPath] lastPathComponent];
+//
+//        // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
+//        static NSMutableCharacterSet *charSet = nil;
+//        static dispatch_once_t onceToken;
+//        dispatch_once(&onceToken, ^{
+//            charSet = [NSMutableCharacterSet punctuationCharacterSet];
+//            [charSet removeCharactersInString:@"-+&.'"];
+//        });
+//
+//        NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
+//        NSUInteger gameTitleLen;
+//        if (nonCharRange.length > 0 && nonCharRange.location > 1) {
+//            gameTitleLen = nonCharRange.location - 1;
 //        } else {
-//            ELOG("MD5 for Rom was nil at path: %@", romPath);
+//            gameTitleLen = [fileName length];
+//        }
+//        fileName = [fileName substringToIndex:gameTitleLen];
+//        results = [self searchDatabaseUsingKey:@"romFileName"
+//                                         value:fileName
+//                                      systemID:[game systemIdentifier]
+//                                         error:&error];
+//    }
+//
+//    if (![results count])
+//    {
+//        DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
+//
+//        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+//            [game setRequiresSync:NO];
+//        }];
+//
+//        return;
+//    }
+//
+//    NSDictionary *chosenResult = nil;
+//    for (NSDictionary *result in results)
+//    {
+//        if ([result[@"region"] isEqualToString:@"USA"])
+//        {
+//            chosenResult = result;
+//            break;
 //        }
 //    }
-    
-    NSError *error = nil;
-    NSArray *results = nil;
-    
-    if ([[game md5Hash] length])
-    {
-        results = [self searchDatabaseUsingKey:@"romHashMD5"
-                                         value:[[game md5Hash] uppercaseString]
-                                      systemID:[game systemIdentifier]
-                                         error:&error];
-    }
-    
-    if (![results count])
-    {
-        NSString *fileName = [[game romPath] lastPathComponent];
-        
-        // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-        static NSMutableCharacterSet *charSet = nil;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            charSet = [NSMutableCharacterSet punctuationCharacterSet];
-            [charSet removeCharactersInString:@"-+&.'"];
-        });
-        
-        NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
-        NSUInteger gameTitleLen;
-        if (nonCharRange.length > 0 && nonCharRange.location > 1) {
-            gameTitleLen = nonCharRange.location - 1;
-        } else {
-            gameTitleLen = [fileName length];
-        }
-        fileName = [fileName substringToIndex:gameTitleLen];
-        results = [self searchDatabaseUsingKey:@"romFileName"
-                                         value:fileName
-                                      systemID:[game systemIdentifier]
-                                         error:&error];
-    }
-    
-    if (![results count])
-    {
-        DLog(@"Unable to find ROM (%@) in DB", [game romPath]);
-        
-        [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
-            [game setRequiresSync:NO];
-        }];
-
-        return;
-    }
-    
-    NSDictionary *chosenResult = nil;
-    for (NSDictionary *result in results)
-    {
-        if ([result[@"region"] isEqualToString:@"USA"])
-        {
-            chosenResult = result;
-            break;
-        }
-    }
-    
-    if (!chosenResult)
-    {
-        chosenResult = [results firstObject];
-    }
-    
-    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
-        [game setRequiresSync:NO];
-        if ([chosenResult[@"gameTitle"] length])
-        {
-            [game setTitle:chosenResult[@"gameTitle"]];
-        }
-        if ([chosenResult[@"boxImageURL"] length])
-        {
-            [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
-        }
-    }];
-}
+//
+//    if (!chosenResult)
+//    {
+//        chosenResult = [results firstObject];
+//    }
+//
+//    [RomDatabase.sharedInstance writeTransactionAndReturnError:nil :^{
+//        [game setRequiresSync:NO];
+//        if ([chosenResult[@"gameTitle"] length])
+//        {
+//            [game setTitle:chosenResult[@"gameTitle"]];
+//        }
+//        if ([chosenResult[@"boxImageURL"] length])
+//        {
+//            [game setOriginalArtworkURL:chosenResult[@"boxImageURL"]];
+//        }
+//    }];
+//}
 
 - (void)getArtworkFromURL:(NSString *)url
 {
-    if (![url length] || [PVMediaCache filePathForKey:url] != nil )
+    if (![url length] || [PVMediaCache fileExistsForKey:url])
     {
         return;
     }
@@ -826,39 +825,42 @@
     }
 }
 
-- (NSArray *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error
-{
-    if (!self.openVGDB)
-    {
-        self.openVGDB = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
-                                                        error:error];
-    }
-    if (!self.openVGDB)
-    {
-        DLog(@"Unable to open game database: %@", [*error localizedDescription]);
-        return nil;
-    }
-    
-    NSArray *results = nil;
-    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
-    NSString *likeQuery = @"SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC";
-    NSString *queryString = nil;
-    
-    NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
-    
-    if ([key isEqualToString:@"romFileName"])
-    {
-        queryString = [NSString stringWithFormat:likeQuery, key, value, dbSystemID, key, value];
-    }
-    else
-    {
-        queryString = [NSString stringWithFormat:exactQuery, key, value];
-    }
-    
-    results = [self.openVGDB executeQuery:queryString
-                                    error:error];
-    return results;
-}
+//- (NSArray<NSDictionary<NSString*, NSObject*>*> *)searchDatabaseUsingKey:(NSString *)key value:(NSString *)value systemID:(NSString *)systemID error:(NSError **)error
+//{
+//    if (!self.openVGDB)
+//    {
+//        self.openVGDB = [[OESQLiteDatabase alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"openvgdb" withExtension:@"sqlite"]
+//                                                        error:error];
+//    }
+//    if (!self.openVGDB)
+//    {
+//        DLog(@"Unable to open game database: %@", [*error localizedDescription]);
+//        return nil;
+//    }
+//
+//    NSArray *results = nil;
+//
+//    NSString *exactQuery = @"SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'";
+//
+//    NSString *likeQuery = @"SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC";
+//
+//    NSString *queryString = nil;
+//
+//    NSString *dbSystemID = [[PVEmulatorConfiguration sharedInstance] databaseIDForSystemID:systemID];
+//
+//    if ([key isEqualToString:@"romFileName"])
+//    {
+//        queryString = [NSString stringWithFormat:likeQuery, key, value, dbSystemID, key, value];
+//    }
+//    else
+//    {
+//        queryString = [NSString stringWithFormat:exactQuery, key, value];
+//    }
+//
+//    results = [self.openVGDB executeQuery:queryString
+//                                    error:error];
+//    return results;
+//}
 
 #pragma mark - Utils
 

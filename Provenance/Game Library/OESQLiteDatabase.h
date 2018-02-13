@@ -28,5 +28,5 @@
 
 @interface OESQLiteDatabase : NSObject
 - (id)initWithURL:(NSURL*)url error:(NSError *__autoreleasing *)error;
-- (id)executeQuery:(NSString*)sql error:(NSError *__autoreleasing *)error;
+- (NSArray<NSDictionary<NSString*, NSObject*>*> *_Nullable)executeQuery:(NSString* _Nonnull)sql error:(NSError *__autoreleasing *)error;
 @end

@@ -25,6 +25,19 @@ public class PVGame : Object, PVLibraryEntry {
     @objc dynamic var systemIdentifier : String = ""
 
     @objc dynamic var isFavorite : Bool = false
+    
+    /* Extra metadata from OpenBG */
+    @objc dynamic var gameDescription : String?
+    @objc dynamic var boxBackArtworkURL : String?
+    @objc dynamic var developer : String?
+    @objc dynamic var publisher : String?
+    @objc dynamic var year : String?
+    @objc dynamic var genres : String? // Is a comma seperated list or single entry
+    @objc dynamic var referenceURL : String?
+    @objc dynamic var releaseID : String?
+    @objc dynamic var regionName : String?
+    @objc dynamic var systemShortName : String?
+
 
 //    @objc dynamic var recent: PVRecentGame?
     /*
@@ -73,8 +86,22 @@ public extension PVGame {
         let systemName = self.systemName
         
         var description = "\(systemName ?? "")"
-        if isFavorite {
-            description += "\n⭐"
+        
+        // Determine if any of these have a value, and if so, seperate them by a space
+        let optionalEntries : [String?] = [isFavorite ? "⭐" : nil,
+                                           developer,
+                                           year != nil ? "(\(year!)" : nil,
+                                           regionName != nil ? "(\(regionName!))" : nil]
+        let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
+            return maybeString
+        }.joined(separator: " ")
+        if !secondLine.isEmpty {
+            description += "\n\(secondLine)"
+        }
+        
+        if let g = genres, !g.isEmpty {
+            let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
+            description += "\n\(genresWithSpaces)"
         }
         
         // Maybe should use kUTTypeData?
@@ -84,8 +111,15 @@ public extension PVGame {
         contentSet.contentDescription      = description
         contentSet.rating                  = NSNumber(booleanLiteral: isFavorite)
         contentSet.thumbnailURL            = pathOfCachedImage
-        contentSet.keywords                = ["rom", systemName ?? ""]
-//        contentSet.path                    = romPath
+        var keywords                       = ["rom"]
+        if let systemName = systemName {
+            keywords.append(systemName)
+        }
+        if let genres = genres {
+            keywords.append(contentsOf: genres.components(separatedBy: ","))
+        }
+        
+        contentSet.keywords = keywords
         
         //            contentSet.authorNames             = [data.authorName]
         // Could generate small thumbnail here
@@ -97,6 +131,9 @@ public extension PVGame {
     
     var pathOfCachedImage : URL? {
         let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        if !PVMediaCache.fileExists(forKey: artworkKey) {
+            return nil
+        }
         let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
         return artworkURL
     }
