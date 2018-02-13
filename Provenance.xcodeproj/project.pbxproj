@@ -528,9 +528,12 @@
 		B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */; };
 		B35BB803202F62DC00FCB513 /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B35BB802202F62DC00FCB513 /* PVGameImporter.m */; };
 		B35BB804202F62DC00FCB513 /* PVGameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = B35BB802202F62DC00FCB513 /* PVGameImporter.m */; };
+		B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
+		B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
+		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B39578C21E6D2D8B00854D7A /* PVPCEControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B39578C11E6D2D8B00854D7A /* PVPCEControllerViewController.m */; };
@@ -1294,8 +1297,10 @@
 		B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
 		B35BB801202F62DC00FCB513 /* PVGameImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameImporter.h; sourceTree = "<group>"; };
 		B35BB802202F62DC00FCB513 /* PVGameImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameImporter.m; sourceTree = "<group>"; };
+		B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLaunchingViewController.swift; sourceTree = "<group>"; };
 		B36DE7C81D6B80CA002EE3ED /* PVAtari7800ControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAtari7800ControllerViewController.h; sourceTree = "<group>"; };
 		B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAtari7800ControllerViewController.m; sourceTree = "<group>"; };
+		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B39578C01E6D2D8B00854D7A /* PVPCEControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVPCEControllerViewController.h; path = Provenance/Controller/PVPCEControllerViewController.h; sourceTree = "<group>"; };
@@ -2648,6 +2653,8 @@
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */,
 				1A4850B91AE1A6C500F7EF2E /* PVConflictViewController.h */,
 				1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */,
+				B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */,
+				B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3238,6 +3245,7 @@
 				B349AED31E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
 				B349AE911E9ABCF900ACD416 /* 7zCompressionMode.cpp in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.swift in Sources */,
+				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */,
 				B349AF6D1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
 				B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */,
@@ -3278,6 +3286,7 @@
 				B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.m in Sources */,
 				B349AF3F1E9ABCF900ACD416 /* UTFConvert.cpp in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
+				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
 				B349AE6B1E9ABCF900ACD416 /* Lzma2Enc.c in Sources */,
 				B349AF251E9ABCF900ACD416 /* CrcReg.cpp in Sources */,
 				B349AF211E9ABCF900ACD416 /* CommandLineParser.cpp in Sources */,
@@ -3323,6 +3332,7 @@
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				B349AF641E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
 				B349AE8C1E9ABCF900ACD416 /* XzDec.c in Sources */,
+				B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B349AEAC1E9ABCF900ACD416 /* 7zUpdate.cpp in Sources */,
 				1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */,
 				B349AE681E9ABCF900ACD416 /* LzFindMt.c in Sources */,

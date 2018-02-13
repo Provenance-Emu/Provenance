@@ -590,6 +590,19 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
     
+#if !TARGET_OS_TV
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Provenance" bundle:nil];
+        PVGameMoreInfoViewController * moreInfoViewContrller = (PVGameMoreInfoViewController *)[sb instantiateViewControllerWithIdentifier:@"gameMoreInfoVC"];
+        moreInfoViewContrller.game = weakSelf.game;
+        moreInfoViewContrller.showsPlayButton = NO;
+        moreInfoViewContrller.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(hideModeInfo)];
+        UINavigationController *newNav = [[UINavigationController alloc] initWithRootViewController:moreInfoViewContrller];
+        
+        [weakSelf presentViewController:newNav animated:YES completion:nil];
+    }]];
+#endif
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
 	}]];
@@ -610,6 +623,13 @@ void uncaughtExceptionHandler(NSException *exception)
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
 }
+
+- (void)hideModeInfo {
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self  hideMenu];
+    }];
+}
+
 
 - (void)hideMenu
 {

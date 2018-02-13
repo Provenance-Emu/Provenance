@@ -40,7 +40,7 @@ private let CellWidth: CGFloat = 308.0
 let USE_IOS_11_SEARCHBAR = 0
 #endif
 
-class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UINavigationControllerDelegate {
+class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
     var watcher: PVDirectoryWatcher?
     var coverArtWatcher: PVDirectoryWatcher?
@@ -61,9 +61,6 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     @IBOutlet weak var searchField: UITextField!
     var isInitialAppearance = false
     var isMustRefreshDataSource = false
-
-    
-    typealias BiosDictionary = [String: String]
 
 // MARK: - Lifecycle
     required init?(coder aDecoder: NSCoder) {
@@ -195,13 +192,17 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "SettingsSegue") {
-#if os(iOS)
-        if let settingsVC = (segue.destination as! UINavigationController).topViewController as? PVSettingsViewController {
-            settingsVC.gameImporter = gameImporter
-        }
-#endif
+            #if os(iOS)
+            if let settingsVC = (segue.destination as! UINavigationController).topViewController as? PVSettingsViewController {
+                settingsVC.gameImporter = gameImporter
+            }
+            #endif
             // Refresh table view data source when back from settings
             isMustRefreshDataSource = true
+        } else if segue.identifier == "gameMoreInfoSegue" {
+            let game = sender as! PVGame
+            let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
+            moreInfoVC.game = game
         }
     }
 
@@ -798,201 +799,6 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         //    });
     }
 
-    func createBiosDirectory(atPath biosPath: String) {
-        let fm = FileManager.default
-        if !fm.fileExists(atPath: biosPath) {
-            do {
-                try fm.createDirectory(atPath: biosPath, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print("Error creating BIOS dir: \(error.localizedDescription)")
-            }
-        }
-    }
-
-    // TODO: This should be a throw not a bool
-    // with error message containting the message text
-    // instead of using the handleError function
-    func canLoad(_ game: PVGame) -> Bool {
-        let config = PVEmulatorConfiguration.sharedInstance()
-
-        guard let system = config.system(forIdentifier: game.systemIdentifier) else {
-            ELOG("No system for id \(game.systemIdentifier)")
-            return false
-        }
-
-        // Error handler
-        let handleError : (String?)->Void = { [unowned self] errorMessage in
-            // Create missing BIOS directory to help user out
-            let biosPath: String = config.biosPath(forSystemID: game.systemIdentifier)
-            self.createBiosDirectory(atPath: biosPath)
-            
-            let biosNames = system[PVBIOSNamesKey] as? [BiosDictionary] ?? [BiosDictionary]()
-            
-            var biosString = ""
-            for bios: BiosDictionary in biosNames {
-                let name = bios["Name"]
-                biosString += "\(String(describing: name))"
-                if biosNames.last! != bios {
-                    biosString += """
-                    ,
-                    
-                    """
-                }
-            }
-            
-            var message : String
-            if let errorMessage = errorMessage {
-                message = errorMessage
-            } else {
-                message = """
-                \(String(describing: system[PVShortSystemNameKey])) requires BIOS files to run games. Ensure the following files are inside Documents/BIOS/\(String(describing: system[PVSystemIdentifierKey]))/
-                
-                \(biosString)
-                """
-            }
-            
-            let alertController = UIAlertController(title: "Missing BIOS Files", message: message, preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alertController, animated: true)
-        }
-        
-        
-        if let requiresBIOS = system[PVRequiresBIOSKey] as? Bool, requiresBIOS == true {
-           
-            guard  let biosNames = system[PVBIOSNamesKey] as? [BiosDictionary] else {
-                ELOG("System \(game.systemIdentifier) specifies it requires BIOS files but does not provide values for \(PVBIOSNamesKey)")
-                handleError("Invalid configuration for system \(game.systemIdentifier)")
-                return false
-            }
-            
-            let biosPath: String = config.biosPath(forSystemID: game.systemIdentifier)
-
-            var contents : [String]!
-            do {
-                contents = try FileManager.default.contentsOfDirectory(atPath: biosPath)
-            } catch {
-                ELOG("Unable to get contents of \(biosPath) because \(error.localizedDescription)")
-                handleError(nil)
-                return false
-            }
-            
-            for bios: BiosDictionary in biosNames {
-                if let name = bios["name"], !contents.contains(name)  {
-                    ELOG("Missing bios of name \(String(describing: name))")
-                    handleError(nil)
-                    return false
-                }
-            }
-        }
-
-        return true
-    }
-
-    // TODO: Make this throw
-    func load(_ game: PVGame) {
-        if !(presentedViewController is PVEmulatorViewController) {
-            let config = PVEmulatorConfiguration.sharedInstance()
-            if self.canLoad(game) {
-                let emulatorViewController = PVEmulatorViewController(game: game)!
-                emulatorViewController.batterySavesPath = config.batterySavesPath(forROM: URL(fileURLWithPath: config.romsPath).appendingPathComponent(game.romPath).path)
-                emulatorViewController.saveStatePath = config.saveStatePath(forROM: URL(fileURLWithPath: config.romsPath).appendingPathComponent(game.romPath).path)
-                emulatorViewController.biosPath = config.biosPath(forSystemID: game.systemIdentifier)
-                emulatorViewController.systemID = game.systemIdentifier
-                emulatorViewController.modalTransitionStyle = .crossDissolve
-                self.present(emulatorViewController, animated: true) {() -> Void in }
-                PVControllerManager.shared().iCadeController?.refreshListener()
-                self.updateRecentGames(game)
-            } else {
-                ELOG("Cannot load game")
-            }
-        }
-    }
-
-    func updateRecentGames(_ game: PVGame) {
-        let database = RomDatabase.temporaryDatabaseContext()
-        database.refresh()
-        
-        let recents: Results<PVRecentGame> = database.all(PVRecentGame.self)
-        
-        let recentsMatchingGame =  database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: game.md5Hash)
-        let recentToDelete = recentsMatchingGame.first
-        if let recentToDelete = recentToDelete {
-            do {
-                try database.delete(object: recentToDelete)
-            } catch {
-                ELOG("Failed to delete recent: \(error.localizedDescription)")
-            }
-        }
-        
-        if recents.count >= PVMaxRecentsCount() {
-            // TODO: This should delete more than just the last incase we had an overflow earlier
-            if let oldestRecent: PVRecentGame = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false).last {
-                do {
-                    try database.delete(object: oldestRecent)
-                } catch {
-                    ELOG("Failed to delete recent: \(error.localizedDescription)")
-                }
-            }
-        }
-
-        let newRecent = PVRecentGame(withGame: game)
-        do {
-            try database.add(object: newRecent, update:false)
-            
-            let activity = game.spotlightActivity
-            // Make active, causes it to index also
-            self.userActivity = activity
-        } catch {
-            ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
-        }
-        register3DTouchShortcuts()
-        isMustRefreshDataSource = true
-    }
-
-    func register3DTouchShortcuts() {
-        // TODO: Maybe should add favorite games first, then recent games?
-        
-        if #available(iOS 9.0, *) {
-            #if os(iOS)
-                // Add 3D touch shortcuts to recent games
-                var shortcuts = [UIApplicationShortcutItem]()
-                
-                let database = RomDatabase.temporaryDatabaseContext()
-                
-                let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
-                for game in favorites {
-                    let icon : UIApplicationShortcutIcon?
-                    if #available(iOS 9.1, *) {
-                        icon  = UIApplicationShortcutIcon(type: .favorite)
-                    } else {
-                        icon = UIApplicationShortcutIcon(type: .play)
-                    }
-                    
-                    let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
-                    shortcuts.append(shortcut)
-                }
-                
-                
-                let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-                
-                for recentGame in sortedRecents {
-                    if let game = recentGame.game {
-                        
-                        let icon : UIApplicationShortcutIcon?
-                        icon = UIApplicationShortcutIcon(type: .play)
-                        
-                        let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.sharedInstance().name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])
-                        shortcuts.append(shortcut)
-                    }
-                }
-
-                UIApplication.shared.shortcutItems = shortcuts
-            #endif
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-
     func loadRecentGame(fromShortcut md5: String) {
         let database = RomDatabase.temporaryDatabaseContext()
         let recentGames = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: md5)
@@ -1029,9 +835,17 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
             }
+
+            #if os(iOS)
+            actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                self.moreInfo(for: game)
+            }))
+            #endif
+            
             actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.toggleFavorite(for: game)
             }))
+
             actionSheet.addAction(UIAlertAction(title: "Rename", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.renameGame(game)
             }))
@@ -1039,6 +853,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
+    
             actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.pasteCustomArtwork(for: game)
             }))
@@ -1121,6 +936,11 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             ELOG("Failed to toggle Favourite for game \(game.title)")
         }
     }
+    
+    func moreInfo(for game: PVGame) {
+        performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
+    }
+    
 
     func renameGame(_ game: PVGame) {
 #if os(tvOS)
@@ -1500,6 +1320,19 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             items = games?.count ?? 0
         }
         return items
+    }
+    
+    func indexTitles(for collectionView: UICollectionView) -> [String]? {
+        if searchResults != nil {
+            return nil
+        }
+        else {
+            return sectionInfo
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, indexPathForIndexTitle title: String, at index: Int) -> IndexPath {
+        return IndexPath(row: 0, section: index)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
