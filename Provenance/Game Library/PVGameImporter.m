@@ -147,6 +147,8 @@
         }
     }];
     
+    ILOG("Starting import for paths %@", paths.description);
+    
     NSArray<ImportCanidateFile*> *canidateFiles = [paths mapObjectsUsingBlock:^ImportCanidateFile*(NSString* path, NSUInteger idx) {
         return [[ImportCanidateFile alloc] initWithFilePath:[[self romsPath] stringByAppendingPathComponent:path]];
     }];
@@ -161,6 +163,8 @@
             {
                 [newPaths addObjectsFromArray:[self moveCDROMToAppropriateSubfolder:canidate]];
             }
+        } else {
+            ELOG("File doesn't exist at path %@", canidate.filePath);
         }
     }
     
@@ -173,6 +177,8 @@
             {
                 [newPaths addObject:newPath];
             }
+        } else {
+            ELOG("File doesn't exist at path %@", canidate.filePath);
         }
     }
     
@@ -265,12 +271,21 @@
         return nil;
     }
     
-    if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent]
-                                                 toPath:[subfolderPath stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent]
+    NSString *sourcePath = [[self romsPath] stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent];
+    NSString *destinationPath = [subfolderPath stringByAppendingPathComponent:canidateFile.filePath.lastPathComponent];
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:destinationPath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:destinationPath error:nil];
+    }
+    
+    if (![[NSFileManager defaultManager] moveItemAtPath:sourcePath
+                                                 toPath:destinationPath
                                                   error:&error])
     {
-        DLog(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
+        ELOG(@"Unable to move file from %@ to %@ - %@", canidateFile, subfolderPath, [error localizedDescription]);
         return nil;
+    } else {
+        DLOG("Moved file %@ to %@", sourcePath, destinationPath);
     }
     
     NSString *cueSheetPath = [subfolderPath stringByAppendingPathComponent:canidateFile.filePath];
@@ -334,9 +349,9 @@
             
             if (![[NSFileManager defaultManager] moveItemAtPath:[[self romsPath] stringByAppendingPathComponent:file] toPath:[to stringByAppendingPathComponent:file] error:&error])
             {
-                DLog(@"Unable to move file from %@ to %@ - %@", filename, to, [error localizedDescription]);
+                ELOG(@"Unable to move file from %@ to %@ - %@", filename, to, [error localizedDescription]);
             } else {
-                DLog(@"Moved file from %@ to %@", filename, to);
+                DLOG(@"Moved file from %@ to %@", filename, to);
             }
         }
     }
@@ -402,6 +417,8 @@
             {
                 DLog(@"Unable to delete %@ (after trying to move and getting 'file exists error', because %@", filePath, [error localizedDescription]);
             }
+        } else {
+            DLOG("Moved file %@ to %@", filePath, destiaionPath);
         }
         return nil;
     }
@@ -465,7 +482,9 @@
         return nil;
     }
     
-    if (![fm moveItemAtPath:filePath toPath:[subfolderPath stringByAppendingPathComponent:filePath.lastPathComponent] error:&error])
+    NSString *destination = [subfolderPath stringByAppendingPathComponent:filePath.lastPathComponent];
+    
+    if (![fm moveItemAtPath:filePath toPath:destination error:&error])
     {
         
         if ([error code] == NSFileWriteFileExistsError)
@@ -476,8 +495,10 @@
             }
         }
         
-        DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
+        ELOG(@"Unable to move file from %@ to %@ - %@", filePath, subfolderPath, [error localizedDescription]);
         return nil;
+    } else {
+        DLOG(@"Moved file %@ to %@", filePath, destination);
     }
     
     if (!self.encounteredConflicts)
@@ -512,9 +533,14 @@
             [[NSFileManager defaultManager] createDirectoryAtPath:subfolder withIntermediateDirectories:YES attributes:nil error:NULL];
         }
         NSError *error = nil;
-        if (![[NSFileManager defaultManager] moveItemAtPath:[[self conflictPath] stringByAppendingPathComponent:filePath] toPath:[subfolder stringByAppendingPathComponent:filePath] error:&error])
+        
+        NSString * sourcePath = [[self conflictPath] stringByAppendingPathComponent:filePath];
+        NSString *destinationPath = [subfolder stringByAppendingPathComponent:filePath];
+        if (![[NSFileManager defaultManager] moveItemAtPath:sourcePath toPath:destinationPath error:&error])
         {
-            DLog(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
+            ELOG(@"Unable to move %@ to %@ because %@", filePath, subfolder, [error localizedDescription]);
+        } else {
+            DLOG(@"Moved file %@ to %@.", sourcePath, destinationPath);
         }
         
         // moved the .cue, now move .bins .imgs etc
@@ -557,7 +583,7 @@
                 
                 if (![[NSFileManager defaultManager] moveItemAtPath:[[self conflictPath] stringByAppendingPathComponent:file] toPath:[subfolder stringByAppendingPathComponent:file] error:&error])
                 {
-                    DLog(@"Unable to move file from %@ to %@ - %@", filePath, subfolder, [error localizedDescription]);
+                    ELOG(@"Unable to move file from %@ to %@ - %@", filePath, subfolder, [error localizedDescription]);
                 }
             }
         }

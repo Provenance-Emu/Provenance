@@ -272,6 +272,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             if let gameImporter = gameImporter {
                 let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
                 navigationController?.pushViewController(conflictViewController, animated: true)
+            } else {
+                ELOG("No game importer instance")
             }
         }
         else if indexPath.section == 7 && indexPath.row == 0 {

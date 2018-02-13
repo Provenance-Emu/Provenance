@@ -1213,7 +1213,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         
         let romPath: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(game.romPath).path
         let indexPaths = indexPathsForGame(withMD5Hash: game.md5Hash)
-        try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+        
+        if !game.customArtworkURL.isEmpty {
+            do {
+                try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+            } catch {
+                ELOG("Failed to delete image \(game.customArtworkURL)")
+            }
+        }
 
         let savesPath = config.saveStatePath(forROM: romPath)
         do {

@@ -153,7 +153,10 @@ NSString *PVArchiveInflationFailedNotification = @"PVArchiveInflationFailedNotif
            atomically:NO
              encoding:NSUTF8StringEncoding
                 error:NULL];
-    [[NSFileManager defaultManager] removeItemAtPath:triggerPath error:NULL];
+    
+    if ([[NSFileManager defaultManager] removeItemAtPath:triggerPath error:NULL]) {
+        DLOG("Removed file at path %@", triggerPath);
+    }
 }
 
 - (void)stopMonitoring
