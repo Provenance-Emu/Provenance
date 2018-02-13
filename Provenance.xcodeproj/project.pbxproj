@@ -79,7 +79,7 @@
 		1AD481CB1BA353F600FDA50A /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696B17C8C0DE0019F6D2 /* PVDirectoryWatcher.m */; };
 		1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
-		1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
+		1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		1AD481D11BA3540600FDA50A /* PVConflictViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */; };
 		1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
@@ -188,7 +188,7 @@
 		378F4A151B63F2240065FA39 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A141B63F2240065FA39 /* Reachability.m */; };
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
-		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */; };
+		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
@@ -943,8 +943,7 @@
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		423BB97D17DD46BC0048F457 /* NSData+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Hashing.h"; sourceTree = "<group>"; };
 		423BB97E17DD46BC0048F457 /* NSData+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
-		42BC83A717E6775E00E9A607 /* PVGameLibrarySectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGameLibrarySectionHeaderView.h; sourceTree = "<group>"; };
-		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGameLibrarySectionHeaderView.m; sourceTree = "<group>"; };
+		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
 		42E63AE717E12ECE00FE7098 /* PVSNESControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSNESControllerViewController.h; sourceTree = "<group>"; };
 		42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSNESControllerViewController.m; sourceTree = "<group>"; };
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
@@ -2646,8 +2645,7 @@
 			children = (
 				B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */,
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */,
-				42BC83A717E6775E00E9A607 /* PVGameLibrarySectionHeaderView.h */,
-				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m */,
+				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */,
 				1A4850B91AE1A6C500F7EF2E /* PVConflictViewController.h */,
 				1A4850BA1AE1A6C500F7EF2E /* PVConflictViewController.m */,
 			);
@@ -3117,7 +3115,7 @@
 				B349AF311E9ABCF900ACD416 /* NewHandler.cpp in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				B349AEB11E9ABCF900ACD416 /* DummyOutStream.cpp in Sources */,
-				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.m in Sources */,
+				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B349AF0F1E9ABCF900ACD416 /* PpmdDecoder.cpp in Sources */,
 				1A52098C1BADD4F900DAE6E3 /* PVControllerSelectionViewController.m in Sources */,
 				B349AF591E9ABCFA00ACD416 /* LzmaSDKObjCError.mm in Sources */,
@@ -3533,7 +3531,7 @@
 				B35BB7FF202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				B349AF141E9ABCF900ACD416 /* PpmdRegister.cpp in Sources */,
-				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.m in Sources */,
+				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B349AF341E9ABCF900ACD416 /* Sha256Reg.cpp in Sources */,
 				B349AEB81E9ABCF900ACD416 /* ItemNameUtils.cpp in Sources */,
 				1AD481EA1BA3547B00FDA50A /* ioapi.c in Sources */,

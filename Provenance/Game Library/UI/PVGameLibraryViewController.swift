@@ -1597,12 +1597,12 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             var headerView: PVGameLibrarySectionHeaderView? = nil
             if  searchResults != nil {
                 headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-                headerView?.titleLabel?.text = "Search Results"
+                headerView?.titleLabel.text = "Search Results"
             }
             else {
                 headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
                 let title: String = nameForSection(at: indexPath.section)
-                headerView?.titleLabel?.text = title
+                headerView?.titleLabel.text = title
             }
             if let headerView = headerView {
                 return headerView

@@ -2,7 +2,6 @@
 //  Use this file to import your target's public headers that you would like to expose to Swift.
 //
 
-#import "PVGameLibrarySectionHeaderView.h"
 #import "NSData+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "PVGameImporter.h"
@@ -37,7 +36,6 @@
 #import "PVEmulatorConstants.h"
 #import "PVEmulatorViewController.h"
 #import "PVGameImporter.h"
-#import "PVGameLibrarySectionHeaderView.h"
 #import "PVSynchronousURLSession.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "UIImage+Scaling.h"
