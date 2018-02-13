@@ -212,21 +212,21 @@
 				[self.leftShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 				[self.view addSubview:self.leftShoulderButton];
 			}
-            else if (!self.leftShoulderButton2)
-            {
-                yPadding = yPadding + self.leftShoulderButton.frame.size.height + 10;
-                CGRect leftShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
-                
-                self.leftShoulderButton2 = [[JSButton alloc] initWithFrame:leftShoulderFrame];
-                [[self.leftShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-                [self.leftShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-                [self.leftShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-                [self.leftShoulderButton2 setDelegate:self];
-                [self.leftShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-                [self.leftShoulderButton2 setAlpha:alpha];
-                [self.leftShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
-                [self.view addSubview:self.leftShoulderButton2];
-            }
+//            else if (!self.leftShoulderButton2)
+//            {
+//                yPadding = yPadding + self.leftShoulderButton.frame.size.height + 20;
+//                CGRect leftShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
+//
+//                self.leftShoulderButton2 = [[JSButton alloc] initWithFrame:leftShoulderFrame];
+//                [[self.leftShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+//                [self.leftShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+//                [self.leftShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+//                [self.leftShoulderButton2 setDelegate:self];
+//                [self.leftShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+//                [self.leftShoulderButton2 setAlpha:alpha];
+//                [self.leftShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+//                [self.view addSubview:self.leftShoulderButton2];
+//            }
 			else
 			{
 				[self.leftShoulderButton setFrame:leftShoulderFrame];
@@ -251,21 +251,21 @@
 				[self.rightShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
 				[self.view addSubview:self.rightShoulderButton];
 			}
-            else if (!self.rightShoulderButton2)
-            {
-                yPadding = yPadding + self.rightShoulderButton.frame.size.height + 10;
-                CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
-
-                self.rightShoulderButton2 = [[JSButton alloc] initWithFrame:rightShoulderFrame];
-                [[self.rightShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
-                [self.rightShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
-                [self.rightShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
-                [self.rightShoulderButton2 setDelegate:self];
-                [self.rightShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
-                [self.rightShoulderButton2 setAlpha:alpha];
-                [self.rightShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
-                [self.view addSubview:self.rightShoulderButton2];
-            }
+//            else if (!self.rightShoulderButton2)
+//            {
+//                yPadding = yPadding + self.rightShoulderButton.frame.size.height + 20;
+//                CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
+//
+//                self.rightShoulderButton2 = [[JSButton alloc] initWithFrame:rightShoulderFrame];
+//                [[self.rightShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+//                [self.rightShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+//                [self.rightShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+//                [self.rightShoulderButton2 setDelegate:self];
+//                [self.rightShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+//                [self.rightShoulderButton2 setAlpha:alpha];
+//                [self.rightShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+//                [self.view addSubview:self.rightShoulderButton2];
+//            }
 			else
 			{
                 CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
