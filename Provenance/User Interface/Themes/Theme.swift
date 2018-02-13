@@ -169,33 +169,33 @@ public class Theme : NSObject {
 
 
         // Settings
-        UITableViewCell.appearance {
-            $0.backgroundColor = theme.settingsCellBackground
-            $0.textLabel?.textColor = theme.settingsCellText
-            $0.detailTextLabel?.textColor = theme.settingsCellText
-        }
-        
-        appearance(in: UITableViewCell.self) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsCellText
-            }
-        }
-
-        UITableViewHeaderFooterView.appearance {
-            $0.backgroundColor = theme.settingsHeaderBackground
-        }
-
-        appearance(in: UITableViewHeaderFooterView.self) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsHeaderText
-            }
-        }
-        
-        UITableView.appearance {
-            // TODO
-            $0.backgroundColor = theme.settingsHeaderBackground
-        }
-        
+//        UITableViewCell.appearance {
+//            $0.backgroundColor = theme.settingsCellBackground
+//            $0.textLabel?.textColor = theme.settingsCellText
+//            $0.detailTextLabel?.textColor = theme.settingsCellText
+//        }
+//        
+//        appearance(in: UITableViewCell.self) {
+//            UILabel.appearance {
+//                $0.textColor = theme.settingsCellText
+//            }
+//        }
+//
+//        UITableViewHeaderFooterView.appearance {
+//            $0.backgroundColor = theme.settingsHeaderBackground
+//        }
+//
+//        appearance(in: UITableViewHeaderFooterView.self) {
+//            UILabel.appearance {
+//                $0.textColor = theme.settingsHeaderText
+//            }
+//        }
+//        
+//        UITableView.appearance {
+//            // TODO
+//            $0.backgroundColor = theme.settingsHeaderBackground
+//        }
+//        
         
         
         // Search bar
