@@ -41,20 +41,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
     [[GCController controllers] makeObjectsPerformSelector:@selector(setControllerPausedHandler:) withObject:NULL];
-    self.emulatorCore = nil;
-    self.systemIdentifier = nil;
-    self.controlLayout = nil;
-	self.dPad = nil;
-	self.buttonGroup = nil;
-	self.leftShoulderButton = nil;
-	self.rightShoulderButton = nil;
-	self.startButton = nil;
-	self.selectButton = nil;
-#if !TARGET_OS_TV
-	self.feedbackGenerator = nil;
-#endif
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -225,6 +212,21 @@
 				[self.leftShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 				[self.view addSubview:self.leftShoulderButton];
 			}
+            else if (!self.leftShoulderButton2)
+            {
+                yPadding = yPadding + self.leftShoulderButton.frame.size.height + 10;
+                CGRect leftShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
+                
+                self.leftShoulderButton2 = [[JSButton alloc] initWithFrame:leftShoulderFrame];
+                [[self.leftShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.leftShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.leftShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.leftShoulderButton2 setDelegate:self];
+                [self.leftShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.leftShoulderButton2 setAlpha:alpha];
+                [self.leftShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+                [self.view addSubview:self.leftShoulderButton2];
+            }
 			else
 			{
 				[self.leftShoulderButton setFrame:leftShoulderFrame];
@@ -234,10 +236,11 @@
 		{
 			CGFloat xPadding = safeAreaInsets.right + 10;
 			CGFloat yPadding = safeAreaInsets.top + 10;
-			CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
 			
 			if (!self.rightShoulderButton)
 			{
+                CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
+
 				self.rightShoulderButton = [[JSButton alloc] initWithFrame:rightShoulderFrame];
 				[[self.rightShoulderButton titleLabel] setText:[control objectForKey:PVControlTitleKey]];
 				[self.rightShoulderButton setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
@@ -248,8 +251,24 @@
 				[self.rightShoulderButton setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
 				[self.view addSubview:self.rightShoulderButton];
 			}
+            else if (!self.rightShoulderButton2)
+            {
+                yPadding = yPadding + self.rightShoulderButton.frame.size.height + 10;
+                CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
+
+                self.rightShoulderButton2 = [[JSButton alloc] initWithFrame:rightShoulderFrame];
+                [[self.rightShoulderButton2 titleLabel] setText:[control objectForKey:PVControlTitleKey]];
+                [self.rightShoulderButton2 setBackgroundImage:[UIImage imageNamed:@"button-thin"]];
+                [self.rightShoulderButton2 setBackgroundImagePressed:[UIImage imageNamed:@"button-thin-pressed"]];
+                [self.rightShoulderButton2 setDelegate:self];
+                [self.rightShoulderButton2 setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 4, 0)];
+                [self.rightShoulderButton2 setAlpha:alpha];
+                [self.rightShoulderButton2 setAutoresizingMask:UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin];
+                [self.view addSubview:self.rightShoulderButton2];
+            }
 			else
 			{
+                CGRect rightShoulderFrame = CGRectMake(self.view.frame.size.width - controlSize.width - xPadding, yPadding, controlSize.width, controlSize.height);
 				[self.rightShoulderButton setFrame:rightShoulderFrame];
 			}
 		}
@@ -324,6 +343,8 @@
         [self.buttonGroup setHidden:NO];
         [self.leftShoulderButton setHidden:NO];
         [self.rightShoulderButton setHidden:NO];
+        [self.leftShoulderButton2 setHidden:NO];
+        [self.rightShoulderButton2 setHidden:NO];
         [self.startButton setHidden:NO];
         [self.selectButton setHidden:NO];
     }
@@ -343,6 +364,8 @@
         [self.buttonGroup setHidden:NO];
         [self.leftShoulderButton setHidden:NO];
         [self.rightShoulderButton setHidden:NO];
+        [self.leftShoulderButton2 setHidden:NO];
+        [self.rightShoulderButton2 setHidden:NO];
         [self.startButton setHidden:NO];
         [self.selectButton setHidden:NO];
     }
@@ -429,6 +452,9 @@ void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
     [self.buttonGroup setHidden:YES];
     [self.leftShoulderButton setHidden:YES];
     [self.rightShoulderButton setHidden:YES];
+    [self.leftShoulderButton2 setHidden:YES];
+    [self.rightShoulderButton2 setHidden:YES];
+
     
     //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
     NSArray *useStandardGamepad = [NSArray arrayWithObjects: PVGBSystemIdentifier, PVGBCSystemIdentifier, PVGBASystemIdentifier, nil];

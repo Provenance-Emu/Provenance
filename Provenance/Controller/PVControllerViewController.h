@@ -41,6 +41,8 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
 @property (nonatomic, strong) UIView *buttonGroup;
 @property (nonatomic, strong) JSButton *leftShoulderButton;
 @property (nonatomic, strong) JSButton *rightShoulderButton;
+@property (nonatomic, strong) JSButton *leftShoulderButton2;
+@property (nonatomic, strong) JSButton *rightShoulderButton2;
 @property (nonatomic, strong) JSButton *startButton;
 @property (nonatomic, strong) JSButton *selectButton;
 #if !TARGET_OS_TV
