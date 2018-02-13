@@ -36,7 +36,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *fpsCountSwitch;
 @property (weak, nonatomic) IBOutlet UILabel *importLabel;
 
-@property (nonatomic, strong) PVGameImporter *gameImporter;
+@property (nonatomic, strong, nullable) PVGameImporter *gameImporter;
 
 - (IBAction)wikiLinkButton:(id)sender;
 

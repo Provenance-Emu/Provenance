@@ -25,7 +25,7 @@
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
+		1A3D40A217B2DCE4004DFFFC = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
@@ -67,12 +67,12 @@
 		1AAE7D421BC870A2003066C0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AAE7D411BC870A2003066C0 /* Realm.framework */; };
 		1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AAE7D411BC870A2003066C0 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */; };
-		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */; };
+		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
-		1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
+		1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1ACD487717BEEABC0053407A /* PVButtonGroupOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */; };
 		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */; };
-		1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Main.storyboard */; };
+		1AD481C11BA350A400FDA50A = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Main.storyboard */; };
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
@@ -101,7 +101,7 @@
 		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1AD481E61BA3546A00FDA50A /* PVEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A34C58917D53C9B0058E7D1 /* PVEmulatorConfiguration.m */; };
-		1AD481E81BA3547200FDA50A /* PVSettingsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.m */; };
+		1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1AD481E91BA3547800FDA50A /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
 		1AD481EA1BA3547B00FDA50A /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
 		1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2B1AD9FFBF004EA30B /* mztools.c */; };
@@ -164,10 +164,10 @@
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
 		1AFA7C9F1D10B06D0058C637 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.swift */; };
-		1F8D52461D9198E000C29F90 /* PVLicensesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */; };
+		1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
-		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
-		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */; };
+		1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
+		1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
 		377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 1AECF4A61966D6D600F8704E /* openvgdb.sqlite */; };
 		378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
 		378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
@@ -858,11 +858,9 @@
 		1AAE7D411BC870A2003066C0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
-		1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsViewController.h; sourceTree = "<group>"; };
-		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsViewController.m; sourceTree = "<group>"; };
+		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsViewController.swift; sourceTree = "<group>"; };
 		1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Provenance.storyboard; sourceTree = "<group>"; };
-		1AB9600117C572B400D3E392 /* PVSettingsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSettingsModel.h; sourceTree = "<group>"; };
-		1AB9600217C572B400D3E392 /* PVSettingsModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVSettingsModel.m; sourceTree = "<group>"; };
+		1AB9600217C572B400D3E392 /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		1ACD487517BEEABC0053407A /* PVButtonGroupOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVButtonGroupOverlayView.h; sourceTree = "<group>"; };
 		1ACD487617BEEABC0053407A /* PVButtonGroupOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVButtonGroupOverlayView.m; sourceTree = "<group>"; };
 		1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVTVSettingsViewController.swift; sourceTree = "<group>"; };
@@ -902,11 +900,9 @@
 		1AECF4AA1966D7A600F8704E /* OESQLiteDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESQLiteDatabase.h; sourceTree = "<group>"; };
 		1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OESQLiteDatabase.m; sourceTree = "<group>"; };
 		1F8D523E1D9190E900C29F90 /* PVAvailability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAvailability.h; sourceTree = "<group>"; };
-		1F8D52441D9198E000C29F90 /* PVLicensesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLicensesViewController.h; sourceTree = "<group>"; };
-		1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLicensesViewController.m; sourceTree = "<group>"; };
+		1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLicensesViewController.swift; sourceTree = "<group>"; };
 		1F8D52471D91993000C29F90 /* licenses.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = licenses.html; sourceTree = "<group>"; };
-		1FB125941D93E57F00D045D0 /* PVAppearanceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVAppearanceViewController.h; sourceTree = "<group>"; };
-		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVAppearanceViewController.m; sourceTree = "<group>"; };
+		1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAppearanceViewController.swift; sourceTree = "<group>"; };
 		25A64E151CB1C41100EDD19D /* UIImage+Color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Color.h"; sourceTree = "<group>"; };
 		25A64E161CB1C41100EDD19D /* UIImage+Color.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Color.m"; sourceTree = "<group>"; };
 		378F49DE1B63D7CD0065FA39 /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
@@ -1535,14 +1531,10 @@
 		1A1237F317CA27AD00CEC788 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				1AB95FFA17C563C100D3E392 /* PVSettingsViewController.h */,
-				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.m */,
-				1AB9600117C572B400D3E392 /* PVSettingsModel.h */,
-				1AB9600217C572B400D3E392 /* PVSettingsModel.m */,
-				1F8D52441D9198E000C29F90 /* PVLicensesViewController.h */,
-				1F8D52451D9198E000C29F90 /* PVLicensesViewController.m */,
-				1FB125941D93E57F00D045D0 /* PVAppearanceViewController.h */,
-				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.m */,
+				1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */,
+				1AB9600217C572B400D3E392 /* PVSettingsModel.swift */,
+				1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */,
+				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2741,12 +2733,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
-				B3FF744F202F7D67008C964A /* Create Version.h */,
+				B3FF744F202F7D67008C964A /* ShellScript */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
-				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
-				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
+				1A44C0AD1D0A1DE80018751A /* ShellScript */,
+				E3D030EE1D980D9F00045BE6 /* ShellScript */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 			);
@@ -2764,12 +2756,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
-				B3F9CDA320315CA8007F808D /* Create Version.h */,
+				B3F9CDA320315CA8007F808D /* ShellScript */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
-				1A44C0AE1D0A1E730018751A /* Set Build Number */,
-				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
+				1A44C0AE1D0A1E730018751A /* ShellScript */,
+				E32D548D1D99C82E00C41A52 /* ShellScript */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 			);
@@ -2890,7 +2882,7 @@
 				Base,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
-			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
+			productRefGroup = 1A3D409517B2DCE4004DFFFC;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -2908,7 +2900,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
+				1A3D40A217B2DCE4004DFFFC,
 				B349AF4B1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B349AF4D1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
@@ -2949,7 +2941,7 @@
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
-				1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */,
+				1AD481C11BA350A400FDA50A,
 				B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				B349AE3C1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
@@ -2982,7 +2974,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A44C0AD1D0A1DE80018751A /* Set Build Number */ = {
+		1A44C0AD1D0A1DE80018751A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2996,7 +2988,7 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
-		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
+		1A44C0AE1D0A1E730018751A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3010,7 +3002,7 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
-		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
+		B3F9CDA320315CA8007F808D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3024,7 +3016,7 @@
 			shellPath = /bin/sh;
 			shellScript = "";
 		};
-		B3FF744F202F7D67008C964A /* Create Version.h */ = {
+		B3FF744F202F7D67008C964A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3038,7 +3030,7 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
-		E32D548D1D99C82E00C41A52 /* Set Git SHA */ = {
+		E32D548D1D99C82E00C41A52 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3052,7 +3044,7 @@
 			shellPath = /bin/bash;
 			shellScript = "revision=$(git rev-parse --short HEAD)\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n";
 		};
-		E3D030EE1D980D9F00045BE6 /* Set Git SHA */ = {
+		E3D030EE1D980D9F00045BE6 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3210,8 +3202,8 @@
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				B349AF271E9ABCF900ACD416 /* IntToString.cpp in Sources */,
 				B39578C71E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m in Sources */,
-				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.m in Sources */,
-				1AB9600317C572B400D3E392 /* PVSettingsModel.m in Sources */,
+				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
+				1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */,
 				B349AECB1E9ABCF900ACD416 /* FileStreams.cpp in Sources */,
 				B349AF031E9ABCF900ACD416 /* Lzma2Decoder.cpp in Sources */,
 				B349AF631E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
@@ -3247,7 +3239,7 @@
 				B349AF3B1E9ABCF900ACD416 /* StringToInt.cpp in Sources */,
 				B349AF711E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */,
 				B349AF391E9ABCF900ACD416 /* StringConvert.cpp in Sources */,
-				1F8D52461D9198E000C29F90 /* PVLicensesViewController.m in Sources */,
+				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
 				B349AF2F1E9ABCF900ACD416 /* MyWindows.cpp in Sources */,
 				B349AEBD1E9ABCF900ACD416 /* ParseProperties.cpp in Sources */,
 				B349AEAB1E9ABCF900ACD416 /* 7zUpdate.cpp in Sources */,
@@ -3286,7 +3278,7 @@
 				B3E21D6620320E6F009939D3 /* Logging.swift in Sources */,
 				1A5209881BADCBB500DAE6E3 /* PVControllerManager.m in Sources */,
 				B349AE591E9ABCF900ACD416 /* Bcj2Enc.c in Sources */,
-				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.m in Sources */,
+				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
 				B349AE4D1E9ABCF900ACD416 /* 7zFile.c in Sources */,
 				1A9647B117D6864300A55612 /* PVControllerViewController.m in Sources */,
 				B349AE7F1E9ABCF900ACD416 /* Sha256.c in Sources */,
@@ -3325,7 +3317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.m in Sources */,
+				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				1AD481FF1BA354B100FDA50A /* PViCadeGamepadDirectionPad.m in Sources */,
 				B349AEFA1E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
@@ -3506,7 +3498,7 @@
 				B349AEB41E9ABCF900ACD416 /* HandlerOut.cpp in Sources */,
 				B349AEDE1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
 				B349AEE01E9ABCF900ACD416 /* ProgressUtils.cpp in Sources */,
-				1AD481E81BA3547200FDA50A /* PVSettingsModel.m in Sources */,
+				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
 				B349AF421E9ABCF900ACD416 /* Wildcard.cpp in Sources */,
 				B349AEF81E9ABCF900ACD416 /* BranchRegister.cpp in Sources */,
 				1AD481DF1BA3544D00FDA50A /* GCDWebServerURLEncodedFormRequest.m in Sources */,

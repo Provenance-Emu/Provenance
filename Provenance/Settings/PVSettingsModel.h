@@ -10,20 +10,20 @@
 #import "kICadeControllerSetting.h"
 
 NS_ASSUME_NONNULL_BEGIN
-extern NSString * const kAutoSaveKey;
-extern NSString * const kAskToAutoLoadKey;
-extern NSString * const kAutoLoadAutoSavesKey;
-extern NSString * const kControllerOpacityKey;
-extern NSString * const kDisableAutoLockKey;
-extern NSString * const kButtonVibrationKey;
-extern NSString * const kImageSmoothingKey;
-extern NSString * const kCRTFilterKey;
-extern NSString * const kShowRecentGamesKey;
-extern NSString * const kICadeControllerSettingKey;
-extern NSString * const kVolumeSettingKey;
-extern NSString * const kFPSCountKey;
-extern NSString * const kShowGameTitlesKey;
-extern NSString * const kWebDayAlwwaysOnKey;
+extern NSString * _Nonnull const kAutoSaveKey;
+extern NSString *  _Nonnull const kAskToAutoLoadKey;
+extern NSString *  _Nonnull const kAutoLoadAutoSavesKey;
+extern NSString *  _Nonnull const kControllerOpacityKey;
+extern NSString *  _Nonnull const kDisableAutoLockKey;
+extern NSString *  _Nonnull const kButtonVibrationKey;
+extern NSString *  _Nonnull const kImageSmoothingKey;
+extern NSString *  _Nonnull const kCRTFilterKey;
+extern NSString *  _Nonnull const kShowRecentGamesKey;
+extern NSString *  _Nonnull const kICadeControllerSettingKey;
+extern NSString *  _Nonnull const kVolumeSettingKey;
+extern NSString *  _Nonnull const kFPSCountKey;
+extern NSString *  _Nonnull const kShowGameTitlesKey;
+extern NSString *  _Nonnull const kWebDayAlwwaysOnKey;
 NS_ASSUME_NONNULL_END
 
 @interface PVSettingsModel : NSObject

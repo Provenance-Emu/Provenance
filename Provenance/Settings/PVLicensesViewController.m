@@ -8,12 +8,6 @@
 
 #import "PVLicensesViewController.h"
 
-@interface PVLicensesViewController ()
-
-@property (nonatomic) UIWebView *webView;
-
-@end
-
 @implementation PVLicensesViewController
 
 - (void)viewDidLoad
@@ -26,12 +20,12 @@
     NSString *filesystemPath = [[NSBundle mainBundle] pathForResource:@"licenses" ofType:@"html"];
     NSString *htmlContent = [[NSString alloc] initWithContentsOfFile:filesystemPath encoding:NSUTF8StringEncoding error:nil];
     
-    self.webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
-    [self.webView loadHTMLString:htmlContent baseURL:nil];
-    self.webView.scalesPageToFit = NO;
-    self.webView.scrollView.bounces = NO;
-    self.webView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
-    [self.view addSubview:self.webView];
+    UIWebView *webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
+    [webView loadHTMLString:htmlContent baseURL:nil];
+    webView.scalesPageToFit = NO;
+    webView.scrollView.bounces = NO;
+    webView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
+    [self.view addSubview:webView];
 }
 
 - (void)didReceiveMemoryWarning

@@ -13,8 +13,8 @@
 @interface PVAppearanceViewController ()
 
 #if !TARGET_OS_TV
-@property (nonatomic) UISwitch *hideTitlesSwitch;
-@property (nonatomic) UISwitch *recentlyPlayedSwitch;
+@property (nonatomic, strong) UISwitch *hideTitlesSwitch;
+@property (nonatomic, strong) UISwitch *recentlyPlayedSwitch;
 #endif
 
 @end
