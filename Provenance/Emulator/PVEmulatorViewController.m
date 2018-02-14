@@ -571,11 +571,7 @@ void uncaughtExceptionHandler(NSException *exception)
 	}]];
     
     [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-#if TARGET_OS_TV
-        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-#else
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Provenance" bundle:nil];
-#endif
         PVGameMoreInfoViewController * moreInfoViewContrller = (PVGameMoreInfoViewController *)[sb instantiateViewControllerWithIdentifier:@"gameMoreInfoVC"];
         moreInfoViewContrller.game = weakSelf.game;
         moreInfoViewContrller.showsPlayButton = NO;

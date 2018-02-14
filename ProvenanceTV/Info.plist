@@ -48,7 +48,7 @@
 	<key>Revision</key>
 	<string>3889340</string>
 	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
+	<string>Provenance</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>
