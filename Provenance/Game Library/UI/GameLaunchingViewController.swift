@@ -17,7 +17,7 @@ import RealmSwift
  */
 
 protocol GameLaunchingViewController : class {
-    typealias BiosDictionary = [String: String]
+    typealias BiosDictionary = [String: Any]
     var isMustRefreshDataSource : Bool {get set}
     
     func createBiosDirectory(atPath biosPath: String)
@@ -62,7 +62,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             for bios: BiosDictionary in biosNames {
                 let name = bios["Name"]
                 biosString += "\(String(describing: name))"
-                if biosNames.last! != bios {
+                if biosNames.last!["MD5"] as? String != bios["MD5"] as? String {
                     biosString += """
                     ,
                     
@@ -88,7 +88,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         
         
         if let requiresBIOS = system[PVRequiresBIOSKey] as? Bool, requiresBIOS == true {
-            
+            print(system)
             guard  let biosNames = system[PVBIOSNamesKey] as? [BiosDictionary] else {
                 ELOG("System \(game.systemIdentifier) specifies it requires BIOS files but does not provide values for \(PVBIOSNamesKey)")
                 handleError("Invalid configuration for system \(game.systemIdentifier)")
@@ -107,7 +107,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             }
             
             for bios: BiosDictionary in biosNames {
-                if let name = bios["name"], !contents.contains(name)  {
+				if let name = bios["name"], !contents.contains(name as! String)  {
                     ELOG("Missing bios of name \(String(describing: name))")
                     handleError(nil)
                     return false

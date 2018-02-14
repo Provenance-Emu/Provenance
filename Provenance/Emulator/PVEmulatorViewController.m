@@ -323,7 +323,9 @@ void uncaughtExceptionHandler(NSException *exception)
                                                         [[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
                                                         [[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
                                                     }]];
-			[self presentViewController:alert animated:YES completion:NULL];
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				[self presentViewController:alert animated:YES completion:NULL];
+			});
 		}
 	}
 
