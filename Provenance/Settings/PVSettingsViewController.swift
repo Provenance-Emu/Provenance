@@ -224,7 +224,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
                 // Check to see if we are connected to WiFi. Cannot continue otherwise.
-            let reachability = Reachability()
+			let reachability = Reachability.forInternetConnection();
             reachability.startNotifier()
             let status: NetworkStatus = reachability.currentReachabilityStatus()
             if status != ReachableViaWiFi {
