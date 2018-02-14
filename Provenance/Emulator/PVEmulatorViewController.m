@@ -570,9 +570,12 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
     
-#if !TARGET_OS_TV
     [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+#if TARGET_OS_TV
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+#else
         UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Provenance" bundle:nil];
+#endif
         PVGameMoreInfoViewController * moreInfoViewContrller = (PVGameMoreInfoViewController *)[sb instantiateViewControllerWithIdentifier:@"gameMoreInfoVC"];
         moreInfoViewContrller.game = weakSelf.game;
         moreInfoViewContrller.showsPlayButton = NO;
@@ -581,7 +584,6 @@ void uncaughtExceptionHandler(NSException *exception)
         
         [weakSelf presentViewController:newNav animated:YES completion:nil];
     }]];
-#endif
     
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
@@ -606,7 +608,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)hideModeInfo {
     [self dismissViewControllerAnimated:YES completion:^{
+#if TARGET_OS_TV
+        [self showMenu:nil];
+#else
         [self  hideMenu];
+#endif
     }];
 }
 

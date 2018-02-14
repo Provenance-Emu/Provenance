@@ -837,11 +837,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
             }
 
-            #if os(iOS)
             actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.moreInfo(for: game)
             }))
-            #endif
             
             actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.toggleFavorite(for: game)

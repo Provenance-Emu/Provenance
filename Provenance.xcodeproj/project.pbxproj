@@ -533,6 +533,7 @@
 		B35D26FD2033977600F17D58 /* VolumeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FC2033977500F17D58 /* VolumeBar.swift */; };
 		B35D26FF2033A32500F17D58 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */; };
 		B35D27002033A32500F17D58 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */; };
+		B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B36DE7CB1D6B80D3002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
@@ -3542,6 +3543,7 @@
 				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				BE1E266D1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				1AD481F41BA3549A00FDA50A /* NSData+Hashing.m in Sources */,
+				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				B349AE9E1E9ABCF900ACD416 /* 7zHandlerOut.cpp in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
 				B349AF2E1E9ABCF900ACD416 /* MyVector.cpp in Sources */,

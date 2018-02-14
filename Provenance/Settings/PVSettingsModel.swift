@@ -141,13 +141,14 @@ public class PVSettingsModel: NSObject {
         }
     }
 
-    
+    #if os(iOS)
     var theme: Themes {
         didSet {
             UserDefaults.standard.set(theme.rawValue, forKey: kThemeKey)
             UserDefaults.standard.synchronize()
         }
     }
+    #endif
     
     private static var _sharedInstace = PVSettingsModel()
     @objc
@@ -156,6 +157,12 @@ public class PVSettingsModel: NSObject {
     }
 
     override init() {
+        #if os(iOS)
+        let theme = Themes.defaultTheme.rawValue
+        #else
+        let theme = ""
+        #endif
+        
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadAutoSavesKey: false,
@@ -170,7 +177,7 @@ public class PVSettingsModel: NSObject {
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
-                                                  kThemeKey: Themes.defaultTheme.rawValue])
+                                                  kThemeKey: theme])
         UserDefaults.standard.synchronize()
         
         autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
@@ -188,8 +195,11 @@ public class PVSettingsModel: NSObject {
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)
         webDavAlwaysOn = UserDefaults.standard.bool(forKey: kWebDayAlwwaysOnKey)
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
+        
+        #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue
         theme = Themes(rawValue: themeString) ?? Themes.defaultTheme
+        #endif
         
         super.init()
     }

@@ -7,8 +7,11 @@
 //
 
 import UIKit
-import SafariServices
 
+#if os(iOS)
+import SafariServices
+#endif
+    
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
     @objc
@@ -23,11 +26,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @objc
     var showsPlayButton : Bool = true {
         didSet {
+            #if os(iOS)
             if showsPlayButton {
                 navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
             } else {
                 navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
             }
+            #endif
         }
     }
     
@@ -45,7 +50,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet var singleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
     
+    #if os(iOS)
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
+    #endif
     @IBOutlet weak var playBarButtonItem: UIBarButtonItem!
     
     var isMustRefreshDataSource = false
@@ -54,7 +61,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         super.viewDidLoad()
         
         // Prevent double tap from triggering single tap also
+        #if os(iOS)
         singleImageTapGesture.require(toFail: doubleImageTapGesture)
+        #endif
         
         // Add a shadow to artwork
         let layer = artworkImageView.layer
@@ -62,8 +71,11 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         layer.shadowOffset = CGSize(width: 2, height: 1)
         layer.shadowRadius = 4.0
         layer.shadowOpacity = 0.7
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        // Do any additional setup after loading the view.
         updateContent()
     }
 
@@ -85,11 +97,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     func updateContent() {
         self.title = game?.title
         
+        #if os(iOS)
         if showsPlayButton {
             navigationItem.rightBarButtonItems = [playBarButtonItem, onlineLookupBarButtonItem]
         } else {
             navigationItem.rightBarButtonItems = [onlineLookupBarButtonItem]
         }
+        #endif
         
         nameLabel.text = game?.title ?? ""
         systemLabel.text = game?.systemShortName ?? ""
@@ -112,11 +126,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         
         updateImageView()
         
+        #if os(iOS)
         if let referenceURL = game?.referenceURL, !referenceURL.isEmpty {
             onlineLookupBarButtonItem.isEnabled = true
         } else {
             onlineLookupBarButtonItem.isEnabled = false
         }
+        #endif
     }
 
     var showingFrontArt = true
@@ -129,6 +145,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
     }
     
+    #if os(iOS)
     @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
         if #available(iOS 9.0, *) {
             if let urlString = game?.referenceURL, let url = URL(string:urlString) {
@@ -150,6 +167,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
             present(alert, animated: true, completion: nil)
         }
     }
+    #endif
     
     @IBAction func imageViewTapped(_ sender: UITapGestureRecognizer) {
         if canShowBackArt {
@@ -282,12 +300,15 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         originalImageView = image
         backgroundView = MediaZoom.backgroundView(with: frame, useBlur: useBlur)
         super.init(frame: frame)
+        
+        #if os(iOS)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(deviceOrientationDidChange(notification:)),
             name: .UIDeviceOrientationDidChange,
             object: nil
         )
+        #endif
         imageView.image = image.image
         addGestureRecognizer(
             UITapGestureRecognizer(
@@ -366,6 +387,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         return originalImageView.frame
     }
     
+    #if os(iOS)
     @objc func deviceOrientationDidChange(notification: NSNotification) {
         let orientation = UIDevice.current.orientation
         switch orientation {
@@ -378,6 +400,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
             break
         }
     }
+    #endif
     
     @objc public func handleSingleTap(sender: UITapGestureRecognizer) {
         willHandleSingleTap()

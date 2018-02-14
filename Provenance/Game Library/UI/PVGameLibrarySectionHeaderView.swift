@@ -47,12 +47,15 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     
 #if os(tvOS)
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        titleLabel?.textColor = colorForText()
+        titleLabel.textColor = colorForText
     }
     var colorForText : UIColor {
-        if traitCollection.userInterfaceStyle == .dark {
-            return UIColor.lightGray
+        if #available(tvOS 10.0, *) {
+            if traitCollection.userInterfaceStyle == .dark {
+                return UIColor.lightGray
+            }
         }
+        
         return UIColor.darkGray
     }
 #endif
