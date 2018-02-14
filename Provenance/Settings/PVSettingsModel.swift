@@ -198,7 +198,7 @@ public class PVSettingsModel: NSObject {
         
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue
-        theme = Themes(rawValue: themeString) ?? Themes.defaultTheme
+        self.theme = Themes(rawValue: themeString) ?? Themes.defaultTheme
         #endif
         
         super.init()
