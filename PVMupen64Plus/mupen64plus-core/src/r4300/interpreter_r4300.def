@@ -19,12 +19,12 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLARE_JUMP(J,   (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &r4300_reg[0],  0, 0)
-DECLARE_JUMP(JAL, (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &r4300_reg[31], 0, 0)
-DECLARE_JUMP(BEQ,     PCADDR + (iimmediate+1)*4, irs == irt, &r4300_reg[0], 0, 0)
-DECLARE_JUMP(BNE,     PCADDR + (iimmediate+1)*4, irs != irt, &r4300_reg[0], 0, 0)
-DECLARE_JUMP(BLEZ,    PCADDR + (iimmediate+1)*4, irs <= 0,   &r4300_reg[0], 0, 0)
-DECLARE_JUMP(BGTZ,    PCADDR + (iimmediate+1)*4, irs > 0,    &r4300_reg[0], 0, 0)
+DECLARE_JUMP(J,   (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &reg[0],  0, 0)
+DECLARE_JUMP(JAL, (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &reg[31], 0, 0)
+DECLARE_JUMP(BEQ,     PCADDR + (iimmediate+1)*4, irs == irt, &reg[0], 0, 0)
+DECLARE_JUMP(BNE,     PCADDR + (iimmediate+1)*4, irs != irt, &reg[0], 0, 0)
+DECLARE_JUMP(BLEZ,    PCADDR + (iimmediate+1)*4, irs <= 0,   &reg[0], 0, 0)
+DECLARE_JUMP(BGTZ,    PCADDR + (iimmediate+1)*4, irs > 0,    &reg[0], 0, 0)
 
 DECLARE_INSTRUCTION(ADDI)
 {
@@ -77,10 +77,10 @@ DECLARE_INSTRUCTION(LUI)
    ADD_TO_PC(1);
 }
 
-DECLARE_JUMP(BEQL,    PCADDR + (iimmediate+1)*4, irs == irt, &r4300_reg[0], 1, 0)
-DECLARE_JUMP(BNEL,    PCADDR + (iimmediate+1)*4, irs != irt, &r4300_reg[0], 1, 0)
-DECLARE_JUMP(BLEZL,   PCADDR + (iimmediate+1)*4, irs <= 0,   &r4300_reg[0], 1, 0)
-DECLARE_JUMP(BGTZL,   PCADDR + (iimmediate+1)*4, irs > 0,    &r4300_reg[0], 1, 0)
+DECLARE_JUMP(BEQL,    PCADDR + (iimmediate+1)*4, irs == irt, &reg[0], 1, 0)
+DECLARE_JUMP(BNEL,    PCADDR + (iimmediate+1)*4, irs != irt, &reg[0], 1, 0)
+DECLARE_JUMP(BLEZL,   PCADDR + (iimmediate+1)*4, irs <= 0,   &reg[0], 1, 0)
+DECLARE_JUMP(BGTZL,   PCADDR + (iimmediate+1)*4, irs > 0,    &reg[0], 1, 0)
 
 DECLARE_INSTRUCTION(DADDI)
 {
@@ -483,7 +483,7 @@ DECLARE_INSTRUCTION(LL)
 DECLARE_INSTRUCTION(LWC1)
 {
    const unsigned char lslfft = lfft;
-   const uint32_t lslfaddr = (uint32_t)r4300_reg[lfbase] + lfoffset;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
    uint64_t temp;
    if (check_cop1_unusable()) return;
    ADD_TO_PC(1);
@@ -497,7 +497,7 @@ DECLARE_INSTRUCTION(LWC1)
 DECLARE_INSTRUCTION(LDC1)
 {
    const unsigned char lslfft = lfft;
-   const uint32_t lslfaddr = (uint32_t)r4300_reg[lfbase] + lfoffset;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
    if (check_cop1_unusable()) return;
    ADD_TO_PC(1);
    address = lslfaddr;
@@ -538,7 +538,7 @@ DECLARE_INSTRUCTION(SC)
 DECLARE_INSTRUCTION(SWC1)
 {
    const unsigned char lslfft = lfft;
-   const uint32_t lslfaddr = (uint32_t)r4300_reg[lfbase] + lfoffset;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
    if (check_cop1_unusable()) return;
    ADD_TO_PC(1);
    address = lslfaddr;
@@ -550,7 +550,7 @@ DECLARE_INSTRUCTION(SWC1)
 DECLARE_INSTRUCTION(SDC1)
 {
    const unsigned char lslfft = lfft;
-   const uint32_t lslfaddr = (uint32_t)r4300_reg[lfbase] + lfoffset;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
    if (check_cop1_unusable()) return;
    ADD_TO_PC(1);
    address = lslfaddr;

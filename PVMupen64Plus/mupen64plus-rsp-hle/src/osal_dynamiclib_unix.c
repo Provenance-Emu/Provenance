@@ -1,6 +1,6 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-core - api/callbacks.c                                    *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Mupen64plus-ui-console - osal_dynamiclib_unix.c                       *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,61 +19,53 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* This file contains the Core functions for handling callbacks to the
- * front-end application
- */
-
-#include <stdarg.h>
+#include <dlfcn.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include "api/m64p_frontend.h"
-#include "callbacks.h"
 #include "m64p_types.h"
+#include "hle_external.h"
+#include "osal_dynamiclib.h"
 
-/* local variables */
-static ptr_DebugCallback pDebugFunc = NULL;
-static ptr_StateCallback pStateFunc = NULL;
-static void *            DebugContext = NULL;
-static void *            StateContext = NULL;
-
-/* global Functions for use by the Core */
-m64p_error SetDebugCallback(ptr_DebugCallback pFunc, void *Context)
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath)
 {
-    pDebugFunc = pFunc;
-    DebugContext = Context;
+    if (pLibHandle == NULL || pccLibraryPath == NULL)
+        return M64ERR_INPUT_ASSERT;
+
+    *pLibHandle = dlopen(pccLibraryPath, RTLD_NOW);
+
+    if (*pLibHandle == NULL)
+    {
+        /* only print an error message if there is a directory separator (/) in the pathname */
+        /* this prevents us from throwing an error for the use case where Mupen64Plus is not installed */
+        if (strchr(pccLibraryPath, '/') != NULL)
+            HleErrorMessage(NULL, "dlopen('%s') failed: %s", pccLibraryPath, dlerror());
+        return M64ERR_INPUT_NOT_FOUND;
+    }
+
     return M64ERR_SUCCESS;
 }
 
-m64p_error SetStateCallback(ptr_StateCallback pFunc, void *Context)
+void * osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName)
 {
-    pStateFunc = pFunc;
-    StateContext = Context;
+    if (pccProcedureName == NULL)
+        return NULL;
+
+    return dlsym(LibHandle, pccProcedureName);
+}
+
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle)
+{
+    int rval = dlclose(LibHandle);
+
+    if (rval != 0)
+    {
+        HleErrorMessage(NULL, "dlclose() failed: %s", dlerror());
+        return M64ERR_INTERNAL;
+    }
+
     return M64ERR_SUCCESS;
-}
-
-void DebugMessage(int level, const char *message, ...)
-{
-  char msgbuf[512];
-  va_list args;
-
-  if (pDebugFunc == NULL)
-      return;
-
-  va_start(args, message);
-  vsprintf(msgbuf, message, args);
-
-  (*pDebugFunc)(DebugContext, level, msgbuf);
-
-  va_end(args);
-}
-
-void StateChanged(m64p_core_param param_type, int new_value)
-{
-    if (pStateFunc == NULL)
-        return;
-
-    (*pStateFunc)(StateContext, param_type, new_value);
 }
 
 

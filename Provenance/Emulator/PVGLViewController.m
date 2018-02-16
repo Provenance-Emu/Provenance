@@ -99,9 +99,6 @@ struct PVVertex
         glDeleteShader(defaultVertexShader);
     }
     glDeleteTextures(1, &texture);
-	self.glContext = nil;
-	self.emulatorCore = nil;
-    self.alternateThreadGLContext = nil;
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore

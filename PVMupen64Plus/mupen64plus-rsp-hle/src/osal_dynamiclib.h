@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - r4300.h                                                 *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Mupen64plus-ui-console - osal_dynamiclib.h                            *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
+ *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,39 +19,16 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef M64P_R4300_R4300_H
-#define M64P_R4300_R4300_H
+#if !defined(OSAL_DYNAMICLIB_H)
+#define OSAL_DYNAMICLIB_H
 
-#include <stdint.h>
+#include "m64p_types.h"
 
-#include "ops.h"
-#include "r4300_core.h"
-#include "recomp.h"
+m64p_error osal_dynlib_open(m64p_dynlib_handle *pLibHandle, const char *pccLibraryPath);
 
-extern precomp_instr *PC;
+void *     osal_dynlib_getproc(m64p_dynlib_handle LibHandle, const char *pccProcedureName);
 
-extern int stop, rompause;
-extern unsigned int llbit;
-extern int64_t reg[32], hi, lo;
-extern long long int local_rs;
-extern unsigned int delay_slot;
-extern uint32_t skip_jump;
-extern unsigned int dyna_interp;
-extern unsigned int r4300emu;
-extern uint32_t next_interupt;
-extern uint32_t last_addr;
-#define COUNT_PER_OP_DEFAULT 2
-extern unsigned int count_per_op;
-extern cpu_instruction_table current_instruction_table;
+m64p_error osal_dynlib_close(m64p_dynlib_handle LibHandle);
 
-void r4300_reset_hard(void);
-void r4300_reset_soft(void);
-void r4300_execute(void);
-
-// r4300 emulators
-#define CORE_PURE_INTERPRETER 0
-#define CORE_INTERPRETER      1
-#define CORE_DYNAREC          2
-
-#endif /* M64P_R4300_R4300_H */
+#endif /* #define OSAL_DYNAMICLIB_H */
 

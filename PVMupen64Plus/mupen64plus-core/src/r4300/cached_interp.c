@@ -73,7 +73,7 @@ unsigned int jump_to_address;
       const uint32_t jump_target = (destination); \
       int64_t *link_register = (link); \
       if (cop1 && check_cop1_unusable()) return; \
-      if (link_register != &r4300_reg[0]) \
+      if (link_register != &reg[0]) \
       { \
          *link_register = SE32(PC->addr + 8); \
       } \
@@ -104,7 +104,7 @@ unsigned int jump_to_address;
       const uint32_t jump_target = (destination); \
       int64_t *link_register = (link); \
       if (cop1 && check_cop1_unusable()) return; \
-      if (link_register != &r4300_reg[0]) \
+      if (link_register != &reg[0]) \
       { \
          *link_register = SE32(PC->addr + 8); \
       } \

@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-rsp-hle - alist_internal.h                                *
- *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2002 Hacktarux                                          *
+ *   Mupen64plus-rsp-hle - audio.h                                         *
+ *   Mupen64Plus homepage: https://mupen64plus.org/                        *
+ *   Copyright (C) 2014 Bobby Smiles                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,32 +19,27 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ALIST_INTERNAL_H
-#define ALIST_INTERNAL_H
+#ifndef AUDIO_H
+#define AUDIO_H
 
-#include "hle.h"
+#include <stddef.h>
+#include <stdint.h>
 
-typedef void (*acmd_callback_t)(u32 inst1, u32 inst2);
+#include "common.h"
 
-/*
- * Audio flags
- */
+extern const int16_t RESAMPLE_LUT[64 * 4];
 
-#define A_INIT          0x01
-#define A_CONTINUE      0x00
-#define A_LOOP          0x02
-#define A_OUT           0x02
-#define A_LEFT          0x02
-#define A_RIGHT         0x00
-#define A_VOL           0x04
-#define A_RATE          0x00
-#define A_AUX           0x08
-#define A_NOAUX         0x00
-#define A_MAIN          0x00
-#define A_MIX           0x10
+int32_t rdot(size_t n, const int16_t *x, const int16_t *y);
 
-extern u16 AudioInBuffer, AudioOutBuffer, AudioCount;
-extern u16 AudioAuxA, AudioAuxC, AudioAuxE;
-extern u32 loopval; // Value set by A_SETLOOP : Possible conflict with SETVOLUME???
+static inline int16_t adpcm_predict_sample(uint8_t byte, uint8_t mask,
+        unsigned lshift, unsigned rshift)
+{
+    int16_t sample = (uint16_t)(byte & mask) << lshift;
+    sample >>= rshift; /* signed */
+    return sample;
+}
+
+void adpcm_compute_residuals(int16_t* dst, const int16_t* src,
+        const int16_t* cb_entry, const int16_t* last_samples, size_t count);
 
 #endif
