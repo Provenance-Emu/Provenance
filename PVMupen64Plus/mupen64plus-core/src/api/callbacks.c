@@ -54,19 +54,18 @@ m64p_error SetStateCallback(ptr_StateCallback pFunc, void *Context)
 
 void DebugMessage(int level, const char *message, ...)
 {
-    //TODO: Fix on iOS
-//  char msgbuf[256];
-//  va_list args;
-//
-//  if (pDebugFunc == NULL)
-//      return;
-//
-//  va_start(args, message);
-//  vsprintf(msgbuf, message, args);
-//
-//  (*pDebugFunc)(DebugContext, level, msgbuf);
-//
-//  va_end(args);
+  char msgbuf[512];
+  va_list args;
+
+  if (pDebugFunc == NULL)
+      return;
+
+  va_start(args, message);
+  vsprintf(msgbuf, message, args);
+
+  (*pDebugFunc)(DebugContext, level, msgbuf);
+
+  va_end(args);
 }
 
 void StateChanged(m64p_core_param param_type, int new_value)

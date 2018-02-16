@@ -82,5 +82,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.provenance-emu.webserver</string>
+	</array>
 </dict>
 </plist>

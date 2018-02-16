@@ -60,7 +60,7 @@ DECLARE_INSTRUCTION(SRAV)
    ADD_TO_PC(1);
 }
 
-DECLARE_JUMP(JR,   irs32, 1, &r4300_reg[0], 0, 0)
+DECLARE_JUMP(JR,   irs32, 1, &reg[0], 0, 0)
 DECLARE_JUMP(JALR, irs32, 1, &rrd,    0, 0)
 
 DECLARE_INSTRUCTION(SYSCALL)
@@ -256,6 +256,8 @@ DECLARE_INSTRUCTION(ADD)
    rrd = SE32(rrs32 + rrt32);
    ADD_TO_PC(1);
 }
+
+// Hack for Provenance where clang optizations causes this method to break the interpretor
 #pragma clang optimize off
 
 DECLARE_INSTRUCTION(ADDU)
@@ -345,7 +347,7 @@ DECLARE_INSTRUCTION(TEQ)
    if (rrs == rrt)
    {
      DebugMessage(M64MSG_ERROR, "trap exception in TEQ");
-     r4300_stop=1;
+     stop=1;
    }
    ADD_TO_PC(1);
 }

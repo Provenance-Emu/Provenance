@@ -649,6 +649,7 @@ void romdatabase_close(void)
         g_romdatabase.list = search;
         }
     
+    // Hack for provenance since static var is never destroyed since iOS doens't properly dlclose frameworks
     memset(&g_romdatabase, 0, sizeof(g_romdatabase));
 }
 

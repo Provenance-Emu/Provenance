@@ -25,7 +25,7 @@ DECLARE_INSTRUCTION(MFC0)
    {
       case CP0_RANDOM_REG:
         DebugMessage(M64MSG_ERROR, "MFC0 instruction reading un-implemented Random register");
-        r4300_stop=1;
+        stop=1;
         break;
       case CP0_COUNT_REG:
         update_count();
@@ -45,7 +45,7 @@ DECLARE_INSTRUCTION(MTC0)
       if ((g_cp0_regs[CP0_INDEX_REG] & UINT32_C(0x3F)) > UINT32_C(31))
       {
         DebugMessage(M64MSG_ERROR, "MTC0 instruction writing Index register with TLB index > 31");
-        r4300_stop=1;
+        stop=1;
       }
       break;
     case CP0_RANDOM_REG:
@@ -106,7 +106,7 @@ DECLARE_INSTRUCTION(MTC0)
       if (rrt32!=0)
       {
          DebugMessage(M64MSG_ERROR, "MTC0 instruction trying to write Cause register with non-0 value");
-         r4300_stop = 1;
+         stop = 1;
       }
       else g_cp0_regs[CP0_CAUSE_REG] = rrt32;
       break;
@@ -132,7 +132,7 @@ DECLARE_INSTRUCTION(MTC0)
       break;
     default:
       DebugMessage(M64MSG_ERROR, "Unknown MTC0 write: %d", rfs);
-      r4300_stop=1;
+      stop=1;
   }
   ADD_TO_PC(1);
 }

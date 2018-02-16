@@ -32,7 +32,7 @@
 #include "osal/preproc.h"
 #include "r4300/recomph.h"
 
-extern int64_t r4300_reg[32];
+extern int64_t reg[32];
 
 #define RAX 0
 #define RCX 1
@@ -116,11 +116,11 @@ static inline void put64(unsigned long long qword)
 static inline int rel_r15_offset(void *dest, const char *op_name)
 {
     /* calculate the destination pointer's offset from the base of the r4300 registers */
-    long long rel_offset = (long long) ((unsigned char *) dest - (unsigned char *) r4300_reg);
+    long long rel_offset = (long long) ((unsigned char *) dest - (unsigned char *) reg);
 
     if (llabs(rel_offset) > 0x7fffffff)
     {
-        DebugMessage(M64MSG_ERROR, "Error: destination %p more than 2GB away from r15 base %p in %s()", dest, r4300_reg, op_name);
+        DebugMessage(M64MSG_ERROR, "Error: destination %p more than 2GB away from r15 base %p in %s()", dest, reg, op_name);
         OSAL_BREAKPOINT_INTERRUPT;
     }
 

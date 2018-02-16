@@ -19,11 +19,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLARE_JUMP(BLTZ,    PCADDR + (iimmediate+1)*4, irs < 0,    &r4300_reg[0],  0, 0)
-DECLARE_JUMP(BGEZ,    PCADDR + (iimmediate+1)*4, irs >= 0,   &r4300_reg[0],  0, 0)
-DECLARE_JUMP(BLTZL,   PCADDR + (iimmediate+1)*4, irs < 0,    &r4300_reg[0],  1, 0)
-DECLARE_JUMP(BGEZL,   PCADDR + (iimmediate+1)*4, irs >= 0,   &r4300_reg[0],  1, 0)
-DECLARE_JUMP(BLTZAL,  PCADDR + (iimmediate+1)*4, irs < 0,    &r4300_reg[31], 0, 0)
-DECLARE_JUMP(BGEZAL,  PCADDR + (iimmediate+1)*4, irs >= 0,   &r4300_reg[31], 0, 0)
-DECLARE_JUMP(BLTZALL, PCADDR + (iimmediate+1)*4, irs < 0,    &r4300_reg[31], 1, 0)
-DECLARE_JUMP(BGEZALL, PCADDR + (iimmediate+1)*4, irs >= 0,   &r4300_reg[31], 1, 0)
+DECLARE_JUMP(BLTZ,    PCADDR + (iimmediate+1)*4, irs < 0,    &reg[0],  0, 0)
+DECLARE_JUMP(BGEZ,    PCADDR + (iimmediate+1)*4, irs >= 0,   &reg[0],  0, 0)
+DECLARE_JUMP(BLTZL,   PCADDR + (iimmediate+1)*4, irs < 0,    &reg[0],  1, 0)
+DECLARE_JUMP(BGEZL,   PCADDR + (iimmediate+1)*4, irs >= 0,   &reg[0],  1, 0)
+DECLARE_JUMP(BLTZAL,  PCADDR + (iimmediate+1)*4, irs < 0,    &reg[31], 0, 0)
+DECLARE_JUMP(BGEZAL,  PCADDR + (iimmediate+1)*4, irs >= 0,   &reg[31], 0, 0)
+DECLARE_JUMP(BLTZALL, PCADDR + (iimmediate+1)*4, irs < 0,    &reg[31], 1, 0)
+DECLARE_JUMP(BGEZALL, PCADDR + (iimmediate+1)*4, irs >= 0,   &reg[31], 1, 0)

@@ -27,6 +27,10 @@
 // We need to mess with core internals
 #define M64P_CORE_PROTOTYPES 1
 
+// Change to 1 to use the CXD4 plugin for the Reality Coprocessor
+// Some games will run much slower or not at all. Others may run better if you have faster hardware.
+#define USE_RSP_CXD4 0
+
 #import "MupenGameCore.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -89,6 +93,10 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 
     dispatch_queue_t _callbackQueue;
     NSMutableDictionary *_callbackHandlers;
+    
+    m64p_dynlib_handle core_handle;
+    
+    m64p_dynlib_handle plugins[4];
 }
 
 - (instancetype)init
@@ -117,10 +125,27 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
 {
     SetStateCallback(NULL, NULL);
     SetDebugCallback(NULL, NULL);
+    
+    [self pluginsUnload];
+    [self detachCoreLib];
+    
 #if !__has_feature(objc_arc)
     dispatch_release(mupenWaitToBeginFrameSemaphore);
     dispatch_release(coreWaitToEndFrameSemaphore);
 #endif
+}
+
+-(void)detachCoreLib {
+    if (core_handle != NULL) {
+        // Note: DL close doesn't really work as expected on iOS. The framework will still essentially be loaded
+        // take care to reset static variables that are expected to have cleared memory between uses.
+        if(dlclose(core_handle) != 0) {
+            NSLog(@"Failed to dlclose core framework.");
+        } else {
+            NSLog(@"dlclosed core framework.");
+        }
+        core_handle = NULL;
+    }
 }
 
 // Pass 0 as paramType to receive all state changes.
@@ -384,45 +409,138 @@ static void MupenSetAudioSpeed(int percent)
     // open core here
     CoreStartup(FRONTEND_API_VERSION, [configPath fileSystemRepresentation], dataPath, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
     
-    // set SRAM path
+    /** Core Config **/
     m64p_handle config;
     ConfigOpenSection("Core", &config);
+    
+    // set SRAM path
     ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [batterySavesDirectory UTF8String]);
+    // set data path
     ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
 
-    // Disable dynarec (for debugging)
-    m64p_handle section;
-#if 0 // defined(DEBUG)
-    int ival = 0;
-#else
-    int ival = 1;
-#endif
-    
-    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &ival);
+    // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
+    int emulator = 1;
+    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
+
+    // Draw on-screen display if True, otherwise don't draw OSD
+    int osd = 0;
+    ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+
+    /** End Core Config **/
     ConfigSaveSection("Core");
+    
+    /** RICE CONFIG **/
+    m64p_handle rice;
+    ConfigOpenSection("Video-Rice", &rice);
+    
+    // Use a faster algorithm to speed up texture loading and CRC computation
+    int fastTextureLoading = 0;
+    ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
+
+    // Enable this option to have better render-to-texture quality
+    int doubleSizeForSmallTextureBuffer = 0;
+    ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
+
+    // N64 Texture Memory Full Emulation (may fix some games, may break others)
+    int fullTEMEmulation = 0;
+    ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
+
+    // Use fullscreen mode if True, or windowed mode if False
+    int fullscreen = 0;
+    ConfigSetParameter(rice, "Fullscreen", M64TYPE_BOOL, &fullscreen);
+
+    // If this option is enabled, the plugin will skip every other frame
+    // Breaks some games in my testing -jm
+    int skipFrame = 0;
+    ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
+
+    // Enable hi-resolution texture file loading
+    int hiResTextures = 1;
+    ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
+    // Create the directory if this option is enabled to make it easier for users to upload packs
+    if (hiResTextures == 1) {
+        // Find where we're storing roms
+        NSString *romPath = path;
+        // Create the directory for hires_texture, this is a constant in mupen source
+        NSString *highResPath = [[romPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"/hires_texture/"];
+        NSError *error;
+        BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (!success) {
+            NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
+        }
+    }
+    
+    // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
+    int mipmapping = 0;
+    ConfigSetParameter(rice, "Mipmapping", M64TYPE_INT, &mipmapping);
+
+    // Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality).
+    // This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering
+    int anisotropicFiltering = 16;
+    ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
+    
+    // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
+    int fogMethod = 0;
+    ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
+    
+    // Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
+    // 16 bit breaks some games like GoldenEye
+    int textureQuality = 1;
+    ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
+
+    // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
+    int multiSampling = 0;
+    ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
+
+    // Color bit depth for rendering window (0=32 bits, 1=16 bits)
+    int colorQuality = 0;
+    ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
+
+    /** End RICE CONFIG **/
+    ConfigSaveSection("Video-Rice");
 
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
     
-    if (CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]) != M64ERR_SUCCESS)
+    m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
+    if ( openStatus != M64ERR_SUCCESS) {
+        NSLog(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
         return NO;
+    }
     
-    m64p_dynlib_handle core_handle = dlopen_myself();
+    core_handle = dlopen_myself();
     
     // Assistane block to load frameworks
-    void (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
+    BOOL (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
         NSString *frameworkPath = [NSString stringWithFormat:@"%@.framework/%@", pluginName,pluginName];
         NSString *rspPath = [[[NSBundle mainBundle] privateFrameworksPath] stringByAppendingPathComponent:frameworkPath];
         
-        rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_NOW);
+        rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
         ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
-        rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
-        CoreAttachPlugin(pluginType, rsp_handle);
+        m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
+        if (err != M64ERR_SUCCESS) {
+            NSLog(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
+            return NO;
+        }
+        
+        err = CoreAttachPlugin(pluginType, rsp_handle);
+        if (err != M64ERR_SUCCESS) {
+            NSLog(@"Error code %i attaching plugin of type %i, name: %@", err, pluginType, pluginType);
+            return NO;
+        }
+        
+        // Store handle for later unload
+        plugins[pluginType] = rsp_handle;
+        
+        return YES;
     };
     
     // Load Video
-    LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    if (!success) {
+        return NO;
+    }
     
     ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");
     
@@ -438,16 +556,22 @@ static void MupenSetAudioSpeed(int percent)
     input.initiateControllers = MupenInitiateControllers;
     plugin_start(M64PLUGIN_INPUT);
     
+#if USE_RSP_CXD4
     // Load RSP
     // Configure if using rsp-cxd4 plugin
-//    m64p_handle configRSP;
-//    ConfigOpenSection("rsp-cxd4", &configRSP);
-//    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
-//    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
-//    
-//    LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
-    LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
-
+    m64p_handle configRSP;
+    ConfigOpenSection("rsp-cxd4", &configRSP);
+    int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
+    ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
+    
+    success = LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
+#else
+    success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
+#endif
+    if (!success) {
+        return NO;
+    }
+    
     return YES;
 }
 
@@ -465,11 +589,77 @@ static void MupenSetAudioSpeed(int percent)
     @autoreleasepool
     {
         [self.renderDelegate startRenderingOnAlternateThread];
-        CoreDoCommand(M64CMD_EXECUTE, 0, NULL);
-        CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL);
-        CoreShutdown();
+        if(CoreDoCommand(M64CMD_EXECUTE, 0, NULL) != M64ERR_SUCCESS) {
+            NSLog(@"Core execture did not exit correctly");
+        } else {
+            NSLog(@"Core finished executing main");
+        }
+        
+        if(CoreDetachPlugin(M64PLUGIN_GFX) != M64ERR_SUCCESS) {
+            NSLog(@"Failed to detach GFX plugin");
+        } else {
+            NSLog(@"Detached GFX plugin");
+        }
+        
+        if(CoreDetachPlugin(M64PLUGIN_RSP) != M64ERR_SUCCESS) {
+            NSLog(@"Failed to detach RSP plugin");
+        } else {
+            NSLog(@"Detached RSP plugin");
+        }
+        
+        [self pluginsUnload];
+        
+        if(CoreDoCommand(M64CMD_ROM_CLOSE, 0, NULL) != M64ERR_SUCCESS) {
+            NSLog(@"Filed to close ROM");
+        } else {
+            NSLog(@"ROM closed");
+        }
+        
+        if(CoreShutdown() != M64ERR_SUCCESS) {
+            NSLog(@"Core shutdown failed");
+        }else {
+            NSLog(@"Core shutdown successfully");
+        }
+        
+        // Unlock rendering thread
+        dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
         [super stopEmulation];
     }
+}
+
+- (m64p_error)pluginsUnload
+{
+    // shutdown and unload frameworks for plugins
+    
+    typedef m64p_error (*ptr_PluginShutdown)(void);
+    ptr_PluginShutdown PluginShutdown;
+    int i;
+    
+    /* shutdown each type of plugin */
+    for (i = 0; i < 4; i++)
+    {
+        if (plugins[i] == NULL)
+            continue;
+        /* call the destructor function for the plugin and release the library */
+        PluginShutdown = (ptr_PluginShutdown) osal_dynlib_getproc(plugins[i], "PluginShutdown");
+        if (PluginShutdown != NULL) {
+            m64p_error status = (*PluginShutdown)();
+            if (status == M64ERR_SUCCESS) {
+                NSLog(@"Shutdown plugin");
+            } else {
+                NSLog(@"Shutdown plugin type %i failed: %i", i, status);
+            }
+        }
+        if(dlclose(plugins[i]) != 0) {
+            NSLog(@"Failed to dlclose plugin type %i", i);
+        } else {
+            NSLog(@"dlclosed plugin type %i", i);
+        }
+        plugins[i] = NULL;
+    }
+    
+    return M64ERR_SUCCESS;
 }
 
 - (void)videoInterrupt
@@ -511,10 +701,13 @@ static void MupenSetAudioSpeed(int percent)
 - (void)stopEmulation
 {
     CoreDoCommand(M64CMD_STOP, 0, NULL);
+    
     dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
     [self.frontBufferCondition lock];
     [self.frontBufferCondition signal];
     [self.frontBufferCondition unlock];
+    
+    [super stopEmulation];
 }
 
 - (void)resetEmulation

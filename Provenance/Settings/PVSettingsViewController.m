@@ -17,7 +17,7 @@
 #import <SafariServices/SafariServices.h>
 #import "PVWebServer.h"
 
-@interface PVSettingsViewController ()
+@interface PVSettingsViewController () <SFSafariViewControllerDelegate>
 
 @end
 
@@ -153,8 +153,9 @@
 
 // Show web server (stays on)
 - (void)showServer {
-	NSURL *ipURL = [[PVWebServer sharedInstance] getURL];
-	SFSafariViewController *safariVC = [[SFSafariViewController alloc]initWithURL:ipURL entersReaderIfAvailable:NO];
+	NSString *ipURL = PVWebServer.sharedInstance.URLString;
+	SFSafariViewController *safariVC = [[SFSafariViewController alloc]initWithURL:[NSURL URLWithString:ipURL]
+                                                          entersReaderIfAvailable:NO];
 	safariVC.delegate = self;
 	[self presentViewController:safariVC animated:YES completion:nil];
 }
@@ -167,7 +168,7 @@
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
 	// Done button pressed
 	[self.navigationController popViewControllerAnimated:YES];
-	[[PVWebServer sharedInstance] stopServer];
+	[[PVWebServer sharedInstance] stopServers];
 	_importLabel.text = @"Web server: OFF";
 }
 
@@ -178,17 +179,32 @@
 																   message: message
 															preferredStyle:UIAlertControllerStyleAlert];
 	
-	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,31)];
-	ipField.backgroundColor = [UIColor clearColor];
-	ipField.textAlignment = NSTextAlignmentCenter;
-	ipField.font = [UIFont systemFontOfSize:13];
-	ipField.textColor = [UIColor grayColor];
-	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
-	[ipField setUserInteractionEnabled:NO];
-	[alert.view addSubview:ipField];
+    UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,70)];
+    ipField.backgroundColor = [UIColor clearColor];
+    ipField.textAlignment = NSTextAlignmentCenter;
+    ipField.font = [UIFont systemFontOfSize:13];
+    ipField.textColor = [UIColor grayColor];
+    NSString* ipFieldText = [NSString stringWithFormat:@"%@\nWebDav: %@", PVWebServer.sharedInstance.URLString, PVWebServer.sharedInstance.WebDavURLString];
+    [ipField setText:ipFieldText];
+    [ipField setUserInteractionEnabled:NO];
+    [alert.view addSubview:ipField];
 	
+    UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,160,267,44)];
+    [importNote setUserInteractionEnabled:NO];
+    importNote.font = [UIFont boldSystemFontOfSize:12];
+    importNote.textColor = [UIColor whiteColor];
+    importNote.textAlignment = NSTextAlignmentCenter;
+    importNote.backgroundColor = [UIColor colorWithWhite:.2 alpha:.3];
+    importNote.text = @"Check the wiki for information\nabout Importing ROMs.";
+    importNote.layer.shadowOpacity = 0.8;
+    importNote.layer.shadowRadius = 3.0;
+    importNote.layer.cornerRadius = 8.0;
+    importNote.layer.shadowColor = [UIColor colorWithWhite:.2 alpha:.7].CGColor;
+    importNote.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    [alert.view addSubview:importNote];
+    
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[[PVWebServer sharedInstance] stopServer];
+		[[PVWebServer sharedInstance] stopServers];
 		_importLabel.text = @"Web server: OFF";
 	}]];
 	
@@ -232,11 +248,20 @@
 			// connected via wifi, let's continue
 			
 			// start web transfer service
-			[[PVWebServer sharedInstance] startServer];
-			_importLabel.text = @"Web server: ON";
-	
-			//show alert view
-			[self showServerActiveAlert];
+            if([[PVWebServer sharedInstance] startServers]) {
+                _importLabel.text = @"Web server: ON";
+                
+                //show alert view
+                [self showServerActiveAlert];
+            } else {
+                // Display error
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                               message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                        preferredStyle:UIAlertControllerStyleAlert];
+                [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                }]];
+                [self presentViewController:alert animated:YES completion:NULL];
+            }
 		}
 
     }
