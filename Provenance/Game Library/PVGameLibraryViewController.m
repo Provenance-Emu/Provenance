@@ -277,7 +277,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
 	// Done button pressed
 	[self.navigationController popViewControllerAnimated:YES];
-	[[PVWebServer sharedInstance] stopServer]s;
+	[[PVWebServer sharedInstance] stopServers];
 }
 #endif
 
