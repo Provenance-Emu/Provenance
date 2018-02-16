@@ -620,13 +620,10 @@
 		BEB41B3B1CAB01D6009E0B7E /* PVGame+Sizing.m in Sources */ = {isa = PBXBuildFile; fileRef = BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */; };
 		BEC075CD1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
 		BEC075CE1C221F3A00305027 /* RLMRealmConfiguration+Config.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */; };
-		DF0561C31FB1051100F499B9 /* shader_crt_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */; };
-		DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */; };
-		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; };
+		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF44D3161FACE99D00554D68 /* shader_crt_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */; };
-		DF44D3181FACEA1800554D68 /* shader_crt_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */; };
-		DFCD6EBD203631A500719289 /* shader_blit_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBC203631A500719289 /* shader_blit_fragment.glsl */; };
+		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -1323,11 +1320,7 @@
 		BEB41B3A1CAB01D6009E0B7E /* PVGame+Sizing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVGame+Sizing.m"; sourceTree = "<group>"; };
 		BEC075CB1C221F3A00305027 /* RLMRealmConfiguration+Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RLMRealmConfiguration+Config.h"; sourceTree = "<group>"; };
 		BEC075CC1C221F3A00305027 /* RLMRealmConfiguration+Config.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RLMRealmConfiguration+Config.m"; sourceTree = "<group>"; };
-		DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_crt_fragment.glsl; sourceTree = "<group>"; };
-		DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_crt_vertex.glsl; sourceTree = "<group>"; };
-		DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = shader_crt_vertex.glsl; sourceTree = "<group>"; };
-		DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = shader_crt_fragment.glsl; sourceTree = "<group>"; };
-		DFCD6EBC203631A500719289 /* shader_blit_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_blit_fragment.glsl; sourceTree = "<group>"; };
+		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -1607,6 +1600,7 @@
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
+				DFCD6EBE203762AE00719289 /* shaders */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 			);
 			path = Provenance;
@@ -1698,9 +1692,6 @@
 				1AECF4A61966D6D600F8704E /* openvgdb.sqlite */,
 				1A9FBE1A1ABD23DD004E778B /* vba-over.ini */,
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
-				DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */,
-				DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */,
-				DFCD6EBC203631A500719289 /* shader_blit_fragment.glsl */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2559,8 +2550,6 @@
 		DF0561C01FB104C300F499B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */,
-				DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2742,6 +2731,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
+				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				B349AF4B1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B349AF4D1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
@@ -2749,7 +2739,6 @@
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B349AE371E9ABCF900ACD416 /* .gitignore in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
-				DFCD6EBD203631A500719289 /* shader_blit_fragment.glsl in Resources */,
 				B349AE391E9ABCF900ACD416 /* .travis.yml in Resources */,
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
@@ -2759,8 +2748,6 @@
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
 				B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
-				DF44D3181FACEA1800554D68 /* shader_crt_fragment.glsl in Resources */,
-				DF44D3161FACE99D00554D68 /* shader_crt_vertex.glsl in Resources */,
 				B349AE3B1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2774,16 +2761,15 @@
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
 				1AD482371BA35A3300FDA50A /* systems.plist in Resources */,
 				B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
-				DF0561C31FB1051100F499B9 /* shader_crt_fragment.glsl in Resources */,
 				B349AE3A1E9ABCF900ACD416 /* .travis.yml in Resources */,
 				B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
 				B349AE3E1E9ABCF900ACD416 /* LICENSE in Resources */,
 				1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
-				DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				1AD481C11BA350A400FDA50A /* Main.storyboard in Resources */,
+				DFCD6EC0203762AF00719289 /* shaders in Resources */,
 				B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				B349AE3C1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
