@@ -48,9 +48,10 @@ NSString * const PVRequiresMigrationKey = @"PVRequiresMigration";
 
 #if TARGET_OS_TV
 static const CGFloat CellWidth = 308.0;
-#endif
-
 @interface PVGameLibraryViewController ()
+#else
+@interface PVGameLibraryViewController () <SFSafariViewControllerDelegate>
+#endif
 
 @property (nonatomic, strong) RLMRealm *realm;
 @property (nonatomic, strong) PVDirectoryWatcher *watcher;
@@ -262,7 +263,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 #if !TARGET_OS_TV
 // Show web server (stays on)
 - (void)showServer {
-	NSURL *ipURL = [[PVWebServer sharedInstance] getURL];
+    NSURL *ipURL = [NSURL URLWithString:PVWebServer.sharedInstance.URLString];
 	SFSafariViewController *safariVC = [[SFSafariViewController alloc]initWithURL:ipURL entersReaderIfAvailable:NO];
 	safariVC.delegate = self;
 	[self presentViewController:safariVC animated:YES completion:nil];
@@ -276,7 +277,7 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
 	// Done button pressed
 	[self.navigationController popViewControllerAnimated:YES];
-	[[PVWebServer sharedInstance] stopServer];
+	[[PVWebServer sharedInstance] stopServers];
 }
 #endif
 
@@ -286,30 +287,32 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
 	UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
 																   message: message
 															preferredStyle:UIAlertControllerStyleAlert];
-	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,31)];
+	UITextView *ipField = [[UITextView alloc] initWithFrame:CGRectMake(20,71,231,70)];
 	ipField.backgroundColor = [UIColor clearColor];
 	ipField.textAlignment = NSTextAlignmentCenter;
 	ipField.font = [UIFont systemFontOfSize:13];
 	ipField.textColor = [UIColor grayColor];
-	[ipField setText:[[PVWebServer sharedInstance] getURLString]];
+    NSString* ipFieldText = [NSString stringWithFormat:@"%@\nWebDav: %@", PVWebServer.sharedInstance.URLString, PVWebServer.sharedInstance.WebDavURLString];
+    [ipField setText:ipFieldText];
 	[ipField setUserInteractionEnabled:NO];
 	[alert.view addSubview:ipField];
 
-	UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,166,267,41)];
+	UITextView *importNote = [[UITextView alloc] initWithFrame:CGRectMake(2,160,267,44)];
 	[importNote setUserInteractionEnabled:NO];
-	importNote.font = [UIFont systemFontOfSize:11];
+	importNote.font = [UIFont boldSystemFontOfSize:12];
 	importNote.textColor = [UIColor whiteColor];
 	importNote.textAlignment = NSTextAlignmentCenter;
-	importNote.backgroundColor = [UIColor clearColor];
-	importNote.text = @"Check the wiki for information\nabout Importing ROMs.";
+	importNote.backgroundColor = [UIColor colorWithWhite:.2 alpha:.3];
+    importNote.text = @"Check the wiki for information\nabout Importing ROMs.";
 	importNote.layer.shadowOpacity = 0.8;
 	importNote.layer.shadowRadius = 3.0;
-	importNote.layer.shadowColor = [UIColor blackColor].CGColor;
+    importNote.layer.cornerRadius = 8.0;
+	importNote.layer.shadowColor = [UIColor colorWithWhite:.2 alpha:.7].CGColor;
 	importNote.layer.shadowOffset = CGSizeMake(0.0, 0.0);
 	[alert.view addSubview:importNote];
 
 	[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		[[PVWebServer sharedInstance] stopServer];
+		[[PVWebServer sharedInstance] stopServers];
 	}]];
 #if !TARGET_OS_TV
 	UIAlertAction *viewAction = [UIAlertAction actionWithTitle: @"View" style: UIAlertActionStyleDefault handler: ^(UIAlertAction *action)
@@ -343,10 +346,17 @@ static NSString *_reuseIdentifier = @"PVGameLibraryCollectionViewCell";
         // connected via wifi, let's continue
 
         // start web transfer service
-        [[PVWebServer sharedInstance] startServer];
-
-        //show alert view
-		[self showServerActiveAlert];
+        if([[PVWebServer sharedInstance] startServers]) {
+            //show alert view
+            [self showServerActiveAlert];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                           message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            }]];
+            [self presentViewController:alert animated:YES completion:NULL];
+        }
     }
 }
 

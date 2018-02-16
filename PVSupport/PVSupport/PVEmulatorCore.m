@@ -70,7 +70,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
             [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
-
 		}
 	}
 }
@@ -78,6 +77,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 - (void)resetEmulation
 {
 	[self doesNotImplementSelector:_cmd];
+}
+
+// GameCores that render direct to OpenGL rather than a buffer should override this and return YES
+// If the GameCore subclass returns YES, the renderDelegate will set the appropriate GL Context
+// So the GameCore subclass can just draw to OpenGL
+- (BOOL)rendersToOpenGL
+{
+    return NO;
 }
 
 - (void)setPauseEmulation:(BOOL)flag
@@ -102,8 +109,11 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	shouldStop = YES;
     isRunning  = NO;
 
-    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
-    [self.emulationLoopThreadLock unlock];
+    [self setIsFrontBufferReady:NO];
+    [self.frontBufferCondition signal];
+    
+//    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
+//    [self.emulationLoopThreadLock unlock];
 }
 
 - (void)updateControllers
@@ -135,7 +145,17 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         
         @synchronized (self) {
             if (isRunning) {
-                [self executeFrame];
+                if (self.isSpeedModified)
+                {
+                    [self executeFrame];
+                }
+                else
+                {
+                    @synchronized(self)
+                    {
+                        [self executeFrame];
+                    }
+                }
             }
         }
         frameCount += 1;
@@ -143,23 +163,26 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
         
-        NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
-        if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
-            [self swapBuffers];
-            [self.frontBufferLock unlock];
-            
-            [self.frontBufferCondition lock];
-            [self setIsFrontBufferReady:YES];
-            [self.frontBufferCondition signal];
-            [self.frontBufferCondition unlock];
-        } else {
-            [self swapBuffers];
-            ++framesTorn;
-            
-            [self setIsFrontBufferReady:YES];
+        if ([self isDoubleBuffered])
+        {
+            NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
+            if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
+                [self swapBuffers];
+                [self.frontBufferLock unlock];
+                
+                [self.frontBufferCondition lock];
+                [self setIsFrontBufferReady:YES];
+                [self.frontBufferCondition signal];
+                [self.frontBufferCondition unlock];
+            } else {
+                [self swapBuffers];
+                ++framesTorn;
+                
+                [self setIsFrontBufferReady:YES];
+            }
+
+            sleepTime = nextEmuTick - GetSecondsSince(origin);
         }
-        
-        sleepTime = nextEmuTick - GetSecondsSince(origin);
         
         if(sleepTime >= 0) {
             [NSThread sleepForTimeInterval:sleepTime];

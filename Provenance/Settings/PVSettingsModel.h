@@ -22,6 +22,7 @@ extern NSString * const kICadeControllerSettingKey;
 extern NSString * const kVolumeSettingKey;
 extern NSString * const kFPSCountKey;
 extern NSString * const kShowGameTitlesKey;
+extern NSString * const kWebDayAlwwaysOnKey;
 
 @interface PVSettingsModel : NSObject
 
@@ -35,6 +36,7 @@ extern NSString * const kShowGameTitlesKey;
 @property (nonatomic, assign) BOOL showRecentGames;
 @property (nonatomic, assign) BOOL showFPSCount;
 @property (nonatomic, assign) BOOL showGameTitles;
+@property (nonatomic, assign) BOOL webDavAlwaysOn;
 @property (nonatomic, assign) kICadeControllerSetting iCadeControllerSetting;
 
 @property (nonatomic, assign) CGFloat controllerOpacity;

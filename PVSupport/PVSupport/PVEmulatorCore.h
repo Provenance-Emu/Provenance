@@ -32,6 +32,18 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 #define GetSecondsSince(x) (-[x timeIntervalSinceNow])
 
+@protocol PVAudioDelegate
+@required
+- (void)audioSampleRateDidChange;
+@end
+
+@protocol PVRenderDelegate
+
+@required
+- (void)startRenderingOnAlternateThread;
+- (void)didRenderFrameOnAlternateThread;
+@end
+
 @interface PVEmulatorCore : NSObject {
 	
 	OERingBuffer __strong **ringBuffers;
@@ -47,6 +59,9 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;
+
+@property(weak)     id<PVAudioDelegate>    audioDelegate;
+@property(weak)     id<PVRenderDelegate>   renderDelegate;
 
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;
@@ -73,6 +88,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
 
+- (BOOL)rendersToOpenGL;
 - (void)startEmulation;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag;

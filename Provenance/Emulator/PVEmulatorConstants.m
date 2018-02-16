@@ -59,3 +59,4 @@ NSString * const PVPCFXSystemIdentifier 		= @"com.provenance.pcfx";
 NSString * const PVVirtualBoySystemIdentifier   = @"com.provenance.vb";
 NSString * const PVWonderSwanSystemIdentifier 	= @"com.provenance.ws";
 NSString * const PVWonderSwanColorSystemIdentifier 	= @"com.provenance.wsc";
+NSString * const PVN64SystemIdentifier          = @"com.provenance.n64";

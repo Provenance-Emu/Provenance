@@ -1,0 +1,22 @@
+Mupen64plus build under OSX 10.9.5 (Mavericks) with Xcode 6.1.1
+
+1. Install command-line tools through xcode
+   - Xcode --> Preferences... --> Downloads tab --> Components page --> Command Line Tools
+2. Install mac ports
+   - download page: http://www.macports.org/install.php
+   - .pkg installer for Mavericks
+3. Install Git via macports
+   - command line: "sudo port install git”
+4. Get m64p_helper_scripts.tar.gz from https://code.google.com/p/mupen64plus/wiki/CompilingFromGit
+   - unzip into build folder
+   - run "./m64p_get.sh"
+5. Install other build dependencies:
+   - sudo port install pkgconfig
+   - sudo port install libpng
+   - edit /opt/local/etc/macports/variants.conf:
+     - add: +no_x11 +quartz
+   - sudo port install libSDL2
+   - sudo port install freetype
+   - sudo port install boost
+6. Run "./m64p_build.sh"
+

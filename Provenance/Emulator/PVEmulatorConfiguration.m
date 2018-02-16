@@ -33,6 +33,9 @@
 #import <PicoDrive/PicodriveGameCore.h>
 #import "PV32XControllerViewController.h"
 
+#import <PVMupen64Plus/MupenGameCore.h>
+#import "PVN64ControllerViewController.h"
+
 #import <PVAtari800/ATR800GameCore.h>
 #import "PVAtari5200ControllerViewController.h"
 
@@ -163,9 +166,12 @@
     {
         core = [[MednafenGameCore alloc] init];
     }
-	
+    else if ([systemID isEqualToString:PVN64SystemIdentifier])
+    {
+        core = [[MupenGameCore alloc] init];
+    }
     core.systemIdentifier = systemID;
-    
+
 	return core;
 }
 
@@ -210,6 +216,10 @@
     else if ([systemID isEqualToString:PV32XSystemIdentifier])
     {
         controller = [[PV32XControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
+    }
+    else if ([systemID isEqualToString:PVN64SystemIdentifier])
+    {
+        controller = [[PVN64ControllerViewController alloc] initWithControlLayout:[self controllerLayoutForSystem:systemID] systemIdentifier:systemID];
     }
     else if ([systemID isEqualToString:PV5200SystemIdentifier])
     {

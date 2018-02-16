@@ -22,7 +22,7 @@
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
-@interface PVEmulatorViewController ()
+@interface PVEmulatorViewController () <PVAudioDelegate>
 
 @property (nonatomic, strong) PVGLViewController *glViewController;
 @property (nonatomic, strong) OEGameAudio *gameAudio;
@@ -149,6 +149,7 @@ void uncaughtExceptionHandler(NSException *exception)
 											   object:nil];
 
 	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+    self.emulatorCore.audioDelegate = self;
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
     [self.emulatorCore setBIOSPath:self.BIOSPath];
@@ -964,6 +965,14 @@ void uncaughtExceptionHandler(NSException *exception)
         self.secondaryWindow = nil;
         self.secondaryScreen = nil;
     }
+}
+
+#pragma mark - PVAudioDelegate
+
+- (void)audioSampleRateDidChange
+{
+    [self.gameAudio stopAudio];
+    [self.gameAudio startAudio];
 }
 
 @end
