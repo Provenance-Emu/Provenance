@@ -330,15 +330,27 @@ struct PVVertex
 
 - (void)setupVBOs
 {
-    GLfloat texLeft = self.emulatorCore.screenRect.origin.x / self.emulatorCore.bufferSize.width;
-    GLfloat texTop = self.emulatorCore.screenRect.origin.y / self.emulatorCore.bufferSize.height;
-    GLfloat texRight = ( self.emulatorCore.screenRect.origin.x + self.emulatorCore.screenRect.size.width ) / self.emulatorCore.bufferSize.width;
-    GLfloat texBottom = ( self.emulatorCore.screenRect.origin.y + self.emulatorCore.screenRect.size.height ) / self.emulatorCore.bufferSize.height;
+    glGenBuffers(1, &vertexVBO);
+    [self updateVBOWithScreenRect:self.emulatorCore.screenRect andVideoBufferSize:self.emulatorCore.bufferSize];
+    
+    GLushort indices[6] = { 0, 1, 2, 0, 2, 3 };
+    glGenBuffers(1, &indexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+- (void)updateVBOWithScreenRect:(CGRect)screenRect andVideoBufferSize:(CGSize)videoBufferSize
+{
+    GLfloat texLeft = screenRect.origin.x / videoBufferSize.width;
+    GLfloat texTop = screenRect.origin.y / videoBufferSize.height;
+    GLfloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
+    GLfloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
     if ([self.emulatorCore rendersToOpenGL])
     {
         // Rendered textures are flipped upside down
-        texTop = ( self.emulatorCore.screenRect.origin.y + self.emulatorCore.screenRect.size.height ) / self.emulatorCore.bufferSize.height;
-        texBottom = self.emulatorCore.screenRect.origin.y / self.emulatorCore.bufferSize.height;
+        texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+        texBottom = screenRect.origin.y / videoBufferSize.height;
     }
     
     struct PVVertex quadVertices[4] =
@@ -349,16 +361,9 @@ struct PVVertex
         {-1.0f, 1.0f, 1.0f, texLeft, texTop}
     };
     
-    glGenBuffers(1, &vertexVBO);
     glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    GLushort indices[6] = { 0, 1, 2, 0, 2, 3 };
-    glGenBuffers(1, &indexVBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -420,6 +425,8 @@ struct PVVertex
         
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
+        
+        [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
         
         glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
         
