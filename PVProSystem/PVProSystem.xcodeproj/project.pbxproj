@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7A91D6B757F002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7A81D6B757F002EE3ED /* libz.tbd */; };
 		B36DE7AB1D6B7583002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AA1D6B7583002EE3ED /* Foundation.framework */; };
 		B36DE7AD1D6B758B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */; };
@@ -61,7 +61,7 @@
 		B3FA5D881D6BAD4100060D71 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7A81D6B757F002EE3ED /* libz.tbd */; };
 		B3FA5D8A1D6BAD4100060D71 /* OE7800SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7C41D6B766C002EE3ED /* OE7800SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8B1D6BAD4100060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FA5D8C1D6BAD4100060D71 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B3FA5D8C1D6BAD4100060D71 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8E1D6BAD4100060D71 /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
 /* End PBXBuildFile section */
 
