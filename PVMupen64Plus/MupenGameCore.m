@@ -271,7 +271,7 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
             padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
             
-            float rightJoystickDeadZone = 0.15;
+            float rightJoystickDeadZone = 0.45;
             
             padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
             padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
