@@ -50,6 +50,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet var singleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
     
+    @IBOutlet var playCountLabel : UILabel!
+    @IBOutlet var timeSpentLabel : UILabel!
+    
     #if os(iOS)
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
     #endif
@@ -93,6 +96,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         // Pass the selected object to the new view controller.
     }
     */
+    private func secondsToHoursMinutesSeconds (seconds : Int) -> (Int, Int, Int) {
+        return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
+    }
     
     func updateContent() {
         self.title = game?.title
@@ -123,6 +129,48 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
         
         descriptionTextView.text = game?.gameDescription  ?? ""
+        
+        let playsText : String
+        if let playCount = game?.playCount {
+            playsText = "\(playCount)"
+        } else {
+            playsText = "Never"
+        }
+        playCountLabel.text = playsText
+        
+        let timeSpentText : String
+        if let timeSpent = game?.timeSpentInGame {
+            let calendar = Calendar(identifier: .gregorian)
+            let calendarUnitFlags: Set<Calendar.Component> = Set([.year, .month, .day, .hour, .minute, .second])
+            let components = calendar.dateComponents(calendarUnitFlags, from: Date(), to: Date(timeIntervalSinceNow: TimeInterval(timeSpent)))
+            
+            var textBuilder = ""
+            if let days = components.day, days > 0 {
+                textBuilder += "\(days) Days, "
+            }
+            
+            if let hours = components.hour, hours > 0 {
+                textBuilder += "\(hours) Hours, "
+            }
+            
+            if let minutes = components.minute, minutes > 0 {
+                textBuilder += "\(minutes) Minutes, "
+            }
+
+            if let seconds = components.second, seconds > 0 {
+                textBuilder += "\(seconds) Seconds"
+            }
+
+            if !textBuilder.isEmpty {
+                timeSpentText = textBuilder
+            } else {
+                timeSpentText = "None"
+            }
+            
+        } else {
+            timeSpentText = "None"
+        }
+        timeSpentLabel.text = timeSpentText
         
         updateImageView()
         
