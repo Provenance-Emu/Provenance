@@ -123,7 +123,7 @@ class PVTVSettingsViewController: UITableViewController {
                     case 1:
                             // Start Webserver
                             // Check to see if we are connected to WiFi. Cannot continue otherwise.
-                        let reachability = Reachability()
+                        let reachability = Reachability.forLocalWiFi()
                         reachability.startNotifier()
                         let status: NetworkStatus = reachability.currentReachabilityStatus()
                         if status != ReachableViaWiFi {

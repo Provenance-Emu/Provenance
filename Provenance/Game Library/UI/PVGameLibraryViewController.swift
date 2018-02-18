@@ -303,7 +303,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 // MARK: - Filesystem Helpers
     @IBAction func getMoreROMs() {
-        let reachability = Reachability.forInternetConnection()
+        let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
         let status: NetworkStatus = reachability.currentReachabilityStatus()
         if status != ReachableViaWiFi {
