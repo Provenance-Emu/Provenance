@@ -492,6 +492,22 @@ public extension PVEmulatorConfiguration {
     }
 }
 
+// MARK: m3u
+public extension PVEmulatorConfiguration {
+    class func m3uDiscs(forGame game: PVGame) -> [URL]? {
+        let gamePath = self.path(forGame: game)
+        let filename = gamePath.lastPathComponent
+        let filenamWithoutExtension =  gamePath.deletingPathExtension().lastPathComponent
+        
+        let m3uFilePath = gamePath.deletingPathExtension().appendingPathExtension("m3u")
+        if FileManager.default.fileExists(atPath: m3uFilePath.path) {
+            return nil
+        } else {
+            return nil
+        }
+    }
+}
+
 // MARK: Helpers
 public extension PVEmulatorConfiguration {
     class func createBIOSDirectory(forSystemIdentifier system : SystemIdentifier) {
