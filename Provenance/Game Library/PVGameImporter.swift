@@ -605,6 +605,7 @@ public extension PVGameImporter {
                      referenceURL
                      releaseID
                      systemShortName
+                     serial
                  */
                 
                 if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
@@ -649,7 +650,11 @@ public extension PVGameImporter {
 
                 if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty {
                     game.systemShortName = systemShortName
-                }                
+                }
+                
+                if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty {
+                    game.romSerial = romSerial
+                }
             }
         } catch {
             ELOG("Failed to update game \(game.title) : \(error.localizedDescription)")
@@ -670,8 +675,8 @@ public extension PVGameImporter {
         }
         
         var results: [Any]? = nil
-        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
+        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
+        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
         
         let dbSystemID: String = PVEmulatorConfiguration.databaseID(forSystemID: systemID)!
         
@@ -1013,6 +1018,8 @@ extension PVGameImporter {
             // Clip down the file name to the length of the .cue to see if they start to match
             if filenameWithoutExtension.count > relatedFileName.count {
                 filenameWithoutExtension = (filenameWithoutExtension as NSString).substring(with: NSRange(location: 0, length: relatedFileName.count))
+                    // RegEx pattern match the parentheses e.g. " (Disc 1)"
+                filenameWithoutExtension = filenameWithoutExtension.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
             }
             
             if filenameWithoutExtension == relatedFileName {

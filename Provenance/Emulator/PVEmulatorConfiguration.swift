@@ -494,15 +494,24 @@ public extension PVEmulatorConfiguration {
 
 // MARK: m3u
 public extension PVEmulatorConfiguration {
-    class func m3uDiscs(forGame game: PVGame) -> [URL]? {
+    @objc
+    class func m3uFile(forGame game: PVGame) -> URL? {
         let gamePath = self.path(forGame: game)
-        let filename = gamePath.lastPathComponent
-        let filenamWithoutExtension =  gamePath.deletingPathExtension().lastPathComponent
+        let gameDirectory = self.romDirectory(forSystemIdentifier: game.system!)
+        let filenameWithoutExtension =  gamePath.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
         
-        let m3uFilePath = gamePath.deletingPathExtension().appendingPathExtension("m3u")
-        if FileManager.default.fileExists(atPath: m3uFilePath.path) {
-            return nil
-        } else {
+        do {
+            let m3uFile = try FileManager.default.contentsOfDirectory(at: gameDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).first { (url) -> Bool in
+                if url.pathExtension.lowercased() == "m3u" {
+                    return url.lastPathComponent.contains(filenameWithoutExtension)
+                } else {
+                    return false
+                }
+            }
+            
+            return m3uFile
+        } catch {
+            ELOG("Failed looking for .m3u : \(error.localizedDescription)")
             return nil
         }
     }

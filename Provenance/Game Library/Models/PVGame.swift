@@ -50,6 +50,8 @@ public class PVGame : Object, PVLibraryEntry {
 
     @objc dynamic var isFavorite : Bool           = false
 
+    @objc dynamic var romSerial : String          = ""
+    
     /* Linksj to other objects */
     var saveStates : List<PVSaveState>? = nil
     var recentPlays : List<PVRecentGame>? = nil

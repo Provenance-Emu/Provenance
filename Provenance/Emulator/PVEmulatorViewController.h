@@ -31,3 +31,9 @@
 - (void)quit:(void(^_Nullable)(void))completion;
 
 @end
+
+// Private for Swift
+@interface PVEmulatorViewController()
+@property (nonatomic, weak, nullable) UIAlertController *menuActionSheet;
+@property (nonatomic, assign) BOOL isShowingMenu;
+@end

@@ -262,7 +262,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     return NO;
 }
 
-- (void)swapDisk
+- (void)swapDisc:(NSUInteger)discNumber
 {
     [self doesNotImplementOptionalSelector:_cmd];
 }
@@ -397,6 +397,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 	}
 	
     return ringBuffers[index];
+}
+
+-(NSUInteger)discCount {
+    return 0;
 }
 
 #pragma mark - Save States

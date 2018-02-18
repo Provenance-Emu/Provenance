@@ -135,7 +135,7 @@
     NSDictionary *webSeverOptions = @{
                                       GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
                                       GCDWebServerOption_ServerName : @"Provenance",
-                                      GCDWebServerOption_BonjourName : @"Provenance WWW",
+                                      GCDWebServerOption_BonjourName : @"ProvenanceWWW",
                                       GCDWebServerOption_Port : @(webUploadPort)
                                       };
     NSError *error;
@@ -163,7 +163,7 @@
     NSDictionary *webDavSeverOptions = @{
                                          GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
                                          GCDWebServerOption_ServerName : @"Provenance",
-                                         GCDWebServerOption_BonjourName : @"Provenance WebDav",
+                                         GCDWebServerOption_BonjourName : @"ProvenanceWebDav",
                                          GCDWebServerOption_Port : @(webDavPort)
                                          };
     NSError *error;

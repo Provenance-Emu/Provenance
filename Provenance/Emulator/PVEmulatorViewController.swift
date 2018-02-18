@@ -54,6 +54,55 @@ extension PVEmulatorViewController {
     }
 }
 
+public extension PVEmulatorViewController {
+    @objc
+    func showSwapDiscsMenu() {
+        guard let emulatorCore = self.emulatorCore else {
+            ELOG("No core?")
+            return
+        }
+        
+        let numberOfDiscs = emulatorCore.discCount
+        guard numberOfDiscs > 1 else {
+            ELOG("Only 1 disc?")
+            return
+        }
+        
+        // Add action for each disc
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        for index in 1...numberOfDiscs {
+            actionSheet.addAction(UIAlertAction(title: "\(index)", style: .default, handler: {[unowned self] (sheet) in
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+                    emulatorCore.swapDisc(index)
+                })
+                
+                emulatorCore.setPauseEmulation(false)
+
+                self.isShowingMenu = false
+                #if os(tvOS)
+                    self.controllerUserInteractionEnabled = false
+                #endif
+            }))
+        }
+
+        // Add cancel action
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[unowned self] (sheet) in
+            emulatorCore.setPauseEmulation(false)
+            self.isShowingMenu = false
+            #if os(tvOS)
+                self.controllerUserInteractionEnabled = false
+            #endif
+        }))
+
+        // Present
+        self.present(actionSheet, animated: true) {
+            PVControllerManager.shared().iCadeController?.refreshListener()
+        }
+    }
+}
+
 // Inherits the default behaviour
 #if os(iOS)
 extension PVEmulatorViewController : VolumeController {

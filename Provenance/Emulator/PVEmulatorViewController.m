@@ -30,9 +30,6 @@
 @property (nonatomic, assign) NSTimer *fpsTimer;
 @property (nonatomic, strong) UILabel *fpsLabel;
 
-@property (nonatomic, weak) UIAlertController *menuActionSheet;
-@property (nonatomic, assign) BOOL isShowingMenu;
-
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
 @property (nonatomic, strong) UITapGestureRecognizer *menuGestureRecognizer;
@@ -156,11 +153,16 @@ void uncaughtExceptionHandler(NSException *exception)
     }
 
     self.emulatorCore.romMD5 = md5Hash;
+    self.emulatorCore.romSerial = [self.game romSerial];
     
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
         // to provide the correct data for creating views.
+    NSURL *m3uFile = [PVEmulatorConfiguration m3uFileForGame:self.game];
+    if (m3uFile) {
+        romPath = m3uFile.path;
+    }
     BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
 
     if ([[UIScreen screens] count] > 1)
@@ -518,9 +520,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
     if ([self.emulatorCore supportsDiskSwapping])
     {
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disk" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [[weakSelf emulatorCore] swapDisk];
-            weakSelf.isShowingMenu = NO;
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disc" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf performSelector:@selector(showSwapDiscsMenu)
+                           withObject:nil
+                           afterDelay:0.1];
         }]];
     }
     
