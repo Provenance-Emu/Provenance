@@ -638,12 +638,10 @@
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
-		DF0561C31FB1051100F499B9 /* shader_crt_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */; };
-		DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */; };
 		DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97B1DED14AE00602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		DF44D3161FACE99D00554D68 /* shader_crt_vertex.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */; };
-		DF44D3181FACEA1800554D68 /* shader_crt_fragment.glsl in Resources */ = {isa = PBXBuildFile; fileRef = DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */; };
+		DFCD6EBF203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
+		DFCD6EC0203762AF00719289 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = DFCD6EBE203762AE00719289 /* shaders */; };
 		E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448891B3125D90056D80A /* iCadeReaderView.m */; };
 		E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */ = {isa = PBXBuildFile; fileRef = E414488D1B3126190056D80A /* PViCadeGamepad.m */; };
 		E41448911B34B9600056D80A /* PViCadeController.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448901B34B9600056D80A /* PViCadeController.m */; };
@@ -1361,10 +1359,7 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
-		DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_crt_fragment.glsl; sourceTree = "<group>"; };
-		DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = shader_crt_vertex.glsl; sourceTree = "<group>"; };
-		DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = shader_crt_vertex.glsl; sourceTree = "<group>"; };
-		DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */ = {isa = PBXFileReference; lastKnownFileType = text; path = shader_crt_fragment.glsl; sourceTree = "<group>"; };
+		DFCD6EBE203762AE00719289 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
 		E41448881B3125D90056D80A /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		E41448891B3125D90056D80A /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		E414488A1B3125D90056D80A /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
@@ -1658,6 +1653,7 @@
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
+				DFCD6EBE203762AE00719289 /* shaders */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
 				B3E21D602032074F009939D3 /* Logging.swift */,
 			);
@@ -1741,8 +1737,6 @@
 				1AECF4A61966D6D600F8704E /* openvgdb.sqlite */,
 				1A9FBE1A1ABD23DD004E778B /* vba-over.ini */,
 				1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */,
-				DF44D3151FACE99D00554D68 /* shader_crt_vertex.glsl */,
-				DF44D3171FACEA1800554D68 /* shader_crt_fragment.glsl */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2672,8 +2666,6 @@
 		DF0561C01FB104C300F499B9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DF0561C11FB1051000F499B9 /* shader_crt_fragment.glsl */,
-				DF0561C21FB1051100F499B9 /* shader_crt_vertex.glsl */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2883,6 +2875,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
+				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				B349AF4B1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B349AF4D1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
@@ -2899,8 +2892,6 @@
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* systems.plist in Resources */,
 				B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
-				DF44D3181FACEA1800554D68 /* shader_crt_fragment.glsl in Resources */,
-				DF44D3161FACE99D00554D68 /* shader_crt_vertex.glsl in Resources */,
 				B349AE3B1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2914,16 +2905,15 @@
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
 				1AD482371BA35A3300FDA50A /* systems.plist in Resources */,
 				B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
-				DF0561C31FB1051100F499B9 /* shader_crt_fragment.glsl in Resources */,
 				B349AE3A1E9ABCF900ACD416 /* .travis.yml in Resources */,
 				B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
 				B349AE3E1E9ABCF900ACD416 /* LICENSE in Resources */,
 				1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
-				DF0561C41FB1051100F499B9 /* shader_crt_vertex.glsl in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				1AD481C11BA350A400FDA50A /* Provenance.storyboard in Resources */,
+				DFCD6EC0203762AF00719289 /* shaders in Resources */,
 				B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				B349AE3C1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);

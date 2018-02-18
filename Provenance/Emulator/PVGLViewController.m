@@ -11,14 +11,26 @@
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 
+struct PVVertex
+{
+    GLfloat x, y, z;
+    GLfloat u, v;
+};
+
+#define BUFFER_OFFSET(x) ((char *)NULL + (x))
+
 @interface PVGLViewController () <PVRenderDelegate>
 {
-    GLKVector3 vertices[8];
-	GLKVector2 textureCoordinates[8];
-	GLKVector3 triangleVertices[6];
-	GLKVector2 triangleTexCoords[6];
-
-    GLuint crtVertexShader;
+    GLuint alternateThreadFramebufferBack;
+    GLuint alternateThreadFramebufferFront;
+    GLuint alternateThreadColorTextureBack;
+    GLuint alternateThreadColorTextureFront;
+    GLuint alternateThreadDepthRenderbuffer;
+    
+    GLuint blitFragmentShader;
+    GLuint blitShaderProgram;
+    int blitUniform_EmulatedImage;
+    
     GLuint crtFragmentShader;
     GLuint crtShaderProgram;
     int crtUniform_DisplayRect;
@@ -26,17 +38,16 @@
     int crtUniform_EmulatedImageSize;
     int crtUniform_FinalRes;
     
-    GLuint alternateThreadFramebuffer;
-    GLuint alternateThreadColorTexture;
-    GLuint alternateThreadDepthRenderbuffer;
+    GLuint defaultVertexShader;
+    
+    GLuint indexVBO, vertexVBO;
     
 	GLuint texture;
 }
 
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
-@property (nonatomic, strong) GLKBaseEffect *effect;
-@property (nonatomic, strong) GLKBaseEffect *alternateThreadEffect;
+@property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
 @end
 
 @implementation PVGLViewController
@@ -51,13 +62,21 @@
     {
         glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer);
     }
-    if (alternateThreadColorTexture > 0)
+    if (alternateThreadColorTextureFront > 0)
     {
-        glDeleteTextures(1, &alternateThreadColorTexture);
+        glDeleteTextures(1, &alternateThreadColorTextureFront);
     }
-    if (alternateThreadFramebuffer > 0)
+    if (alternateThreadColorTextureBack > 0)
     {
-        glDeleteFramebuffers(1, &alternateThreadFramebuffer);
+        glDeleteTextures(1, &alternateThreadColorTextureBack);
+    }
+    if (alternateThreadFramebufferBack > 0)
+    {
+        glDeleteFramebuffers(1, &alternateThreadFramebufferBack);
+    }
+    if (alternateThreadFramebufferFront > 0)
+    {
+        glDeleteFramebuffers(1, &alternateThreadFramebufferFront);
     }
     if (crtShaderProgram > 0)
     {
@@ -67,9 +86,17 @@
     {
         glDeleteShader(crtFragmentShader);
     }
-    if (crtVertexShader > 0)
+    if (blitShaderProgram > 0)
     {
-        glDeleteShader(crtVertexShader);
+        glDeleteProgram(blitShaderProgram);
+    }
+    if (blitFragmentShader > 0)
+    {
+        glDeleteShader(blitFragmentShader);
+    }
+    if (defaultVertexShader > 0)
+    {
+        glDeleteShader(defaultVertexShader);
     }
     glDeleteTextures(1, &texture);
 }
@@ -99,14 +126,17 @@
 
 	GLKView *view = (GLKView *)self.view;
     view.context = self.glContext;
-
-	self.effect = [[GLKBaseEffect alloc] init];
-
+    
+    [self setupVBOs];
 	[self setupTexture];
+    defaultVertexShader = [self compileShaderResource:@"shaders/default/default_vertex" ofType:GL_VERTEX_SHADER];
+    [self setupBlitShader];
     [self setupCRTShader];
     
-    alternateThreadFramebuffer = 0;
-    alternateThreadColorTexture = 0;
+    alternateThreadFramebufferBack = 0;
+    alternateThreadFramebufferFront = 0;
+    alternateThreadColorTextureBack = 0;
+    alternateThreadColorTextureFront = 0;
     alternateThreadDepthRenderbuffer = 0;
 }
 
@@ -262,15 +292,21 @@
     return shaderProgram;
 }
 
+- (void)setupBlitShader
+{
+    blitFragmentShader = [self compileShaderResource:@"shaders/blit/blit_fragment" ofType:GL_FRAGMENT_SHADER];
+    blitShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:blitFragmentShader];
+    blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage");
+}
+
 - (void)setupCRTShader
 {
-    crtVertexShader = [self compileShaderResource:@"shader_crt_vertex" ofType:GL_VERTEX_SHADER];
-    crtFragmentShader = [self compileShaderResource:@"shader_crt_fragment" ofType:GL_FRAGMENT_SHADER];
-    crtShaderProgram = [self linkVertexShader:crtVertexShader withFragmentShader:crtFragmentShader];
-    crtUniform_DisplayRect = glGetUniformLocation( crtShaderProgram, "DisplayRect" );
-    crtUniform_EmulatedImage = glGetUniformLocation( crtShaderProgram, "EmulatedImage" );
-    crtUniform_EmulatedImageSize = glGetUniformLocation( crtShaderProgram, "EmulatedImageSize" );
-    crtUniform_FinalRes = glGetUniformLocation( crtShaderProgram, "FinalRes" );
+    crtFragmentShader = [self compileShaderResource:@"shaders/crt/crt_fragment" ofType:GL_FRAGMENT_SHADER];
+    crtShaderProgram = [self linkVertexShader:defaultVertexShader withFragmentShader:crtFragmentShader];
+    crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect");
+    crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage");
+    crtUniform_EmulatedImageSize = glGetUniformLocation(crtShaderProgram, "EmulatedImageSize");
+    crtUniform_FinalRes = glGetUniformLocation(crtShaderProgram, "FinalRes");
 }
 
 - (void)setupTexture
@@ -290,6 +326,44 @@
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+- (void)setupVBOs
+{
+    glGenBuffers(1, &vertexVBO);
+    [self updateVBOWithScreenRect:self.emulatorCore.screenRect andVideoBufferSize:self.emulatorCore.bufferSize];
+    
+    GLushort indices[6] = { 0, 1, 2, 0, 2, 3 };
+    glGenBuffers(1, &indexVBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+- (void)updateVBOWithScreenRect:(CGRect)screenRect andVideoBufferSize:(CGSize)videoBufferSize
+{
+    GLfloat texLeft = screenRect.origin.x / videoBufferSize.width;
+    GLfloat texTop = screenRect.origin.y / videoBufferSize.height;
+    GLfloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
+    GLfloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+    if ([self.emulatorCore rendersToOpenGL])
+    {
+        // Rendered textures are flipped upside down
+        texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
+        texBottom = screenRect.origin.y / videoBufferSize.height;
+    }
+    
+    struct PVVertex quadVertices[4] =
+    {
+        { -1.0f, -1.0f, 1.0f, texLeft, texBottom},
+        {1.0f, -1.0f, 1.0f, texRight, texBottom},
+        {1.0f, 1.0f, 1.0f, texRight, texTop},
+        {-1.0f, 1.0f, 1.0f, texLeft, texTop}
+    };
+    
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_DYNAMIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
@@ -314,42 +388,11 @@
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        CGFloat texLeft = screenRect.origin.x / videoBufferSize.width;
-        CGFloat texTop = screenRect.origin.y / videoBufferSize.height;
-        CGFloat texRight = ( screenRect.origin.x + screenRect.size.width ) / videoBufferSize.width;
-        CGFloat texBottom = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
-        if ([self.emulatorCore rendersToOpenGL])
-        {
-            // Rendered textures are flipped upside down
-            texTop = ( screenRect.origin.y + screenRect.size.height ) / videoBufferSize.height;
-            texBottom = screenRect.origin.y / videoBufferSize.height;
-        }
-        
-        vertices[0] = GLKVector3Make(-1.0, -1.0,  1.0); // Left  bottom
-        vertices[1] = GLKVector3Make( 1.0, -1.0,  1.0); // Right bottom
-        vertices[2] = GLKVector3Make( 1.0,  1.0,  1.0); // Right top
-        vertices[3] = GLKVector3Make(-1.0,  1.0,  1.0); // Left  top
-        
-        textureCoordinates[0] = GLKVector2Make(texLeft, texBottom); // Left bottom
-        textureCoordinates[1] = GLKVector2Make(texRight, texBottom); // Right bottom
-        textureCoordinates[2] = GLKVector2Make(texRight, texTop); // Right top
-        textureCoordinates[3] = GLKVector2Make(texLeft, texTop); // Left top
-        
-        int vertexIndices[6] = {
-            // Front
-            0, 1, 2,
-            0, 2, 3,
-        };
-        
-        for (int i = 0; i < 6; i++) {
-            triangleVertices[i]  = vertices[vertexIndices[i]];
-            triangleTexCoords[i] = textureCoordinates[vertexIndices[i]];
-        }
-        
         GLuint frontBufferTex;
         if ([self.emulatorCore rendersToOpenGL])
         {
-            frontBufferTex = alternateThreadColorTexture;
+            frontBufferTex = alternateThreadColorTextureFront;
+            [self.emulatorCore.frontBufferLock lock];
         }
         else
         {
@@ -360,19 +403,8 @@
         
         if (frontBufferTex)
         {
-            if ( [[PVSettingsModel sharedInstance] crtFilterEnabled] )
-            {
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, frontBufferTex);
-            }
-            else
-            {
-                self.effect.texture2d0.envMode = GLKTextureEnvModeReplace;
-                self.effect.texture2d0.target = GLKTextureTarget2D;
-                self.effect.texture2d0.name = frontBufferTex;
-                self.effect.texture2d0.enabled = YES;
-                self.effect.useConstantColor = YES;
-            }
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
         if ([[PVSettingsModel sharedInstance] crtFilterEnabled])
@@ -387,33 +419,39 @@
         }
         else
         {
-            [self.effect prepareToDraw];
+            glUseProgram(blitShaderProgram);
+            glUniform1i(blitUniform_EmulatedImage, 0);
         }
         
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_CULL_FACE);
         
+        [self updateVBOWithScreenRect:screenRect andVideoBufferSize:videoBufferSize];
+        
+        glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+        
         glEnableVertexAttribArray(GLKVertexAttribPosition);
-        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 0, triangleVertices);
+        glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
         
-        if (frontBufferTex)
-        {
-            glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
-            glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, 0, triangleTexCoords);
-        }
+        glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+        glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(12));
         
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         
-        if (frontBufferTex)
-        {
-            glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
-        }
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         
+        glDisableVertexAttribArray(GLKVertexAttribTexCoord0);
         glDisableVertexAttribArray(GLKVertexAttribPosition);
         
         glBindTexture(GL_TEXTURE_2D, 0);
         
-        glFlush();
+        if ([self.emulatorCore rendersToOpenGL])
+        {
+            glFlush();
+            [self.emulatorCore.frontBufferLock unlock];
+        }
     };
     
     if ([self.emulatorCore rendersToOpenGL])
@@ -423,16 +461,16 @@
             [self.emulatorCore.frontBufferCondition lock];
             while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
             BOOL isFrontBufferReady = self.emulatorCore.isFrontBufferReady;
-            [self.emulatorCore.frontBufferLock lock];
+            [self.emulatorCore.frontBufferCondition unlock];
             if (isFrontBufferReady)
             {
                 fetchVideoBuffer();
                 renderBlock();
+                [self.emulatorCore.frontBufferCondition lock];
+                [self.emulatorCore setIsFrontBufferReady:NO];
+                [self.emulatorCore.frontBufferCondition signal];
+                [self.emulatorCore.frontBufferCondition unlock];
             }
-            [self.emulatorCore.frontBufferLock unlock];
-            [self.emulatorCore setIsFrontBufferReady:NO];
-            [self.emulatorCore.frontBufferCondition signal];
-            [self.emulatorCore.frontBufferCondition unlock];
         }
     }
     else
@@ -471,30 +509,56 @@
 
 - (void)startRenderingOnAlternateThread
 {
-    self.alternateThreadGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
-    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+    self.alternateThreadBufferCopyGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
+    [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     
-    self.alternateThreadEffect = [[GLKBaseEffect alloc] init];
-    
-    // Setup framebuffer
-    if (alternateThreadFramebuffer == 0)
+    if (alternateThreadFramebufferFront == 0)
     {
-        glGenFramebuffers(1, &alternateThreadFramebuffer);
+        glGenFramebuffers(1, &alternateThreadFramebufferFront);
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferFront);
     
-    // Setup color textures to render into
-    if (alternateThreadColorTexture == 0)
+    if (alternateThreadColorTextureFront == 0)
     {
-        glGenTextures(1, &alternateThreadColorTexture);
-        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTexture);
+        glGenTextures(1, &alternateThreadColorTextureFront);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureFront);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.width & ((unsigned int)self.emulatorCore.bufferSize.width - 1)), @"Emulator buffer width is not a power of two!" );
         NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTexture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureFront, 0);
+    NSAssert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, @"Front framebuffer incomplete!");
+    
+    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
+    glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);
+    glUseProgram(blitShaderProgram);
+    glUniform1i(blitUniform_EmulatedImage, 0);
+    
+    self.alternateThreadGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
+    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+    
+    // Setup framebuffer
+    if (alternateThreadFramebufferBack == 0)
+    {
+        glGenFramebuffers(1, &alternateThreadFramebufferBack);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
+    
+    // Setup color textures to render into
+    if (alternateThreadColorTextureBack == 0)
+    {
+        glGenTextures(1, &alternateThreadColorTextureBack);
+        glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        NSAssert( !((unsigned int)self.emulatorCore.bufferSize.width & ((unsigned int)self.emulatorCore.bufferSize.width - 1)), @"Emulator buffer width is not a power of two!" );
+        NSAssert( !((unsigned int)self.emulatorCore.bufferSize.height & ((unsigned int)self.emulatorCore.bufferSize.height - 1)), @"Emulator buffer height is not a power of two!" );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureBack, 0);
     
     // Setup depth buffer
     if (alternateThreadDepthRenderbuffer == 0)
@@ -510,18 +574,57 @@
 
 - (void)didRenderFrameOnAlternateThread
 {
+    // Release back buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glFlush();
     
+    // Blit back buffer to front buffer
+    [self.emulatorCore.frontBufferLock lock];
+    
+    // NOTE: We switch contexts here because we don't know what state
+    // the emulator core might have OpenGL in and we need to avoid
+    // changing any state it's relying on. It's more efficient and
+    // less verbose to switch contexts than to try do a bunch of
+    // state retrieval and restoration.
+    [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
+    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferFront);
+    
+    glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+    
+    glEnableVertexAttribArray(GLKVertexAttribPosition);
+    glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(0));
+
+    glEnableVertexAttribArray(GLKVertexAttribTexCoord0);
+    glVertexAttribPointer(GLKVertexAttribTexCoord0, 2, GL_FLOAT, GL_FALSE, sizeof(struct PVVertex), BUFFER_OFFSET(12));
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexVBO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, NULL);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    glFlush();
+    
+    [self.emulatorCore.frontBufferLock unlock];
+    
+    // Notify render thread that the front buffer is ready
     [self.emulatorCore.frontBufferCondition lock];
     [self.emulatorCore setIsFrontBufferReady:YES];
     [self.emulatorCore.frontBufferCondition signal];
     [self.emulatorCore.frontBufferCondition unlock];
     
-    [self.emulatorCore.frontBufferCondition lock];
-    while (self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
-    [self.emulatorCore.frontBufferCondition unlock];
-    
-    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
+    // Switch context back to emulator's
+    [EAGLContext setCurrentContext:self.alternateThreadGLContext];
+    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
 }
 
 @end
