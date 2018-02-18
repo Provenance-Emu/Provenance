@@ -13,11 +13,11 @@
 
 @import GameController;
 
-extern NSString * const PVSavedDPadFrameKey;
-extern NSString * const PVSavedButtonFrameKey;
-extern NSString * const PVSavedControllerFramesKey;
+extern NSString * _Nonnull const PVSavedDPadFrameKey;
+extern NSString * _Nonnull const PVSavedButtonFrameKey;
+extern NSString * _Nonnull const PVSavedControllerFramesKey;
 
-@class PVControllerViewController, PVEmulatorCore;
+@class PVEmulatorCore;
 
 typedef NS_ENUM(NSInteger, PVControllerButton) {
     PVControllerButtonA,
@@ -30,35 +30,53 @@ typedef NS_ENUM(NSInteger, PVControllerButton) {
     PVControllerButtonRightTrigger
 };
 
-@interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate> {
+@protocol PVController <NSObject>
+@optional
+    @property (nonatomic, strong, nullable) JSDPad *dPad;
+    @property (nonatomic, strong, nullable) JSDPad *dPad2;
+    @property (nonatomic, strong, nullable) UIView *buttonGroup;
+    @property (nonatomic, strong, nullable) JSButton *leftShoulderButton;
+    @property (nonatomic, strong, nullable) JSButton *rightShoulderButton;
+    @property (nonatomic, strong, nullable) JSButton *leftShoulderButton2;
+    @property (nonatomic, strong, nullable) JSButton *rightShoulderButton2;
+    @property (nonatomic, strong, nullable) JSButton *startButton;
+    @property (nonatomic, strong, nullable) JSButton *selectButton;
+@end
 
-}
+@interface PVControllerViewController : UIViewController <JSDPadDelegate, JSButtonDelegate>
 
-@property (nonatomic, strong) PVEmulatorCore *emulatorCore;
-@property (nonatomic, copy) NSString *systemIdentifier;
-@property (nonatomic, strong) JSDPad *dPad;
-@property (nonatomic, strong) JSDPad *dPad2;
-@property (nonatomic, strong) UIView *buttonGroup;
-@property (nonatomic, strong) JSButton *leftShoulderButton;
-@property (nonatomic, strong) JSButton *rightShoulderButton;
-@property (nonatomic, strong) JSButton *leftShoulderButton2;
-@property (nonatomic, strong) JSButton *rightShoulderButton2;
-@property (nonatomic, strong) JSButton *startButton;
-@property (nonatomic, strong) JSButton *selectButton;
+@property (nonatomic, strong, nullable) PVEmulatorCore *emulatorCore;
+@property (nonatomic, strong, nonnull) NSString *systemIdentifier;
+
+@property (nonatomic, strong, nullable) JSDPad *dPad;
+@property (nonatomic, strong, nullable) JSDPad *dPad2;
+@property (nonatomic, strong, nullable) UIView *buttonGroup;
+@property (nonatomic, strong, nullable) JSButton *leftShoulderButton;
+@property (nonatomic, strong, nullable) JSButton *rightShoulderButton;
+@property (nonatomic, strong, nullable) JSButton *leftShoulderButton2;
+@property (nonatomic, strong, nullable) JSButton *rightShoulderButton2;
+@property (nonatomic, strong, nullable) JSButton *startButton;
+@property (nonatomic, strong, nullable) JSButton *selectButton;
+
 #if !TARGET_OS_TV
-@property (nonatomic, strong) UISelectionFeedbackGenerator *feedbackGenerator;
+@property (nonatomic, strong, nullable) UISelectionFeedbackGenerator *feedbackGenerator;
 #endif
 
-- (id)initWithControlLayout:(NSArray *)controlLayout systemIdentifier:(NSString *)systemIdentifier;
+- (instancetype _Nonnull)initWithControlLayout:(NSArray<NSDictionary<NSString*,id>*> * _Nonnull)controlLayout
+                              systemIdentifier:(NSString *_Nonnull)systemIdentifier;
 
-- (void)dPad:(JSDPad *)dPad didPressDirection:(JSDPadDirection)direction;
-- (void)dPadDidReleaseDirection:(JSDPad *)dPad;
-- (void)buttonPressed:(JSButton *)button;
-- (void)buttonReleased:(JSButton *)button;
+- (void)dPad:(JSDPad *_Nonnull)dPad didPressDirection:(JSDPadDirection)direction;
+- (void)dPadDidReleaseDirection:(JSDPad * _Nonnull)dPad;
+- (void)buttonPressed:(JSButton * _Nonnull)button;
+- (void)buttonReleased:(JSButton * _Nonnull)button;
 - (void)pressStartForPlayer:(NSUInteger)player;
 - (void)releaseStartForPlayer:(NSUInteger)player;
 - (void)pressSelectForPlayer:(NSUInteger)player;
 - (void)releaseSelectForPlayer:(NSUInteger)player;
 - (void)vibrate;
 
+@end
+
+@interface PVControllerViewController ()
+@property (nonatomic, strong, nonnull) NSArray<NSDictionary<NSString*,id>*> * controlLayout;
 @end

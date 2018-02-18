@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+@class JSButton;
 @interface PVButtonGroupOverlayView : UIView
 
-- (id)initWithButtons:(NSArray *)buttons;
+- (instancetype _Nonnull)initWithButtons:(NSArray<JSButton*> * _Nonnull)buttons;
 
 @end

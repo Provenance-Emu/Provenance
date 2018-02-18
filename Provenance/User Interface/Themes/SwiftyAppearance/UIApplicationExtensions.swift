@@ -9,11 +9,7 @@
 import UIKit
 
 public extension NSNotification.Name {
-    
-    /// <#Description#>
     public static let SwiftyAppearanceWillRefresh = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshNotification")
-    
-    /// <#Description#>
     public static let SwiftyAppearanceDidRefresh = NSNotification.Name(rawValue: "SwiftyAppearanceDidRefreshNotification")
 }
 
@@ -25,9 +21,6 @@ public extension UIApplication {
         }
     }
 
-    /// <#Description#>
-    ///
-    /// - Parameter animated: <#animated description#>
     public func refreshAppearance(animated: Bool) {
         NotificationCenter.default.post(name: .SwiftyAppearanceWillRefresh, object: self)
         UIView.animate(withDuration: animated ? 0.25 : 0, animations: {

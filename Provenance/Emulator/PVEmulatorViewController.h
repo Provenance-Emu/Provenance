@@ -19,16 +19,15 @@
 @interface PVEmulatorViewController : UIViewController
 #endif
 
+@property (nonatomic, strong, nullable) PVEmulatorCore *emulatorCore;
+@property (nonatomic, strong, nonnull) PVGame *game;
+@property (nonatomic, strong, nullable)  NSString *systemID;
+@property (nonatomic, copy, nullable) NSString *batterySavesPath;
+@property (nonatomic, copy, nullable) NSString *saveStatePath;
+@property (nonatomic, copy, nullable) NSString *BIOSPath;
 
-@property (nonatomic, strong) PVEmulatorCore *emulatorCore;
-@property (nonatomic, strong) PVGame *game;
-@property (nonatomic, strong)  NSString *systemID;
-@property (nonatomic, copy) NSString *batterySavesPath;
-@property (nonatomic, copy) NSString *saveStatePath;
-@property (nonatomic, copy) NSString *BIOSPath;
-
-- (instancetype)initWithGame:(PVGame *)game;
+- (instancetype _Nonnull )initWithGame:(PVGame *_Nonnull)game;
 - (void)quit;
-- (void)quit:(void(^)(void))completion;
+- (void)quit:(void(^_Nullable)(void))completion;
 
 @end

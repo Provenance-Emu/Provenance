@@ -10,10 +10,8 @@ import UIKit
 
 public extension NSNotification.Name {
     
-    /// <#Description#>
     public static let SwiftyAppearanceWillRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshWindowNotification")
  
-    /// <#Description#>
     public static let SwiftyAppearanceDidRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceDidRefreshWindowNotification")
 }
 

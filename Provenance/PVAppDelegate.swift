@@ -40,11 +40,8 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             tabBarController.viewControllers = viewControllers
         }
 #else
-
-        if #available(iOS 9.0, *) {
-            let currentTheme = PVSettingsModel.sharedInstance().theme
-            Theme.setTheme(currentTheme.theme)
-        }
+        let currentTheme = PVSettingsModel.sharedInstance().theme
+        Theme.setTheme(currentTheme.theme)
 #endif
         
         startOptionalWebDavServer()

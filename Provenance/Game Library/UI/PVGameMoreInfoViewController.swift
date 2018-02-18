@@ -55,7 +55,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     #endif
     @IBOutlet weak var playBarButtonItem: UIBarButtonItem!
     
-    var isMustRefreshDataSource = false
+    var mustRefreshDataSource = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -216,7 +216,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                             if let data = data {
                                 
                                 // Save to cache for later
-                                try? PVMediaCache.writeData(toDisk: data, withKey: imageKey)
+                                _ = try? PVMediaCache.writeData(toDisk: data, withKey: imageKey)
                                 
                                 DispatchQueue.main.async {
                                     if let newImage = UIImage(data: data) {

@@ -38,23 +38,17 @@ extension PVRecentGame {
     }
     
     var imageType : TVContentItemImageShape {
-        let posterSystems : [String] = [PVNESSystemIdentifier, PVGenesisSystemIdentifier, PVSegaCDSystemIdentifier, PVMasterSystemSystemIdentifier, PVSG1000SystemIdentifier, PV32XSystemIdentifier, PV2600SystemIdentifier, PV5200SystemIdentifier, PV7800SystemIdentifier, PVLynxSystemIdentifier, PVWonderSwanSystemIdentifier]
-        
-        let squareSystems : [String] = [PVGameGearSystemIdentifier, PVGBSystemIdentifier, PVGBCSystemIdentifier, PVGBASystemIdentifier, PVNGPSystemIdentifier, PVNGPCSystemIdentifier, PVPSXSystemIdentifier, PVVirtualBoySystemIdentifier, PVPCESystemIdentifier, PVPCECDSystemIdentifier, PVPCFXSystemIdentifier, PVFDSSystemIdentifier, PVPokemonMiniSystemIdentifier]
-        
-        let wideSystems  : [String] = [PVN64SystemIdentifier, PVSNESSystemIdentifier]
-        
-        let systemIdentifier = game?.systemIdentifier ?? ""
-        
-        if posterSystems.contains(systemIdentifier ){
-            return .poster
-        } else if squareSystems.contains(systemIdentifier) {
+        guard let game = game, let system = game.system else {
             return .square
-        } else if wideSystems.contains(systemIdentifier) {
-            return .HDTV
-        } else {
+        }
+        
+        switch system {
+        case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
+            return .poster
+        case .GameGear, .GB, .GBC, .GBA, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini:
+            return .square
+        case .N64, .SNES:
             return .HDTV
         }
     }
 }
-

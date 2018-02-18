@@ -16,10 +16,12 @@ public enum LogLevel : Int {
     case error
 }
 
+private let startDate = Date()
+
 #if DEBUG
 let LOG_LEVEL : LogLevel = .debug
 #else
-let LOG_LEVEL : LogLevel = .info
+let LOG_LEVEL : LogLevel = .debug
 #endif
 
 public func VLOG(_ message: @autoclosure () -> String, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
@@ -75,7 +77,7 @@ fileprivate func _LogMessage(_ message: @autoclosure () -> String, file: StaticS
     let fileName = (String(describing: file) as NSString).lastPathComponent
     let messageString = message()
     
-    let logString = "\(icon) [\(levelString)] \(fileName):\(line) \(function)\n  ↪︎ \(messageString)\n"
+    let logString = "\(Int(floor(startDate.timeIntervalSinceNow * -1))) \(icon) [\(levelString)] \(fileName):\(line) \(function)\n  ↪︎ \(messageString)\n"
     
     print(logString)
 }

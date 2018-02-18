@@ -48,7 +48,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
         
             // TODO: May be renabled later
-        let placeholderImageText: String = PVEmulatorConfiguration.sharedInstance().shortName(forSystemIdentifier: game.systemIdentifier) ?? "No System"
+        let placeholderImageText: String = PVEmulatorConfiguration.shortName(forSystemIdentifier: game.systemIdentifier) ?? "No System"
         if artworkURL.isEmpty && originalArtworkURL.isEmpty {
             var artworkText: String
             if PVSettingsModel.sharedInstance().showGameTitles {
@@ -77,7 +77,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     self.imageView.image = artwork
 #if os(tvOS)
                     let width: CGFloat = self.frame.width
-                    let boxartSize = CGSize(width: width, height: width / game.boxartAspectRatio)
+                    let boxartSize = CGSize(width: width, height: width / game.boxartAspectRatio.rawValue)
                     self.imageView.frame = CGRect(x: 0, y: 0, width: width, height: boxartSize.height)
 #else
                     var imageHeight: CGFloat = self.frame.size.height

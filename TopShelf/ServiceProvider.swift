@@ -43,7 +43,7 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
             }
             recentItems.title = "Recently Played"
             
-            let database = RomDatabase.temporaryDatabaseContext()
+            let database = RomDatabase.sharedInstance
         
             let recentGames = database.all(PVRecentGame.self, sorthedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
             

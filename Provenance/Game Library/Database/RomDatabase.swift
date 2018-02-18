@@ -60,7 +60,35 @@ public class RealmConfiguration {
     }()
 }
 
-public final class RomDatabase : NSObject {
+
+internal class WeakWrapper : NSObject {
+    static var associatedKey = "WeakWrapper"
+    weak var weakObject : RomDatabase?
+    
+    init(_ weakObject: RomDatabase?) {
+        self.weakObject = weakObject
+    }
+}
+import ObjectiveC
+extension Thread {
+    var realm: RomDatabase? {
+        get {
+            let weakWrapper: WeakWrapper? = objc_getAssociatedObject(self, &WeakWrapper.associatedKey) as? WeakWrapper
+            return weakWrapper?.weakObject
+        }
+        set {
+            var weakWrapper: WeakWrapper? = objc_getAssociatedObject(self, &WeakWrapper.associatedKey) as? WeakWrapper
+            if weakWrapper == nil {
+                weakWrapper = WeakWrapper(newValue)
+                objc_setAssociatedObject(self, &WeakWrapper.associatedKey, weakWrapper, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            } else {
+                weakWrapper!.weakObject = newValue
+            }
+        }
+    }
+}
+
+public final class RomDatabase {
     
     // Private shared instance that propery initializes
     private static var _sharedInstance : RomDatabase =  {
@@ -75,7 +103,6 @@ public final class RomDatabase : NSObject {
     // Or maybe there should be no public sharedInstance and instead only a
     // databaseContext object that must be used for all calls. It would be another class
     // and RomDatabase would just exist to provide context instances and init the initial database - jm
-    @objc
     public static var sharedInstance : RomDatabase {
         // Make sure real shared is inited first
         let shared = RomDatabase._sharedInstance
@@ -83,26 +110,29 @@ public final class RomDatabase : NSObject {
         if Thread.isMainThread {
             return shared
         } else {
-            return RomDatabase.temporaryDatabaseContext()
+            if let realm = Thread.current.realm {
+                return realm
+            } else {
+                let realm = RomDatabase.temporaryDatabaseContext()
+                Thread.current.realm = realm
+                return realm
+            }
         }
     }
     
     // For multi-threading
-    @objc
-    public static func temporaryDatabaseContext() -> RomDatabase {
+    fileprivate static func temporaryDatabaseContext() -> RomDatabase {
         return RomDatabase()
     }
     
     fileprivate var realm : Realm
     
-    override init() {
+    private init() {
         do {
             self.realm = try Realm()
         } catch {
             fatalError("\(error.localizedDescription)")
         }
-
-        super.init()
     }
 }
 
@@ -142,8 +172,16 @@ public extension RomDatabase {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(booleanLiteral: value)))
     }
     
+    public func all<T:Object,KeyType>(_ type : T.Type, where keyPath: String, value : KeyType) -> Results<T> {
+        return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", [value]))
+    }
+    
     public func all<T:Object>(_ type : T.Type, filter: NSPredicate) -> Results<T> {
         return realm.objects(T.self).filter(filter)
+    }
+    
+    public func object<T:Object, KeyType>(ofType type : T.Type, wherePrimaryKeyEquals value : KeyType) -> T? {
+        return realm.object(ofType: T.self, forPrimaryKey: value)
     }
     
     // HELPERS -- TODO: Get rid once we're all swift

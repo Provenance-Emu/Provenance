@@ -642,7 +642,7 @@
 				<key>Name</key>
 				<string>syscard3.pce</string>
 				<key>Size</key>
-				<string>262656</string>
+				<integer>262656</integer>
 			</dict>
 		</array>
 	</dict>

@@ -29,7 +29,7 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
     public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
         
         if RealmConfiguration.supportsAppGroups {
-            let database = RomDatabase.temporaryDatabaseContext()
+            let database = RomDatabase.sharedInstance
             
             let allGames = database.all(PVGame.self)
             indexResults(allGames)
@@ -45,7 +45,7 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
         // Reindex any items with the given identifiers and the provided index
         
         if RealmConfiguration.supportsAppGroups {
-            let database = RomDatabase.temporaryDatabaseContext()
+            let database = RomDatabase.sharedInstance
             
             
             let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format:"md5Hash IN %@", identifiers))
@@ -88,7 +88,7 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
         if typeIdentifier == (kUTTypeImage as String) {
             let md5 = itemIdentifier.components(separatedBy: ".").last ?? ""
             
-            if let game = RomDatabase.temporaryDatabaseContext().all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first, let artworkURL = game.pathOfCachedImage {
+            if let game = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first, let artworkURL = game.pathOfCachedImage {
                 return artworkURL
             } else {
                 throw SpotlightError.notFound

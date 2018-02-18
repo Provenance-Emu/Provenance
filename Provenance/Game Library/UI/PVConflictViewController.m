@@ -8,7 +8,7 @@
 
 #import "PVConflictViewController.h"
 #import "PVGameImporter.h"
-#import "PVEmulatorConfiguration.h"
+#import "Provenance-Swift.h"
 
 @interface PVConflictViewController ()
 
@@ -68,7 +68,7 @@
     for (NSString *file in filesInConflictsFolder)
     {
         NSString *extension = [file pathExtension];
-        if ([[[PVEmulatorConfiguration sharedInstance] systemIdentifiersForFileExtension:[extension lowercaseString]] count] > 1)
+        if ([[PVEmulatorConfiguration systemIdentifiersForFileExtension:[extension lowercaseString]] count] > 1)
         {
             [tempConflictedFiles addObject:file];
         }
@@ -189,12 +189,12 @@
     [[alertController popoverPresentationController] setSourceView:self.view];
     [[alertController popoverPresentationController] setSourceRect:[self.tableView rectForRowAtIndexPath:indexPath]];
     
-    for (NSString *systemID in [[PVEmulatorConfiguration sharedInstance] availableSystemIdentifiers])
+    for (NSString *systemID in [PVEmulatorConfiguration availableSystemIdentifiers])
     {
-        NSArray *supportedExtensions = [[PVEmulatorConfiguration sharedInstance] fileExtensionsForSystemIdentifier:systemID];
+        NSArray *supportedExtensions = [PVEmulatorConfiguration fileExtensionsForSystemIdentifier:systemID];
         if ([supportedExtensions containsObject:[path pathExtension]])
         {
-            NSString *name = [[PVEmulatorConfiguration sharedInstance] shortNameForSystemIdentifier:systemID];
+            NSString *name = [PVEmulatorConfiguration shortNameForSystemIdentifier:systemID];
             [alertController addAction:[UIAlertAction actionWithTitle:name style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
                 [self.gameImporter resolveConflictsWithSolutions:@{path: systemID}];
                 // This update crashes since we remove for me on aTV.

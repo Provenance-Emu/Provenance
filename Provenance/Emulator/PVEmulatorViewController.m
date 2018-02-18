@@ -16,7 +16,6 @@
 #import "PVButtonGroupOverlayView.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
-#import "PVEmulatorConfiguration.h"
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
@@ -85,14 +84,6 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[self.glViewController view] removeFromSuperview];
 	[self.glViewController removeFromParentViewController];
 	
-	self.emulatorCore = nil;
-	self.gameAudio = nil;
-	self.glViewController = nil;
-	self.controllerViewController = nil;
-	self.menuButton = nil;
-
-    self.fpsTimer = nil;
-
 #if !TARGET_OS_TV
 	for (GCController *controller in [GCController controllers])
 	{
@@ -146,7 +137,7 @@ void uncaughtExceptionHandler(NSException *exception)
 												 name:PVControllerManagerControllerReassignedNotification
 											   object:nil];
 
-	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+	self.emulatorCore = [PVCoreFactory emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
     self.emulatorCore.audioDelegate = self;
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
@@ -189,12 +180,14 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.glViewController didMoveToParentViewController:self];
     }
 
-	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
+    #if !TARGET_OS_TV
+	self.controllerViewController = [PVCoreFactory controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
 	[self.controllerViewController setEmulatorCore:self.emulatorCore];
 	[self addChildViewController:self.controllerViewController];
 	[self.view addSubview:[self.controllerViewController view]];
 	[self.controllerViewController didMoveToParentViewController:self];
-	
+    #endif
+    
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
@@ -463,7 +456,7 @@ void uncaughtExceptionHandler(NSException *exception)
     }
 
     PVControllerManager *controllerManager = [PVControllerManager sharedManager];
-	BOOL wantsStartSelectInMenu = [[PVEmulatorConfiguration sharedInstance] systemIDWantsStartAndSelectInMenu: self.systemID];
+	BOOL wantsStartSelectInMenu = [PVEmulatorConfiguration systemIDWantsStartAndSelectInMenu: self.systemID];
 	
 	if ([controllerManager player1]) {
 		if (![[controllerManager player1] extendedGamepad] || wantsStartSelectInMenu)
@@ -597,8 +590,10 @@ void uncaughtExceptionHandler(NSException *exception)
     
     [actionsheet addAction:resumeAction];
     
-    [actionsheet setPreferredAction:resumeAction];
-
+    if (@available(iOS 9.0, *)) {
+        actionsheet.preferredAction = resumeAction;
+    }
+ 
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
@@ -860,6 +855,10 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
+    
+    if (self.game != nil) {
+        [self finishedPlayingWithGame:self.game];
+    }
 }
 
 #pragma mark - Controllers

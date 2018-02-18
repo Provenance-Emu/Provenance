@@ -11,7 +11,7 @@
 
 @interface PVButtonGroupOverlayView ()
 
-@property (nonatomic, strong) NSArray *buttons;
+@property (nonatomic, strong) NSArray<JSButton*> * _Nonnull buttons;
 
 @end
 
@@ -29,16 +29,6 @@
 	}
 	
 	return self;
-}
-
-- (void)dealloc
-{
-	self.buttons = nil;
-}
-
-- (void)willMoveToSuperview:(UIView *)newSuperview
-{
-	[super willMoveToSuperview:newSuperview];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

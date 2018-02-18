@@ -15,7 +15,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var autoLoadSwitch: UISwitch!
     @IBOutlet weak var autoLockSwitch: UISwitch!
     @IBOutlet weak var vibrateSwitch: UISwitch!
-    @IBOutlet weak var isImageSmoothing: UISwitch!
+    @IBOutlet weak var imageSmoothing: UISwitch!
     @IBOutlet weak var crtFilterSwitch: UISwitch!
     @IBOutlet weak var opacitySlider: UISlider!
     @IBOutlet weak var opacityValueLabel: UILabel!
@@ -50,7 +50,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         opacitySlider.value = Float(settings.controllerOpacity)
         autoLockSwitch.isOn = settings.disableAutoLock
         vibrateSwitch.isOn = settings.buttonVibration
-        isImageSmoothing.isOn = settings.imageSmoothing
+        imageSmoothing.isOn = settings.imageSmoothing
         crtFilterSwitch.isOn = settings.crtFilterEnabled
         fpsCountSwitch.isOn = settings.showFPSCount
         volumeSlider.value = settings.volume
@@ -60,7 +60,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         versionLabel.text = versionText
     
-        
 #if DEBUG
         modeLabel.text = "DEBUG"
 #else
@@ -136,7 +135,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func toggleSmoothing(_ sender: Any) {
-        PVSettingsModel.sharedInstance().imageSmoothing = isImageSmoothing.isOn
+        PVSettingsModel.sharedInstance().imageSmoothing = imageSmoothing.isOn
     }
 
     @IBAction func toggleCRTFilter(_ sender: Any) {

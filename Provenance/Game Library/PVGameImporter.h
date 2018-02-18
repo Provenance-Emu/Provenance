@@ -31,8 +31,6 @@ NS_ASSUME_NONNULL_END
 - (instancetype _Nonnull )initWithCompletionHandler:(PVGameImporterCompletionHandler __nullable)completionHandler;
 
 NS_ASSUME_NONNULL_BEGIN
-- (void)startImportForPaths:(NSArray *)paths;
-
 - (NSArray *)conflictedFiles;
 - (void)resolveConflictsWithSolutions:(NSDictionary *)solutions;
 
@@ -44,7 +42,9 @@ NS_ASSUME_NONNULL_END
 
 // Private
 @interface PVGameImporter()
-- (NSString* _Nullable)calculateMD5ForGame:(PVGame *_Nonnull)game;
-- (NSString * _Nonnull)documentsPath;
 @property (nonatomic, strong) OESQLiteDatabase * _Nullable openVGDB;
+
+@property (nonatomic, readwrite, strong) dispatch_queue_t _Nonnull serialImportQueue;
+@property (nonatomic, strong) NSDictionary<NSString*, NSString*> *_Nonnull systemToPathMap;
+@property (nonatomic, strong) NSDictionary<NSString*, NSArray<NSString*>*> *_Nonnull romExtensionToSystemsMap;
 @end

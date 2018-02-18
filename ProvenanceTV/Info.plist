@@ -46,7 +46,7 @@
 		<string>com.provenance-emu.game.play</string>
 	</array>
 	<key>Revision</key>
-	<string>3889340</string>
+	<string>f9c61252</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Provenance</string>
 	<key>UIRequiredDeviceCapabilities</key>

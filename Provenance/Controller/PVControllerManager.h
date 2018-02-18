@@ -20,8 +20,8 @@ extern NSString * _Nonnull const PVControllerManagerControllerReassignedNotifica
 @property (nonatomic, strong, nullable) GCController *player1;
 @property (nonatomic, strong, nullable) GCController *player2;
 @property (nonatomic, strong, nullable) PViCadeController *iCadeController;
+@property (nonatomic, readonly) BOOL hasControllers;
 
-- (BOOL)hasControllers;
 - (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *_Nullable)window completion:(void (^_Nullable)(void))completion;
 - (void)stopListeningForICadeControllers;
 

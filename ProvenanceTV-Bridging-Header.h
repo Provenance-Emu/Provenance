@@ -8,6 +8,8 @@
 #import "OESQLiteDatabase.h"
 #import "NSFileManager+Hashing.h"
 #import "kICadeControllerSetting.h"
+#import "LzmaSDKObjCReader.h"
+#import "SSZipArchive.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
@@ -25,9 +27,6 @@
 #import "NSData+Hashing.h"
 #import "PVConflictViewController.h"
 #import "PVControllerManager.h"
-#import "PVDirectoryWatcher.h"
-#import "PVEmulatorConfiguration.h"
-#import "PVEmulatorConstants.h"
 #import "PVEmulatorViewController.h"
 #import "PVGameImporter.h"
 #import "PVWebServer.h"

@@ -3,10 +3,40 @@
 //
 
 #import "NSData+Hashing.h"
+#import "NSFileManager+Hashing.h"
 #import "UIImage+Scaling.h"
 #import "PVGameImporter.h"
 #import "NSString+Hashing.h"
 #import "OESQLiteDatabase.h"
+#import "LzmaSDKObjCReader.h"
+#import "SSZipArchive.h"
+
+// Hack cause they can't make modules for some reason
+#import <ProSystem/ProSystemGameCore.h>
+#import <PicoDrive/PicodriveGameCore.h>
+
+// -----------------------------------------------------------------------------
+// Controller UIs
+#import "PVButtonGroupOverlayView.h"
+#import "PVControllerViewController.h"
+
+#import "PV32XControllerViewController.h"
+#import "PVAtari5200ControllerViewController.h"
+#import "PVAtari7800ControllerViewController.h"
+#import "PVGBAControllerViewController.h"
+#import "PVGBControllerViewController.h"
+#import "PVGenesisControllerViewController.h"
+#import "PVLynxControllerViewController.h"
+#import "PVN64ControllerViewController.h"
+#import "PVNESControllerViewController.h"
+#import "PVNeoGeoPocketControllerViewController.h"
+#import "PVPCEControllerViewController.h"
+#import "PVPSXControllerViewController.h"
+#import "PVPokeMiniControllerViewController.h"
+#import "PVSNESControllerViewController.h"
+#import "PVStellaControllerViewController.h"
+#import "PVVBControllerViewController.h"
+#import "PVWonderSwanControllerViewController.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
@@ -31,9 +61,6 @@
 #import "OESQLiteDatabase.h"
 #import "PVControllerManager.h"
 #import "PVControllerSelectionViewController.h"
-#import "PVDirectoryWatcher.h"
-#import "PVEmulatorConfiguration.h"
-#import "PVEmulatorConstants.h"
 #import "PVEmulatorViewController.h"
 #import "PVGameImporter.h"
 #import "PVSynchronousURLSession.h"

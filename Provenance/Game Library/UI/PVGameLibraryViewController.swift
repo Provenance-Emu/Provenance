@@ -40,7 +40,7 @@ private let CellWidth: CGFloat = 308.0
 let USE_IOS_11_SEARCHBAR = 0
 #endif
 
-class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
+class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
     var watcher: PVDirectoryWatcher?
     var coverArtWatcher: PVDirectoryWatcher?
@@ -60,7 +60,9 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     var searchResults: Results<PVGame>?
     @IBOutlet weak var searchField: UITextField!
     var isInitialAppearance = false
-    var isMustRefreshDataSource = false
+    var mustRefreshDataSource = false
+
+    var needToShowConflictsAlert = false
 
 // MARK: - Lifecycle
     required init?(coder aDecoder: NSCoder) {
@@ -117,27 +119,37 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         })
         #endif
         
-        PVEmulatorConfiguration.sharedInstance()
         //load the config file
         title = "Library"
+        
         let layout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
-        collectionView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionView?.dataSource = self
-        collectionView?.delegate = self
-        collectionView?.bounces = true
-        collectionView?.alwaysBounceVertical = true
-        collectionView?.delaysContentTouches = false
-        collectionView?.keyboardDismissMode = .interactive
-        collectionView?.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
+        
+        if #available(tvOS 11.0, iOS 11.0, *) {
+            var safeArea = view.safeAreaInsets
+            safeArea.top += 20
+            safeArea.bottom += 20
+            layout.sectionInset = safeArea;
+        } else {
+            layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+        }
+
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
+        self.collectionView = collectionView
+        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.bounces = true
+        collectionView.alwaysBounceVertical = true
+        collectionView.delaysContentTouches = false
+        collectionView.keyboardDismissMode = .interactive
+        collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
 #if os(tvOS)
-        collectionView?.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+        collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
 #endif
-        view.addSubview(collectionView!)
+        view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
-        collectionView?.addGestureRecognizer(longPressRecognizer)
-        collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView.addGestureRecognizer(longPressRecognizer)
+        collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
         }
@@ -199,7 +211,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             }
             #endif
             // Refresh table view data source when back from settings
-            isMustRefreshDataSource = true
+            mustRefreshDataSource = true
         } else if segue.identifier == "gameMoreInfoSegue" {
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
@@ -269,6 +281,11 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         alert.view.addSubview(importNote)
         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
             PVWebServer.sharedInstance().stopServers()
+            if self.needToShowConflictsAlert {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                    self.showConflictsAlert()
+                })
+            }
         }))
         
         if #available(iOS 9.0, *) {
@@ -312,6 +329,8 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
 // MARK: - Game Library Management
+    
+    // This method is probably outdated
     func migrateLibrary() {
         let hud = MBProgressHUD.showAdded(to: view, animated: true)!
         hud.isUserInteractionEnabled = false
@@ -337,62 +356,85 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
 
 
-        let config = PVEmulatorConfiguration.sharedInstance()
-
         do {
-            try FileManager.default.createDirectory(atPath: config.romsPath, withIntermediateDirectories: true, attributes: nil)} catch {
+            try FileManager.default.createDirectory(at: PVEmulatorConfiguration.romsImportPath, withIntermediateDirectories: true, attributes: nil)} catch {
                 ELOG("Unable to create roms directory because \(error.localizedDescription)")
                 // dunno what else can be done if this fails
                 return
         }
 
-        let contents = try! FileManager.default.contentsOfDirectory(atPath: config.documentsPath)
-//        if contents == nil {
-//            DLOG("Unable to get contents of documents because %@", error?.localizedDescription)
-//        }
+        // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
+        let contents : [URL]
+        do {
+            contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+        } catch {
+            ELOG("Unable to get contents of documents because \(error.localizedDescription)")
+            return
+        }
         
-        for path: String in contents {
-            let fullPath: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(path).path
+        // TODO: Use the known ROM and BIOS extensions to skip those
+        // Skip the battery and saves folder
+        // Don't move the Imge cache files, or delete them
+        
+        let ignoredExtensions = ["jpg","png","gif"]
+        let filteredContents = contents.filter { (url) -> Bool in
+            let dbFile = url.path.lowercased().contains("realm")
+            let ignoredExtension = ignoredExtensions.contains(url.pathExtension)
+            return !dbFile && !ignoredExtension
+        }
+        
+        filteredContents.forEach { path in
             var isDir : ObjCBool = false
-            let exists: Bool = FileManager.default.fileExists(atPath: fullPath, isDirectory: &isDir)
-            if exists && !isDir.boolValue && !path.lowercased().contains("realm") {
-                let toPath = URL(fileURLWithPath: config.romsPath).appendingPathComponent(path).path
+            let exists: Bool = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDir)
+
+            if exists && !isDir.boolValue && !path.path.lowercased().contains("realm") {
+                let toPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(path.lastPathComponent)
+                
                 do {
-                    try FileManager.default.moveItem(atPath: fullPath, toPath: toPath)
+                    try FileManager.default.moveItem(at: path, to: toPath)
                 } catch {
-                    ELOG("Unable to move \(fullPath) to \(toPath) because \(error.localizedDescription)")
+                    ELOG("Unable to move \(path.path) to \(toPath.path) because \(error.localizedDescription)")
                 }
             }
+            
         }
+
         hud.hide(true)
         UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
         setUpGameLibrary()
         
         do {
-            let paths = try FileManager.default.contentsOfDirectory(atPath: config.romsPath)
+            let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
             gameImporter?.startImport(forPaths: paths)
         } catch {
             ELOG("Couldn't get rom paths")
         }
     }
+    
+    fileprivate func showConflictsAlert() {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: {[unowned self] (_ action: UIAlertAction) -> Void in
+                self.needToShowConflictsAlert = false
+                let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
+                let navController = UINavigationController(rootViewController: conflictViewController)
+                self.present(navController, animated: true) {() -> Void in }
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: {[unowned self] (_ action: UIAlertAction) -> Void in self.needToShowConflictsAlert = false }))
+            self.present(alert, animated: true) {() -> Void in }
+            
+            ILOG("Encountered conflicts, should be showing message")
+        }
+    }
 
     func setUpGameLibrary() {
         fetchGames()
-
-        let config = PVEmulatorConfiguration.sharedInstance()
         
         gameImporter = PVGameImporter(completionHandler: {[unowned self] (_ encounteredConflicts: Bool) -> Void in
             if encounteredConflicts {
-                let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: {[unowned self] (_ action: UIAlertAction) -> Void in
-                    let conflictViewController = PVConflictViewController(gameImporter: self.gameImporter!)
-                    let navController = UINavigationController(rootViewController: conflictViewController)
-                    self.present(navController, animated: true) {() -> Void in }
-                }))
-                alert.addAction(UIAlertAction(title: "Nah, I'll do it later...", style: .cancel, handler: nil))
-                self.present(alert, animated: true) {() -> Void in }
-                
-                ILOG("Encountered conflicts, should be showing message")
+                self.needToShowConflictsAlert = true
+                self.showConflictsAlert()
             }
         })
         
@@ -417,13 +459,13 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         }
         
         do {
-            let existingFiles = try FileManager.default.contentsOfDirectory(atPath: config.romsPath)
+            let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
             gameImporter.startImport(forPaths: existingFiles)
         } catch {
-            ELOG("No existing ROM path at \(config.romsPath)")
+            ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
         }
         
-        watcher = PVDirectoryWatcher(path: config.romsPath, extractionStartedHandler: {(_ path: String) -> Void in
+        watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
             
             DispatchQueue.main.async {
                 guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
@@ -436,14 +478,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 hud.mode = .annularDeterminate
                 hud.progress = 0
                 #if os(tvOS)
-                    let lastPathComponent = URL(fileURLWithPath: path).lastPathComponent
+                    let lastPathComponent = path.lastPathComponent
                     let label = "Extracting Archive: \(lastPathComponent)"
                 #else
                     let label = "Extracting Archive..."
                 #endif
                 hud.labelText = label
             }
-        }, extractionUpdatedHandler: {(_ path: String, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
+        }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
             
             DispatchQueue.main.async {
                 guard let hud = MBProgressHUD(for: self.view) else {
@@ -454,30 +496,33 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 hud.mode = .annularDeterminate
                 hud.progress = progress
                 #if os(tvOS)
-                    let lastPathComponent = URL(fileURLWithPath: path).lastPathComponent
+                    let lastPathComponent = path.lastPathComponent
                     let label = "Extracting Archive: \(lastPathComponent)"
                 #else
                     let label = "Extracting Archive..."
                 #endif
                 hud.labelText = label
             }
-        }, extractionCompleteHandler: {(_ paths: [String]) -> Void in
+        }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
             DispatchQueue.main.async {
                 if let hud = MBProgressHUD(for: self.view) {
                     hud.isUserInteractionEnabled = false
                     hud.mode = .annularDeterminate
                     hud.progress = 1
-                    hud.labelText = "Extraction Complete!"
+                    hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
                     hud.hide(true, afterDelay: 0.5)
                 } else {
                     WLOG("No hud")
                 }
             }
             
-            self.gameImporter?.startImport(forPaths: paths)
+            if let paths = paths {
+                self.gameImporter?.startImport(forPaths: paths)
+            }
         })
+        
         watcher?.startMonitoring()
-        coverArtWatcher = PVDirectoryWatcher(path: config.coverArtPath, extractionStartedHandler: {(_ path: String) -> Void in
+        coverArtWatcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.coverArtPath, extractionStartedHandler: {(_ path: URL) -> Void in
             
             DispatchQueue.main.async {
                 guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
@@ -490,7 +535,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 hud.progress = 0
                 hud.labelText = "Extracting Archive…"
             }
-        }, extractionUpdatedHandler: {(_ path: String, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
+        }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
             DispatchQueue.main.async {
                 if let hud = MBProgressHUD(for: self.view) {
                     hud.progress = progress
@@ -498,7 +543,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                     WLOG("No hud")
                 }
             }
-        }, extractionCompleteHandler: {(_ paths: [String]) -> Void in
+        }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
             
             DispatchQueue.main.async {
                 guard let hud = MBProgressHUD(for: self.view) else {
@@ -506,51 +551,60 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                     return
                 }
                 hud.progress = 1
-                hud.labelText = "Extraction Complete!"
+                hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
                 hud.hide(true, afterDelay: 0.5)
             }
             
             var allIndexPaths = [IndexPath]()
             
-            for imageFilepath: String in paths {
-                let imageFullPath: String = URL(fileURLWithPath: config.coverArtPath).appendingPathComponent(imageFilepath).path
-                if let game = PVGameImporter.importArtwork(fromPath: imageFullPath) {
+            paths?.forEach { imageFilepath in
+                if let game = PVGameImporter.importArtwork(fromPath: imageFilepath) {
                     let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
                     allIndexPaths.append(contentsOf: indexPaths)
                 } else {
-                    DLOG("No game for artwork \(imageFullPath)")
+                    DLOG("No game for artwork \(imageFilepath.path)")
                 }
             }
-            
+
             DispatchQueue.main.async {
                 self.collectionView?.reloadItems(at: allIndexPaths)
             }
         })
         
         coverArtWatcher?.startMonitoring()
-        let systems = PVEmulatorConfiguration.sharedInstance().availableSystemIdentifiers
-        for systemID: String in systems {
-            let systemDir: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
-            if FileManager.default.fileExists(atPath: systemDir) {
+        
+        // Scan each Core direxctory and looks for ROMs in them
+        let systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        
+        systems.forEach { systemID in
+            let systemDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
+            //URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
+            
+            // Check if a folder actually exists, nothing to do if it doesn't
+            guard FileManager.default.fileExists(atPath: systemDir.path) else {
+                VLOG("Nothing found at \(systemDir.path)")
+                return
+            }
 
-                if let contents = try? FileManager.default.contentsOfDirectory(atPath: systemDir) {
-                    gameImporter.serialImportQueue.async {
-                        self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: systemID)
-                        if let completionHandler = self.gameImporter.completionHandler {
-                            DispatchQueue.main.async {
-                                completionHandler(self.gameImporter.encounteredConflicts)
-                            }
-                        }
+            guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir,
+                                                                              includingPropertiesForKeys: nil,
+                                                                              options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]) else {
+                return
+            }
+            
+            gameImporter.serialImportQueue.async {
+                self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: systemID)
+                if let completionHandler = self.gameImporter.completionHandler {
+                    DispatchQueue.main.async {
+                        completionHandler(self.gameImporter.encounteredConflicts)
                     }
-                } else {
-                    ELOG("Nothing found at \(systemDir)")
                 }
             }
         }
     }
 
     func fetchGames() {
-        let database = RomDatabase.temporaryDatabaseContext()
+        let database = RomDatabase.sharedInstance
         database.refresh()
         
         // Favorite Games
@@ -599,7 +653,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         // Set data source
         gamesInSections = tempSections
         self.sectionInfo = sectionInfo
-        isMustRefreshDataSource = false
+        mustRefreshDataSource = false
     }
 
     func finishedImportingGame(withMD5 md5: String, modified: Bool) {
@@ -627,7 +681,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 // if let game = realm.resolve(gameRef) { }
                 
                 // Have to do the import here so the images are ready
-                if let game = RomDatabase.temporaryDatabaseContext().all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first {
+                if let game = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first {
                     let spotlightItem = CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
                     CSSearchableIndex.default().indexSearchableItems([spotlightItem]) { error in
                         if let error = error {
@@ -742,7 +796,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     @objc func handleCacheEmptied(_ notification: NotificationCenter) {
 
         DispatchQueue.global(qos: .default).async(execute: {() -> Void in
-            let database = RomDatabase.temporaryDatabaseContext()
+            let database = RomDatabase.sharedInstance
             database.refresh()
             
             do {
@@ -772,14 +826,14 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     @objc func handleRefreshLibrary(_ note: Notification) {
-//        let config = PVEmulatorConfiguration.sharedInstance()
+//        let config = PVEmulatorConfiguration.
 //        let documentsPath: String = config.documentsPath
 //        let romPaths = database.all(PVGame.self).map { (game) -> String in
 //            let path: String = URL(fileURLWithPath: documentsPath).appendingPathComponent(game.romPath).path
 //            return path
 //        }
 
-        let database = RomDatabase.temporaryDatabaseContext()
+        let database = RomDatabase.sharedInstance
         do {
             try database.deleteAll()
         } catch {
@@ -801,7 +855,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func loadRecentGame(fromShortcut md5: String) {
-        let database = RomDatabase.temporaryDatabaseContext()
+        let database = RomDatabase.sharedInstance
         let recentGames = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: md5)
         
         if let mostRecentGame = recentGames.first?.game {
@@ -861,7 +915,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                 actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
                     
-                    try! RomDatabase.temporaryDatabaseContext().writeTransaction {
+                    try! RomDatabase.sharedInstance.writeTransaction {
                         game.customArtworkURL = ""
                     }
 
@@ -893,34 +947,10 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             self.present(actionSheet, animated: true) {() -> Void in }
         }
     }
-    
-    #if os(iOS)
-    @available(iOS 9.0, *)
-    private func deleteFromSpotlight(game : PVGame) {
-        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
-            if let error = error {
-                print("Error deleting game spotlight item: \(error)")
-            } else {
-                print("Game indexing deleted.")
-            }
-        })
-    }
-    
-    @available(iOS 9.0, *)
-    private func deleteAllGamesFromSpotlight() {
-        CSSearchableIndex.default().deleteAllSearchableItems() { (error) in
-            if let error = error {
-                print("Error deleting all games spotlight index: \(error)")
-            } else {
-                print("Game indexing deleted.")
-            }
-        }
-    }
-    #endif
 
     func toggleFavorite(for game: PVGame) {
         do {
-            try RomDatabase.temporaryDatabaseContext().writeTransaction {
+            try RomDatabase.sharedInstance.writeTransaction {
                 game.isFavorite = !game.isFavorite
             }
             
@@ -956,6 +986,8 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true) {() -> Void in }
 #else
+        // TODO: There's a bug here that you'll never see the text input if a hardware keyboard is attached.
+        // Maybe just use the same code as atV - jm
         gameToRename = game
         renameOverlay = UIView(frame: UIScreen.main.bounds)
         renameOverlay?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -1015,7 +1047,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     func renameGame(_ game: PVGame, toTitle title: String) {
         if title.count != 0 {
             do {
-                try RomDatabase.temporaryDatabaseContext().writeTransaction {
+                try RomDatabase.sharedInstance.writeTransaction {
                     game.title = title
                 }
                 
@@ -1028,9 +1060,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func delete(game: PVGame) {
-        let config = PVEmulatorConfiguration.sharedInstance()
-        
-        let romPath: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(game.romPath).path
+        let romURL = PVEmulatorConfiguration.path(forGame: game)
         let indexPaths = indexPathsForGame(withMD5Hash: game.md5Hash)
         
         if !game.customArtworkURL.isEmpty {
@@ -1041,24 +1071,24 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             }
         }
 
-        let savesPath = config.saveStatePath(forROM: romPath)
+        let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
         do {
-            try FileManager.default.removeItem(atPath: savesPath)
+            try FileManager.default.removeItem(at: savesPath)
         } catch {
-            WLOG("Unable to delete save states at path: \(savesPath) because: \(error.localizedDescription)")
+            WLOG("Unable to delete save states at path: \(savesPath.path) because: \(error.localizedDescription)")
         }
         
-        let batteryPath = config.batterySavesPath(forROM: romPath)
+        let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
         do {
-            try FileManager.default.removeItem(atPath:batteryPath)
+            try FileManager.default.removeItem(at:batteryPath)
         } catch {
-            WLOG("Unable to delete battery states at path: \(batteryPath) because: \(error.localizedDescription)")
+            WLOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
         }
 
         do {
-            try FileManager.default.removeItem(atPath: romPath)
+            try FileManager.default.removeItem(at: romURL)
         } catch {
-            WLOG("Unable to delete rom at path: \(romPath) because: \(error.localizedDescription)")
+            WLOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
         }
 
         // Delete from Spotlight search
@@ -1069,7 +1099,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         #endif
         
         deleteRelatedFilesGame(game)
-        try? RomDatabase.temporaryDatabaseContext().delete(object: game)
+        try? RomDatabase.sharedInstance.delete(object: game)
         let oldSectionInfo = sectionInfo
         let oldGamesInSections = gamesInSections
         fetchGames()
@@ -1091,29 +1121,34 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     }
 
     func deleteRelatedFilesGame(_ game: PVGame) {
-        let config = PVEmulatorConfiguration.sharedInstance()
+
+        guard let system = game.system else {
+            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
+            return
+        }
         
-        let romPath = URL.init(fileURLWithPath: game.romPath)
-        let romDirectory: String = URL(fileURLWithPath: config.documentsPath).appendingPathComponent(game.systemIdentifier).path
-        let romExtension = romPath.pathExtension
-        let relatedFileName: String = romPath.lastPathComponent.replacingOccurrences(of: romExtension, with: "")
+        let romDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system)
+        let relatedFileName: String = game.url.deletingPathExtension().lastPathComponent
         
-        let contents : [String]
+        let contents : [URL]
         do {
-            contents = try FileManager.default.contentsOfDirectory(atPath: romDirectory)
+            contents = try FileManager.default.contentsOfDirectory(at: romDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
         } catch {
             ELOG("scanning \(romDirectory) \(error.localizedDescription)")
             return
         }
         
-        for file: String in contents {
-            let fileWithoutExtension: String = file.replacingOccurrences(of: URL(fileURLWithPath: file).pathExtension, with: "")
-            if fileWithoutExtension == relatedFileName {
-                do {
-                    try FileManager.default.removeItem(atPath: URL(fileURLWithPath: romDirectory).appendingPathComponent(file).path)
-                } catch {
-                    ELOG("Failed to remove item \(file).\n \(error.localizedDescription)")
-                }
+        let matchingFiles = contents.filter {
+            let filename = $0.deletingPathExtension().lastPathComponent
+            return filename.contains(relatedFileName)
+        }
+
+        matchingFiles.forEach {
+            let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory:false)
+            do {
+                try FileManager.default.removeItem(at: file)
+            } catch {
+                ELOG("Failed to remove item \(file.path).\n \(error.localizedDescription)")
             }
         }
     }
@@ -1161,7 +1196,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
                             
                             do {
                                 try PVMediaCache.writeImage(toDisk: lastPhoto, withKey: rep.url().path)
-                                try RomDatabase.temporaryDatabaseContext().writeTransaction {
+                                try RomDatabase.sharedInstance.writeTransaction {
                                     game.customArtworkURL = rep.url().path
                                 }
                             } catch {
@@ -1241,7 +1276,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             
             do {
                 try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
-                try RomDatabase.temporaryDatabaseContext().writeTransaction {
+                try RomDatabase.sharedInstance.writeTransaction {
                     game.customArtworkURL = key
                 }
             } catch {
@@ -1272,7 +1307,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             return "Favorites"
         }
         else {
-            return PVEmulatorConfiguration.sharedInstance().shortName(forSystemIdentifier: systemID) ?? "Not Found"
+            return PVEmulatorConfiguration.shortName(forSystemIdentifier: systemID) ?? "Not Found"
         }
 
     }
@@ -1281,7 +1316,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
     func searchLibrary(_ searchText: String) {
         let predicate = NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])
         
-        searchResults = RomDatabase.temporaryDatabaseContext().all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         
         collectionView?.reloadData()
     }
@@ -1354,62 +1389,6 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             WLOG("Can't setup PVGameLibraryCollectionViewCell wil nil game reference")
         }
         return cell
-    }
-
-// MARK: - UICollectionViewDelegate & UICollectionViewDelegateFlowLayout
-#if os(tvOS)
-    func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
-        return true
-    }
-
-#endif
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-#if os(tvOS)
-        let game = self.game(at: indexPath)!
-        let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio)
-        return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
-#else
-        if PVSettingsModel.sharedInstance().showGameTitles {
-            return CGSize(width: 100, height: 144)
-        }
-        return CGSize(width: 100, height: 100)
-#endif
-    }
-
-#if os(tvOS)
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 88
-    }
-#endif
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-#if os(tvOS)
-        return 50
-#else
-        return 5.0
-#endif
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-#if os(tvOS)
-        return UIEdgeInsetsMake(40, 0, 120, 0)
-#else
-        return UIEdgeInsetsMake(5, 5, 5, 5)
-#endif
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let game = self.game(at: indexPath) {
-            load(game)
-        } else {
-            let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true)
-        }
     }
 
     func game(at indexPath: IndexPath) -> PVGame? {
@@ -1537,7 +1516,7 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
             
             do {
                 try PVMediaCache.writeData(toDisk: imageData, withKey: hash)
-                try RomDatabase.temporaryDatabaseContext().writeTransaction {
+                try RomDatabase.sharedInstance.writeTransaction {
                     gameForCustomArt.customArtworkURL = hash
                 }
             } catch {
@@ -1594,6 +1573,99 @@ class PVGameLibraryViewController: UIViewController, UICollectionViewDataSource,
         return true
     }
 }
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        #if os(tvOS)
+            let game = self.game(at: indexPath)!
+            let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
+            return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
+        #else
+            if PVSettingsModel.sharedInstance().showGameTitles {
+                return CGSize(width: 100, height: 144)
+            }
+            return CGSize(width: 100, height: 100)
+        #endif
+    }
+    
+    #if os(tvOS)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 88
+    }
+    #endif
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        #if os(tvOS)
+            return 50
+        #else
+            return 5.0
+        #endif
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        #if os(tvOS)
+            return UIEdgeInsetsMake(40, 0, 120, 0)
+        #else
+            return UIEdgeInsetsMake(5, 5, 5, 5)
+        #endif
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension PVGameLibraryViewController : UICollectionViewDataSource {
+    
+}
+
+// MARK: - UICollectionViewDelegate
+extension PVGameLibraryViewController : UICollectionViewDelegate {
+    #if os(tvOS)
+    func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
+    return true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
+    return true
+    }
+    
+    #endif
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let game = self.game(at: indexPath) {
+            load(game)
+        } else {
+            let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        }
+    }
+}
+
+// MARK: - Spotlight
+#if os(iOS)
+@available(iOS 9.0, *)
+extension PVGameLibraryViewController {
+    private func deleteFromSpotlight(game : PVGame) {
+        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
+            if let error = error {
+                print("Error deleting game spotlight item: \(error)")
+            } else {
+                print("Game indexing deleted.")
+            }
+        })
+    }
+    
+    private func deleteAllGamesFromSpotlight() {
+        CSSearchableIndex.default().deleteAllSearchableItems() { (error) in
+            if let error = error {
+                print("Error deleting all games spotlight index: \(error)")
+            } else {
+                print("Game indexing deleted.")
+            }
+        }
+    }
+}
+#endif
 
 #if os(iOS)
     extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {

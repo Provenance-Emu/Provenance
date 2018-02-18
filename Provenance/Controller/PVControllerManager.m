@@ -15,10 +15,6 @@
 
 NSString * const PVControllerManagerControllerReassignedNotification = @"PVControllerManagerControllerReassignedNotification";
 
-@interface PVControllerManager ()
-
-@end
-
 @implementation PVControllerManager
 
 + (PVControllerManager *)sharedManager

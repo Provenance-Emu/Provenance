@@ -183,7 +183,9 @@
     [self stopWWWUploadServer];
     [self stopWebDavServer];
     
-    [self.handoffActivity resignCurrent];
+    if (@available(iOS 9.0, *)) {
+        [self.handoffActivity resignCurrent];
+    }
 }
 
 -(void)stopWWWUploadServer {

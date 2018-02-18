@@ -135,14 +135,14 @@ struct LightTheme : iOSTheme {
 
     let defaultTintColor = UIColor.init(hex: "#007aff") // iOS Blue
     
-    let gameLibraryBackground = UIColor.clear
+    let gameLibraryBackground = UIColor.white
     let gameLibraryText : UIColor = UIColor.black
 
     let gameLibraryHeaderBackground = UIColor.init(white: 0.9, alpha: 0.6)
     let gameLibraryHeaderText = UIColor.darkGray
 }
 
-@available(iOS 9.0, *)
+//@available(iOS 9.0, *)
 public class Theme : NSObject {
     
     public static var currentTheme : iOSTheme = LightTheme()
@@ -209,19 +209,24 @@ public class Theme : NSObject {
         PVGameLibrarySectionHeaderView.appearance {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
         }
-        appearance(in: PVGameLibrarySectionHeaderView.self) {
-            UILabel.appearance {
-                $0.backgroundColor = theme.gameLibraryHeaderBackground
-                $0.textColor = theme.gameLibraryHeaderText
+        
+        // Appearacne in is only in 9+
+        if #available(iOS 9.0, *) {
+            appearance(in: PVGameLibrarySectionHeaderView.self) {
+                UILabel.appearance {
+                    $0.backgroundColor = theme.gameLibraryHeaderBackground
+                    $0.textColor = theme.gameLibraryHeaderText
+                }
+            }
+            
+            // Game Library Main
+            appearance(inAny: [UICollectionView.self, PVGameLibraryCollectionViewCell.self]) {
+                UILabel.appearance {
+                    $0.textColor = theme.gameLibraryText // !!! Why isn't this working?
+                }
             }
         }
         
-        // Game Library Main
-        appearance(inAny: [UICollectionView.self, PVGameLibraryCollectionViewCell.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.gameLibraryText // !!! Why isn't this working?
-            }
-        }
         UICollectionView.appearance {
             $0.backgroundColor = theme.gameLibraryBackground
         }
