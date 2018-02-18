@@ -64,6 +64,8 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Import/Export ROMs
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
+- DocumentPicker support
+    - Import from iCloud or any app that provides a document picker API (Google Drive, DropBox etc)
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
 - Uses [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB) to look up game information and artwork
