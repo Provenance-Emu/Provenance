@@ -314,17 +314,41 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
         else {
             // connected via wifi, let's continue
-            // start web transfer service
-            if PVWebServer.sharedInstance().startServers() {
-                //show alert view
-                showServerActiveAlert()
-            }
-            else {
-                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                }))
-                present(alert, animated: true) {() -> Void in }
-            }
+            
+            let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
+                let extensions = ["com.provenance.rom", "com.pkware.zip-archive"]
+
+                //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
+                //        documentMenu.delegate = self
+                //        present(documentMenu, animated: true, completion: nil)
+                
+                let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+                if #available(iOS 11.0, *) {
+                    documentPicker.allowsMultipleSelection = true
+                }
+                documentPicker.delegate = self
+                self.present(documentPicker, animated: true, completion: nil)
+            }))
+            
+            actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
+                // start web transfer service
+                if PVWebServer.sharedInstance().startServers() {
+                    //show alert view
+                    self.showServerActiveAlert()
+                }
+                else {
+                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    }))
+                    self.present(alert, animated: true) {() -> Void in }
+                }
+            }))
+            
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            present(actionSheet, animated: true, completion: nil)
         }
     }
 
@@ -1667,8 +1691,57 @@ extension PVGameLibraryViewController {
 }
 #endif
 
-#if os(iOS)
-    extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
-        
+// MARK: UIDocumentMenuDelegate
+extension PVGameLibraryViewController : UIDocumentMenuDelegate {
+
+    func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
+        documentPicker.delegate = self
+        documentPicker.popoverPresentationController?.sourceView = self.view
+        present(documentMenu, animated: true, completion: nil)
     }
+
+    func documentMenuWasCancelled(_ documentMenu: UIDocumentMenuViewController) {
+        ILOG("DocumentMenu was cancelled")
+    }
+}
+
+// MARK: UIDocumentPickerDelegate
+extension PVGameLibraryViewController : UIDocumentPickerDelegate {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let sortedUrls = PVEmulatorConfiguration.sortImportUURLs(urls: urls)
+        
+        let importPath = PVEmulatorConfiguration.romsImportPath
+        
+        sortedUrls.forEach { (url) in
+            defer {
+                url.stopAccessingSecurityScopedResource()
+            }
+            
+            // Doesn't seem we need access in dev builds?
+            let access = url.startAccessingSecurityScopedResource()
+            
+//            if access {
+                let fileName = url.lastPathComponent
+                let destination = importPath.appendingPathComponent(fileName, isDirectory: false)
+                do {
+                    // Since we're in UIDocumentPickerModeImport, these URLs are temporary URLs so a move is what we want
+                    try FileManager.default.moveItem(at: url, to: destination)
+                } catch {
+                    ELOG("Failed to move file from \(url.path) to \(destination.path)")
+                }
+//            } else {
+//                ELOG("Wasn't granded access to \(url.path)")
+//            }
+        }
+    }
+    
+    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+        ILOG("Document picker was cancelled")
+    }
+}
+
+#if os(iOS)
+extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
+    
+}
 #endif

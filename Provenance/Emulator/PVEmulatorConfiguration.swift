@@ -530,6 +530,44 @@ public extension PVEmulatorConfiguration {
             }
         }
     }
+    
+    class func sortImportUURLs(urls : [URL]) -> [URL] {
+        let sortedPaths = urls.sorted { (obj1, obj2) -> Bool in
+            
+            let obj1Filename = obj1.lastPathComponent
+            let obj2Filename = obj2.lastPathComponent
+            
+            let obj1Extension = obj1.pathExtension
+            let obj2Extension = obj2.pathExtension
+            
+            // Check m3u
+            if obj1Extension == "m3u" && obj2Extension == "m3u" {
+                return obj1Filename > obj2Filename
+            }
+            else if obj1Extension == "m3u" {
+                return true
+            }
+            else if obj2Extension == "m3u" {
+                return false
+            }
+                // Check cue
+            else if obj1Extension == "cue" && obj2Extension == "cue" {
+                return obj1Filename > obj2Filename
+            }
+            else if obj1Extension == "cue" {
+                return true
+            }
+            else if obj2Extension == "cue" {
+                return false
+            }
+                // Standard sort
+            else {
+                return obj1Filename > obj2Filename
+            }
+        }
+        
+        return sortedPaths
+    }
 }
 
 // MARK: System queries
