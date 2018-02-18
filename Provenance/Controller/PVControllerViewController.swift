@@ -138,11 +138,9 @@ public extension PVControllerViewController {
                 else if (controlType == Keys.LeftShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.left + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
-                    let leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
+                    var leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
                     
-                    if let leftShoulderButton = self.leftShoulderButton {
-                        leftShoulderButton.frame = leftShoulderFrame
-                    } else {
+                    if leftShoulderButton == nil {
                         let leftShoulderButton = JSButton(frame: leftShoulderFrame)
                         self.leftShoulderButton = leftShoulderButton
                         leftShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
@@ -153,18 +151,32 @@ public extension PVControllerViewController {
                         leftShoulderButton.alpha = alpha
                         leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton)
+                    } else if leftShoulderButton2 == nil, let title = control[Keys.ControlTitle] as? String, title == "L2" {
+                        leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
+                        
+                        let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
+                        self.leftShoulderButton2 = leftShoulderButton2
+                        leftShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
+                        leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                        leftShoulderButton2.delegate = self
+                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        leftShoulderButton2.alpha = alpha
+                        leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
+                        view.addSubview(leftShoulderButton2)
+
+                    } else {
+                        leftShoulderButton?.frame = leftShoulderFrame
+                        leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
+                        leftShoulderButton2?.frame = leftShoulderFrame
                     }
                 }
                 else if (controlType == Keys.RightShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.right + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
-                    
-                    if let rightShoulderButton = self.rightShoulderButton {
-                        let rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
-                        rightShoulderButton.frame = rightShoulderFrame
-                    }
-                    else {
-                        let rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
+                    var rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
+
+                    if rightShoulderButton == nil {
                         let rightShoulderButton = JSButton(frame: rightShoulderFrame)
                         self.rightShoulderButton = rightShoulderButton
                         rightShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
@@ -175,6 +187,23 @@ public extension PVControllerViewController {
                         rightShoulderButton.alpha = alpha
                         rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton)
+                    } else if rightShoulderButton2 == nil ,let title = control[Keys.ControlTitle] as? String, title == "R2"{
+                        rightShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
+                        
+                        let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)
+                        self.rightShoulderButton2 = rightShoulderButton2
+                        rightShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
+                        rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
+                        rightShoulderButton2.delegate = self
+                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        rightShoulderButton2.alpha = alpha
+                        rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
+                        view.addSubview(rightShoulderButton2)
+                    } else {
+                        rightShoulderButton?.frame = rightShoulderFrame
+                        rightShoulderFrame.origin.y += rightShoulderButton!.frame.size.height + 20
+                        rightShoulderButton2?.frame = rightShoulderFrame
                     }
                 }
                 else if (controlType == Keys.StartButton) {

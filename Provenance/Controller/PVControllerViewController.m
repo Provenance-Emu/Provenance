@@ -49,7 +49,7 @@
 												 name:GCControllerDidDisconnectNotification
 											   object:nil];
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_SIMULATOR
 	if (@available(iOS 10.0, *)) {
 		self.feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
 		[self.feedbackGenerator prepare];
@@ -67,7 +67,7 @@
 
 - (void)controllerDidConnect:(NSNotification *)note
 {
-    #if !TARGET_OS_TV
+    #if !TARGET_OS_TV && !TARGET_OS_SIMULATOR
     if ([[PVControllerManager sharedManager] hasControllers])
     {
         [self hideTouchControlsFor:[[PVControllerManager sharedManager] player1]];

@@ -240,11 +240,12 @@ void uncaughtExceptionHandler(NSException *exception)
         
     }
     
-	
+#if !TARGET_OS_SIMULATOR
 	if ([[GCController controllers] count])
 	{
 		[self.menuButton setHidden:YES];
 	}
+#endif
 
     if (!loaded)
     {
@@ -349,7 +350,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_SIMULATOR
 //Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
 -(BOOL)prefersHomeIndicatorAutoHidden{
 	BOOL shouldHideHomeIndicator = [[PVControllerManager sharedManager] hasControllers];
@@ -365,7 +366,8 @@ void uncaughtExceptionHandler(NSException *exception)
         safeArea = self.view.safeAreaInsets;
     }
     
-    [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22)];
+    CGRect frame = CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22);
+    [self.menuButton setFrame:frame];
 }
 
 - (NSString *)documentsPath
@@ -898,6 +900,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)controllerDidConnect:(NSNotification *)note
 {
+#if !TARGET_OS_SIMULATOR
     GCController *controller = [note object];
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
     if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
@@ -915,6 +918,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 #endif
     }
+#endif
 }
 
 - (void)controllerDidDisconnect:(NSNotification *)note
