@@ -313,6 +313,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             present(alert, animated: true) {() -> Void in }
         }
         else {
+            
+            #if os(iOS)
             // connected via wifi, let's continue
             
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
@@ -333,23 +335,31 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }))
             
             actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
-                // start web transfer service
-                if PVWebServer.sharedInstance().startServers() {
-                    //show alert view
-                    self.showServerActiveAlert()
-                }
-                else {
-                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    }))
-                    self.present(alert, animated: true) {() -> Void in }
-                }
+                self.startWebServer()
             }))
             
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             
             present(actionSheet, animated: true, completion: nil)
+            #else
+                startWebServer()
+            #endif
         }
+    }
+    
+    func startWebServer() {
+        // start web transfer service
+        if PVWebServer.sharedInstance().startServers() {
+            //show alert view
+            self.showServerActiveAlert()
+        }
+        else {
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            }))
+            self.present(alert, animated: true) {() -> Void in }
+        }
+
     }
 
 // MARK: - Game Library Management
@@ -1692,6 +1702,7 @@ extension PVGameLibraryViewController {
 #endif
 
 // MARK: UIDocumentMenuDelegate
+#if os(iOS)
 extension PVGameLibraryViewController : UIDocumentMenuDelegate {
 
     func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
@@ -1739,7 +1750,8 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
-
+#endif
+    
 #if os(iOS)
 extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
     
