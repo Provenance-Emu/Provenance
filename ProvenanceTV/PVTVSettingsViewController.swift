@@ -19,6 +19,7 @@ class PVTVSettingsViewController: UITableViewController {
     @IBOutlet weak var crtFilterLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
+    @IBOutlet weak var imageSmoothingLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +32,7 @@ class PVTVSettingsViewController: UITableViewController {
         autoLoadValueLabel.text = settings.autoLoadAutoSaves ? "On" : "Off"
         showFPSCountValueLabel.text = settings.showFPSCount ? "On" : "Off"
         crtFilterLabel.text = settings.crtFilterEnabled ? "On" : "Off"
+        imageSmoothingLabel.text = settings.imageSmoothing.onOffString
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? "" ))")
         versionValueLabel.text = versionText
@@ -94,6 +96,9 @@ class PVTVSettingsViewController: UITableViewController {
                         // CRT Filter
                         TOGGLE_SETTING(\PVSettingsModel.crtFilterEnabled, crtFilterLabel)
                     case 3:
+                    // Image Smoother
+                    TOGGLE_SETTING(\PVSettingsModel.imageSmoothing, imageSmoothingLabel)
+                    case 4:
                         // FPS Counter
                         TOGGLE_SETTING(\PVSettingsModel.showFPSCount, showFPSCountValueLabel)
                     default:
