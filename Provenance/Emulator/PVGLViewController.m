@@ -485,7 +485,7 @@ struct PVVertex
             if (self.emulatorCore.isDoubleBuffered)
             {
                 [self.emulatorCore.frontBufferCondition lock];
-                while (!self.emulatorCore.isFrontBufferReady) [self.emulatorCore.frontBufferCondition wait];
+                while (!self.emulatorCore.isFrontBufferReady && ![self.emulatorCore isEmulationPaused]) [self.emulatorCore.frontBufferCondition wait];
                 [self.emulatorCore setIsFrontBufferReady:NO];
                 [self.emulatorCore.frontBufferLock lock];
                 fetchVideoBuffer();
