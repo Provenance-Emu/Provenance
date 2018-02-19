@@ -601,6 +601,7 @@
 		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CB85C71E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */; };
+		B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */; };
 		B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3446,6 +3447,7 @@
 				B349AE8E1E9ABCF900ACD416 /* XzEnc.c in Sources */,
 				B349AED81E9ABCF900ACD416 /* MethodId.cpp in Sources */,
 				B349AF1A1E9ABCF900ACD416 /* MyAes.cpp in Sources */,
+				B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.m in Sources */,
 				B349AF181E9ABCF900ACD416 /* 7zAesRegister.cpp in Sources */,
 				B349AE581E9ABCF900ACD416 /* Bcj2.c in Sources */,
 				B349AF0A1E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
