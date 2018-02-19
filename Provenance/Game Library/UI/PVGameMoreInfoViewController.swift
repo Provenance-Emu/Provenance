@@ -11,6 +11,15 @@ import UIKit
 #if os(iOS)
 import SafariServices
 #endif
+
+/* TODO:
+ Add edit for text fields
+ Add long touch for imageview for editing artwork and restoring
+ Use a category to impliment the same functions as long press on GameLibraryViewController
+ Improove visual look
+ Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
+ Add UICollectionView wrapper
+ */
     
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
@@ -284,6 +293,35 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         UIView.transition(with: artworkImageView, duration: 0.4, options: direction, animations: {
             self.artworkImageView.image = image
         }, completion: nil)
+    }
+}
+
+@available(iOS 9.0, *)
+extension PVGameMoreInfoViewController {
+    override var previewActionItems : [UIPreviewActionItem] {
+        let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
+            if let libVC = self.presentingViewController as? PVGameLibraryViewController {
+                libVC.load(self.game!)
+            }
+        }
+        
+        let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { (action, viewController) in
+            let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+                // Delete from Realm
+//                self.delete(game: self.game!)
+            }))
+            alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+            self.present(alert, animated: true) {() -> Void in }
+        }
+        //        let action2 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
+//            print("I believe I can fly")
+//        }
+//        let action3 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
+//            print("I believe I can fly")
+//        }
+//        let actionGroup = UIPreviewActionGroup(title: "Look at me, I can grow!", style: .default, actions: [action1, action2, action3])
+        return [playAction, deleteAction]
     }
 }
 

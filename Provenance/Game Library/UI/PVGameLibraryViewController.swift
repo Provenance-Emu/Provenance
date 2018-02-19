@@ -150,6 +150,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        
+        // Force touch
+        #if os(iOS)
+        if #available(iOS 9.0, *) {
+            registerForPreviewing(with: self, sourceView: collectionView)
+        }
+        #endif
+        
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
         }
@@ -1752,6 +1760,31 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
 #endif
     
 #if os(iOS)
+    @available(iOS 9.0, *)
+    extension PVGameLibraryViewController : UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+  
+        navigationController?.show(viewControllerToCommit, sender: self)
+//        (viewControllerToCommit as! PVGameMoreInfoViewController).navigationItem.leftBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
+//        let newNav = UINavigationController(rootViewController: viewControllerToCommit)
+//        present(newNav, animated: true, completion: nil)
+    }
+        
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
+            //This will show the cell clearly and blur the rest of the screen for our peek.
+            previewingContext.sourceRect = cellAttributes.frame
+
+            let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+            let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            moreInfoViewContrller.game = game(at: indexPath)
+            moreInfoViewContrller.showsPlayButton = true
+            return moreInfoViewContrller
+        }
+        return nil
+    }
+}
+    
 extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
     
 }
