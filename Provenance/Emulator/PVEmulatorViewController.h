@@ -25,6 +25,7 @@
 @property (nonatomic, copy, nullable) NSString *batterySavesPath;
 @property (nonatomic, copy, nullable) NSString *saveStatePath;
 @property (nonatomic, copy, nullable) NSString *BIOSPath;
+@property (nonatomic, strong, nullable) UIButton *menuButton;
 
 - (instancetype _Nonnull )initWithGame:(PVGame *_Nonnull)game;
 - (void)quit;
