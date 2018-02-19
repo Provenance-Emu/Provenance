@@ -499,6 +499,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
         }
         
+        let labelMaker : (URL) -> String = { path in
+            #if os(tvOS)
+            return "Extracting Archive: \(path.lastPathComponent)"
+            #else
+            return "Extracting Archive..."
+            #endif
+        }
+        
         watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
             
             DispatchQueue.main.async {
@@ -511,13 +519,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 hud.isUserInteractionEnabled = false
                 hud.mode = .annularDeterminate
                 hud.progress = 0
-                #if os(tvOS)
-                    let lastPathComponent = path.lastPathComponent
-                    let label = "Extracting Archive: \(lastPathComponent)"
-                #else
-                    let label = "Extracting Archive..."
-                #endif
-                hud.labelText = label
+                hud.labelText = labelMaker(path)
             }
         }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
             
@@ -529,13 +531,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 hud.isUserInteractionEnabled = false
                 hud.mode = .annularDeterminate
                 hud.progress = progress
-                #if os(tvOS)
-                    let lastPathComponent = path.lastPathComponent
-                    let label = "Extracting Archive: \(lastPathComponent)"
-                #else
-                    let label = "Extracting Archive..."
-                #endif
-                hud.labelText = label
+                hud.labelText = labelMaker(path)
             }
         }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
             DispatchQueue.main.async {
