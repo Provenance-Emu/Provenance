@@ -98,6 +98,90 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B37EFF371C72F43300857158"
+               BuildableName = "PVMupen64Plus.framework"
+               BlueprintName = "PVMupen64Plus"
+               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B37EFEEF1C72E63300857158"
+               BuildableName = "PVMupen64PlusVideoRice.framework"
+               BlueprintName = "PVMupen64PlusVideoRice"
+               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B331158B1C7309C200E9AD14"
+               BuildableName = "PVRSPCXD4.framework"
+               BlueprintName = "PVRSPCXD4"
+               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B37937AB1D6BCF8100EBAE81"
+               BuildableName = "PicoDrive.framework"
+               BlueprintName = "PicoDrive"
+               ReferencedContainer = "container:PVPicoDrive/PVPicoDrive.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
+               BuildableName = "ProSystem.framework"
+               BlueprintName = "ProSystem"
+               ReferencedContainer = "container:PVProSystem/PVProSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B38FB4BF1C839BE500CD73BE"
+               BuildableName = "PVStella.framework"
+               BlueprintName = "PVStella"
+               ReferencedContainer = "container:PVStella/PVStella.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
                BuildableName = "PVAtari800.framework"
                BlueprintName = "PVAtari800"

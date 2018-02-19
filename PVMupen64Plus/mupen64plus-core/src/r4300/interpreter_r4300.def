@@ -1,0 +1,571 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   Mupen64plus - interpreter_r4300.def                                   *
+ *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2002 Hacktarux                                          *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+DECLARE_JUMP(J,   (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &reg[0],  0, 0)
+DECLARE_JUMP(JAL, (jinst_index<<2) | ((PCADDR+4) & UINT32_C(0xF0000000)), 1, &reg[31], 0, 0)
+DECLARE_JUMP(BEQ,     PCADDR + (iimmediate+1)*4, irs == irt, &reg[0], 0, 0)
+DECLARE_JUMP(BNE,     PCADDR + (iimmediate+1)*4, irs != irt, &reg[0], 0, 0)
+DECLARE_JUMP(BLEZ,    PCADDR + (iimmediate+1)*4, irs <= 0,   &reg[0], 0, 0)
+DECLARE_JUMP(BGTZ,    PCADDR + (iimmediate+1)*4, irs > 0,    &reg[0], 0, 0)
+
+DECLARE_INSTRUCTION(ADDI)
+{
+   irt = SE32(irs32 + iimmediate);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ADDIU)
+{
+   irt = SE32(irs32 + iimmediate);
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SLTI)
+{
+   if (irs < iimmediate) irt = 1;
+   else irt = 0;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(SLTIU)
+{
+   if ((uint64_t) irs < (uint64_t) ((int64_t) iimmediate))
+     irt = 1;
+   else irt = 0;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ANDI)
+{
+   irt = irs & (uint16_t) iimmediate;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(ORI)
+{
+   irt = irs | (uint16_t) iimmediate;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(XORI)
+{
+   irt = irs ^ (uint16_t) iimmediate;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(LUI)
+{
+   irt = SE32(iimmediate << 16);
+   ADD_TO_PC(1);
+}
+
+DECLARE_JUMP(BEQL,    PCADDR + (iimmediate+1)*4, irs == irt, &reg[0], 1, 0)
+DECLARE_JUMP(BNEL,    PCADDR + (iimmediate+1)*4, irs != irt, &reg[0], 1, 0)
+DECLARE_JUMP(BLEZL,   PCADDR + (iimmediate+1)*4, irs <= 0,   &reg[0], 1, 0)
+DECLARE_JUMP(BGTZL,   PCADDR + (iimmediate+1)*4, irs > 0,    &reg[0], 1, 0)
+
+DECLARE_INSTRUCTION(DADDI)
+{
+   irt = irs + iimmediate;
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(DADDIU)
+{
+   irt = irs + iimmediate;
+   ADD_TO_PC(1);
+}
+
+/* Assists unaligned memory accessors with making masks to preserve or apply
+ * bits in registers and memory.
+ *
+ * BITS_BELOW_MASK32 and BITS_BELOW_MASK64 make masks where bits 0 to (x - 1)
+ * are set.
+ *
+ * BITS_ABOVE_MASK32 makes masks where bits x to 31 are set.
+ * BITS_ABOVE_MASK64 makes masks where bits x to 63 are set.
+ *
+ * e.g. x = 8
+ * 0000 0000 0000 0000 0000 0000 1111 1111 <- BITS_BELOW_MASK32(8)
+ * 1111 1111 1111 1111 1111 1111 0000 0000 <- BITS_ABOVE_MASK32(8)
+ *
+ * Giving a negative value or one that is >= the bit count of the mask results
+ * in undefined behavior.
+ */
+
+#define BITS_BELOW_MASK32(x) ((UINT32_C(1) << (x)) - 1)
+#define BITS_ABOVE_MASK32(x) (~((UINT32_C(1) << (x)) - 1))
+
+#define BITS_BELOW_MASK64(x) ((UINT64_C(1) << (x)) - 1)
+#define BITS_ABOVE_MASK64(x) (~((UINT64_C(1) << (x)) - 1))
+
+DECLARE_INSTRUCTION(LDL)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t word = 0;
+   ADD_TO_PC(1);
+   if ((lsaddr & 7) == 0)
+   {
+     address = lsaddr;
+     rdword = (uint64_t*) lsrtp;
+     read_dword_in_memory();
+   }
+   else
+   {
+     address = lsaddr & UINT32_C(0xFFFFFFF8);
+     rdword = &word;
+     read_dword_in_memory();
+     if (address)
+     {
+       /* How many low bits do we want to preserve from the old value? */
+       uint64_t old_mask = BITS_BELOW_MASK64((lsaddr & 7) * 8);
+       /* How many bits up do we want to add the low bits of the new value in? */
+       int new_shift = (lsaddr & 7) * 8;
+       *lsrtp = (*lsrtp & old_mask) | (word << new_shift);
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(LDR)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t word = 0;
+   ADD_TO_PC(1);
+   address = lsaddr & UINT32_C(0xFFFFFFF8);
+   if ((lsaddr & 7) == 7)
+   {
+     rdword = (uint64_t*) lsrtp;
+     read_dword_in_memory();
+   }
+   else
+   {
+     rdword = &word;
+     read_dword_in_memory();
+     if (address)
+     {
+       /* How many high bits do we want to preserve from the old value? */
+       uint64_t old_mask = BITS_ABOVE_MASK64(((lsaddr & 7) + 1) * 8);
+       /* How many bits down do we want to add the high bits of the new value in? */
+       int new_shift = (7 - (lsaddr & 7)) * 8;
+       *lsrtp = (*lsrtp & old_mask) | (word >> new_shift);
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(LB)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_byte_in_memory();
+   if (address)
+     *lsrtp = SE8(*lsrtp);
+}
+
+DECLARE_INSTRUCTION(LH)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_hword_in_memory();
+   if (address)
+     *lsrtp = SE16(*lsrtp);
+}
+
+DECLARE_INSTRUCTION(LWL)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t word = 0;
+   ADD_TO_PC(1);
+   if ((lsaddr & 3) == 0)
+   {
+     address = lsaddr;
+     rdword = (uint64_t*) lsrtp;
+     read_word_in_memory();
+     if (address)
+       *lsrtp = SE32(*lsrtp);
+   }
+   else
+   {
+     address = lsaddr & UINT32_C(0xFFFFFFFC);
+     rdword = &word;
+     read_word_in_memory();
+     if (address)
+     {
+       /* How many low bits do we want to preserve from the old value? */
+       uint32_t old_mask = BITS_BELOW_MASK32((lsaddr & 3) * 8);
+       /* How many bits up do we want to add the low bits of the new value in? */
+       int new_shift = (lsaddr & 3) * 8;
+       *lsrtp = SE32(((uint32_t) *lsrtp & old_mask) | ((uint32_t) word << new_shift));
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(LW)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_word_in_memory();
+   if (address)
+     *lsrtp = SE32(*lsrtp);
+}
+
+DECLARE_INSTRUCTION(LBU)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_byte_in_memory();
+}
+
+DECLARE_INSTRUCTION(LHU)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_hword_in_memory();
+}
+
+DECLARE_INSTRUCTION(LWR)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t word = 0;
+   ADD_TO_PC(1);
+   address = lsaddr & UINT32_C(0xFFFFFFFC);
+   if ((lsaddr & 3) == 3)
+   {
+     rdword = (uint64_t*) lsrtp;
+     read_word_in_memory();
+     if (address)
+       *lsrtp = SE32(*lsrtp);
+   }
+   else
+   {
+     rdword = &word;
+     read_word_in_memory();
+     if (address)
+     {
+       /* How many high bits do we want to preserve from the old value? */
+       uint32_t old_mask = BITS_ABOVE_MASK32(((lsaddr & 3) + 1) * 8);
+       /* How many bits down do we want to add the new value in? */
+       int new_shift = (3 - (lsaddr & 3)) * 8;
+       *lsrtp = SE32(((uint32_t) *lsrtp & old_mask) | ((uint32_t) word >> new_shift));
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(LWU)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_word_in_memory();
+}
+
+DECLARE_INSTRUCTION(SB)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   cpu_byte = (uint8_t) *lsrtp;
+   write_byte_in_memory();
+   CHECK_MEMORY();
+}
+
+DECLARE_INSTRUCTION(SH)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   cpu_hword = (uint16_t) *lsrtp;
+   write_hword_in_memory();
+   CHECK_MEMORY();
+}
+
+DECLARE_INSTRUCTION(SWL)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t old_word = 0;
+   ADD_TO_PC(1);
+   if ((lsaddr & 3) == 0)
+   {
+     address = lsaddr;
+     cpu_word = (uint32_t) *lsrtp;
+     write_word_in_memory();
+     CHECK_MEMORY();
+   }
+   else
+   {
+     address = lsaddr & UINT32_C(0xFFFFFFFC);
+     rdword = &old_word;
+     read_word_in_memory();
+     if (address)
+     {
+       /* How many high bits do we want to preserve from what was in memory
+        * before? */
+       uint32_t old_mask = BITS_ABOVE_MASK32((4 - (lsaddr & 3)) * 8);
+       /* How many bits down do we need to shift the register to store some
+        * of its high bits into the low bits of the memory word? */
+       int new_shift = (lsaddr & 3) * 8;
+       cpu_word = ((uint32_t) old_word & old_mask) | ((uint32_t) *lsrtp >> new_shift);
+       write_word_in_memory();
+       CHECK_MEMORY();
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(SW)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   cpu_word = (uint32_t) *lsrtp;
+   write_word_in_memory();
+   CHECK_MEMORY();
+}
+
+DECLARE_INSTRUCTION(SDL)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t old_word = 0;
+   ADD_TO_PC(1);
+   if ((lsaddr & 7) == 0)
+   {
+     address = lsaddr;
+     cpu_dword = *lsrtp;
+     write_dword_in_memory();
+     CHECK_MEMORY();
+   }
+   else
+   {
+     address = lsaddr & UINT32_C(0xFFFFFFF8);
+     rdword = &old_word;
+     read_dword_in_memory();
+     if (address)
+     {
+       /* How many high bits do we want to preserve from what was in memory
+        * before? */
+       uint64_t old_mask = BITS_ABOVE_MASK64((8 - (lsaddr & 7)) * 8);
+       /* How many bits down do we need to shift the register to store some
+        * of its high bits into the low bits of the memory word? */
+       int new_shift = (lsaddr & 7) * 8;
+       cpu_dword = (old_word & old_mask) | ((uint64_t) *lsrtp >> new_shift);
+       write_dword_in_memory();
+       CHECK_MEMORY();
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(SDR)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t old_word = 0;
+   ADD_TO_PC(1);
+   address = lsaddr & UINT32_C(0xFFFFFFF8);
+   if ((lsaddr & 7) == 7)
+   {
+     cpu_dword = *lsrtp;
+     write_dword_in_memory();
+     CHECK_MEMORY();
+   }
+   else
+   {
+     rdword = &old_word;
+     read_dword_in_memory();
+     if (address)
+     {
+       /* How many low bits do we want to preserve from what was in memory
+        * before? */
+       uint64_t old_mask = BITS_BELOW_MASK64((7 - (lsaddr & 7)) * 8);
+       /* How many bits up do we need to shift the register to store some
+        * of its low bits into the high bits of the memory word? */
+       int new_shift = (7 - (lsaddr & 7)) * 8;
+       cpu_dword = (old_word & old_mask) | (*lsrtp << new_shift);
+       write_dword_in_memory();
+       CHECK_MEMORY();
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(SWR)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   uint64_t old_word = 0;
+   ADD_TO_PC(1);
+   address = lsaddr & UINT32_C(0xFFFFFFFC);
+   if ((lsaddr & 3) == 3)
+   {
+     cpu_word = (uint32_t) *lsrtp;
+     write_word_in_memory();
+     CHECK_MEMORY();
+   }
+   else
+   {
+     rdword = &old_word;
+     read_word_in_memory();
+     if (address)
+     {
+       /* How many low bits do we want to preserve from what was in memory
+        * before? */
+       int32_t old_mask = BITS_BELOW_MASK32((3 - (lsaddr & 3)) * 8);
+       /* How many bits up do we need to shift the register to store some
+        * of its low bits into the high bits of the memory word? */
+       int new_shift = (3 - (lsaddr & 3)) * 8;
+       cpu_word = ((uint32_t) old_word & old_mask) | ((uint32_t) *lsrtp << new_shift);
+       write_word_in_memory();
+       CHECK_MEMORY();
+     }
+   }
+}
+
+DECLARE_INSTRUCTION(CACHE)
+{
+   ADD_TO_PC(1);
+}
+
+DECLARE_INSTRUCTION(LL)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_word_in_memory();
+   if (address)
+     {
+    *lsrtp = SE32(*lsrtp);
+    llbit = 1;
+     }
+}
+
+DECLARE_INSTRUCTION(LWC1)
+{
+   const unsigned char lslfft = lfft;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
+   uint64_t temp;
+   if (check_cop1_unusable()) return;
+   ADD_TO_PC(1);
+   address = lslfaddr;
+   rdword = &temp;
+   read_word_in_memory();
+   if (address)
+     *((uint32_t*) reg_cop1_simple[lslfft]) = (uint32_t) *rdword;
+}
+
+DECLARE_INSTRUCTION(LDC1)
+{
+   const unsigned char lslfft = lfft;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
+   if (check_cop1_unusable()) return;
+   ADD_TO_PC(1);
+   address = lslfaddr;
+   rdword = (uint64_t*) reg_cop1_double[lslfft];
+   read_dword_in_memory();
+}
+
+DECLARE_INSTRUCTION(LD)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   rdword = (uint64_t*) lsrtp;
+   read_dword_in_memory();
+}
+
+DECLARE_INSTRUCTION(SC)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   if(llbit)
+   {
+      address = lsaddr;
+      cpu_word = (uint32_t) *lsrtp;
+      write_word_in_memory();
+      CHECK_MEMORY();
+      llbit = 0;
+      *lsrtp = 1;
+   }
+   else
+   {
+      *lsrtp = 0;
+   }
+}
+
+DECLARE_INSTRUCTION(SWC1)
+{
+   const unsigned char lslfft = lfft;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
+   if (check_cop1_unusable()) return;
+   ADD_TO_PC(1);
+   address = lslfaddr;
+   cpu_word = *((uint32_t*) reg_cop1_simple[lslfft]);
+   write_word_in_memory();
+   CHECK_MEMORY();
+}
+
+DECLARE_INSTRUCTION(SDC1)
+{
+   const unsigned char lslfft = lfft;
+   const uint32_t lslfaddr = (uint32_t) reg[lfbase] + lfoffset;
+   if (check_cop1_unusable()) return;
+   ADD_TO_PC(1);
+   address = lslfaddr;
+   cpu_dword = *((uint64_t*) reg_cop1_double[lslfft]);
+   write_dword_in_memory();
+   CHECK_MEMORY();
+}
+
+DECLARE_INSTRUCTION(SD)
+{
+   const uint32_t lsaddr = irs32 + iimmediate;
+   int64_t *lsrtp = &irt;
+   ADD_TO_PC(1);
+   address = lsaddr;
+   cpu_dword = *lsrtp;
+   write_dword_in_memory();
+   CHECK_MEMORY();
+}

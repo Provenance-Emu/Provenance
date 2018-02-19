@@ -1,0 +1,13 @@
+Mupen64Plus-Video-Glide64mk2 RELEASE
+-------------------------------------
+
+Mupen64Plus-Video-Glide64mk2 v2.0 - July 4, 2013
+------------------------------------------------
+ - lots of bug fixing and cleanup
+ - remove wxwidgets dependencies
+ - ported old 32-bit x86 assembly language code to C for other platforms/CPUs
+ - add Visual Studio 2012 project files
+ - convert to Mupen64Plus build system and API
+ - merged wahrhaft's Glide64 and Glitch64 changes from earlier porting effort
+ - ported later changes from Mudlord's repository
+ - add initial source code from Gonetz's google code repo "10th anniversary Glide64 release"

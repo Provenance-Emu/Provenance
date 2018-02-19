@@ -56,3 +56,4 @@ extern NSString * const PVPCECDSystemIdentifier;
 extern NSString * const PVPCFXSystemIdentifier;
 extern NSString * const PVVirtualBoySystemIdentifier;
 extern NSString * const PVWonderSwanSystemIdentifier;
+extern NSString * const PVN64SystemIdentifier;
