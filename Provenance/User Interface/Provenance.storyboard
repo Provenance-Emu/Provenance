@@ -261,7 +261,7 @@
                         </textField>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
                             <connections>
-                                <action selector="getMoreROMs" destination="40z-oi-2L6" id="mcY-ai-xh6"/>
+                                <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

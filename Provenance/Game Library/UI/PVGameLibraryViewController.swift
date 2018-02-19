@@ -302,7 +302,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 // MARK: - Filesystem Helpers
-    @IBAction func getMoreROMs() {
+	@IBAction func getMoreROMs(_ sender: Any) {
         let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
         let status: NetworkStatus = reachability.currentReachabilityStatus()
@@ -340,6 +340,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             
+			if let barButtonItem = sender as? UIBarButtonItem {
+				actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
+			}
             present(actionSheet, animated: true, completion: nil)
             #else
                 startWebServer()
