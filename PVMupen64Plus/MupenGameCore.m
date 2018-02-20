@@ -525,7 +525,8 @@ static void MupenSetAudioSpeed(int percent)
     };
     
     // Load Video
-    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    //BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
     if (!success) {
         return NO;
     }
