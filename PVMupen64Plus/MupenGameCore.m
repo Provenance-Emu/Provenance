@@ -429,6 +429,34 @@ static void MupenSetAudioSpeed(int percent)
     /** End Core Config **/
     ConfigSaveSection("Core");
     
+    /** Begin Video Config **/
+    m64p_handle general;
+    ConfigOpenSection("Video-General", &general);
+    
+    // Screen width
+    int screenWidth = 640;
+    ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
+    
+    // Screen height
+    int screenHeight = 480;
+    ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
+    
+    /** End Video Config **/
+    
+    /** Begin GLideN64 Config **/
+    m64p_handle gliden64;
+    ConfigOpenSection("Video-GLideN64", &gliden64);
+    
+    // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
+    int aspectRatio = 1;
+    ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
+    
+    // Per-pixel lighting
+    int enableHWLighting = 0;
+    ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
+    
+    /** End GLideN64 Config **/
+    
     /** RICE CONFIG **/
     m64p_handle rice;
     ConfigOpenSection("Video-Rice", &rice);
@@ -849,7 +877,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (CGSize)aspectSize
 {
-    return CGSizeMake(4, 3);
+    return CGSizeMake(videoWidth, videoHeight);
 }
 
 - (void) tryToResizeVideoTo:(CGSize)size

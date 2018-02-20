@@ -535,7 +535,6 @@ struct PVVertex
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureFront, 0);
     NSAssert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, @"Front framebuffer incomplete!");
     
-    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glUseProgram(blitShaderProgram);
@@ -592,6 +591,7 @@ struct PVVertex
     // state retrieval and restoration.
     [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferFront);
+    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
     
     glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
