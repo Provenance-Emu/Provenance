@@ -34,6 +34,15 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         bottomSeparator.autoresizingMask = .flexibleWidth
         
         addSubview(bottomSeparator)
+    
+        // Style
+        backgroundColor = UIColor.black
+        titleLabel.textAlignment = .left
+        titleLabel.backgroundColor = UIColor.black
+        titleLabel.textColor = UIColor(hex: "#7B7B81")
+        topSeparator.backgroundColor = UIColor(hex: "#262626")
+        bottomSeparator.backgroundColor = UIColor(hex: "#262626")
+        self.clipsToBounds = false
 #endif
         titleLabel.numberOfLines = 0
         titleLabel.autoresizingMask = .flexibleWidth

@@ -91,6 +91,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #endif
     
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -145,6 +149,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
 #if os(tvOS)
         collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+#else
+    collectionView.backgroundColor = UIColor(hex: "#222")
+    searchField.keyboardAppearance = .dark
 #endif
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
@@ -1659,7 +1666,7 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
         #if os(tvOS)
             return UIEdgeInsetsMake(40, 0, 120, 0)
         #else
-            return UIEdgeInsetsMake(5, 5, 5, 5)
+            return UIEdgeInsetsMake(5, 10, 5, 10)
         #endif
     }
 }

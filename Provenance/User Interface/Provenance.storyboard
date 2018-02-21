@@ -14,7 +14,7 @@
         <scene sceneID="9Nl-1J-rrm">
             <objects>
                 <navigationController definesPresentationContext="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="iLh-mO-joj">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="iLh-mO-joj">
                         <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -30,7 +30,23 @@
         <scene sceneID="9pW-XQ-eWJ">
             <objects>
                 <pageViewController storyboardIdentifier="gameMoreInfoPageVC" autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="iWs-z6-SNP" customClass="GameMoreInfoPageViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" id="v5U-SS-fQX"/>
+                    <navigationItem key="navigationItem" id="v5U-SS-fQX">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="bookmarks" id="kDw-kM-Yw5">
+                                <connections>
+                                    <action selector="moreInfoButtonClicked:" destination="iWs-z6-SNP" id="2To-jY-Mqb"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="play" id="k3H-6D-xYE">
+                                <connections>
+                                    <action selector="playButtonTapped:" destination="iWs-z6-SNP" id="L95-bK-gGc"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="onlineLookupBarButtonItem" destination="kDw-kM-Yw5" id="8gk-yo-knw"/>
+                    </connections>
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c1v-J7-Iaj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -369,12 +385,13 @@
                                 <segue destination="YzD-6V-3zn" kind="modal" identifier="SettingsSegue" modalPresentationStyle="formSheet" id="PHC-9h-QIz"/>
                             </connections>
                         </barButtonItem>
-                        <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" clearButtonMode="always" id="FMl-Ia-DzO">
-                            <rect key="frame" x="80" y="7" width="216" height="30"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" red="0.082352941176470587" green="0.082352941176470587" blue="0.082352941176470587" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="redraw" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="Search" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" clearButtonMode="always" id="FMl-Ia-DzO">
+                            <rect key="frame" x="68" y="7" width="240" height="30"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" white="0.25159489197863472" alpha="0.1543771404109589" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="textColor" white="0.80292426215277779" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="search"/>
+                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardAppearance="alert" returnKeyType="search" enablesReturnKeyAutomatically="YES"/>
                             <connections>
                                 <outlet property="delegate" destination="40z-oi-2L6" id="Q9f-Ec-mp2"/>
                             </connections>
@@ -384,6 +401,9 @@
                                 <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                             </connections>
                         </barButtonItem>
+                        <connections>
+                            <outlet property="titleView" destination="FMl-Ia-DzO" id="WNp-E2-Ole"/>
+                        </connections>
                     </navigationItem>
                     <connections>
                         <outlet property="searchField" destination="FMl-Ia-DzO" id="Spf-xq-3GX"/>
@@ -393,7 +413,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rMK-CR-Zic" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-298" y="-38"/>
+            <point key="canvasLocation" x="-298.5" y="-38"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9Ps-Fk-JIO">
@@ -419,6 +439,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="sectionIndexBackgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <sections>
                             <tableViewSection headerTitle="Emulator Settings" id="98n-5y-kj7">
                                 <cells>
