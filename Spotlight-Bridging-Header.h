@@ -4,3 +4,4 @@
 
 #import "UIImage+Scaling.h"
 #import "NSString+Hashing.h"
+#import "NSFileManager+Hashing.h"

@@ -8,6 +8,12 @@
 
 import Foundation
 import RealmSwift
+import UIKit
+
+public extension Notification.Name {
+    static let DatabaseMigrationStarted  = Notification.Name("DatabaseMigrarionStarted")
+    static let DatabaseMigrationFinished = Notification.Name("DatabaseMigrarionFinished")
+}
 
 public class RealmConfiguration {
     class public var supportsAppGroups : Bool {
@@ -50,9 +56,47 @@ public class RealmConfiguration {
         
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
-                ILOG("Migrating to version 2.")
+                ILOG("Migrating to version 2. Adding MD5s")
+                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
+               
+                var counter = 0;
+                var deletions = 0;
+                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
+                    let romPath = oldObject!["romPath"] as! String
+                    let systemID = oldObject!["systemIdentifier"] as! String
+                    let system = SystemIdentifier(rawValue: systemID)!
+
+                    var offset : UInt = 0
+                    if system == .SNES {
+                        offset = 16
+                    }
+
+                    let fullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(romPath, isDirectory: false)
+                    let fm = FileManager.default
+                    if !fm.fileExists(atPath: fullPath.path) {
+                        ELOG("Cannot find file at path: \(fullPath). Deleting entry");
+                        if let oldObject = oldObject {
+                            migration.delete(oldObject)
+                            deletions += 1
+                        }
+                        return
+                    }
+
+                    if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: offset), !md5.isEmpty {
+                        newObject!["md5Hash"] = md5
+                        counter += 1
+                    } else {
+                        ELOG("Couldn't get md5 for \(fullPath.path). Removing entry")
+                        if let oldObject = oldObject {
+                            migration.delete(oldObject)
+                            deletions += 1
+                        }
+                    }
+                }
+                
+                NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
+                ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
             }
-            ILOG("Migration complete.")
         }
         
         #if DEBUG
