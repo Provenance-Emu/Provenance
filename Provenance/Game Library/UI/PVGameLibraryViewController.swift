@@ -99,12 +99,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     @objc func handleAppDidBecomeActive(_ note: Notification) {
         loadGameFromShortcut()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
         definesPresentationContext = true
         
+        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationStarted(_:)), name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationFinished(_:)), name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
+
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleCacheEmptied(_:)), name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArchiveInflationFailed(_:)), name: NSNotification.Name.PVArchiveInflationFailed, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
@@ -1604,6 +1607,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     override var canBecomeFirstResponder: Bool {
         return true
+    }
+}
+
+// MARK: Database Migration
+extension PVGameLibraryViewController {
+    @objc public func databaseMigrationStarted(_ notification: Notification) {
+        let hud = MBProgressHUD.showAdded(to: view, animated: true)!
+        hud.isUserInteractionEnabled = false
+        hud.mode = .indeterminate
+        hud.labelText = "Migrating Game Library"
+        hud.detailsLabelText = "Please be patient, this may take a while..."
+    }
+    
+    @objc public func databaseMigrationFinished(_ notification: Notification) {
+        MBProgressHUD.hide(for: view!, animated: true)
     }
 }
 
