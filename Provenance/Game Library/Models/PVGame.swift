@@ -66,7 +66,7 @@ public class PVGame : Object, PVLibraryEntry {
     @objc dynamic var boxBackArtworkURL : String?
     @objc dynamic var developer : String?
     @objc dynamic var publisher : String?
-    @objc dynamic var year : String?
+    @objc dynamic var publishDate : String?
     @objc dynamic var genres : String? // Is a comma seperated list or single entry
     @objc dynamic var referenceURL : String?
     @objc dynamic var releaseID : String?
@@ -131,7 +131,7 @@ public extension PVGame {
         // Determine if any of these have a value, and if so, seperate them by a space
         let optionalEntries : [String?] = [isFavorite ? "⭐" : nil,
                                            developer,
-                                           year != nil ? "(\(year!)" : nil,
+                                           publishDate != nil ? "(\(publishDate!)" : nil,
                                            regionName != nil ? "(\(regionName!))" : nil]
         let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
             return maybeString

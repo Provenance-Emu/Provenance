@@ -18,8 +18,7 @@ import RealmSwift
 
 public protocol GameLaunchingViewController : class {
     var mustRefreshDataSource : Bool {get set}
-    
-    func canLoad(_ game: PVGame) throws -> Bool
+    func canLoad(_ game: PVGame) throws
     func load(_ game: PVGame)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
@@ -123,14 +122,12 @@ extension GameLaunchingViewController where Self : UIViewController {
         }
     }
     
-    func canLoad(_ game: PVGame) throws -> Bool {
+    func canLoad(_ game: PVGame) throws {
         guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
         }
 
         try biosCheck(system: system)
-
-        return true
     }
     
     private func displayAndLogError(withTitle title : String, message : String) {
@@ -155,36 +152,33 @@ extension GameLaunchingViewController where Self : UIViewController {
         }
         
         do {
-            if try self.canLoad(game) {
-                // Init emulator VC
-                let emulatorViewController = PVEmulatorViewController(game: game)
-                
-                // Configure emulator VC
-                // NOTE: These technically could be derived in PVEmulatorViewController directly
-                emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
-                emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
-                emulatorViewController.biosPath = PVEmulatorConfiguration.biosPath(forGame: game).path
-                emulatorViewController.systemID = game.systemIdentifier
-                
-                // Present the emulator VC
-                emulatorViewController.modalTransitionStyle = .crossDissolve
-                self.present(emulatorViewController, animated: true) {() -> Void in }
-                
-                PVControllerManager.shared().iCadeController?.refreshListener()
-                
-                do {
-                    try RomDatabase.sharedInstance.writeTransaction {
-                        game.playCount += 1
-                        game.lastPlayed = Date()
-                    }
-                } catch {
-                    ELOG("\(error.localizedDescription)")
+            try self.canLoad(game)
+            // Init emulator VC
+            let emulatorViewController = PVEmulatorViewController(game: game)
+            
+            // Configure emulator VC
+            // NOTE: These technically could be derived in PVEmulatorViewController directly
+            emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
+            emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
+            emulatorViewController.biosPath = PVEmulatorConfiguration.biosPath(forGame: game).path
+            emulatorViewController.systemID = game.systemIdentifier
+            
+            // Present the emulator VC
+            emulatorViewController.modalTransitionStyle = .crossDissolve
+            self.present(emulatorViewController, animated: true) {() -> Void in }
+            
+            PVControllerManager.shared().iCadeController?.refreshListener()
+            
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.playCount += 1
+                    game.lastPlayed = Date()
                 }
-                
-                self.updateRecentGames(game)
-            } else {
-                ELOG("Cannot load game")
+            } catch {
+                ELOG("\(error.localizedDescription)")
             }
+            
+            self.updateRecentGames(game)    
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system)

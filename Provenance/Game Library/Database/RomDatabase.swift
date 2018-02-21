@@ -197,6 +197,10 @@ public extension RomDatabase {
     public func allGames(sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<PVGame> {
         return all(PVGame.self, sorthedByKeyPath: keyPath, ascending: ascending)
     }
+    
+    public func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
+        return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
+    }
 }
 
 // MARK: - Update

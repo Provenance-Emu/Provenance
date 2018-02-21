@@ -7,9 +7,10 @@
 //
 
 import UIKit
-
+import RealmSwift
 #if os(iOS)
 import SafariServices
+import AssetsLibrary
 #endif
 
 /* TODO:
@@ -20,11 +21,165 @@ import SafariServices
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
+
+// Special label that renders Countries as flag emojis when available
+class RegionLabel : UILabel {
+    override var text: String? {
+        get {
+            return super.text
+        }
+        set {
+            let flags = ["Europe" : "🇪🇺", "USA" : "🇺🇸", "Japan" : "🇯🇵", "World" : "🌎", "Korea" : "🇰🇷", "Spain" : "🇪🇸", "Taiwan" : "🇹🇼", "China" : "🇨🇳", "Australia" : "🇦🇺", "Netherlands" : "🇳🇱", "Italy" : "🇮🇹", "Germany" : "🇩🇪", "France" : "🇫🇷", "Brazil" : "🇧🇷", "Asia" : "🌏"]
+            let swappedFlagsText = flags.reduce(newValue, { (result, dict) -> String? in
+                let (text, flag) = dict
+                return result?.replacingOccurrences(of: text, with: flag)
+            })
+            super.text = swappedFlagsText
+        }
+    }
+}
+
+class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController {
+    var mustRefreshDataSource: Bool = false
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.dataSource = self
+        self.delegate = self
+    }
+    
+    var game : PVGame? {
+        return (self.viewControllers?.first as? PVGameMoreInfoViewController)?.game
+    }
+    
+    lazy var games : Results<PVGame> = {
+        RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle()
+    }()
+    
+    // MARK: - Delegate
+    
+    // Sent when a gesture-initiated transition begins.
+    public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+        
+    }
+    
+    
+    // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
+    public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        if completed {
+            #if os(iOS)
+                if let referenceURL = game?.referenceURL, !referenceURL.isEmpty {
+                    onlineLookupBarButtonItem.isEnabled = true
+                } else {
+                    onlineLookupBarButtonItem.isEnabled = false
+                }
+            #endif
+        }
+    }
+    
+    // Delegate may specify a different spine location for after the interface orientation change. Only sent for transition style 'UIPageViewControllerTransitionStylePageCurl'.
+    // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
+    public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewControllerSpineLocation {
+        return .min
+    }
+    
+    
+    public func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
+        return [.portrait]
+    }
+    
+    public func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
+        return .portrait
+    }
+    
+    // MARK: - Data Source
+    // In terms of navigation direction. For example, for 'UIPageViewControllerNavigationOrientationHorizontal', view controllers coming 'before' would be to the left of the argument view controller, those coming 'after' would be to the right.
+    // Return 'nil' to indicate that no more progress can be made in the given direction.
+    // For gesture-initiated transitions, the page view controller obtains view controllers via these methods, so use of setViewControllers:direction:animated:completion: is not required.
+    // MARK: - UIPageViewControllerDataSource
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+        guard let moreInfoviewController = viewController as? PVGameMoreInfoViewController else {
+            ELOG("Wrong controller type \(viewController.debugDescription)")
+            return nil
+        }
+        return nextFrom(viewController: moreInfoviewController, direction: .reverse)
+    }
+    
+    public func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        guard let moreInfoviewController = viewController as? PVGameMoreInfoViewController else {
+            ELOG("Wrong controller type \(viewController.debugDescription)")
+            return nil
+        }
+        return nextFrom(viewController: moreInfoviewController, direction: .forward)
+    }
+    
+    // A page indicator will be visible if both methods are implemented, transition style is 'UIPageViewControllerTransitionStyleScroll', and navigation orientation is 'UIPageViewControllerNavigationOrientationHorizontal'.
+    // Both methods are called in response to a 'setViewControllers:...' call, but the presentation index is updated automatically in the case of gesture-driven navigation.
+//    public func presentationCount(for pageViewController: UIPageViewController) -> Int // The number of items reflected in the page indicator.
+//    public func presentationIndex(for pageViewController: UIPageViewController) -> Int // The selected item reflected in the page indicator.
+    
+    private func nextFrom(viewController: PVGameMoreInfoViewController, direction: UIPageViewControllerNavigationDirection) -> PVGameMoreInfoViewController? {
+        guard let game = viewController.game, let currentIndex = games.index(of: game) else {
+            ELOG("Game or current index was nil")
+            return nil
+        }
+        
+
+        let nextGameIndex = direction == .forward ? games.index(after: currentIndex) : games.index(before: currentIndex)
+        guard nextGameIndex != currentIndex, nextGameIndex < games.count, nextGameIndex >= 0 else {
+            ELOG("Game or current index was nil")
+            return nil
+        }
+        
+        let storyboard = UIStoryboard.init(name: "Provenance", bundle: nil)
+        let nextViewController = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        
+        let nextGame = games[nextGameIndex]
+        nextViewController.game = nextGame
+        return nextViewController
+    }
+    
+    // MARK: Actions
+    @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
+        if let game = game {
+            load(game)
+        }
+    }
+    
+    
+    @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
+        #if os(iOS)
+
+        if #available(iOS 9.0, *) {
+            if let urlString = game?.referenceURL, let url = URL(string:urlString) {
+                if #available(iOS 11.0, *) {
+                    let config = SFSafariViewController.Configuration()
+                    config.barCollapsingEnabled = true
+                    config.entersReaderIfAvailable = true
+                    
+                    let webVC = SFSafariViewController(url: url, configuration: config)
+                    present(webVC, animated: true, completion: nil)
+                } else {
+                    let webVC = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+                    present(webVC, animated: true, completion: nil)
+                }
+            }
+        } else {
+            let alert = UIAlertController(title: "Not supported", message: "Feature requires iOS 9 or above", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+        }
+        #endif
+    }
+
+    @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
+}
+
     
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
     @objc
-    var game : PVGame? {
+    public var game : PVGame? {
         didSet {
             if isViewLoaded {
                 updateContent()
@@ -53,12 +208,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet weak var publisherLabel: UILabel!
     @IBOutlet weak var publishDateLabel: UILabel!
     @IBOutlet weak var genresLabel: UILabel!
-    @IBOutlet weak var regionLabel: UILabel!
+    @IBOutlet weak var regionLabel: RegionLabel!
     @IBOutlet weak var descriptionTextView: UITextView!
     
     @IBOutlet var singleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
-    
+    @IBOutlet var imageLongPressGestureRecognizer: UILongPressGestureRecognizer!
+
     @IBOutlet var playCountLabel : UILabel!
     @IBOutlet var timeSpentLabel : UILabel!
     
@@ -67,6 +223,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     #endif
     @IBOutlet weak var playBarButtonItem: UIBarButtonItem!
     
+    
+    
+    @IBAction func nameLabelTapped(_ sender: Any) {
+    }
     var mustRefreshDataSource = false
 
     override func viewDidLoad() {
@@ -83,6 +243,17 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         layer.shadowOffset = CGSize(width: 2, height: 1)
         layer.shadowRadius = 4.0
         layer.shadowOpacity = 0.7
+    }
+    
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        descriptionTextView.showsVerticalScrollIndicator = true
+        descriptionTextView.flashScrollIndicators()
+        descriptionTextView.indicatorStyle = .white
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,18 +295,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         systemLabel.text = game?.systemShortName ?? ""
         developerLabel.text = game?.developer  ?? ""
         publisherLabel.text = game?.publisher  ?? ""
-        publishDateLabel.text = game?.year  ?? ""
+        publishDateLabel.text = game?.publishDate  ?? ""
         genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ")  ?? ""
-        
-        if let regionText = game?.regionName {
-            let flags = ["Europe" : "🇪🇺", "USA" : "🇺🇸", "Japan" : "🇯🇵", "World" : "🌎", "Korea" : "🇰🇷", "Spain" : "🇪🇸", "Taiwan" : "🇹🇼", "China" : "🇨🇳", "Australia" : "🇦🇺", "Netherlands" : "🇳🇱", "Italy" : "🇮🇹", "Germany" : "🇩🇪", "France" : "🇫🇷", "Brazil" : "🇧🇷", "Asia" : "🌏"]
-            regionLabel.text = flags.reduce(regionText, { (result, dict) -> String in
-                let (text, flag) = dict
-                return result.replacingOccurrences(of: text, with: flag)
-            })
-        } else {
-            regionLabel.text = ""
-        }
+        regionLabel.text = game?.regionName
         
         descriptionTextView.text = game?.gameDescription  ?? ""
         
@@ -252,7 +414,12 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
             if let imageKey = (game?.customArtworkURL.isEmpty ?? true) ? game?.originalArtworkURL : game?.customArtworkURL {
                 PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
                     if let image = image {
-                        self.flipImageView(withImage: image)
+                        if self.artworkImageView.image == nil {
+                            // Don't animate the first load, it's annoying
+                            self.artworkImageView.image = image
+                        } else {
+                            self.flipImageView(withImage: image)
+                        }
                     }
                 })
             }
@@ -294,10 +461,132 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
             self.artworkImageView.image = image
         }, completion: nil)
     }
+    
+    
+    @IBAction func nameTapped(_ sender: Any) {
+        editKey(\PVGame.title, title: "Title", label: nameLabel)
+    }
+    
+    @IBAction func developerTapped(_ sender: Any) {
+        editKey(\PVGame.developer, title: "Developer", label: developerLabel)
+    }
+    
+    @IBAction func publishDateTapped(_ sender: Any) {
+        editKey(\PVGame.publishDate, title: "Published Date", label: publishDateLabel)
+    }
+    
+    @IBAction func publisherTapped(_ sender: Any) {
+        editKey(\PVGame.publisher, title: "Publisher", label: developerLabel)
+    }
+    
+    @IBAction func genresTapped(_ sender: Any) {
+        editKey(\PVGame.genres, title: "Genres", label: genresLabel)
+    }
+    
+    @IBAction func regionLongPressed(_ sender: Any) {
+        editKey(\PVGame.regionName, title: "Regions", label: regionLabel)
+    }
+    
+    @IBAction func descriptionTapped(_ sender: Any) {
+        descriptionTextView.isUserInteractionEnabled = true
+        descriptionTextView.isEditable = true
+        descriptionTextView.becomeFirstResponder()
+        descriptionTextView.delegate = self
+    }
+    
+    @IBAction func imageLongPressed(_ sender: Any) {
+        #if os(iOS)
+        askToChangeArtwork()
+        #endif
+    }
+    
+    @IBAction func timeSpentTapped(_ sender: Any) {
+        askToResetAnalytics()
+    }
+    
+    @IBAction func playsTapped(_ sender: Any) {
+        askToResetAnalytics()
+    }
+    
+    // Deal will nullable key paths
+    private func editKey(_ key : WritableKeyPath<PVGame, String?>, title: String, label: UILabel) {
+        let currentValue = game![keyPath: key]
+        let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
+        
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = title
+            textField.text = currentValue
+            textField.allowsEditingTextAttributes = false
+            textField.clearButtonMode = .always
+            textField.keyboardAppearance  = .dark
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { (action) in
+            let textField = alert.textFields?.first!
+            let submittedValue = textField?.text
+            
+            if submittedValue != currentValue {
+                do {
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        self.game![keyPath: key] = submittedValue
+                    }
+                    label.text = submittedValue
+                } catch {
+                    ELOG("Failed to update value of \(key) to \(submittedValue ?? "nil"). \(error.localizedDescription)")
+                }
+            }
+        }))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
+    // Deal with non-null - non-empty keys paths
+    private func editKey(_ key : WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
+        
+        let currentValue = game![keyPath: key]
+        let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
+        
+        
+        alert.addTextField { (textField) in
+            textField.placeholder = title
+            textField.text = currentValue
+            textField.allowsEditingTextAttributes = false
+            textField.clearButtonMode = .always
+            textField.keyboardAppearance  = .dark
+        }
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { (action) in
+            let textField = alert.textFields?.first!
+            let submittedValue = textField?.text
+            
+            if submittedValue == nil || submittedValue!.isEmpty {
+                let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty", preferredStyle: .alert)
+                errAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(errAlert, animated: true, completion: nil)
+            } else if submittedValue != currentValue, let newValue = submittedValue {
+                do {
+                    try RomDatabase.sharedInstance.writeTransaction {
+                        self.game![keyPath: key] = newValue
+                    }
+                    
+                    label.text = newValue
+                } catch {
+                    ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")
+                }
+            }
+        }))
+        
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 @available(iOS 9.0, *)
 extension PVGameMoreInfoViewController {
+    
+     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems : [UIPreviewActionItem] {
         let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
@@ -323,6 +612,238 @@ extension PVGameMoreInfoViewController {
 //        let actionGroup = UIPreviewActionGroup(title: "Look at me, I can grow!", style: .default, actions: [action1, action2, action3])
         return [playAction, deleteAction]
     }
+}
+
+extension PVGameMoreInfoViewController : UITextViewDelegate {
+    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+        return true
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView == descriptionTextView {
+            descriptionTextView.resignFirstResponder()
+            descriptionTextView.isEditable = false
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    self.game!.gameDescription = descriptionTextView.text
+                }
+            } catch {
+                ELOG("Failed to update game description : \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+}
+
+
+// MARK: - Edit Gesture
+extension PVGameMoreInfoViewController {
+    private func askToResetAnalytics() {
+        let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game!.title)?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    self.game?.playCount = 0
+                    self.game?.timeSpentInGame = 0
+                }
+                self.playCountLabel.text = ""
+                self.timeSpentLabel.text = ""
+            } catch {
+                ELOG("Failed to erase play counts. \(error.localizedDescription)")
+            }
+        }))
+        present(alert, animated: true, completion: nil)
+    }
+    
+    private func askToChangeArtwork() {
+        #if os(iOS)
+            guard let game = self.game else {
+                return
+            }
+            
+            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+//            actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//                self.chooseCustomArtwork(for: game)
+//            }))
+
+            actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                self.pasteCustomArtwork(for: game)
+            }))
+
+//            if !game.originalArtworkURL.isEmpty && game.originalArtworkURL != game.customArtworkURL {
+//                actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//                    try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+//
+//                    try! RomDatabase.sharedInstance.writeTransaction {
+//                        game.customArtworkURL = ""
+//                    }
+//
+//                    let originalArtworkURL: String = game.originalArtworkURL
+//                    DispatchQueue.global(qos: .default).async {
+//                        self.gameImporter?.getArtworkFromURL(originalArtworkURL)
+//                        DispatchQueue.main.async {
+//                            let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
+//                            self.fetchGames()
+//                            self.collectionView?.reloadItems(at: indexPaths)
+//                        }
+//                    }
+//                }))
+//            }
+            
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(actionSheet, animated: true, completion: nil)
+        #endif
+    }
+    
+    // TODO: These are copied from PVGameLibraryViewController
+    // Can make a protocol with default implimentation instead
+    #if os(iOS)
+    func chooseCustomArtwork(for game: PVGame) {
+//
+//        let imagePickerActionSheet = UIActionSheet()
+//        let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
+//        let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
+//        let cameraAction: PVUIActionSheetAction = {() -> Void in
+//            self.gameForCustomArt = game!
+//            let pickerController = UIImagePickerController()
+//            pickerController.delegate = weakSelf
+//            pickerController.allowsEditing = false
+//            pickerController.sourceType = .camera
+//            self.present(pickerController, animated: true) {() -> Void in }
+//        }
+//        let libraryAction: PVUIActionSheetAction = {() -> Void in
+//            self.gameForCustomArt = game!
+//            let pickerController = UIImagePickerController()
+//            pickerController.delegate = weakSelf
+//            pickerController.allowsEditing = false
+//            pickerController.sourceType = .photoLibrary
+//            self.present(pickerController, animated: true) {() -> Void in }
+//        }
+//
+//        assetsLibrary = ALAssetsLibrary()
+//        assetsLibrary?.enumerateGroups(withTypes: ALAssetsGroupType(ALAssetsGroupSavedPhotos), using: { (group, stop) in
+//            guard let group = group else {
+//                return
+//            }
+//
+//            group.setAssetsFilter(ALAssetsFilter.allPhotos())
+//            let index: Int = group.numberOfAssets() - 1
+//            VLOG("Group: \(group)")
+//            if index >= 0 {
+//                var indexPathsToUpdate = [IndexPath]()
+//
+//                group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { (result, index, stop) in
+//                    if let rep: ALAssetRepresentation = result?.defaultRepresentation() {
+//                        imagePickerActionSheet.pv_addButton(withTitle: "Use Last Photo Taken", action: {() -> Void in
+//                            let orientation : UIImageOrientation = UIImageOrientation(rawValue: rep.orientation().rawValue)!
+//
+//                            let lastPhoto = UIImage(cgImage: rep.fullScreenImage().takeUnretainedValue(), scale: CGFloat(rep.scale()), orientation: orientation)
+//
+//                            do {
+//                                try PVMediaCache.writeImage(toDisk: lastPhoto, withKey: rep.url().path)
+//                                try RomDatabase.sharedInstance.writeTransaction {
+//                                    game.customArtworkURL = rep.url().path
+//                                }
+//                            } catch {
+//                                ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
+//                            }
+//
+//                            let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
+//                            indexPathsToUpdate.append(contentsOf: indexPaths)
+//                            self.fetchGames()
+//                            self.assetsLibrary = nil
+//                        })
+//                        if cameraIsAvailable || photoLibraryIsAvaialble {
+//                            if cameraIsAvailable {
+//                                imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
+//                            }
+//                            if photoLibraryIsAvaialble {
+//                                imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
+//                            }
+//                        }
+//                        imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//                        imagePickerActionSheet.show(in: self.view)
+//                    }
+//                })
+//
+//                DispatchQueue.main.async {
+//                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
+//                }
+//            }
+//            else {
+//                let alert = UIAlertController(title: "No Photos", message: "There are no photos in your library to choose from", preferredStyle: .alert)
+//                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//                self.present(alert, animated: true) {() -> Void in }
+//            }
+//        }, failureBlock: { (error) in
+//            if cameraIsAvailable || photoLibraryIsAvaialble {
+//                if cameraIsAvailable {
+//                    imagePickerActionSheet.pv_addButton(withTitle: "Take Photo...", action: cameraAction)
+//                }
+//                if photoLibraryIsAvaialble {
+//                    imagePickerActionSheet.pv_addButton(withTitle: "Choose from Library...", action: libraryAction)
+//                }
+//            }
+//            imagePickerActionSheet.pv_addCancelButton(withTitle: "Cancel", action: nil)
+//            imagePickerActionSheet.show(in: self.view)
+//            self.assetsLibrary = nil
+//        })
+    }
+    
+    func pasteCustomArtwork(for game: PVGame) {
+        let pb = UIPasteboard.general
+        var pastedImageMaybe: UIImage? = pb.image
+        
+        let pastedURL: URL? = pb.url
+        
+        if pastedImageMaybe == nil {
+            if let pastedURL = pastedURL {
+                do {
+                    let data = try Data(contentsOf: pastedURL)
+                    pastedImageMaybe = UIImage(data: data)
+                } catch {
+                    ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")
+                }
+            } else {
+                ELOG("No image or image url in pasteboard")
+                return
+            }
+        }
+        
+        if let pastedImage = pastedImageMaybe {
+            var key: String
+            if let pastedURL = pastedURL {
+                key = pastedURL.lastPathComponent
+            }
+            else {
+                key = UUID().uuidString
+            }
+            
+            do {
+                try PVMediaCache.writeImage(toDisk: pastedImage, withKey: key)
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.customArtworkURL = key
+                }
+                self.updateImageView()
+            } catch {
+                ELOG("Failed to set custom artwork URL for game \(game.title).\n\(error.localizedDescription)")
+            }
+        } else {
+            ELOG("No pasted image")
+        }
+    }
+    
+    #endif
+    
 }
 
 // TEMP

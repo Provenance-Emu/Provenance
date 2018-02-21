@@ -224,6 +224,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
             moreInfoVC.game = game
+        } else if segue.identifier == "gameMoreInfoPageVCSegue" {
+            let game = sender as! PVGame
+            
+            let firstVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            
+            let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController
+            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
         }
     }
 
@@ -1008,7 +1015,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
     
     func moreInfo(for game: PVGame) {
-        performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
+        #if os(iOS)
+            performSegue(withIdentifier: "gameMoreInfoPageVCSegue", sender: game)
+        #else
+            performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
+        #endif
     }
     
 
@@ -1763,8 +1774,12 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
     @available(iOS 9.0, *)
     extension PVGameLibraryViewController : UIViewControllerPreviewingDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-  
-        navigationController?.show(viewControllerToCommit, sender: self)
+        
+        let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+        moreInfoGamePageVC.setViewControllers([viewControllerToCommit], direction: .forward, animated: false, completion: nil)
+        navigationController!.show(moreInfoGamePageVC, sender: self)
+        
+//        navigationController?.show(viewControllerToCommit, sender: self)
 //        (viewControllerToCommit as! PVGameMoreInfoViewController).navigationItem.leftBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
 //        let newNav = UINavigationController(rootViewController: viewControllerToCommit)
 //        present(newNav, animated: true, completion: nil)
