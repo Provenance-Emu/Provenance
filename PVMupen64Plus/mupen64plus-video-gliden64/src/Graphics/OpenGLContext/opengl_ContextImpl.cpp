@@ -261,16 +261,6 @@ void ContextImpl::bindFramebuffer(graphics::BufferTargetParam _target, graphics:
 		depthMask->setDepthMask(true);
 		glClear(GL_DEPTH_BUFFER_BIT);
 	}
-#ifdef OS_IOS
-    if (m_defaultFramebuffer == graphics::ObjectHandle::null) {
-        GLint defaultFramebuffer;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &defaultFramebuffer);
-        m_defaultFramebuffer = graphics::ObjectHandle(defaultFramebuffer);
-    }
-    if (_name == graphics::ObjectHandle::null) {
-        _name = m_defaultFramebuffer;
-    }
-#endif
 	m_cachedFunctions->getCachedBindFramebuffer()->bind(_target, _name);
 }
 

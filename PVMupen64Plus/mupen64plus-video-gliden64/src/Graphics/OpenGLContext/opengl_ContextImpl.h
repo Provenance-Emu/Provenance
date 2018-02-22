@@ -159,10 +159,6 @@ namespace opengl {
 		std::unique_ptr<glsl::CombinerProgramBuilder> m_combinerProgramBuilder;
 		std::unique_ptr<glsl::SpecialShadersFactory> m_specialShadersFactory;
 		GLInfo m_glInfo;
-        
-#ifdef OS_IOS
-        graphics::ObjectHandle m_defaultFramebuffer;
-#endif
 	};
 
 }
