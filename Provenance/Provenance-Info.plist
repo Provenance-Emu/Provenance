@@ -84,6 +84,8 @@
 	</array>
 	<key>UIStatusBarHidden</key>
 	<false/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -114,17 +116,17 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-                    <string>ROM</string>
-                    <string>rom</string>
+					<string>ROM</string>
+					<string>rom</string>
 					<string>cue</string>
 					<string>bin</string>
 					<string>a78</string>
 					<string>a26</string>
 					<string>a52</string>
 					<string>sms</string>
-                    <string>smc</string>
-                    <string>fig</string>
-                    <string>sfc</string>
+					<string>smc</string>
+					<string>fig</string>
+					<string>sfc</string>
 					<string>gb</string>
 					<string>gbc</string>
 					<string>sgb</string>
@@ -133,9 +135,9 @@
 					<string>fds</string>
 					<string>lnx</string>
 					<string>ngp</string>
-                    <string>ngc</string>
-                    <string>ngpc</string>
-                    <string>npc</string>
+					<string>ngc</string>
+					<string>ngpc</string>
+					<string>npc</string>
 					<string>pce</string>
 					<string>ws</string>
 					<string>wsc</string>
@@ -144,12 +146,12 @@
 					<string>z64</string>
 					<string>gen</string>
 					<string>md</string>
-                    <string>gg</string>
+					<string>gg</string>
 					<string>smd</string>
 					<string>32x</string>
-                    <string>32X</string>
-                    <string>min</string>
-                    <string>7z</string>
+					<string>32X</string>
+					<string>min</string>
+					<string>7z</string>
 				</array>
 			</dict>
 		</dict>
@@ -161,42 +163,42 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
-                    <string>ROM</string>
-                    <string>rom</string>
-                    <string>cue</string>
-                    <string>bin</string>
-                    <string>a78</string>
-                    <string>a26</string>
-                    <string>a52</string>
-                    <string>sms</string>
-                    <string>smc</string>
-                    <string>fig</string>
-                    <string>sfc</string>
-                    <string>gb</string>
-                    <string>gbc</string>
-                    <string>sgb</string>
-                    <string>gba</string>
-                    <string>nes</string>
-                    <string>fds</string>
-                    <string>lnx</string>
-                    <string>ngp</string>
-                    <string>ngc</string>
-                    <string>ngpc</string>
-                    <string>npc</string>
-                    <string>pce</string>
-                    <string>ws</string>
-                    <string>wsc</string>
-                    <string>vb</string>
-                    <string>n64</string>
-                    <string>z64</string>
-                    <string>gen</string>
-                    <string>md</string>
-                    <string>gg</string>
-                    <string>smd</string>
-                    <string>32x</string>
-                    <string>32X</string>
-                    <string>min</string>
-                    <string>7z</string>
+					<string>ROM</string>
+					<string>rom</string>
+					<string>cue</string>
+					<string>bin</string>
+					<string>a78</string>
+					<string>a26</string>
+					<string>a52</string>
+					<string>sms</string>
+					<string>smc</string>
+					<string>fig</string>
+					<string>sfc</string>
+					<string>gb</string>
+					<string>gbc</string>
+					<string>sgb</string>
+					<string>gba</string>
+					<string>nes</string>
+					<string>fds</string>
+					<string>lnx</string>
+					<string>ngp</string>
+					<string>ngc</string>
+					<string>ngpc</string>
+					<string>npc</string>
+					<string>pce</string>
+					<string>ws</string>
+					<string>wsc</string>
+					<string>vb</string>
+					<string>n64</string>
+					<string>z64</string>
+					<string>gen</string>
+					<string>md</string>
+					<string>gg</string>
+					<string>smd</string>
+					<string>32x</string>
+					<string>32X</string>
+					<string>min</string>
+					<string>7z</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
