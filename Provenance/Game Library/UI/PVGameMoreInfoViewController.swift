@@ -555,6 +555,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
             textField.allowsEditingTextAttributes = false
             textField.clearButtonMode = .always
             textField.keyboardAppearance  = .dark
+            textField.autocapitalizationType = .sentences
+            
         }
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
