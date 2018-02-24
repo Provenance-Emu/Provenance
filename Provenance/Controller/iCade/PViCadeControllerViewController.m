@@ -16,6 +16,9 @@
 {
     [super viewDidLoad];
     
+    UITableView *currentTableView = self.tableView;
+    self.tableView = [[SettingsTableView alloc] initWithFrame:currentTableView.frame style:currentTableView.style];
+
 #if TARGET_OS_TV
     [self.splitViewController setTitle:@"Supported iCade Controllers"];
     [self.tableView setBackgroundColor:[UIColor clearColor]];

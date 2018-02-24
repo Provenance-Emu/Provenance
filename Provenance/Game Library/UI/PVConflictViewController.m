@@ -33,6 +33,8 @@
 {
     [super viewDidLoad];
 
+    UITableView *currentTableView = self.tableView;
+    self.tableView = [[SettingsTableView alloc] initWithFrame:currentTableView.frame style:currentTableView.style];
 #if TARGET_OS_TV
     self.splitViewController.title = @"Solve Conflicts";
 #else

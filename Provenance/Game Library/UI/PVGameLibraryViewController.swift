@@ -40,6 +40,13 @@ private let CellWidth: CGFloat = 308.0
 let USE_IOS_11_SEARCHBAR = 0
 #endif
 
+class PVDocumentPickerViewController : UIDocumentPickerViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
+    }
+}
+
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
     var watcher: PVDirectoryWatcher?
@@ -352,7 +359,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 //        documentMenu.delegate = self
                 //        present(documentMenu, animated: true, completion: nil)
                 
-                let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+                let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
                 if #available(iOS 11.0, *) {
                     documentPicker.allowsMultipleSelection = true
                 }
@@ -1886,6 +1893,10 @@ extension UIAlertController {
         
         // Find the titles of UIAlertActions that are .cancel type
         let cancelTitles : [String] = self.actions.filter() {$0.style == .cancel}.flatMap(){return $0.title}
+
+        // Find the titles of UIAlertActions that are .destructive type
+        let destructiveTitles : [String] = self.actions.filter() {$0.style == .destructive}.flatMap(){return $0.title}
+
         
         // TODO: Could do the same for 'destructive' types
         
@@ -1912,18 +1923,23 @@ extension UIAlertController {
             // Set label colors
             if let view = $0, let textColor = settings.textColor {
                 getAllSubviews(ofType: UILabel.self, forView: view)?.forEach {
-                    $0.textColor = textColor
-                    $0.tintColor = textColor
+
                     
                     // Check if the label is of the .cancel type
-                    if let text = $0.text, cancelTitles.contains(text)  {
+                    if let text = $0.text, cancelTitles.contains(text) || destructiveTitles.contains(text)  {
                         if let cancelBackgroundColor = settings.cancelBackgroundColor {
                             $0.superview?.superview?.backgroundColor = cancelBackgroundColor
                         }
                         if let cancelTextColor = settings.cancelTextColor {
                             $0.textColor = cancelTextColor
                             $0.tintColor = cancelTextColor
+                        } else {
+                            $0.textColor = textColor
+                            $0.tintColor = textColor
                         }
+                    } else {
+                        $0.textColor = textColor
+                        $0.tintColor = textColor
                     }
                 }
             }

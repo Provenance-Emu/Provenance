@@ -36,7 +36,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         addSubview(bottomSeparator)
     
         // Style
-        backgroundColor = UIColor.black
+//        backgroundColor = UIColor.black
         titleLabel.textAlignment = .left
         titleLabel.backgroundColor = UIColor.black
         titleLabel.textColor = UIColor(hex: "#7B7B81")

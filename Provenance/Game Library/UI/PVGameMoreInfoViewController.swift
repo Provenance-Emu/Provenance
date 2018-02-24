@@ -222,11 +222,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
     #endif
     @IBOutlet weak var playBarButtonItem: UIBarButtonItem!
-    
-    
-    
-    @IBAction func nameLabelTapped(_ sender: Any) {
-    }
+
     var mustRefreshDataSource = false
 
     override func viewDidLoad() {
@@ -656,8 +652,8 @@ extension PVGameMoreInfoViewController {
                     self.game?.playCount = 0
                     self.game?.timeSpentInGame = 0
                 }
-                self.playCountLabel.text = ""
-                self.timeSpentLabel.text = ""
+                self.playCountLabel.text = "0"
+                self.timeSpentLabel.text = "None"
             } catch {
                 ELOG("Failed to erase play counts. \(error.localizedDescription)")
             }

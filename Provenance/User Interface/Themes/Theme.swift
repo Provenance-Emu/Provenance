@@ -14,7 +14,7 @@ public enum Themes : String {
     case dark  = "Dark"
     
     public static var defaultTheme : Themes {
-        return .light
+        return .dark
     }
     
     public var theme : iOSTheme {
@@ -34,6 +34,8 @@ public protocol iOSTheme {
     
     var theme : Themes {get}
     
+    var navigationBarStyle : UIBarStyle { get}
+
     // Mandatory
     var gameLibraryBackground : UIColor {get}
     var gameLibraryText : UIColor {get}
@@ -56,6 +58,7 @@ public protocol iOSTheme {
     var statusBarStyle : UIStatusBarStyle {get}
 
     var settingsHeaderBackground : UIColor? {get}
+    var settingsSeperator : UIColor? {get}
     var settingsHeaderText: UIColor? {get}
 
     var settingsCellBackground: UIColor? {get}
@@ -75,26 +78,28 @@ extension iOSTheme  {
     var defaultTintColor: UIColor? {return nil}
     var switchThumb: UIColor? {return nil}
     var navigationBarBackgroundColor: UIColor? {return nil}
-    
+
     var settingsHeaderBackground: UIColor? {return nil}
     var settingsHeaderText: UIColor? {return nil}
     var settingsCellBackground: UIColor? {return nil}
     var settingsCellText: UIColor? {return nil}
+    var settingsSeperator : UIColor? {return nil}
 
-
+    var navigationBarStyle : UIBarStyle { return .default }
+    
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? {return defaultTintColor}
     var alertViewTintColor: UIColor? {return defaultTintColor}
     var switchON: UIColor? {return defaultTintColor}
-    
+
     func setGlobalTint() {
         // Get app delegate
         let sharedApp = UIApplication.shared
-        
+
         // Set tint color
         sharedApp.delegate?.window??.tintColor = self.defaultTintColor
     }
-    
+
     var statusBarStyle : UIStatusBarStyle {
         return UIStatusBarStyle.default
     }
@@ -103,37 +108,42 @@ extension iOSTheme  {
 struct DarkTheme : iOSTheme {
     let theme = Themes.dark
     
-    let defaultTintColor: UIColor = UIColor(hex: "#32c")!
-    let keyboardAppearance: UIKeyboardAppearance = .dark
-    
-    let switchON = UIColor(hex: "#32c")!
-    let switchThumb = UIColor(hex: "#111")!
-    
-    let gameLibraryBackground = UIColor(hex: "#292929")!
-    let gameLibraryText = UIColor(hex: "#6F6F6F")!
+    var navigationBarStyle : UIBarStyle { return UIBarStyle.black }
 
-    let gameLibraryHeaderBackground = UIColor.black
-    let gameLibraryHeaderText = UIColor(hex: "#333")!
+    var defaultTintColor: UIColor? { return UIColor(hex: "#1C83F5")! }
+    var keyboardAppearance: UIKeyboardAppearance = .dark
     
-    let barButtonItemTint : UIColor = UIColor.darkGray
-    let navigationBarBackgroundColor: UIColor = UIColor(hex: "#1C1C1C")!
+    var switchON : UIColor? { return UIColor(hex: "#1C83F5")! }
+    var switchThumb : UIColor? { return UIColor(hex: "#eee")! }
     
-    let alertViewBackground: UIColor = UIColor.darkGray
-    let alertViewText: UIColor = UIColor.lightGray
-    
-    let statusBarStyle: UIStatusBarStyle = UIStatusBarStyle.lightContent
-    
-    let settingsHeaderBackground: UIColor = UIColor.black
-    let settingsHeaderText: UIColor = UIColor(hex: "#343434")!
+    var gameLibraryBackground : UIColor { return UIColor(hex: "#292929")! }
+    var gameLibraryText : UIColor { return UIColor(hex: "#6F6F6F")! }
 
-    let settingsCellBackground: UIColor = UIColor(hex: "#292929")!
-    let settingsCellText: UIColor = UIColor(hex: "#5A5A5A")!
+    var gameLibraryHeaderBackground : UIColor {return UIColor.black}
+    var gameLibraryHeaderText :UIColor { return UIColor(hex: "#333")! }
+    
+    var barButtonItemTint : UIColor? { return UIColor.darkGray }
+    var navigationBarBackgroundColor: UIColor? {return UIColor(hex: "#1C1C1C") }
+    
+    var alertViewBackground: UIColor { return UIColor.darkGray }
+    var alertViewText: UIColor { return UIColor.lightGray }
+    
+    var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
+    
+    var settingsHeaderBackground: UIColor? { return UIColor.black }
+    var settingsHeaderText: UIColor? { return UIColor.init(white: 0.5, alpha: 1.0) }
+
+    var settingsCellBackground: UIColor? { return UIColor(hex: "#292929")! }
+    var settingsCellText: UIColor? { return UIColor.init(white: 0.8, alpha: 1.0) }
+    
+    var settingsSeperator : UIColor? {return UIColor.black }
+
 }
 
 struct LightTheme : iOSTheme {
     let theme = Themes.light
 
-    let defaultTintColor = UIColor.init(hex: "#007aff") // iOS Blue
+    var defaultTintColor : UIColor? {return UIColor.init(hex: "#007aff")} // iOS Blue
     
     let gameLibraryBackground = UIColor.white
     let gameLibraryText : UIColor = UIColor.black
@@ -152,6 +162,8 @@ public class Theme : NSObject {
         
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
+            $0.tintColor = theme.navigationBarBackgroundColor
+            $0.barStyle = theme.navigationBarStyle
         }
         
         UIView.appearance {
@@ -166,37 +178,42 @@ public class Theme : NSObject {
             $0.onTintColor = theme.switchON
             $0.thumbTintColor = theme.switchThumb
         }
-
-
-        // Settings
-//        UITableViewCell.appearance {
-//            $0.backgroundColor = theme.settingsCellBackground
-//            $0.textLabel?.textColor = theme.settingsCellText
-//            $0.detailTextLabel?.textColor = theme.settingsCellText
-//        }
-//        
-//        appearance(in: UITableViewCell.self) {
-//            UILabel.appearance {
-//                $0.textColor = theme.settingsCellText
-//            }
-//        }
-//
-//        UITableViewHeaderFooterView.appearance {
-//            $0.backgroundColor = theme.settingsHeaderBackground
-//        }
-//
-//        appearance(in: UITableViewHeaderFooterView.self) {
-//            UILabel.appearance {
-//                $0.textColor = theme.settingsHeaderText
-//            }
-//        }
-//        
-//        UITableView.appearance {
-//            // TODO
-//            $0.backgroundColor = theme.settingsHeaderBackground
-//        }
-//        
         
+        UITableView.appearance {
+            $0.backgroundColor = theme.settingsHeaderBackground
+            $0.separatorColor = theme.settingsSeperator
+        }
+        
+        SettingsTableView.appearance {
+            $0.backgroundColor = theme.settingsHeaderBackground
+            $0.separatorColor = theme.settingsSeperator
+        }
+        
+        // Settings
+        appearance(in: SettingsTableView.self) {
+            UITableViewCell.appearance {
+                $0.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.backgroundColor = theme.settingsCellBackground
+                $0.textLabel?.textColor = theme.settingsCellText
+                $0.detailTextLabel?.textColor = theme.settingsCellText
+            }
+        }
+        
+        appearance(in: UITableViewCell.self) {
+            UILabel.appearance {
+                $0.textColor = theme.settingsCellText
+            }
+        }
+
+        UITableViewHeaderFooterView.appearance {
+            $0.backgroundColor = theme.settingsHeaderBackground
+        }
+
+        appearance(in: UITableViewHeaderFooterView.self) {
+            UILabel.appearance {
+                $0.textColor = theme.settingsHeaderText
+            }
+        }
         
         // Search bar
 //        appearance(in: UISearchBar.self) {
@@ -220,19 +237,23 @@ public class Theme : NSObject {
             }
             
             // Game Library Main
-            appearance(inAny: [UICollectionView.self, PVGameLibraryCollectionViewCell.self]) {
+            appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
                 UILabel.appearance {
-                    $0.textColor = theme.gameLibraryText // !!! Why isn't this working?
+                    $0.textColor = theme.gameLibraryText
                 }
             }
         }
         
-        UICollectionView.appearance {
-            $0.backgroundColor = theme.gameLibraryBackground
-        }
+//        UICollectionView.appearance {
+//            $0.backgroundColor = theme.gameLibraryBackground
+//        }
         
         // Keyboard Style
         UITextField.appearance {
+            $0.keyboardAppearance = theme.keyboardAppearance
+        }
+        
+        UISearchBar.appearance {
             $0.keyboardAppearance = theme.keyboardAppearance
         }
         

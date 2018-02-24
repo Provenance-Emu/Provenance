@@ -10,6 +10,18 @@
 import SafariServices
 import UIKit
 
+@objc public class SettingsTableView : UITableView {
+    public override init(frame: CGRect, style: UITableViewStyle) {
+        super.init(frame: frame, style: style)
+        self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
+    }
+}
+
 class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
@@ -59,7 +71,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         versionLabel.text = versionText
-    
 #if DEBUG
         modeLabel.text = "DEBUG"
 #else
@@ -213,7 +224,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         }
         present(alert, animated: true) {() -> Void in }
     }
-
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 3 && indexPath.row == 0 {
             let iCadeControllerViewController = PViCadeControllerViewController()
