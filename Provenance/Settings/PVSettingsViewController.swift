@@ -10,6 +10,7 @@
 import SafariServices
 import UIKit
 
+// Subclass to help with themeing
 @objc public class SettingsTableView : UITableView {
     public override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame: frame, style: style)

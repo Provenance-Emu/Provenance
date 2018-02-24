@@ -77,6 +77,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
         }
     }
     
+    #if os(iOS)
     // Delegate may specify a different spine location for after the interface orientation change. Only sent for transition style 'UIPageViewControllerTransitionStylePageCurl'.
     // Delegate may set new view controllers or update double-sided state within this method's implementation as well.
     public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewControllerSpineLocation {
@@ -91,6 +92,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     public func pageViewControllerPreferredInterfaceOrientationForPresentation(_ pageViewController: UIPageViewController) -> UIInterfaceOrientation {
         return .portrait
     }
+    #endif
     
     // MARK: - Data Source
     // In terms of navigation direction. For example, for 'UIPageViewControllerNavigationOrientationHorizontal', view controllers coming 'before' would be to the left of the argument view controller, those coming 'after' would be to the right.
@@ -480,7 +482,9 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     
     @IBAction func descriptionTapped(_ sender: Any) {
         descriptionTextView.isUserInteractionEnabled = true
+        #if os(iOS)
         descriptionTextView.isEditable = true
+        #endif
         descriptionTextView.becomeFirstResponder()
         descriptionTextView.delegate = self
     }
@@ -615,7 +619,9 @@ extension PVGameMoreInfoViewController : UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView == descriptionTextView {
             descriptionTextView.resignFirstResponder()
+            #if os(iOS)
             descriptionTextView.isEditable = false
+            #endif
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
                     self.game!.gameDescription = descriptionTextView.text

@@ -40,12 +40,14 @@ private let CellWidth: CGFloat = 308.0
 let USE_IOS_11_SEARCHBAR = true
 #endif
 
+#if os(iOS)
 class PVDocumentPickerViewController : UIDocumentPickerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
     }
 }
+#endif
 
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
@@ -81,9 +83,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
     }
     
+    #if os(iOS)
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
+    #endif
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -1878,6 +1882,7 @@ class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
     }
 }
 
+#if os(iOS)
 extension UIAlertController {
     public struct UIAlertControllerOverrides {
         let backgroundColor : UIColor?
@@ -1985,3 +1990,4 @@ extension UIAlertController {
         return mapped != nil ? Array(mapped!.joined()) : nil
     }
 }
+#endif
