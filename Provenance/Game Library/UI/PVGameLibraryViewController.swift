@@ -142,6 +142,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
+        collectionView.collectionViewLayout = PVGameLibraryCollectionFlowLayout()
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -1829,3 +1830,19 @@ extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafar
     
 }
 #endif
+
+
+class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
+    override init() {
+        super.init()
+        
+        if #available(iOS 9.0, *) {
+            self.sectionHeadersPinToVisibleBounds = true
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
