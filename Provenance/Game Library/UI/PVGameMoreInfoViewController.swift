@@ -40,6 +40,7 @@ class RegionLabel : LongPressLabel {
 }
 
 class LongPressLabel : UILabel {
+    #if os(tvOS)
     override var canBecomeFocused: Bool {
         return true
     }
@@ -53,6 +54,7 @@ class LongPressLabel : UILabel {
             }
             }, completion: nil)
     }
+    #endif
 }
 
 class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController {
@@ -657,6 +659,7 @@ extension PVGameMoreInfoViewController : UITextViewDelegate {
     }
 }
 
+#if os(tvOS)
 extension PVGameMoreInfoViewController {
     override var preferredFocusedView: UIView? {
         return artworkImageView
@@ -682,7 +685,7 @@ extension PVGameMoreInfoViewController {
 //        }
 //    }
 }
-
+#endif
 
 // MARK: - Edit Gesture
 extension PVGameMoreInfoViewController {

@@ -2069,7 +2069,7 @@ extension PVGameLibraryViewController : UITableViewDelegate {
 }
 
 #if os(iOS)
-extension PVGameLibraryViewController : UIPopoverPresentationController {
+extension PVGameLibraryViewController : UIPopoverControllerDelegate {
     
 }
 #endif

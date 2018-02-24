@@ -34,7 +34,7 @@
     [super viewDidLoad];
 
 #if !TARGET_OS_TV
-    UITableView *currentTableView = self.tableView
+    UITableView *currentTableView = self.tableView;
     self.tableView = [[SettingsTableView alloc] initWithFrame:currentTableView.frame style:currentTableView.style];
 #endif
 #if TARGET_OS_TV
