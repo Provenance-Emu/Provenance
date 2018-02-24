@@ -50,7 +50,7 @@
                 </pageViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c1v-J7-Iaj" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-233" y="-933"/>
+            <point key="canvasLocation" x="32" y="-1074"/>
         </scene>
         <!--Game More Info View Controller-->
         <scene sceneID="ZjI-cp-Va1">
@@ -365,7 +365,7 @@
                             </connections>
                         </barButtonItem>
                         <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="redraw" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="Search" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" clearButtonMode="always" id="FMl-Ia-DzO">
-                            <rect key="frame" x="68" y="7" width="240" height="30"/>
+                            <rect key="frame" x="53" y="7" width="202" height="30"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="0.25159489197863472" alpha="0.1543771404109589" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <color key="textColor" white="0.80292426215277779" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -375,22 +375,60 @@
                                 <outlet property="delegate" destination="40z-oi-2L6" id="Q9f-Ec-mp2"/>
                             </connections>
                         </textField>
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
-                            <connections>
-                                <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Sort ⌄" id="Lgc-1k-iDE">
+                                <connections>
+                                    <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="Li7-Hv-ja5"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="add" id="6tp-vr-cci">
+                                <connections>
+                                    <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                         <connections>
                             <outlet property="titleView" destination="FMl-Ia-DzO" id="WNp-E2-Ole"/>
                         </connections>
                     </navigationItem>
                     <connections>
                         <outlet property="searchField" destination="FMl-Ia-DzO" id="Spf-xq-3GX"/>
+                        <outlet property="sortButtonItem" destination="Lgc-1k-iDE" id="yHs-gh-5uX"/>
+                        <outlet property="sortOptionsTableView" destination="yd6-6I-GtS" id="YlW-da-mCM"/>
                         <segue destination="7RB-u6-8KS" kind="push" identifier="gameMoreInfoSegue" id="p31-Z5-rbw"/>
                         <segue destination="iWs-z6-SNP" kind="push" identifier="gameMoreInfoPageVCSegue" id="LS3-MN-RY8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rMK-CR-Zic" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="yd6-6I-GtS">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <prototypes>
+                        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="sortCell" textLabel="egp-7q-f7P" style="IBUITableViewCellStyleDefault" id="m7k-NW-PMB">
+                            <rect key="frame" x="0.0" y="28" width="240" height="44"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="m7k-NW-PMB" id="OUs-fB-12d">
+                                <rect key="frame" x="0.0" y="0.0" width="200" height="43.666666666666664"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="egp-7q-f7P">
+                                        <rect key="frame" x="16" y="0.0" width="184" height="43.666666666666664"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </tableViewCellContentView>
+                        </tableViewCell>
+                    </prototypes>
+                    <sections/>
+                    <connections>
+                        <outlet property="dataSource" destination="40z-oi-2L6" id="u5V-y2-Ad8"/>
+                        <outlet property="delegate" destination="40z-oi-2L6" id="0AI-rf-4LO"/>
+                    </connections>
+                </tableView>
             </objects>
             <point key="canvasLocation" x="-298.5" y="-38"/>
         </scene>

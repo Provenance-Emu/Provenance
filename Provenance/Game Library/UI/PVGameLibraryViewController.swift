@@ -34,6 +34,37 @@ public extension Notification.Name {
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
+enum SortOptions : String {
+    case title = "Title"
+    case importDate = "Imported"
+    case lastPlayed = "Last Played"
+    
+    var row : UInt {
+        switch self {
+        case .title:
+            return 0
+        case .importDate:
+            return 1
+        case .lastPlayed:
+            return 2
+        }
+    }
+    
+    static func optionForRow(_ row:UInt) -> SortOptions {
+        switch row {
+        case 0:
+            return .title
+        case 1:
+            return .importDate
+        case 2:
+            return .lastPlayed
+        default:
+            ELOG("Bad row \(row)")
+            return .title
+        }
+    }
+}
+
 #if os(tvOS)
 private let CellWidth: CGFloat = 308.0
 #else
@@ -71,7 +102,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var isInitialAppearance = false
     var mustRefreshDataSource = false
     
+    @IBOutlet weak var sortButtonItem: UIBarButtonItem!
     var needToShowConflictsAlert = false
+    
+    @IBOutlet var sortOptionsTableView: UITableView!
+    var currentSort : SortOptions = .title {
+        didSet {
+            collectionView?.reloadData()
+        }
+    }
 
 // MARK: - Lifecycle
     required init?(coder aDecoder: NSCoder) {
@@ -347,7 +386,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         present(alert, animated: true) {() -> Void in }
     }
 
-// MARK: - Filesystem Helpers
+    @IBAction func sortButtonTapped(_ sender: Any) {
+        let optionsTableView = sortOptionsTableView
+        let avc = UIViewController()
+        avc.view = optionsTableView
+        #if os(iOS)
+        avc.modalPresentationStyle = .popover
+        avc.popoverPresentationController?.delegate = self
+        #endif
+        avc.preferredContentSize = CGSize(width: 600, height: 100)
+        
+        present(avc, animated: true, completion: nil)
+        
+        avc.popoverPresentationController?.barButtonItem = sortButtonItem //sender
+
+    }
+    // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
         let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
@@ -1989,5 +2043,33 @@ extension UIAlertController {
         
         return mapped != nil ? Array(mapped!.joined()) : nil
     }
+}
+#endif
+
+extension PVGameLibraryViewController : UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 0 ? 3 : 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+
+        let sortOption = SortOptions.optionForRow(UInt(indexPath.row))
+        
+        cell.textLabel?.text = sortOption.rawValue
+        cell.accessoryType = sortOption == currentSort ? .checkmark : .none
+        return cell
+    }
+}
+
+extension PVGameLibraryViewController : UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        currentSort = SortOptions.optionForRow(UInt(indexPath.row))
+    }
+}
+
+#if os(iOS)
+extension PVGameLibraryViewController : UIPopoverPresentationController {
+    
 }
 #endif

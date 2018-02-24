@@ -23,7 +23,7 @@ import AssetsLibrary
  */
 
 // Special label that renders Countries as flag emojis when available
-class RegionLabel : UILabel {
+class RegionLabel : LongPressLabel {
     override var text: String? {
         get {
             return super.text
@@ -36,6 +36,22 @@ class RegionLabel : UILabel {
             })
             super.text = swappedFlagsText
         }
+    }
+}
+
+class LongPressLabel : UILabel {
+    override var canBecomeFocused: Bool {
+        return true
+    }
+    
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        coordinator.addCoordinatedAnimations({ [unowned self] in
+            if self.isFocused {
+                self.backgroundColor = UIColor.lightGray
+            } else {
+                self.backgroundColor = nil
+            }
+            }, completion: nil)
     }
 }
 
@@ -205,11 +221,11 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     
     @IBOutlet weak var artworkImageView: UIImageView!
     
-    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var nameLabel: LongPressLabel!
     @IBOutlet weak var systemLabel: UILabel!
-    @IBOutlet weak var developerLabel: UILabel!
-    @IBOutlet weak var publishDateLabel: UILabel!
-    @IBOutlet weak var genresLabel: UILabel!
+    @IBOutlet weak var developerLabel: LongPressLabel!
+    @IBOutlet weak var publishDateLabel: LongPressLabel!
+    @IBOutlet weak var genresLabel: LongPressLabel!
     @IBOutlet weak var regionLabel: RegionLabel!
     @IBOutlet weak var descriptionTextView: UITextView!
     
@@ -217,8 +233,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var imageLongPressGestureRecognizer: UILongPressGestureRecognizer!
 
-    @IBOutlet var playCountLabel : UILabel!
-    @IBOutlet var timeSpentLabel : UILabel!
+    @IBOutlet var playCountLabel : LongPressLabel!
+    @IBOutlet var timeSpentLabel : LongPressLabel!
     
     #if os(iOS)
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
@@ -639,6 +655,32 @@ extension PVGameMoreInfoViewController : UITextViewDelegate {
         }
         return true
     }
+}
+
+extension PVGameMoreInfoViewController {
+    override var preferredFocusedView: UIView? {
+        return artworkImageView
+    }
+    
+    override var preferredFocusEnvironments: [UIFocusEnvironment] {
+        return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]
+    }
+    
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        coordinator.addCoordinatedAnimations({ [unowned self] in
+            
+            }, completion: nil)
+    }
+    
+//    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+//        super.didUpdateFocus(in: context, with: coordinator)
+//
+//        if context.nextFocusedView == self {
+//            backgroundColor = .red
+//        } else if context.previouslyFocusedView == self {
+//            backgroundColor = .clear
+//        }
+//    }
 }
 
 

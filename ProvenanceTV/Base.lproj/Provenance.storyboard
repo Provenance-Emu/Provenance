@@ -22,164 +22,169 @@
                         <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0I0-Th-3od">
-                                <rect key="frame" x="44" y="0.0" width="1723" height="1082"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDL-G2-98W" userLabel="Left Container">
-                                        <rect key="frame" x="0.0" y="0.0" width="760" height="1082"/>
-                                        <subviews>
-                                            <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Rk-2X-23P">
-                                                <rect key="frame" x="31" y="68" width="698" height="946"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <gestureRecognizers/>
-                                                <connections>
-                                                    <outletCollection property="gestureRecognizers" destination="rqN-aC-Ahh" appends="YES" id="mvR-Mi-b4e"/>
-                                                </connections>
-                                            </imageView>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9rJ-vz-e8D" userLabel="Right Container">
-                                        <rect key="frame" x="760" y="0.0" width="963" height="1082"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="44K-kK-tzz">
-                                                <rect key="frame" x="8" y="68" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="System" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ghP-r1-YtO">
-                                                <rect key="frame" x="8" y="122" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Developer" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a9B-hX-wKc">
-                                                <rect key="frame" x="8" y="176" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCC-IU-dJG">
-                                                <rect key="frame" x="248" y="68" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="System" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hxq-dF-NHS">
-                                                <rect key="frame" x="248" y="122" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Developer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pdc-6a-7AK">
-                                                <rect key="frame" x="247" y="176" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3n5-3M-e7G">
-                                                <rect key="frame" x="8" y="500" width="945" height="582"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                            </textView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Publish Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="smT-TK-CSw">
-                                                <rect key="frame" x="8" y="230" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Genres" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SqZ-1K-rnE">
-                                                <rect key="frame" x="8" y="284" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Plays" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qe5-iT-hkp">
-                                                <rect key="frame" x="8" y="392" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time Spent" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AXk-NM-79f">
-                                                <rect key="frame" x="8" y="446" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6zZ-eP-Qko">
-                                                <rect key="frame" x="8" y="338" width="216" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Publish Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLa-ri-Ljy">
-                                                <rect key="frame" x="247" y="230" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Genres" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3T-0F-7F0" customClass="RegionLabel" customModule="Provenance" customModuleProvider="target">
-                                                <rect key="frame" x="247" y="284" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hpb-Rc-ffI">
-                                                <rect key="frame" x="247" y="338" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-tY-FGg">
-                                                <rect key="frame" x="247" y="392" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyf-rY-JwD">
-                                                <rect key="frame" x="247" y="446" width="706" height="46"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="cDL-G2-98W" secondAttribute="trailing" constant="963" id="03s-An-nGE"/>
-                                    <constraint firstItem="cDL-G2-98W" firstAttribute="top" secondItem="0I0-Th-3od" secondAttribute="top" id="f5C-IU-U4j"/>
-                                    <constraint firstItem="cDL-G2-98W" firstAttribute="leading" secondItem="0I0-Th-3od" secondAttribute="leading" id="pn7-Zb-XF8"/>
-                                    <constraint firstAttribute="bottom" secondItem="cDL-G2-98W" secondAttribute="bottom" id="xiv-Kn-xFK"/>
-                                </constraints>
-                            </stackView>
+                            <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Rk-2X-23P">
+                                <rect key="frame" x="110" y="49" width="698" height="946"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="rqN-aC-Ahh" appends="YES" id="mvR-Mi-b4e"/>
+                                    <outletCollection property="gestureRecognizers" destination="Fkc-ow-T0D" appends="YES" id="md6-P9-Mp7"/>
+                                    <outletCollection property="gestureRecognizers" destination="hiW-UO-Mdf" appends="YES" id="IBB-NI-zZr"/>
+                                </connections>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Name" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="44K-kK-tzz">
+                                <rect key="frame" x="877" y="49" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="System" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ghP-r1-YtO">
+                                <rect key="frame" x="877" y="103" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Developer" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a9B-hX-wKc">
+                                <rect key="frame" x="877" y="157" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Publish Date" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="smT-TK-CSw">
+                                <rect key="frame" x="877" y="211" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Genres" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SqZ-1K-rnE">
+                                <rect key="frame" x="877" y="319" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Plays" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qe5-iT-hkp">
+                                <rect key="frame" x="877" y="373" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Time Spent" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AXk-NM-79f">
+                                <rect key="frame" x="877" y="427" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Region" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6zZ-eP-Qko">
+                                <rect key="frame" x="877" y="265" width="216" height="46"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Super Mario World" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KCC-IU-dJG" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="49" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="8ef-XH-WMm" appends="YES" id="F80-mN-peB"/>
+                                </connections>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="SNES" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hxq-dF-NHS">
+                                <rect key="frame" x="1152" y="103" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="May 5, 1984" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLa-ri-Ljy" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="211" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="dJO-jx-daD" appends="YES" id="AD8-kP-4wH"/>
+                                </connections>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Action, Shooter" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3T-0F-7F0" customClass="RegionLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="319" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Gm5-Uj-TFG" appends="YES" id="0Ai-mF-nNz"/>
+                                </connections>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="USA" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hpb-Rc-ffI" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="265" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="Ll8-DY-rki" appends="YES" id="ArI-oc-RWI"/>
+                                </connections>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yOt-tY-FGg" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="373" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="JOs-kY-IfJ" appends="YES" id="HE9-z0-jKs"/>
+                                </connections>
+                            </label>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="None" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyf-rY-JwD" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="427" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="cIy-kB-tk2" appends="YES" id="kS8-Hk-F4K"/>
+                                </connections>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="3n5-3M-e7G">
+                                <rect key="frame" x="877" y="481" width="933" height="582"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="O4U-bX-gcM" appends="YES" id="2rQ-MQ-G2S"/>
+                                </connections>
+                            </textView>
+                            <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Nintendo" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pdc-6a-7AK" customClass="LongPressLabel" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="1152" y="157" width="706" height="46"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <gestureRecognizers/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="JFR-ES-Qwy" appends="YES" id="4wa-Cc-pgb"/>
+                                </connections>
+                            </label>
                         </subviews>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="0I0-Th-3od" secondAttribute="trailing" constant="153" id="NwT-kO-ejq"/>
-                            <constraint firstItem="0I0-Th-3od" firstAttribute="top" secondItem="Xfw-bG-EL0" secondAttribute="bottom" constant="-60" id="eMi-Uf-QJp"/>
-                            <constraint firstItem="q5j-gb-wzs" firstAttribute="top" secondItem="0I0-Th-3od" secondAttribute="bottom" constant="-62" id="fZd-Cu-cR3"/>
-                            <constraint firstItem="0I0-Th-3od" firstAttribute="leading" secondItem="bct-np-Ygd" secondAttribute="leading" constant="44" id="oP6-0n-KK1"/>
-                        </constraints>
                     </view>
                     <toolbarItems>
                         <barButtonItem title="Play" id="N8T-lW-KL5"/>
@@ -189,6 +194,7 @@
                         <outlet property="artworkImageView" destination="8Rk-2X-23P" id="2Dp-6r-Gs7"/>
                         <outlet property="descriptionTextView" destination="3n5-3M-e7G" id="nCI-ZH-7pp"/>
                         <outlet property="developerLabel" destination="Pdc-6a-7AK" id="3ag-Kj-2Ou"/>
+                        <outlet property="doubleImageTapGesture" destination="Fkc-ow-T0D" id="9sH-On-LxJ"/>
                         <outlet property="genresLabel" destination="Q3T-0F-7F0" id="OAe-fB-g31"/>
                         <outlet property="nameLabel" destination="KCC-IU-dJG" id="1pp-AI-aAV"/>
                         <outlet property="playBarButtonItem" destination="N8T-lW-KL5" id="Rm0-Yu-9UZ"/>
@@ -207,6 +213,66 @@
                         <action selector="imageViewTapped:" destination="rRL-5Z-sl7" id="UNE-kp-pxF"/>
                     </connections>
                 </tapGestureRecognizer>
+                <tapGestureRecognizer id="8ef-XH-WMm" userLabel="name tap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="nameTapped:" destination="rRL-5Z-sl7" id="NWS-0e-sWH"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="JFR-ES-Qwy" userLabel="developerTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="developerTapped:" destination="rRL-5Z-sl7" id="fzX-AF-s4C"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="dJO-jx-daD" userLabel="publishDateTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="publishDateTapped:" destination="rRL-5Z-sl7" id="3c7-1J-08G"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="Ll8-DY-rki" userLabel="regionTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="regionLongPressed:" destination="rRL-5Z-sl7" id="m2P-hi-ghp"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="Gm5-Uj-TFG" userLabel="genresTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="genresTapped:" destination="rRL-5Z-sl7" id="lcY-LA-z7n"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="JOs-kY-IfJ" userLabel="playsTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="playsTapped:" destination="rRL-5Z-sl7" id="QRB-Zy-3lM"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="cIy-kB-tk2" userLabel="timeSpentTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="timeSpentTapped:" destination="rRL-5Z-sl7" id="STT-Oy-aar"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer id="O4U-bX-gcM" userLabel="descriptionTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="descriptionTapped:" destination="rRL-5Z-sl7" id="Gtd-OV-3fS"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="Fkc-ow-T0D" userLabel="imageDoubleTap">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="imageViewDoubleTapped:" destination="rRL-5Z-sl7" id="Ult-6F-zVR"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="hiW-UO-Mdf" userLabel="imageLongPress">
+                    <pressTypeMask key="allowedPressTypes" select="YES"/>
+                    <connections>
+                        <action selector="imageLongPressed:" destination="rRL-5Z-sl7" id="qti-aw-VSg"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1244" y="-2708"/>
         </scene>
