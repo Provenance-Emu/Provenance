@@ -1846,3 +1846,101 @@ class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
     }
 }
 
+extension UIAlertController {
+    public struct UIAlertControllerOverrides {
+        let backgroundColor : UIColor?
+        let textColor : UIColor?
+        let borderColor : UIColor?
+        let borderWidth : CGFloat
+        let cornerRadius : CGFloat
+        let cancelBackgroundColor : UIColor?
+        let cancelTextColor : UIColor?
+        
+        init(backgroundColor : UIColor? = nil, textColor : UIColor? = nil, borderColor : UIColor? = nil, borderWidth : CGFloat = 0.0, cornerRadius : CGFloat = 0.0, cancelBackgroundColor : UIColor? = nil, cancelTextColor : UIColor? = nil) {
+            self.backgroundColor = backgroundColor
+            self.textColor = textColor
+            self.borderColor = borderColor
+            self.borderWidth = borderWidth
+            self.cornerRadius = cornerRadius
+            self.cancelBackgroundColor = cancelBackgroundColor
+            self.cancelTextColor = cancelTextColor
+        }
+    }
+    
+    // view{load,willAppear,didAppear} had GFX glitches. This seems to render accuratly before animation and after
+    // Remove this method if you don't want ALL your UIAlertController's to look the same
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setDefaultOverrides()
+    }
+    
+    // Set how you want your defaults to be for all instances of UIAlertController
+    func setDefaultOverrides() {
+        let overrides = UIAlertControllerOverrides(backgroundColor: UIColor.darkGray, textColor: UIColor.lightText, borderColor:  UIColor.init(white: 0.5, alpha: 0.5), borderWidth: 3.0, cornerRadius: 10.0, cancelBackgroundColor:  UIColor.init(red: 0.5, green: 0.1, blue: 0.1, alpha: 1.0), cancelTextColor: UIColor.white)
+        setOverrideSettings(overrides)
+    }
+    
+    func setOverrideSettings(_ settings : UIAlertControllerOverrides){
+        let FirstSubview = self.view.subviews.first
+        let AlertContentViews : [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
+        
+        // Find the titles of UIAlertActions that are .cancel type
+        let cancelTitles : [String] = self.actions.filter() {$0.style == .cancel}.flatMap(){return $0.title}
+        
+        // TODO: Could do the same for 'destructive' types
+        
+        
+        AlertContentViews.forEach() {
+            $0?.subviews.forEach({ (subview) in
+                if let backgroundColor = settings.backgroundColor {
+                    subview.backgroundColor = backgroundColor
+                }
+                
+                subview.layer.cornerRadius = settings.cornerRadius
+                subview.layer.borderWidth = settings.borderWidth
+                subview.alpha = 1
+                
+                if let label = subview as? UILabel, let textColor = settings.textColor {
+                    label.textColor = textColor
+                }
+                
+                if let borderColor = settings.borderColor {
+                    subview.layer.borderColor = borderColor.cgColor
+                }
+            })
+            
+            // Set label colors
+            if let view = $0, let textColor = settings.textColor {
+                getAllSubviews(ofType: UILabel.self, forView: view)?.forEach {
+                    $0.textColor = textColor
+                    $0.tintColor = textColor
+                    
+                    // Check if the label is of the .cancel type
+                    if let text = $0.text, cancelTitles.contains(text)  {
+                        if let cancelBackgroundColor = settings.cancelBackgroundColor {
+                            $0.superview?.superview?.backgroundColor = cancelBackgroundColor
+                        }
+                        if let cancelTextColor = settings.cancelTextColor {
+                            $0.textColor = cancelTextColor
+                            $0.tintColor = cancelTextColor
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Assistance function to recursively get all subviews of a type
+    func getAllSubviews<T: UIView>(ofType type: T.Type, forView view: UIView?) -> [T]? {
+        let mapped = view?.subviews.flatMap { subView -> [T]? in
+            var result = getAllSubviews(ofType: T.self, forView:subView)
+            if let view = subView as? T {
+                result = result ?? [T]()
+                result!.append(view)
+            }
+            return result
+        }
+        
+        return mapped != nil ? Array(mapped!.joined()) : nil
+    }
+}
