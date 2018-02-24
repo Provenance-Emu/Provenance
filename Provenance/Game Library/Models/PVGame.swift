@@ -52,6 +52,8 @@ public class PVGame : Object, PVLibraryEntry {
 
     @objc dynamic var romSerial : String          = ""
     
+    @objc dynamic var importDate : Date           = Date()
+    
     /* Linksj to other objects */
     var saveStates : List<PVSaveState>? = nil
     var recentPlays : List<PVRecentGame>? = nil

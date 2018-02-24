@@ -108,7 +108,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     @IBOutlet var sortOptionsTableView: UITableView!
     var currentSort : SortOptions = .title {
         didSet {
-            collectionView?.reloadData()
+            if isViewLoaded {
+                fetchGames()
+                collectionView?.reloadData()
+            }
         }
     }
 
@@ -392,14 +395,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         avc.view = optionsTableView
         #if os(iOS)
         avc.modalPresentationStyle = .popover
-        avc.popoverPresentationController?.delegate = self
+//        avc.popoverPresentationController?.delegate = self
+        avc.popoverPresentationController?.barButtonItem = sortButtonItem
         #endif
-        avc.preferredContentSize = CGSize(width: 600, height: 100)
+        avc.preferredContentSize = CGSize(width: 200, height: 200)
         
         present(avc, animated: true, completion: nil)
         
-        avc.popoverPresentationController?.barButtonItem = sortButtonItem //sender
-
     }
     // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
@@ -740,8 +742,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let database = RomDatabase.sharedInstance
         database.refresh()
         
+        var allSortedGames = database.allGames(sortedByKeyPath: #keyPath(PVGame.title), ascending: true)
+
+        switch currentSort {
+        case .title:
+            break
+        case .importDate:
+            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: false)
+        case .lastPlayed:
+            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
+        }
+        
         // Favorite Games
-        let allSortedGames = database.allGames(sortedByKeyPath: #keyPath(PVGame.title), ascending: true)
         let favoriteGames : [PVGame] = allSortedGames.filter { (game) -> Bool in
             return game.isFavorite
         }
@@ -749,7 +761,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         // Recent games
         var recentGames : [PVGame]?
         if  PVSettingsModel.sharedInstance().showRecentGames {
-            let sorted: Results<PVRecentGame> = database.all(PVRecentGame.self, sorthedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+            let sorted: Results<PVRecentGame> = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
 
             recentGames = Array(sorted).flatMap({ (recentGame) -> PVGame? in
                 return recentGame.game
@@ -2065,6 +2077,8 @@ extension PVGameLibraryViewController : UITableViewDataSource {
 extension PVGameLibraryViewController : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentSort = SortOptions.optionForRow(UInt(indexPath.row))
+        tableView.reloadData()
+        dismiss(animated: true, completion: nil)
     }
 }
 
