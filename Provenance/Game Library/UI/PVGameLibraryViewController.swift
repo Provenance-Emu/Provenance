@@ -37,7 +37,7 @@ public extension Notification.Name {
 #if os(tvOS)
 private let CellWidth: CGFloat = 308.0
 #else
-let USE_IOS_11_SEARCHBAR = 0
+let USE_IOS_11_SEARCHBAR = true
 #endif
 
 class PVDocumentPickerViewController : UIDocumentPickerViewController {
@@ -65,10 +65,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var gamesInSections = [String: [PVLibraryEntry]]()
     var sectionInfo = [String]()
     var searchResults: Results<PVGame>?
-    @IBOutlet weak var searchField: UITextField!
+    @IBOutlet weak var searchField: UITextField?
     var isInitialAppearance = false
     var mustRefreshDataSource = false
-
+    
     var needToShowConflictsAlert = false
 
 // MARK: - Lifecycle
@@ -79,24 +79,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let _ = RomDatabase.sharedInstance
 
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
-#if USE_IOS_11_SEARCHBAR
-#if os(iOS)
-        if #available(iOS 11.0, *) {
-            // Hide the pre iOS 11 search bar
-            navigationItem.titleView = nil
-            // Navigation bar large titles
-            navigationController?.navigationBar.prefersLargeTitles = false
-            navigationItem.title = nil
-                // Create a search contorller
-            let searchController = UISearchController(searchResultsController: nil)
-            searchController.searchBar.placeholder = "Search"
-            searchController.searchResultsUpdater = self
-            navigationItem.hidesSearchBarWhenScrolling = true
-            navigationItem.searchController = searchController
-        }
-#endif
-#endif
-    
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -133,6 +115,32 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         })
         #endif
         
+        #if os(iOS)
+            if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
+                
+                // Hide the pre iOS 11 search bar
+                searchField?.removeFromSuperview()
+                navigationItem.titleView = nil
+                
+                // Navigation bar large titles
+                navigationController?.navigationBar.prefersLargeTitles = false
+                navigationItem.title = "Library"
+                
+                // Create a search contorller
+                let searchController = UISearchController(searchResultsController: nil)
+                searchController.searchBar.placeholder = "Search"
+                searchController.searchResultsUpdater = self
+                searchController.obscuresBackgroundDuringPresentation = false
+                searchController.hidesNavigationBarDuringPresentation = true
+
+                searchController.delegate = self
+                navigationItem.hidesSearchBarWhenScrolling = true
+                navigationItem.searchController = searchController
+            }
+            
+            // TODO: For below iOS 11, can make searchController.searchbar. the navigationItem.titleView and get a similiar effect
+        #endif
+        
         //load the config file
         title = "Library"
         
@@ -161,8 +169,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #if os(tvOS)
         collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
 #else
-    collectionView.backgroundColor = UIColor(hex: "#222")
-    searchField.keyboardAppearance = .dark
+    collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+    searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
 #endif
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
@@ -246,6 +254,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let game = sender as! PVGame
             
             let firstVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            firstVC.game = game
             
             let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController
             moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
@@ -1372,11 +1381,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let systemID = sectionInfo[section]
         if (systemID == "recent") {
             return "Recently Played"
-        }
-        else if (systemID == "favorite") {
+        } else if (systemID == "favorite") {
             return "Favorites"
-        }
-        else {
+        } else {
             return PVEmulatorConfiguration.shortName(forSystemIdentifier: systemID) ?? "Not Found"
         }
 
@@ -1385,21 +1392,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 // MARK: - Searching
     func searchLibrary(_ searchText: String) {
         let predicate = NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])
+        let titleSearchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         
-        searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        if !titleSearchResults.isEmpty {
+            searchResults = titleSearchResults
+        } else {
+            let predicate = NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText])
+            self.searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        }
         
         collectionView?.reloadData()
     }
 
     func clearSearch() {
-        searchField.text = nil
+        searchField?.text = nil
         searchResults = nil
         collectionView?.reloadData()
-    }
-
-// MARK: - UISearchResultsUpdating
-    func updateSearchResults(forSearch searchController: UISearchController) {
-        searchLibrary(searchController.searchBar.text ?? "")
     }
 
 // MARK: - UICollectionViewDataSource
@@ -1524,7 +1532,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 #endif
     @objc func handleTextFieldDidChange(_ notification: Notification) {
-        if let text = searchField.text, !text.isEmpty {
+        if let text = searchField?.text, !text.isEmpty {
             searchLibrary(text)
         }
         else {
@@ -1630,7 +1638,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     @objc func selectSearch(_ sender: UIKeyCommand) {
-        searchField.becomeFirstResponder()
+        searchField?.becomeFirstResponder()
     }
 
     @objc func selectSection(_ sender: UIKeyCommand) {
@@ -1837,6 +1845,23 @@ extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafar
     
 }
 #endif
+
+extension PVGameLibraryViewController : UISearchControllerDelegate {
+    func didDismissSearchController(_ searchController: UISearchController) {
+        clearSearch()
+    }
+}
+
+// MARK: - UISearchResultsUpdating
+extension PVGameLibraryViewController : UISearchResultsUpdating  {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let text = searchController.searchBar.text, !text.isEmpty {
+            searchLibrary(searchController.searchBar.text ?? "")
+        } else {
+            clearSearch()
+        }
+    }
+}
 
 
 class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
