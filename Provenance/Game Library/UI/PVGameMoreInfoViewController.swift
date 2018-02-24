@@ -181,6 +181,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @objc
     public var game : PVGame? {
         didSet {
+            assert(game != nil, "Set a nil game")
             if isViewLoaded {
                 updateContent()
             }
@@ -205,7 +206,6 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var systemLabel: UILabel!
     @IBOutlet weak var developerLabel: UILabel!
-    @IBOutlet weak var publisherLabel: UILabel!
     @IBOutlet weak var publishDateLabel: UILabel!
     @IBOutlet weak var genresLabel: UILabel!
     @IBOutlet weak var regionLabel: RegionLabel!
@@ -290,7 +290,6 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         nameLabel.text = game?.title ?? ""
         systemLabel.text = game?.systemShortName ?? ""
         developerLabel.text = game?.developer  ?? ""
-        publisherLabel.text = game?.publisher  ?? ""
         publishDateLabel.text = game?.publishDate  ?? ""
         genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ")  ?? ""
         regionLabel.text = game?.regionName
@@ -470,11 +469,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBAction func publishDateTapped(_ sender: Any) {
         editKey(\PVGame.publishDate, title: "Published Date", label: publishDateLabel)
     }
-    
-    @IBAction func publisherTapped(_ sender: Any) {
-        editKey(\PVGame.publisher, title: "Publisher", label: developerLabel)
-    }
-    
+
     @IBAction func genresTapped(_ sender: Any) {
         editKey(\PVGame.genres, title: "Genres", label: genresLabel)
     }
