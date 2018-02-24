@@ -553,7 +553,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
             
             DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) else {
+                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) else {
                     WLOG("No hud")
                     return
                 }
@@ -564,7 +564,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
             DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) {
+                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) {
                     hud.isUserInteractionEnabled = false
                     hud.mode = .annularDeterminate
                     hud.progress = 1
