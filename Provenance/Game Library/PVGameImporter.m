@@ -684,26 +684,31 @@
     {
         NSString *fileName = [[game romPath] lastPathComponent];
         
-        // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-        static NSMutableCharacterSet *charSet = nil;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            charSet = [NSMutableCharacterSet punctuationCharacterSet];
-            [charSet removeCharactersInString:@"-+&.'"];
-        });
-        
-        NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
-        NSUInteger gameTitleLen;
-        if (nonCharRange.length > 0 && nonCharRange.location > 1) {
-            gameTitleLen = nonCharRange.location - 1;
+        // Sometimes, the filename comes in as nil. (If there is a problem importing the file or ..?)
+        if (!fileName.length) {
+            // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
+            static NSMutableCharacterSet *charSet = nil;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                charSet = [NSMutableCharacterSet punctuationCharacterSet];
+                [charSet removeCharactersInString:@"-+&.'"];
+            });
+            
+            NSRange nonCharRange = [fileName rangeOfCharacterFromSet:charSet];
+            NSUInteger gameTitleLen;
+            if (nonCharRange.length > 0) {
+                gameTitleLen = nonCharRange.location - 1;
+            } else {
+                gameTitleLen = [fileName length];
+            }
+            fileName = [fileName substringToIndex:gameTitleLen];
+            results = [self searchDatabaseUsingKey:@"romFileName"
+                                             value:fileName
+                                          systemID:[game systemIdentifier]
+                                             error:&error];
         } else {
-            gameTitleLen = [fileName length];
-        }
-        fileName = [fileName substringToIndex:gameTitleLen];
-        results = [self searchDatabaseUsingKey:@"romFileName"
-                                         value:fileName
-                                      systemID:[game systemIdentifier]
-                                         error:&error];
+            DLog(@"fileName is nil (%@)", [game romPath]);
+        }        
     }
     
     if (![results count])
