@@ -5,7 +5,6 @@
 #import "NSData+Hashing.h"
 #import "NSFileManager+Hashing.h"
 #import "UIImage+Scaling.h"
-#import "PVGameImporter.h"
 #import "NSString+Hashing.h"
 #import "OESQLiteDatabase.h"
 #import "LzmaSDKObjCReader.h"
@@ -51,7 +50,6 @@
 // • No need to import the Swift Bridging Header (Provenance-Swift.h), since it's already being imported fom the .pch file.
 
 #import "kICadeControllerSetting.h"
-#import "PVConflictViewController.h"
 #import "PViCadeControllerViewController.h"
 #import "PVWebServer.h"
 #import "Reachability.h"
@@ -62,7 +60,6 @@
 #import "PVControllerManager.h"
 #import "PVControllerSelectionViewController.h"
 #import "PVEmulatorViewController.h"
-#import "PVGameImporter.h"
 #import "PVSynchronousURLSession.h"
 #import "UIActionSheet+BlockAdditions.h"
 #import "UIImage+Scaling.h"
