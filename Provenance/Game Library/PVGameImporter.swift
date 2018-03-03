@@ -342,12 +342,16 @@ public extension PVGameImporter {
             return nil
         }
         
+        var success = false
+        
         // Make sure we always delete the image even on early error returns
         defer {
-            do {
-                try FileManager.default.removeItem(at: imageFullPath)
-            } catch {
-                ELOG("Failed to delete image at path \(imageFullPath) \n \(error.localizedDescription)")
+            if success {
+                do {
+                    try FileManager.default.removeItem(at: imageFullPath)
+                } catch {
+                    ELOG("Failed to delete image at path \(imageFullPath) \n \(error.localizedDescription)")
+                }
             }
         }
         
@@ -364,7 +368,7 @@ public extension PVGameImporter {
             // This is the case where the user didn't put the gamename.nes.jpg,
             // but just gamename.jpg
             let games = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [gameFilename]))
-            let allGames = database.all(PVGame.self).map { return $0.romPath }.joined(separator: ",")
+
             if games.count == 1, let game = games.first {
                 ILOG("File for image didn't have extension for system but we found a single match for image \(imageFullPath.lastPathComponent) to game \(game.title) on system \(game.systemIdentifier)")
                 guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
@@ -375,6 +379,7 @@ public extension PVGameImporter {
                     try database.writeTransaction {
                         game.customArtworkURL = hash
                     }
+                    success = true
                     ILOG("Set custom artwork of game \(game.title) from file \(imageFullPath.lastPathComponent)")
                 } catch {
                     ELOG("Couldn't update game \(game.title) with new artwork URL \(hash)")
@@ -412,6 +417,7 @@ public extension PVGameImporter {
                     try database.writeTransaction {
                         onlyMatch.customArtworkURL = hash
                     }
+                    success = true
                 } catch {
                     ELOG("Couldn't update game \(onlyMatch.title) with new artwork URL")
                 }
@@ -454,10 +460,11 @@ public extension PVGameImporter {
             try database.writeTransaction {
                 game.customArtworkURL = hash
             }
+            success = true
         } catch {
             ELOG("Couldn't update game with new artwork URL")
         }
-        
+
         return game
     }
     
