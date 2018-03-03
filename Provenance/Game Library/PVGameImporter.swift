@@ -114,7 +114,7 @@ public class PVGameImporter {
         return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
     }
     
-    required public init(completionHandler: @escaping PVGameImporterCompletionHandler) {
+    required public init(completionHandler: PVGameImporterCompletionHandler?) {
         self.completionHandler = completionHandler
         systemToPathMap = updateSystemToPathMap()
         romExtensionToSystemsMap = updateromExtensionToSystemsMap()
