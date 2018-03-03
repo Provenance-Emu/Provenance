@@ -1187,7 +1187,7 @@ extension PVGameImporter {
     
     func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
         ILOG("Move files files similiar to \(inputFile.path) to directory \(toDirectory.path) from cue sheet \(cueSheetPath.path)")
-        let relatedFileName: String = inputFile.deletingPathExtension().lastPathComponent
+        let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
         
         let contents : [URL]
         let fromDirectory = inputFile.deletingLastPathComponent()
@@ -1207,7 +1207,7 @@ extension PVGameImporter {
             if filenameWithoutExtension.count > relatedFileName.count {
                 filenameWithoutExtension = (filenameWithoutExtension as NSString).substring(with: NSRange(location: 0, length: relatedFileName.count))
                     // RegEx pattern match the parentheses e.g. " (Disc 1)"
-                filenameWithoutExtension = filenameWithoutExtension.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
+                filenameWithoutExtension =  PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameWithoutExtension)
             }
             
             if filenameWithoutExtension == relatedFileName {
@@ -1242,6 +1242,21 @@ extension PVGameImporter {
                     filesMovedToPaths.append(toPath)
                 } catch {
                     ELOG("Unable to move file from \(file.path) to \(toPath.path) - \(error.localizedDescription)")
+                }
+            }
+                // Look for m3u's that have filenames that don't match but the contents of the file does contain this file
+            else if file.pathExtension.lowercased() == "m3u", let m3uContents = try? String.init(contentsOf: file) {
+                if m3uContents.contains(cueSheetPath.lastPathComponent) {
+                    ILOG("m3u file <\(file.lastPathComponent)> contains the cue <\(cueSheetPath.lastPathComponent)>. Moving as well to \(toDirectory.lastPathComponent). Will rename to match as well.")
+                    let cueFilename = cueSheetPath.deletingPathExtension().lastPathComponent
+                    let newM3UFilename = "\(cueFilename).m3u"
+                    let newM3UPath = toDirectory.appendingPathComponent(newM3UFilename, isDirectory: false)
+                    do {
+                        try FileManager.default.moveItem(at: file, to: newM3UPath)
+                        filesMovedToPaths.append(newM3UPath)
+                    } catch {
+                        ELOG("Failed to move m3u \(file.lastPathComponent) to directory \(toDirectory.lastPathComponent)")
+                    }
                 }
             }
         }

@@ -495,11 +495,15 @@ public extension PVEmulatorConfiguration {
 
 // MARK: m3u
 public extension PVEmulatorConfiguration {
+    class func stripDiscNames(fromFilename filename : String) -> String {
+        return filename.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
+    }
+    
     @objc
     class func m3uFile(forGame game: PVGame) -> URL? {
         let gamePath = self.path(forGame: game)
         let gameDirectory = self.romDirectory(forSystemIdentifier: game.system!)
-        let filenameWithoutExtension =  gamePath.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
+        let filenameWithoutExtension =  stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
         
         do {
             let m3uFile = try FileManager.default.contentsOfDirectory(at: gameDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).first { (url) -> Bool in
@@ -541,19 +545,19 @@ public extension PVEmulatorConfiguration {
             let obj1Extension = obj1.pathExtension.lowercased()
             let obj2Extension = obj2.pathExtension.lowercased()
             
-            // Check m3u
+            // Check m3u, put last
             if obj1Extension == "m3u" && obj2Extension == "m3u" {
-                return obj1Filename > obj2Filename
+                return obj1Filename < obj2Filename
             }
             else if obj1Extension == "m3u" {
-                return true
+                return false
             }
             else if obj2Extension == "m3u" {
-                return false
+                return true
             }
                 // Check cue
             else if obj1Extension == "cue" && obj2Extension == "cue" {
-                return obj1Filename > obj2Filename
+                return obj1Filename < obj2Filename
             }
             else if obj1Extension == "cue" {
                 return true
