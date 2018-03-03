@@ -375,18 +375,11 @@
                                 <outlet property="delegate" destination="40z-oi-2L6" id="Q9f-Ec-mp2"/>
                             </connections>
                         </textField>
-                        <rightBarButtonItems>
-                            <barButtonItem title="Sort ⌄" id="Lgc-1k-iDE">
-                                <connections>
-                                    <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="Li7-Hv-ja5"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="add" id="6tp-vr-cci">
-                                <connections>
-                                    <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
+                            <connections>
+                                <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
+                            </connections>
+                        </barButtonItem>
                         <connections>
                             <outlet property="titleView" destination="FMl-Ia-DzO" id="WNp-E2-Ole"/>
                         </connections>
@@ -429,6 +422,11 @@
                         <outlet property="delegate" destination="40z-oi-2L6" id="0AI-rf-4LO"/>
                     </connections>
                 </tableView>
+                <barButtonItem title="Sort ⌄" id="Lgc-1k-iDE">
+                    <connections>
+                        <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="Li7-Hv-ja5"/>
+                    </connections>
+                </barButtonItem>
             </objects>
             <point key="canvasLocation" x="-298.5" y="-38"/>
         </scene>
