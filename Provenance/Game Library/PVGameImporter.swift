@@ -837,7 +837,7 @@ public extension PVGameImporter {
     
     static var charset : CharacterSet = {
         var c = CharacterSet.punctuationCharacters
-        c.remove(charactersIn: "-+&.'")
+        c.remove(charactersIn: ",-+&.'")
         return c
     }()
 }
