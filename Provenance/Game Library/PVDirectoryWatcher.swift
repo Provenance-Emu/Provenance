@@ -93,6 +93,11 @@ public class PVDirectoryWatcher: NSObject {
                 var contentsSet = Set(contents ?? [URL]())
                 contentsSet.subtract(previousContentsSet)
                 
+                contentsSet = contentsSet.filter({ (url) -> Bool in
+                    // Ignore special files
+                    return url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("__MAC_OSX")
+                })
+                
                 contentsSet.forEach { file in
                     self.watchFile(at: file)
                 }
