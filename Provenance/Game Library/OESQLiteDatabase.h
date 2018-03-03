@@ -27,6 +27,6 @@
 #import <Foundation/Foundation.h>
 
 @interface OESQLiteDatabase : NSObject
-- (id)initWithURL:(NSURL*)url error:(NSError *__autoreleasing *)error;
-- (id)executeQuery:(NSString*)sql error:(NSError *__autoreleasing *)error;
+- (instancetype _Nullable)initWithURL:(NSURL* _Nonnull)url error:(NSError * _Nullable __autoreleasing *_Nullable)error;
+- (NSArray<NSDictionary<NSString*, NSObject*>*> *_Nullable)executeQuery:(NSString* _Nonnull)sql error:(NSError * _Nullable __autoreleasing *_Nullable)error;
 @end

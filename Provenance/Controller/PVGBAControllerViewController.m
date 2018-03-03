@@ -8,7 +8,7 @@
 
 #import "PVGBAControllerViewController.h"
 #import <PVGBA/PVGBAEmulatorCore.h>
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 @interface PVGBAControllerViewController ()

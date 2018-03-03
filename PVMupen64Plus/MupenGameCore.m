@@ -271,7 +271,7 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
             padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
             
-            float rightJoystickDeadZone = 0.15;
+            float rightJoystickDeadZone = 0.45;
             
             padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
             padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
@@ -429,6 +429,34 @@ static void MupenSetAudioSpeed(int percent)
     /** End Core Config **/
     ConfigSaveSection("Core");
     
+    /** Begin Video Config **/
+    m64p_handle general;
+    ConfigOpenSection("Video-General", &general);
+    
+    // Screen width
+    int screenWidth = 640;
+    ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
+    
+    // Screen height
+    int screenHeight = 480;
+    ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
+    
+    /** End Video Config **/
+    
+    /** Begin GLideN64 Config **/
+    m64p_handle gliden64;
+    ConfigOpenSection("Video-GLideN64", &gliden64);
+    
+    // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
+    int aspectRatio = 1;
+    ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
+    
+    // Per-pixel lighting
+    int enableHWLighting = 0;
+    ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
+    
+    /** End GLideN64 Config **/
+    
     /** RICE CONFIG **/
     m64p_handle rice;
     ConfigOpenSection("Video-Rice", &rice);
@@ -455,8 +483,20 @@ static void MupenSetAudioSpeed(int percent)
     ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
 
     // Enable hi-resolution texture file loading
-    int hiResTextures = 0;
+    int hiResTextures = 1;
     ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
+    // Create the directory if this option is enabled to make it easier for users to upload packs
+    if (hiResTextures == 1) {
+        // Find where we're storing roms
+        NSString *romPath = path;
+        // Create the directory for hires_texture, this is a constant in mupen source
+        NSString *highResPath = [[romPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"/hires_texture/"];
+        NSError *error;
+        BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (!success) {
+            NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
+        }
+    }
     
     // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
     int mipmapping = 0;
@@ -525,7 +565,8 @@ static void MupenSetAudioSpeed(int percent)
     };
     
     // Load Video
-    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    //BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
     if (!success) {
         return NO;
     }
@@ -848,7 +889,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (CGSize)aspectSize
 {
-    return CGSizeMake(4, 3);
+    return CGSizeMake(videoWidth, videoHeight);
 }
 
 - (void) tryToResizeVideoTo:(CGSize)size

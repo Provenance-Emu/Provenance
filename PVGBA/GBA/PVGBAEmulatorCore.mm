@@ -134,11 +134,12 @@ static __weak PVGBAEmulatorCore *_current;
     
     _saveFile = [NSURL fileURLWithPath:[batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav2"]]];
 
-    if ([_saveFile checkResourceIsReachableAndReturnError:nil] && vba.emuReadBattery([[_saveFile path] UTF8String]))
-        DLog(@"VBA: Battery loaded");
-    else
+    if ([_saveFile checkResourceIsReachableAndReturnError:nil] && vba.emuReadBattery([[_saveFile path] UTF8String])) {
+        ILOG(@"VBA: Battery loaded");
+    }
+    else {
         [self migrateSaveFile];
-
+    }
     emulating = 1;
 
     return YES;

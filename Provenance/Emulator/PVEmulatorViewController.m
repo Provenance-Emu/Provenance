@@ -9,16 +9,13 @@
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
 #import <PVSupport/PVSupport.h>
-#import "PVGame.h"
+#import "Provenance-Swift.h"
 #import "JSButton.h"
 #import "JSDPad.h"
 #import "UIActionSheet+BlockAdditions.h"
-#import "UIAlertView+BlockAdditions.h"
 #import "PVButtonGroupOverlayView.h"
-#import "PVSettingsModel.h"
 #import "UIView+FrameAdditions.h"
 #import <QuartzCore/QuartzCore.h>
-#import "PVEmulatorConfiguration.h"
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
 
@@ -28,13 +25,8 @@
 @property (nonatomic, strong) OEGameAudio *gameAudio;
 @property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
-@property (nonatomic, strong) UIButton *menuButton;
-
 @property (nonatomic, assign) NSTimer *fpsTimer;
 @property (nonatomic, strong) UILabel *fpsLabel;
-
-@property (nonatomic, weak) UIAlertController *menuActionSheet;
-@property (nonatomic, assign) BOOL isShowingMenu;
 
 @property (nonatomic, strong) UIScreen *secondaryScreen;
 @property (nonatomic, strong) UIWindow *secondaryWindow;
@@ -87,20 +79,14 @@ void uncaughtExceptionHandler(NSException *exception)
 	[[self.glViewController view] removeFromSuperview];
 	[self.glViewController removeFromParentViewController];
 	
-	self.emulatorCore = nil;
-	self.gameAudio = nil;
-	self.glViewController = nil;
-	self.controllerViewController = nil;
-	self.menuButton = nil;
-
-    self.fpsTimer = nil;
-
 #if !TARGET_OS_TV
 	for (GCController *controller in [GCController controllers])
 	{
 		[controller setControllerPausedHandler:nil];
 	}
 #endif
+    
+    [self updatePlayedDuration];
 }
 
 - (void)viewDidLoad
@@ -148,7 +134,7 @@ void uncaughtExceptionHandler(NSException *exception)
 												 name:PVControllerManagerControllerReassignedNotification
 											   object:nil];
 
-	self.emulatorCore = [[PVEmulatorConfiguration sharedInstance] emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+	self.emulatorCore = [PVCoreFactory emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
     self.emulatorCore.audioDelegate = self;
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];
@@ -167,11 +153,16 @@ void uncaughtExceptionHandler(NSException *exception)
     }
 
     self.emulatorCore.romMD5 = md5Hash;
+    self.emulatorCore.romSerial = [self.game romSerial];
     
 	self.glViewController = [[PVGLViewController alloc] initWithEmulatorCore:self.emulatorCore];
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
         // to provide the correct data for creating views.
+    NSURL *m3uFile = [PVEmulatorConfiguration m3uFileForGame:self.game];
+    if (m3uFile) {
+        romPath = m3uFile.path;
+    }
     BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
 
     if ([[UIScreen screens] count] > 1)
@@ -191,12 +182,14 @@ void uncaughtExceptionHandler(NSException *exception)
         [self.glViewController didMoveToParentViewController:self];
     }
 
-	self.controllerViewController = [[PVEmulatorConfiguration sharedInstance] controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
+    #if !TARGET_OS_TV
+	self.controllerViewController = [PVCoreFactory controllerViewControllerForSystemIdentifier:[self.game systemIdentifier]];
 	[self.controllerViewController setEmulatorCore:self.emulatorCore];
 	[self addChildViewController:self.controllerViewController];
 	[self.view addSubview:[self.controllerViewController view]];
 	[self.controllerViewController didMoveToParentViewController:self];
-	
+    #endif
+    
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
@@ -247,11 +240,12 @@ void uncaughtExceptionHandler(NSException *exception)
         
     }
     
-	
+#if !TARGET_OS_SIMULATOR
 	if ([[GCController controllers] count])
 	{
 		[self.menuButton setHidden:YES];
 	}
+#endif
 
     if (!loaded)
     {
@@ -325,7 +319,9 @@ void uncaughtExceptionHandler(NSException *exception)
                                                         [[PVSettingsModel sharedInstance] setAskToAutoLoad:NO];
                                                         [[PVSettingsModel sharedInstance] setAutoLoadAutoSaves:NO];
                                                     }]];
-			[self presentViewController:alert animated:YES completion:NULL];
+			dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+				[self presentViewController:alert animated:YES completion:NULL];
+			});
 		}
 	}
 
@@ -354,44 +350,24 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_SIMULATOR
 //Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
 -(BOOL)prefersHomeIndicatorAutoHidden{
 	BOOL shouldHideHomeIndicator = [[PVControllerManager sharedManager] hasControllers];
 	return shouldHideHomeIndicator;
 }
-
--(void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:YES];
-	//Notifies UIKit that your view controller updated its preference regarding the visual indicator
-	if (@available(iOS 11.0, *))
-	{
-		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
-	}
-}
-
 #endif
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
     UIEdgeInsets safeArea = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         safeArea = self.view.safeAreaInsets;
     }
     
-    [self.menuButton setFrame:CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22)];
-
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-
-#if !TARGET_OS_TV
-	[[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-#endif
+    CGRect frame = CGRectMake(([[self view] bounds].size.width - 62) / 2, safeArea.top + 10, 62, 22);
+    [self.menuButton setFrame:frame];
 }
 
 - (NSString *)documentsPath
@@ -423,12 +399,12 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
@@ -484,7 +460,7 @@ void uncaughtExceptionHandler(NSException *exception)
     }
 
     PVControllerManager *controllerManager = [PVControllerManager sharedManager];
-	BOOL wantsStartSelectInMenu = [[PVEmulatorConfiguration sharedInstance] systemIDWantsStartAndSelectInMenu: self.systemID];
+	BOOL wantsStartSelectInMenu = [PVEmulatorConfiguration systemIDWantsStartAndSelectInMenu: self.systemID];
 	
 	if ([controllerManager player1]) {
 		if (![[controllerManager player1] extendedGamepad] || wantsStartSelectInMenu)
@@ -546,9 +522,10 @@ void uncaughtExceptionHandler(NSException *exception)
 
     if ([self.emulatorCore supportsDiskSwapping])
     {
-        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disk" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [[weakSelf emulatorCore] swapDisk];
-            weakSelf.isShowingMenu = NO;
+        [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disc" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [weakSelf performSelector:@selector(showSwapDiscsMenu)
+                           withObject:nil
+                           afterDelay:0.1];
         }]];
     }
     
@@ -593,6 +570,17 @@ void uncaughtExceptionHandler(NSException *exception)
 #endif
 	}]];
     
+    [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"Provenance" bundle:nil];
+        PVGameMoreInfoViewController * moreInfoViewContrller = (PVGameMoreInfoViewController *)[sb instantiateViewControllerWithIdentifier:@"gameMoreInfoVC"];
+        moreInfoViewContrller.game = weakSelf.game;
+        moreInfoViewContrller.showsPlayButton = NO;
+        moreInfoViewContrller.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(hideModeInfo)];
+        UINavigationController *newNav = [[UINavigationController alloc] initWithRootViewController:moreInfoViewContrller];
+        
+        [weakSelf presentViewController:newNav animated:YES completion:nil];
+    }]];
+    
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Return to Game Library" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf quit];
 	}]];
@@ -607,25 +595,41 @@ void uncaughtExceptionHandler(NSException *exception)
     
     [actionsheet addAction:resumeAction];
     
-    [actionsheet setPreferredAction:resumeAction];
-
+    if (@available(iOS 9.0, *)) {
+        actionsheet.preferredAction = resumeAction;
+    }
+ 
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
+    
+    [self updatePlayedDuration];
 }
+
+- (void)hideModeInfo {
+    [self dismissViewControllerAnimated:YES completion:^{
+#if TARGET_OS_TV
+        [self showMenu:nil];
+#else
+        [self  hideMenu];
+#endif
+    }];
+}
+
 
 - (void)hideMenu
 {
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
-
     if (self.menuActionSheet)
     {
         [self dismissViewControllerAnimated:YES completion:NULL];
-        [self.emulatorCore setPauseEmulation:NO];
         self.isShowingMenu = NO;
     }
+    
+    [self updateLastPlayedTime];
+    [self.emulatorCore setPauseEmulation:NO];
 }
 
 - (void)updateFPSLabel
@@ -859,6 +863,8 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
+    
+    [self updatePlayedDuration];
 }
 
 #pragma mark - Controllers
@@ -895,6 +901,7 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)controllerDidConnect:(NSNotification *)note
 {
+#if !TARGET_OS_SIMULATOR
     GCController *controller = [note object];
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
     if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
@@ -912,6 +919,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 #endif
     }
+#endif
 }
 
 - (void)controllerDidDisconnect:(NSNotification *)note

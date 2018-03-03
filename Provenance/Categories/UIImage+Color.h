@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface UIImage (Color)
-+ (UIImage *)imageWithSize:(CGSize)size
-                     color:(UIColor *)color
-                      text:(NSAttributedString *)text;
++ (UIImage *_Nonnull)imageWithSize:(CGSize)size
+                             color:(UIColor *_Nonnull)color
+                              text:(NSAttributedString *_Nonnull)text;
 @end

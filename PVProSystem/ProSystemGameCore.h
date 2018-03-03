@@ -30,7 +30,7 @@
 #import <ProSystem/OE7800SystemResponderClient.h>
 
 __attribute__((visibility("default")))
-@interface PVProSystemGameCore : PVEmulatorCore <OE7800SystemResponderClient>
+@interface PVProSystemGameCore : PVEmulatorCore // <OE7800SystemResponderClient>
 
 #pragma mark - OE7800SystemResponderClient
 - (oneway void)didPush7800Button:(OE7800Button)button forPlayer:(NSUInteger)player;

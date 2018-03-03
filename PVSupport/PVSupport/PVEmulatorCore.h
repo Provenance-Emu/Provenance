@@ -69,6 +69,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (nonatomic, copy) NSString *systemIdentifier;
 @property (nonatomic, strong) NSString* romMD5;
+@property (nonatomic, strong) NSString* romSerial;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 
@@ -87,6 +88,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
+@property (nonatomic, readonly) NSUInteger discCount;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation;
@@ -100,7 +102,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)updateControllers;
 
 - (BOOL)supportsDiskSwapping;
-- (void)swapDisk;
+- (void)swapDisc:(NSUInteger)discNumber;
 
 - (const void *)videoBuffer;
 - (CGRect)screenRect;

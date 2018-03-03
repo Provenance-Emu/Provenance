@@ -8,11 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if TARGET_OS_TV
-#define PVMaxRecentsCount 12
-#else
-#define PVMaxRecentsCount (self.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiomPhone ? 6 : 9)
-#endif
+int PVMaxRecentsCount();
 
 extern NSInteger const PVMaxRecentsShortcutCount;
 

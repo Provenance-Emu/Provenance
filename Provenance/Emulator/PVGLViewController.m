@@ -8,7 +8,7 @@
 
 #import "PVGLViewController.h"
 #import <PVSupport/PVEmulatorCore.h>
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 
 struct PVVertex
@@ -121,7 +121,11 @@ struct PVVertex
 
 	[self setPreferredFramesPerSecond:60];
 
-	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    if (self.glContext == nil)
+    {
+        self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    }
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
@@ -145,7 +149,7 @@ struct PVVertex
     [super viewDidLayoutSubviews];
 
     UIEdgeInsets parentSafeAreaInsets = UIEdgeInsetsZero;
-    if (@available(iOS 11.0, *)) {
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
         parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
     }
     
@@ -531,7 +535,6 @@ struct PVVertex
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, alternateThreadColorTextureFront, 0);
     NSAssert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, @"Front framebuffer incomplete!");
     
-    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glUseProgram(blitShaderProgram);
@@ -588,6 +591,7 @@ struct PVVertex
     // state retrieval and restoration.
     [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferFront);
+    glViewport(self.emulatorCore.screenRect.origin.x, self.emulatorCore.screenRect.origin.y, self.emulatorCore.screenRect.size.width, self.emulatorCore.screenRect.size.height);
     
     glBindTexture(GL_TEXTURE_2D, alternateThreadColorTextureBack);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

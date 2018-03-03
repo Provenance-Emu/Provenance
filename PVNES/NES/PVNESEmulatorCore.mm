@@ -78,7 +78,7 @@ static __weak PVNESEmulatorCore *_current;
     return YES;
 }
 
-- (void)swapDisk
+- (void)swapDisc:(NSUInteger)discNumber
 {
     [self setPauseEmulation:NO];
 

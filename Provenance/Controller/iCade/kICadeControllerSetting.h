@@ -19,8 +19,8 @@ typedef NS_ENUM(NSUInteger, kICadeControllerSetting) {
     kICadeControllerSetting_Count
 };
 
-NSString* kIcadeControllerSettingToString(kICadeControllerSetting value);
+NSString*_Nullable kIcadeControllerSettingToString(kICadeControllerSetting value);
 
-PViCadeController* kIcadeControllerSettingToPViCadeController(kICadeControllerSetting value);
+PViCadeController*_Nullable kIcadeControllerSettingToPViCadeController(kICadeControllerSetting value);
 
 #endif

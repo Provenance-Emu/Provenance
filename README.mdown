@@ -25,6 +25,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
     - Game Gear
     - 32X
 - Nintendo
+    - N64
     - NES (Nintendo Entertainment System)
     - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
     - SNES (Super Nintendo)
@@ -58,22 +59,25 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Portrait and landscape support
 - Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and some iCade Controllers
 - Local multiplayer with external controllers
-- Built-in web server
+- Built-in web server and WebDav
     - Import/Export game saves
     - Import/Export ROMs
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
+- DocumentPicker support
+    - Import from iCloud or any app that provides a document picker API (Google Drive, DropBox etc)
 - iTunes File Sharing
     - Just drop ROMs into the app from iTunes on your Mac or PC
 - Uses [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB) to look up game information and artwork
     - OpenVGDB is a database maintained by the OpenEmu Team and automatically downloads available information and artwork
     - Custom artwork is also supported
 - Game library searching
+- Spotlight search of game library on iOS [See Instructions](https://github.com/jasarien/Provenance/wiki/Building-Provenance#spotlight-search)
 - Supports iOS 8+
     - 3D Touch shortcuts for recent games (iPhone 6s and later)
     - Taptic Engine Feedback for button presses (iPhone 7 and later)
 - Supports Apple TV tvOS 9+
-    - TopShelf support [See instructions](https://github.com/jasarien/Provenance/pull/242)
+    - TopShelf support [See instructions](https://github.com/jasarien/Provenance/wiki/Building-Provenance#topshelf)
 
 Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
 
@@ -107,6 +111,8 @@ Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSys
 Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
 
 Pokémon Mini is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
+
+N64 emulation is provided by [Mupen64Plus](https://github.com/mupen64plus)
 
 Atari Lynx, Sony PlayStation, Nintendo VirtualBoy, SNK Neo Geo Pocket + Color, NEC PC Engine family and Bandai WonderSwan are provided by [Mednafen](https://mednafen.github.io)
 

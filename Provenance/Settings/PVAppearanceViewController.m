@@ -8,13 +8,13 @@
 
 #import "PVAppearanceViewController.h"
 #import "PVSettingsModel.h"
-#import "PVAppConstants.h"
+#import "Provenance-Swift.h"
 
 @interface PVAppearanceViewController ()
 
 #if !TARGET_OS_TV
-@property (nonatomic) UISwitch *hideTitlesSwitch;
-@property (nonatomic) UISwitch *recentlyPlayedSwitch;
+@property (nonatomic, strong) UISwitch *hideTitlesSwitch;
+@property (nonatomic, strong) UISwitch *recentlyPlayedSwitch;
 #endif
 
 @end
@@ -58,7 +58,7 @@
         [[PVSettingsModel sharedInstance] setShowRecentGames:[switchItem isOn]];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:kInterfaceDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"kInterfaceDidChangeNotification" object:nil];
 }
 #endif
 

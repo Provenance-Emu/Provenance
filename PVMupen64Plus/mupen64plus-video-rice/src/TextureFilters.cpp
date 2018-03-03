@@ -1332,6 +1332,8 @@ void FindAllHiResTextures(void)
     }
     else
     {
+        DebugMessage(M64MSG_INFO, "Loading hi-res texture directory: %s", foldername);
+
         // Find all hires textures and also cache them if configured to do so
         FindAllTexturesFromFolder(foldername,gHiresTxtrInfos, true, true);
     }

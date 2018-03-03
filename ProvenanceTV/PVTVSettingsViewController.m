@@ -8,13 +8,19 @@
 
 #import "PVTVSettingsViewController.h"
 #import "PVSettingsModel.h"
-#import "PVGameLibraryViewController.h"
+#import "Provenance-Swift.h"
 #import "PVGameImporter.h"
 #import "PVMediaCache.h"
 #import "PVConflictViewController.h"
 #import "PVControllerSelectionViewController.h"
 #import "Reachability.h"
 #import "PVWebServer.h"
+
+// Reduce code, use a macro!
+#define BOOL_STRING(boolean) ((NSString*)(boolean ? @"On" : @"Off"))
+#define TOGGLE_SETTING(setting, label) \
+PVSettingsModel.sharedInstance.setting = !PVSettingsModel.sharedInstance.setting; \
+self.label.text = BOOL_STRING(PVSettingsModel.sharedInstance.setting)
 
 @interface PVTVSettingsViewController ()
 
@@ -28,6 +34,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *showFPSCountValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
 @property (weak, nonatomic) IBOutlet UILabel *crtFilterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *webDavAlwaysOnValueLabel;
+@property (weak, nonatomic) IBOutlet UILabel *webDavAlwaysOnTitleLabel;
 
 @end
 
@@ -91,34 +99,64 @@
     self.splitViewController.title = @"Settings";
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [self.iCadeControllerSetting setText:kIcadeControllerSettingToString([settings iCadeControllerSetting])];
+    
+    [self updateWebDavTitleLabel];
+}
+
+- (void)updateWebDavTitleLabel {
+    BOOL isAlwaysOn = PVSettingsModel.sharedInstance.webDavAlwaysOn;
+
+    // Set the status indicator text
+    _webDavAlwaysOnValueLabel.text = isAlwaysOn ? @"On" : @"Off";
+    
+    // Use 2 lines if on to make space for the sub title
+    _webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1;
+    
+    
+    // The main title is always present
+    NSDictionary<NSAttributedStringKey, id>* firstLineAttributes = @{
+                                                                     NSFontAttributeName : [UIFont systemFontOfSize:38]
+                                                                     };
+    NSMutableAttributedString * titleString = [[NSMutableAttributedString alloc] initWithString:@"Always on WebDav server"
+                                                                                     attributes:firstLineAttributes];
+    
+    // Make a new line sub title with instructions to connect in lighter text
+    if (isAlwaysOn) {
+        NSString *subTitleText = [NSString stringWithFormat:@"\nPoint a WebDav client to %@", PVWebServer.sharedInstance.WebDavURLString];
+        NSDictionary<NSAttributedStringKey, id>* subTitleAttributes = @{
+                                                                         NSFontAttributeName : [UIFont systemFontOfSize:26],
+                                                                         NSForegroundColorAttributeName : [UIColor grayColor]
+                                                                         };
+        NSAttributedString * subTitleAttrString = [[NSMutableAttributedString alloc] initWithString:subTitleText
+                                                                                         attributes:subTitleAttributes];
+        [titleString appendAttributedString:subTitleAttrString];
+    }
+    
+    _webDavAlwaysOnTitleLabel.attributedText = titleString;
 }
 
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    PVSettingsModel *settings = [PVSettingsModel sharedInstance];
-
     switch ([indexPath section]) {
         case 0:
             // Emu Settings
             switch ([indexPath row]) {
                 case 0:
                     // Auto save
-                    [settings setAutoSave:![settings autoSave]];
-                    [self.autoSaveValueLabel setText:([settings autoSave]) ? @"On" : @"Off"];
+                    TOGGLE_SETTING(autoSave, autoSaveValueLabel);
                     break;
                 case 1:
                     // auto load
-                    [settings setAutoLoadAutoSaves:![settings autoLoadAutoSaves]];
-                    [self.autoLoadValueLabel setText:([settings autoLoadAutoSaves]) ? @"On" : @"Off"];
+                    TOGGLE_SETTING(autoLoadAutoSaves, autoLoadValueLabel);
                     break;
                 case 2:
-                    [settings setCrtFilterEnabled:![settings crtFilterEnabled]];
-                    [self.crtFilterLabel setText:([settings crtFilterEnabled]) ? @"On" : @"Off"];
+                    // CRT Filter
+                    TOGGLE_SETTING(crtFilterEnabled, crtFilterLabel);
                     break;
                 case 3:
-                    [settings setShowFPSCount:![settings showFPSCount]];
-                    [self.showFPSCountValueLabel setText:([settings showFPSCount]) ? @"On" : @"Off"];
+                    // FPS Counter
+                    TOGGLE_SETTING(showFPSCount, showFPSCountValueLabel);
                 default:
                     break;
             }
@@ -129,7 +167,26 @@
         case 2:
             // Actions
             switch ([indexPath row]) {
-				case 0: {
+                case 0: {
+                    PVSettingsModel.sharedInstance.webDavAlwaysOn = !PVSettingsModel.sharedInstance.webDavAlwaysOn;
+                    
+                    // Always on WebDav server
+                    // Currently this is only exposed on ATV since it would be a drain on battery
+                    // for a mobile device to have this on and doesn't seem nearly as useful.
+                    // Web dav can still be manually started alone side the web server
+                    
+                    if (PVSettingsModel.sharedInstance.webDavAlwaysOn && ! PVWebServer.sharedInstance.isWebDavServerRunning) {
+                        [PVWebServer.sharedInstance startWebDavServer];
+                    } else if (!PVSettingsModel.sharedInstance.webDavAlwaysOn && PVWebServer.sharedInstance.isWebDavServerRunning) {
+                        [PVWebServer.sharedInstance stopWebDavServer];
+                    }
+                    
+                    // Update the label to hide / show the instructions to connect
+                    [self updateWebDavTitleLabel];
+
+                    break;
+                }
+                case 1: {
 					// Start Webserver
 					// Check to see if we are connected to WiFi. Cannot continue otherwise.
 					Reachability *reachability = [Reachability reachabilityForInternetConnection];
@@ -148,24 +205,30 @@
 					} else {
 						// connected via wifi, let's continue
 
-						// start web transfer service
-						[[PVWebServer sharedInstance] startServer];
+                        // start web transfer service
+                        if([[PVWebServer sharedInstance] startServers]) {                            
 
-						// get the IP address of the device
-						NSString *ipAddress = [[PVWebServer sharedInstance] getIPAddress];
-
-#if TARGET_IPHONE_SIMULATOR
-						ipAddress = [ipAddress stringByAppendingString:@":8080"];
-#endif
-                        NSString *ipURLString = [NSString stringWithFormat: @"http://%@/", ipAddress];
-						NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@", ipURLString];
-						UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
-																					   message: message
-																				preferredStyle:UIAlertControllerStyleAlert];
-						[alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-							[[PVWebServer sharedInstance] stopServer];
-						}]];
-						[self presentViewController:alert animated:YES completion:NULL];
+                            // get the IP address of the device
+                            NSString *webServerAddress = PVWebServer.sharedInstance.URLString;
+                            NSString *webDavAddress = PVWebServer.sharedInstance.WebDavURLString;
+                            
+                            NSString *message = [NSString stringWithFormat: @"Upload/Download ROMs,\nsaves and cover art at:\n%@\n Or WebDav at:\n%@", webServerAddress, webDavAddress];
+                            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Web Server Active"
+                                                                                           message: message
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"Stop" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                [[PVWebServer sharedInstance] stopServers];
+                            }]];
+                            [self presentViewController:alert animated:YES completion:NULL];
+                        } else {
+                            // Display error
+                            UIAlertController *alert = [UIAlertController alertControllerWithTitle: @"Unable to start web server!"
+                                                                                           message: @"Check your network connection or that something isn't already running on required ports 80 & 81"
+                                                                                    preferredStyle:UIAlertControllerStyleAlert];
+                            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                            }]];
+                            [self presentViewController:alert animated:YES completion:NULL];
+                        }
 					}
 				}
                 default:

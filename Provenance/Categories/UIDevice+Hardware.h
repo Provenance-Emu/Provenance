@@ -10,7 +10,8 @@
 
 @interface UIDevice (Hardware)
 
-- (NSString *)modelIdentifier;
+
+@property (nonatomic, readonly, strong, nonnull) NSString *modelIdentifier;
 + (BOOL)hasTapticMotor;
 
 @end

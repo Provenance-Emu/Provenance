@@ -115,9 +115,25 @@
 			</dict>
 			<dict>
 				<key>PVControlType</key>
+				<string>PVLeftShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>L2</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
 				<string>R1</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightShoulderButton</string>
+				<key>PVControlTitle</key>
+				<string>R2</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
 			</dict>
@@ -626,7 +642,7 @@
 				<key>Name</key>
 				<string>syscard3.pce</string>
 				<key>Size</key>
-				<string>262656</string>
+				<integer>262656</integer>
 			</dict>
 		</array>
 	</dict>

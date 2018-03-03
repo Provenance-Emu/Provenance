@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0900"
+   LastUpgradeVersion = "0920"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -182,6 +182,62 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
+               BuildableName = "PVMednafen.framework"
+               BlueprintName = "PVMednafen tvOS"
+               ReferencedContainer = "container:Mednafen/PVMednafen.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3B3B9421DED13A200602746"
+               BuildableName = "PVMupen64PlusRspHLE.framework"
+               BlueprintName = "PVMupen64PlusRspHLE tvOS"
+               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3CB85551E9BECCF009155A6"
+               BuildableName = "PVPokeMini.framework"
+               BlueprintName = "PVPokeMini tvOS"
+               ReferencedContainer = "container:PVPokeMini/PVPokeMini.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3FA5D6E1D6BAD4100060D71"
+               BuildableName = "ProSystem.framework"
+               BlueprintName = "ProSystem tvOS"
+               ReferencedContainer = "container:PVProSystem/PVProSystem.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
                BuildableName = "Provenance.app"
                BlueprintName = "ProvenanceTV"
@@ -231,6 +287,13 @@
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "ALWAYS_ON_WEBDAV"
+            value = "1"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

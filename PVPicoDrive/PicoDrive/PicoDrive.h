@@ -15,5 +15,5 @@ FOUNDATION_EXPORT double PicoDriveVersionNumber;
 FOUNDATION_EXPORT const unsigned char PicoDriveVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PicoDrive/PublicHeader.h>
-#import <PioDrive/PicodriveGameCore.h>
-#import <PioDrive/OESega32XSystemResponderClient.h>
+#import <PicoDrive/PicodriveGameCore.h>
+#import <PicoDrive/OESega32XSystemResponderClient.h>

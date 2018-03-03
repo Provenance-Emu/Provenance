@@ -97,7 +97,7 @@ typedef uint32_t DWORD;
 
 
 // MyWindows.h - removed prev. definition & MyWindows.cpp - implemented
-LZMASDKOBJC_EXTERN DWORD GetLastError();
+LZMASDKOBJC_EXTERN DWORD GetLastError(void);
 
 // unused
 // void SetLastError(DWORD err) { errno = err; }

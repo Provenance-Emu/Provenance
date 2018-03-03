@@ -10,6 +10,6 @@
 
 @interface NSFileManager (Hashing)
 
-- (NSString *)MD5ForFileAtPath:(NSString *)path fromOffset:(NSUInteger)offset;
+- (NSString *_Nullable)MD5ForFileAtPath:(NSString *_Nonnull)path fromOffset:(NSUInteger)offset;
 
 @end

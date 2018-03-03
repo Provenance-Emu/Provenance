@@ -237,9 +237,12 @@ OSStatus RenderCallback(void                       *in,
         
         err = AudioUnitSetProperty(mConverterUnit, kAudioUnitProperty_SetRenderCallback,
                                    kAudioUnitScope_Input, 0, &renderStruct, sizeof(AURenderCallbackStruct));
-        if(err) DLog(@"Couldn't set the render callback");
-        else DLog(@"Set the render callback");
-        
+        if(err) {
+            ELOG(@"Couldn't set the render callback");
+        }
+        else {
+            DLOG(@"Set the render callback");
+        }
         AudioStreamBasicDescription mDataFormat;
         NSUInteger channelCount = _contexts[i].channelCount;
         NSUInteger bytesPerSample = _contexts[i].bytesPerSample;
@@ -254,18 +257,24 @@ OSStatus RenderCallback(void                       *in,
         mDataFormat.mBitsPerChannel   = 8 * bytesPerSample;
         
         err = AudioUnitSetProperty(mConverterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, sizeof(AudioStreamBasicDescription));
-        if(err) DLog(@"couldn't set player's input stream format");
-        else DLog(@"Set the play'ers input stream format");
-        
+        if(err) {
+            ELOG(@"couldn't set player's input stream format");
+        } {
+            DLOG(@"Set the play'ers input stream format");
+        }
+
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
-        if(err) DLog(@"Couldn't connect the converter to the mixer");
-        else DLog(@"Conncted the converter to the mixer");
+        if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
+        else { DLog(@"Conncted the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          
     err = AUGraphConnectNodeInput(mGraph, mMixerNode, 0, mOutputNode, 0);
-    if(err) DLog(@"Could not connect the input of the output");
-    else DLog(@"Conncted input of the output");
+    if(err) {
+        ELOG(@"Could not connect the input of the output");
+    } {
+        DLOG(@"Conncted input of the output");
+    }
     
     //AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, [[[GameDocumentController sharedDocumentController] preferenceController] volume] ,0);
     AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, 1.0 ,0);
@@ -273,15 +282,15 @@ OSStatus RenderCallback(void                       *in,
     AudioDeviceID outputDeviceID = [_outputDeviceID unsignedIntValue];
 //    if(outputDeviceID != 0)
     err = AudioUnitSetProperty(mOutputUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, sizeof(outputDeviceID));
-    if(err) DLog(@"couldn't set device properties");
+    if(err){ ELOG(@"couldn't set device properties"); }
 
     err = AUGraphInitialize(mGraph);
-    if(err) DLog(@"couldn't initialize graph");
-    else DLog(@"Initialized the graph");
+    if(err){ ELOG(@"couldn't initialize graph"); }
+    else { DLOG(@"Initialized the graph"); }
 
     err = AUGraphStart(mGraph);
-    if(err) DLog(@"couldn't start graph");
-    else DLog(@"Started the graph");
+    if(err){ ELOG(@"couldn't start graph"); }
+    else { DLOG(@"Started the graph"); }
 	
         //    CFShow(mGraph);
     [self setVolume:[self volume]];

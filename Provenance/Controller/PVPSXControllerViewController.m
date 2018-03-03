@@ -47,6 +47,9 @@
     [self.leftShoulderButton setTag:PVPSXButtonL1];
     [self.rightShoulderButton setTag:PVPSXButtonR1];
 
+    [self.leftShoulderButton2 setTag:PVPSXButtonL2];
+    [self.rightShoulderButton2 setTag:PVPSXButtonR2];
+
     [self.selectButton setTag:PVPSXButtonSelect];
     [self.startButton setTag:PVPSXButtonStart];
 }

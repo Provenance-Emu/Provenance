@@ -8,7 +8,7 @@
 
 #import "PViCadeControllerViewController.h"
 #import "kICadeControllerSetting.h"
-#import "PVSettingsModel.h"
+#import "Provenance-Swift.h"
 
 @implementation PViCadeControllerViewController
 

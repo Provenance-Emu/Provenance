@@ -380,6 +380,7 @@
 		B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F41E088A4500AD0E8B /* Foundation.framework */; };
 		B340E5FB1E088AF100AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FA1E088AF100AD0E8B /* PVSupport.framework */; };
 		B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5FC1E088AF700AD0E8B /* PVSupport.framework */; };
+		B36CBFED2039819100728482 /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39578C91E6D57DD00854D7A /* neopop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D7D817F1DE5B0090372A /* neopop.cpp */; };
 		B39578CA1E6D57DE00854D7A /* neopop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D7D817F1DE5B0090372A /* neopop.cpp */; };
 		B39578CB1E6D57F900854D7A /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D7C717F1DE5B0090372A /* bios.cpp */; };
@@ -434,6 +435,10 @@
 		B39578FE1E6D58FF00854D7A /* gfx_scanline_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D7D117F1DE5B0090372A /* gfx_scanline_mono.cpp */; };
 		B39578FF1E6D591E00854D7A /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D64C17F1DE5B0090372A /* z80_ops.cpp */; };
 		B39579001E6D591E00854D7A /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D64C17F1DE5B0090372A /* z80_ops.cpp */; };
+		B3CF44B82039B64A005BEB14 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
+		B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
+		B3CF44BB2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
+		B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1825,6 +1830,8 @@
 		B340E5F41E088A4500AD0E8B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B340E5FA1E088AF100AD0E8B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B340E5FC1E088AF700AD0E8B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
+		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
+		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -1911,6 +1918,8 @@
 				944543F31785289B006C057B /* OEWSSystemResponderClient.h */,
 				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
+				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
+				B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */,
 				94454E3B17852E61006C057B /* stubs.cpp */,
 				94454E3617852E44006C057B /* thread.cpp */,
 				94454E3717852E44006C057B /* thread.h */,
@@ -4396,6 +4405,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B36CBFED2039819100728482 /* PVMednafen.h in Headers */,
 				B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4446,7 +4456,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0920;
 				TargetAttributes = {
 					B340E4611E08887600AD0E8B = {
 						CreatedOnToolsVersion = 8.1;
@@ -4510,6 +4520,7 @@
 				B340E4811E08893000AD0E8B /* PSFLoader.cpp in Sources */,
 				B340E4821E08893000AD0E8B /* input.cpp in Sources */,
 				B340E4831E08893000AD0E8B /* res012.c in Sources */,
+				B3CF44BB2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */,
 				B340E4841E08893000AD0E8B /* hes.cpp in Sources */,
 				B340E4851E08893000AD0E8B /* sound.cpp in Sources */,
 				B340E4861E08893000AD0E8B /* arcade_card.cpp in Sources */,
@@ -4667,6 +4678,7 @@
 				B340E50C1E08893000AD0E8B /* pce.cpp in Sources */,
 				B340E50D1E08893000AD0E8B /* info.c in Sources */,
 				B340E50E1E08893000AD0E8B /* king.cpp in Sources */,
+				B3CF44B82039B64A005BEB14 /* MednafenMultiDisc.m in Sources */,
 				B340E50F1E08893000AD0E8B /* resize.cpp in Sources */,
 				B340E5101E08893000AD0E8B /* v810_cpu.cpp in Sources */,
 				B340E5111E08893000AD0E8B /* WAVRecord.cpp in Sources */,
@@ -4724,6 +4736,7 @@
 				B340E5371E08893000AD0E8B /* PSFLoader.cpp in Sources */,
 				B340E5381E08893000AD0E8B /* input.cpp in Sources */,
 				B340E5391E08893000AD0E8B /* res012.c in Sources */,
+				B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */,
 				B340E53A1E08893000AD0E8B /* hes.cpp in Sources */,
 				B340E53B1E08893000AD0E8B /* sound.cpp in Sources */,
 				B340E53C1E08893000AD0E8B /* arcade_card.cpp in Sources */,
@@ -4881,6 +4894,7 @@
 				B340E5C21E08893000AD0E8B /* pce.cpp in Sources */,
 				B340E5C31E08893000AD0E8B /* info.c in Sources */,
 				B340E5C41E08893000AD0E8B /* king.cpp in Sources */,
+				B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */,
 				B340E5C51E08893000AD0E8B /* resize.cpp in Sources */,
 				B340E5C61E08893000AD0E8B /* v810_cpu.cpp in Sources */,
 				B340E5C71E08893000AD0E8B /* WAVRecord.cpp in Sources */,
@@ -4943,19 +4957,28 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_EXPERIMENTAL = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -4967,6 +4990,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -4979,11 +5003,19 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_EXPERIMENTAL = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -4992,6 +5024,7 @@
 				ENABLE_TESTABILITY = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -5018,7 +5051,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -5115,7 +5148,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
