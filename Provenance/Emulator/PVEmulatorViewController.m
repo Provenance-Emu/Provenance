@@ -622,13 +622,14 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
-
     if (self.menuActionSheet)
     {
         [self dismissViewControllerAnimated:YES completion:NULL];
-        [self.emulatorCore setPauseEmulation:NO];
         self.isShowingMenu = NO;
     }
+    
+    [self updateLastPlayedTime];
+    [self.emulatorCore setPauseEmulation:NO];
 }
 
 - (void)updateFPSLabel

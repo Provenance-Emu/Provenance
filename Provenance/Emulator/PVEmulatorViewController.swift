@@ -52,6 +52,16 @@ extension PVEmulatorViewController {
             ELOG("\(error.localizedDescription)")
         }
     }
+    
+    @objc public func updateLastPlayedTime() {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                game.lastPlayed = Date()
+            }
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
+    }
 }
 
 public extension PVEmulatorViewController {
