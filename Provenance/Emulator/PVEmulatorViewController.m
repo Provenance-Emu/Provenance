@@ -25,8 +25,6 @@
 @property (nonatomic, strong) OEGameAudio *gameAudio;
 @property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
-@property (nonatomic, strong) UIButton *menuButton;
-
 @property (nonatomic, assign) NSTimer *fpsTimer;
 @property (nonatomic, strong) UILabel *fpsLabel;
 

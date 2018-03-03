@@ -97,6 +97,11 @@ public extension PVEmulatorViewController {
         }))
 
         // Present
+		if traitCollection.userInterfaceIdiom == .pad {
+			actionSheet.popoverPresentationController?.sourceView = menuButton
+			actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
+		}
+		
         self.present(actionSheet, animated: true) {
             PVControllerManager.shared().iCadeController?.refreshListener()
         }
