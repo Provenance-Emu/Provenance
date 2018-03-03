@@ -44,12 +44,18 @@ extension GameLaunchingViewController where Self : UIViewController {
                 ELOG("System \(system.name) specifies it requires BIOS files but does not provide values for \(SystemDictionaryKeys.BIOSEntries)")
                 throw GameLaunchingError.generic("Invalid configuration for system \(system.rawValue). Missing BIOS dictionary in systems.plist")
             }
-            
+        
             let biosPathContents : [String]
             do {
                 biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
             } catch {
-                let message = "Unable to get contents of \(system.biosPath.relativePath) because \(error.localizedDescription)"
+                try? FileManager.default.createDirectory(at: system.biosPath, withIntermediateDirectories: true, attributes: nil)
+                let biosFiles = biosEntries.map { return $0.filename }.joined(separator: ", ")
+                
+                let documentsPath = PVEmulatorConfiguration.documentsPath.path
+                let biosDirectory  = system.biosPath.path.replacingOccurrences(of: documentsPath, with: "")
+
+                let message = "This system requires BIOS files. Please upload '\(biosFiles)' to \(biosDirectory)."
                 ELOG(message)
                 throw GameLaunchingError.generic(message)
             }

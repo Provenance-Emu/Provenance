@@ -33,9 +33,9 @@ extension PVEmulatorViewController {
             UIApplication.shared.setStatusBarHidden(true, with: .fade)
         #endif
     }
-    
+
     @objc
-    public func finishedPlaying(game : PVGame) {
+    public func updatePlayedDuration() {
         guard let startTime = game.lastPlayed else {
             return
         }
@@ -46,11 +46,21 @@ extension PVEmulatorViewController {
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 game.timeSpentInGame = totalTimeSpent
+                game.lastPlayed = Date()
             }
         } catch {
             ELOG("\(error.localizedDescription)")
         }
-        
+    }
+    
+    @objc public func updateLastPlayedTime() {
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                game.lastPlayed = Date()
+            }
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
     }
 }
 
@@ -97,6 +107,11 @@ public extension PVEmulatorViewController {
         }))
 
         // Present
+		if traitCollection.userInterfaceIdiom == .pad {
+			actionSheet.popoverPresentationController?.sourceView = menuButton
+			actionSheet.popoverPresentationController?.sourceRect = menuButton?.bounds ?? .zero
+		}
+		
         self.present(actionSheet, animated: true) {
             PVControllerManager.shared().iCadeController?.refreshListener()
         }

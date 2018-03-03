@@ -11,6 +11,33 @@ import Foundation
 import RealmSwift
 import CoreSpotlight
 
+extension URLSession {
+    func synchronousDataTask(urlrequest: URLRequest) throws -> (data: Data?, response: HTTPURLResponse?) {
+        var data: Data?
+        var response: HTTPURLResponse?
+        var error: Error?
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let dataTask = self.dataTask(with: urlrequest) {
+            data = $0
+            response = $1 as! HTTPURLResponse?
+            error = $2
+            
+            semaphore.signal()
+        }
+        dataTask.resume()
+        
+        _ = semaphore.wait(timeout: .distantFuture)
+        
+        if let error = error {
+            throw error
+        }
+        
+        return (data, response)
+    }
+}
+
 struct ImportCanidateFile {
     var filePath : URL
     var md5 : String? {
@@ -36,19 +63,33 @@ struct ImportCanidateFile {
     private var cache = Cache()
 }
 
-public extension PVGameImporter {
+public typealias PVGameImporterImportStartedHandler = (_ path: String) -> Void
+public typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool) -> Void
+public typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
+public typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
+
+public extension Notification.Name {
+    public static let ArtworkUpdatedNotification = Notification.Name("artworkUpdatedNotification")
+}
+
+public class PVGameImporter {
+    
+    public var importStartedHandler: PVGameImporterImportStartedHandler?
+    public var completionHandler: PVGameImporterCompletionHandler?
+    public var finishedImportHandler: PVGameImporterFinishedImportingGameHandler?
+    public var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
+    public private(set) var encounteredConflicts = false
+    
+    public private(set) var serialImportQueue: DispatchQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialImportQueue")
+    public private(set) var systemToPathMap = [String: URL]()
+    public private(set) var romExtensionToSystemsMap = [String: [String]]()
     
     // MARK: - Paths
-    @objc
-    var documentsPath : URL { return PVEmulatorConfiguration.documentsPath }
+    let documentsPath : URL = PVEmulatorConfiguration.documentsPath
+    let romsImporPath : URL = PVEmulatorConfiguration.romsImportPath
+    let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true)
 
-    @objc
-    var romsImporPath : URL { return PVEmulatorConfiguration.romsImportPath }
-    
-    @objc
-    var conflictPath : URL { return PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true) }
-
-    func path(forSystemID systemID: String) -> String? {
+    func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
     }
     
@@ -64,6 +105,21 @@ public extension PVGameImporter {
         return cdExtensions.contains(ext)
     }
     
+    lazy var openVGDB: OESQLiteDatabase = {
+        let _openVGDB = try! OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!)
+        return _openVGDB
+    }()
+        
+    public var conflictedFiles : [URL]? {
+        return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+    }
+    
+    required public init(completionHandler: PVGameImporterCompletionHandler?) {
+        self.completionHandler = completionHandler
+        systemToPathMap = updateSystemToPathMap()
+        romExtensionToSystemsMap = updateromExtensionToSystemsMap()
+    }
+
     @objc
     func calculateMD5(forGame game : PVGame ) -> String? {
         var offset : UInt = 0
@@ -81,7 +137,6 @@ public extension PVGameImporter {
         return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
     }
     
-    @objc
     func importFiles(atPaths paths: [URL]) -> [URL] {
         
         let sortedPaths = PVEmulatorConfiguration.sortImportUURLs(urls: paths)
@@ -106,7 +161,14 @@ public extension PVGameImporter {
                     // Files are already moved and imported to database (in theory),
                     // or moved to conflicts dir and already set the conflists flag - jm
                     return nil
-                } else {
+                } else if PVEmulatorConfiguration.artworkExtensions.contains(canidate.filePath.pathExtension.lowercased()), let game = PVGameImporter.importArtwork(fromPath: canidate.filePath) {
+                    // Is artwork, import that
+                    ILOG("Found artwork \(canidate.filePath.lastPathComponent) for game <\(game.title)>")
+                    let hash = game.md5Hash
+                    NotificationCenter.default.post(name: .ArtworkUpdatedNotification, object: self, userInfo: ["gameMD5" : hash])
+                    return nil
+                }
+                else {
                     return canidate
                 }
             } else {
@@ -141,6 +203,91 @@ public extension PVGameImporter {
                 })
             }
         })
+    }
+    
+    func resolveConflicts(withSolutions solutions: [URL: String]) {
+        
+        solutions.forEach { (filePath, systemID) in
+            guard let subfolder: URL = systemToPathMap[systemID] else {
+                ELOG("No subfoder")
+                return
+            }
+            
+            if !FileManager.default.fileExists(atPath: subfolder.path) {
+                try? FileManager.default.createDirectory(at: subfolder, withIntermediateDirectories: true, attributes: nil)
+            }
+            
+            let sourceFilename : String = filePath.lastPathComponent
+            let sourcePath: URL = filePath
+            let destinationPath: URL = subfolder.appendingPathComponent(sourceFilename, isDirectory: false)
+            
+            do {
+                try FileManager.default.moveItem(at: sourcePath, to: destinationPath)
+                DLOG("Moved \(sourcePath.path) to \(destinationPath.path)")
+            } catch {
+                ELOG("Unable to move \(sourcePath.path) to \(destinationPath.path) because: \(error.localizedDescription)")
+            }
+            
+                // moved the .cue, now move .bins .imgs etc
+            let relatedFileName: String = sourcePath.deletingPathExtension().lastPathComponent
+
+            let conflictsDirContents = try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [])
+            conflictsDirContents?.forEach { file in
+
+                    // Crop out any extra info in the .bin files, like Game.cue and Game (Track 1).bin, we want to match up to just 'Game'
+                var fileWithoutExtension: String = file.deletingPathExtension().lastPathComponent
+                if fileWithoutExtension.count > relatedFileName.count {
+                    // Trim the matching filename to same lentgh as possible relation string
+                    fileWithoutExtension = String(fileWithoutExtension[..<relatedFileName.endIndex])
+                }
+                
+                // TODO: This doesn't take into account things with (Disc) need to remove those using regex, I think. unless we d
+                // Compare the trimmed string is the same as our match looking string
+                if fileWithoutExtension == relatedFileName {
+                    
+                        // Before moving the file, make sure the if it's a cue sheet, that the cue sheet's reference uses the same case.
+                    let isCueSheet = destinationPath.pathExtension == "cue"
+                    if isCueSheet {
+                        let cueSheetPath = destinationPath
+                        if var cuesheetContents = try? String(contentsOf: cueSheetPath, encoding: .utf8) {
+                            let range = (cuesheetContents as NSString).range(of: file.lastPathComponent, options: .caseInsensitive)
+                            
+                            if range.location != NSNotFound {
+                                if let subRange = Range<String.Index>(range, in: cuesheetContents) {
+                                    cuesheetContents.replaceSubrange(subRange, with: file.lastPathComponent)
+                                }
+                                
+                                do {
+                                    try cuesheetContents.write(to: cueSheetPath, atomically: true, encoding: .utf8)
+                                } catch {
+                                    ELOG("Unable to rewrite cuesheet \(destinationPath.path) because \(error.localizedDescription)")
+                                }
+                            } else {
+                                DLOG("Range of string <\(file)> not found in file <\(cueSheetPath.lastPathComponent)>")
+                            }
+                        }
+                    }
+                    
+                    do {
+                        let newDestinationPath = subfolder.appendingPathComponent(file.lastPathComponent, isDirectory: false)
+                        try FileManager.default.moveItem(at: file, to: newDestinationPath)
+                    } catch {
+                        ELOG("Unable to move related file from \(filePath.path) to \(subfolder.path) because: \(error.localizedDescription)")
+                    }
+                }
+            }
+            
+            serialImportQueue.async(execute: {[unowned self] () -> Void in
+                self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: systemID)
+                
+                // TODO: Shouldn't this only be colled after all conflicts have been resolved?
+                if self.completionHandler != nil {
+                    DispatchQueue.main.async(execute: {() -> Void in
+                        self.completionHandler?(false)
+                    })
+                }
+            })
+        } // End forEach
     }
 }
 
@@ -185,7 +332,6 @@ public extension PVGameImporter {
      @param imageFullPath The artwork image path
      @return The game that was updated
      */
-    @objc
     class func importArtwork(fromPath imageFullPath: URL) -> PVGame? {
         
         // Check the file exists (and is not a directory for some reason)
@@ -196,58 +342,54 @@ public extension PVGameImporter {
             return nil
         }
         
+        var success = false
+        
         // Make sure we always delete the image even on early error returns
         defer {
-            do {
-                try FileManager.default.removeItem(at: imageFullPath)
-            } catch {
-                ELOG("Failed to delete image at path \(imageFullPath) \n \(error.localizedDescription)")
+            if success {
+                do {
+                    try FileManager.default.removeItem(at: imageFullPath)
+                } catch {
+                    ELOG("Failed to delete image at path \(imageFullPath) \n \(error.localizedDescription)")
+                }
             }
-        }
-        
-        // Read the data
-        let coverArtFullData : Data
-        do {
-            coverArtFullData = try Data.init(contentsOf: imageFullPath, options: [])
-        } catch {
-            ELOG("Couldn't read data from image file \(imageFullPath.path)\n\(error.localizedDescription)")
-            return nil
-        }
-        
-        // Create a UIImage from the Data
-        guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
-            ELOG("Failed to create Image from data")
-            return nil
-        }
-        
-        // Scale the UIImage to our desired max size
-        guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
-            ELOG("Failed to create scale image")
-            return nil
-        }
-
-        // Create new Data from scaled image
-        guard let coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage) else {
-            ELOG("Failed to create data respresentation of scaled image")
-            return nil
-        }
-        
-        // Hash the image and save to cache
-        let hash: String = (coverArtScaledData as NSData).md5Hash
-        
-        do {
-            try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
-        } catch {
-            ELOG("Failed to save artwork to cache: \(error.localizedDescription)")
-            return nil
         }
         
         // Trim the extension off the filename
         let gameFilename: String = imageFullPath.deletingPathExtension().lastPathComponent
+
+        // The game extension since images needs to be foo.nes.png
+        let gameExtension = imageFullPath.deletingPathExtension().pathExtension
         
-        // Figure out what system this belongs to by extension
-        // Hey, how is this going to work if we just stripped it?
-        let gameExtension = imageFullPath.pathExtension
+        let database = RomDatabase.sharedInstance
+
+        if gameExtension.isEmpty {
+            ILOG("Trying to import artwork that didn't contain the extension of the system")
+            // This is the case where the user didn't put the gamename.nes.jpg,
+            // but just gamename.jpg
+            let games = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [gameFilename]))
+
+            if games.count == 1, let game = games.first {
+                ILOG("File for image didn't have extension for system but we found a single match for image \(imageFullPath.lastPathComponent) to game \(game.title) on system \(game.systemIdentifier)")
+                guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+                    return nil
+                }
+                
+                do {
+                    try database.writeTransaction {
+                        game.customArtworkURL = hash
+                    }
+                    success = true
+                    ILOG("Set custom artwork of game \(game.title) from file \(imageFullPath.lastPathComponent)")
+                } catch {
+                    ELOG("Couldn't update game \(game.title) with new artwork URL \(hash)")
+                }
+
+                return game
+            } else {
+                VLOG("Database search returned \(games.count) results")
+            }
+        }
         
         guard let systemIDs: [String] = PVEmulatorConfiguration.systemIdentifiers(forFileExtension: gameExtension) else {
             ELOG("No system for extension \(gameExtension)")
@@ -256,20 +398,26 @@ public extension PVGameImporter {
         
         let cdBasedSystems = PVEmulatorConfiguration.cdBasedSystemIDs
         let couldBelongToCDSystem = !Set(cdBasedSystems).isDisjoint(with: Set(systemIDs))
-        let database = RomDatabase.sharedInstance
 
         // Skip CD systems for non special extensions
-        if (couldBelongToCDSystem && (gameExtension.lowercased() != "cue" || gameExtension.lowercased() != "m3u")) || systemIDs.count > 1 {
+        if (couldBelongToCDSystem && PVEmulatorConfiguration.supportedCDFileExtensions.contains(gameExtension.lowercased())) || systemIDs.count > 1 {
             // We could get here with Sega games. They use .bin, which is CD extension.
             // See if we can match any of the potential paths to a current game
             // See if we have any current games that could match based on searching for any, [systemIDs]/filename
             let existingGames = findAnyCurrentGameThatCouldBelongToAnyOfTheseSystemIDs(systemIDs, romFilename:gameFilename)
             if existingGames.count == 1, let onlyMatch = existingGames.first {
                 ILOG("We found a hit for artwork that could have been belonging to multiple games and only found one file that matched by systemid/filename. The winner is \(onlyMatch.title) for \(onlyMatch.systemIdentifier)")
+                
+                guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+                    ELOG("Couldn't move image, fail to set custom artowrk")
+                    return nil
+                }
+                
                 do {
                     try database.writeTransaction {
                         onlyMatch.customArtworkURL = hash
                     }
+                    success = true
                 } catch {
                     ELOG("Couldn't update game \(onlyMatch.title) with new artwork URL")
                 }
@@ -303,16 +451,63 @@ public extension PVGameImporter {
             ELOG("Couldn't find game for path \(gamePartialPath)")
             return nil
         }
+        
+        guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+            return nil
+        }
 
         do {
             try database.writeTransaction {
                 game.customArtworkURL = hash
             }
+            success = true
         } catch {
             ELOG("Couldn't update game with new artwork URL")
         }
-        
+
         return game
+    }
+    
+    fileprivate class func scaleAndMoveImageToCache(imageFullPath : URL) -> String? {
+        // Read the data
+        let coverArtFullData : Data
+        do {
+            coverArtFullData = try Data.init(contentsOf: imageFullPath, options: [])
+        } catch {
+            ELOG("Couldn't read data from image file \(imageFullPath.path)\n\(error.localizedDescription)")
+            return nil
+        }
+        
+        // Create a UIImage from the Data
+        guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
+            ELOG("Failed to create Image from data")
+            return nil
+        }
+        
+        // Scale the UIImage to our desired max size
+        guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
+            ELOG("Failed to create scale image")
+            return nil
+        }
+        
+        // Create new Data from scaled image
+        guard let coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage) else {
+            ELOG("Failed to create data respresentation of scaled image")
+            return nil
+        }
+        
+        // Hash the image and save to cache
+        let hash: String = (coverArtScaledData as NSData).md5Hash
+        
+        do {
+            let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
+            VLOG("Scaled and moved image from \(imageFullPath.path) to \(destinationURL.path)")
+        } catch {
+            ELOG("Failed to save artwork to cache: \(error.localizedDescription)")
+            return nil
+        }
+        
+        return hash
     }
     
     fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystemIDs(_ systemIDs : [String], romFilename : String) -> Results<PVGame> {
@@ -343,16 +538,16 @@ public extension PVGameImporter {
         //
         //                    })
         let database = RomDatabase.sharedInstance
-        let allContainsPredicats = potentialExistingRomPartialPaths.map { return NSPredicate(format: "romPath CONTAINS[c] %@", $0) }
+        let allContainsPredicats = potentialExistingRomPartialPaths.map { return NSPredicate(format: "romPath CONTAINS[c] %@", PVEmulatorConfiguration.stripDiscNames(fromFilename: $0)) }
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: allContainsPredicats)
         let existingGames = database.all(PVGame.self, filter: compoundPredicate)
         return existingGames
     }
     
-    @objc
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystemID: String? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
+        
         
         paths.forEach { (path) in
             let isDirectory: Bool = !path.isFileURL
@@ -368,6 +563,13 @@ public extension PVGameImporter {
                 let fileExtensionLower = urlPath.pathExtension.lowercased()
                 
                 if let chosenSystemID = chosenSystemID, !chosenSystemID.isEmpty {
+                    // First check if it's a chosen system that supports CDs and this is a non-cd extension
+                    if PVEmulatorConfiguration.cdBasedSystemIDs.contains(chosenSystemID) && !PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtensionLower) {
+                        // We're on a file that is from a CD based system but this file isn't an importable file type so skip it.
+                        // This prevents us from importing .bin's for example when the .cue is already imported
+                        return
+                    }
+                    
                     systemIDsMaybe = [chosenSystemID]
                 } else {
                     systemIDsMaybe = PVEmulatorConfiguration.systemIdentifiers(forFileExtension: fileExtensionLower)
@@ -379,15 +581,6 @@ public extension PVGameImporter {
                     return
                 }
                 
-                // Skip non .m3u/.cue files for CD systems to avoid importing .bins
-                // TODO: I think this actaully does nothing... - jm
-//                let cdBasedSystems = PVEmulatorConfiguration.cdBasedSystemIDs
-//                let couldBelongToCDSystem = !Set(cdBasedSystems).isDisjoint(with: Set(systemIDs))
-//                if couldBelongToCDSystem && (fileExtensionLower != "cue" || fileExtension != "m3u") {
-//                    WLOG("\(path.lastPathComponent) could belong to a CD and isn't a cue or m3u")
-//                    return
-//                }
-                
                 var maybeGame: PVGame? = nil
 
                 if systemIDs.count > 1 {
@@ -395,6 +588,7 @@ public extension PVGameImporter {
                     // Try to match by MD5 first
                     if let systemIDMatch = systemId(forROMCanidate: ImportCanidateFile(filePath: urlPath)) {
                         systemIDs = [systemIDMatch]
+                        DLOG("Matched \(urlPath.path) by MD5 to system \(systemIDMatch)")
                     } else {
                         // We have a conflict, multiple systems matched and couldn't find anything by MD5 match
                         let s =  systemIDs.joined(separator: ",")
@@ -448,6 +642,8 @@ public extension PVGameImporter {
                 //                    // Grabbed this from OpenEMU - jm
                 //                    let newGameTitle = title.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression, range: Range(0, title.count))
                 //                }
+
+                
                 
                 
                 // Check if we have this game already
@@ -455,21 +651,21 @@ public extension PVGameImporter {
                 // and then we can use a Set with .contains instead of doing a new query here every times
                 // Would instead see if contains first, then query for the full object
                 // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
-                if let existingGame = maybeGame ?? database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: partialPath).first {
-//                    do {
-//                        try database.writeTransaction {
-//                            existingGame.romPath = partialPath
-//
-//                            // TODO: Shoulud check MD5 and delete and make new instance if not equal
-//                            // Can't updated MD5 since it's a primary key
-//                            if let md5 = calculateMD5(forGame: existingGame) {
-//                                existingGame.md5Hash = md5
-//                            }
-//                        }
-                        finishUpdateOrImport(ofGame: existingGame)
-//                    } catch {
-//                        ELOG("\(error.localizedDescription)")
-//                    }
+                
+                    // For multi-cd games, make the most inert version of the filename
+                var similiarName = path.deletingPathExtension().lastPathComponent
+                similiarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similiarName)
+                
+                if let existingGame = maybeGame ?? // found a match above?
+                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
+                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarName])).first // More generic match
+                {
+                    // TODO: Check the MD5 mash. If it doesn't match, delete the imported game and re-import
+                    // Can't update existig game since MD5 is the primary DB key and you can't update it.
+                    // Downside would be that you have to then check the MD5 for every file and that would take forver
+                    // perhaps we should add more info to the PVGame entry for the file modified date and compare that instead,
+                    // then check md5 only if the date differs. - Joe M
+                    finishUpdateOrImport(ofGame: existingGame)
                 } else {
                     // New game
                     importToDatabaseROM(atPath: path, systemID: systemID)
@@ -480,7 +676,6 @@ public extension PVGameImporter {
     
     // MARK: - ROM Lookup
     
-    @objc
     public func lookupInfo(for game: PVGame) {
         let database = RomDatabase.sharedInstance
         database.refresh()
@@ -578,7 +773,10 @@ public extension PVGameImporter {
                  */
                 
                 if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
-                    game.title = title
+                    // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
+                    let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
+
+                    game.title = revisedTitle
                 }
                 
                 if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty {
@@ -635,18 +833,6 @@ public extension PVGameImporter {
      }
     
     public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
-        
-        var openVGDB = self.openVGDB
-        if openVGDB == nil {
-            do {
-                openVGDB = try OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!)
-                self.openVGDB = openVGDB
-            } catch {
-                ELOG("Unable to open game database: \(error.localizedDescription)")
-                throw error
-            }
-        }
-        
         var results: [Any]? = nil
         let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
         let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
@@ -662,7 +848,7 @@ public extension PVGameImporter {
         }
         
         do {
-            results = try openVGDB!.executeQuery(queryString)
+            results = try openVGDB.executeQuery(queryString)
         } catch {
             ELOG("Failed to execute query: \(error.localizedDescription)")
             throw error
@@ -673,7 +859,7 @@ public extension PVGameImporter {
     
     static var charset : CharacterSet = {
         var c = CharacterSet.punctuationCharacters
-        c.remove(charactersIn: "-+&.'")
+        c.remove(charactersIn: ",-+&.'")
         return c
     }()
 }
@@ -695,7 +881,7 @@ extension PVGameImporter {
             return nil
         }
         
-        var subfolderPathMaybe: String? = nil
+        var subfolderPathMaybe: URL? = nil
         
         var matchedSystemID : String?
         
@@ -707,7 +893,7 @@ extension PVGameImporter {
             } else {
                 ILOG("No MD5 match.")
                 // No MD5 match, so move to conflict dir
-                subfolderPathMaybe = self.conflictPath.path
+                subfolderPathMaybe = self.conflictPath
                 self.encounteredConflicts = true
             }
         } else {
@@ -724,13 +910,13 @@ extension PVGameImporter {
 
         // Create the subfulder path if need be
         do {
-            try FileManager.default.createDirectory(atPath: subfolderPath, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: subfolderPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Unable to create \(subfolderPath) - \(error.localizedDescription)")
             return nil
         }
         
-        let newDirectory = URL(fileURLWithPath: subfolderPath, isDirectory:true)
+        let newDirectory = subfolderPath
         let newCueSheetPath = newDirectory.appendingPathComponent(canidateFile.filePath.lastPathComponent)
         
         // Try to move the CD file
@@ -763,7 +949,7 @@ extension PVGameImporter {
         let database = RomDatabase.sharedInstance
         
         let filename = path.lastPathComponent
-        let title: String = path.deletingPathExtension().lastPathComponent
+        let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: path.deletingPathExtension().lastPathComponent)
         let partialPath: String = URL(fileURLWithPath: systemID, isDirectory: true).appendingPathComponent(filename).path
         
         let game = PVGame()
@@ -827,6 +1013,50 @@ extension PVGameImporter {
         return nil
     }
     
+    func getArtworkFromURL(_ url: String) {
+        if url.isEmpty || PVMediaCache.fileExists(forKey: url) {
+            return
+        }
+        
+        DLOG("Starting Artwork download for \(url)")
+        
+        guard let artworkURL = URL(string: url) else {
+            return
+        }
+
+        let request = URLRequest(url: artworkURL)
+        let urlResponseMaybe: HTTPURLResponse?
+        
+        // TODO: Is a synchronous data task just a bad idea here?
+        let dataMaybe : Data?
+        do {
+            (dataMaybe, urlResponseMaybe) = try URLSession.shared.synchronousDataTask(urlrequest: request)
+        } catch {
+            DLOG("error downloading artwork from: \(url) -- \(error.localizedDescription)")
+            return
+        }
+        
+        guard let data = dataMaybe, let urlResponse = urlResponseMaybe else {
+            ELOG("No response or data")
+            return
+        }
+
+        if urlResponse.statusCode != 200 {
+            DLOG("HTTP Error: \(urlResponse.statusCode). \nResponse: \(urlResponse)")
+        }
+        
+        
+        if let artwork = UIImage(data: data) {
+            do { try PVMediaCache.writeImage(toDisk: artwork, withKey: url) } catch { ELOG("\(error.localizedDescription)") }
+        }
+        
+        if finishedArtworkHandler != nil {
+            DispatchQueue.main.sync(execute: {() -> Void in
+                self.finishedArtworkHandler?(url)
+            })
+        }
+    }
+    
     func moveROM(toAppropriateSubfolder canidateFile: ImportCanidateFile) -> URL? {
         
         let filePath = canidateFile.filePath
@@ -836,14 +1066,14 @@ extension PVGameImporter {
         var systemID: String? = nil
         let fm = FileManager.default
         
+        let extensionLowercased = filePath.pathExtension.lowercased()
         
         // Check if zip
-        if PVEmulatorConfiguration.archiveExtensions.contains(filePath.pathExtension) {
+        if PVEmulatorConfiguration.archiveExtensions.contains(extensionLowercased) {
             return nil
         }
         
         // Check first if known BIOS
-        
         if let biosEntry = biosEntryMatcing(canidateFile: canidateFile) {
             // We have a BIOS file match
             let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: biosEntry.systemID)
@@ -870,8 +1100,42 @@ extension PVGameImporter {
             return nil
         }
         
-        // Done dealing with BIOS file matches
+        // Check if .m3u
+        if extensionLowercased == "m3u" {
+            let cueFilenameWithoutExtension = filePath.deletingPathExtension().lastPathComponent
+            let similiarFile = PVEmulatorConfiguration.stripDiscNames(fromFilename: cueFilenameWithoutExtension)
+            
+            var foundGameMaybe = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first
+            
+                // If don't find by the m3u partial file name matching a filename, try to see if the first line of the m3u matches any games filenames partially
+            if foundGameMaybe == nil, let m3uContents = try? String(contentsOf: filePath, encoding: .utf8) {
+                if var firstLine = m3uContents.components(separatedBy: .newlines).first {
+                    firstLine = PVEmulatorConfiguration.stripDiscNames(fromFilename: firstLine)
+                    if let game = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first {
+                        foundGameMaybe = game
+                    }
+                }
+            }
+           
+            if let game = foundGameMaybe {
+                ILOG("Found game <\(game.title)> that matches .m3u <\(filePath.lastPathComponent)>")
+                let directory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier)
+                let nameWithoutExtension = ((game.romPath as NSString).lastPathComponent as NSString).deletingPathExtension
+                let newFilename = "\(nameWithoutExtension).m3u"
+                let destinationPath = directory.appendingPathComponent(newFilename, isDirectory: false)
+                do {
+                    try FileManager.default.moveItem(at: filePath, to: destinationPath)
+                    ILOG("Moved <\(filePath.lastPathComponent)> to \(directory.lastPathComponent)")
+                } catch {
+                    ELOG("Failed to move m3u \(filePath.lastPathComponent) to \(directory.lastPathComponent). \(error.localizedDescription)")
+                }
+            } else {
+                // See if the m3u contents has anything that matches
+                
+            }
+        }
         
+        // Done dealing with BIOS file matches
         guard let systemsForExtension = systemIDsForRom(at: filePath), !systemsForExtension.isEmpty else {
             ELOG("No system found to match \(filePath.lastPathComponent)")
             return nil
@@ -898,7 +1162,7 @@ extension PVGameImporter {
                 systemID = foundSystemIDMaybe
                 
                 if let s = systemID, let f = systemToPathMap[s] {
-                    subfolderPathMaybe = URL.init(fileURLWithPath: f, isDirectory: true)
+                    subfolderPathMaybe = f
                 } else {
                     ELOG("Didn't expecte any nils here")
                     return nil
@@ -918,7 +1182,7 @@ extension PVGameImporter {
             systemID = String(onlySystem)
             
             if let s = systemID, let f = systemToPathMap[s] {
-                subfolderPathMaybe = URL.init(fileURLWithPath: f, isDirectory: true)
+                subfolderPathMaybe = f
             } else {
                 ELOG("Didn't expecte any nils here")
                 return nil
@@ -971,8 +1235,8 @@ extension PVGameImporter {
     }
     
     func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
-        ILOG("Move files files similiar to \(inputFile.path) to directory \(toDirectory.path) from cue sheet \(cueSheetPath.path)")
-        let relatedFileName: String = inputFile.deletingPathExtension().lastPathComponent
+        ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
+        let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
         
         let contents : [URL]
         let fromDirectory = inputFile.deletingLastPathComponent()
@@ -985,6 +1249,16 @@ extension PVGameImporter {
         
         var filesMovedToPaths = [URL]()
         contents.forEach { file in
+            if file.path.contains("_MACOSX") {
+                ILOG("Found a file with __MACOSX. Need to delete this.")
+                do {
+                    try FileManager.default.removeItem(at: file)
+                } catch {
+                    ELOG("\(error.localizedDescription)")
+                }
+                return
+            }
+            
             var filenameWithoutExtension = file.deletingPathExtension().lastPathComponent
             
             // Some cue's have multiple bins, like, Game.cue Game (Track 1).bin, Game (Track 2).bin ....
@@ -992,10 +1266,11 @@ extension PVGameImporter {
             if filenameWithoutExtension.count > relatedFileName.count {
                 filenameWithoutExtension = (filenameWithoutExtension as NSString).substring(with: NSRange(location: 0, length: relatedFileName.count))
                     // RegEx pattern match the parentheses e.g. " (Disc 1)"
-                filenameWithoutExtension = filenameWithoutExtension.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
+                filenameWithoutExtension =  PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameWithoutExtension)
             }
             
-            if filenameWithoutExtension == relatedFileName {
+            if filenameWithoutExtension.contains(relatedFileName) {
+                DLOG("<\(file.lastPathComponent)> was found to be similiar to <\(cueSheetPath.lastPathComponent)>")
                 // Before moving the file, make sure the cue sheet's reference uses the same case.
                 if !cueSheetPath.path.isEmpty {
                     do {
@@ -1023,10 +1298,25 @@ extension PVGameImporter {
                 do {
                     try FileManager.default.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
                     try FileManager.default.moveItem(at: file, to: toPath)
-                    DLOG("Moved file from \(file) to \(toDirectory.path)")
+                    DLOG("Moved file from \(file) to \(toPath.path)")
                     filesMovedToPaths.append(toPath)
                 } catch {
                     ELOG("Unable to move file from \(file.path) to \(toPath.path) - \(error.localizedDescription)")
+                }
+            }
+                // Look for m3u's that have filenames that don't match but the contents of the file does contain this file
+            else if file.pathExtension.lowercased() == "m3u", let m3uContents = try? String.init(contentsOf: file) {
+                if m3uContents.contains(cueSheetPath.lastPathComponent) {
+                    ILOG("m3u file <\(file.lastPathComponent)> contains the cue <\(cueSheetPath.lastPathComponent)>. Moving as well to \(toDirectory.lastPathComponent). Will rename to match as well.")
+                    let cueFilename = cueSheetPath.deletingPathExtension().lastPathComponent
+                    let newM3UFilename = "\(cueFilename).m3u"
+                    let newM3UPath = toDirectory.appendingPathComponent(newM3UFilename, isDirectory: false)
+                    do {
+                        try FileManager.default.moveItem(at: file, to: newM3UPath)
+                        filesMovedToPaths.append(newM3UPath)
+                    } catch {
+                        ELOG("Failed to move m3u \(file.lastPathComponent) to directory \(toDirectory.lastPathComponent)")
+                    }
                 }
             }
         }
@@ -1046,7 +1336,11 @@ extension PVGameImporter {
         
         do {
             // var results: [[String: NSObject]]? = nil
-            if let results = try openVGDB?.executeQuery(queryString), let match = results.first, let databaseID = match["systemID"]?.description, let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
+            let results = try openVGDB.executeQuery(queryString)
+            if
+                let match = results.first,
+                let databaseID = match["systemID"]?.description,
+                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {
                 ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {md5}")
@@ -1058,317 +1352,3 @@ extension PVGameImporter {
         }
     }
 }
-
-// The complete but error filled auto-transition is below. Going to pick out parts to use as category extension for now
-/*
-import Foundation
-
-typealias PVGameImporterImportStartedHandler = (_ path: String) -> Void
-typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool) -> Void
-typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
-typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
-
-class PVGameImporter: NSObject {
-    private(set) var serialImportQueue: DispatchQueue?
-    var importStartedHandler: PVGameImporterImportStartedHandler?
-    var completionHandler: PVGameImporterCompletionHandler?
-    var finishedImportHandler: PVGameImporterFinishedImportingGameHandler?
-    var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
-    var isEncounteredConflicts = false
-
-    var serialImportQueue: DispatchQueue?
-    var systemToPathMap = [AnyHashable: Any]()
-    var romExtensionToSystemsMap = [AnyHashable: Any]()
-    private var _openVGDB: OESQLiteDatabase?
-    var openVGDB: OESQLiteDatabase? {
-        if _openVGDB == nil {
-                var error: Error?
-                _openVGDB = try? OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite"))
-                if _openVGDB == nil {
-                    DLog("Unable to open game database: %@", error?.localizedDescription)
-                    return nil
-                }
-            }
-            return _openVGDB
-    }
-
-    convenience init(completionHandler: PVGameImporterCompletionHandler) {
-        self.init()
-
-        self.completionHandler = completionHandler
-    
-    }
-
-    func conflictedFiles() -> [Any] {
-        var error: Error? = nil
-        let contents = try? FileManager.default.contentsOfDirectory(atPath: conflictPath())
-        if contents == nil {
-            DLog("Unable to get contents of %@ because %@", conflictPath(), error?.localizedDescription)
-        }
-        return contents ?? [Any]()
-    }
-
-    func resolveConflicts(withSolutions solutions: [AnyHashable: Any]) {
-        let filePaths = solutions.keys
-        for filePath: String in filePaths {
-            let systemID = solutions[filePath] as? String
-            let subfolder = systemToPathMap[systemID] as? String
-            if !FileManager.default.fileExists(atPath: subfolder) {
-                try? FileManager.default.createDirectory(atPath: subfolder, withIntermediateDirectories: true, attributes: nil)
-            }
-            var error: Error? = nil
-            if (try? FileManager.default.moveItem(atPath: URL(fileURLWithPath: conflictPath()).appendingPathComponent(filePath).path, toPath: URL(fileURLWithPath: subfolder).appendingPathComponent(filePath).path)) == nil {
-                DLog("Unable to move %@ to %@ because %@", filePath, subfolder, error?.localizedDescription)
-            }
-                // moved the .cue, now move .bins .imgs etc
-            let cueSheetPath: String = URL(fileURLWithPath: subfolder).appendingPathComponent(filePath).path
-            let relatedFileName: String = URL(fileURLWithPath: filePath).deletingPathExtension().path
-            let contents = try? FileManager.default.contentsOfDirectory(atPath: conflictPath())
-            for file: String in contents {
-                    // Crop out any extra info in the .bin files, like Game.cue and Game (Track 1).bin, we want to match up to just 'Game'
-                var fileWithoutExtension: String = file.replacingOccurrences(of: ".\(URL(fileURLWithPath: file).pathExtension)", with: "")
-                if fileWithoutExtension.count > relatedFileName.count {
-                    fileWithoutExtension = (fileWithoutExtension as NSString).substring(with: NSRange(location: 0, length: relatedFileName.count))
-                }
-                if fileWithoutExtension == relatedFileName {
-                        // Before moving the file, make sure the cue sheet's reference uses the same case.
-                    var cuesheet = try? String(contentsOfFile: cueSheetPath, encoding: .utf8)
-                    if cuesheet != nil {
-                        let range: NSRange? = (cuesheet as NSString?)?.range(of: file, options: .caseInsensitive)
-                        if range?.location != NSNotFound {
-                            if let subRange = Range<String.Index>(range ?? NSRange(), in: cuesheet) { cuesheet?.replaceSubrange(subRange, with: file) }
-                            if (try? cuesheet?.write(toFile: cueSheetPath, atomically: false, encoding: .utf8)) == nil {
-                                DLog("Unable to rewrite cuesheet %@ because %@", cueSheetPath, error?.localizedDescription)
-                            }
-                        }
-                        else {
-                            DLog("Range of string <%@> not found in file <%@>", file, cueSheetPath)
-                        }
-                    }
-                    else {
-                        DLog("Unable to read cue sheet %@ because %@", cueSheetPath, error?.localizedDescription)
-                    }
-                    if (try? FileManager.default.moveItem(atPath: URL(fileURLWithPath: conflictPath()).appendingPathComponent(file).path, toPath: URL(fileURLWithPath: subfolder).appendingPathComponent(file).path)) == nil {
-                        DLog("Unable to move file from %@ to %@ - %@", filePath, subfolder, error?.localizedDescription)
-                    }
-                }
-            }
-            weak var weakSelf: PVGameImporter? = self
-            serialImportQueue.async(execute: {() -> Void in
-                weakSelf?.getRomInfoForFiles(atPaths: [filePath], userChosenSystem: systemID)
-                if weakSelf?.self.completionHandler != nil {
-                    DispatchQueue.main.async(execute: {() -> Void in
-                        weakSelf?.self.completionHandler(false)
-                    })
-                }
-            })
-        }
-    }
-
-    func getRomInfoForFiles(atPaths paths: [Any], userChosenSystem systemID: String) {
-        let database = RomDatabase.sharedInstance
-        database.refresh()
-        for path: String in paths {
-            let isDirectory: Bool = !path.contains(".")
-            if path.hasPrefix(".") || isDirectory {
-                continue
-            }
-            autoreleasepool {
-                var systemID: String? = nil
-                if chosenSystemID.count == 0 {
-                    systemID = PVEmulatorConfiguration.systemIdentifier(forFileExtension: URL(fileURLWithPath: path).pathExtension)
-                }
-                else {
-                    systemID = chosenSystemID
-                }
-                let cdBasedSystems = PVEmulatorConfiguration.cdBasedSystemIDs()
-                if cdBasedSystems.contains(systemID ?? "") && ((URL(fileURLWithPath: path).pathExtension == "cue") == false) {
-                    continue
-                }
-                let partialPath: String = URL(fileURLWithPath: systemID ?? "").appendingPathComponent(path.lastPathComponent).path
-                let title: String = path.lastPathComponent.replacingOccurrences(of: "." + (URL(fileURLWithPath: path).pathExtension), with: "")
-                var game: PVGame? = nil
-                let results: RLMResults? = database.objectsOf(PVGame.self, predicate: NSPredicate(format: "romPath == %@", partialPath.count ? partialPath : ""))
-                if results?.count() != nil {
-                    game = results?.first
-                }
-                else {
-                    if systemID?.count == nil {
-                        continue
-                    }
-                    game = PVGame()
-                    game?.romPath = partialPath
-                    game?.title = title
-                    game?.systemIdentifier = systemID
-                    game?.isRequiresSync = true
-                    try? database.add(withObject: game)
-                }
-                var modified = false
-                if game?.requiresSync() != nil {
-                    if importStartedHandler {
-                        DispatchQueue.main.async(execute: {() -> Void in
-                            self.importStartedHandler(path)
-                        })
-                    }
-                    lookupInfo(for: game)
-                    modified = true
-                }
-                if finishedImportHandler {
-                    let md5: String? = game?.md5Hash()
-                    DispatchQueue.main.async(execute: {() -> Void in
-                        self.finishedImportHandler(md5, modified)
-                    })
-                }
-                getArtworkFromURL(game?.originalArtworkURL())
-            }
-        }
-    }
-
-    func getArtworkFromURL(_ url: String) {
-        if !url.count || PVMediaCache.filePath(forKey: url).length() {
-            return
-        }
-        DLog("Starting Artwork download for %@", url)
-        let artworkURL = URL(string: url)
-        if artworkURL == nil {
-            return
-        }
-        let request = URLRequest(url: artworkURL!)
-        var urlResponse: HTTPURLResponse? = nil
-        var error: Error? = nil
-        let data: Data? = try? PVSynchronousURLSession.sendSynchronousRequest(request, returning: urlResponse)
-        if error != nil {
-            DLog("error downloading artwork from: %@ -- %@", url, error?.localizedDescription)
-            return
-        }
-        if urlResponse?.statusCode != 200 {
-            DLog("HTTP Error: %zd", urlResponse?.statusCode)
-            DLog("Response: %@", urlResponse)
-        }
-        let artwork = UIImage(data: data ?? Data())
-        if artwork != nil {
-            PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-        }
-        if finishedArtworkHandler {
-            DispatchQueue.main.sync(execute: {() -> Void in
-                self.finishedArtworkHandler(url)
-            })
-        }
-    }
-
-// MARK: -
-
-    override init() {
-        super.init()
-        
-        serialImportQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialImportQueue")
-        systemToPathMap = updateSystemToPathMap()
-        romExtensionToSystemsMap = updateromExtensionToSystemsMap()
-    
-    }
-
-// MARK: - ROM Lookup
-
-    func lookupInfo(for game: PVGame) {
-        RomDatabase.sharedInstance.refresh()
-        if !game.md5Hash().length() {
-            var offset: Int = 0
-            if (game.systemIdentifier() == PVNESSystemIdentifier) {
-                offset = 16
-                // make this better
-            }
-            let md5Hash: String = FileManager.default.md5ForFile(atPath: URL(fileURLWithPath: documentsPath()).appendingPathComponent(game.romPath()).path, fromOffset: offset)
-            RomDatabase.sharedInstance.writeTransactionAndReturnError(nil, {() -> Void in
-                game.md5Hash = md5Hash
-            })
-        }
-        var error: Error? = nil
-        var results: [Any]? = nil
-        if game.md5Hash().length() {
-            results = try? self.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash().uppercased(), systemID: game.systemIdentifier())
-        }
-        if results?.count == nil {
-            var fileName: String = game.romPath().lastPathComponent
-                // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
-            var charSet: CharacterSet? = nil
-            var onceToken: Int
-            if (onceToken == 0) {
-            /* TODO: move below code to a static variable initializer (dispatch_once is deprecated) */
-                charSet = CharacterSet.punctuationCharacters
-                charSet?.removeCharacters(in: "-+&.'")
-            }
-        onceToken = 1
-            let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: charSet!)
-            var gameTitleLen: Int
-            if nonCharRange.length > 0 && nonCharRange.location > 1 {
-                gameTitleLen = nonCharRange.location - 1
-            }
-            else {
-                gameTitleLen = fileName.count
-            }
-            fileName = ((fileName as? NSString)?.substring(to: gameTitleLen)) ?? ""
-            results = try? self.searchDatabase(usingKey: "romFileName", value: fileName, systemID: game.systemIdentifier())
-        }
-        if results?.count == nil {
-            DLog("Unable to find ROM (%@) in DB", game.romPath())
-            RomDatabase.sharedInstance.writeTransactionAndReturnError(nil, {() -> Void in
-                game.isRequiresSync = false
-            })
-            return
-        }
-        var chosenResult: [AnyHashable: Any]? = nil
-        for result: [AnyHashable: Any] in results {
-            if (result["region"] == "USA") {
-                chosenResult = result
-                break
-            }
-        }
-        if chosenResult == nil {
-            chosenResult = results?.first
-        }
-        RomDatabase.sharedInstance.writeTransactionAndReturnError(nil, {() -> Void in
-            game.isRequiresSync = false
-            if chosenResult["gameTitle"].length() {
-                game.title = chosenResult["gameTitle"]
-            }
-            if chosenResult["boxImageURL"].length() {
-                game.originalArtworkURL = chosenResult["boxImageURL"]
-            }
-        })
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [Any] {
-        if openVGDB == nil {
-            openVGDB = try? OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite"))
-        }
-        if openVGDB == nil {
-            DLog("Unable to open game database: %@", error?.localizedDescription)
-            return nil
-        }
-        var results: [Any]? = nil
-        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', regionName as 'region', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
-        var queryString: String? = nil
-        let dbSystemID: String = PVEmulatorConfiguration.databaseID(forSystemID: systemID)
-        if (key == "romFileName") {
-            queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
-        }
-        else {
-            queryString = String(format: exactQuery, key, value)
-        }
-        results = try? openVGDB?.executeQuery(queryString)
-        return results ?? [Any]()
-    }
-}
-
-extension NSArray {
-    func mapObjects(usingBlock block: @escaping (_ obj: Any, _ idx: Int) -> Any) -> [Any] {
-        var result = [AnyHashable]() /* TODO: .reserveCapacity(count) */
-        (self as NSArray).enumerateObjects({(_ obj: Any, _ idx: Int, _ stop: Bool) -> Void in
-            result.append(block(obj, idx))
-        })
-        return result
-    }
-}
- 
-*/

@@ -25,8 +25,6 @@
 @property (nonatomic, strong) OEGameAudio *gameAudio;
 @property (nonatomic, strong) PVControllerViewController *controllerViewController;
 
-@property (nonatomic, strong) UIButton *menuButton;
-
 @property (nonatomic, assign) NSTimer *fpsTimer;
 @property (nonatomic, strong) UILabel *fpsLabel;
 
@@ -87,6 +85,8 @@ void uncaughtExceptionHandler(NSException *exception)
 		[controller setControllerPausedHandler:nil];
 	}
 #endif
+    
+    [self updatePlayedDuration];
 }
 
 - (void)viewDidLoad
@@ -399,12 +399,12 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
@@ -602,6 +602,8 @@ void uncaughtExceptionHandler(NSException *exception)
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
+    
+    [self updatePlayedDuration];
 }
 
 - (void)hideModeInfo {
@@ -620,13 +622,14 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     self.controllerUserInteractionEnabled = NO;
 #endif
-
     if (self.menuActionSheet)
     {
         [self dismissViewControllerAnimated:YES completion:NULL];
-        [self.emulatorCore setPauseEmulation:NO];
         self.isShowingMenu = NO;
     }
+    
+    [self updateLastPlayedTime];
+    [self.emulatorCore setPauseEmulation:NO];
 }
 
 - (void)updateFPSLabel
@@ -861,9 +864,7 @@ void uncaughtExceptionHandler(NSException *exception)
     self.controllerUserInteractionEnabled = NO;
 #endif
     
-    if (self.game != nil) {
-        [self finishedPlayingWithGame:self.game];
-    }
+    [self updatePlayedDuration];
 }
 
 #pragma mark - Controllers
