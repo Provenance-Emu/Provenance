@@ -538,7 +538,7 @@ public extension PVGameImporter {
         //
         //                    })
         let database = RomDatabase.sharedInstance
-        let allContainsPredicats = potentialExistingRomPartialPaths.map { return NSPredicate(format: "romPath CONTAINS[c] %@", $0) }
+        let allContainsPredicats = potentialExistingRomPartialPaths.map { return NSPredicate(format: "romPath CONTAINS[c] %@", PVEmulatorConfiguration.stripDiscNames(fromFilename: $0)) }
         let compoundPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: allContainsPredicats)
         let existingGames = database.all(PVGame.self, filter: compoundPredicate)
         return existingGames
@@ -651,7 +651,15 @@ public extension PVGameImporter {
                 // and then we can use a Set with .contains instead of doing a new query here every times
                 // Would instead see if contains first, then query for the full object
                 // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
-                if let existingGame = maybeGame ?? database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: partialPath).first {
+                
+                    // For multi-cd games, make the most inert version of the filename
+                var similiarName = path.deletingPathExtension().lastPathComponent
+                similiarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similiarName)
+                
+                if let existingGame = maybeGame ?? // found a match above?
+                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
+                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarName])).first // More generic match
+                {
                     // TODO: Check the MD5 mash. If it doesn't match, delete the imported game and re-import
                     // Can't update existig game since MD5 is the primary DB key and you can't update it.
                     // Downside would be that you have to then check the MD5 for every file and that would take forver
@@ -765,7 +773,10 @@ public extension PVGameImporter {
                  */
                 
                 if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
-                    game.title = title
+                    // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
+                    let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
+
+                    game.title = revisedTitle
                 }
                 
                 if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty {
@@ -934,7 +945,7 @@ extension PVGameImporter {
         let database = RomDatabase.sharedInstance
         
         let filename = path.lastPathComponent
-        let title: String = path.deletingPathExtension().lastPathComponent
+        let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: path.deletingPathExtension().lastPathComponent)
         let partialPath: String = URL(fileURLWithPath: systemID, isDirectory: true).appendingPathComponent(filename).path
         
         let game = PVGame()
@@ -1051,14 +1062,14 @@ extension PVGameImporter {
         var systemID: String? = nil
         let fm = FileManager.default
         
+        let extensionLowercased = filePath.pathExtension.lowercased()
         
         // Check if zip
-        if PVEmulatorConfiguration.archiveExtensions.contains(filePath.pathExtension) {
+        if PVEmulatorConfiguration.archiveExtensions.contains(extensionLowercased) {
             return nil
         }
         
         // Check first if known BIOS
-        
         if let biosEntry = biosEntryMatcing(canidateFile: canidateFile) {
             // We have a BIOS file match
             let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: biosEntry.systemID)
@@ -1085,8 +1096,42 @@ extension PVGameImporter {
             return nil
         }
         
-        // Done dealing with BIOS file matches
+        // Check if .m3u
+        if extensionLowercased == "m3u" {
+            let cueFilenameWithoutExtension = filePath.deletingPathExtension().lastPathComponent
+            let similiarFile = PVEmulatorConfiguration.stripDiscNames(fromFilename: cueFilenameWithoutExtension)
+            
+            var foundGameMaybe = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first
+            
+                // If don't find by the m3u partial file name matching a filename, try to see if the first line of the m3u matches any games filenames partially
+            if foundGameMaybe == nil, let m3uContents = try? String(contentsOf: filePath, encoding: .utf8) {
+                if var firstLine = m3uContents.components(separatedBy: .newlines).first {
+                    firstLine = PVEmulatorConfiguration.stripDiscNames(fromFilename: firstLine)
+                    if let game = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first {
+                        foundGameMaybe = game
+                    }
+                }
+            }
+           
+            if let game = foundGameMaybe {
+                ILOG("Found game <\(game.title)> that matches .m3u <\(filePath.lastPathComponent)>")
+                let directory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier)
+                let nameWithoutExtension = ((game.romPath as NSString).lastPathComponent as NSString).deletingPathExtension
+                let newFilename = "\(nameWithoutExtension).m3u"
+                let destinationPath = directory.appendingPathComponent(newFilename, isDirectory: false)
+                do {
+                    try FileManager.default.moveItem(at: filePath, to: destinationPath)
+                    ILOG("Moved <\(filePath.lastPathComponent)> to \(directory.lastPathComponent)")
+                } catch {
+                    ELOG("Failed to move m3u \(filePath.lastPathComponent) to \(directory.lastPathComponent). \(error.localizedDescription)")
+                }
+            } else {
+                // See if the m3u contents has anything that matches
+                
+            }
+        }
         
+        // Done dealing with BIOS file matches
         guard let systemsForExtension = systemIDsForRom(at: filePath), !systemsForExtension.isEmpty else {
             ELOG("No system found to match \(filePath.lastPathComponent)")
             return nil
@@ -1186,7 +1231,7 @@ extension PVGameImporter {
     }
     
     func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
-        ILOG("Move files files similiar to \(inputFile.path) to directory \(toDirectory.path) from cue sheet \(cueSheetPath.path)")
+        ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
         let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
         
         let contents : [URL]
@@ -1200,6 +1245,16 @@ extension PVGameImporter {
         
         var filesMovedToPaths = [URL]()
         contents.forEach { file in
+            if file.path.contains("_MACOSX") {
+                ILOG("Found a file with __MACOSX. Need to delete this.")
+                do {
+                    try FileManager.default.removeItem(at: file)
+                } catch {
+                    ELOG("\(error.localizedDescription)")
+                }
+                return
+            }
+            
             var filenameWithoutExtension = file.deletingPathExtension().lastPathComponent
             
             // Some cue's have multiple bins, like, Game.cue Game (Track 1).bin, Game (Track 2).bin ....
@@ -1210,7 +1265,8 @@ extension PVGameImporter {
                 filenameWithoutExtension =  PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameWithoutExtension)
             }
             
-            if filenameWithoutExtension == relatedFileName {
+            if filenameWithoutExtension.contains(relatedFileName) {
+                DLOG("<\(file.lastPathComponent)> was found to be similiar to <\(cueSheetPath.lastPathComponent)>")
                 // Before moving the file, make sure the cue sheet's reference uses the same case.
                 if !cueSheetPath.path.isEmpty {
                     do {
@@ -1238,7 +1294,7 @@ extension PVGameImporter {
                 do {
                     try FileManager.default.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
                     try FileManager.default.moveItem(at: file, to: toPath)
-                    DLOG("Moved file from \(file) to \(toDirectory.path)")
+                    DLOG("Moved file from \(file) to \(toPath.path)")
                     filesMovedToPaths.append(toPath)
                 } catch {
                     ELOG("Unable to move file from \(file.path) to \(toPath.path) - \(error.localizedDescription)")
