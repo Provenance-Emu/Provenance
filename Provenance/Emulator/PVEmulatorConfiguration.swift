@@ -309,7 +309,7 @@ public class PVEmulatorConfiguration : NSObject {
     
     @objc
     static let romsImportPath: URL = {
-        return documentsPath.appendingPathComponent("roms", isDirectory: true)
+        return documentsPath.appendingPathComponent("Imports", isDirectory: true)
     }()
     
     static let coverArtPath: URL = {

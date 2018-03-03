@@ -86,7 +86,7 @@ public class PVGameImporter {
     
     // MARK: - Paths
     let documentsPath : URL = PVEmulatorConfiguration.documentsPath
-    let romsImporPath : URL = PVEmulatorConfiguration.romsImportPath
+    let romsImportPath : URL = PVEmulatorConfiguration.romsImportPath
     let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true)
 
     func path(forSystemID systemID: String) -> URL? {
