@@ -83,7 +83,6 @@ class PVDocumentPickerViewController : UIDocumentPickerViewController {
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
     var watcher: PVDirectoryWatcher?
-    var coverArtWatcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
     var collectionView: UICollectionView?
 
@@ -662,57 +661,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         })
         
         watcher?.startMonitoring()
-        coverArtWatcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.coverArtPath, extractionStartedHandler: {(_ path: URL) -> Void in
-            
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
-                    WLOG("No hud")
-                    return
-                }
-
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = 0
-                hud.labelText = "Extracting Archive…"
-            }
-        }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) {
-                    hud.progress = progress
-                } else {
-                    WLOG("No hud")
-                }
-            }
-        }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
-            
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) else {
-                    WLOG("No hud")
-                    return
-                }
-                hud.progress = 1
-                hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
-                hud.hide(true, afterDelay: 0.5)
-            }
-            
-            var allIndexPaths = [IndexPath]()
-            
-            paths?.forEach { imageFilepath in
-                if let game = PVGameImporter.importArtwork(fromPath: imageFilepath) {
-                    let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
-                    allIndexPaths.append(contentsOf: indexPaths)
-                } else {
-                    DLOG("No game for artwork \(imageFilepath.path)")
-                }
-            }
-
-            DispatchQueue.main.async {
-                self.collectionView?.reloadItems(at: allIndexPaths)
-            }
-        })
-        
-        coverArtWatcher?.startMonitoring()
-        
+		
         // Scan each Core direxctory and looks for ROMs in them
         let systems = PVEmulatorConfiguration.availableSystemIdentifiers
         

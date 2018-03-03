@@ -312,10 +312,6 @@ public class PVEmulatorConfiguration : NSObject {
         return documentsPath.appendingPathComponent("Imports", isDirectory: true)
     }()
     
-    static let coverArtPath: URL = {
-        return documentsPath.appendingPathComponent("Cover Art", isDirectory: true)
-    }()
-    
     static let batterySavesPath : URL = {
         return documentsPath.appendingPathComponent("Battery States", isDirectory: true)
     }()
