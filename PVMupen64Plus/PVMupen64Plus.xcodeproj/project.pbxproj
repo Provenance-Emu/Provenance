@@ -970,11 +970,11 @@
 		B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusRspHLE.h; sourceTree = "<group>"; };
 		B3B3B8631DECEA9100602746 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3B3B9081DED130B00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9091DED130C00602746 /* PVMupen64Plus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64Plus-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64Plus-Info.plist"; sourceTree = "<absolute>"; };
+		B3B3B9091DED130C00602746 /* PVMupen64Plus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVMupen64Plus-Info.plist"; sourceTree = "<group>"; };
 		B3B3B9401DED137100602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9411DED137200602746 /* PVMupen64PlusVideoRice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64PlusVideoRice-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64PlusVideoRice-Info.plist"; sourceTree = "<absolute>"; };
+		B3B3B9411DED137200602746 /* PVMupen64PlusVideoRice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVMupen64PlusVideoRice-Info.plist"; sourceTree = "<group>"; };
 		B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9541DED13A300602746 /* PVMupen64PlusRspHLE-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64PlusRspHLE-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64PlusRspHLE-Info.plist"; sourceTree = "<absolute>"; };
+		B3B3B9541DED13A300602746 /* PVMupen64PlusRspHLE-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PVMupen64PlusRspHLE-Info.plist"; sourceTree = "<group>"; };
 		B3B3B9731DED144100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C103111C72AA2B00DD066C /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C103131C72AA3200DD066C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -2390,7 +2390,8 @@
 				B3303E6A1DED23EE00896D96 /* pngwtran.c */,
 				B3303E6B1DED23EE00896D96 /* pngwutil.c */,
 			);
-			path = libpng;
+			name = libpng;
+			path = png;
 			sourceTree = "<group>";
 		};
 		B331158D1C7309C200E9AD14 /* PVRSPCXD4 */ = {
