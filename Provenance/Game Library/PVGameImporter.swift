@@ -68,7 +68,7 @@ public typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool
 public typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
 public typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
 
-public class PVGameImporter : NSObject {
+public class PVGameImporter {
     
     public var importStartedHandler: PVGameImporterImportStartedHandler?
     public var completionHandler: PVGameImporterCompletionHandler?
@@ -81,14 +81,9 @@ public class PVGameImporter : NSObject {
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
     
     // MARK: - Paths
-    @objc
-    var documentsPath : URL { return PVEmulatorConfiguration.documentsPath }
-
-    @objc
-    var romsImporPath : URL { return PVEmulatorConfiguration.romsImportPath }
-    
-    @objc
-    var conflictPath : URL { return PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true) }
+    let documentsPath : URL = PVEmulatorConfiguration.documentsPath
+    let romsImporPath : URL = PVEmulatorConfiguration.romsImportPath
+    let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true)
 
     func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -116,7 +111,6 @@ public class PVGameImporter : NSObject {
     }
     
     required public init(completionHandler: @escaping PVGameImporterCompletionHandler) {
-        super.init()
         self.completionHandler = completionHandler
         systemToPathMap = updateSystemToPathMap()
         romExtensionToSystemsMap = updateromExtensionToSystemsMap()
@@ -492,10 +486,10 @@ public extension PVGameImporter {
         return existingGames
     }
     
-    @objc
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystemID: String? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
+        
         
         paths.forEach { (path) in
             let isDirectory: Bool = !path.isFileURL
@@ -511,6 +505,13 @@ public extension PVGameImporter {
                 let fileExtensionLower = urlPath.pathExtension.lowercased()
                 
                 if let chosenSystemID = chosenSystemID, !chosenSystemID.isEmpty {
+                    // First check if it's a chosen system that supports CDs and this is a non-cd extension
+                    if PVEmulatorConfiguration.cdBasedSystemIDs.contains(chosenSystemID) && !PVEmulatorConfiguration.supportedCDFileExtensions.contains(fileExtensionLower) {
+                        // We're on a file that is from a CD based system but this file isn't an importable file type so skip it.
+                        // This prevents us from importing .bin's for example when the .cue is already imported
+                        return
+                    }
+                    
                     systemIDsMaybe = [chosenSystemID]
                 } else {
                     systemIDsMaybe = PVEmulatorConfiguration.systemIdentifiers(forFileExtension: fileExtensionLower)
@@ -522,15 +523,6 @@ public extension PVGameImporter {
                     return
                 }
                 
-                // Skip non .m3u/.cue files for CD systems to avoid importing .bins
-                // TODO: I think this actaully does nothing... - jm
-//                let cdBasedSystems = PVEmulatorConfiguration.cdBasedSystemIDs
-//                let couldBelongToCDSystem = !Set(cdBasedSystems).isDisjoint(with: Set(systemIDs))
-//                if couldBelongToCDSystem && (fileExtensionLower != "cue" || fileExtension != "m3u") {
-//                    WLOG("\(path.lastPathComponent) could belong to a CD and isn't a cue or m3u")
-//                    return
-//                }
-                
                 var maybeGame: PVGame? = nil
 
                 if systemIDs.count > 1 {
@@ -538,6 +530,7 @@ public extension PVGameImporter {
                     // Try to match by MD5 first
                     if let systemIDMatch = systemId(forROMCanidate: ImportCanidateFile(filePath: urlPath)) {
                         systemIDs = [systemIDMatch]
+                        DLOG("Matched \(urlPath.path) by MD5 to system \(systemIDMatch)")
                     } else {
                         // We have a conflict, multiple systems matched and couldn't find anything by MD5 match
                         let s =  systemIDs.joined(separator: ",")
@@ -591,6 +584,8 @@ public extension PVGameImporter {
                 //                    // Grabbed this from OpenEMU - jm
                 //                    let newGameTitle = title.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression, range: Range(0, title.count))
                 //                }
+
+                
                 
                 
                 // Check if we have this game already
@@ -599,20 +594,12 @@ public extension PVGameImporter {
                 // Would instead see if contains first, then query for the full object
                 // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
                 if let existingGame = maybeGame ?? database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: partialPath).first {
-//                    do {
-//                        try database.writeTransaction {
-//                            existingGame.romPath = partialPath
-//
-//                            // TODO: Shoulud check MD5 and delete and make new instance if not equal
-//                            // Can't updated MD5 since it's a primary key
-//                            if let md5 = calculateMD5(forGame: existingGame) {
-//                                existingGame.md5Hash = md5
-//                            }
-//                        }
-                        finishUpdateOrImport(ofGame: existingGame)
-//                    } catch {
-//                        ELOG("\(error.localizedDescription)")
-//                    }
+                    // TODO: Check the MD5 mash. If it doesn't match, delete the imported game and re-import
+                    // Can't update existig game since MD5 is the primary DB key and you can't update it.
+                    // Downside would be that you have to then check the MD5 for every file and that would take forver
+                    // perhaps we should add more info to the PVGame entry for the file modified date and compare that instead,
+                    // then check md5 only if the date differs. - Joe M
+                    finishUpdateOrImport(ofGame: existingGame)
                 } else {
                     // New game
                     importToDatabaseROM(atPath: path, systemID: systemID)
@@ -623,7 +610,6 @@ public extension PVGameImporter {
     
     // MARK: - ROM Lookup
     
-    @objc
     public func lookupInfo(for game: PVGame) {
         let database = RomDatabase.sharedInstance
         database.refresh()

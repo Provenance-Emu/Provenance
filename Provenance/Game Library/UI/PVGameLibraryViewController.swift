@@ -500,7 +500,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         
         do {
             let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
-            gameImporter.startImport(forPaths: existingFiles)
+            if !existingFiles.isEmpty {
+                gameImporter.startImport(forPaths: existingFiles)
+            }
         } catch {
             ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
         }
@@ -624,7 +626,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
             guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir,
                                                                               includingPropertiesForKeys: nil,
-                                                                              options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]) else {
+                                                                              options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
+                !contents.isEmpty else {
                 return
             }
             
