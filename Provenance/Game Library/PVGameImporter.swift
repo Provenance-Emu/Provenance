@@ -68,6 +68,10 @@ public typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool
 public typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
 public typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
 
+public extension Notification.Name {
+    public static let ArtworkUpdatedNotification = Notification.Name("artworkUpdatedNotification")
+}
+
 public class PVGameImporter {
     
     public var importStartedHandler: PVGameImporterImportStartedHandler?
@@ -133,7 +137,6 @@ public class PVGameImporter {
         return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
     }
     
-    @objc
     func importFiles(atPaths paths: [URL]) -> [URL] {
         
         let sortedPaths = PVEmulatorConfiguration.sortImportUURLs(urls: paths)
@@ -158,7 +161,14 @@ public class PVGameImporter {
                     // Files are already moved and imported to database (in theory),
                     // or moved to conflicts dir and already set the conflists flag - jm
                     return nil
-                } else {
+                } else if PVEmulatorConfiguration.artworkExtensions.contains(canidate.filePath.pathExtension.lowercased()), let game = PVGameImporter.importArtwork(fromPath: canidate.filePath) {
+                    // Is artwork, import that
+                    ILOG("Found artwork \(canidate.filePath.lastPathComponent) for game <\(game.title)>")
+                    let hash = game.md5Hash
+                    NotificationCenter.default.post(name: .ArtworkUpdatedNotification, object: self, userInfo: ["gameMD5" : hash])
+                    return nil
+                }
+                else {
                     return canidate
                 }
             } else {
@@ -322,7 +332,6 @@ public extension PVGameImporter {
      @param imageFullPath The artwork image path
      @return The game that was updated
      */
-    @objc
     class func importArtwork(fromPath imageFullPath: URL) -> PVGame? {
         
         // Check the file exists (and is not a directory for some reason)
@@ -342,49 +351,40 @@ public extension PVGameImporter {
             }
         }
         
-        // Read the data
-        let coverArtFullData : Data
-        do {
-            coverArtFullData = try Data.init(contentsOf: imageFullPath, options: [])
-        } catch {
-            ELOG("Couldn't read data from image file \(imageFullPath.path)\n\(error.localizedDescription)")
-            return nil
-        }
-        
-        // Create a UIImage from the Data
-        guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
-            ELOG("Failed to create Image from data")
-            return nil
-        }
-        
-        // Scale the UIImage to our desired max size
-        guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
-            ELOG("Failed to create scale image")
-            return nil
-        }
-
-        // Create new Data from scaled image
-        guard let coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage) else {
-            ELOG("Failed to create data respresentation of scaled image")
-            return nil
-        }
-        
-        // Hash the image and save to cache
-        let hash: String = (coverArtScaledData as NSData).md5Hash
-        
-        do {
-            try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
-        } catch {
-            ELOG("Failed to save artwork to cache: \(error.localizedDescription)")
-            return nil
-        }
-        
         // Trim the extension off the filename
         let gameFilename: String = imageFullPath.deletingPathExtension().lastPathComponent
+
+        // The game extension since images needs to be foo.nes.png
+        let gameExtension = imageFullPath.deletingPathExtension().pathExtension
         
-        // Figure out what system this belongs to by extension
-        // Hey, how is this going to work if we just stripped it?
-        let gameExtension = imageFullPath.pathExtension
+        let database = RomDatabase.sharedInstance
+
+        if gameExtension.isEmpty {
+            ILOG("Trying to import artwork that didn't contain the extension of the system")
+            // This is the case where the user didn't put the gamename.nes.jpg,
+            // but just gamename.jpg
+            let games = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [gameFilename]))
+            let allGames = database.all(PVGame.self).map { return $0.romPath }.joined(separator: ",")
+            if games.count == 1, let game = games.first {
+                ILOG("File for image didn't have extension for system but we found a single match for image \(imageFullPath.lastPathComponent) to game \(game.title) on system \(game.systemIdentifier)")
+                guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+                    return nil
+                }
+                
+                do {
+                    try database.writeTransaction {
+                        game.customArtworkURL = hash
+                    }
+                    ILOG("Set custom artwork of game \(game.title) from file \(imageFullPath.lastPathComponent)")
+                } catch {
+                    ELOG("Couldn't update game \(game.title) with new artwork URL \(hash)")
+                }
+
+                return game
+            } else {
+                VLOG("Database search returned \(games.count) results")
+            }
+        }
         
         guard let systemIDs: [String] = PVEmulatorConfiguration.systemIdentifiers(forFileExtension: gameExtension) else {
             ELOG("No system for extension \(gameExtension)")
@@ -393,16 +393,21 @@ public extension PVGameImporter {
         
         let cdBasedSystems = PVEmulatorConfiguration.cdBasedSystemIDs
         let couldBelongToCDSystem = !Set(cdBasedSystems).isDisjoint(with: Set(systemIDs))
-        let database = RomDatabase.sharedInstance
 
         // Skip CD systems for non special extensions
-        if (couldBelongToCDSystem && (gameExtension.lowercased() != "cue" || gameExtension.lowercased() != "m3u")) || systemIDs.count > 1 {
+        if (couldBelongToCDSystem && PVEmulatorConfiguration.supportedCDFileExtensions.contains(gameExtension.lowercased())) || systemIDs.count > 1 {
             // We could get here with Sega games. They use .bin, which is CD extension.
             // See if we can match any of the potential paths to a current game
             // See if we have any current games that could match based on searching for any, [systemIDs]/filename
             let existingGames = findAnyCurrentGameThatCouldBelongToAnyOfTheseSystemIDs(systemIDs, romFilename:gameFilename)
             if existingGames.count == 1, let onlyMatch = existingGames.first {
                 ILOG("We found a hit for artwork that could have been belonging to multiple games and only found one file that matched by systemid/filename. The winner is \(onlyMatch.title) for \(onlyMatch.systemIdentifier)")
+                
+                guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+                    ELOG("Couldn't move image, fail to set custom artowrk")
+                    return nil
+                }
+                
                 do {
                     try database.writeTransaction {
                         onlyMatch.customArtworkURL = hash
@@ -440,6 +445,10 @@ public extension PVGameImporter {
             ELOG("Couldn't find game for path \(gamePartialPath)")
             return nil
         }
+        
+        guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+            return nil
+        }
 
         do {
             try database.writeTransaction {
@@ -450,6 +459,48 @@ public extension PVGameImporter {
         }
         
         return game
+    }
+    
+    fileprivate class func scaleAndMoveImageToCache(imageFullPath : URL) -> String? {
+        // Read the data
+        let coverArtFullData : Data
+        do {
+            coverArtFullData = try Data.init(contentsOf: imageFullPath, options: [])
+        } catch {
+            ELOG("Couldn't read data from image file \(imageFullPath.path)\n\(error.localizedDescription)")
+            return nil
+        }
+        
+        // Create a UIImage from the Data
+        guard let coverArtFullImage = UIImage(data: coverArtFullData) else {
+            ELOG("Failed to create Image from data")
+            return nil
+        }
+        
+        // Scale the UIImage to our desired max size
+        guard let coverArtScaledImage = coverArtFullImage.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)) else {
+            ELOG("Failed to create scale image")
+            return nil
+        }
+        
+        // Create new Data from scaled image
+        guard let coverArtScaledData = UIImagePNGRepresentation(coverArtScaledImage) else {
+            ELOG("Failed to create data respresentation of scaled image")
+            return nil
+        }
+        
+        // Hash the image and save to cache
+        let hash: String = (coverArtScaledData as NSData).md5Hash
+        
+        do {
+            let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
+            VLOG("Scaled and moved image from \(imageFullPath.path) to \(destinationURL.path)")
+        } catch {
+            ELOG("Failed to save artwork to cache: \(error.localizedDescription)")
+            return nil
+        }
+        
+        return hash
     }
     
     fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystemIDs(_ systemIDs : [String], romFilename : String) -> Results<PVGame> {

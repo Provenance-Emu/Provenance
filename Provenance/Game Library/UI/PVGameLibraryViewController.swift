@@ -99,7 +99,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     @objc func handleAppDidBecomeActive(_ note: Notification) {
         loadGameFromShortcut()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -113,6 +113,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: .UITextFieldTextDidChange, object: searchField)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArtworkUpdatedNotification(_:)), name: .ArtworkUpdatedNotification, object: nil)
+
         #if os(iOS)
         NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
             DispatchQueue.main.async {
@@ -639,6 +642,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                     }
                 }
             }
+        }
+    }
+    
+    
+    @objc func handleArtworkUpdatedNotification(_ notificaton : Notification) {
+        guard let gameMD5 = notificaton.userInfo?["gameMD5"] as? String else {
+            ELOG("No 'gameMD5 or game not found' entry in userInfo")
+            return
+        }
+        DispatchQueue.main.async {
+            let indexPaths = self.indexPathsForGame(withMD5Hash: gameMD5)
+            self.collectionView?.reloadItems(at: indexPaths)
         }
     }
 

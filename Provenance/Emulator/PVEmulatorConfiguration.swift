@@ -264,8 +264,8 @@ public class PVEmulatorConfiguration : NSObject {
         }).joined())
     }()
     
-    static let supportedCDFileExtensions: [String] = {
-        return Array(systems.flatMap({ (system) -> [String]? in
+    static let supportedCDFileExtensions: Set<String> = {
+        return Set(systems.flatMap({ (system) -> [String]? in
             guard system.usesCDs else {
                 return nil
             }
@@ -329,7 +329,8 @@ public class PVEmulatorConfiguration : NSObject {
     }()
     
     static let archiveExtensions : [String] = ["zip", "7z"]
-
+    static let artworkExtensions : [String] = ["png", "jpg", "jpeg"]
+    
     @objc
     class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
         if systemID == SystemIdentifier.PSX.rawValue {
@@ -537,8 +538,8 @@ public extension PVEmulatorConfiguration {
             let obj1Filename = obj1.lastPathComponent
             let obj2Filename = obj2.lastPathComponent
             
-            let obj1Extension = obj1.pathExtension
-            let obj2Extension = obj2.pathExtension
+            let obj1Extension = obj1.pathExtension.lowercased()
+            let obj2Extension = obj2.pathExtension.lowercased()
             
             // Check m3u
             if obj1Extension == "m3u" && obj2Extension == "m3u" {
@@ -559,6 +560,11 @@ public extension PVEmulatorConfiguration {
             }
             else if obj2Extension == "cue" {
                 return false
+            } // Check if image, put last
+            else if artworkExtensions.contains(obj1Extension) {
+                return false
+            } else if artworkExtensions.contains(obj2Extension) {
+                return true
             }
                 // Standard sort
             else {
