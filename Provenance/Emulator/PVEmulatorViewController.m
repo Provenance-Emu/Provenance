@@ -85,6 +85,8 @@ void uncaughtExceptionHandler(NSException *exception)
 		[controller setControllerPausedHandler:nil];
 	}
 #endif
+    
+    [self updatePlayedDuration];
 }
 
 - (void)viewDidLoad
@@ -397,12 +399,12 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)appWillEnterForeground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appDidEnterBackground:(NSNotification *)note
 {
-
+    [self updatePlayedDuration];
 }
 
 - (void)appWillResignActive:(NSNotification *)note
@@ -600,6 +602,8 @@ void uncaughtExceptionHandler(NSException *exception)
     [self presentViewController:actionsheet animated:YES completion:^{
         [[[PVControllerManager sharedManager] iCadeController] refreshListener];
     }];
+    
+    [self updatePlayedDuration];
 }
 
 - (void)hideModeInfo {
@@ -859,9 +863,7 @@ void uncaughtExceptionHandler(NSException *exception)
     self.controllerUserInteractionEnabled = NO;
 #endif
     
-    if (self.game != nil) {
-        [self finishedPlayingWithGame:self.game];
-    }
+    [self updatePlayedDuration];
 }
 
 #pragma mark - Controllers

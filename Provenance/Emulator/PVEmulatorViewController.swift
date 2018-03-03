@@ -33,9 +33,9 @@ extension PVEmulatorViewController {
             UIApplication.shared.setStatusBarHidden(true, with: .fade)
         #endif
     }
-    
+
     @objc
-    public func finishedPlaying(game : PVGame) {
+    public func updatePlayedDuration() {
         guard let startTime = game.lastPlayed else {
             return
         }
@@ -46,11 +46,11 @@ extension PVEmulatorViewController {
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 game.timeSpentInGame = totalTimeSpent
+                game.lastPlayed = Date()
             }
         } catch {
             ELOG("\(error.localizedDescription)")
         }
-        
     }
 }
 
