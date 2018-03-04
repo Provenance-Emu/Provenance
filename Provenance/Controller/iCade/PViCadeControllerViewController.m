@@ -63,6 +63,7 @@
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
     PVSettingsModel *settings = [PVSettingsModel sharedInstance];
     [settings setICadeControllerSetting:[indexPath row]];
+    [[PVControllerManager sharedManager] resetICadeController];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
