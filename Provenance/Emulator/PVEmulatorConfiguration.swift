@@ -37,10 +37,11 @@ public struct SystemDictionaryKeys {
     static let ControlLayout       = "PVControlLayout"
     static let DatabaseID          = "PVDatabaseID"
     static let RequiresBIOS        = "PVRequiresBIOS"
-    static let ShortSystemName     = "PVShortSystemName"
+    static let SystemShortName     = "PVSystemShortName"
     static let SupportedExtensions = "PVSupportedExtensions"
     static let SystemIdentifier    = "PVSystemIdentifier"
     static let SystemName          = "PVSystemName"
+	static let Manufacturer        = "PVManufacturer"
     static let UsesCDs             = "PVUsesCDs"
     
     struct ControllerLayoutKeys {
@@ -55,7 +56,7 @@ public struct SystemDictionaryKeys {
         static let LeftShoulderButton  = "PVLeftShoulderButton"
         static let RightShoulderButton = "PVRightShoulderButton"
         static let SelectButton        = "PVSelectButton"
-        static let StartButton = "PVStartButton"
+        static let StartButton         = "PVStartButton"
     }
 }
 
@@ -166,8 +167,8 @@ fileprivate extension Dictionary where Key == String, Value == Any {
     }
     
     var shortName : String {
-        guard let shortName = self[SystemDictionaryKeys.ShortSystemName] as? String else {
-            fatalError("System missing \(SystemDictionaryKeys.ShortSystemName). \(self.debugDescription)")
+        guard let shortName = self[SystemDictionaryKeys.SystemShortName] as? String else {
+            fatalError("System missing \(SystemDictionaryKeys.SystemShortName). \(self.debugDescription)")
         }
         return shortName
     }
