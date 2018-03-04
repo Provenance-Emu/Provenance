@@ -25,4 +25,6 @@ extern NSString * _Nonnull const PVControllerManagerControllerReassignedNotifica
 - (void)listenForICadeControllersForPlayer:(NSInteger)player window:(UIWindow *_Nullable)window completion:(void (^_Nullable)(void))completion;
 - (void)stopListeningForICadeControllers;
 
+- (void)resetICadeController;
+
 @end
