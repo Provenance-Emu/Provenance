@@ -18,6 +18,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "PVControllerManager.h"
 #import "PViCade8BitdoController.h"
+#import "PViCade8BitdoZeroController.h"
 
 @interface PVEmulatorViewController () <PVAudioDelegate>
 
@@ -904,7 +905,7 @@ void uncaughtExceptionHandler(NSException *exception)
 #if !TARGET_OS_SIMULATOR
     GCController *controller = [note object];
     // 8Bitdo controllers don't have a pause button, so don't hide the menu
-    if (![controller isKindOfClass:[PViCade8BitdoController class]]) {
+    if (![controller isKindOfClass:[PViCade8BitdoController class]] || ![controller isKindOfClass:[PViCade8BitdoZeroController class]]) {
         [self.menuButton setHidden:YES];
 
     // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
