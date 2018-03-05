@@ -42,6 +42,8 @@ public struct SystemDictionaryKeys {
     static let SystemIdentifier    = "PVSystemIdentifier"
     static let SystemName          = "PVSystemName"
 	static let Manufacturer        = "PVManufacturer"
+	static let Bit                 = "PVBit"
+	static let ReleaseYear         = "PVReleaseYear"
     static let UsesCDs             = "PVUsesCDs"
     
     struct ControllerLayoutKeys {
