@@ -52,6 +52,8 @@ public class PVGame : Object, PVLibraryEntry {
 
     @objc dynamic var romSerial : String          = ""
     
+    var relatedFiles : List<String>?   = nil
+    
     /* Linksj to other objects */
     var saveStates : List<PVSaveState>? = nil
     var recentPlays : List<PVRecentGame>? = nil
@@ -87,6 +89,19 @@ public class PVGame : Object, PVLibraryEntry {
     
     override public static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
+    }
+}
+
+extension PVGame {
+    public override var debugDescription: String {
+        let debugString =
+        """
+        Path : \(romPath)
+        Title: \(title)
+        md5 : \(md5Hash)
+        relatedFiles : \(relatedFiles?.joined(separator: ", ") ?? "None")
+        """
+        return debugString
     }
 }
 
