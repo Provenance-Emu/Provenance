@@ -6,7 +6,154 @@
 //  Created by James Addyman on 14/08/2013.
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
+import MIKMIDI
 
+import PVMednafen
+import PVSNES
+
+var lsbStore : MIKMIDIControlChangeCommand?
+
+extension PVEmulatorViewController {
+    @objc public func setupMIDIController() {
+        midiDeviceManager = MIKMIDIDeviceManager.shared()
+        midiConnectionManager = MIKMIDIConnectionManager.init(name: "org.provenance.connectionManager", delegate: self, eventHandler: { (endpoint, commands) in
+            for command in commands {
+                self.handleMidiCommand(command: command)
+            }
+        })
+        
+//        midiDeviceManager.addObserver(self, forKeyPath: "availableDevices", options: [.initial], context: nil)
+//        let observation = midiDeviceManager.observe(\.availableDevices, options: [.initial, .old]) { (deviceManager, change) in
+//            if let provUSB = deviceManager.availableDevices.first(where: { (device) -> Bool in
+//                return (device.name ?? "") == "Provenance Controller USB Device"
+//            }) {
+//                ILOG("Found USB device \(provUSB.debugDescription)")
+//                deviceManager.connect(provUSB, eventHandler: { (endpoint, command) in
+//
+//                })
+//            }
+//        }
+    }
+    
+    func handleMidiCommand(command : MIKMIDICommand) {
+        switch command.commandType {
+        case .controlChange:
+            handleCC(command: command as! MIKMIDIControlChangeCommand)
+//        case .noteOn:
+//            handleNote(command: command as! MIKMIDINoteOnCommand)
+//        case .noteOff:
+//            handleNote(command: command as! MIKMIDINoteOffCommand)
+        default:
+            print("unhandled command")
+        }
+    }
+    
+    func handleCC(command : MIKMIDIControlChangeCommand) {
+        
+        let controllerNumber = command.controllerNumber
+        var processCommand = command
+        
+        if controllerNumber >= 10 && controllerNumber <= 31 {
+            if !command.isFourteenBitCommand, let lsbStoreLocal = lsbStore {
+                processCommand = MIKMIDIControlChangeCommand(byCoalescingMSBCommand: command, andLSBCommand: lsbStoreLocal) ?? command
+                lsbStore = nil
+            }
+        } else if controllerNumber >= 32 && controllerNumber <= 63 {
+            print("Storing LSB")
+            lsbStore = command
+            return
+        }
+        
+        if self.emulatorCore is MednafenGameCore {
+            psxHandleCC(command: processCommand)
+        }else if self.emulatorCore is PVSNESEmulatorCore {
+            snesHandleCC(command: processCommand)
+        }
+    }
+    
+    func snesHandleCC(command : MIKMIDIControlChangeCommand) {
+        let snesCore = self.emulatorCore as! PVSNESEmulatorCore
+        let controllerNumber = command.controllerNumber
+
+        let mapping : [UInt : PVSNESButton] = [
+            7 : .left,
+            5 : .right,
+            4 : .up,
+            6 : .down,
+            14 : .B,
+            15 : .Y,
+            12:  .X,
+            13 : .A,
+            0 : .select,
+            3 : .start,
+            8 : .triggerLeft,
+            10 : .triggerLeft,
+            9 : .triggerRight,
+            11 : .triggerRight
+        ]
+
+        if controllerNumber >= 70, let button = mapping[command.controllerNumber - 70] {
+            command.value > 0 ? snesCore.push(button, forPlayer: 0) : snesCore.release(button, forPlayer: 0)
+        }
+    }
+    
+    func psxHandleCC(command : MIKMIDIControlChangeCommand) {
+        let psxCore = self.emulatorCore as! MednafenGameCore
+        let controllerNumber = command.controllerNumber
+
+        let mapping : [UInt : PVPSXButton] = [
+            7 : .left,
+            5 : .right,
+            4 : .up,
+            6 : .down,
+            8 : .L2,
+            9 : .R2,
+            10 : .L2,
+            11 : .R1,
+            0 : .select,
+            3 : .start,
+            14 : .cross,
+            15 : .square,
+            12 : .triangle,
+            13 : .circle,
+            1 : .L3,
+            2 : .R3,
+            ]
+        
+        if controllerNumber >= 70, let button = mapping[command.controllerNumber - 70] {
+            command.value > 0 ? psxCore.didPush(button, forPlayer: 0) : psxCore.didRelease(button, forPlayer: 0)
+        } else if command.isFourteenBitCommand {
+            let value = command.fourteenBitValue
+            let max :Float = 16384.0
+            let normalizedValue = ((Float(value) / max) * 2.0) - 1
+            
+            let joyMaps : [UInt:(PVPSXButton,PVPSXButton)] = [
+                10 : (.rightAnalogUp,.rightAnalogDown),
+                12 : (.rightAnalogLeft,.rightAnalogRight),
+                11 : (.leftAnalogUp,.leftAnalogDown),
+                13 : (.leftAnalogLeft,.leftAnalogRight),
+                ]
+            
+            if let (possitiveCommand, negativeCommand) = joyMaps[command.controllerNumber] {
+                print("mapped <\(value)> to <\(normalizedValue)> for control \(command.controllerNumber)")
+                
+                if normalizedValue > 0.0 {
+                    psxCore.didMovePSXJoystickDirection(possitiveCommand, withValue: 0, forPlayer: 0)
+                    psxCore.didMovePSXJoystickDirection(negativeCommand, withValue: CGFloat(normalizedValue), forPlayer: 0)
+                } else if normalizedValue < 0.0 {
+                    psxCore.didMovePSXJoystickDirection(negativeCommand, withValue: 0, forPlayer: 0)
+                    psxCore.didMovePSXJoystickDirection(possitiveCommand, withValue: CGFloat(normalizedValue * -1.0), forPlayer: 0)
+                } else {
+                    psxCore.didMovePSXJoystickDirection(negativeCommand, withValue: 0, forPlayer: 0)
+                    psxCore.didMovePSXJoystickDirection(possitiveCommand, withValue: 0, forPlayer: 0)
+                }
+            }
+        } else {
+            ILOG("Unhandled midi CC: <\(command.controllerNumber)> value: <\(command.value)>")
+        }
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
 import PVSupport
 import QuartzCore
 import UIKit
@@ -1101,6 +1248,28 @@ extension PVEmulatorViewController {
     }
 }
 
+extension PVEmulatorViewController : MIKMIDIConnectionManagerDelegate {
+    public func connectionManager(_ manager: MIKMIDIConnectionManager, shouldConnectToNewlyAddedDevice device: MIKMIDIDevice) -> MIKMIDIAutoConnectBehavior {
+        let match = (device.name ?? "") == "Provenance Controller USB Device"
+        
+        return match ? .connect : .doNotConnect
+    }
+    
+    public func connectionManager(_ manager: MIKMIDIConnectionManager, deviceWasConnected device: MIKMIDIDevice) {
+        NotificationCenter.default.post(name: Notification.Name.GCControllerDidConnect, object: nil)
+    }
+    
+    public func connectionManager(_ manager: MIKMIDIConnectionManager, deviceWasDisconnected device: MIKMIDIDevice, withUnterminatedNoteOnCommands commands: [MIKMIDINoteOnCommand]) {
+        NotificationCenter.default.post(name: Notification.Name.GCControllerDidDisconnect, object: nil)
+    }
+}
+
+// Inherits the default behaviour
+#if os(iOS)
+extension PVEmulatorViewController : VolumeController {
+    
+}
+#endif
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
 @available(iOS 9.0, *)
 extension NSNumber {

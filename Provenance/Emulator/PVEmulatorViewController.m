@@ -363,6 +363,8 @@ void uncaughtExceptionHandler(NSException *exception)
 		}];
 	}
 #endif
+    
+    [self setupMIDIController];
 }
 
 #if !TARGET_OS_TV && !TARGET_OS_SIMULATOR

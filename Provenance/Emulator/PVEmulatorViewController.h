@@ -30,8 +30,11 @@
 
 @end
 
+@class MIKMIDIDeviceManager, MIKMIDIConnectionManager;
 // Private for Swift
 @interface PVEmulatorViewController()
 @property (nonatomic, weak, nullable) UIAlertController *menuActionSheet;
 @property (nonatomic, assign) BOOL isShowingMenu;
+@property (nonatomic, strong, nonnull) MIKMIDIDeviceManager* midiDeviceManager;
+@property (nonatomic, strong, nonnull) MIKMIDIConnectionManager* midiConnectionManager;
 @end

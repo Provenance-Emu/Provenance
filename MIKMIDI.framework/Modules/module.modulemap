@@ -1,0 +1,30 @@
+framework module MIKMIDI {
+	umbrella header "MIKMIDI.h"
+	
+	private header "MIKMIDIPort_SubclassMethods.h"
+	private header "MIKMIDISynthesizer_SubclassMethods.h"
+	private header "MIKMIDITransmittable.h"
+	
+	export *
+	module * { export * }
+	
+	explicit module MIKMIDICommandSubclass {
+		header "MIKMIDICommand_SubclassMethods.h"
+		export *
+	}
+	
+	explicit module MIKMIDIEventSubclass {
+		header "MIKMIDIEvent_SubclassMethods.h"
+		export *
+	}
+	
+	explicit module MIKMIDIMetaEventSubclass {
+		header "MIKMIDIMetaEvent_SubclassMethods.h"
+		export *
+	}
+	
+	explicit module MIKMIDISynthesizerSubclass {
+		header "MIKMIDISynthesizer_SubclassMethods.h"
+		export *
+	}
+}

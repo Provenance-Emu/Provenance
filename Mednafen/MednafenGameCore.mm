@@ -50,6 +50,9 @@
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
+
+static const NSArray<NSString*>* psxButtonToString = @[@"Up", @"Down", @"Left",@"Right",@"Triagne",@"Circle",@"Cross",@"Square", @"L1", @"L2", @"L3", @"R1", @"R2", @"R3", @"Start", @"Select", @"Analog Mode", @"LA Up", @"LA Down", @"LA Left", @"LA Right", @"RA Up",  @"RA Down", @"RA Left", @"RA Right"];
+
 @interface MednafenGameCore (MultiDisc)
 + (NSDictionary<NSString*,NSNumber*>*_Nonnull)multiDiscPSXGames;
 @end
@@ -429,6 +432,32 @@ static void emulation_run(BOOL skipFrame) {
 {
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
+    
+    // Set the current system
+    NSDictionary *mednafenCoreModules =
+    @{
+      @"com.provenance.lynx"   : @"lynx",
+      @"com.provenance.ngp"    : @"ngp",
+      @"com.provenance.ngpc"    : @"ngp",
+
+      @"com.provenance.pce"    : @"pce",
+      @"com.provenance.pcecd"  : @"pce",
+      @"com.provenance.sgfx"  : @"pce",
+
+      @"com.provenance.pcfx"   : @"pcfx",
+      @"com.provenance.psx"    : @"psx",
+      @"com.provenance.saturn" : @"ss",
+      @"com.provenance.vb"     : @"vb",
+      @"com.provenance.ws"     : @"wswan",
+      };
+    
+    mednafenCoreModule = mednafenCoreModules[self.systemIdentifier];
+    
+    assert(_current);
+    mednafen_init(_current);
+    
+    game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
+    
     if([[self systemIdentifier] isEqualToString:@"com.provenance.lynx"])
     {
         self.systemType = MednaSystemLynx;
@@ -560,11 +589,6 @@ static void emulation_run(BOOL skipFrame) {
         NSLog(@"MednafenGameCore loadFileAtPath: Incorrect systemIdentifier");
         assert(false);
     }
-
-    assert(_current);
-    mednafen_init(_current);
-
-    game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
 
 	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
 	// is this correct for EU, JP, US? Still testing.
@@ -1294,6 +1318,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 #pragma mark PSX
 - (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 {
+    NSLog(@"push %i", button);
     if (button == PVPSXButtonStart) {
         self.isStartPressed = true;
     } else if (button == PVPSXButtonSelect) {
@@ -1306,6 +1331,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 - (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 {
+    NSLog(@"release %i", button);
     if (button == PVPSXButtonStart) {
         self.isStartPressed = false;
     } else if (button == PVPSXButtonSelect) {
@@ -1323,12 +1349,17 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
     // Background: https://mednafen.github.io/documentation/psx.html#Section_analog_range
     // double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
-
+    
     uint16 modifiedValue = value * 32767;
-
+    
+    if (modifiedValue != 0) {
+        NSString *buttonName = psxButtonToString[button];
+        NSLog(@"button <%@> value %0.2f", buttonName, modifiedValue);
+    }
+    
     int analogNumber = PSXMap[button] - 17;
     int address = analogNumber;
-
+    
     if (analogNumber % 2 != 0) {
         axis[analogNumber] = -1 * modifiedValue;
         address -= 1;
@@ -1336,9 +1367,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     else {
         axis[analogNumber] = modifiedValue;
     }
-
+    
     uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
-
+    
     uint8 *buf = (uint8 *)inputBuffer[player];
     MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
 }
@@ -2046,7 +2077,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVPSXButtonLeft:
                 return ([[dpad left] isPressed] || (!analogMode && [[[pad leftThumbstick] left] isPressed]));
             case PVPSXButtonRight:
-                return ([[dpad right] isPressed] || (!analogMode && [[[pad leftThumbstick] right] isPressed])) && !modifiersPressed;
+                return [[dpad right] isPressed];
             case PVPSXButtonLeftAnalogUp:
                 return [pad leftThumbstick].up.value;
             case PVPSXButtonLeftAnalogDown:
