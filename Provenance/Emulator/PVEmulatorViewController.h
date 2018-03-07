@@ -37,4 +37,5 @@
 @property (nonatomic, assign) BOOL isShowingMenu;
 @property (nonatomic, strong, nonnull) MIKMIDIDeviceManager* midiDeviceManager;
 @property (nonatomic, strong, nonnull) MIKMIDIConnectionManager* midiConnectionManager;
+- (void)showMenu:(id)sender;
 @end

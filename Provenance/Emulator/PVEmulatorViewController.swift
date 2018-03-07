@@ -10,6 +10,27 @@ import MIKMIDI
 
 import PVMednafen
 import PVSNES
+import PVMupen64Plus
+
+enum DualShockMIDICC : UInt {
+    case select = 0
+    case L3 = 1
+    case R3 = 2
+    case start = 3
+    case up = 4
+    case right = 5
+    case down = 6
+    case left = 7
+    case L2 = 8
+    case R2 = 9
+    case L1 = 10
+    case R1 = 11
+    case triangle = 12
+    case circle = 13
+    case cross = 14
+    case square = 15
+    case psButton = 16
+ }
 
 var lsbStore : MIKMIDIControlChangeCommand?
 
@@ -53,10 +74,19 @@ extension PVEmulatorViewController {
         let controllerNumber = command.controllerNumber
         var processCommand = command
         
+        // Check for the PS button being pressed
+        if controllerNumber == (DualShockMIDICC.psButton.rawValue + 70), command.value > 0, !isShowingMenu {
+            showMenu(self)
+            return
+        }
+        
+        // Deal with 14 bit messages
         if controllerNumber >= 10 && controllerNumber <= 31 {
             if !command.isFourteenBitCommand, let lsbStoreLocal = lsbStore {
-                processCommand = MIKMIDIControlChangeCommand(byCoalescingMSBCommand: command, andLSBCommand: lsbStoreLocal) ?? command
-                lsbStore = nil
+                if let joined = MIKMIDIControlChangeCommand(byCoalescingMSBCommand: command, andLSBCommand: lsbStoreLocal) {
+                    processCommand = joined
+                    lsbStore = nil
+                }
             }
         } else if controllerNumber >= 32 && controllerNumber <= 63 {
             print("Storing LSB")
@@ -66,8 +96,78 @@ extension PVEmulatorViewController {
         
         if self.emulatorCore is MednafenGameCore {
             psxHandleCC(command: processCommand)
-        }else if self.emulatorCore is PVSNESEmulatorCore {
+        } else if self.emulatorCore is PVSNESEmulatorCore {
             snesHandleCC(command: processCommand)
+        } else if self.emulatorCore is MupenGameCore {
+            n64HandleCC(command: processCommand)
+        }
+    }
+    
+    func n64HandleCC(command : MIKMIDIControlChangeCommand) {
+        let n64Core = self.emulatorCore as! MupenGameCore
+        let controllerNumber = command.controllerNumber
+
+        let mapping : [DualShockMIDICC : PVN64Button] = [
+            .left : .dPadLeft,
+            .up : .dPadUp,
+            .down : .dPadDown,
+            .right : .dPadRight,
+            .start : .start,
+            .L1 : .L,
+            .R1 : .R,
+            .L2 : .Z,
+            .R2 : .Z,
+            .cross : .A,
+            .square : .B,
+            .circle : .A,
+            .triangle : .B,
+        ]
+        
+
+        if controllerNumber >= 70, let e = DualShockMIDICC(rawValue: command.controllerNumber - 70), let button = mapping[e] {
+            command.value > 0 ? n64Core.didPush(button, forPlayer: 0) : n64Core.didRelease(button, forPlayer: 0)
+        } else if command.isFourteenBitCommand {
+            let value = command.fourteenBitValue
+            let max :Float = 16384.0
+            let normalizedValue = ((Float(value) / max) * 2.0) - 1
+            
+            let joyMaps : [UInt:(PVN64Button,PVN64Button)] = [
+                10 : (.cUp,.cDown),
+                12 : (.cLeft,.cRight),
+                11 : (.analogDown,.analogUp),
+                13 : (.analogLeft,.analogRight),
+                ]
+            
+            
+            if let (possitiveCommand, negativeCommand) = joyMaps[command.controllerNumber] {
+                print("mapped <\(value)> to <\(normalizedValue)> for control \(command.controllerNumber)")
+                
+                if command.controllerNumber == 11 || command.controllerNumber == 13 {
+                    if normalizedValue > 0.0 {
+                        n64Core.didMoveN64JoystickDirection(possitiveCommand, withValue: 0, forPlayer: 0)
+                        n64Core.didMoveN64JoystickDirection(negativeCommand, withValue: CGFloat(normalizedValue), forPlayer: 0)
+                    } else if normalizedValue < 0.0 {
+                        n64Core.didMoveN64JoystickDirection(negativeCommand, withValue: 0, forPlayer: 0)
+                        n64Core.didMoveN64JoystickDirection(possitiveCommand, withValue: CGFloat(normalizedValue * -1.0), forPlayer: 0)
+                    } else {
+                        n64Core.didMoveN64JoystickDirection(negativeCommand, withValue: 0, forPlayer: 0)
+                        n64Core.didMoveN64JoystickDirection(possitiveCommand, withValue: 0, forPlayer: 0)
+                    }
+                } else  if command.controllerNumber == 10 || command.controllerNumber == 12 {
+                    if normalizedValue > 0.0 {
+                        n64Core.didPush(negativeCommand, forPlayer: 0)
+                        n64Core.didRelease(possitiveCommand, forPlayer: 0)
+                    } else if normalizedValue < 0.0 {
+                        n64Core.didPush(possitiveCommand, forPlayer: 0)
+                        n64Core.didRelease(negativeCommand, forPlayer: 0)
+                    } else {
+                        n64Core.didRelease(negativeCommand, forPlayer: 0)
+                        n64Core.didRelease(possitiveCommand, forPlayer: 0)
+                    }
+                }
+            }
+        } else {
+            ILOG("Unhandled midi CC: <\(command.controllerNumber)> value: <\(command.value)>")
         }
     }
     
@@ -108,7 +208,7 @@ extension PVEmulatorViewController {
             6 : .down,
             8 : .L2,
             9 : .R2,
-            10 : .L2,
+            10 : .L1,
             11 : .R1,
             0 : .select,
             3 : .start,
