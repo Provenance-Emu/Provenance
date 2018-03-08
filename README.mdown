@@ -58,9 +58,10 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Portrait and landscape support
 - Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and some iCade Controllers
 - Local multiplayer with external controllers
-- Built-in web server
-    - Import/Export game saves
-    - Import/Export ROMs
+- Built-in web server to Import/Export:
+    - ROMs
+    - Game Saves
+    - Custom Cover Art
 - "Open In..." support
     - Download a ROM using Mobile Safari and import it into Provenance
 - iTunes File Sharing
