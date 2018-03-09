@@ -95,7 +95,7 @@ public class PVDirectoryWatcher: NSObject {
                 
                 contentsSet = contentsSet.filter({ (url) -> Bool in
                     // Ignore special files
-                    return url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("__MAC_OSX")
+                    return url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
                 })
                 
                 contentsSet.forEach { file in
@@ -203,6 +203,10 @@ public class PVDirectoryWatcher: NSObject {
     
     func extractArchive(at filePath: URL) {
 
+        if filePath.path.contains("MACOSX") {
+            return
+        }
+        
         DispatchQueue.main.async(execute: {() -> Void in
             self.extractionStartedHandler?(filePath)
         })

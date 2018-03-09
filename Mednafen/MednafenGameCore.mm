@@ -827,9 +827,16 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 - (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
 {
+    // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
+    // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
+    // Background: https://mednafen.github.io/documentation/psx.html#Section_analog_range
+    value *= 32767; // de-normalize
+    double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
+    
     int analogNumber = PSXMap[button] - 17;
     uint8_t *buf = (uint8_t *)inputBuffer[player];
-    *(uint16*)& buf[3 + analogNumber * 2] = 32767 * value;
+    MDFN_en16lsb(&buf[3 + analogNumber * 2], scaledValue);
+    MDFN_en16lsb(&buf[3 + (analogNumber ^ 1) * 2], 0);
 }
 
 #pragma mark Virtual Boy
@@ -1092,6 +1099,20 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
             default:
                 break;
         }
+    } else if ([controller gamepad]) {
+        GCGamepad *pad = [controller gamepad];
+        switch (buttonID) {
+            case OEPSXLeftAnalogUp:
+                return [pad dpad].up.value;
+            case OEPSXLeftAnalogDown:
+                return [pad dpad].down.value;
+            case OEPSXLeftAnalogLeft:
+                return [pad dpad].left.value;
+            case OEPSXLeftAnalogRight:
+                return [pad dpad].right.value;
+            default:
+                break;
+        }
     }
     return 0;
 }
@@ -1167,6 +1188,10 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
                 return [[pad buttonY] isPressed];
             case PVPSXButtonR1:
                 return [[pad rightShoulder] isPressed];
+            case PVPSXButtonStart:
+                return self.isStartPressed;
+            case PVPSXButtonSelect:
+                return self.isSelectPressed;
             default:
                 break;
         }

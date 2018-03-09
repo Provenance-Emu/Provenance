@@ -42,19 +42,15 @@ public class PVGame : Object, PVLibraryEntry {
     @objc dynamic var romPath : String            = ""
     @objc dynamic var customArtworkURL : String   = ""
     @objc dynamic var originalArtworkURL : String = ""
-
     @objc dynamic var md5Hash : String            = ""
-
     @objc dynamic var requiresSync : Bool         = true
     @objc dynamic var systemIdentifier : String   = ""
-
     @objc dynamic var isFavorite : Bool           = false
-
     @objc dynamic var romSerial : String          = ""
-    
     @objc dynamic var importDate : Date           = Date()
     
-    /* Linksj to other objects */
+    /* Links to other objects */
+    var relatedFiles : List<String>?   = nil
     var saveStates : List<PVSaveState>? = nil
     var recentPlays : List<PVRecentGame>? = nil
     
@@ -89,6 +85,19 @@ public class PVGame : Object, PVLibraryEntry {
     
     override public static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
+    }
+}
+
+extension PVGame {
+    public override var debugDescription: String {
+        let debugString =
+        """
+        Path : \(romPath)
+        Title: \(title)
+        md5 : \(md5Hash)
+        relatedFiles : \(relatedFiles?.joined(separator: ", ") ?? "None")
+        """
+        return debugString
     }
 }
 
