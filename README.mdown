@@ -36,7 +36,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
   - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions))
-  - Super Nintendo / Super Famicom (SNES/SFC)
+  - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
   - Game Boy / Game Boy Color 
   - Game Boy Advance (GBA)
   - Pokémon mini
