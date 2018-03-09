@@ -117,7 +117,7 @@ Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive
 
 Pokémon mini emulation is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
 
-Atari Lynx, Bandai WonderSwan + WonderSwan Color, NEC TurboGrax/PC Engine + TurboGrafx-CD/CD-ROM² + SuperGrafx + PCEFX, Nintendo VirtualBoy, SNK Neo Geo Pocket + Neo Geo Pocket Color and Sony PlayStation emulations are provided by [Mednafen](https://mednafen.github.io)
+Atari Lynx, Bandai WonderSwan + WonderSwan Color, NEC TurboGrax/PC Engine + TurboGrafx-CD/CD-ROM² + SuperGrafx + PC-FX, Nintendo VirtualBoy, SNK Neo Geo Pocket + Neo Geo Pocket Color and Sony PlayStation emulations are provided by [Mednafen](https://mednafen.github.io)
 
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
 
