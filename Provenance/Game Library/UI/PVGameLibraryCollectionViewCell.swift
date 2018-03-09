@@ -130,6 +130,13 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         titleLabel.textAlignment = .center
 #if os(iOS)
         titleLabel.font = titleLabel.font.withSize(12)
+    
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textColor = UIColor.white
+        titleLabel.textAlignment = .center
+        titleLabel.contentMode = .center
+        titleLabel.numberOfLines = 3
+        titleLabel.lineBreakMode = .byWordWrapping
 #endif
         if #available(iOS 9.0, *) {
             titleLabel.allowsDefaultTighteningForTruncation = true

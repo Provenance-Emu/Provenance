@@ -24,11 +24,11 @@ class PVAppearanceViewController: UITableViewController {
         hideTitlesSwitch = UISwitch()
         hideTitlesSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
         hideTitlesSwitch?.isOn = settings.showGameTitles
-    hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+        hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
         recentlyPlayedSwitch = UISwitch()
         recentlyPlayedSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
         recentlyPlayedSwitch?.isOn = settings.showRecentGames
-    recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+        recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 #endif
     }
 

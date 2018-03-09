@@ -86,8 +86,8 @@ public class PVGameImporter {
     
     // MARK: - Paths
     let documentsPath : URL = PVEmulatorConfiguration.documentsPath
-    let romsImporPath : URL = PVEmulatorConfiguration.romsImportPath
-    let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflict", isDirectory: true)
+    let romsImportPath : URL = PVEmulatorConfiguration.romsImportPath
+    let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -806,6 +806,10 @@ public extension PVGameImporter {
                 if let genres = chosenResult["genres"] as? String, !genres.isEmpty {
                     game.genres = genres
                 }
+                
+                if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty {
+                    game.publishDate = releaseDate
+                }
 
                 if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty {
                     game.referenceURL = referenceURL
@@ -830,8 +834,8 @@ public extension PVGameImporter {
     
     public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
         var results: [Any]? = nil
-        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'year', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
+        let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
+        let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
         
         let dbSystemID: String = PVEmulatorConfiguration.databaseID(forSystemID: systemID)!
         

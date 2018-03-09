@@ -28,6 +28,9 @@ class PVConflictViewController: UITableViewController {
 #if os(tvOS)
         splitViewController?.title = "Solve Conflicts"
 #else
+        let currentTableview = self.tableView!
+        self.tableView = SettingsTableView(frame: currentTableview.frame, style:currentTableview.style)
+
         title = "Solve Conflicts"
         if !conflictedFiles.isEmpty {
             tableView.separatorColor = UIColor.clear

@@ -34,16 +34,55 @@ public extension Notification.Name {
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
+enum SortOptions : String {
+    case title = "Title"
+    case importDate = "Imported"
+    case lastPlayed = "Last Played"
+    
+    var row : UInt {
+        switch self {
+        case .title:
+            return 0
+        case .importDate:
+            return 1
+        case .lastPlayed:
+            return 2
+        }
+    }
+    
+    static func optionForRow(_ row:UInt) -> SortOptions {
+        switch row {
+        case 0:
+            return .title
+        case 1:
+            return .importDate
+        case 2:
+            return .lastPlayed
+        default:
+            ELOG("Bad row \(row)")
+            return .title
+        }
+    }
+}
+
 #if os(tvOS)
 private let CellWidth: CGFloat = 308.0
 #else
-let USE_IOS_11_SEARCHBAR = 0
+let USE_IOS_11_SEARCHBAR = true
+#endif
+
+#if os(iOS)
+class PVDocumentPickerViewController : UIDocumentPickerViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
+    }
+}
 #endif
 
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
     var watcher: PVDirectoryWatcher?
-    var coverArtWatcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
     var collectionView: UICollectionView?
 
@@ -58,11 +97,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var gamesInSections = [String: [PVLibraryEntry]]()
     var sectionInfo = [String]()
     var searchResults: Results<PVGame>?
-    @IBOutlet weak var searchField: UITextField!
+    @IBOutlet weak var searchField: UITextField?
     var isInitialAppearance = false
     var mustRefreshDataSource = false
-
+    
+    @IBOutlet weak var sortButtonItem: UIBarButtonItem!
     var needToShowConflictsAlert = false
+    
+    @IBOutlet var sortOptionsTableView: UITableView!
+    var currentSort : SortOptions = .title {
+        didSet {
+            if isViewLoaded {
+                fetchGames()
+                collectionView?.reloadData()
+            }
+        }
+    }
 
 // MARK: - Lifecycle
     required init?(coder aDecoder: NSCoder) {
@@ -72,25 +122,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let _ = RomDatabase.sharedInstance
 
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
-#if USE_IOS_11_SEARCHBAR
-#if os(iOS)
-        if #available(iOS 11.0, *) {
-            // Hide the pre iOS 11 search bar
-            navigationItem.titleView = nil
-            // Navigation bar large titles
-            navigationController?.navigationBar.prefersLargeTitles = false
-            navigationItem.title = nil
-                // Create a search contorller
-            let searchController = UISearchController(searchResultsController: nil)
-            searchController.searchBar.placeholder = "Search"
-            searchController.searchResultsUpdater = self
-            navigationItem.hidesSearchBarWhenScrolling = true
-            navigationItem.searchController = searchController
-        }
-#endif
-#endif
-    
     }
+    
+    #if os(iOS)
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    #endif
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -125,6 +163,32 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         })
         #endif
         
+        #if os(iOS)
+            if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
+                
+                // Hide the pre iOS 11 search bar
+                searchField?.removeFromSuperview()
+                navigationItem.titleView = nil
+                
+                // Navigation bar large titles
+                navigationController?.navigationBar.prefersLargeTitles = false
+                navigationItem.title = "Library"
+                
+                // Create a search contorller
+                let searchController = UISearchController(searchResultsController: nil)
+                searchController.searchBar.placeholder = "Search"
+                searchController.searchResultsUpdater = self
+                searchController.obscuresBackgroundDuringPresentation = false
+                searchController.hidesNavigationBarDuringPresentation = true
+
+                searchController.delegate = self
+                navigationItem.hidesSearchBarWhenScrolling = true
+                navigationItem.searchController = searchController
+            }
+            
+            // TODO: For below iOS 11, can make searchController.searchbar. the navigationItem.titleView and get a similiar effect
+        #endif
+        
         //load the config file
         title = "Library"
         
@@ -141,6 +205,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
+        collectionView.collectionViewLayout = PVGameLibraryCollectionFlowLayout()
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -151,11 +216,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
 #if os(tvOS)
         collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+#else
+    collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+    searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
 #endif
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        
+        // Force touch
+        #if os(iOS)
+        if #available(iOS 9.0, *) {
+            registerForPreviewing(with: self, sourceView: collectionView)
+        }
+        #endif
+        
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
         }
@@ -222,6 +298,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let game = sender as! PVGame
             let moreInfoVC = segue.destination as! PVGameMoreInfoViewController
             moreInfoVC.game = game
+        } else if segue.identifier == "gameMoreInfoPageVCSegue" {
+            let game = sender as! PVGame
+            
+            let firstVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            firstVC.game = game
+            
+            let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController
+            moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
         }
     }
 
@@ -307,7 +391,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         present(alert, animated: true) {() -> Void in }
     }
 
-// MARK: - Filesystem Helpers
+    @IBAction func sortButtonTapped(_ sender: Any) {
+        let optionsTableView = sortOptionsTableView
+        let avc = UIViewController()
+        avc.view = optionsTableView
+        #if os(iOS)
+        avc.modalPresentationStyle = .popover
+//        avc.popoverPresentationController?.delegate = self
+        avc.popoverPresentationController?.barButtonItem = sortButtonItem
+        #endif
+        avc.preferredContentSize = CGSize(width: 200, height: 200)
+        
+        present(avc, animated: true, completion: nil)
+        
+    }
+    // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
         let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
@@ -332,7 +430,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 //        documentMenu.delegate = self
                 //        present(documentMenu, animated: true, completion: nil)
                 
-                let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+                let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
                 if #available(iOS 11.0, *) {
                     documentPicker.allowsMultipleSelection = true
                 }
@@ -535,7 +633,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
             
             DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) else {
+                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) else {
                     WLOG("No hud")
                     return
                 }
@@ -546,7 +644,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
             DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) {
+                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) {
                     hud.isUserInteractionEnabled = false
                     hud.mode = .annularDeterminate
                     hud.progress = 1
@@ -563,57 +661,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         })
         
         watcher?.startMonitoring()
-        coverArtWatcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.coverArtPath, extractionStartedHandler: {(_ path: URL) -> Void in
-            
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
-                    WLOG("No hud")
-                    return
-                }
-
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = 0
-                hud.labelText = "Extracting Archive…"
-            }
-        }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) {
-                    hud.progress = progress
-                } else {
-                    WLOG("No hud")
-                }
-            }
-        }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
-            
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) else {
-                    WLOG("No hud")
-                    return
-                }
-                hud.progress = 1
-                hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
-                hud.hide(true, afterDelay: 0.5)
-            }
-            
-            var allIndexPaths = [IndexPath]()
-            
-            paths?.forEach { imageFilepath in
-                if let game = PVGameImporter.importArtwork(fromPath: imageFilepath) {
-                    let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
-                    allIndexPaths.append(contentsOf: indexPaths)
-                } else {
-                    DLOG("No game for artwork \(imageFilepath.path)")
-                }
-            }
-
-            DispatchQueue.main.async {
-                self.collectionView?.reloadItems(at: allIndexPaths)
-            }
-        })
-        
-        coverArtWatcher?.startMonitoring()
-        
+		
         // Scan each Core direxctory and looks for ROMs in them
         let systems = PVEmulatorConfiguration.availableSystemIdentifiers
         
@@ -661,8 +709,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let database = RomDatabase.sharedInstance
         database.refresh()
         
+        var allSortedGames = database.allGames(sortedByKeyPath: #keyPath(PVGame.title), ascending: true)
+
+        switch currentSort {
+        case .title:
+            break
+        case .importDate:
+            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: false)
+        case .lastPlayed:
+            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
+        }
+        
         // Favorite Games
-        let allSortedGames = database.allGames(sortedByKeyPath: #keyPath(PVGame.title), ascending: true)
         let favoriteGames : [PVGame] = allSortedGames.filter { (game) -> Bool in
             return game.isFavorite
         }
@@ -670,7 +728,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         // Recent games
         var recentGames : [PVGame]?
         if  PVSettingsModel.sharedInstance().showRecentGames {
-            let sorted: Results<PVRecentGame> = database.all(PVRecentGame.self, sorthedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+            let sorted: Results<PVRecentGame> = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
 
             recentGames = Array(sorted).flatMap({ (recentGame) -> PVGame? in
                 return recentGame.game
@@ -1021,7 +1079,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
     
     func moreInfo(for game: PVGame) {
-        performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
+        #if os(iOS)
+            performSegue(withIdentifier: "gameMoreInfoPageVCSegue", sender: game)
+        #else
+            performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
+        #endif
     }
     
 
@@ -1356,11 +1418,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let systemID = sectionInfo[section]
         if (systemID == "recent") {
             return "Recently Played"
-        }
-        else if (systemID == "favorite") {
+        } else if (systemID == "favorite") {
             return "Favorites"
-        }
-        else {
+        } else {
             return PVEmulatorConfiguration.shortName(forSystemIdentifier: systemID) ?? "Not Found"
         }
 
@@ -1369,21 +1429,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 // MARK: - Searching
     func searchLibrary(_ searchText: String) {
         let predicate = NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])
+        let titleSearchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         
-        searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        if !titleSearchResults.isEmpty {
+            searchResults = titleSearchResults
+        } else {
+            let predicate = NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText])
+            self.searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        }
         
         collectionView?.reloadData()
     }
 
     func clearSearch() {
-        searchField.text = nil
+        searchField?.text = nil
         searchResults = nil
         collectionView?.reloadData()
-    }
-
-// MARK: - UISearchResultsUpdating
-    func updateSearchResults(forSearch searchController: UISearchController) {
-        searchLibrary(searchController.searchBar.text ?? "")
     }
 
 // MARK: - UICollectionViewDataSource
@@ -1508,7 +1569,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 #endif
     @objc func handleTextFieldDidChange(_ notification: Notification) {
-        if let text = searchField.text, !text.isEmpty {
+        if let text = searchField?.text, !text.isEmpty {
             searchLibrary(text)
         }
         else {
@@ -1614,7 +1675,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     @objc func selectSearch(_ sender: UIKeyCommand) {
-        searchField.becomeFirstResponder()
+        searchField?.becomeFirstResponder()
     }
 
     @objc func selectSection(_ sender: UIKeyCommand) {
@@ -1676,7 +1737,7 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
         #if os(tvOS)
             return UIEdgeInsetsMake(40, 0, 120, 0)
         #else
-            return UIEdgeInsetsMake(5, 5, 5, 5)
+            return UIEdgeInsetsMake(5, 10, 5, 10)
         #endif
     }
 }
@@ -1788,7 +1849,208 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
 #endif
     
 #if os(iOS)
+    @available(iOS 9.0, *)
+    extension PVGameLibraryViewController : UIViewControllerPreviewingDelegate {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
+        
+        let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+        moreInfoGamePageVC.setViewControllers([viewControllerToCommit], direction: .forward, animated: false, completion: nil)
+        navigationController!.show(moreInfoGamePageVC, sender: self)
+        
+//        navigationController?.show(viewControllerToCommit, sender: self)
+//        (viewControllerToCommit as! PVGameMoreInfoViewController).navigationItem.leftBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
+//        let newNav = UINavigationController(rootViewController: viewControllerToCommit)
+//        present(newNav, animated: true, completion: nil)
+    }
+        
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
+            //This will show the cell clearly and blur the rest of the screen for our peek.
+            previewingContext.sourceRect = cellAttributes.frame
+
+            let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+            let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            moreInfoViewContrller.game = game(at: indexPath)
+            moreInfoViewContrller.showsPlayButton = true
+            return moreInfoViewContrller
+        }
+        return nil
+    }
+}
+    
 extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
+    
+}
+#endif
+
+extension PVGameLibraryViewController : UISearchControllerDelegate {
+    func didDismissSearchController(_ searchController: UISearchController) {
+        clearSearch()
+    }
+}
+
+// MARK: - UISearchResultsUpdating
+extension PVGameLibraryViewController : UISearchResultsUpdating  {
+    func updateSearchResults(for searchController: UISearchController) {
+        if let text = searchController.searchBar.text, !text.isEmpty {
+            searchLibrary(searchController.searchBar.text ?? "")
+        } else {
+            clearSearch()
+        }
+    }
+}
+
+
+class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
+    override init() {
+        super.init()
+        
+        if #available(iOS 9.0, *) {
+            self.sectionHeadersPinToVisibleBounds = true
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+#if os(iOS)
+extension UIAlertController {
+    public struct UIAlertControllerOverrides {
+        let backgroundColor : UIColor?
+        let textColor : UIColor?
+        let borderColor : UIColor?
+        let borderWidth : CGFloat
+        let cornerRadius : CGFloat
+        let cancelBackgroundColor : UIColor?
+        let cancelTextColor : UIColor?
+        
+        init(backgroundColor : UIColor? = nil, textColor : UIColor? = nil, borderColor : UIColor? = nil, borderWidth : CGFloat = 0.0, cornerRadius : CGFloat = 0.0, cancelBackgroundColor : UIColor? = nil, cancelTextColor : UIColor? = nil) {
+            self.backgroundColor = backgroundColor
+            self.textColor = textColor
+            self.borderColor = borderColor
+            self.borderWidth = borderWidth
+            self.cornerRadius = cornerRadius
+            self.cancelBackgroundColor = cancelBackgroundColor
+            self.cancelTextColor = cancelTextColor
+        }
+    }
+    
+    // view{load,willAppear,didAppear} had GFX glitches. This seems to render accuratly before animation and after
+    // Remove this method if you don't want ALL your UIAlertController's to look the same
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setDefaultOverrides()
+    }
+    
+    // Set how you want your defaults to be for all instances of UIAlertController
+    func setDefaultOverrides() {
+        let overrides = UIAlertControllerOverrides(backgroundColor: UIColor.darkGray, textColor: UIColor.lightText, borderColor:  UIColor.init(white: 0.5, alpha: 0.5), borderWidth: 3.0, cornerRadius: 10.0, cancelBackgroundColor:  UIColor.init(red: 0.5, green: 0.1, blue: 0.1, alpha: 1.0), cancelTextColor: UIColor.white)
+        setOverrideSettings(overrides)
+    }
+    
+    func setOverrideSettings(_ settings : UIAlertControllerOverrides){
+        let FirstSubview = self.view.subviews.first
+        let AlertContentViews : [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
+        
+        // Find the titles of UIAlertActions that are .cancel type
+        let cancelTitles : [String] = self.actions.filter() {$0.style == .cancel}.flatMap(){return $0.title}
+
+        // Find the titles of UIAlertActions that are .destructive type
+        let destructiveTitles : [String] = self.actions.filter() {$0.style == .destructive}.flatMap(){return $0.title}
+
+        
+        // TODO: Could do the same for 'destructive' types
+        
+        
+        AlertContentViews.forEach() {
+            $0?.subviews.forEach({ (subview) in
+                if let backgroundColor = settings.backgroundColor {
+                    subview.backgroundColor = backgroundColor
+                }
+                
+                subview.layer.cornerRadius = settings.cornerRadius
+                subview.layer.borderWidth = settings.borderWidth
+                subview.alpha = 1
+                
+                if let label = subview as? UILabel, let textColor = settings.textColor {
+                    label.textColor = textColor
+                }
+                
+                if let borderColor = settings.borderColor {
+                    subview.layer.borderColor = borderColor.cgColor
+                }
+            })
+            
+            // Set label colors
+            if let view = $0, let textColor = settings.textColor {
+                getAllSubviews(ofType: UILabel.self, forView: view)?.forEach {
+
+                    
+                    // Check if the label is of the .cancel type
+                    if let text = $0.text, cancelTitles.contains(text) || destructiveTitles.contains(text)  {
+                        if let cancelBackgroundColor = settings.cancelBackgroundColor {
+                            $0.superview?.superview?.backgroundColor = cancelBackgroundColor
+                        }
+                        if let cancelTextColor = settings.cancelTextColor {
+                            $0.textColor = cancelTextColor
+                            $0.tintColor = cancelTextColor
+                        } else {
+                            $0.textColor = textColor
+                            $0.tintColor = textColor
+                        }
+                    } else {
+                        $0.textColor = textColor
+                        $0.tintColor = textColor
+                    }
+                }
+            }
+        }
+    }
+    
+    // Assistance function to recursively get all subviews of a type
+    func getAllSubviews<T: UIView>(ofType type: T.Type, forView view: UIView?) -> [T]? {
+        let mapped = view?.subviews.flatMap { subView -> [T]? in
+            var result = getAllSubviews(ofType: T.self, forView:subView)
+            if let view = subView as? T {
+                result = result ?? [T]()
+                result!.append(view)
+            }
+            return result
+        }
+        
+        return mapped != nil ? Array(mapped!.joined()) : nil
+    }
+}
+#endif
+
+extension PVGameLibraryViewController : UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 0 ? 3 : 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+
+        let sortOption = SortOptions.optionForRow(UInt(indexPath.row))
+        
+        cell.textLabel?.text = sortOption.rawValue
+        cell.accessoryType = sortOption == currentSort ? .checkmark : .none
+        return cell
+    }
+}
+
+extension PVGameLibraryViewController : UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        currentSort = SortOptions.optionForRow(UInt(indexPath.row))
+        tableView.reloadData()
+        dismiss(animated: true, completion: nil)
+    }
+}
+
+#if os(iOS)
+extension PVGameLibraryViewController : UIPopoverControllerDelegate {
     
 }
 #endif

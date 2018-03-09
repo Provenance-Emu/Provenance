@@ -45,7 +45,7 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
             
             let database = RomDatabase.sharedInstance
         
-            let recentGames = database.all(PVRecentGame.self, sorthedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+            let recentGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
             
             var items = [TVContentItem]()
             for game: PVRecentGame in recentGames {

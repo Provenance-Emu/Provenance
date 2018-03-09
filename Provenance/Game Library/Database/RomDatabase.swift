@@ -92,6 +92,8 @@ public class RealmConfiguration {
                             deletions += 1
                         }
                     }
+                    
+                    newObject!["importDate"] = Date()
                 }
                 
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
@@ -195,7 +197,7 @@ public extension RomDatabase {
     
     // Testing a Swift hack to make Swift 4 keypaths work with KVC keypaths
 /*
-    public func all<T:Object>(sorthedByKeyPath keyPath : KeyPath<T, AnyKeyPath>, ascending: Bool = true) -> Results<T> {
+    public func all<T:Object>(sortedByKeyPath keyPath : KeyPath<T, AnyKeyPath>, ascending: Bool = true) -> Results<T> {
         return realm.objects(T.self).sorted(byKeyPath: keyPath._kvcKeyPathString!, ascending: ascending)
     }
     
@@ -204,12 +206,12 @@ public extension RomDatabase {
     }
      
      public func allGames(sortedByKeyPath keyPath: KeyPath<PVGame, AnyKeyPath>, ascending: Bool = true) -> Results<PVGame> {
-        return all(sorthedByKeyPath: keyPath, ascending: ascending)
+        return all(sortedByKeyPath: keyPath, ascending: ascending)
      }
 
 */
     
-    public func all<T:Object>(_ type : T.Type, sorthedByKeyPath keyPath : String, ascending: Bool = true) -> Results<T> {
+    public func all<T:Object>(_ type : T.Type, sortedByKeyPath keyPath : String, ascending: Bool = true) -> Results<T> {
         return realm.objects(T.self).sorted(byKeyPath: keyPath, ascending: ascending)
     }
     
@@ -239,7 +241,11 @@ public extension RomDatabase {
     }
     
     public func allGames(sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<PVGame> {
-        return all(PVGame.self, sorthedByKeyPath: keyPath, ascending: ascending)
+        return all(PVGame.self, sortedByKeyPath: keyPath, ascending: ascending)
+    }
+    
+    public func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
+        return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
 }
 

@@ -146,10 +146,16 @@
 		<string>38</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.psx</string>
-		<key>PVShortSystemName</key>
-		<string>PSX</string>
+		<key>PVSystemShortName</key>
+		<string>PS1</string>
 		<key>PVSystemName</key>
 		<string>Playstation</string>
+		<key>PVManufacturer</key>
+		<string>Sony</string>
+		<key>PVBit</key>
+		<string>32</string>
+		<key>PVReleaseYear</key>
+		<string>1994</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -225,10 +231,16 @@
 		</array>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.lynx</string>
-		<key>PVShortSystemName</key>
+		<key>PVSystemShortName</key>
 		<string>Lynx</string>
 		<key>PVSystemName</key>
 		<string>Atari Lynx</string>
+		<key>PVManufacturer</key>
+		<string>Atari</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1989</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -283,10 +295,16 @@
 		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ngp</string>
-		<key>PVShortSystemName</key>
+		<key>PVSystemShortName</key>
 		<string>NGP</string>
 		<key>PVSystemName</key>
-		<string>NGK Neo Geo Pocket</string>
+		<string>Neo Geo Pocket</string>
+		<key>PVManufacturer</key>
+		<string>NGK</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1998</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -343,10 +361,16 @@
 		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ngpc</string>
-		<key>PVShortSystemName</key>
+		<key>PVSystemShortName</key>
 		<string>NGPC</string>
 		<key>PVSystemName</key>
-		<string>NGK Neo Geo Pocket Color</string>
+		<string>Neo Geo Pocket Color</string>
+		<key>PVManufacturer</key>
+		<string>NGK</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1999</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -423,10 +447,16 @@
 		<string>27</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.vb</string>
-		<key>PVShortSystemName</key>
-		<string>Virtual Boy</string>
+		<key>PVSystemShortName</key>
+		<string>VB</string>
 		<key>PVSystemName</key>
-		<string>Nintendo Virtual Boy</string>
+		<string>Virtual Boy</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>32</string>
+		<key>PVReleaseYear</key>
+		<string>1995</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -496,10 +526,16 @@
 		<string>9</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ws</string>
-		<key>PVShortSystemName</key>
-		<string>WonderSwan</string>
+		<key>PVSystemShortName</key>
+		<string>WS/WSC</string>
 		<key>PVSystemName</key>
-		<string>Bandai WonderSwan</string>
+		<string>WonderSwan/Wonderswan Color</string>
+		<key>PVManufacturer</key>
+		<string>Bandai</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1999</string>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -560,10 +596,16 @@
 		<string>14</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pce</string>
-		<key>PVShortSystemName</key>
-		<string>PCE</string>
+		<key>PVSystemShortName</key>
+		<string>PCE/TG16</string>
 		<key>PVSystemName</key>
-		<string>NEC PC Engine/TurboGrafx-16</string>
+		<string>PC Engine/TurboGrafx-16</string>
+		<key>PVManufacturer</key>
+		<string>NEC</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1987</string>
 	</dict>
 	<dict>
 		<key>PVUsesCDs</key>
@@ -626,10 +668,16 @@
 		<string>15</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pcecd</string>
-		<key>PVShortSystemName</key>
-		<string>PCECD</string>
+		<key>PVSystemShortName</key>
+		<string>PCECD/TG16CD</string>
 		<key>PVSystemName</key>
-		<string>NEC PC Engine CD/TurboGrafx-CD</string>
+		<string>PC Engine CD/TurboGrafx-CD</string>
+		<key>PVManufacturer</key>
+		<string>NEC</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1988</string>
 		<key>PVRequiresBIOS</key>
 		<true/>
 		<key>PVBIOSNames</key>
@@ -647,6 +695,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>PCFX</string>
+		<key>PVSystemName</key>
+		<string>PCFX</string>
+		<key>PVManufacturer</key>
+		<string>NEC</string>
+		<key>PVBit</key>
+		<string>32</string>
+		<key>PVReleaseYear</key>
+		<string>1994</string>
 		<key>PVUsesCDs</key>
 		<true/>
 		<key>PVControlLayout</key>
@@ -739,10 +797,6 @@
 		<string>16</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pcfx</string>
-		<key>PVShortSystemName</key>
-		<string>PCFX</string>
-		<key>PVSystemName</key>
-		<string>NEC PC-FX</string>
 		<key>PVRequiresBIOS</key>
 		<true/>
 		<key>PVBIOSNames</key>
@@ -760,10 +814,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>SCD</string>
 		<key>PVSystemName</key>
-		<string>SegaCD</string>
-		<key>PVShortSystemName</key>
-		<string>SegaCD</string>
+		<string>Sega CD</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1991</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.segacd</string>
 		<key>PVDatabaseID</key>
@@ -885,12 +945,18 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>SG/SMD</string>
 		<key>PVSystemName</key>
-		<string>Sega Genesis</string>
-		<key>PVShortSystemName</key>
-		<string>Genesis</string>
+		<string>Genesis/Mega Drive</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.genesis</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1988</string>
 		<key>PVDatabaseID</key>
 		<string>33</string>
 		<key>PVSupportedExtensions</key>
@@ -976,10 +1042,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>SGG</string>
 		<key>PVSystemName</key>
-		<string>Sega Game Gear</string>
-		<key>PVShortSystemName</key>
 		<string>Game Gear</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1990</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gamegear</string>
 		<key>PVDatabaseID</key>
@@ -1032,10 +1104,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>SMS</string>
 		<key>PVSystemName</key>
-		<string>Sega Master System</string>
-		<key>PVShortSystemName</key>
 		<string>Master System</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1985</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.mastersystem</string>
 		<key>PVDatabaseID</key>
@@ -1088,10 +1166,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>SNES</string>
 		<key>PVSystemName</key>
 		<string>Super Nintendo Entertainment System</string>
-		<key>PVShortSystemName</key>
-		<string>SNES</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1990</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.snes</string>
 		<key>PVDatabaseID</key>
@@ -1187,10 +1271,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>GBA</string>
 		<key>PVSystemName</key>
 		<string>Gameboy Advance</string>
-		<key>PVShortSystemName</key>
-		<string>Gameboy Advance</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>32</string>
+		<key>PVReleaseYear</key>
+		<string>2001</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gba</string>
 		<key>PVDatabaseID</key>
@@ -1267,10 +1357,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>GB</string>
 		<key>PVSystemName</key>
 		<string>Gameboy</string>
-		<key>PVShortSystemName</key>
-		<string>Gameboy</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1989</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gb</string>
 		<key>PVDatabaseID</key>
@@ -1331,10 +1427,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>GBC</string>
 		<key>PVSystemName</key>
 		<string>Gameboy Color</string>
-		<key>PVShortSystemName</key>
-		<string>Gameboy Color</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1998</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gbc</string>
 		<key>PVDatabaseID</key>
@@ -1396,10 +1498,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>NES</string>
 		<key>PVSystemName</key>
 		<string>Nintendo Entertainment System</string>
-		<key>PVShortSystemName</key>
-		<string>NES</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1983</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.nes</string>
 		<key>PVDatabaseID</key>
@@ -1460,10 +1568,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>FDS</string>
 		<key>PVSystemName</key>
 		<string>Famicom Disk System</string>
-		<key>PVShortSystemName</key>
-		<string>FDS</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1986</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.fds</string>
 		<key>PVDatabaseID</key>
@@ -1539,10 +1653,16 @@
 		</array>
 	</dict>
 	<dict>
-		<key>PVSystemName</key>
-		<string>Sega SG-1000</string>
-		<key>PVShortSystemName</key>
+		<key>PVSystemShortName</key>
 		<string>SG-1000</string>
+		<key>PVSystemName</key>
+		<string>SG-1000</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1983</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.sg1000</string>
 		<key>PVDatabaseID</key>
@@ -1587,10 +1707,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>A2600</string>
 		<key>PVSystemName</key>
 		<string>Atari 2600</string>
-		<key>PVShortSystemName</key>
-		<string>2600</string>
+		<key>PVManufacturer</key>
+		<string>Atari</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1977</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.2600</string>
 		<key>PVDatabaseID</key>
@@ -1644,9 +1770,15 @@
 	</dict>
 	<dict>
 		<key>PVSystemName</key>
+		<string>A7800</string>
+		<key>PVSystemShortName</key>
 		<string>Atari 7800</string>
-		<key>PVShortSystemName</key>
-		<string>7800</string>
+		<key>PVManufacturer</key>
+		<string>Atari</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1986</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.7800</string>
 		<key>PVDatabaseID</key>
@@ -1708,9 +1840,15 @@
 	</dict>
 	<dict>
 		<key>PVSystemName</key>
-		<string>Sega 32X</string>
-		<key>PVShortSystemName</key>
 		<string>32X</string>
+		<key>PVSystemShortName</key>
+		<string>32X</string>
+		<key>PVManufacturer</key>
+		<string>Sega</string>
+		<key>PVBit</key>
+		<string>32</string>
+		<key>PVReleaseYear</key>
+		<string>1994</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.32X</string>
 		<key>PVDatabaseID</key>
@@ -1804,10 +1942,16 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVSystemShortName</key>
+		<string>N64</string>
 		<key>PVSystemName</key>
 		<string>Nintendo 64</string>
-		<key>PVShortSystemName</key>
-		<string>N64</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>64</string>
+		<key>PVReleaseYear</key>
+		<string>1996</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.n64</string>
 		<key>PVDatabaseID</key>
@@ -1930,12 +2074,18 @@
 				<real>2048</real>
 			</dict>
 		</array>
-		<key>PVSystemName</key>
-		<string>Atari 5200</string>
 		<key>PVRequiresBIOS</key>
 		<true/>
-		<key>PVShortSystemName</key>
-		<string>5200</string>
+		<key>PVSystemShortName</key>
+		<string>A5200</string>
+		<key>PVSystemName</key>
+		<string>Atari 5200</string>
+		<key>PVManufacturer</key>
+		<string>Atari</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>1982</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.5200</string>
 		<key>PVDatabaseID</key>
@@ -2021,10 +2171,16 @@
 				<integer>4096</integer>
 			</dict>
 		</array>
+		<key>PVSystemShortName</key>
+		<string>Pm</string>
 		<key>PVSystemName</key>
 		<string>Pokémon mini</string>
-		<key>PVShortSystemName</key>
-		<string>Pokémon mini</string>
+		<key>PVManufacturer</key>
+		<string>Nintendo</string>
+		<key>PVBit</key>
+		<string>8</string>
+		<key>PVReleaseYear</key>
+		<string>2001</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pokemonmini</string>
 		<key>PVDatabaseID</key>
