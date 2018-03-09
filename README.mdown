@@ -1,10 +1,12 @@
 # Provenance
-An iOS & tvOS Frontend for multiple emulators
+An iOS & tvOS Frontend for Multiple Emulators
 
 ![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
 
+
 ### Building Provenance
 [See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
+
 
 ### Why 'Provenance'?
 
@@ -15,77 +17,83 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 > **Noun**  
 > > The beginning of something's existence; something's origin.
 
+
 ### Systems currently supported by Provenance:
 
-- Sega
-    - SG-1000
-    - Master System
-    - Genesis / Mega Drive
-    - MegaCD [See wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions)
-    - Game Gear
-    - 32X
-- Nintendo
-    - NES (Nintendo Entertainment System)
-    - Famicom Disk System [See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions)
-    - SNES (Super Nintendo)
-    - Gameboy / Gameboy Color
-    - Gameboy Advance
-    - Pokémon Mini
-    - Virtual Boy
 - Atari
-    - 2600
-    - 5200
-    - 7800
-    - Lynx
-- Sony
-	- PlayStation
-- SNK
-	- Neo Geo Pocket / Neo Geo Pocket Color
-- NEC
-	- PC Engine / TurboGrafx-16 (CD)
-	- SuperGrafx
-	- PC-FX
+  - 2600
+  - 5200
+  - 7800
+  - Lynx
 - Bandai
-	- WonderSwan
+  - WonderSwan
+  - WonderSwan Color
+- Nintendo 
+  - Nintendo Entertainment System / Famicom (NES/FC)
+  - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions))
+  - Super Nintendo / Super Famicom (SNES/SFC)
+  - Game Boy / Game Boy Color 
+  - Game Boy Advance (GBA)
+  - Pokémon mini
+  - Virtual Boy
+- NEC
+  - PC Engine / TurboGrafx-16
+  - PC Engine CD-ROM² System / TurboGrafx-CD
+  - SuperGrafx
+  - PC-FX
+- Sega
+  - SG-1000
+  - Master System
+  - Genesis / Mega Drive
+  - CD / MegaCD ([See Wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions))
+  - Game Gear
+  - 32X
+- SNK
+  - Neo Geo Pocket / Neo Geo Pocket Color
+- Sony
+  - PlayStation (PSX/PS1) ([See Wiki](https://github.com/jasarien/Provenance/wiki/Playstation-Instructions))
+
 
 ### Features
 
-- Very accurate & full speed emulation
-- Stereo sound
-- Save States
-- Battery saves (native game saves, i.e. Sonic 3, Pokémon, etc)
-- Adjust onscreen control opacity so they don't get in your way
-- Portrait and landscape support
-- Supports all [MFi game controllers](https://mficontrollers.afterpad.com/), and some iCade Controllers
-- Local multiplayer with external controllers
-- Built-in web server to Import/Export:
-    - ROMs
-    - Game Saves
-    - Custom Cover Art
-- "Open In..." support
-    - Download a ROM using Mobile Safari and import it into Provenance
-- iTunes File Sharing
-    - Just drop ROMs into the app from iTunes on your Mac or PC
-- Uses [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB) to look up game information and artwork
-    - OpenVGDB is a database maintained by the OpenEmu Team and automatically downloads available information and artwork
-    - Custom artwork is also supported
-- Game library searching
-- Supports iOS 8+
-    - 3D Touch shortcuts for recent games (iPhone 6s and later)
-    - Taptic Engine Feedback for button presses (iPhone 7 and later)
-- Supports Apple TV tvOS 9+
-    - TopShelf support [See instructions](https://github.com/jasarien/Provenance/pull/242)
+- Very Accurate, Full Speed Emulation
+- Stereo Sound
+- Save States (Save Anywhere Game Freezing)
+- Battery Saves (Native Game Saves)
+- Adjustable Opacity for Touchscreen Overlay Controls
+- [MFi Game Controller](https://mficontrollers.afterpad.com/) Support
+- iCade Controller Support (8bitdo, etc…)
+- Portrait and Landscape Orientation
+- Local Multiplayer via External Controllers
+- Automatic ROM Matching Pulls Game Name, Cover Art and Additional Meta Data via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
+- Custom Cover Art and Game Name Replacement
+- Multiple Options to for Managing ROMs, Game Saves and Cover Art:
+  - Import:
+    - _"Copy to…"_ from Other Apps
+    - iTunes File Sharing
+  - Import/Export:
+    - Built-in Web Server
+- Game Library Searching
+- iOS 8+ (iPhone, iPad)
+  - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
+  - Taptic Engine Button Feedback (iPhone 7 and later)
+- tvOS 9+ (Apple TV)
+    - TopShelf Support ([See Instructions](https://github.com/jasarien/Provenance/pull/242))
 
-Feel free to suggest/request features using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates.
+_Feel free to Suggest/Request Features or Report Bugs using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates._
+
 
 ### Importing ROMs
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
+[See the Instructions on the Wiki](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)
+
 
 ### Screenshots
 [Provenance Screenshots](http://jamesaddyman.com/provenance/screenshots)
 
+
 # Contributor Discussion
-If you're a contributor, or would like to contribute, there is a developer-focussed Slack at [provenance-dev.slack.com](http://provenance-dev.slack.com). Request an invite to join the conversation.
+If you're a contributor, or would like to contribute, there is a developer-focused Slack at [provenance-dev.slack.com](http://provenance-dev.slack.com). Request an invite to join the conversation.
+
 
 # Attributions
 
@@ -95,7 +103,7 @@ NES/Famicom Disk System emulation is provided by [FCEUX](http://www.fceux.com/we
 
 SNES (Super Nintendo) emulation is provided by [SNES9x](http://www.snes9x.com).
 
-Gameboy Advance emulation is provided by [Visualboy Advance](http://sourceforge.net/projects/vba/).
+Gameboy Advance emulation is provided by [VisualBoy Advance](http://sourceforge.net/projects/vba/).
 
 Gameboy/Gameboy Color emulation is provided by [Gambatte](http://gambatte.sourceforge.net/).
 
@@ -107,11 +115,12 @@ Atari 7800 emulation is provided by [ProSystem](http://gstanton.github.io/ProSys
 
 Sega 32X emulation is provided by [PicoDrive](https://github.com/notaz/picodrive).
 
-Pokémon Mini is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
+Pokémon mini is provided by [PokiMini](https://sourceforge.net/projects/pokemini/).
 
 Atari Lynx, Sony PlayStation, Nintendo VirtualBoy, SNK Neo Geo Pocket + Color, NEC PC Engine family and Bandai WonderSwan are provided by [Mednafen](https://mednafen.github.io)
 
 The specific implementations used in Provenance are loosely based on some of the work done by [OpenEmu](http://openemu.org) [(source)](http://github.com/OpenEmu) and [RetroArch](http://www.libretro.com) [(source)](https://github.com/libretro/RetroArch).
+
 
 # Provenance License
 
@@ -137,6 +146,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 The views and conclusions contained in the software and documentation are those of the
 authors and should not be interpreted as representing official policies, either expressed
 or implied, of James Addyman (JamSoft).
+
 
 # OpenEmu License
 
