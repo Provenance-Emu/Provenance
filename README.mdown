@@ -61,7 +61,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Save States (Save Anywhere Game Freezing)
 - Battery Saves (Native Game Saves)
 - Adjustable Opacity for Touchscreen Overlay Controls
-- [MFi Game Controller](https://mficontrollers.afterpad.com/) Support
+- [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
 - iCade Controller Support (8bitdo, etc…)
 - Portrait and Landscape Orientation
 - Local Multiplayer via External Controllers
