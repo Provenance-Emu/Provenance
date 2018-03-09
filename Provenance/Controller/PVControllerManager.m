@@ -11,6 +11,7 @@
 #import "PViCadeController.h"
 #import "kICadeControllerSetting.h"
 #import "PViCade8BitdoController.h"
+#import "PViCade8BitdoZeroController.h"
 #import "PViCadeController.h"
 
 NSString * const PVControllerManagerControllerReassignedNotification = @"PVControllerManagerControllerReassignedNotification";
@@ -65,6 +66,14 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     }
 }
 
+- (void)resetICadeController {
+    if (self.iCadeController) {
+        [self stopListeningForICadeControllers];
+        self.iCadeController = nil;
+    }
+    [self setupICade];
+}
+
 - (void)setPlayer1:(GCController *)player1
 {
     [self setController:player1 toPlayer:1];
@@ -103,7 +112,7 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
     }
     
     BOOL assigned = NO;
-    if ([controller isKindOfClass:[PViCade8BitdoController class]]) {
+    if ([controller isKindOfClass:[PViCade8BitdoController class]] || [controller isKindOfClass:[PViCade8BitdoZeroController class]]) {
         // For 8Bitdo, we set to listen again for controllers after disconnecting
         // so we can detect when they connect again
         if (self.iCadeController) {
@@ -150,11 +159,13 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
 
 - (void)listenForICadeControllers
 {
+    DLOG(@"Start listening iCade Controller of type %@", NSStringFromClass([self.iCadeController class]));
     [self listenForICadeControllersForPlayer:0 window:nil completion:nil];
 }
 
 - (void)stopListeningForICadeControllers
 {
+    DLOG(@"Stop listening iCade Controller of type %@", NSStringFromClass([self.iCadeController class]));
     [self.iCadeController setControllerPressedAnyKey:nil];
     [self.iCadeController.reader listenToWindow:nil];
 }
