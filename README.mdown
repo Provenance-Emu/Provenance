@@ -28,6 +28,11 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Bandai
   - WonderSwan
   - WonderSwan Color
+- NEC
+  - PC Engine / TurboGrafx-16
+  - PC Engine CD-ROM² System / TurboGrafx-CD
+  - SuperGrafx
+  - PC-FX
 - Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
   - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions))
@@ -36,11 +41,6 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - Game Boy Advance (GBA)
   - Pokémon mini
   - Virtual Boy
-- NEC
-  - PC Engine / TurboGrafx-16
-  - PC Engine CD-ROM² System / TurboGrafx-CD
-  - SuperGrafx
-  - PC-FX
 - Sega
   - SG-1000
   - Master System
