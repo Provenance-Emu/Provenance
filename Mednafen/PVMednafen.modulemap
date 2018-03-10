@@ -1,0 +1,27 @@
+framework module PVMednafen {
+    umbrella header "PVMednafen.h"
+
+    explicit module Private {
+        requires cplusplus
+        header "/Users/jmattiello/Workspace/Provenance-jmattiello/Mednafen/mednafen/mednafen-driver.h"
+        export *
+    }
+
+    export *
+    module * { export * }
+}
+//
+//module std {
+//    // C standard library...
+//    
+//    module vector {
+//        requires cplusplus
+//        header "vector"
+//    }
+// }
+//
+//module PVMednafen.Private {
+//    requires cplusplus
+//    header "/Users/jmattiello/Workspace/Provenance-jmattiello/Mednafen/mednafen/mednafen-driver.h"
+//}
+

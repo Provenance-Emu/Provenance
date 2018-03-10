@@ -71,14 +71,7 @@ static __weak PVNESEmulatorCore *_current;
     free(videoBuffer);
 }
 
-# pragma mark - Execution
-
-- (BOOL)supportsDiskSwapping
-{
-    return YES;
-}
-
-- (void)swapDisc:(NSUInteger)discNumber
+- (void)internalSwapDisc:(NSUInteger)discNumber
 {
     [self setPauseEmulation:NO];
 

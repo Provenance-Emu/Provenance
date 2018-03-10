@@ -30,6 +30,16 @@
 
 @class OERingBuffer;
 
+typedef NS_ENUM(NSInteger, MednaSystem) {
+    MednaSystemLynx,
+    MednaSystemNeoGeo,
+    MednaSystemPCE,
+    MednaSystemPCFX,
+    MednaSystemPSX,
+    MednaSystemVirtualBoy,
+    MednaSystemWonderSwan
+};
+
 typedef NS_ENUM(NSInteger, PVPSXButton)
 {
     PVPSXButtonUp,
@@ -202,4 +212,11 @@ __attribute__((visibility("default")))
 - (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
 - (oneway void)didReleaseWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
 
+@end
+
+// for Swiwt
+@interface MednafenGameCore()
+@property (nonatomic, assign) MednaSystem systemType;
+@property (nonatomic, assign) NSUInteger maxDiscs;
+-(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 @end

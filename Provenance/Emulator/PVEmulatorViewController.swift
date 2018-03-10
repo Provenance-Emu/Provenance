@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 Joe Mattiello. All rights reserved.
 //
 
+import PVSupport
+
 extension PVEmulatorViewController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
@@ -67,12 +69,12 @@ extension PVEmulatorViewController {
 public extension PVEmulatorViewController {
     @objc
     func showSwapDiscsMenu() {
-        guard let emulatorCore = self.emulatorCore else {
+        guard let emulatorCore = self.emulatorCore as? (PVEmulatorCore & DiscSwappable) else {
             ELOG("No core?")
             return
         }
         
-        let numberOfDiscs = emulatorCore.discCount
+        let numberOfDiscs = emulatorCore.numberOfDiscs
         guard numberOfDiscs > 1 else {
             ELOG("Only 1 disc?")
             return
@@ -85,7 +87,7 @@ public extension PVEmulatorViewController {
             actionSheet.addAction(UIAlertAction(title: "\(index)", style: .default, handler: {[unowned self] (sheet) in
 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-                    emulatorCore.swapDisc(index)
+                    emulatorCore.swapDisc(number: index)
                 })
                 
                 emulatorCore.setPauseEmulation(false)

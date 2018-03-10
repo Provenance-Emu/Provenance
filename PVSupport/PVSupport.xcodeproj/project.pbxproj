@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
+		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
 		B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4291DE86780008450F5 /* GameController.framework */; };
 		B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -72,6 +74,7 @@
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F42F1DE86E6D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -181,6 +184,7 @@
 				0592894E1DC194FD0012644D /* RealTimeThread.m */,
 				B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */,
 				B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */,
+				B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */,
 				B3FA5D611D6B90BD00060D71 /* PVGameControllerUtilities.h */,
 				B3FA5D621D6B90BD00060D71 /* PVGameControllerUtilities.m */,
 				1ACEA64A17F7467D0031B1C9 /* Supporting Files */,
@@ -346,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
@@ -361,6 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5D1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D691D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */,
 				B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
@@ -509,6 +515,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -531,6 +538,8 @@
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -542,6 +551,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -565,6 +575,7 @@
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -576,6 +587,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
@@ -599,6 +611,7 @@
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -610,6 +623,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -632,6 +646,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -643,6 +659,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -666,6 +683,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -677,6 +695,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -700,6 +719,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VERSIONING_SYSTEM = "apple-generic";

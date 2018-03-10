@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B39E8CB320539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */; };
+		B39E8CB420539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */; };
 		B3A9F43A1DE877B4008450F5 /* PVNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F44D1DE87823008450F5 /* PVSupport.framework */; };
 		B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
@@ -635,6 +637,7 @@
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSNESEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4361DE877B4008450F5 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A9F4381DE877B4008450F5 /* PVNES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVNES.h; sourceTree = "<group>"; };
 		B3A9F4391DE877B4008450F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -907,6 +910,7 @@
 				1A3A75051ABF16A3002274A3 /* FCEU */,
 				1A3A79AB1ABF1CE8002274A3 /* PVNESEmulatorCore.h */,
 				1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */,
+				B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */,
 				1A3A75041ABF125C002274A3 /* Supporting Files */,
 			);
 			path = NES;
@@ -1424,10 +1428,12 @@
 				TargetAttributes = {
 					B3A9F4351DE877B4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 					B3A9F4431DE877E4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0920;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1509,6 +1515,7 @@
 				B3A9F4801DE87E09008450F5 /* 80.cpp in Sources */,
 				B3A9F4811DE87E09008450F5 /* t-262.cpp in Sources */,
 				B3A9F4821DE87E09008450F5 /* 252.cpp in Sources */,
+				B39E8CB320539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */,
 				B3A9F4831DE87E09008450F5 /* oldmovie.cpp in Sources */,
 				B3A9F4841DE87E09008450F5 /* coolboy.cpp in Sources */,
 				B3A9F4851DE87E09008450F5 /* eh8813a.cpp in Sources */,
@@ -1746,6 +1753,7 @@
 				B3A9F5671DE87E09008450F5 /* 80.cpp in Sources */,
 				B3A9F5681DE87E09008450F5 /* t-262.cpp in Sources */,
 				B3A9F5691DE87E09008450F5 /* 252.cpp in Sources */,
+				B39E8CB420539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */,
 				B3A9F56A1DE87E09008450F5 /* oldmovie.cpp in Sources */,
 				B3A9F56B1DE87E09008450F5 /* coolboy.cpp in Sources */,
 				B3A9F56C1DE87E09008450F5 /* eh8813a.cpp in Sources */,
@@ -2088,6 +2096,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2124,6 +2133,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2135,6 +2146,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2171,6 +2183,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2182,6 +2195,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2218,6 +2232,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -2229,6 +2244,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2264,6 +2280,8 @@
 				PRODUCT_NAME = PVNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2276,6 +2294,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2311,6 +2330,7 @@
 				PRODUCT_NAME = PVNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -2323,6 +2343,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -2358,6 +2379,7 @@
 				PRODUCT_NAME = PVNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";

@@ -257,16 +257,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     return [self loadFileAtPath:path];
 }
 
-- (BOOL)supportsDiskSwapping
-{
-    return NO;
-}
-
-- (void)swapDisc:(NSUInteger)discNumber
-{
-    [self doesNotImplementOptionalSelector:_cmd];
-}
-
 #pragma mark - Video
 
 - (const void *)videoBuffer

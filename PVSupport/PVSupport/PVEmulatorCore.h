@@ -88,7 +88,6 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
-@property (nonatomic, readonly) NSUInteger discCount;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation;
@@ -100,9 +99,6 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error;
 - (void)updateControllers;
-
-- (BOOL)supportsDiskSwapping;
-- (void)swapDisc:(NSUInteger)discNumber;
 
 - (const void *)videoBuffer;
 - (CGRect)screenRect;

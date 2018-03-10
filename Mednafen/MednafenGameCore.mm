@@ -94,12 +94,9 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-typedef enum MednaSystem {lynx, neogeo, pce, pcfx, psx, vb, wswan };
-
 @interface MednafenGameCore ()
 {
     uint32_t *inputBuffer[8];
-    MednaSystem systemType;
     int videoWidth, videoHeight;
     int videoOffsetX, videoOffsetY;
     int multiTapPlayerCount;
@@ -110,7 +107,6 @@ typedef enum MednaSystem {lynx, neogeo, pce, pcfx, psx, vb, wswan };
     NSString *mednafenCoreModule;
     NSTimeInterval mednafenCoreTiming;
     OEIntSize mednafenCoreAspect;
-    NSUInteger maxDiscs;
 }
 
 @end
@@ -236,7 +232,7 @@ static void emulation_run() {
     // is up to date while respecting the current game speed setting
     [current setGameSpeed:[current gameSpeed]];
 
-    if(current->systemType == psx)
+    if(current->_systemType == MednaSystemPSX)
     {
         current->videoWidth = rects[spec.DisplayRect.y];
         current->videoOffsetX = spec.DisplayRect.x;
@@ -264,7 +260,7 @@ static void emulation_run() {
 
     if([[self systemIdentifier] isEqualToString:@"com.provenance.lynx"])
     {
-        systemType = lynx;
+        self.systemType = MednaSystemLynx;
         
         mednafenCoreModule = @"lynx";
         mednafenCoreAspect = OEIntSizeMake(80, 51);
@@ -273,7 +269,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
     {
-        systemType = neogeo;
+        self.systemType = MednaSystemNeoGeo;
         
         mednafenCoreModule = @"ngp";
         mednafenCoreAspect = OEIntSizeMake(20, 19);
@@ -282,7 +278,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pce"] || [[self systemIdentifier] isEqualToString:@"com.provenance.pcecd"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sgfx"])
     {
-        systemType = pce;
+        self.systemType = MednaSystemPCE;
         
         mednafenCoreModule = @"pce";
         mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
@@ -291,7 +287,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pcfx"])
     {
-        systemType = pcfx;
+        self.systemType = MednaSystemPCFX;
         
         mednafenCoreModule = @"pcfx";
         mednafenCoreAspect = OEIntSizeMake(4, 3);
@@ -300,7 +296,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.psx"])
     {
-        systemType = psx;
+        self.systemType = MednaSystemPSX;
         
         mednafenCoreModule = @"psx";
         // Note: OpenEMU sets this to 4, 3.
@@ -310,7 +306,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.vb"])
     {
-        systemType = vb;
+        self.systemType = MednaSystemVirtualBoy;
         
         mednafenCoreModule = @"vb";
         mednafenCoreAspect = OEIntSizeMake(12, 7);
@@ -319,7 +315,7 @@ static void emulation_run() {
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ws"] || [[self systemIdentifier] isEqualToString:@"com.provenance.wsc"])
     {
-        systemType = wswan;
+        self.systemType = MednaSystemWonderSwan;
         
         mednafenCoreModule = @"wswan";
         mednafenCoreAspect = OEIntSizeMake(14, 9);
@@ -348,7 +344,7 @@ static void emulation_run() {
 
     masterClock = game->MasterClock >> 32;
 
-    if (systemType == pce)
+    if (self.systemType == MednaSystemPCE)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
@@ -356,12 +352,12 @@ static void emulation_run() {
         game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
         game->SetInput(4, "gamepad", (uint8_t *)inputBuffer[4]);
     }
-    else if (systemType == pcfx)
+    else if (self.systemType == MednaSystemPCFX)
     {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
     }
-    else if (systemType == psx)
+    else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
             game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
@@ -373,7 +369,7 @@ static void emulation_run() {
         BOOL multiDiscGame = NO;
         NSNumber *discCount = [MednafenGameCore multiDiscPSXGames][self.romSerial];
         if (discCount) {
-            maxDiscs = [discCount intValue];
+            self.maxDiscs = [discCount intValue];
             multiDiscGame = YES;
         }
         
@@ -384,7 +380,7 @@ static void emulation_run() {
                 m3uPath = [m3uPath substringFromIndex:rangeOfDocuments.location + 11];
             }
             
-            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", maxDiscs, m3uPath];
+            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
             
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Required m3u file missing."
                                                                            message:message
@@ -400,7 +396,7 @@ static void emulation_run() {
             return NO;
         }
         
-        if (maxDiscs > 1) {
+        if (self.maxDiscs > 1) {
             // Parse number of discs in m3u
             NSString *m3uString = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
             NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@".cue|.ccd" options:NSRegularExpressionCaseInsensitive error:nil];
@@ -421,35 +417,40 @@ static void emulation_run() {
     return YES;
 }
 
+-(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc {
+    MDFNI_SetMedia(0, open ? 0 : 2, disc, 0);
+}
+
+
 - (void)pollControllers {
     unsigned maxValue = 0;
     const int*map;
-    switch (systemType) {
-        case psx:
+    switch (self.systemType) {
+        case MednaSystemPSX:
             maxValue = PVPSXButtonCount;
             map = PSXMap;
             break;
-        case neogeo:
+        case MednaSystemNeoGeo:
             maxValue = OENGPButtonCount;
             map = NeoMap;
             break;
-        case lynx:
+        case MednaSystemLynx:
             maxValue = OELynxButtonCount;
             map = LynxMap;
             break;
-        case pce:
+        case MednaSystemPCE:
             maxValue = OEPCEButtonCount;
             map = PCEMap;
             break;
-        case pcfx:
+        case MednaSystemPCFX:
             maxValue = OEPCFXButtonCount;
             map = PCFXMap;
             break;
-        case vb:
+        case MednaSystemVirtualBoy:
             maxValue = OEVBButtonCount;
             map = VBMap;
             break;
-        case wswan:
+        case MednaSystemWonderSwan:
             maxValue = OEWSButtonCount;
             map = WSMap;
             break;
@@ -470,7 +471,7 @@ static void emulation_run() {
         if (controller) {
             for (unsigned i=0; i<maxValue; i++) {
                 
-                if (systemType != psx || i < OEPSXLeftAnalogUp) {
+                if (self.systemType != MednaSystemPSX || i < OEPSXLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
                     
                     if(value > 0) {
@@ -863,29 +864,29 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         controller = self.controller2;
     }
     
-    switch (systemType) {
-        case neogeo:
+    switch (self.systemType) {
+        case MednaSystemNeoGeo:
             return [self NeoGeoValueForButtonID:buttonID forController:controller];
             break;
 
-        case lynx:
+        case MednaSystemLynx:
             return [self LynxControllerValueForButtonID:buttonID forController:controller];
             break;
 
-        case pce:
-        case pcfx:
+        case MednaSystemPCE:
+        case MednaSystemPCFX:
             return [self PCEValueForButtonID:buttonID forController:controller];
             break;
 
-        case psx:
+        case MednaSystemPSX:
             return [self PSXcontrollerValueForButtonID:buttonID forController:controller];
             break;
 
-        case vb:
+        case MednaSystemVirtualBoy:
             return [self VirtualBoyControllerValueForButtonID:buttonID forController:controller];
             break;
 
-        case wswan:
+        case MednaSystemWonderSwan:
             return [self WonderSwanControllerValueForButtonID:buttonID forController:controller];
             break;
             
@@ -1401,7 +1402,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 - (void)changeDisplayMode
 {
-    if (systemType == vb)
+    if (self.systemType == MednaSystemVirtualBoy)
     {
         switch (MDFN_IEN_VB::mednafenCurrentDisplayMode)
         {
@@ -1463,36 +1464,6 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
                 return;
                 break;
         }
-    }
-}
-
-- (void)swapDisc:(NSUInteger)discNumber {
-    [self setPauseEmulation:NO];
-    
-    uint32_t index = discNumber - 1; // 0-based index
-    MDFNI_SetMedia(0, 0, 0, 0); // open drive/eject disc
-
-    // Open/eject needs a bit of delay, so wait 1 second until inserting new disc
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-        MDFNI_SetMedia(0, 2, index, 0); // close drive/insert disc (2 = close)
-    });
-}
-
-- (NSUInteger)discCount {
-    return maxDiscs ? maxDiscs : 1;
-}
-
-- (BOOL)supportsDiskSwapping {
-    switch (systemType) {
-        case psx:
-            return [self discCount] > 1;
-        case neogeo:
-        case lynx:
-        case pce:
-        case pcfx:
-        case vb:
-        case wswan:
-            return NO;
     }
 }
 

@@ -8,7 +8,7 @@
 
 #import "PVEmulatorViewController.h"
 #import "PVGLViewController.h"
-#import <PVSupport/PVSupport.h>
+@import PVSupport;
 #import "Provenance-Swift.h"
 #import "JSButton.h"
 #import "JSDPad.h"
@@ -520,7 +520,7 @@ void uncaughtExceptionHandler(NSException *exception)
 		}
 	}
 
-    if ([self.emulatorCore supportsDiskSwapping])
+    if ([self.emulatorCore conformsToProtocol:@protocol(DiscSwappable)])
     {
         [actionsheet addAction:[UIAlertAction actionWithTitle:@"Swap Disc" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [weakSelf performSelector:@selector(showSwapDiscsMenu)
