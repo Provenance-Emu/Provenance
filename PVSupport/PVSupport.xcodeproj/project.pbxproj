@@ -303,9 +303,11 @@
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = V78REPMQFZ;
+						LastSwiftMigration = 0920;
 					};
 					B3C96EBE1D62C5E7003F1E93 = {
 						DevelopmentTeam = V78REPMQFZ;
+						LastSwiftMigration = 0920;
 					};
 				};
 			};

@@ -13,7 +13,7 @@ import RealmSwift
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
 protocol PVLibraryEntry where Self: Object {}
 
-public class PVSaveState : Object {
+@objcMembers public class PVSaveState : Object {
 
     @objc dynamic var game : PVGame?
     @objc dynamic var path : String?
@@ -30,7 +30,90 @@ public class PVSaveState : Object {
     }
 }
 
-public class PVGame : Object, PVLibraryEntry {
+@objcMembers public class PVBIOS : Object {
+    @objc dynamic var system : PVSystem?
+    @objc dynamic var descriptionText: String = ""
+    @objc dynamic var optional : Bool = false
+    
+    @objc dynamic var expectedMD5 : String = ""
+    @objc dynamic var expectedSize : Int = 0
+    @objc dynamic var expectedFilename : String = ""
+    
+    @objc dynamic var url : String?
+    @objc dynamic var md5 : String?
+    
+    override public static func primaryKey() -> String? {
+        return "expectedFilename"
+    }
+}
+
+@objcMembers public class PVSystem : Object {
+    @objc dynamic var name : String = ""
+    @objc dynamic var shortName : String = ""
+    @objc dynamic var manufacturer : String = ""
+    @objc dynamic var releaseYear : Int = 0
+    @objc dynamic var bit : Int = 0
+    @objc dynamic var openvgDatabaseID : Int = 0
+    @objc dynamic var requiresBIOS : Bool = false
+    @objc dynamic var usesCDs : Bool = false
+    var supportedExtensions = List<String>()
+    
+    var bioses = List<PVBIOS>()
+
+    @objc dynamic var systemIdentifier : String = ""
+    
+    override public static func primaryKey() -> String? {
+        return "systemIdentifier"
+    }
+    
+    // Hack to store controller layout because I don't want to make
+    // all the complex objects it would require. Just store the plist dictionary data
+    @objc private dynamic var controlLayoutData: Data?
+    var controllerLayout:  [ControlLayoutEntry]? {
+        get {
+            guard let controlLayoutData = controlLayoutData else {
+                return nil
+            }
+            do {
+                let dict = try JSONDecoder().decode([ControlLayoutEntry].self, from: controlLayoutData)
+                return dict
+            } catch {
+                return nil
+            }
+        }
+        
+        set {
+            guard let newDictionaryData = newValue else {
+                controlLayoutData = nil
+                return
+            }
+            
+            do {
+                let data = try JSONEncoder().encode(newDictionaryData)
+                controlLayoutData = data
+            } catch {
+                controlLayoutData = nil
+                ELOG("\(error)")
+            }
+        }
+    }
+    
+    override public static func ignoredProperties() -> [String] {
+        return ["controllerLayout"]
+    }
+}
+
+@objcMembers public class PVCore : Object {
+    @objc dynamic var identifier : String = ""
+    var supportSystems = List<PVSystem>()
+    
+    override public static func primaryKey() -> String? {
+        return "identifier"
+    }
+}
+
+
+@objcMembers public class PVGame : Object, PVLibraryEntry {
     @objc dynamic var title : String              = ""
     
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
@@ -55,8 +138,8 @@ public class PVGame : Object, PVLibraryEntry {
     @objc dynamic var importDate : Date           = Date()
     
     /* Linksj to other objects */
-    var saveStates : List<PVSaveState>? = nil
-    var recentPlays : List<PVRecentGame>? = nil
+    var saveStates = List<PVSaveState>()
+    var recentPlays = List<PVRecentGame>()
     
     /* Tracking data */
     @objc dynamic var lastPlayed : Date?

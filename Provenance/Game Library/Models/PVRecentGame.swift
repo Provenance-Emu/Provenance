@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-public class PVRecentGame : Object, PVLibraryEntry {
+@objcMembers public class PVRecentGame : Object, PVLibraryEntry {
 
     @objc dynamic var game : PVGame?
     @objc dynamic var lastPlayedDate : Date = Date()

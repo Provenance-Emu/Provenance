@@ -837,7 +837,7 @@ public extension PVGameImporter {
         let exactQuery = "SELECT DISTINCT releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
         let likeQuery = "SELECT DISTINCT romFileName, releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
         
-        let dbSystemID: String = PVEmulatorConfiguration.databaseID(forSystemID: systemID)!
+        let dbSystemID: String = String(PVEmulatorConfiguration.databaseID(forSystemID: systemID)!)
         
         let queryString: String
         if key == "romFileName" {
@@ -999,7 +999,7 @@ extension PVGameImporter {
         getArtworkFromURL(game.originalArtworkURL)
     }
     
-    func biosEntryMatcing(canidateFile: ImportCanidateFile) -> BIOSEntry? {
+    func biosEntryMatcing(canidateFile: ImportCanidateFile) -> PVBIOS? {
         // Check if BIOS by filename - should possibly just only check MD5?
         if let bios = PVEmulatorConfiguration.biosEntry(forFilename: canidateFile.filePath.lastPathComponent) {
             return bios
@@ -1076,8 +1076,8 @@ extension PVGameImporter {
         // Check first if known BIOS
         if let biosEntry = biosEntryMatcing(canidateFile: canidateFile) {
             // We have a BIOS file match
-            let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: biosEntry.systemID)
-            let destiaionPath = biosDirectory.appendingPathComponent(biosEntry.filename, isDirectory:false)
+            let biosDirectory = PVEmulatorConfiguration.biosPath(forSystemIdentifier: biosEntry.system!.systemIdentifier)
+            let destiaionPath = biosDirectory.appendingPathComponent(biosEntry.expectedFilename, isDirectory:false)
             
             do {
                 try fm.createDirectory(at: biosDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -1339,7 +1339,7 @@ extension PVGameImporter {
             let results = try openVGDB.executeQuery(queryString)
             if
                 let match = results.first,
-                let databaseID = match["systemID"]?.description,
+                let databaseID = match["systemID"] as? Int,
                 let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {

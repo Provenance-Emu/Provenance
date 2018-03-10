@@ -83,11 +83,17 @@ public final class PVCoreFactory : NSObject {
     }
 
     class func controllerViewController(forSystemIdentifier systemID: SystemIdentifier) -> PVControllerViewController? {
-        guard let controllerLayout = PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: systemID) else {
+        guard let controllerLayoutStruct = PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: systemID) else {
             ELOG("No controller layout config defined for system \(systemID)")
             return nil
         }
-
+        
+        let controllerLayout = controllerLayoutStruct.reduce([[String:Any]]()) { (result, layoutEntry) -> [[String:Any]] in
+            var result = result
+            result.append(layoutEntry.dictionaryValue)
+            return result
+        }
+        
         switch systemID {
         case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
             return PVGenesisControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)

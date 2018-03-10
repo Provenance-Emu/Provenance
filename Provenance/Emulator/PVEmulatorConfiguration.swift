@@ -7,30 +7,8 @@
 
 import Foundation
 import UIKit
-
-public struct BIOSEntry {
-    let systemID : String
-    let filename : String
-    let desctription : String
-    
-    var expectedMD5 : String {
-        didSet {
-            self.expectedMD5 = expectedMD5.uppercased()
-        }
-    }
-    
-    let expectedFileSize: UInt
-    let optional : Bool
-
-    init(systemID: String, filename: String, desctription: String, expectedMD5: String, expectedFileSize: UInt, optional: Bool = false) {
-        self.systemID = systemID
-        self.filename = filename
-        self.desctription = desctription
-        self.expectedMD5 = expectedMD5.uppercased()
-        self.expectedFileSize = expectedFileSize
-        self.optional = optional
-    }
-}
+import RealmSwift
+import PVSupport
 
 public struct SystemDictionaryKeys {
     static let BIOSEntries         = "PVBIOSNames"
@@ -95,7 +73,7 @@ public enum SystemIdentifier : String {
  
     // MARK: Assistance accessors for properties
     
-    var system : SystemDictionary? {
+    var system : PVSystem? {
         return PVEmulatorConfiguration.system(forIdentifier: self)
     }
     
@@ -107,7 +85,7 @@ public enum SystemIdentifier : String {
         return PVEmulatorConfiguration.shortName(forSystemIdentifier: self)!
     }
     
-    var controllerLayout : [ControllerLayoutDictionary] {
+    var controllerLayout : [ControlLayoutEntry] {
         return PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: self)!
     }
     
@@ -119,7 +97,7 @@ public enum SystemIdentifier : String {
         return PVEmulatorConfiguration.requiresBIOS(forSystemIdentifier: self)
     }
 
-    var biosEntries : [BIOSEntry]? {
+    var biosEntries : [PVBIOS]? {
         return PVEmulatorConfiguration.biosEntries(forSystemIdentifier: self)
     }
     
@@ -203,23 +181,13 @@ fileprivate extension Dictionary where Key == String, Value == Any {
         return controllerLayout
     }
     
-    var bioses : [BIOSEntry]? {
-        guard let bs = self[SystemDictionaryKeys.BIOSEntries] as? [[String:Any]] else {
+    var bioses : [PVBIOS]? {
+        let bioses = RomDatabase.sharedInstance.all(PVBIOS.self)
+        if  !bioses.isEmpty {
+            return Array(bioses)
+        } else {
             return nil
         }
-        
-        return bs.map({ (biosDict : [String:Any]) -> BIOSEntry in
-            guard let md5 = biosDict["MD5"] as? String, let name = biosDict["Name"] as? String, let desc = biosDict["Description"] as? String, let size = biosDict["Size"] as? NSNumber else {
-                fatalError("BIOS entry missing critical data. \(biosDict.debugDescription)")
-            }
-
-            var optional = false
-            if let o = biosDict["Name"] as? Bool {
-                optional = o
-            }
-            
-            return BIOSEntry(systemID: self.identifier, filename: name, desctription: desc, expectedMD5: md5.uppercased(), expectedFileSize: size.uintValue, optional: optional)
-        })
     }
     
     var requiresBIOS : Bool {
@@ -241,29 +209,21 @@ public class PVEmulatorConfiguration : NSObject {
      and iterate those and create SystemConfiguration structions based off of parsing them
      instead of key / value matching a single plist
      */
-    fileprivate static let systems : [SystemDictionary] = {
-        guard let systemsPlist = Bundle.main.url(forResource: "systems", withExtension: "plist") else {
-            fatalError("Missing systems.plist in main bundle")
-        }
-        
-        guard let systemsArray = NSArray(contentsOf: systemsPlist) as? [[String:Any]] else {
-            fatalError("Failed to convert systems.plist to array")
-        }
-        
-        return systemsArray
-    }()
+    fileprivate static var systems : [PVSystem] {
+        return Array(RomDatabase.sharedInstance.all(PVSystem.self))
+    }
     
     @objc
     static let availableSystemIdentifiers: [String] = {
         return systems.map({ (system) -> String in
-            return system.identifier
+            return system.systemIdentifier
         })
     }()
     
     // MARK: ROM IOS etc
     static let supportedROMFileExtensions: [String] = {
         return Array(systems.map({ (system) -> [String] in
-            return system.supportedExtensions
+            return Array(system.supportedExtensions)
         }).joined())
     }()
     
@@ -273,7 +233,7 @@ public class PVEmulatorConfiguration : NSObject {
                 return nil
             }
             
-            return system.supportedExtensions
+            return Array(system.supportedExtensions)
         }).joined())
     }()
     
@@ -282,20 +242,24 @@ public class PVEmulatorConfiguration : NSObject {
             guard system.usesCDs else {
                 return nil
             }
-            return system.identifier
+            return system.systemIdentifier
         })
     }()
     
     // MARK: BIOS
     static let supportedBIOSFileExtensions: [String] = {
         return biosEntries.map({ (bios) -> String in
-            return bios.filename.components(separatedBy: ".").last!.lowercased()
+            return bios.expectedFilename.components(separatedBy: ".").last!.lowercased()
         })
     }()
     
-    static let biosEntries: [BIOSEntry] = {
-        return Array(systems.flatMap({ (system) -> [BIOSEntry]? in
-            return system.bioses
+    static let biosEntries: [PVBIOS] = {
+        return Array(systems.flatMap({ (system) -> [PVBIOS]? in
+            if !system.bioses.isEmpty {
+                return Array(system.bioses)
+            } else {
+                return nil
+            }
         }).joined())
     }()
     
@@ -338,12 +302,12 @@ public class PVEmulatorConfiguration : NSObject {
         return false
     }
     
-    class func databaseID(forSystemID systemID: String) -> String? {
-        return system(forIdentifier: systemID)?.databaseId
+    class func databaseID(forSystemID systemID: String) -> Int? {
+        return system(forIdentifier: systemID)?.openvgDatabaseID
     }
     
-    class func systemID(forDatabaseID databaseID: String) -> String? {
-        return systems.first{ $0.databaseId == databaseID }?.identifier
+    class func systemID(forDatabaseID databaseID: Int) -> String? {
+        return systems.first{ $0.openvgDatabaseID == databaseID }?.systemIdentifier
     }
     
     @objc
@@ -351,7 +315,7 @@ public class PVEmulatorConfiguration : NSObject {
         return systems.reduce(nil as [String]?, { (systems, system) -> [String]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems : [String] = systems ?? [String]() // Create initial if doesn't exist
-                newSystems.append(system.identifier)
+                newSystems.append(system.systemIdentifier)
                 return newSystems
             } else {
                 return systems
@@ -359,12 +323,196 @@ public class PVEmulatorConfiguration : NSObject {
         })
     }
     
-    class func biosEntry(forMD5 md5: String) -> BIOSEntry? {
-        return biosEntries.first { $0.expectedMD5 == md5 }
+    class func biosEntry(forMD5 md5: String) -> PVBIOS? {
+        return RomDatabase.sharedInstance.all(PVBIOS.self, where: "expectedMD5", value: md5).first
     }
     
-    class func biosEntry(forFilename filename: String) -> BIOSEntry? {
-        return biosEntries.first { $0.filename == filename }
+    class func biosEntry(forFilename filename: String) -> PVBIOS? {
+        return biosEntries.first { $0.expectedFilename == filename }
+    }
+}
+
+public struct SystemPlistBIOSEntry : Codable {
+    var Description : String
+    var MD5 : String
+    var Name : String
+    var Size : Int
+    var Optional : Bool?
+}
+
+public struct ControlGroupButton : Codable {
+    let PVControlType : String
+    let PVControlTitle : String
+    let PVControlFrame : String
+}
+
+public struct ControlLayoutEntry : Codable {
+    let PVControlType : String
+    let PVControlSize : String
+    let PVControlerTitle : String?
+    let PVGroupedButtons : [ControlGroupButton]?
+    
+    private enum CodingKeys: String, CodingKey {
+        case PVControlType
+        case PVControlSize
+        case PVControlerTitle
+        case PVGroupedButtons
+    }
+}
+
+public extension ControlLayoutEntry {
+    public var dictionaryValue : [String:Any] {
+        do {
+            let data = try JSONEncoder().encode(self)
+            let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:Any]
+            return dictionary!
+        } catch {
+            fatalError("Bad serialzied data")
+        }
+    }
+}
+
+public struct SytemPlistEntry: Codable {
+    var PVSystemIdentifier : String
+    var PVDatabaseID: String
+    var PVRequiresBIOS : Bool?
+    var PVManufacturer : String
+    var PVBit : String
+    var PVReleaseYear : String
+    var PVSystemName : String
+    var PVSystemShortName : String
+    var PVBiosNames : [SystemPlistBIOSEntry]?
+    var PVSupportedExtensions : [String]
+    var PVControlLayout : [ControlLayoutEntry]
+    var PVUsesCDs : Bool?
+ 
+//    private enum CodingKeys: String, CodingKey {
+//        case PVSystemIdentifier
+//        case PVDatabaseID
+//        case PVRequiresBIOS
+//        case PVManufacturer
+//        case PVBit
+//        case PVReleaseYear
+//        case PVSystemName
+//        case PVSystemShortName
+//        case PVBiosNames
+//        case PVSupportedExtensions
+//        case PVControlLayout
+//        case PVUsesCDs
+//    }
+}
+
+public struct ClassInfo : CustomStringConvertible, Equatable {
+    let classObject: AnyClass
+    let className: String
+    let bundle: Bundle
+    
+    init?(_ classObject: AnyClass?) {
+        guard let classObject = classObject else { return nil }
+        
+        self.classObject = classObject
+        
+        let cName = class_getName(classObject)
+        self.className = String(cString: cName)
+        self.bundle = Bundle(for: classObject)
+    }
+    
+    var superclassInfo: ClassInfo? {
+        let superclassObject: AnyClass? = class_getSuperclass(self.classObject)
+        return ClassInfo(superclassObject)
+    }
+    
+    public var description: String {
+        return self.className
+    }
+    
+    public static func ==(lhs: ClassInfo, rhs: ClassInfo) -> Bool {
+        return lhs.className == rhs.className
+    }
+}
+
+// MARK: - System Scanner
+public extension PVEmulatorConfiguration {
+    static var coreClasses : [ClassInfo] {
+        let motherClassInfo = ClassInfo(PVEmulatorCore.self)!
+        var subclassList = [ClassInfo]()
+        
+        var count = UInt32(0)
+        let classList = objc_copyClassList(&count)!
+        
+        for i in 0..<Int(count) {
+            if let classInfo = ClassInfo(classList[i]),
+                let superclassInfo = classInfo.superclassInfo,
+                superclassInfo == motherClassInfo
+            {
+                subclassList.append(classInfo)
+            }
+        }
+
+        return subclassList
+    }
+    
+    class func updateSystems(fromPlist plists : [URL]) {
+        typealias SystemPlistEntries = [SytemPlistEntry]
+        let database = RomDatabase.sharedInstance
+        
+        plists.forEach { plist in
+            do {
+                let data = try Data(contentsOf: plist)
+                let decoder = PropertyListDecoder()
+                let systems : SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
+                
+                systems?.forEach { system in
+                    if let existingSystem = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
+                        try! database.writeTransaction {
+                            setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
+                        }
+                    } else {
+                        let newSystem = PVSystem()
+                        newSystem.systemIdentifier = system.PVSystemIdentifier
+                        setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
+                        do {
+                            try database.add(object: newSystem, update: true)
+                        } catch {
+                            ELOG("Failed to make new system: \(error)")
+                        }
+                    }
+
+                }
+            } catch {
+                // Handle error
+                ELOG("Failed to parse plist \(plist.path) : \(error)")
+            }
+        }
+    }
+    
+    class func setPropertiesTo(pvSystem : PVSystem, fromSystemPlistEntry system : SytemPlistEntry) {
+        pvSystem.openvgDatabaseID = Int(system.PVDatabaseID)!
+        pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
+        pvSystem.manufacturer = system.PVManufacturer
+        pvSystem.bit = Int(system.PVBit)!
+        pvSystem.releaseYear = Int(system.PVReleaseYear)!
+        pvSystem.name = system.PVSystemName
+        pvSystem.shortName = system.PVSystemShortName
+        pvSystem.controllerLayout = system.PVControlLayout
+        pvSystem.usesCDs = system.PVUsesCDs ?? false
+        
+        // Iterate extensions and add to Realm object
+        pvSystem.supportedExtensions = List<String>()
+        system.PVSupportedExtensions.forEach { pvSystem.supportedExtensions.append($0) }
+        
+        if let bioses = system.PVBiosNames?.map({ (entry) -> PVBIOS in
+            let newBIOS = PVBIOS()
+            newBIOS.descriptionText = entry.Description
+            newBIOS.expectedMD5 = entry.MD5
+            newBIOS.expectedFilename = entry.Name
+            newBIOS.expectedSize = entry.Size
+            newBIOS.optional = entry.Optional ?? false
+            return newBIOS
+        }) {
+            pvSystem.bioses.removeAll()
+            bioses.forEach { pvSystem.bioses.append($0) }
+        }
     }
 }
 
@@ -372,8 +520,9 @@ public class PVEmulatorConfiguration : NSObject {
 public extension PVEmulatorConfiguration {
     
     @objc
-    class func system(forIdentifier systemID: String) -> SystemDictionary? {
-        return systems.first{ $0.identifier == systemID }
+    class func system(forIdentifier systemID: String) -> PVSystem? {
+        let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID)
+        return system
     }
     
     @objc
@@ -386,8 +535,7 @@ public extension PVEmulatorConfiguration {
         return system(forIdentifier: systemID)?.shortName
     }
     
-    @objc
-    class func controllerLayout(forSystemIdentifier systemID: String) -> [[String: Any]]? {
+    class func controllerLayout(forSystemIdentifier systemID: String) -> [ControlLayoutEntry]? {
         return system(forIdentifier: systemID)?.controllerLayout
     }
     
@@ -400,8 +548,12 @@ public extension PVEmulatorConfiguration {
         return biosPath(forSystemIdentifier: game.systemIdentifier)
     }
     
-    class func biosEntries(forSystemIdentifier systemID: String) -> [BIOSEntry]? {
-        return system(forIdentifier: systemID)?.bioses
+    class func biosEntries(forSystemIdentifier systemID: String) -> [PVBIOS]? {
+        if let bioses = system(forIdentifier: systemID)?.bioses {
+            return Array(bioses)
+        } else {
+            return nil
+        }
     }
     
     class func requiresBIOS(forSystemIdentifier systemID: String) -> Bool {
@@ -410,13 +562,17 @@ public extension PVEmulatorConfiguration {
     
     @objc
     class func fileExtensions(forSystemIdentifier systemID: String) -> [String]? {
-        return system(forIdentifier: systemID)?.supportedExtensions
+        if let extensions = system(forIdentifier: systemID)?.supportedExtensions {
+            return Array(extensions)
+        } else {
+            return nil
+        }
     }
 }
 
 // MARK: - System queries Swift specific
 public extension PVEmulatorConfiguration {
-    class func system(forIdentifier systemID: SystemIdentifier) -> SystemDictionary? {
+    class func system(forIdentifier systemID: SystemIdentifier) -> PVSystem? {
         return system(forIdentifier: systemID.rawValue)
     }
     
@@ -428,7 +584,7 @@ public extension PVEmulatorConfiguration {
         return shortName(forSystemIdentifier: systemID.rawValue)
     }
     
-    class func controllerLayout(forSystemIdentifier systemID: SystemIdentifier) -> [[String: Any]]? {
+    class func controllerLayout(forSystemIdentifier systemID: SystemIdentifier) -> [ControlLayoutEntry]? {
         return controllerLayout(forSystemIdentifier: systemID.rawValue)
     }
     
@@ -436,7 +592,7 @@ public extension PVEmulatorConfiguration {
         return biosPath(forSystemIdentifier: systemID.rawValue)
     }
     
-    class func biosEntries(forSystemIdentifier systemID: SystemIdentifier) -> [BIOSEntry]? {
+    class func biosEntries(forSystemIdentifier systemID: SystemIdentifier) -> [PVBIOS]? {
         return biosEntries(forSystemIdentifier: systemID.rawValue)
     }
     

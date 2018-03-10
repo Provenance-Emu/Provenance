@@ -222,6 +222,7 @@
 		B37EFF991C72F48C00857158 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B3882C151DED27BC007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
+		B39E8CB62053B53100380DCD /* Systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Systems.plist */; };
 		B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8561DECE9D800602746 /* PVSupport.framework */; };
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B85A1DECEA0200602746 /* PVN64SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1581,6 +1582,7 @@
 		B37EFF381C72F43300857158 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64Plus.h; sourceTree = "<group>"; };
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B39E8CB52053B53100380DCD /* Systems.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Systems.plist; sourceTree = "<group>"; };
 		B3B3B8561DECE9D800602746 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusRspHLE.h; sourceTree = "<group>"; };
@@ -2334,6 +2336,7 @@
 			children = (
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
+				B39E8CB52053B53100380DCD /* Systems.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -5455,6 +5458,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3BDEC901DED6091002BD7A4 /* mupen64plus.ini in Resources */,
+				B39E8CB62053B53100380DCD /* Systems.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

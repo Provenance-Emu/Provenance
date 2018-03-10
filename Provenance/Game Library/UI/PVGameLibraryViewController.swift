@@ -121,7 +121,23 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         // A hack to make sure the main thread instance lives first
         let _ = RomDatabase.sharedInstance
 
+        initSystemPlists()
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
+    }
+    
+    func initSystemPlists() {
+        // Scane all subclasses of  PVEmulator core, and get their metadata
+        // like their subclass name and the bundle the belong to
+        let coreClasses = PVEmulatorConfiguration.coreClasses
+        var plists = coreClasses.flatMap { (classInfo) -> URL? in
+            return classInfo.bundle.url(forResource: "Systems", withExtension: "plist")
+        }
+        
+        if let mainSystemPlist = Bundle.main.url(forResource: "Systems", withExtension: "plist") {
+            plists.append(mainSystemPlist)
+        }
+        
+        PVEmulatorConfiguration.updateSystems(fromPlist: plists)
     }
     
     #if os(iOS)

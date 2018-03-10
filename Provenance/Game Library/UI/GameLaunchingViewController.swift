@@ -50,7 +50,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                 biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
             } catch {
                 try? FileManager.default.createDirectory(at: system.biosPath, withIntermediateDirectories: true, attributes: nil)
-                let biosFiles = biosEntries.map { return $0.filename }.joined(separator: ", ")
+                let biosFiles = biosEntries.map { return $0.expectedFilename }.joined(separator: ", ")
                 
                 let documentsPath = PVEmulatorConfiguration.documentsPath.path
                 let biosDirectory  = system.biosPath.path.replacingOccurrences(of: documentsPath, with: "")
@@ -72,7 +72,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             let canLoad = biosEntries.all {
                 
                 // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
-                if !biosPathContents.contains($0.filename) && !$0.optional {
+                if !biosPathContents.contains($0.expectedFilename) && !$0.optional {
                     // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
                     
                     // 1 - Lazily generate the hashes of files in the BIOS directory
@@ -96,28 +96,28 @@ extension GameLaunchingViewController where Self : UIViewController {
                         // Rename the file to what we expected
                         do {
                             let from = system.biosPath.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
-                            let to = system.biosPath.appendingPathComponent($0.filename, isDirectory: false)
+                            let to = system.biosPath.appendingPathComponent($0.expectedFilename, isDirectory: false)
                             try FileManager.default.moveItem(at: from, to: to)
                             // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
-                            ILOG("Rename file \(filenameOfFoundFile) to \($0.filename) because it matched by MD5 \($0.expectedMD5)")
+                            ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5)")
                             return true
                         } catch {
-                            ELOG("Failed to rename \(filenameOfFoundFile) to \($0.filename)\n\(error.localizedDescription)")
+                            ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
                             // Since we couldn't rename, mark this as a false
-                            missingBIOSES.append($0.filename)
+                            missingBIOSES.append($0.expectedFilename)
                             return false
                         }
                     } else {
                         // No MD5 matches either
-                        missingBIOSES.append($0.filename)
+                        missingBIOSES.append($0.expectedFilename)
                         return false
                     }
                 } else {
                     // Not as important, but log if MD5 is mismatched.
                     // Cores care about filenames for some reason, not MD5s
-                    let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosPath.appendingPathComponent($0.filename, isDirectory: false).path, fromOffset:0) ?? ""
+                    let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosPath.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset:0) ?? ""
                     if fileMD5 != $0.expectedMD5.uppercased() {
-                        WLOG("MD5 hash for \($0.filename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
+                        WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
                     }
                     return true
                 }
