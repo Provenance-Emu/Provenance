@@ -4,8 +4,8 @@ An iOS & tvOS Frontend for Multiple Emulators
 ![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
 
 
-### Building Provenance
-[See the instructions on the wiki](https://github.com/jasarien/Provenance/wiki/Building-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
+### Installation
+[See the instructions on the Wiki](https://github.com/jasarien/Provenance/wiki/Installing-Provenance) and follow them _to the letter_. Any issues raised that clearly demonstrate that the instructions haven't been followed will be closed.
 
 
 ### Why 'Provenance'?
@@ -35,7 +35,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - PC-FX
 - Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
-  - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Famicom-Disk-System-Instructions))
+  - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-Famicom-Disk-System))
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
   - Game Boy / Game Boy Color 
   - Game Boy Advance (GBA)
@@ -45,13 +45,13 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - SG-1000
   - Master System
   - Genesis / Mega Drive
-  - CD / MegaCD ([See Wiki](https://github.com/jasarien/Provenance/wiki/Sega-MegaCD-Instructions))
+  - CD / MegaCD ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-Sega-CD-MegaCD))
   - Game Gear
   - 32X
 - SNK
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
-  - PlayStation (PSX/PS1) ([See Wiki](https://github.com/jasarien/Provenance/wiki/Playstation-Instructions))
+  - PlayStation (PSX/PS1) ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-PlayStation))
 
 
 ### Features
