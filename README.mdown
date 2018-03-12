@@ -35,7 +35,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - PC-FX
 - Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
-  - Famicom Disk System ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-Famicom-Disk-System))
+  - Famicom Disk System ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-Famicom-Disk-System))
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
   - Game Boy / Game Boy Color 
   - Game Boy Advance (GBA)
@@ -45,20 +45,20 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - SG-1000
   - Master System
   - Genesis / Mega Drive
-  - CD / MegaCD ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-Sega-CD-MegaCD))
+  - CD / MegaCD ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-Sega-CD-MegaCD))
   - Game Gear
   - 32X
 - SNK
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
-  - PlayStation (PSX/PS1) ([See Wiki](https://github.com/jasarien/Provenance/wiki/Instructions:-PlayStation))
+  - PlayStation (PSX/PS1) ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-PlayStation))
 
 
 ### Features
 
 - Very Accurate, Full Speed Emulation
 - Stereo Sound
-- Save States (Save Anywhere Game Freezing)
+- Save States (Save Anywhere a.k.a. _Game Freezing_)
 - Battery Saves (Native Game Saves)
 - Adjustable Opacity for Touchscreen Overlay Controls
 - [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
@@ -66,7 +66,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
 - Portrait and Landscape Orientation
 - Local Multiplayer via External Controllers
 - Automatic ROM Matching Pulls Game Name, Cover Art and Additional Meta Data via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
-- Custom Cover Art and Game Name Replacement
+- ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/jasarien/Provenance/wiki/Customizing-ROMs))
 - Multiple Options to for Managing ROMs, Game Saves and Cover Art:
   - Import:
     - _"Copy to…"_ from Other Apps
@@ -78,7 +78,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
   - Taptic Engine Button Feedback (iPhone 7 and later)
 - tvOS 9+ (Apple TV)
-    - TopShelf Support ([See Instructions](https://github.com/jasarien/Provenance/pull/242))
+    - TopShelf Support ([Instructions](https://github.com/jasarien/Provenance/pull/242))
 
 _Feel free to Suggest/Request Features or Report Bugs using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates._
 
