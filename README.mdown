@@ -78,7 +78,7 @@ I was looking for a word with a similar meaning to Genesis and came across Prove
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
   - Taptic Engine Button Feedback (iPhone 7 and later)
 - tvOS 9+ (Apple TV)
-    - TopShelf Support ([Instructions](https://github.com/jasarien/Provenance/pull/242))
+    - TopShelf Support ([Instructions](https://github.com/jasarien/Provenance/wiki/Setup-TopShelf-&-Spotlight))
 
 _Feel free to Suggest/Request Features or Report Bugs using the Issues page, but please read all issues (open *and* closed) before raising new ones to avoid duplicates._
 
