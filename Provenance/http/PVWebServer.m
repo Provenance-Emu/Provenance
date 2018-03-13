@@ -163,7 +163,8 @@
     NSDictionary *webDavSeverOptions = @{
                                          GCDWebServerOption_AutomaticallySuspendInBackground : @(NO),
                                          GCDWebServerOption_ServerName : @"Provenance",
-                                         GCDWebServerOption_BonjourName : @"ProvenanceWebDav",
+                                         GCDWebServerOption_BonjourName : @"Provenance",
+                                         GCDWebServerOption_BonjourType : @"_webdav._tcp",
                                          GCDWebServerOption_Port : @(webDavPort)
                                          };
     NSError *error;
@@ -290,6 +291,11 @@
 {
     NSLog(@"[CREATE] %@", path);
 }
+
+- (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
+    ILOG(@"Bonjor register completed for URL: %@", server.bonjourServerURL.absoluteString);
+}
+
 
 #pragma mark - GCDWebDAVServerDelegate
 /**
