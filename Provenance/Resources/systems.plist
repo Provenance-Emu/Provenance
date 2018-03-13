@@ -147,9 +147,9 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.psx</string>
 		<key>PVSystemShortName</key>
-		<string>PS1</string>
+		<string>PSX</string>
 		<key>PVSystemName</key>
-		<string>Playstation</string>
+		<string>PlayStation</string>
 		<key>PVManufacturer</key>
 		<string>Sony</string>
 		<key>PVBit</key>
@@ -1274,7 +1274,7 @@
 		<key>PVSystemShortName</key>
 		<string>GBA</string>
 		<key>PVSystemName</key>
-		<string>Gameboy Advance</string>
+		<string>Game Boy Advance</string>
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVBit</key>
@@ -1360,7 +1360,7 @@
 		<key>PVSystemShortName</key>
 		<string>GB</string>
 		<key>PVSystemName</key>
-		<string>Gameboy</string>
+		<string>Game Boy</string>
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVBit</key>
@@ -1430,7 +1430,7 @@
 		<key>PVSystemShortName</key>
 		<string>GBC</string>
 		<key>PVSystemName</key>
-		<string>Gameboy Color</string>
+		<string>Game Boy Color</string>
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVBit</key>
