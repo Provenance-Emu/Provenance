@@ -28,7 +28,7 @@ public enum ScreenType : String {
     dynamic var usesCDs : Bool = false
     dynamic var portableSystem : Bool = false
     dynamic var supportsRumble : Bool = false
-    fileprivate(set) dynamic var _screenType : String = ScreenType.unknown.rawValue
+    dynamic var _screenType : String = ScreenType.unknown.rawValue
     
     var supportedExtensions = List<String>()
     
@@ -86,9 +86,9 @@ public extension PVSystem {
             return ScreenType(rawValue: _screenType)!
         }
         set {
-            try? realm?.write {
+//            try? realm?.write {
                 _screenType = newValue.rawValue
-            }
+//            }
         }
     }
     

@@ -25,7 +25,7 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var file : PVFile!
     dynamic var customArtworkURL : String   = ""
     dynamic var originalArtworkURL : String = ""
-    dynamic var originalArtworkFile : PVFile?
+    dynamic var originalArtworkFile : PVImageFile?
 
     dynamic var requiresSync : Bool         = true
     dynamic var isFavorite : Bool           = false
@@ -42,6 +42,7 @@ protocol PVLibraryEntry where Self: Object {}
     /* Links to other objects */
     var saveStates = List<PVSaveState>()
     var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
+    var screenShots = List<PVImageFile>()
     
     /* Tracking data */
     dynamic var lastPlayed : Date?

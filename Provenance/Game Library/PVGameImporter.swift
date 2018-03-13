@@ -1039,7 +1039,7 @@ extension PVGameImporter {
             do {
                 let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
                 try RomDatabase.sharedInstance.writeTransaction {
-                    let file = PVFile(withURL: localURL)
+                    let file = PVImageFile(withURL: localURL)
                     game.originalArtworkFile = file
                 }
             } catch { ELOG("\(error.localizedDescription)") }

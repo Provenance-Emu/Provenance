@@ -58,8 +58,53 @@ public enum RelativeRoot : Int {
     }
 }
 
+@objcMembers public class PVImageFile : PVFile {
+    @objc private dynamic var _cgsize : String!
+    @objc dynamic var ratio : Float = 0.0
+    @objc dynamic var width : Int = 0
+    @objc dynamic var height : Int = 0
+    @objc dynamic var layout : String = ""
+    
+    public convenience init(withPartialPath partialPath : String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+        self.init()
+        self.relativeRoot = relativeRoot
+        self.partialPath = partialPath
+        calculateSizeData()
+    }
+    
+    public convenience init(withURL url : URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+        self.init()
+        self.relativeRoot = relativeRoot
+        self.partialPath = relativeRoot.createRelativePath(fromURL: url)
+        calculateSizeData()
+    }
+    
+    private func calculateSizeData() {
+        guard let image = UIImage(contentsOfFile: url.path) else {
+            ELOG("Failed to create UIImage from path <\(url.path)>")
+            return
+        }
+        
+        let size  = image.size
+        cgsize = size
+    }
+    
+    private(set) public var cgsize : CGSize {
+        get {
+            return CGSizeFromString(_cgsize)
+        }
+        set {
+            width = Int(newValue.width)
+            height = Int(newValue.height)
+            layout = newValue.width > newValue.height ? "landscape" : "portrait"
+            ratio = Float(max(newValue.width, newValue.height) / min(newValue.width, newValue.height))
+            _cgsize = NSStringFromCGSize(newValue)
+        }
+    }
+}
+
 @objcMembers public class PVFile : Object, Codable {
-    @objc private dynamic var partialPath : String = ""
+    @objc fileprivate dynamic var partialPath : String = ""
     @objc private dynamic var md5Cache : String?
     @objc private(set) public dynamic var createdDate = Date()
     @objc private dynamic var _relativeRoot : Int = RelativeRoot.documents.rawValue
