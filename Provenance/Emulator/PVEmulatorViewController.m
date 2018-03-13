@@ -134,7 +134,7 @@ void uncaughtExceptionHandler(NSException *exception)
 												 name:PVControllerManagerControllerReassignedNotification
 											   object:nil];
 
-	self.emulatorCore = [PVCoreFactory emulatorCoreForSystemIdentifier:[self.game systemIdentifier]];
+    self.emulatorCore = [PVCoreFactory emulatorCoreForGame:self.game];
     self.emulatorCore.audioDelegate = self;
     [self.emulatorCore setSaveStatesPath:[self saveStatePath]];
 	[self.emulatorCore setBatterySavesPath:[self batterySavesPath]];

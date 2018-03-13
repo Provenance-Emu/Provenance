@@ -8,69 +8,31 @@
 import Foundation
 
 import PVSupport
-import PVGB
-import PVGBA
-import PVFCEU
-import PVSNES
-import PVStella
-import PVGenesis
-import ProSystem
-import PicoDrive
-import PVAtari800
-import PVPokeMini
-import PVMednafen
-import PVAtari800
-import PVMupen64Plus
 
 public final class PVCoreFactory : NSObject {
-    
     @objc
-    class func emulatorCore(forGame game: PVGame) -> PVEmulatorCore? {
-        return emulatorCore(forSystemIdentifier:game.systemIdentifier)
-    }
-    
-    @objc
-    class func emulatorCore(forSystemIdentifier systemID: String) -> PVEmulatorCore? {
-        guard let systemID = SystemIdentifier(rawValue: systemID) else {
-            ELOG("Fail")
+    class func emulatorCore(forGame game: PVGame) ->  PVEmulatorCore? {
+        guard let system = game.system else {
+            ELOG("No system for game \(game.title)")
             return nil
         }
-        return emulatorCore(forSystemIdentifier:systemID)
-    }
-    
-    class func emulatorCore(forSystemIdentifier systemID: SystemIdentifier) ->  PVEmulatorCore {
         
-        let core : PVEmulatorCore
-
-        switch systemID {
-        case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
-            core = PVGenesisEmulatorCore()
-        case .SNES:
-            core = PVSNESEmulatorCore()
-        case .GBA:
-            core = PVGBAEmulatorCore()
-        case .GB, .GBC:
-            core = PVGBEmulatorCore()
-        case .NES, .FDS:
-            core = PVFCEUEmulatorCore()
-        case .Atari2600:
-            core = PVStellaGameCore()
-        case .Atari5200:
-            core = ATR800GameCore()
-        case .Atari7800:
-            core = PVProSystemGameCore()
-        case .Sega32X:
-            core = PicodriveGameCore()
-        case .PokemonMini:
-            core = PVPokeMiniEmulatorCore()
-        case .PSX, .Lynx, .PCE, .PCECD, .NGP, .NGPC, .PCFX, .SGFX, .VirtualBoy, .WonderSwan, .WonderSwanColor:
-            core = MednafenGameCore()
-        case .N64:
-            core = MupenGameCore()
+        guard let core = system.cores.first else {
+            ELOG("No core for system \(system.identifier)")
+            return nil
         }
+        
+        guard let coreClass = NSClassFromString(core.principleClass) as? PVEmulatorCore.Type else {
+            ELOG("Couldn't get class for <\(core.principleClass)>")
+            return nil
+        }
+    
+        let emuCore = coreClass.init()
 
-        core.systemIdentifier = systemID.rawValue
-        return core
+        DLOG("Created core : <\(emuCore.debugDescription)>")
+        
+        emuCore.systemIdentifier = system.identifier
+        return emuCore
     }
     
     #if os(iOS)
