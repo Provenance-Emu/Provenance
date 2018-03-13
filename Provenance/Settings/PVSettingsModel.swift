@@ -118,9 +118,9 @@ public class PVSettingsModel: NSObject {
     }
     
     @objc
-    var iCadeControllerSetting: kICadeControllerSetting {
+    var myiCadeControllerSetting: iCadeControllerSetting {
         didSet {
-            UserDefaults.standard.set(iCadeControllerSetting.rawValue, forKey: kICadeControllerSettingKey)
+            UserDefaults.standard.set(myiCadeControllerSetting.rawValue, forKey: kICadeControllerSettingKey)
             UserDefaults.standard.synchronize()
         }
     }
@@ -172,7 +172,7 @@ public class PVSettingsModel: NSObject {
                                                   kImageSmoothingKey: false,
                                                   kCRTFilterKey: false,
                                                   kShowRecentGamesKey: true,
-                                                  kICadeControllerSettingKey: kICadeControllerSetting.iCadeControllerSettingDisabled.rawValue,
+                                                  kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
@@ -189,7 +189,7 @@ public class PVSettingsModel: NSObject {
         crtFilterEnabled = UserDefaults.standard.bool(forKey: kCRTFilterKey)
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
         let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
-        iCadeControllerSetting = kICadeControllerSetting(rawValue:UInt(iCade))!
+        myiCadeControllerSetting = iCadeControllerSetting(rawValue:Int(iCade))!
         volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
         showFPSCount = UserDefaults.standard.bool(forKey: kFPSCountKey)
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)

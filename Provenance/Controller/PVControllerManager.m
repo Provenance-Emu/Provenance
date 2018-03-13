@@ -58,7 +58,7 @@ NSString * const PVControllerManagerControllerReassignedNotification = @"PVContr
 {
     if (!self.iCadeController) {
         PVSettingsModel* settings = [PVSettingsModel sharedInstance];
-        self.iCadeController = kIcadeControllerSettingToPViCadeController(settings.iCadeControllerSetting);
+        self.iCadeController = iCadeControllerSettingToPViCadeController(settings.myiCadeControllerSetting);
         if( self.iCadeController ) {
             [self listenForICadeControllers];
         }

@@ -11,19 +11,19 @@
 #import "PViCadeSteelSeriesController.h"
 
 
-NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
+NSString* iCadeControllerSettingToString(iCadeControllerSetting value) {
     NSString* stringRepresentation = nil;
     switch (value) {
-        case kICadeControllerSettingDisabled:
+        case iCadeControllerSettingDisabled:
             stringRepresentation = @"Disabled";
             break;
-        case kICadeControllerSettingStandard:
+        case iCadeControllerSettingStandard:
             stringRepresentation = @"Standard Controller";
             break;
-        case kICadeControllerSetting8Bitdo:
+        case iCadeControllerSetting8Bitdo:
             stringRepresentation = @"8Bitdo Controller";
             break;
-        case kICadeControllerSettingSteelSeries:
+        case iCadeControllerSettingSteelSeries:
             stringRepresentation = @"SteelSeries Free Controller";
         default:
             break;
@@ -32,19 +32,19 @@ NSString* kIcadeControllerSettingToString(kICadeControllerSetting value) {
     return stringRepresentation;
 }
 
-PViCadeController* kIcadeControllerSettingToPViCadeController(kICadeControllerSetting value) {
+PViCadeController* iCadeControllerSettingToPViCadeController(iCadeControllerSetting value) {
     PViCadeController* controller = nil;
     switch (value) {
-        case kICadeControllerSettingDisabled:
+        case iCadeControllerSettingDisabled:
             controller = nil;
             break;
-        case kICadeControllerSettingStandard:
+        case iCadeControllerSettingStandard:
             controller = [[PViCadeController alloc] init];
             break;
-        case kICadeControllerSetting8Bitdo:
+        case iCadeControllerSetting8Bitdo:
             controller = [[PViCade8BitdoController alloc] init];
             break;
-        case kICadeControllerSettingSteelSeries:
+        case iCadeControllerSettingSteelSeries:
             controller = [[PViCadeSteelSeriesController alloc] init];
             break;
         default:

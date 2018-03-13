@@ -6,21 +6,16 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
-#ifndef Provenance_kICadeControllerSetting_h
-#define Provenance_kICadeControllerSetting_h
-
 #import "PViCadeController.h"
 
-typedef NS_ENUM(NSUInteger, kICadeControllerSetting) {
-    kICadeControllerSettingDisabled,
-    kICadeControllerSettingStandard,
-    kICadeControllerSetting8Bitdo,
-    kICadeControllerSettingSteelSeries,
-    kICadeControllerSetting_Count
+typedef NS_ENUM(NSInteger, iCadeControllerSetting) {
+    iCadeControllerSettingDisabled,
+    iCadeControllerSettingStandard,
+    iCadeControllerSetting8Bitdo,
+    iCadeControllerSettingSteelSeries,
+    iCadeControllerSettingCount
 };
 
-NSString*_Nullable kIcadeControllerSettingToString(kICadeControllerSetting value);
+NSString*_Nullable iCadeControllerSettingToString(iCadeControllerSetting value);
 
-PViCadeController*_Nullable kIcadeControllerSettingToPViCadeController(kICadeControllerSetting value);
-
-#endif
+PViCadeController*_Nullable iCadeControllerSettingToPViCadeController(iCadeControllerSetting value);

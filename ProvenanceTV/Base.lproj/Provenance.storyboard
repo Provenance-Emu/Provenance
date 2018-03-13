@@ -924,7 +924,7 @@ This is a test</string>
         <!--Vi Cade Controller View Controller-->
         <scene sceneID="tdE-E6-bVa">
             <objects>
-                <tableViewController id="zvw-rB-bmT" customClass="PViCadeControllerViewController" sceneMemberID="viewController">
+                <tableViewController id="zvw-rB-bmT" customClass="PViCadeControllerViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="Cmj-nd-Q5z">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

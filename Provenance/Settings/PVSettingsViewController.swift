@@ -105,7 +105,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let settings = PVSettingsModel.sharedInstance()
-        iCadeControllerSetting.text = kIcadeControllerSettingToString(settings.iCadeControllerSetting)
+        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         
         if #available(iOS 9.0, *) {
             themeValueLabel.text = settings.theme.rawValue

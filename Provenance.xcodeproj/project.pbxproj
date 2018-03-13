@@ -630,7 +630,7 @@
 		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CB85C71E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.m */; };
-		B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */; };
+		B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.swift */; };
 		B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */; };
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -690,7 +690,7 @@
 		E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */ = {isa = PBXBuildFile; fileRef = E41448991B34C48D0056D80A /* PViCadeGamepadDirectionPad.m */; };
 		E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */ = {isa = PBXBuildFile; fileRef = E414489C1B34C4E50056D80A /* PViCadeInputAxis.m */; };
 		E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F936991B50829F009403C5 /* PViCade8BitdoController.m */; };
-		E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */; };
+		E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.swift */; };
 		E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */; };
 		F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 /* End PBXBuildFile section */
@@ -1430,8 +1430,7 @@
 		E414489C1B34C4E50056D80A /* PViCadeInputAxis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeInputAxis.m; sourceTree = "<group>"; };
 		E4F936981B50829F009403C5 /* PViCade8BitdoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCade8BitdoController.h; sourceTree = "<group>"; };
 		E4F936991B50829F009403C5 /* PViCade8BitdoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCade8BitdoController.m; sourceTree = "<group>"; };
-		E4F9369B1B50BF3B009403C5 /* PViCadeControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeControllerViewController.h; sourceTree = "<group>"; };
-		E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeControllerViewController.m; sourceTree = "<group>"; };
+		E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PViCadeControllerViewController.swift; sourceTree = "<group>"; };
 		E4F9369E1B50C0D8009403C5 /* kICadeControllerSetting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = kICadeControllerSetting.h; sourceTree = "<group>"; };
 		E4F9369F1B50C95E009403C5 /* kICadeControllerSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = kICadeControllerSetting.m; sourceTree = "<group>"; };
 		F43211981BFB6AB300387909 /* PViCadeSteelSeriesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeSteelSeriesController.h; sourceTree = "<group>"; };
@@ -2739,8 +2738,7 @@
 		E41448871B3125D90056D80A /* iCade */ = {
 			isa = PBXGroup;
 			children = (
-				E4F9369B1B50BF3B009403C5 /* PViCadeControllerViewController.h */,
-				E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.m */,
+				E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.swift */,
 				E41448881B3125D90056D80A /* iCadeReaderView.h */,
 				E41448891B3125D90056D80A /* iCadeReaderView.m */,
 				E414488A1B3125D90056D80A /* iCadeState.h */,
@@ -3168,7 +3166,7 @@
 				B349AEB71E9ABCF900ACD416 /* ItemNameUtils.cpp in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
 				B349AE491E9ABCF900ACD416 /* 7zCrcOpt.c in Sources */,
-				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.m in Sources */,
+				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.swift in Sources */,
 				B349AE431E9ABCF900ACD416 /* 7zBuf.c in Sources */,
 				B349AF311E9ABCF900ACD416 /* NewHandler.cpp in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
@@ -3527,7 +3525,7 @@
 				B349AE8E1E9ABCF900ACD416 /* XzEnc.c in Sources */,
 				B349AED81E9ABCF900ACD416 /* MethodId.cpp in Sources */,
 				B349AF1A1E9ABCF900ACD416 /* MyAes.cpp in Sources */,
-				B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.m in Sources */,
+				B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.swift in Sources */,
 				B349AF181E9ABCF900ACD416 /* 7zAesRegister.cpp in Sources */,
 				B349AE581E9ABCF900ACD416 /* Bcj2.c in Sources */,
 				B349AF0A1E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
