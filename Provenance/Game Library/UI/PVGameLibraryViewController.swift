@@ -94,8 +94,20 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var renameTextField: UITextField?
     var gameToRename: PVGame?
     var gameForCustomArt: PVGame?
-    var gamesInSections = [String: [PVLibraryEntry]]()
-    var sectionInfo = [String]()
+    
+    var sectionTitles : [String] {
+        var sectionsTitles = [String]()
+        if !favoritesIsHidden {
+            sectionsTitles.append("Favorites")
+        }
+        if !recentGamesIsHidden {
+            sectionsTitles.append("Recently Played")
+        }
+        
+        sectionsTitles.append(contentsOf: systems.map {$0.name})
+        return sectionsTitles
+    }
+    
     var searchResults: Results<PVGame>?
     @IBOutlet weak var searchField: UITextField?
     var isInitialAppearance = false
@@ -148,12 +160,17 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+        
+        systemsToken?.invalidate()
+        recentGamesToken?.invalidate()
+        favoritesToken?.invalidate()
+        systemSectionsTokens.values.forEach{$0.invalidate()}
     }
 
     @objc func handleAppDidBecomeActive(_ note: Notification) {
         loadGameFromShortcut()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -167,8 +184,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleRefreshLibrary(_:)), name: NSNotification.Name.PVRefreshLibrary, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleTextFieldDidChange(_:)), name: .UITextFieldTextDidChange, object: searchField)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleArtworkUpdatedNotification(_:)), name: .ArtworkUpdatedNotification, object: nil)
 
         #if os(iOS)
         NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
@@ -252,11 +267,185 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             migrateLibrary()
         }
         else {
-            setUpGameLibrary()
+            registerForChange()
         }
         
         loadGameFromShortcut()
         becomeFirstResponder()
+    }
+    
+    var systems : Results<PVSystem>!
+    var favoriteGames : Results<PVGame>!
+    var recentGames : Results<PVRecentGame>!
+    
+    var systemsToken : NotificationToken?
+    var favoritesToken : NotificationToken?
+    var recentGamesToken : NotificationToken?
+    
+    var favoritesIsHidden = true
+    var recentGamesIsHidden = true
+    
+    var favoritesSection : Int {
+        return favoritesIsHidden ? -1 : 0
+    }
+    
+    var recentGamesSection : Int {
+        if recentGamesIsHidden {
+            return -1
+        } else {
+            return favoritesIsHidden ? 0 : 1
+        }
+    }
+    
+    var systemSectionsTokens = [String : NotificationToken]()
+    var systemsSectionOffset : Int {
+        return recentGamesSection + 1
+    }
+    
+    func addSectionToken(forSystem system : PVSystem) {
+        let newToken = system.games.observe {[unowned self] (changes: RealmCollectionChange<LinkingObjects<PVGame>>) in
+
+            
+            switch changes {
+            case .initial:
+                // New additions already handled by systems token
+//                guard let collectionView = self.collectionView else {
+//                    return
+//                }
+//                let systemsCount = self.systems.count
+//                if systemsCount > 0 {
+//                    let indexes = self.systemsSectionOffset..<(systemsCount + self.systemsSectionOffset)
+//                    let indexSet = IndexSet(indexes)
+//                    collectionView.insertSections(indexSet)
+//                }
+                break
+            case .update(_, let deletions, let insertions, let modifications):
+                // Query results have changed, so apply them to the UICollectionView
+                let indexOfSystem = (self.systems.index(of: system) ?? 0)!
+                let section = indexOfSystem + self.systemsSectionOffset
+                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+            }
+        }
+        
+        systemSectionsTokens[system.identifier] = newToken
+    }
+    
+    func registerForChange() {
+        systems = PVSystem.all.sorted(byKeyPath: #keyPath(PVSystem.identifier)).filter("games.@count > 0")
+        recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+        favoriteGames = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        
+        systemsToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
+            switch changes {
+            case .initial:
+                self.systems.forEach { system in
+                    self.addSectionToken(forSystem: system)
+                }
+                
+                // Results are now populated and can be accessed without blocking the UI
+                self.setUpGameLibrary()
+            case .update(_, let deletions, let insertions, let modifications):
+                guard let collectionView = self.collectionView else {return}
+                collectionView.performBatchUpdates({
+                    let insertIndexes = insertions.map{ $0 + self.systemsSectionOffset }
+                    collectionView.insertSections(IndexSet(insertIndexes))
+                    
+                    let delectIndexes = deletions.map{ $0 + self.systemsSectionOffset }
+                    collectionView.deleteSections(IndexSet(delectIndexes))
+                    // Not needed since we have watchers per section
+                    // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
+
+                }, completion: { (success) in
+                    
+                })
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+            }
+        }
+        
+        recentGamesToken = recentGames.observe { [unowned self] (changes: RealmCollectionChange) in
+            guard let collectionView = self.collectionView else { return }
+            
+            switch changes {
+            case .initial:
+                if !self.recentGames.isEmpty {
+                    self.recentGamesIsHidden = false
+                    let section = self.recentGamesSection
+                    collectionView.insertSections([section])
+                }
+            case .update(_, let deletions, let insertions, let modifications):
+                let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
+                let needsDelete = self.recentGames.isEmpty && !deletions.isEmpty
+
+                let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
+
+                if needsInsert {
+                    ILOG("Needs insert, recentGamesHidden - false")
+                    self.recentGamesIsHidden = false
+                }
+                
+                if needsDelete {
+                    ILOG("Needs delete, recentGamesHidden - true")
+                    self.recentGamesIsHidden = true
+                }
+                
+                // Query results have changed, so apply them to the UICollectionView
+                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+                self.recentGamesIsHidden = needsDelete
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+            }
+        }
+        
+        favoritesToken = favoriteGames.observe { [unowned self] (changes: RealmCollectionChange) in
+            guard let collectionView = self.collectionView else { return }
+            let section = 0
+            
+            switch changes {
+            case .initial:
+                if !self.favoriteGames.isEmpty {
+                    self.favoritesIsHidden = false
+                    collectionView.insertSections([section])
+                }
+            case .update(_, let deletions, let insertions, let modifications):
+                let needsInsert = self.favoritesIsHidden
+                let needsDelete = self.favoriteGames.isEmpty
+                self.favoritesIsHidden = needsDelete
+
+                // Query results have changed, so apply them to the UICollectionView
+                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+            case .error(let error):
+                // An error occurred while opening the Realm file on the background worker thread
+                fatalError("\(error)")
+            }
+        }
+    }
+    
+    func handleUpdate(forSection section : Int, deletions : [Int], insertions: [Int], modifications : [Int], needsInsert : Bool = false, needsDelete : Bool = false) {
+        guard let collectionView = collectionView else { return }
+        collectionView.performBatchUpdates({
+            if needsInsert {
+                ILOG("Inserting section \(section)")
+                collectionView.insertSections([section])
+            }
+            
+            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
+            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
+            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
+            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
+            
+            if needsDelete {
+                ILOG("Deleting section \(section)")
+                collectionView.deleteSections([section])
+            }
+        }, completion: { (completed) in
+            
+        })
     }
 
     func loadGameFromShortcut() {
@@ -276,10 +465,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
 
-        //    if (self.mustRefreshDataSource) {
-        fetchGames()
-        collectionView?.reloadData()
-        //    }
+        if (self.mustRefreshDataSource) {
+            fetchGames()
+            collectionView?.reloadData()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -558,7 +747,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         hud.hide(true)
         UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
-        setUpGameLibrary()
+        registerForChange()
         
         do {
             let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
@@ -612,7 +801,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             self.finishedImportingGame(withMD5: md5, modified: modified)
         }
         gameImporter.finishedArtworkHandler = {(_ url: String) -> Void in
-            self.finishedDownloadingArtwork(forURL: url)
         }
         
         do {
@@ -679,10 +867,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         watcher?.startMonitoring()
 		
         // Scan each Core direxctory and looks for ROMs in them
-        let systems = PVEmulatorConfiguration.availableSystemIdentifiers
+        let systems = PVSystem.all
         
-        systems.forEach { systemID in
-            let systemDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
+        systems.forEach { system in
+            let systemDir = system.romsDirectory
             //URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
             
             // Check if a folder actually exists, nothing to do if it doesn't
@@ -698,8 +886,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 return
             }
             
+            let systemRef = ThreadSafeReference(to: system)
+            
             gameImporter.serialImportQueue.async {
-                self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: systemID)
+                let realm = try! Realm()
+                guard let system = realm.resolve(systemRef) else {
+                    return // person was deleted
+                }
+                
+                self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
                 if let completionHandler = self.gameImporter.completionHandler {
                     DispatchQueue.main.async {
                         completionHandler(self.gameImporter.encounteredConflicts)
@@ -709,78 +904,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
     
-    
-    @objc func handleArtworkUpdatedNotification(_ notificaton : Notification) {
-        guard let gameMD5 = notificaton.userInfo?["gameMD5"] as? String else {
-            ELOG("No 'gameMD5 or game not found' entry in userInfo")
-            return
-        }
-        DispatchQueue.main.async {
-            let indexPaths = self.indexPathsForGame(withMD5Hash: gameMD5)
-            self.collectionView?.reloadItems(at: indexPaths)
-        }
-    }
-
     func fetchGames() {
         let database = RomDatabase.sharedInstance
         database.refresh()
-        
-        var allSortedGames = database.allGames(sortedByKeyPath: #keyPath(PVGame.title), ascending: true)
-
-        switch currentSort {
-        case .title:
-            break
-        case .importDate:
-            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.importDate), ascending: false)
-        case .lastPlayed:
-            allSortedGames = allSortedGames.sorted(byKeyPath: #keyPath(PVGame.lastPlayed), ascending: false)
-        }
-        
-        // Favorite Games
-        let favoriteGames : [PVGame] = allSortedGames.filter { (game) -> Bool in
-            return game.isFavorite
-        }
-        
-        // Recent games
-        var recentGames : [PVGame]?
-        if  PVSettingsModel.sharedInstance().showRecentGames {
-            let sorted: Results<PVRecentGame> = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
-            recentGames = Array(sorted).flatMap({ (recentGame) -> PVGame? in
-                return recentGame.game
-            })
-        }
-
-        // Games by system
-        var tempSections = [String: [PVLibraryEntry]]()
-        for game: PVGame in allSortedGames {
-            let systemID: String = game.systemIdentifier
-            var games = tempSections[systemID]
-            if games == nil {
-                games = [PVGame]()
-            }
-            games?.append(game)
-            tempSections[systemID] = games
-        }
-        
-        var sectionInfo = tempSections.keys.sorted()
-        // Check if recent games should be added to menu
-        if let recentGames = recentGames, !recentGames.isEmpty {
-            let key = "recent"
-            sectionInfo.insert(key, at: 0)
-            tempSections[key] = recentGames
-        }
-        
-        // Check if favorite games should be added to menu
-        if favoriteGames.count > 0 {
-            let key = "favorite"
-            sectionInfo.insert(key, at: 0)
-            tempSections[key] = favoriteGames
-        }
-        
-        // Set data source
-        gamesInSections = tempSections
-        self.sectionInfo = sectionInfo
         mustRefreshDataSource = false
     }
 
@@ -853,74 +979,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         //    }
     }
 
-    func finishedDownloadingArtwork(forURL url: String) {
-        if let indexPath: IndexPath = indexPathForGame(withURL: url) {
-            DispatchQueue.main.async {
-                self.collectionView?.reloadItems(at: [indexPath])
-            }
-        }
-    }
-
-    func indexPathsForGame(withMD5Hash md5Hash: String) -> [IndexPath] {
-        if let searchResults = searchResults {
-            return searchResults.enumerated().flatMap({ (arg) -> IndexPath? in
-                let (row, game) = arg
-                return game.md5Hash == md5Hash ? IndexPath(row: row, section: 0) : nil
-            })
-        }
-        else {
-            return Array(sectionInfo.enumerated().flatMap({ (arg) -> [IndexPath]? in
-                let (sectionIndex, sectionKey) = arg
-                return gamesInSections[sectionKey]?.enumerated().flatMap({ (arg) -> IndexPath? in
-                    let (gameIndex, game) = arg
-
-                    if let game = game as? PVGame {
-                        return game.md5Hash == md5Hash ? IndexPath(row: gameIndex, section: sectionIndex) : nil
-                    } else if let recentGame = game as? PVRecentGame, let game = recentGame.game {
-                        return game.md5Hash == md5Hash ? IndexPath(row: gameIndex, section: sectionIndex) : nil
-                    } else {
-                        return nil
-                    }
-                })
-            }).joined())
-        }
-    }
-
-    func indexPathForGame(withURL url: String) -> IndexPath? {
-        var indexPath: IndexPath? = nil
-        var section: Int = NSNotFound
-        var item: Int = NSNotFound
-        
-        _ = sectionInfo.enumerated().first(where: { (arg) -> Bool in
-            let (sectionIndex, sectionKey) = arg
-            let games = self.gamesInSections[sectionKey]
-            
-            var gameIndex: Int?
-            let foundGame = games?.enumerated().first(where: { (arg) -> Bool in
-                    let (index, game) = arg
-                    if let game = game as? PVGame, (game.originalArtworkURL == url) || (game.customArtworkURL == url) {
-                        gameIndex = index
-                        return true
-                    } else {
-                        return false
-                    }
-            })
-                
-            if foundGame != nil {
-                section = sectionIndex
-                item = gameIndex!
-                return true
-            }
-            
-            return false
-        })
-        
-        if (section != NSNotFound) && (item != NSNotFound) {
-            indexPath = IndexPath(item: item, section: section)
-        }
-        return indexPath
-    }
-
     @objc func handleCacheEmptied(_ notification: NotificationCenter) {
 
         DispatchQueue.global(qos: .default).async(execute: {() -> Void in
@@ -932,8 +990,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                     for game: PVGame in database.allGames {
                         game.customArtworkURL = ""
                         
-                        let originalArtworkURL: String = game.originalArtworkURL
-                        self.gameImporter?.getArtworkFromURL(originalArtworkURL)
+                        self.gameImporter?.getArtwork(forGame: game)
                     }
                 }
             } catch {
@@ -1047,14 +1104,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                         game.customArtworkURL = ""
                     }
 
-                    let originalArtworkURL: String = game.originalArtworkURL
+                    let gameRef = ThreadSafeReference(to: game)
+
                     DispatchQueue.global(qos: .default).async {
-                        self.gameImporter?.getArtworkFromURL(originalArtworkURL)
-                        DispatchQueue.main.async {
-                            let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
-                            self.fetchGames()
-                            self.collectionView?.reloadItems(at: indexPaths)
+                        let realm = try! Realm()
+                        guard let game = realm.resolve(gameRef) else {
+                            return // person was deleted
                         }
+
+                        self.gameImporter?.getArtwork(forGame: game)
                     }
                 }))
             }
@@ -1193,7 +1251,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func delete(game: PVGame) {
         let romURL = PVEmulatorConfiguration.path(forGame: game)
-        let indexPaths = indexPathsForGame(withMD5Hash: game.md5Hash)
         
         if !game.customArtworkURL.isEmpty {
             do {
@@ -1230,26 +1287,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
         #endif
         
-        deleteRelatedFilesGame(game)
-        try? RomDatabase.sharedInstance.delete(object: game)
-        let oldSectionInfo = sectionInfo
-        let oldGamesInSections = gamesInSections
-        fetchGames()
+        game.saveStates.forEach { try! $0.delete() }
+        game.recentPlays.forEach { try! $0.delete() }
         
-        DispatchQueue.main.async {
-            self.collectionView?.performBatchUpdates({() -> Void in
-                self.collectionView?.deleteItems(at: indexPaths)
-                for indexPath: IndexPath in indexPaths {
-                    let sectionID = oldSectionInfo[indexPath.section]
-                    
-                    let count: Int = oldGamesInSections[sectionID]?.count ?? 0
-                    if count == 1 {
-                        self.collectionView?.deleteSections(NSIndexSet(index: indexPath.section) as IndexSet)
-                    }
-                }
-            }, completion: {(_ finished: Bool) -> Void in
-            })
-        }
+        deleteRelatedFilesGame(game)
+        try? game.delete()
     }
 
     func deleteRelatedFilesGame(_ game: PVGame) {
@@ -1259,7 +1301,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return
         }
         
-        let romDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system)
+        let romDirectory = system.romsDirectory
         let relatedFileName: String = game.url.deletingPathExtension().lastPathComponent
         
         let contents : [URL]
@@ -1334,11 +1376,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                             } catch {
                                 ELOG("Failed to set custom artwork URL for game \(game.title) \n \(error.localizedDescription)")
                             }
-                            
-                            let indexPaths = self.indexPathsForGame(withMD5Hash: game.md5Hash)
-                            indexPathsToUpdate.append(contentsOf: indexPaths)
-                            self.fetchGames()
-                            self.assetsLibrary = nil
                         })
                         if cameraIsAvailable || photoLibraryIsAvaialble {
                             if cameraIsAvailable {
@@ -1414,33 +1451,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             } catch {
                 ELOG("Failed to set custom artwork URL for game \(game.title).\n\(error.localizedDescription)")
             }
-            
-            let indexPaths = indexPathsForGame(withMD5Hash: game.md5Hash)
-            
-            if !indexPaths.isEmpty {
-                fetchGames()
-                collectionView?.reloadItems(at: indexPaths)
-            } else {
-                ELOG("Couldn't find index paths for game \(game.title)")
-            }
         } else {
             ELOG("No pasted image")
         }
     }
 
     #endif
-    
-    func nameForSection(at section: Int) -> String {
-        let systemID = sectionInfo[section]
-        if (systemID == "recent") {
-            return "Recently Played"
-        } else if (systemID == "favorite") {
-            return "Favorites"
-        } else {
-            return PVEmulatorConfiguration.shortName(forSystemIdentifier: systemID) ?? "Not Found"
-        }
-
-    }
 
 // MARK: - Searching
     func searchLibrary(_ searchText: String) {
@@ -1465,26 +1481,30 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 // MARK: - UICollectionViewDataSource
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        var sections: Int = 0
         if searchResults != nil {
-            sections = 1
+            return 1
         }
         else {
-            sections = sectionInfo.count
+            let count = systemsSectionOffset + systems.count
+            ILOG("Sections : \(count)")
+            return count
         }
-        return sections
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        var items: Int = 0
         if let searchResults = searchResults {
-            items = Int(searchResults.count)
+            return Int(searchResults.count)
+        } else {
+            if section >= systemsSectionOffset {
+                return Array(systems)[section - systemsSectionOffset].games.count
+            } else if section == favoritesSection {
+                return favoriteGames.count
+            } else if section == recentGamesSection {
+                return recentGames.count
+            } else {
+                fatalError("Shouldn't be here")
+            }
         }
-        else {
-            let games = gamesInSections[sectionInfo[section]]
-            items = games?.count ?? 0
-        }
-        return items
     }
     
     func indexTitles(for collectionView: UICollectionView) -> [String]? {
@@ -1492,7 +1512,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return nil
         }
         else {
-            return sectionInfo
+            return sectionTitles
         }
     }
     
@@ -1510,15 +1530,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             game = Array(searchResults)[indexPath.item]
         }
         else {
-            let games = gamesInSections[sectionInfo[indexPath.section]]
-            game = games?[indexPath.item] as? PVGame
+            game = self.game(at: indexPath)
         }
-        
-        if let game = game {
-            cell.setup(with: game)
-        } else {
-            WLOG("Can't setup PVGameLibraryCollectionViewCell wil nil game reference")
-        }
+
+        cell.game = game
+
         return cell
     }
 
@@ -1528,9 +1544,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             game = Array(searchResults)[indexPath.item]
         }
         else {
-            let games = gamesInSections[sectionInfo[indexPath.section]]
-            game = games![indexPath.item] as? PVGame
+            let section = indexPath.section
+            let row = indexPath.row
+            
+            if section == favoritesSection {
+                game = Array(favoriteGames)[row]
+            } else if section == recentGamesSection {
+                game = Array(recentGames)[row].game
+            } else {
+                let system = Array(systems)[section - systemsSectionOffset]
+                game = Array(system.games)[row]
+            }
         }
+        
         return game
     }
 
@@ -1543,7 +1569,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
             else {
                 headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-                let title: String = nameForSection(at: indexPath.section)
+                let title: String = sectionTitles[indexPath.section]
                 headerView?.titleLabel.text = title
             }
             if let headerView = headerView {
@@ -1653,9 +1679,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             } catch {
                 ELOG("Failed to set custom artwork for game \(gameForCustomArt.title)\n\(error.localizedDescription)")
             }
-
-            let indexPaths = indexPathsForGame(withMD5Hash: gameForCustomArt.md5Hash)
-            collectionView?.reloadItems(at: indexPaths)
         }
         self.gameForCustomArt = nil
     }
@@ -1670,9 +1693,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     public override var keyCommands: [UIKeyCommand]? {
         if #available(iOS 9.0, *) {
             var sectionCommands = [UIKeyCommand]() /* TODO: .reserveCapacity(sectionInfo.count + 2) */
-            for i in 0..<sectionInfo.count {
+            
+            for (i, title) in sectionTitles.enumerated() {
                 let input = "\(i)"
-                let title: String = nameForSection(at: i)
                 // Simulator Command + number has shorcuts already
                 #if TARGET_OS_SIMULATOR
                     let flags: UIKeyModifierFlags = [.control, .command]
@@ -1841,7 +1864,7 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
             }
             
             // Doesn't seem we need access in dev builds?
-            let access = url.startAccessingSecurityScopedResource()
+            _ = url.startAccessingSecurityScopedResource()
             
 //            if access {
                 let fileName = url.lastPathComponent

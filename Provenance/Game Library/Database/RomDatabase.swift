@@ -259,13 +259,13 @@ public extension RomDatabase {
     }
     
     @objc
-    public func add(object: Object, update: Bool = true) throws {
+    public func add(_ object: Object, update: Bool = false) throws {
         try realm.write {
             realm.add(object, update: update)
         }
     }
     
-    public func add<T:Object>(objects: [T], update: Bool = true) throws {
+    public func add<T:Object>(objects: [T], update: Bool = false) throws {
         try realm.write {
             realm.add(objects, update: update)
         }
@@ -285,7 +285,7 @@ public extension RomDatabase {
     }
     
     @objc
-    public func delete(object: Object) throws {
+    public func delete(_ object: Object) throws {
         try realm.write {
             realm.delete(object)
         }
@@ -298,3 +298,47 @@ public extension RomDatabase {
         realm.refresh()
     }
 }
+
+// MARK: - Convenience Accessors
+public protocol PVObject {}
+public extension PVObject where Self : Object {
+    static var all : Results<Self> {
+        return RomDatabase.sharedInstance.all(Self.self)
+    }
+    
+    func add(update: Bool = false) throws {
+        try RomDatabase.sharedInstance.add(self, update: update)
+    }
+    
+    static func deleteAll() throws {
+        try RomDatabase.sharedInstance.deleteAll(Self.self)
+    }
+    
+    func delete() throws {
+        try RomDatabase.sharedInstance.delete(self)
+    }
+    
+    static func with(primaryKey : String) -> Self? {
+        return RomDatabase.sharedInstance.object(ofType: Self.self, wherePrimaryKeyEquals: primaryKey)
+    }
+}
+
+// Now all Objects can use PVObject methods
+extension Object : PVObject {}
+
+public protocol PVFiled {
+    var file : PVFile? { get }
+}
+public extension PVFiled where Self : Object {
+    var missing : Bool {
+        return file == nil || file!.missing
+    }
+    
+    var md5 : String? {
+        guard let file = file else {
+            return nil
+        }
+        return file.md5
+    }
+}
+

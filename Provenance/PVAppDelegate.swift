@@ -45,6 +45,10 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 #endif
         
         startOptionalWebDavServer()
+        
+        let database = RomDatabase.sharedInstance
+        database.refresh()
+        
         return true
     }
     

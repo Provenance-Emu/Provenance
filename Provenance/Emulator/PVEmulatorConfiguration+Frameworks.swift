@@ -43,15 +43,21 @@ public extension PVEmulatorConfiguration {
                 
                 systems?.forEach { system in
                     if let existingSystem = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
-                        try! database.writeTransaction {
-                            setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
+                        do {
+                            try database.writeTransaction {
+                                setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
+                                VLOG("Updated system for id \(system.PVSystemIdentifier)")
+                            }
+                        } catch {
+                            ELOG("Failed to make update system: \(error)")
                         }
                     } else {
                         let newSystem = PVSystem()
-                        newSystem.systemIdentifier = system.PVSystemIdentifier
+                        newSystem.identifier = system.PVSystemIdentifier
                         setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
                         do {
-                            try database.add(object: newSystem, update: true)
+                            try database.add(newSystem, update: true)
+                            DLOG("Added new system for id \(system.PVSystemIdentifier)")
                         } catch {
                             ELOG("Failed to make new system: \(error)")
                         }
@@ -69,7 +75,7 @@ public extension PVEmulatorConfiguration {
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID)!
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer
-        pvSystem.bit = Int(system.PVBit)!
+        pvSystem.bit = Int(system.PVBit) ?? 0
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
         pvSystem.shortName = system.PVSystemShortName
@@ -77,21 +83,17 @@ public extension PVEmulatorConfiguration {
         pvSystem.usesCDs = system.PVUsesCDs ?? false
         
         // Iterate extensions and add to Realm object
-        pvSystem.supportedExtensions = List<String>()
-        system.PVSupportedExtensions.forEach { pvSystem.supportedExtensions.append($0) }
+        pvSystem.supportedExtensions.removeAll()
+        pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
         
-        if let bioses = system.PVBiosNames?.map({ (entry) -> PVBIOS in
-            let newBIOS = PVBIOS()
-            newBIOS.descriptionText = entry.Description
-            newBIOS.expectedMD5 = entry.MD5
-            newBIOS.expectedFilename = entry.Name
-            newBIOS.expectedSize = entry.Size
-            newBIOS.optional = entry.Optional ?? false
-            return newBIOS
-        }) {
-            pvSystem.bioses.removeAll()
-            bioses.forEach { pvSystem.bioses.append($0) }
-        }
+        system.PVBiosNames?.forEach { entry in
+            if let existingBIOS = RomDatabase.sharedInstance.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: entry.Name) {
+                existingBIOS.system = pvSystem
+            } else {
+                let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
+                try! newBIOS.add()
+            }
+         }
     }
 }
 

@@ -11,8 +11,8 @@ import RealmSwift
 
 @objcMembers public class PVRecentGame : Object, PVLibraryEntry {
 
-    @objc dynamic var game : PVGame?
-    @objc dynamic var lastPlayedDate : Date = Date()
+    dynamic var game : PVGame!
+    dynamic var lastPlayedDate : Date = Date()
 
     override public static func indexedProperties() -> [String] {
         return ["lastPlayedDate"]

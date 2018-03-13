@@ -32,7 +32,7 @@ public enum GameLaunchingError : Error {
 
 extension GameLaunchingViewController where Self : UIViewController {
 
-    private func biosCheck(system : SystemIdentifier) throws {
+    private func biosCheck(system : PVSystem) throws {
         guard system.requiresBIOS else {
             // Nothing to do
             return
@@ -40,87 +40,87 @@ extension GameLaunchingViewController where Self : UIViewController {
         
         // Check if requires a BIOS and has them all - only warns if md5's mismatch
 
-        guard  let biosEntries = system.biosEntries else {
-                ELOG("System \(system.name) specifies it requires BIOS files but does not provide values for \(SystemDictionaryKeys.BIOSEntries)")
-                throw GameLaunchingError.generic("Invalid configuration for system \(system.rawValue). Missing BIOS dictionary in systems.plist")
-            }
-        
-            let biosPathContents : [String]
-            do {
-                biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
-            } catch {
-                try? FileManager.default.createDirectory(at: system.biosPath, withIntermediateDirectories: true, attributes: nil)
-                let biosFiles = biosEntries.map { return $0.expectedFilename }.joined(separator: ", ")
-                
-                let documentsPath = PVEmulatorConfiguration.documentsPath.path
-                let biosDirectory  = system.biosPath.path.replacingOccurrences(of: documentsPath, with: "")
+        guard let biosEntries = system.biosesHave else {
+            ELOG("System \(system.name) specifies it requires BIOS files but does not provide values for \(SystemDictionaryKeys.BIOSEntries)")
+            throw GameLaunchingError.generic("Invalid configuration for system \(system.name). Missing BIOS dictionary in systems.plist")
+        }
+    
+        let biosPathContents : [String]
+        do {
+            biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
+        } catch {
+            try? FileManager.default.createDirectory(at: system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
+            let biosFiles = biosEntries.map { return $0.expectedFilename }.joined(separator: ", ")
+            
+            let documentsPath = PVEmulatorConfiguration.documentsPath.path
+            let biosDirectory  = system.biosDirectory.path.replacingOccurrences(of: documentsPath, with: "")
 
-                let message = "This system requires BIOS files. Please upload '\(biosFiles)' to \(biosDirectory)."
-                ELOG(message)
-                throw GameLaunchingError.generic(message)
-            }
+            let message = "This system requires BIOS files. Please upload '\(biosFiles)' to \(biosDirectory)."
+            ELOG(message)
+            throw GameLaunchingError.generic(message)
+        }
+        
+        // Store the HASH : FILENAME of the BIOS directory contents
+        // Only generated if needed for matching if filename fails
+        var biosPathContentsMD5Cache : [String:String]?
+        
+        var missingBIOSES = [String]()
+        
+        // Go through each BIOSEntry struct and see if all non-optional BIOS's were found in the BIOS dir
+        // Try to match MD5s for files that don't match by name, and rename them to what's expected if found
+        // Warn on files that have filename match but MD5 doesn't match expected
+        let canLoad = biosEntries.all {
             
-            // Store the HASH : FILENAME of the BIOS directory contents
-            // Only generated if needed for matching if filename fails
-            var biosPathContentsMD5Cache : [String:String]?
-            
-            var missingBIOSES = [String]()
-            
-            // Go through each BIOSEntry struct and see if all non-optional BIOS's were found in the BIOS dir
-            // Try to match MD5s for files that don't match by name, and rename them to what's expected if found
-            // Warn on files that have filename match but MD5 doesn't match expected
-            let canLoad = biosEntries.all {
+            // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
+            if !biosPathContents.contains($0.expectedFilename) && !$0.optional {
+                // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
                 
-                // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
-                if !biosPathContents.contains($0.expectedFilename) && !$0.optional {
-                    // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
-                    
-                    // 1 - Lazily generate the hashes of files in the BIOS directory
-                    if biosPathContentsMD5Cache == nil {
-                        biosPathContentsMD5Cache = biosPathContents.reduce([String:String](), { (hashDictionary, filename) -> [String:String] in
-                            let fullBIOSFileURL = system.biosPath.appendingPathComponent(filename, isDirectory: false)
-                            if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
-                                // Make mutable
-                                var hashDictionary = hashDictionary
-                                hashDictionary[hash] = filename
-                                return hashDictionary
-                            } else {
-                                // Couldn't hash for whatever reason, just pass on the hash dict
-                                return hashDictionary
-                            }
-                        })
-                    }
-                    
-                    // 2 - See if any hashes in the BIOS directory match the current BIOS entry we're investigating.
-                    if let biosPathContentsMD5Cache = biosPathContentsMD5Cache, let filenameOfFoundFile = biosPathContentsMD5Cache[$0.expectedMD5.uppercased()] {
-                        // Rename the file to what we expected
-                        do {
-                            let from = system.biosPath.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
-                            let to = system.biosPath.appendingPathComponent($0.expectedFilename, isDirectory: false)
-                            try FileManager.default.moveItem(at: from, to: to)
-                            // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
-                            ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5)")
-                            return true
-                        } catch {
-                            ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
-                            // Since we couldn't rename, mark this as a false
-                            missingBIOSES.append($0.expectedFilename)
-                            return false
+                // 1 - Lazily generate the hashes of files in the BIOS directory
+                if biosPathContentsMD5Cache == nil {
+                    biosPathContentsMD5Cache = biosPathContents.reduce([String:String](), { (hashDictionary, filename) -> [String:String] in
+                        let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
+                        if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
+                            // Make mutable
+                            var hashDictionary = hashDictionary
+                            hashDictionary[hash] = filename
+                            return hashDictionary
+                        } else {
+                            // Couldn't hash for whatever reason, just pass on the hash dict
+                            return hashDictionary
                         }
-                    } else {
-                        // No MD5 matches either
+                    })
+                }
+                
+                // 2 - See if any hashes in the BIOS directory match the current BIOS entry we're investigating.
+                if let biosPathContentsMD5Cache = biosPathContentsMD5Cache, let filenameOfFoundFile = biosPathContentsMD5Cache[$0.expectedMD5.uppercased()] {
+                    // Rename the file to what we expected
+                    do {
+                        let from = system.biosDirectory.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
+                        let to = system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false)
+                        try FileManager.default.moveItem(at: from, to: to)
+                        // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
+                        ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5)")
+                        return true
+                    } catch {
+                        ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
+                        // Since we couldn't rename, mark this as a false
                         missingBIOSES.append($0.expectedFilename)
                         return false
                     }
                 } else {
-                    // Not as important, but log if MD5 is mismatched.
-                    // Cores care about filenames for some reason, not MD5s
-                    let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosPath.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset:0) ?? ""
-                    if fileMD5 != $0.expectedMD5.uppercased() {
-                        WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
-                    }
-                    return true
+                    // No MD5 matches either
+                    missingBIOSES.append($0.expectedFilename)
+                    return false
                 }
+            } else {
+                // Not as important, but log if MD5 is mismatched.
+                // Cores care about filenames for some reason, not MD5s
+                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset:0) ?? ""
+                if fileMD5 != $0.expectedMD5.uppercased() {
+                    WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
+                }
+                return true
+            }
         } // End canLoad .all loop
             
         if !canLoad {
@@ -153,7 +153,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         
         // Pre-flight
         guard let system = game.system else {
-            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be foundn for id '\(game.systemIdentifier)'.")
+            displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")
             return
         }
         
@@ -187,10 +187,10 @@ extension GameLaunchingViewController where Self : UIViewController {
             self.updateRecentGames(game)    
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
-            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system)
+            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
 
             let missingFilesString = missingBIOSes.joined(separator: ", ")
-            let relativeBiosPath = "Documents/BIOS/\(system.rawValue)/"
+            let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
             
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
             displayAndLogError(withTitle: "Missing BIOS files", message: message)
@@ -204,7 +204,7 @@ extension GameLaunchingViewController where Self : UIViewController {
     }
     
     func doLoad(_ game: PVGame) throws {
-        guard let system = SystemIdentifier(rawValue: game.systemIdentifier) else {
+        guard let system = game.system else {
             throw GameLaunchingError.systemNotFound
         }
         
@@ -221,7 +221,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         let recentToDelete = recentsMatchingGame.first
         if let recentToDelete = recentToDelete {
             do {
-                try database.delete(object: recentToDelete)
+                try database.delete(recentToDelete)
             } catch {
                 ELOG("Failed to delete recent: \(error.localizedDescription)")
             }
@@ -231,25 +231,34 @@ extension GameLaunchingViewController where Self : UIViewController {
             // TODO: This should delete more than just the last incase we had an overflow earlier
             if let oldestRecent: PVRecentGame = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false).last {
                 do {
-                    try database.delete(object: oldestRecent)
+                    try database.delete(oldestRecent)
                 } catch {
                     ELOG("Failed to delete recent: \(error.localizedDescription)")
                 }
             }
         }
         
-        let newRecent = PVRecentGame(withGame: game)
-        do {
-            try database.add(object: newRecent, update:false)
-            
-            let activity = game.spotlightActivity
-            // Make active, causes it to index also
-            self.userActivity = activity
-        } catch {
-            ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
+        if let currentRecent = game.recentPlays.first {
+            do {
+                currentRecent.lastPlayedDate = Date()
+                try database.add(currentRecent, update:true)
+            } catch {
+                ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
+            }
+        } else {
+            let newRecent = PVRecentGame(withGame: game)
+            do {
+                try database.add(newRecent, update:false)
+                
+                let activity = game.spotlightActivity
+                // Make active, causes it to index also
+                self.userActivity = activity
+            } catch {
+                ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
+            }
         }
+
         register3DTouchShortcuts()
-        mustRefreshDataSource = true
     }
     
     func register3DTouchShortcuts() {        

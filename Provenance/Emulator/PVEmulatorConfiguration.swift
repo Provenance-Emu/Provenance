@@ -76,33 +76,33 @@ public enum SystemIdentifier : String {
         return PVEmulatorConfiguration.system(forIdentifier: self)
     }
     
-    var name : String {
-        return PVEmulatorConfiguration.name(forSystemIdentifier: self)!
-    }
-    
-    var shortName : String {
-        return PVEmulatorConfiguration.shortName(forSystemIdentifier: self)!
-    }
-    
-    var controllerLayout : [ControlLayoutEntry] {
-        return PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: self)!
-    }
-    
-    var biosPath : URL {
-        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: self)
-    }
-    
-    var requiresBIOS : Bool {
-        return PVEmulatorConfiguration.requiresBIOS(forSystemIdentifier: self)
-    }
-
-    var biosEntries : [PVBIOS]? {
-        return PVEmulatorConfiguration.biosEntries(forSystemIdentifier: self)
-    }
-    
-    var fileExtensions : [String] {
-        return PVEmulatorConfiguration.fileExtensions(forSystemIdentifier: self)!
-    }
+//    var name : String {
+//        return PVEmulatorConfiguration.name(forSystemIdentifier: self)!
+//    }
+//
+//    var shortName : String {
+//        return PVEmulatorConfiguration.shortName(forSystemIdentifier: self)!
+//    }
+//
+//    var controllerLayout : [ControlLayoutEntry] {
+//        return PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: self)!
+//    }
+//
+//    var biosPath : URL {
+//        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: self)
+//    }
+//
+//    var requiresBIOS : Bool {
+//        return PVEmulatorConfiguration.requiresBIOS(forSystemIdentifier: self)
+//    }
+//
+//    var biosEntries : [PVBIOS]? {
+//        return PVEmulatorConfiguration.biosEntries(forSystemIdentifier: self)
+//    }
+//
+//    var fileExtensions : [String] {
+//        return PVEmulatorConfiguration.fileExtensions(forSystemIdentifier: self)!
+//    }
     
     // TODO: Eventaully wouldl make sense to add batterSavesPath, savesStatePath that
     // are a sub-directory of the current paths. Right now those are just a folder
@@ -110,11 +110,19 @@ public enum SystemIdentifier : String {
     // to use the ROM md5 not the name, since names might have collisions - jm
 }
 
-public extension PVGame {
-    var system : SystemIdentifier? {
-        return SystemIdentifier(rawValue: self.systemIdentifier)
+// MARK: - PVSystem convenience extension
+public extension PVSystem {
+    var biosDirectory : URL {
+        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: enumValue)
     }
     
+    var romsDirectory : URL {
+        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: enumValue)
+    }
+}
+
+// MARK: - PVGame convenience extension
+public extension PVGame {
     // TODO: See above TODO, this should be based on the ROM systemid/md5
     var batterSavesPath : URL {
         return PVEmulatorConfiguration.batterySavesPath(forGame: self)
@@ -122,77 +130,6 @@ public extension PVGame {
     
     var saveStatePath : URL {
         return PVEmulatorConfiguration.saveStatePath(forGame: self)
-    }
-}
-
-public typealias ControllerLayoutDictionary = [String:Any]
-public typealias SystemDictionary = [String:Any]
-
-// Assistance extension to get values out of the plist dictionary systems easier
-fileprivate extension Dictionary where Key == String, Value == Any {
-
-    var identifier : String {
-        guard let systemID = self[SystemDictionaryKeys.SystemIdentifier] as? String else {
-            fatalError("System missing \(SystemDictionaryKeys.SystemIdentifier    ). \(self.debugDescription)")
-        }
-        return systemID
-    }
-    
-    var name : String {
-        guard let name = self[SystemDictionaryKeys.SystemName] as? String else {
-            fatalError("System missing \(SystemDictionaryKeys.SystemName). \(self.debugDescription)")
-        }
-        return name
-    }
-    
-    var shortName : String {
-        guard let shortName = self[SystemDictionaryKeys.SystemShortName] as? String else {
-            fatalError("System missing \(SystemDictionaryKeys.SystemShortName). \(self.debugDescription)")
-        }
-        return shortName
-    }
-    
-    var databaseId : String {
-        guard let databaseId = self[SystemDictionaryKeys.DatabaseID] as? String else {
-            fatalError("System missing \(SystemDictionaryKeys.DatabaseID). \(self.debugDescription)")
-        }
-        return databaseId
-    }
-    
-    var usesCDs : Bool {
-        if let usesCDs = self[SystemDictionaryKeys.UsesCDs] as? Bool {
-            return usesCDs
-        }
-        return false
-    }
-    
-    var supportedExtensions : [String] {
-        guard let extensions = self[SystemDictionaryKeys.SupportedExtensions] as? [String] else {
-            fatalError("System missing \(SystemDictionaryKeys.SupportedExtensions). \(self.debugDescription)")
-        }
-        return extensions.map { $0.lowercased() }
-    }
-    
-    var controllerLayout : [ControllerLayoutDictionary] {
-        guard let controllerLayout = self[SystemDictionaryKeys.ControlLayout] as? [ControllerLayoutDictionary] else {
-            fatalError("System missing \(SystemDictionaryKeys.ControlLayout). \(self.debugDescription)")
-        }
-        return controllerLayout
-    }
-    
-    var bioses : [PVBIOS]? {
-        let bioses = RomDatabase.sharedInstance.all(PVBIOS.self)
-        if  !bioses.isEmpty {
-            return Array(bioses)
-        } else {
-            return nil
-        }
-    }
-    
-    var requiresBIOS : Bool {
-        guard let bioses = bioses else { return false }
-        // If any entries aren't marked optional, then we need a bios!
-        return bioses.contains { !$0.optional }
     }
 }
 
@@ -215,7 +152,7 @@ public class PVEmulatorConfiguration : NSObject {
     @objc
     static let availableSystemIdentifiers: [String] = {
         return systems.map({ (system) -> String in
-            return system.systemIdentifier
+            return system.identifier
         })
     }()
     
@@ -236,12 +173,12 @@ public class PVEmulatorConfiguration : NSObject {
         }).joined())
     }()
     
-    static let cdBasedSystemIDs: [String] = {
-        return systems.flatMap({ (system) -> String? in
+    static let cdBasedSystems: [PVSystem] = {
+        return systems.flatMap({ (system) -> PVSystem? in
             guard system.usesCDs else {
                 return nil
             }
-            return system.systemIdentifier
+            return system
         })
     }()
     
@@ -306,15 +243,21 @@ public class PVEmulatorConfiguration : NSObject {
     }
     
     class func systemID(forDatabaseID databaseID: Int) -> String? {
-        return systems.first{ $0.openvgDatabaseID == databaseID }?.systemIdentifier
+        return systems.first{ $0.openvgDatabaseID == databaseID }?.identifier
     }
     
     @objc
     class func systemIdentifiers(forFileExtension fileExtension: String) -> [String]? {
-        return systems.reduce(nil as [String]?, { (systems, system) -> [String]? in
+        return systems(forFileExtension: fileExtension)?.flatMap({ (system) -> String? in
+            return system.identifier
+        })
+    }
+    
+    class func systems(forFileExtension fileExtension:String) -> [PVSystem]? {
+        return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
-                var newSystems : [String] = systems ?? [String]() // Create initial if doesn't exist
-                newSystems.append(system.systemIdentifier)
+                var newSystems : [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
+                newSystems.append(system)
                 return newSystems
             } else {
                 return systems
@@ -557,8 +500,7 @@ public extension PVEmulatorConfiguration {
     }
     
     class func path(forGame game :PVGame) -> URL {
-        let url = documentsPath.appendingPathComponent(game.romPath, isDirectory: false)
-        return url
+        return game.file.url
     }
 }
 
@@ -571,7 +513,7 @@ public extension PVEmulatorConfiguration {
     @objc
     class func m3uFile(forGame game: PVGame) -> URL? {
         let gamePath = self.path(forGame: game)
-        let gameDirectory = self.romDirectory(forSystemIdentifier: game.system!)
+        let gameDirectory = self.romDirectory(forSystemIdentifier: game.system.identifier)
         let filenameWithoutExtension =  stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
         
         do {

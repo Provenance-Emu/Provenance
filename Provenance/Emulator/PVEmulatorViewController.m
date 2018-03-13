@@ -142,15 +142,8 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.emulatorCore setController1:[[PVControllerManager sharedManager] player1]];
     [self.emulatorCore setController2:[[PVControllerManager sharedManager] player2]];
 	
-    NSString *romPath = [[self documentsPath] stringByAppendingPathComponent:[self.game romPath]];
-
-    NSError *error = nil;
-    NSString *md5Hash, *crc32Hash;
-    if(![[NSFileManager defaultManager] hashFileAtURL:[NSURL fileURLWithPath:romPath] md5:&md5Hash crc32:&crc32Hash error:&error])
-    {
-        DLog(@"%@", error);
-        return;
-    }
+    NSURL *romPath = self.game.file.url;
+    NSString *md5Hash = self.game.md5Hash;
 
     self.emulatorCore.romMD5 = md5Hash;
     self.emulatorCore.romSerial = [self.game romSerial];
@@ -161,10 +154,36 @@ void uncaughtExceptionHandler(NSException *exception)
         // to provide the correct data for creating views.
     NSURL *m3uFile = [PVEmulatorConfiguration m3uFileForGame:self.game];
     if (m3uFile) {
-        romPath = m3uFile.path;
+        romPath = m3uFile;
     }
-    BOOL loaded = [self.emulatorCore loadFileAtPath:romPath error:&error];
+    
+    NSError *error;
+    BOOL loaded = [self.emulatorCore loadFileAtPath:romPath.path error:&error];
 
+    if(!loaded) {
+        UIAlertController *alert =
+        [UIAlertController alertControllerWithTitle:error.localizedDescription
+                                            message:error.localizedRecoverySuggestion
+                                     preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+                                                  style:UIAlertActionStyleDefault
+                                                handler:nil]];
+        
+        if(error.code == PVEmulatorCoreErrorCodeMissingM3U) {
+            [alert addAction:[UIAlertAction actionWithTitle:@"View Wiki" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+                [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://bitly.com/provm3u"] options:nil completionHandler:nil];
+            }]];
+        }
+        
+        __weak typeof(self) weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [weakSelf presentViewController:alert
+                                   animated:YES
+                                 completion:nil];
+        });
+        return;
+    }
+    
     if ([[UIScreen screens] count] > 1)
     {
         self.secondaryScreen = [[UIScreen screens] objectAtIndex:1];
