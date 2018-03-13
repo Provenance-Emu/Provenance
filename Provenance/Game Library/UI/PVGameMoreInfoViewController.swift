@@ -202,8 +202,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     public var game : PVGame? {
         didSet {
             assert(game != nil, "Set a nil game")
-            if isViewLoaded {
-                updateContent()
+            
+            if game != oldValue {
+                registerForChange()
+                
+                if isViewLoaded {
+                    updateContent()
+                }
             }
         }
     }
@@ -595,6 +600,24 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }))
         
         present(alert, animated: true, completion: nil)
+    }
+
+    var token : NotificationToken?
+    func registerForChange() {
+        token = game?.observe({ (change) in
+            switch change {
+            case .change(let properties):
+                if !properties.isEmpty {
+                    DispatchQueue.main.async {
+                        self.updateContent()
+                    }
+                }
+            case .error(let error):
+                ELOG("An error occurred: \(error)")
+            case .deleted:
+                print("The object was deleted.")
+            }
+        })
     }
 }
 
