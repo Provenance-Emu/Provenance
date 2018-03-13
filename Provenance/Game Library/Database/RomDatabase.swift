@@ -176,7 +176,7 @@ public final class RomDatabase {
         return RomDatabase()
     }
     
-    fileprivate var realm : Realm
+    private(set) public var realm : Realm
     
     private init() {
         do {

@@ -62,7 +62,7 @@ public extension PVEmulatorConfiguration {
                 let systems : SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
                 
                 systems?.forEach { system in
-                    if let existingSystem = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
+                    if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
                             try database.writeTransaction {
                                 setPropertiesTo(pvSystem: existingSystem, fromSystemPlistEntry: system)
@@ -113,16 +113,24 @@ public extension PVEmulatorConfiguration {
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
-        
+        let database = RomDatabase.sharedInstance
+
         system.PVBIOSNames?.forEach { entry in
-            if let existingBIOS = RomDatabase.sharedInstance.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: entry.Name) {
-                existingBIOS.system = pvSystem
+            if let existingBIOS = database.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: entry.Name) {
+                if database.realm.isInWriteTransaction {
+                    existingBIOS.system = pvSystem
+                } else {
+                    try! database.writeTransaction {
+                        existingBIOS.system = pvSystem
+                    }
+                }
             } else {
                 let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
-                if let realm = pvSystem.realm {
-                    realm.add(newBIOS)
+                
+                if database.realm.isInWriteTransaction {
+                    database.realm.add(newBIOS)
                 } else {
-                    try! newBIOS.add()
+                    try! database.add(newBIOS)
                 }
             }
          }
