@@ -61,6 +61,7 @@ public enum RelativeRoot : Int {
 @objcMembers public class PVFile : Object, Codable {
     @objc private dynamic var partialPath : String = ""
     @objc private dynamic var md5Cache : String?
+    @objc private(set) public dynamic var createdDate = Date()
     @objc private dynamic var _relativeRoot : Int = RelativeRoot.documents.rawValue
     
     public convenience init(withPartialPath partialPath : String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
