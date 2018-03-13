@@ -13,10 +13,14 @@
 		<string>64</string>
 		<key>PVReleaseYear</key>
 		<string>1996</string>
+		<key>PVSupportsRumble</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.n64</string>
 		<key>PVDatabaseID</key>
 		<string>23</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>n64</string>
@@ -275,6 +279,10 @@
 		<string>32</string>
 		<key>PVReleaseYear</key>
 		<string>1994</string>
+		<key>PVSupportsRumble</key>
+		<true/>
+		<key>PVPortable</key>
+		<false/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -360,6 +368,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1989</string>
+		<key>PVPortable</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -424,6 +434,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1998</string>
+		<key>PVPortable</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -490,6 +502,8 @@
 		<string>16</string>
 		<key>PVReleaseYear</key>
 		<string>1999</string>
+		<key>PVPortable</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -576,6 +590,8 @@
 		<string>32</string>
 		<key>PVReleaseYear</key>
 		<string>1995</string>
+		<key>PVPortable</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -655,6 +671,8 @@
 		<string>16</string>
 		<key>PVReleaseYear</key>
 		<string>1999</string>
+		<key>PVPortable</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVControlLayout</key>
@@ -725,6 +743,8 @@
 		<string>16</string>
 		<key>PVReleaseYear</key>
 		<string>1987</string>
+		<key>PVPortable</key>
+		<false/>
 	</dict>
 	<dict>
 		<key>PVUsesCDs</key>
@@ -797,6 +817,8 @@
 		<string>16</string>
 		<key>PVReleaseYear</key>
 		<string>1988</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVRequiresBIOS</key>
 		<true/>
 		<key>PVBIOSNames</key>
@@ -824,6 +846,8 @@
 		<string>32</string>
 		<key>PVReleaseYear</key>
 		<string>1994</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVUsesCDs</key>
 		<true/>
 		<key>PVControlLayout</key>
@@ -943,6 +967,8 @@
 		<string>16</string>
 		<key>PVReleaseYear</key>
 		<string>1991</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.segacd</string>
 		<key>PVDatabaseID</key>
@@ -1078,6 +1104,8 @@
 		<string>1988</string>
 		<key>PVDatabaseID</key>
 		<string>33</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smd</string>
@@ -1173,6 +1201,8 @@
 		<string>1990</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gamegear</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVDatabaseID</key>
 		<string>30</string>
 		<key>PVSupportedExtensions</key>
@@ -1233,6 +1263,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1985</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.mastersystem</string>
 		<key>PVDatabaseID</key>
@@ -1400,6 +1432,8 @@
 		<string>32</string>
 		<key>PVReleaseYear</key>
 		<string>2001</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gba</string>
 		<key>PVDatabaseID</key>
@@ -1486,6 +1520,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1989</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gb</string>
 		<key>PVDatabaseID</key>
@@ -1556,6 +1592,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1998</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.gbc</string>
 		<key>PVDatabaseID</key>
@@ -1627,6 +1665,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.nes</string>
 		<key>PVDatabaseID</key>
@@ -1697,6 +1737,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1986</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.fds</string>
 		<key>PVDatabaseID</key>
@@ -1782,6 +1824,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.sg1000</string>
 		<key>PVDatabaseID</key>
@@ -1838,6 +1882,8 @@
 		<string>1977</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.2600</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVDatabaseID</key>
 		<string>3</string>
 		<key>PVSupportedExtensions</key>
@@ -1898,6 +1944,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1986</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.7800</string>
 		<key>PVDatabaseID</key>
@@ -1968,6 +2016,8 @@
 		<string>32</string>
 		<key>PVReleaseYear</key>
 		<string>1994</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.32X</string>
 		<key>PVDatabaseID</key>
@@ -2086,6 +2136,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>1982</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.5200</string>
 		<key>PVDatabaseID</key>
@@ -2181,6 +2233,8 @@
 		<string>8</string>
 		<key>PVReleaseYear</key>
 		<string>2001</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pokemonmini</string>
 		<key>PVDatabaseID</key>
