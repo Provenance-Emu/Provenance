@@ -317,7 +317,8 @@ __weak static ATR800GameCore * _currentCore;
 
 - (CGRect)screenRect
 {
-    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
+    return CGRectMake(24, 0, 336, 240);
+//    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
 }
 
 - (CGSize)aspectSize
