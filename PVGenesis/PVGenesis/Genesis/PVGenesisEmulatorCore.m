@@ -312,12 +312,28 @@ static bool environment_callback(unsigned cmd, void *data)
 
 - (CGRect)screenRect
 {
-	return CGRectMake(0, 0, _videoWidth, _videoHeight);
+    if([[self systemIdentifier] isEqualToString:@"com.openemu.gamegear"])
+    {
+        return CGRectMake(0, 0, 160, 144);
+    }
+    else
+    {
+        return CGRectMake(0, 0, _videoWidth, _videoHeight);
+    }
 }
 
 - (CGSize)aspectSize
 {
-	return CGSizeMake(4, 3);
+    if([[self systemIdentifier] isEqualToString:@"com.provenance.gamegear"])
+    {
+        return CGSizeMake(160, 144);
+    }
+    else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sg1000"])
+    {
+        return CGSizeMake(256 * (8.0/7.0), 192);
+    }else {
+        return CGSizeMake(4, 3);
+    }
 }
 
 - (CGSize)bufferSize

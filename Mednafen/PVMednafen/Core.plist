@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenane.core.gambatte</string>
+	<key>PVPrincipleClass</key>
+	<string>PVFCEUEmulatorCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.gb</string>
+		<string></string>
+	</array>
+	<key>PVProjectName</key>
+	<string>Gambatte</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/sinamas/gambatte</string>
+	<key>PVProjectVersion</key>
+	<string>unknown</string>
+</dict>
+</plist>

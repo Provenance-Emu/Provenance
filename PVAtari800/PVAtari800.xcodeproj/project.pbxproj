@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269544614317D34003A07D4 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3547B512058581E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B502058581E00CFF7D8 /* Core.plist */; };
+		B3547B522058581E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B502058581E00CFF7D8 /* Core.plist */; };
 		B36DE74B1D6AB19C002EE3ED /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7501D6AB1B4002EE3ED /* default.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E465198C11A10075135C /* default.act */; };
 		B36DE7511D6AB1B4002EE3ED /* gray.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E466198C11A10075135C /* gray.act */; };
@@ -237,6 +239,7 @@
 		94DEA010171918A200073397 /* crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crc32.h; path = "atari800-src/crc32.h"; sourceTree = SOURCE_ROOT; };
 		94DEA012171918D200073397 /* emuos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = emuos.c; path = "atari800-src/emuos.c"; sourceTree = SOURCE_ROOT; };
 		94DEA018171951AD00073397 /* OpenEmuBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenEmuBase.framework; path = "../OpenEmu-SDK/build/Release/OpenEmuBase.framework"; sourceTree = "<group>"; };
+		B3547B502058581E00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVAtari800.h; sourceTree = "<group>"; };
 		B36DE74C1D6AB19C002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -481,6 +484,7 @@
 		B36DE7491D6AB19C002EE3ED /* PVAtari800 */ = {
 			isa = PBXGroup;
 			children = (
+				B3547B502058581E00CFF7D8 /* Core.plist */,
 				B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */,
 				B36DE74C1D6AB19C002EE3ED /* Info.plist */,
 			);
@@ -592,6 +596,7 @@
 				B36DE7531D6AB1B4002EE3ED /* Real.act in Resources */,
 				B36DE7511D6AB1B4002EE3ED /* gray.act in Resources */,
 				B36DE7541D6AB1B4002EE3ED /* XFormer.act in Resources */,
+				B3547B512058581E00CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,6 +609,7 @@
 				B3D73D2D1E9EAF1C0023925B /* Real.act in Resources */,
 				B3D73D2E1E9EAF1C0023925B /* gray.act in Resources */,
 				B3D73D2F1E9EAF1C0023925B /* XFormer.act in Resources */,
+				B3547B522058581E00CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

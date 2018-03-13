@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3547B5D205858D800CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5C205858D800CFF7D8 /* Core.plist */; };
+		B3547B5E205858D800CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5C205858D800CFF7D8 /* Core.plist */; };
 		B368C2461D6D873900FE9EF8 /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
 		B36BE9041DEB43120078A9CB /* stub_arm.S in Sources */ = {isa = PBXBuildFile; fileRef = 946B94F117829B4400A212AC /* stub_arm.S */; };
 		B36EE5131D6D3B5F000D545F /* compiler.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94EB17829B4400A212AC /* compiler.c */; };
@@ -576,6 +578,7 @@
 		94E45B9A17E67B560079D59E /* mcd_arm.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = mcd_arm.s; sourceTree = "<group>"; };
 		94E45B9B17E67B560079D59E /* mcd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcd.c; sourceTree = "<group>"; };
 		94E45B9E17E67C630079D59E /* sh2soc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sh2soc.c; sourceTree = "<group>"; };
+		B3547B5C205858D800CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37937AC1D6BCF8100EBAE81 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PicoDrive.h; sourceTree = "<group>"; };
 		B37937AF1D6BCF8100EBAE81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1457,6 +1460,7 @@
 			isa = PBXGroup;
 			children = (
 				B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */,
+				B3547B5C205858D800CFF7D8 /* Core.plist */,
 				B37937AF1D6BCF8100EBAE81 /* Info.plist */,
 			);
 			path = PicoDrive;
@@ -1578,6 +1582,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B371709E1D6CB559005D1EFF /* carthw.cfg in Resources */,
+				B3547B5D205858D800CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1586,6 +1591,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B371709F1D6CB55A005D1EFF /* carthw.cfg in Resources */,
+				B3547B5E205858D800CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

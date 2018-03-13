@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.core.fceu</string>
+	<key>PVPrincipleClass</key>
+	<string>PVFCEUEmulatorCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.nes</string>
+		<string>com.provenance.fds</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>FCEUX</string>
+	<key>PVProjectURL</key>
+	<string>http://sourceforge.net/projects/fceultra/</string>
+	<key>PVProjectVersion</key>
+	<string>2.2.3</string>
+</dict>
+</plist>

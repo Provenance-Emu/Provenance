@@ -31,14 +31,34 @@ public extension PVEmulatorConfiguration {
         return subclassList
     }
     
-    class func updateSystems(fromPlist plists : [URL]) {
+    class func updateCores(fromPlists plists : [URL]) {
+        let database = RomDatabase.sharedInstance
+        let decoder = PropertyListDecoder()
+
+        plists .forEach { (plist) in
+            do {
+                let data = try Data(contentsOf: plist)
+                let core = try decoder.decode(CorePlistEntry.self, from: data)
+                let supportedSystems = RomDatabase.sharedInstance.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
+
+                let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
+                try newCore.add(update: true)
+            } catch {
+                // Handle error
+                ELOG("Failed to parse plist \(plist.path) : \(error)")
+            }
+        }
+    }
+
+    
+    class func updateSystems(fromPlists plists : [URL]) {
         typealias SystemPlistEntries = [SytemPlistEntry]
         let database = RomDatabase.sharedInstance
-        
+        let decoder = PropertyListDecoder()
+
         plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
-                let decoder = PropertyListDecoder()
                 let systems : SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
                 
                 systems?.forEach { system in

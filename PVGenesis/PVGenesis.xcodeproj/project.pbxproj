@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3547B572058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
+		B3547B582058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
 		B37302D41DE7DB1B00D0B366 /* gamepad.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7AC17F752600031B1C9 /* gamepad.c */; };
 		B37302D51DE7DB1B00D0B366 /* eq.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA7E617F752600031B1C9 /* eq.c */; };
 		B37302D61DE7DB1B00D0B366 /* scd.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA70B17F752600031B1C9 /* scd.c */; };
@@ -259,6 +261,7 @@
 		1ACEA8D517F75B8A0031B1C9 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		1ACEA8D717F75B8A0031B1C9 /* fileio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
+		B3547B562058589900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37303361DE7DB5C00D0B366 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B37303381DE7DB6400D0B366 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3A9F41F1DE7EB67008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -586,6 +589,7 @@
 		B3E432051DE6917700D3C91E /* PVGenesis */ = {
 			isa = PBXGroup;
 			children = (
+				B3547B562058589900CFF7D8 /* Core.plist */,
 				B3E432061DE6917700D3C91E /* PVGenesis.h */,
 				B3E432071DE6917700D3C91E /* Info.plist */,
 			);
@@ -696,6 +700,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B572058589900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +708,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B582058589900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

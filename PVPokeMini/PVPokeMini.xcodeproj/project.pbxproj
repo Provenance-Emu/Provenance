@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3547B692058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
+		B3547B6A2058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
 		B3CB854D1E9BECBF009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85601E9BF153009155A6 /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */; };
 		B3CB85611E9BF153009155A6 /* MinxCPU_CE.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A45A91B95605F00565444 /* MinxCPU_CE.c */; };
@@ -173,6 +175,7 @@
 		081A46191B95660100565444 /* freebios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = freebios.c; path = "pokemini-code/freebios/freebios.c"; sourceTree = "<group>"; };
 		081A461A1B95660100565444 /* freebios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = freebios.h; path = "pokemini-code/freebios/freebios.h"; sourceTree = "<group>"; };
 		081A461D1B95669B00565444 /* NoUI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = NoUI.c; path = "pokemini-code/sourcex/NoUI.c"; sourceTree = "<group>"; };
+		B3547B682058593700CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3CB85491E9BECBF009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPokeMini.h; sourceTree = "<group>"; };
 		B3CB854C1E9BECBF009155A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -358,6 +361,7 @@
 		B3CB854A1E9BECBF009155A6 /* PVPokeMini Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B3547B682058593700CFF7D8 /* Core.plist */,
 				B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */,
 				B3CB854C1E9BECBF009155A6 /* Info.plist */,
 			);
@@ -471,6 +475,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B692058593700CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +483,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B6A2058593700CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

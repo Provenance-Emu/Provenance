@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
+		B3547B4F205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B3C9D43E1DEA6AFB0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
 		B3C9D4541DEA6DE80068D057 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08B1ABE373800FF6AEF /* video.cpp */; };
@@ -239,6 +241,7 @@
 		1AABE0C31ABE378D00FF6AEF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1AABE0C51ABE379500FF6AEF /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1AABE0C91ABE380200FF6AEF /* PVGB-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGB-Prefix.pch"; sourceTree = "<group>"; };
+		B3547B4D205857E300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3C96EE31D6365F9003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3C96EE51D6365FE003F1E93 /* PVSupportTV.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupportTV.framework; path = "../PVSupport/build/Debug-appletvos/PVSupportTV.framework"; sourceTree = "<group>"; };
 		B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -580,6 +583,7 @@
 		B3C9D43B1DEA6AFB0068D057 /* PVGB */ = {
 			isa = PBXGroup;
 			children = (
+				B3547B4D205857E300CFF7D8 /* Core.plist */,
 				B3C9D43C1DEA6AFB0068D057 /* PVGB.h */,
 				B3C9D43D1DEA6AFB0068D057 /* Info.plist */,
 			);
@@ -688,6 +692,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B4E205857E300CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,6 +700,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3547B4F205857E300CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

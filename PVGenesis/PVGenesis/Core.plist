@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.core.genplusgx</string>
+	<key>PVPrincipleClass</key>
+	<string>PVGenesisEmulatorCore</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.genesis</string>
+		<string>com.provenance.gamegear</string>
+		<string>com.provenance.mastersystem</string>
+		<string>com.provenance.sg1000</string>
+		<string>com.provenance.segacd</string>
+	</array>
+	<key>PVProjectName</key>
+	<string>Genesis Plus GX</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/ekeeke/Genesis-Plus-GX</string>
+	<key>PVProjectVersion</key>
+	<string>1.7.1</string>
+</dict>
+</plist>
