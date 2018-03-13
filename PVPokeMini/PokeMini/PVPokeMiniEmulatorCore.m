@@ -189,9 +189,8 @@ int saveEEPROM(const char *filename)
     return 1;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path // error:(NSError **)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
-
     romPath = path;
     return YES;
 }

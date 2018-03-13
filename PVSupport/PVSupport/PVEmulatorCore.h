@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeStateHasWrongSize        = -4,
     PVEmulatorCoreErrorCodeCouldNotSaveState        = -5,
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
+    PVEmulatorCoreErrorCodeMissingM3U               = -7,
 };
 
 #define GetSecondsSince(x) (-[x timeIntervalSinceNow])

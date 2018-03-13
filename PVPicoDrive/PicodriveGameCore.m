@@ -454,7 +454,7 @@ static void writeSaveFile(const char* path, int type)
     retro_run();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path //error:(NSError **)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
 {
         // Copy default cartHW.cfg if need be
     [self copyCartHWCFG];
@@ -521,7 +521,20 @@ static void writeSaveFile(const char* path, int type)
         return YES;
     }
     
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: @"Failed to load game.",
+                               NSLocalizedFailureReasonErrorKey: @"PicoDrive failed to load ROM.",
+                               NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format PicoDrive supports."
+                               };
+    
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                        userInfo:userInfo];
+    
+    *error = newError;
+    
     return NO;
+    
 }
 
 - (void)loadSaveFile:(NSString *)path forType:(int)type

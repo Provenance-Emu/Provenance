@@ -94,7 +94,7 @@ public:
 
 # pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     memset(gb_pad, 0, sizeof(uint32_t) * PVGBButtonCount);
 
@@ -119,8 +119,21 @@ public:
     double outSampleRate = inSampleRate * mul / div;
     sampleRate = outSampleRate; // 47994.326636
 
-    if (gb.load([path UTF8String]) != 0)
+    if (gb.load([path UTF8String]) != 0) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"Gambatte failed to load ROM.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Gambatte supports."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+        
         return NO;
+    }
 
     // Load built-in GBC palette for monochrome games if supported
     if (!gb.isCgb())

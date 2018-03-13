@@ -135,7 +135,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     S9xMainLoop();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     memset(&Settings, 0, sizeof(Settings));
     Settings.DontSaveOopsSnapshot = true;
@@ -229,7 +229,20 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
         return YES;
     }
 
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: @"Failed to load game.",
+                               NSLocalizedFailureReasonErrorKey: @"Snes9x failed to load ROM.",
+                               NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format Snes9x supports."
+                               };
+    
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                        userInfo:userInfo];
+    
+    *error = newError;
+    
     return NO;
+    
 }
 
 #pragma mark Video

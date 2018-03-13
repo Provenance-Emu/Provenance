@@ -79,7 +79,7 @@
 
 #pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path {
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     const int LEFT_DIFF_SWITCH  = 15;
     const int RIGHT_DIFF_SWITCH = 16;
     const int LEFT_POSITION  = 1; // also know as "B"
@@ -133,7 +133,20 @@
         return YES;
     }
 
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: @"Failed to load game.",
+                               NSLocalizedFailureReasonErrorKey: @"ProSystem failed to load ROM.",
+                               NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format ProSystem supports."
+                               };
+    
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                        userInfo:userInfo];
+    
+    *error = newError;
+    
     return NO;
+    
 }
 
 - (void)executeFrame {

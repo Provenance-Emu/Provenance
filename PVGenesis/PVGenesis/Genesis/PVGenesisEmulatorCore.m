@@ -183,7 +183,7 @@ static bool environment_callback(unsigned cmd, void *data)
 	retro_run();
 }
 
-- (BOOL)loadFileAtPath:(NSString*)path
+- (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error
 {
 	memset(_pad, 0, sizeof(int16_t) * 10);
     
@@ -195,6 +195,17 @@ static bool environment_callback(unsigned cmd, void *data)
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
     if (dataObj == nil)
 	{
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"File was unreadble.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and exists."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
 		return false;
 	}
     size = [dataObj length];
@@ -240,6 +251,18 @@ static bool environment_callback(unsigned cmd, void *data)
         
         return YES;
     }
+    
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: @"Failed to load game.",
+                               NSLocalizedFailureReasonErrorKey: @"GenPlusGX failed to load game.",
+                               NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported GenPlusGX ROM format."
+                               };
+    
+    NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                            code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                        userInfo:userInfo];
+    
+    *error = newError;
     
     return NO;
 }

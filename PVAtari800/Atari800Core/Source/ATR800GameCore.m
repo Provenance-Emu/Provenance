@@ -240,6 +240,18 @@ __weak static ATR800GameCore * _currentCore;
     if(!AFILE_OpenFile([path UTF8String], 1, 1, FALSE))
     {
         NSLog(@"Failed to open file");
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"atari800 failed to load ROM.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format atari800 supports."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+        
         return NO;
     }
 

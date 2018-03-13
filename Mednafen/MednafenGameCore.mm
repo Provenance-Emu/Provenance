@@ -254,7 +254,7 @@ static void emulation_run() {
     update_audio_batch(spec.SoundBuf, spec.SoundBufSize);
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     [[NSFileManager defaultManager] createDirectoryAtPath:[self batterySavesPath] withIntermediateDirectories:YES attributes:nil error:NULL];
 
@@ -334,6 +334,17 @@ static void emulation_run() {
     game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
 
     if(!game) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"Mednafen failed to load game.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednefen ROM format."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
         return NO;
     }
     
@@ -363,8 +374,6 @@ static void emulation_run() {
             game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
         }
         
-        
-        
         // Multi-Disc check
         BOOL multiDiscGame = NO;
         NSNumber *discCount = [MednafenGameCore multiDiscPSXGames][self.romSerial];
@@ -379,20 +388,20 @@ static void emulation_run() {
             if (rangeOfDocuments.location != NSNotFound) {
                 m3uPath = [m3uPath substringFromIndex:rangeOfDocuments.location + 11];
             }
-            
+
             NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
+
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"Missing required m3u file.",
+                                       NSLocalizedRecoverySuggestionErrorKey: message
+                                       };
             
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Required m3u file missing."
-                                                                           message:message
-                                                                    preferredStyle:UIAlertControllerStyleAlert];
+            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeMissingM3U
+                                                userInfo:userInfo];
             
-            [alert addAction:[UIAlertAction actionWithTitle:@"View Wiki" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://bitly.com/provm3u"] options:nil completionHandler:nil];
-            }]];
-            [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
-            
-            [UIApplication.sharedApplication.delegate.window.rootViewController presentViewController:alert animated:YES completion:nil];
-            
+            *error = newError;
             return NO;
         }
         

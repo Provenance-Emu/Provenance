@@ -392,7 +392,7 @@ static void MupenSetAudioSpeed(int percent)
     // do we need this?
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
     const char *dataPath;
@@ -533,6 +533,19 @@ static void MupenSetAudioSpeed(int percent)
     m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
     if ( openStatus != M64ERR_SUCCESS) {
         NSLog(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);
+   
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load game.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mupen64Plus ROM format."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+        
         return NO;
     }
     
@@ -568,6 +581,17 @@ static void MupenSetAudioSpeed(int percent)
     //BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
     BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
     if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load GFX Plugin.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
         return NO;
     }
     
@@ -598,6 +622,18 @@ static void MupenSetAudioSpeed(int percent)
     success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
 #endif
     if (!success) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load RSP Plugin.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+        
         return NO;
     }
     

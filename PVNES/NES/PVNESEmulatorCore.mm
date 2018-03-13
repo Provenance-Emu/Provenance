@@ -86,7 +86,7 @@ static __weak PVNESEmulatorCore *_current;
     });
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     memset(pad, 0, sizeof(uint32_t) * PVNESButtonCount);
 
@@ -106,8 +106,20 @@ static __weak PVNESEmulatorCore *_current;
     FCEUGI *FCEUGameInfo;
     FCEUGameInfo = FCEUI_LoadGame([path UTF8String], 1, false);
 
-    if(!FCEUGameInfo)
+    if(!FCEUGameInfo) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"FCEUI failed to load game.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported FCEUI ROM format."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
         return NO;
+    }
 
     //DLog(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
 

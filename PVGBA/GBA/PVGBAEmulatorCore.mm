@@ -80,7 +80,7 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Execution
 
-- (BOOL)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
     memset(pad, 0, sizeof(uint32_t) * PVGBAButtonCount);
 
@@ -88,8 +88,21 @@ static __weak PVGBAEmulatorCore *_current;
 
     int loaded = CPULoadRom([path UTF8String]);
 
-    if(loaded == 0)
+    if(loaded == 0) {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: @"Failed to load game.",
+                                   NSLocalizedFailureReasonErrorKey: @"VisualBoyAdvanced failed to load ROM.",
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format VisualBoyAdvanced supports."
+                                   };
+        
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                            userInfo:userInfo];
+        
+        *error = newError;
+        
         return NO;
+    }
 
     utilUpdateSystemColorMaps(false);
 
