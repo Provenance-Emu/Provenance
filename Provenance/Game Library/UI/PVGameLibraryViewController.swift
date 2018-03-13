@@ -452,7 +452,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let appDelegate = UIApplication.shared.delegate as! PVAppDelegate
         
         if let shortcutMD5 = appDelegate.shortcutItemMD5 {
-            loadRecentGame(fromShortcut: shortcutMD5)
+            loadGame(fromMD5: shortcutMD5)
             appDelegate.shortcutItemMD5 = nil
         }
     }
@@ -1039,12 +1039,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         //    });
     }
 
-    func loadRecentGame(fromShortcut md5: String) {
+    func loadGame(fromMD5 md5: String) {
         let database = RomDatabase.sharedInstance
-        let recentGames = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: md5)
+        let recentGames = database.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5)
         
-        if let mostRecentGame = recentGames.first?.game {
+        if let mostRecentGame = recentGames.first {
             load(mostRecentGame)
+        } else {
+            ELOG("No game found for MD5 \(md5)")
         }
     }
 
@@ -1079,7 +1081,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.moreInfo(for: game)
             }))
-            
+      
             actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.toggleFavorite(for: game)
             }))
@@ -1088,6 +1090,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.renameGame(game)
             }))
 #if os(iOS)
+    
+    #if DEBUG
+            actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                let md5URL = "provenance://open?md5=\(game.md5Hash)"
+                UIPasteboard.general.string = md5URL
+            }))
+    #endif
             actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
