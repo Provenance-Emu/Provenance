@@ -5,6 +5,8 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
+import RealmSwift
+
 private let LabelHeight: CGFloat = 44.0
 
 extension UIImage {
@@ -40,7 +42,34 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         return CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
     }
     
-    func setup(with game: PVGame) {
+    var token : NotificationToken?
+    var game : PVGame? {
+        didSet {
+            token?.invalidate()
+            
+            if let game = game {
+                token = game.observe { [weak self] change in
+                    switch change {
+                    case .change(let properties):
+                        if !properties.isEmpty {
+                            self?.setup(with: game)
+                        }
+                    case .error(let error):
+                        print("An error occurred: \(error)")
+                    case .deleted:
+                        print("The object was deleted.")
+                    }
+                }
+                setup(with: game)
+            }
+        }
+    }
+    
+    deinit {
+        token?.invalidate()
+    }
+    
+    private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
         let originalArtworkURL: String = game.originalArtworkURL
         if PVSettingsModel.sharedInstance().showGameTitles {
@@ -168,14 +197,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         return missingArtworkImage
     }
     
-    deinit {
-        operation?.cancel()
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
         titleLabel.text = nil
+        token?.invalidate()
+        token = nil
     }
     
     override func layoutSubviews() {
