@@ -45,22 +45,25 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     var token : NotificationToken?
     var game : PVGame? {
         didSet {
-            token?.invalidate()
             
-            if let game = game {
-                token = game.observe { [weak self] change in
-                    switch change {
-                    case .change(let properties):
-                        if !properties.isEmpty {
-                            self?.setup(with: game)
+            DispatchQueue.main.async { [unowned self] in
+                self.token?.invalidate()
+                
+                if let game = self.game {
+                    self.token = game.observe { [weak self] change in
+                        switch change {
+                        case .change(let properties):
+                            if !properties.isEmpty {
+                                self?.setup(with: game)
+                            }
+                        case .error(let error):
+                            print("An error occurred: \(error)")
+                        case .deleted:
+                            print("The object was deleted.")
                         }
-                    case .error(let error):
-                        print("An error occurred: \(error)")
-                    case .deleted:
-                        print("The object was deleted.")
                     }
+                    self.setup(with: game)
                 }
-                setup(with: game)
             }
         }
     }
