@@ -75,8 +75,6 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
     - Downloading _(from mobile browsers)_
     - Copying _(from other mobile apps)_
     - Injecting _(with desktop apps)_
-      - iTunes File Sharing
-      - iTunes File Sharing
 - Game Library Searching
 - iOS 8+ (iPhone, iPad)
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
