@@ -305,9 +305,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
     
     func addSectionToken(forSystem system : PVSystem) {
-        let newToken = system.games.observe {[unowned self] (changes: RealmCollectionChange<LinkingObjects<PVGame>>) in
-
-            
+        let newToken = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true).observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
             switch changes {
             case .initial:
                 // New additions already handled by systems token
@@ -332,6 +330,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
         
+        systemSectionsTokens[system.identifier]?.invalidate()
         systemSectionsTokens[system.identifier] = newToken
     }
     
@@ -1538,7 +1537,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         
         var game: PVGame? = nil
         if let searchResults = searchResults {
-            game = Array(searchResults)[indexPath.item]
+            game = searchResults[indexPath.item]
         }
         else {
             game = self.game(at: indexPath)
@@ -1563,8 +1562,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             } else if section == recentGamesSection {
                 game = Array(recentGames)[row].game
             } else {
-                let system = Array(systems)[section - systemsSectionOffset]
-                game = Array(system.games)[row]
+                let system = systems[section - systemsSectionOffset]
+                game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
             }
         }
         
