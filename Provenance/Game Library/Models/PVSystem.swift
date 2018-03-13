@@ -9,6 +9,14 @@
 import Foundation
 import RealmSwift
 
+public enum ScreenType : String {
+    case unknown = ""
+    case monochromaticLCD = "MonoLCD"
+    case colorLCD = "ColorLCD"
+    case crt = "CRT"
+    case modern = "Modern"
+}
+
 @objcMembers public class PVSystem : Object {
     dynamic var name : String = ""
     dynamic var shortName : String = ""
@@ -18,13 +26,17 @@ import RealmSwift
     dynamic var openvgDatabaseID : Int = 0
     dynamic var requiresBIOS : Bool = false
     dynamic var usesCDs : Bool = false
+    dynamic var portableSystem : Bool = false
+    dynamic var supportsRumble : Bool = false
+    fileprivate(set) dynamic var _screenType : String = ScreenType.unknown.rawValue
     
     var supportedExtensions = List<String>()
     
     // Reverse Links
     var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
     var games = LinkingObjects(fromType: PVGame.self, property: "system")
-    
+    var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
+
     dynamic var identifier : String = ""
     
     override public static func primaryKey() -> String? {
@@ -69,6 +81,17 @@ import RealmSwift
 }
 
 public extension PVSystem {
+    var screenType : ScreenType {
+        get {
+            return ScreenType(rawValue: _screenType)!
+        }
+        set {
+            try? realm?.write {
+                _screenType = newValue.rawValue
+            }
+        }
+    }
+    
     var enumValue : SystemIdentifier {
         return SystemIdentifier(rawValue: identifier)!
     }

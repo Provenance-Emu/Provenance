@@ -80,7 +80,15 @@ public extension PVEmulatorConfiguration {
         pvSystem.name = system.PVSystemName
         pvSystem.shortName = system.PVSystemShortName
         pvSystem.controllerLayout = system.PVControlLayout
+        pvSystem.portableSystem = system.PVPortable ?? false
         pvSystem.usesCDs = system.PVUsesCDs ?? false
+        pvSystem.supportsRumble = system.PVSupportsRumble ?? false
+        
+        if let screenType = system.PVScreenType {
+            pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown
+        } else {
+            pvSystem.screenType = .unknown
+        }
         
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()

@@ -11,7 +11,11 @@ import RealmSwift
 
 @objcMembers public class PVCore : Object {
     dynamic var identifier : String = ""
-    var supportSystems = List<PVSystem>()
+    dynamic var version : String = ""
+    dynamic var supportedSystems = List<PVSystem>()
+    
+    dynamic var projectName = ""
+    dynamic var projectURL = ""
     
     override public static func primaryKey() -> String? {
         return "identifier"

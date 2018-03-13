@@ -22,6 +22,10 @@ public struct SystemDictionaryKeys {
 	static let Bit                 = "PVBit"
 	static let ReleaseYear         = "PVReleaseYear"
     static let UsesCDs             = "PVUsesCDs"
+    static let SupportsRumble      = "PVSupportsRumble"
+    static let ScreenType          = "PVScreenType"
+    static let Portable            = "PVPortable"
+
     
     struct ControllerLayoutKeys {
         static let Button              = "PVButton"
@@ -327,6 +331,9 @@ public struct SytemPlistEntry: Codable {
     var PVSupportedExtensions : [String]
     var PVControlLayout : [ControlLayoutEntry]
     var PVUsesCDs : Bool?
+    var PVPortable : Bool?
+    var PVScreenType : String?
+    var PVSupportsRumble : Bool?
  
 //    private enum CodingKeys: String, CodingKey {
 //        case PVSystemIdentifier

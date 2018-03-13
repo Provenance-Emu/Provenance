@@ -528,6 +528,8 @@
 		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.m */; };
 		B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B375C68E2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
+		B3780B3F2057F1F60018211E /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96832055F3D900281880 /* PVCore.swift */; };
+		B3780B402057F1F70018211E /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96832055F3D900281880 /* PVCore.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -3621,6 +3623,7 @@
 				B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */,
 				B3BE968C2055F41A00281880 /* PVSystem.swift in Sources */,
 				B3BE968B2055F41A00281880 /* PVBIOS.swift in Sources */,
+				B3780B402057F1F70018211E /* PVCore.swift in Sources */,
 				B3BE967C2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
 				B3BE968A2055F40000281880 /* PVFile.swift in Sources */,
 			);
@@ -3642,6 +3645,7 @@
 				B36D9DF92035AC8300D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3BE968E2055F41A00281880 /* PVSystem.swift in Sources */,
 				B3BE968D2055F41A00281880 /* PVBIOS.swift in Sources */,
+				B3780B3F2057F1F60018211E /* PVCore.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				B3BE96892055F40000281880 /* PVFile.swift in Sources */,
 			);
