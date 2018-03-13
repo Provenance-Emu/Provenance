@@ -67,6 +67,34 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
             
             return true
+        } else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
+            
+            guard let components = components else {
+                ELOG("Failed to parse url <\(url.absoluteString)>")
+                return false
+            }
+            
+            if #available(iOS 9.0, *) {
+                let sendingAppID = options[.sourceApplication]
+                ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
+            }
+            
+            if components.host == "open" {
+                guard let queryItems = components.queryItems, let firstQueryItem = queryItems.first else {
+                    return false
+                }
+    
+                if firstQueryItem.name == PVGameMD5Key, let value = firstQueryItem.value, !value.isEmpty {
+                    shortcutItemMD5 = value
+                    return true
+                } else {
+                    ELOG("Query didn't have acceptable values")
+                    return false
+                }
+                
+            } else {
+                ELOG("Unsupported host <\(url.host?.removingPercentEncoding ?? "nil")>")
+                return false
             }
         }
         else if let components = components,
