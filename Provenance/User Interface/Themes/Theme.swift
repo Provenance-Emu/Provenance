@@ -116,7 +116,7 @@ struct DarkTheme : iOSTheme {
     var switchON : UIColor? { return UIColor(hex: "#1C83F5")! }
     var switchThumb : UIColor? { return UIColor(hex: "#eee")! }
     
-    var gameLibraryBackground : UIColor { return UIColor(hex: "#292929")! }
+    var gameLibraryBackground : UIColor { return UIColor.black }
     var gameLibraryText : UIColor { return UIColor(hex: "#6F6F6F")! }
 
     var gameLibraryHeaderBackground : UIColor {return UIColor.black}

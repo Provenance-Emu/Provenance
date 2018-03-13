@@ -7,6 +7,24 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
+class PVGameLibrarySectionFooterView: UICollectionReusableView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        #if os(iOS)
+            let separator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 0.75))
+            separator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
+            separator.autoresizingMask = .flexibleWidth
+            addSubview(separator)
+        #endif
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
 class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     
@@ -18,17 +36,18 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         titleLabel.textColor = colorForText
 #else
-        titleLabel.frame = CGRect(x: 20, y: 0, width: bounds.size.width - 40, height: bounds.size.height)
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+    let labelHeight : CGFloat = 20.0
+    let labelBottomMargin : CGFloat = 3.0
 
-        let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 0.5))
-        topSeparator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
-        topSeparator.autoresizingMask = .flexibleWidth
-        
-        addSubview(topSeparator)
-        
-        titleLabel.textAlignment = .center
-        
+    titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
+    titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
+
+//        let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 0.5))
+//        topSeparator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
+//        topSeparator.autoresizingMask = .flexibleWidth
+//
+//        addSubview(topSeparator)
+    
         let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 0.5))
         bottomSeparator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
         bottomSeparator.autoresizingMask = .flexibleWidth
@@ -40,7 +59,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.textAlignment = .left
         titleLabel.backgroundColor = UIColor.black
         titleLabel.textColor = UIColor(hex: "#7B7B81")
-        topSeparator.backgroundColor = UIColor(hex: "#262626")
+//        topSeparator.backgroundColor = UIColor(hex: "#262626")
         bottomSeparator.backgroundColor = UIColor(hex: "#262626")
         self.clipsToBounds = false
 #endif

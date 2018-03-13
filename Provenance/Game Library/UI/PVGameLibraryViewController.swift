@@ -18,6 +18,8 @@ import RealmSwift
 import CoreSpotlight
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
+let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
+
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
@@ -245,6 +247,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.delaysContentTouches = false
         collectionView.keyboardDismissMode = .interactive
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
+        collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
+
 #if os(tvOS)
         collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
 #else
@@ -1572,20 +1576,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if (kind == UICollectionElementKindSectionHeader) {
             var headerView: PVGameLibrarySectionHeaderView? = nil
-            if  searchResults != nil {
-                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-                headerView?.titleLabel.text = "Search Results"
-            }
-            else {
-                headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
-                let title: String = sectionTitles[indexPath.section]
-                headerView?.titleLabel.text = title
-            }
+            let title = searchResults != nil ? "Search Results" : sectionTitles[indexPath.section]
+            
+            headerView = self.collectionView?.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as? PVGameLibrarySectionHeaderView
+            headerView?.titleLabel.text = title
+            
             if let headerView = headerView {
                 return headerView
             } else {
                 fatalError("Couldn't create header view")
             }
+        } else if kind == UICollectionElementKindSectionFooter {
+            let footerView = self.collectionView!.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryFooterViewIdentifier, for: indexPath) as! PVGameLibrarySectionFooterView
+            return footerView
         }
         
         fatalError("Don't support type \(kind)")
@@ -1785,7 +1788,7 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
         #if os(tvOS)
             return UIEdgeInsetsMake(40, 0, 120, 0)
         #else
-            return UIEdgeInsetsMake(5, 10, 5, 10)
+            return UIEdgeInsetsMake(section == 0 ? 5 : 15, 10, 5, 10)
         #endif
     }
 }
