@@ -11,8 +11,8 @@ import RealmSwift
 
 @objcMembers public class PVSaveState : Object {
     
-    dynamic var game : PVGame?
-    dynamic var path : String?
+    dynamic var game : PVGame!
+    dynamic var path : String!
     dynamic var date : Date = Date()
     dynamic var image : String?
     dynamic var isAutosave : Bool = false
