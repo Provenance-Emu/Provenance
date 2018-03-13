@@ -444,11 +444,21 @@ void uncaughtExceptionHandler(NSException *exception)
     [self.gameAudio startAudio];
 }
 
+- (void)enableContorllerInput:(BOOL)enabled {
+#if TARGET_OS_TV
+    self.controllerUserInteractionEnabled = enabled;
+#else
+// Can enable when we change to iOS 10 base
+// and change super class to GCEventViewController
+//    if (@available(iOS 10, *)) {
+//        self.controllerUserInteractionEnabled = enabled;
+//    }
+#endif
+}
+
 - (void)showMenu:(id)sender
 {
-#if TARGET_OS_TV
-    self.controllerUserInteractionEnabled = YES;
-#endif
+    [self enableContorllerInput:YES];
 
 	__block PVEmulatorViewController *weakSelf = self;
 	
@@ -472,9 +482,7 @@ void uncaughtExceptionHandler(NSException *exception)
             [[NSNotificationCenter defaultCenter] postNotificationName:GCControllerDidDisconnectNotification object:[[PVControllerManager sharedManager] iCadeController]];
             [weakSelf.emulatorCore setPauseEmulation:NO];
             weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
+            [weakSelf enableContorllerInput:NO];
 		}]];
     }
 
@@ -493,9 +501,9 @@ void uncaughtExceptionHandler(NSException *exception)
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 					[weakSelf.controllerViewController releaseStartForPlayer:0];
 				});
-#if TARGET_OS_TV
-				weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+                
+                [weakSelf enableContorllerInput:NO];
+
 			}]];
 			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P1 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 				[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -504,9 +512,9 @@ void uncaughtExceptionHandler(NSException *exception)
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 					[weakSelf.controllerViewController releaseSelectForPlayer:0];
 				});
-#if TARGET_OS_TV
-				weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+                
+                [weakSelf enableContorllerInput:NO];
+                
 			}]];
 		}
 	}
@@ -521,9 +529,9 @@ void uncaughtExceptionHandler(NSException *exception)
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 					[weakSelf.controllerViewController releaseStartForPlayer:1];
 				});
-#if TARGET_OS_TV
-				weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+                
+                [weakSelf enableContorllerInput:NO];
+                
 			}]];
 			[actionsheet addAction:[UIAlertAction actionWithTitle:@"P2 Select" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 				[weakSelf.emulatorCore setPauseEmulation:NO];
@@ -532,9 +540,9 @@ void uncaughtExceptionHandler(NSException *exception)
 				dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 					[weakSelf.controllerViewController releaseSelectForPlayer:1];
 				});
-#if TARGET_OS_TV
-				weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+                
+                [weakSelf enableContorllerInput:NO];
+                
 			}]];
 		}
 	}
@@ -583,10 +591,9 @@ void uncaughtExceptionHandler(NSException *exception)
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		[weakSelf.emulatorCore resetEmulation];
 		weakSelf.isShowingMenu = NO;
-
-#if TARGET_OS_TV
-        weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+        
+        [weakSelf enableContorllerInput:NO];
+        
 	}]];
     
     [actionsheet addAction:[UIAlertAction actionWithTitle:@"Game Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -607,9 +614,9 @@ void uncaughtExceptionHandler(NSException *exception)
     UIAlertAction *resumeAction = [UIAlertAction actionWithTitle:@"Resume" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         [weakSelf.emulatorCore setPauseEmulation:NO];
         weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-        weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+        
+        [weakSelf enableContorllerInput:NO];
+        
     }];
     
     [actionsheet addAction:resumeAction];
@@ -638,9 +645,8 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)hideMenu
 {
-#if TARGET_OS_TV
-    self.controllerUserInteractionEnabled = NO;
-#endif
+    [self enableContorllerInput:NO];
+    
     if (self.menuActionSheet)
     {
         [self dismissViewControllerAnimated:YES completion:NULL];
@@ -703,18 +709,18 @@ void uncaughtExceptionHandler(NSException *exception)
 			[weakSelf.emulatorCore saveStateToFileAtPath:savePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
+            
+            [weakSelf enableContorllerInput:NO];
+            
 		}]];
 	}
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
-#endif
+        
+        [weakSelf enableContorllerInput:NO];
+        
 	}]];
 
     [self presentViewController:actionsheet animated:YES completion:^{
@@ -757,9 +763,9 @@ void uncaughtExceptionHandler(NSException *exception)
 			[weakSelf.emulatorCore loadStateFromFileAtPath:autoSavePath];
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
+            
+            [weakSelf enableContorllerInput:NO];
+            
 		}]];
 	}
 	
@@ -773,18 +779,18 @@ void uncaughtExceptionHandler(NSException *exception)
 			}
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-            self.controllerUserInteractionEnabled = NO;
-#endif
+            
+            [weakSelf enableContorllerInput:NO];
+            
 		}]];
 	}
 	
 	[actionsheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
 		[weakSelf.emulatorCore setPauseEmulation:NO];
 		weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-        self.controllerUserInteractionEnabled = NO;
-#endif
+        
+        [weakSelf enableContorllerInput:NO];
+        
 	}]];
 
      [self presentViewController:actionsheet animated:YES completion:^{
@@ -847,9 +853,9 @@ void uncaughtExceptionHandler(NSException *exception)
 			weakSelf.emulatorCore.gameSpeed = idx;
 			[weakSelf.emulatorCore setPauseEmulation:NO];
 			weakSelf.isShowingMenu = NO;
-#if TARGET_OS_TV
-			weakSelf.controllerUserInteractionEnabled = NO;
-#endif
+            
+            [weakSelf enableContorllerInput:NO];
+            
 		}]];
 	}];
 	
@@ -879,16 +885,15 @@ void uncaughtExceptionHandler(NSException *exception)
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
 #endif
     [self dismissViewControllerAnimated:YES completion:completion];
-#if TARGET_OS_TV
-    self.controllerUserInteractionEnabled = NO;
-#endif
+    
+    [self enableContorllerInput:NO];
     
     [self updatePlayedDuration];
 }
 
 #pragma mark - Controllers
 
-#if TARGET_OS_TV
+//#if TARGET_OS_TV
 // Ensure that override of menu gesture is caught and handled properly for tvOS
 -(void)pressesBegan:(NSSet<UIPress *> *)presses withEvent:(nullable UIPressesEvent *)event {
     
@@ -902,7 +907,7 @@ void uncaughtExceptionHandler(NSException *exception)
         [super pressesBegan:presses withEvent:event];
     }
 }
-#endif
+//#endif
 
 - (void)controllerPauseButtonPressed:(id)sender
 {
