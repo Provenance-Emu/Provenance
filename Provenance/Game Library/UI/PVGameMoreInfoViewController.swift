@@ -313,7 +313,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
         
         nameLabel.text = game?.title ?? ""
-        systemLabel.text = game?.systemShortName ?? ""
+        systemLabel.text = game?.system.name ?? ""
         developerLabel.text = game?.developer  ?? ""
         publishDateLabel.text = game?.publishDate  ?? ""
         genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ")  ?? ""
