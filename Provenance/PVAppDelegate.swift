@@ -56,27 +56,26 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
-#if os(tvOS)
-            let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-            let documentsDirectory = paths.first!
-
             let filename = url.lastPathComponent
-            let destinationPath = URL(fileURLWithPath:documentsDirectory).appendingPathComponent("roms", isDirectory: true).appendingPathComponent(filename)
-
+            let destinationPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+            
             do {
                 try FileManager.default.moveItem(at: url, to: destinationPath)
             } catch {
                 ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
+                return false
+            }
+            
+            return true
             }
         }
-        else if (components?.path == PVGameControllerKey) && (components?.queryItems?.first?.name == PVGameMD5Key) {
-            shortcutItemMD5 = components?.queryItems?.first?.value ?? ""
+        else if let components = components,
+            (components.path == PVGameControllerKey) && (components.queryItems?.first?.name == PVGameMD5Key) {
+            shortcutItemMD5 = components.queryItems?.first?.value ?? ""
+            return true
         }
 
-        return true
+        return false
     }
 #if os(iOS)
     @available(iOS 9.0, *)
