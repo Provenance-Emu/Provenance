@@ -69,7 +69,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
 - ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/jasarien/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
-  - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs)/[Export](https://github.com/jasarien/Provenance/wiki/Exporting-Files):
+  - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/jasarien/Provenance/wiki/Exporting-Files):
     - Uploading _(via built-in web server)_
   - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs):
     - Downloading _(from mobile browsers)_
