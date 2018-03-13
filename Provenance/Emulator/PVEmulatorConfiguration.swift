@@ -193,15 +193,9 @@ public class PVEmulatorConfiguration : NSObject {
         })
     }()
     
-    static let biosEntries: [PVBIOS] = {
-        return Array(systems.flatMap({ (system) -> [PVBIOS]? in
-            if !system.bioses.isEmpty {
-                return Array(system.bioses)
-            } else {
-                return nil
-            }
-        }).joined())
-    }()
+    static var biosEntries: Results<PVBIOS> {
+        return PVBIOS.all
+    }
     
     // MARK: - Filesystem Helpers
     static let documentsPath: URL = {
@@ -327,7 +321,7 @@ public struct SytemPlistEntry: Codable {
     var PVReleaseYear : String
     var PVSystemName : String
     var PVSystemShortName : String
-    var PVBiosNames : [SystemPlistBIOSEntry]?
+    var PVBIOSNames : [SystemPlistBIOSEntry]?
     var PVSupportedExtensions : [String]
     var PVControlLayout : [ControlLayoutEntry]
     var PVUsesCDs : Bool?

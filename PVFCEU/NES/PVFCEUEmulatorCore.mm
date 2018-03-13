@@ -24,7 +24,7 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "PVNESEmulatorCore.h"
+#import "PVFCEUEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
@@ -39,7 +39,7 @@
 extern uint8 *XBuf;
 static uint32_t palette[256];
 
-@interface PVNESEmulatorCore ()
+@interface PVFCEUEmulatorCore ()
 {
     uint32_t *videoBuffer;
     uint8_t *pXBuf;
@@ -50,9 +50,9 @@ static uint32_t palette[256];
 
 @end
 
-@implementation PVNESEmulatorCore
+@implementation PVFCEUEmulatorCore
 
-static __weak PVNESEmulatorCore *_current;
+static __weak PVFCEUEmulatorCore *_current;
 
 - (id)init
 {

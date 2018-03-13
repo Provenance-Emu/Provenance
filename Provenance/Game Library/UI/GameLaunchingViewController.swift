@@ -39,8 +39,8 @@ extension GameLaunchingViewController where Self : UIViewController {
         }
         
         // Check if requires a BIOS and has them all - only warns if md5's mismatch
-
-        guard let biosEntries = system.biosesHave else {
+        let biosEntries = system.bioses
+        guard !biosEntries.isEmpty  else {
             ELOG("System \(system.name) specifies it requires BIOS files but does not provide values for \(SystemDictionaryKeys.BIOSEntries)")
             throw GameLaunchingError.generic("Invalid configuration for system \(system.name). Missing BIOS dictionary in systems.plist")
         }

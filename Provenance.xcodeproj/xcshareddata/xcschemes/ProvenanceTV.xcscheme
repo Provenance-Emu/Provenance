@@ -72,8 +72,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A9F4431DE877E4008450F5"
                BuildableName = "PVNES.framework"
-               BlueprintName = "PVNES tvOS"
-               ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
+               BlueprintName = "PVFCEU tvOS"
+               ReferencedContainer = "container:PVNES/PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

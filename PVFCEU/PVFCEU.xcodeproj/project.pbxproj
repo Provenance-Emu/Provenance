@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B39E8CB320539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */; };
-		B39E8CB420539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */; };
-		B3A9F43A1DE877B4008450F5 /* PVNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
+		B39E8CB420539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
+		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F44D1DE87823008450F5 /* PVSupport.framework */; };
 		B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
@@ -18,7 +18,7 @@
 		B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4541DE87840008450F5 /* OpenGLES.framework */; };
 		B3A9F4571DE87846008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4561DE87846008450F5 /* PVSupport.framework */; };
 		B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4581DE8784B008450F5 /* Foundation.framework */; };
-		B3A9F45A1DE8785A008450F5 /* PVNES.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVNES.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A9F45A1DE8785A008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F45E1DE87E09008450F5 /* addrlatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE3D1D6ECD7500742D04 /* addrlatch.cpp */; };
 		B3A9F45F1DE87E09008450F5 /* 253.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE351D6ECD7500742D04 /* 253.cpp */; };
 		B3A9F4601DE87E09008450F5 /* 603-5052.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE361D6ECD7500742D04 /* 603-5052.cpp */; };
@@ -72,7 +72,7 @@
 		B3A9F4901DE87E09008450F5 /* fceu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77331ABF16A4002274A3 /* fceu.cpp */; };
 		B3A9F4911DE87E09008450F5 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C71ABF16A5002274A3 /* sound.cpp */; };
 		B3A9F4921DE87E09008450F5 /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DA1ABF16A5002274A3 /* guid.cpp */; };
-		B3A9F4931DE87E09008450F5 /* PVNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */; };
+		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
 		B3A9F4941DE87E09008450F5 /* 186.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE241D6ECD7500742D04 /* 186.cpp */; };
 		B3A9F4951DE87E09008450F5 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E91ABF16A5002274A3 /* video.cpp */; };
 		B3A9F4961DE87E09008450F5 /* scale3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BFFD1D6ED36300742D04 /* scale3x.cpp */; };
@@ -300,7 +300,7 @@
 		B3A9F5771DE87E09008450F5 /* fceu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77331ABF16A4002274A3 /* fceu.cpp */; };
 		B3A9F5781DE87E09008450F5 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C71ABF16A5002274A3 /* sound.cpp */; };
 		B3A9F5791DE87E09008450F5 /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DA1ABF16A5002274A3 /* guid.cpp */; };
-		B3A9F57A1DE87E09008450F5 /* PVNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */; };
+		B3A9F57A1DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
 		B3A9F57B1DE87E09008450F5 /* 186.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE241D6ECD7500742D04 /* 186.cpp */; };
 		B3A9F57C1DE87E09008450F5 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E91ABF16A5002274A3 /* video.cpp */; };
 		B3A9F57D1DE87E09008450F5 /* scale3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BFFD1D6ED36300742D04 /* scale3x.cpp */; };
@@ -475,8 +475,8 @@
 		B3A9F6291DE87E09008450F5 /* ks7012.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE601D6ECD7500742D04 /* ks7012.cpp */; };
 		B3A9F62A1DE87E09008450F5 /* bmc64in1nr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE431D6ECD7500742D04 /* bmc64in1nr.cpp */; };
 		B3A9F62B1DE87E09008450F5 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77621ABF16A4002274A3 /* mouse.cpp */; };
-		B3A9F6301DE883F1008450F5 /* PVNESEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVNESEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F6311DE883FC008450F5 /* PVNESEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVNESEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A9F6301DE883F1008450F5 /* PVFCEUEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F6321DE88425008450F5 /* libz.tbd */; };
 		B3A9F6351DE8842C008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F6341DE8842C008450F5 /* libz.tbd */; };
 		B3C9D41C1DEA0C090068D057 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A75AA1ABF16A3002274A3 /* debug.cpp */; };
@@ -488,7 +488,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1A3A75031ABF123F002274A3 /* PVNES-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PVNES-Prefix.pch"; path = "NES/PVNES-Prefix.pch"; sourceTree = "<group>"; };
+		1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PVFCEU-Prefix.pch"; path = "NES/PVFCEU-Prefix.pch"; sourceTree = "<group>"; };
 		1A3A75061ABF16A3002274A3 /* asm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = asm.cpp; sourceTree = "<group>"; };
 		1A3A75071ABF16A3002274A3 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = asm.h; sourceTree = "<group>"; };
 		1A3A75081ABF16A3002274A3 /* auxlib.lua */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = auxlib.lua; sourceTree = "<group>"; };
@@ -632,16 +632,16 @@
 		1A3A77F01ABF16A5002274A3 /* x6502.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502.h; sourceTree = "<group>"; };
 		1A3A77F11ABF16A5002274A3 /* x6502abbrev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502abbrev.h; sourceTree = "<group>"; };
 		1A3A77F21ABF16A5002274A3 /* x6502struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502struct.h; sourceTree = "<group>"; };
-		1A3A79AB1ABF1CE8002274A3 /* PVNESEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVNESEmulatorCore.h; sourceTree = "<group>"; };
-		1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVNESEmulatorCore.mm; sourceTree = "<group>"; };
+		1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVFCEUEmulatorCore.h; sourceTree = "<group>"; };
+		1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFCEUEmulatorCore.mm; sourceTree = "<group>"; };
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1A3A79B01ABF1D41002274A3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSNESEmulatorCore.swift; sourceTree = "<group>"; };
-		B3A9F4361DE877B4008450F5 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3A9F4381DE877B4008450F5 /* PVNES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVNES.h; sourceTree = "<group>"; };
+		B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFCEUEmulatorCore.swift; sourceTree = "<group>"; };
+		B3A9F4361DE877B4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A9F4381DE877B4008450F5 /* PVFCEU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFCEU.h; sourceTree = "<group>"; };
 		B3A9F4391DE877B4008450F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3A9F4441DE877E4008450F5 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A9F4441DE877E4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A9F44D1DE87823008450F5 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3A9F4521DE8783D008450F5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3A9F4541DE87840008450F5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
@@ -880,8 +880,8 @@
 		1A3A74DF1ABF11AC002274A3 = {
 			isa = PBXGroup;
 			children = (
-				1A3A74EA1ABF11AC002274A3 /* PVNES */,
-				B3A9F4371DE877B4008450F5 /* PVNES */,
+				1A3A74EA1ABF11AC002274A3 /* PVFCEU */,
+				B3A9F4371DE877B4008450F5 /* PVFCEU */,
 				1A3A79B41ABF1DB2002274A3 /* Frameworks */,
 				1A3A74E91ABF11AC002274A3 /* Products */,
 			);
@@ -890,27 +890,27 @@
 		1A3A74E91ABF11AC002274A3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3A9F4361DE877B4008450F5 /* PVNES.framework */,
-				B3A9F4441DE877E4008450F5 /* PVNES.framework */,
+				B3A9F4361DE877B4008450F5 /* PVFCEU.framework */,
+				B3A9F4441DE877E4008450F5 /* PVFCEU.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1A3A74EA1ABF11AC002274A3 /* PVNES */ = {
+		1A3A74EA1ABF11AC002274A3 /* PVFCEU */ = {
 			isa = PBXGroup;
 			children = (
 				1A3A75021ABF1222002274A3 /* NES */,
 			);
-			name = PVNES;
+			name = PVFCEU;
 			sourceTree = SOURCE_ROOT;
 		};
 		1A3A75021ABF1222002274A3 /* NES */ = {
 			isa = PBXGroup;
 			children = (
 				1A3A75051ABF16A3002274A3 /* FCEU */,
-				1A3A79AB1ABF1CE8002274A3 /* PVNESEmulatorCore.h */,
-				1A3A79AC1ABF1CE8002274A3 /* PVNESEmulatorCore.mm */,
-				B39E8CB220539B2500380DCD /* PVSNESEmulatorCore.swift */,
+				1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */,
+				1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */,
+				B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */,
 				1A3A75041ABF125C002274A3 /* Supporting Files */,
 			);
 			path = NES;
@@ -919,7 +919,7 @@
 		1A3A75041ABF125C002274A3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1A3A75031ABF123F002274A3 /* PVNES-Prefix.pch */,
+				1A3A75031ABF123F002274A3 /* PVFCEU-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			path = ..;
@@ -1304,13 +1304,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B3A9F4371DE877B4008450F5 /* PVNES */ = {
+		B3A9F4371DE877B4008450F5 /* PVFCEU */ = {
 			isa = PBXGroup;
 			children = (
-				B3A9F4381DE877B4008450F5 /* PVNES.h */,
+				B3A9F4381DE877B4008450F5 /* PVFCEU.h */,
 				B3A9F4391DE877B4008450F5 /* Info.plist */,
 			);
-			path = PVNES;
+			path = PVFCEU;
 			sourceTree = "<group>";
 		};
 		BED8BFE51D6ED32400742D04 /* drivers */ = {
@@ -1363,8 +1363,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4221DEA0CE70068D057 /* ppu.h in Headers */,
-				B3A9F43A1DE877B4008450F5 /* PVNES.h in Headers */,
-				B3A9F6311DE883FC008450F5 /* PVNESEmulatorCore.h in Headers */,
+				B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */,
+				B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1373,17 +1373,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4201DEA0CE50068D057 /* ppu.h in Headers */,
-				B3A9F45A1DE8785A008450F5 /* PVNES.h in Headers */,
-				B3A9F6301DE883F1008450F5 /* PVNESEmulatorCore.h in Headers */,
+				B3A9F45A1DE8785A008450F5 /* PVFCEU.h in Headers */,
+				B3A9F6301DE883F1008450F5 /* PVFCEUEmulatorCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		B3A9F4351DE877B4008450F5 /* PVNES */ = {
+		B3A9F4351DE877B4008450F5 /* PVFCEU */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVNES" */;
+			buildConfigurationList = B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU" */;
 			buildPhases = (
 				B3A9F4311DE877B4008450F5 /* Sources */,
 				B3A9F4321DE877B4008450F5 /* Frameworks */,
@@ -1394,14 +1394,14 @@
 			);
 			dependencies = (
 			);
-			name = PVNES;
+			name = PVFCEU;
 			productName = PVNES;
-			productReference = B3A9F4361DE877B4008450F5 /* PVNES.framework */;
+			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3A9F4431DE877E4008450F5 /* PVNES tvOS */ = {
+		B3A9F4431DE877E4008450F5 /* PVFCEU tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVNES tvOS" */;
+			buildConfigurationList = B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU tvOS" */;
 			buildPhases = (
 				B3A9F43F1DE877E4008450F5 /* Sources */,
 				B3A9F4401DE877E4008450F5 /* Frameworks */,
@@ -1412,9 +1412,9 @@
 			);
 			dependencies = (
 			);
-			name = "PVNES tvOS";
+			name = "PVFCEU tvOS";
 			productName = "PVNES tvOS";
-			productReference = B3A9F4441DE877E4008450F5 /* PVNES.framework */;
+			productReference = B3A9F4441DE877E4008450F5 /* PVFCEU.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1438,7 +1438,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1A3A74E31ABF11AC002274A3 /* Build configuration list for PBXProject "PVNES" */;
+			buildConfigurationList = 1A3A74E31ABF11AC002274A3 /* Build configuration list for PBXProject "PVFCEU" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1450,8 +1450,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B3A9F4351DE877B4008450F5 /* PVNES */,
-				B3A9F4431DE877E4008450F5 /* PVNES tvOS */,
+				B3A9F4351DE877B4008450F5 /* PVFCEU */,
+				B3A9F4431DE877E4008450F5 /* PVFCEU tvOS */,
 			);
 		};
 /* End PBXProject section */
@@ -1515,7 +1515,7 @@
 				B3A9F4801DE87E09008450F5 /* 80.cpp in Sources */,
 				B3A9F4811DE87E09008450F5 /* t-262.cpp in Sources */,
 				B3A9F4821DE87E09008450F5 /* 252.cpp in Sources */,
-				B39E8CB320539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */,
+				B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */,
 				B3A9F4831DE87E09008450F5 /* oldmovie.cpp in Sources */,
 				B3A9F4841DE87E09008450F5 /* coolboy.cpp in Sources */,
 				B3A9F4851DE87E09008450F5 /* eh8813a.cpp in Sources */,
@@ -1532,7 +1532,7 @@
 				B3A9F4901DE87E09008450F5 /* fceu.cpp in Sources */,
 				B3A9F4911DE87E09008450F5 /* sound.cpp in Sources */,
 				B3A9F4921DE87E09008450F5 /* guid.cpp in Sources */,
-				B3A9F4931DE87E09008450F5 /* PVNESEmulatorCore.mm in Sources */,
+				B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */,
 				B3A9F4941DE87E09008450F5 /* 186.cpp in Sources */,
 				B3A9F4951DE87E09008450F5 /* video.cpp in Sources */,
 				B3A9F4961DE87E09008450F5 /* scale3x.cpp in Sources */,
@@ -1753,7 +1753,7 @@
 				B3A9F5671DE87E09008450F5 /* 80.cpp in Sources */,
 				B3A9F5681DE87E09008450F5 /* t-262.cpp in Sources */,
 				B3A9F5691DE87E09008450F5 /* 252.cpp in Sources */,
-				B39E8CB420539B2500380DCD /* PVSNESEmulatorCore.swift in Sources */,
+				B39E8CB420539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */,
 				B3A9F56A1DE87E09008450F5 /* oldmovie.cpp in Sources */,
 				B3A9F56B1DE87E09008450F5 /* coolboy.cpp in Sources */,
 				B3A9F56C1DE87E09008450F5 /* eh8813a.cpp in Sources */,
@@ -1770,7 +1770,7 @@
 				B3A9F5771DE87E09008450F5 /* fceu.cpp in Sources */,
 				B3A9F5781DE87E09008450F5 /* sound.cpp in Sources */,
 				B3A9F5791DE87E09008450F5 /* guid.cpp in Sources */,
-				B3A9F57A1DE87E09008450F5 /* PVNESEmulatorCore.mm in Sources */,
+				B3A9F57A1DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */,
 				B3A9F57B1DE87E09008450F5 /* 186.cpp in Sources */,
 				B3A9F57C1DE87E09008450F5 /* video.cpp in Sources */,
 				B3A9F57D1DE87E09008450F5 /* scale3x.cpp in Sources */,
@@ -2109,13 +2109,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -2130,7 +2130,7 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2159,13 +2159,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -2180,7 +2180,7 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -2208,13 +2208,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -2229,7 +2229,7 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -2256,13 +2256,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2276,8 +2276,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
-				PRODUCT_NAME = PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
+				PRODUCT_NAME = PVFCEU;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2306,13 +2306,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2326,8 +2326,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
-				PRODUCT_NAME = PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
+				PRODUCT_NAME = PVFCEU;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -2355,13 +2355,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVNES-Prefix.pch";
+				GCC_PREFIX_HEADER = "$(SRCROOT)/NES/PVFCEU-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/**",
 				);
-				INFOPLIST_FILE = PVNES/Info.plist;
+				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2375,8 +2375,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVNES;
-				PRODUCT_NAME = PVNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.fceu";
+				PRODUCT_NAME = PVFCEU;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -2391,7 +2391,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A3A74E31ABF11AC002274A3 /* Build configuration list for PBXProject "PVNES" */ = {
+		1A3A74E31ABF11AC002274A3 /* Build configuration list for PBXProject "PVFCEU" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A3A74FA1ABF11AC002274A3 /* Debug */,
@@ -2401,7 +2401,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVNES" */ = {
+		B3A9F43B1DE877B4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A9F43C1DE877B4008450F5 /* Debug */,
@@ -2411,7 +2411,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVNES tvOS" */ = {
+		B3A9F4491DE877E4008450F5 /* Build configuration list for PBXNativeTarget "PVFCEU tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3A9F44A1DE877E4008450F5 /* Debug */,

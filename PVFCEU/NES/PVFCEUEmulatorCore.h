@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, PVNESButton)
     PVNESButtonCount
 };
 
-@interface PVNESEmulatorCore : PVEmulatorCore
+@interface PVFCEUEmulatorCore : PVEmulatorCore
 
 - (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
 - (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
@@ -48,6 +48,6 @@ typedef NS_ENUM(NSInteger, PVNESButton)
 @end
 
 // For swift
-@interface PVNESEmulatorCore()
+@interface PVFCEUEmulatorCore()
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 @end

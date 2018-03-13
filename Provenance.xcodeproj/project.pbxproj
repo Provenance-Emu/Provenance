@@ -535,6 +535,10 @@
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B39578C21E6D2D8B00854D7A /* PVPCEControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B39578C11E6D2D8B00854D7A /* PVPCEControllerViewController.m */; };
 		B39578C71E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m */; };
+		B3995E4C2058228E001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; };
+		B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
+		B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -597,8 +601,6 @@
 		B3BE96982056032600281880 /* PVGame+BoxArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96942056032600281880 /* PVGame+BoxArt.swift */; };
 		B3C0EE4A1EA853A600C6414C /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.swift */; };
 		B3C0EE4B1EA853A700C6414C /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.swift */; };
-		B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; };
-		B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D42F1DEA1B260068D057 /* PVNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
@@ -613,8 +615,6 @@
 		B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55F1DEA85D10068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D5DB1DEA8A200068D057 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */; };
 		B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3C9D5DE1DEA8A250068D057 /* PVNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5DD1DEA8A250068D057 /* PVNES.framework */; };
-		B3C9D5DF1DEA8A250068D057 /* PVNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5DD1DEA8A250068D057 /* PVNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */; };
 		B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5E31DEA8AED0068D057 /* PVStella.framework */; };
@@ -728,7 +728,7 @@
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
 				DFB603BF2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
-				B3C9D5DF1DEA8A250068D057 /* PVNES.framework in Embed Frameworks */,
+				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
 				B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
@@ -757,6 +757,7 @@
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
 				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
 				B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */,
+				B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */,
 				DFB603BC2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
@@ -767,7 +768,6 @@
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				1AAE7D431BC870A8003066C0 /* Realm.framework in Embed Frameworks */,
-				B3C9D4311DEA1B260068D057 /* PVNES.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
@@ -1330,6 +1330,8 @@
 		B39578C11E6D2D8B00854D7A /* PVPCEControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVPCEControllerViewController.m; path = Provenance/Controller/PVPCEControllerViewController.m; sourceTree = "<group>"; };
 		B39578C51E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVNeoGeoPocketControllerViewController.h; sourceTree = "<group>"; };
 		B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVNeoGeoPocketControllerViewController.m; sourceTree = "<group>"; };
+		B3995E4B2058228E001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1361,7 +1363,6 @@
 		B3BE968F2056025B00281880 /* PVSaveState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveState.swift; sourceTree = "<group>"; };
 		B3BE96942056032600281880 /* PVGame+BoxArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGame+BoxArt.swift"; sourceTree = "<group>"; };
 		B3C653071E6F73450096053B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMednafen.framework"; sourceTree = "<group>"; };
-		B3C9D42F1DEA1B260068D057 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1369,7 +1370,6 @@
 		B3C9D55C1DEA85C60068D057 /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D55F1DEA85D10068D057 /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5DA1DEA8A200068D057 /* PVGBA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGBA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C9D5DD1DEA8A250068D057 /* PVNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E31DEA8AED0068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E61DEAA7E80068D057 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1452,7 +1452,6 @@
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
-				B3C9D4301DEA1B260068D057 /* PVNES.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
@@ -1473,6 +1472,7 @@
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
+				B3995E4C2058228E001D4985 /* PVFCEU.framework in Frameworks */,
 				B3B0860A1E71316A007F39E1 /* PVMednafen.framework in Frameworks */,
 				1AAE7D421BC870A2003066C0 /* Realm.framework in Frameworks */,
 			);
@@ -1483,6 +1483,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
+				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				DFB603BE2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
 				B3F9CDA120315599007F808D /* RealmSwift.framework in Frameworks */,
@@ -1512,7 +1513,6 @@
 				B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */,
 				B3C9D5DB1DEA8A200068D057 /* PVGBA.framework in Frameworks */,
 				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
-				B3C9D5DE1DEA8A250068D057 /* PVNES.framework in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
 				B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */,
@@ -1618,6 +1618,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3995E4E2058229F001D4985 /* PVFCEU.framework */,
+				B3995E4B2058228E001D4985 /* PVFCEU.framework */,
 				DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				DFB603BA2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				B36CBFEA20397D9100728482 /* PVMednafen.framework */,
@@ -1682,8 +1684,6 @@
 				B3C9D5201DEA787D0068D057 /* PVGBA.framework */,
 				B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */,
 				B3C9D4321DEA1B340068D057 /* PVGenesis.framework */,
-				B3C9D5DD1DEA8A250068D057 /* PVNES.framework */,
-				B3C9D42F1DEA1B260068D057 /* PVNES.framework */,
 				B3C9D55F1DEA85D10068D057 /* PVSNES.framework */,
 				B3C9D55C1DEA85C60068D057 /* PVSNES.framework */,
 				B3C9D5E31DEA8AED0068D057 /* PVStella.framework */,
@@ -4068,7 +4068,6 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
-					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
@@ -4124,7 +4123,6 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
-					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
@@ -4178,7 +4176,6 @@
 					"$(SRCROOT)/PVGBA/**",
 					"$(SRCROOT)/PVGB/**",
 					/usr/include/libxml2,
-					"$(SRCROOT)/PVNES/**",
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;

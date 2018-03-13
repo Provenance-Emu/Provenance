@@ -10,7 +10,7 @@ import Foundation
 import PVSupport
 import PVGB
 import PVGBA
-import PVNES
+import PVFCEU
 import PVSNES
 import PVStella
 import PVGenesis
@@ -52,7 +52,7 @@ public final class PVCoreFactory : NSObject {
         case .GB, .GBC:
             core = PVGBEmulatorCore()
         case .NES, .FDS:
-            core = PVNESEmulatorCore()
+            core = PVFCEUEmulatorCore()
         case .Atari2600:
             core = PVStellaGameCore()
         case .Atari5200:

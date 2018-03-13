@@ -94,12 +94,16 @@ public extension PVEmulatorConfiguration {
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
         
-        system.PVBiosNames?.forEach { entry in
+        system.PVBIOSNames?.forEach { entry in
             if let existingBIOS = RomDatabase.sharedInstance.object(ofType: PVBIOS.self, wherePrimaryKeyEquals: entry.Name) {
                 existingBIOS.system = pvSystem
             } else {
                 let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
-                try! newBIOS.add()
+                if let realm = pvSystem.realm {
+                    realm.add(newBIOS)
+                } else {
+                    try! newBIOS.add()
+                }
             }
          }
     }

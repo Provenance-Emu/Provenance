@@ -171,7 +171,7 @@ void uncaughtExceptionHandler(NSException *exception)
         
         if(error.code == PVEmulatorCoreErrorCodeMissingM3U) {
             [alert addAction:[UIAlertAction actionWithTitle:@"View Wiki" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-                [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://bitly.com/provm3u"] options:nil completionHandler:nil];
+                [UIApplication.sharedApplication openURL:[NSURL URLWithString:@"https://bitly.com/provm3u"]];
             }]];
         }
         

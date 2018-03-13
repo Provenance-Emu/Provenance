@@ -85,9 +85,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3A9F4351DE877B4008450F5"
-               BuildableName = "PVNES.framework"
-               BlueprintName = "PVNES"
-               ReferencedContainer = "container:PVNES/PVNES.xcodeproj">
+               BuildableName = "PVFCEU.framework"
+               BlueprintName = "PVFCEU"
+               ReferencedContainer = "container:PVNES/PVFCEU.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

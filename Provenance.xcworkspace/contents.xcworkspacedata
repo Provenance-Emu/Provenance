@@ -41,6 +41,6 @@
       location = "group:PVMupen64Plus/PVMupen64Plus.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:PVNES/PVNES.xcodeproj">
+      location = "group:PVFCEU/PVFCEU.xcodeproj">
    </FileRef>
 </Workspace>
