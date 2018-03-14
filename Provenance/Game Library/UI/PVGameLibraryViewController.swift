@@ -1973,8 +1973,10 @@ extension UIAlertController {
         let cornerRadius : CGFloat
         let cancelBackgroundColor : UIColor?
         let cancelTextColor : UIColor?
+        let destructiveBackgroundColor : UIColor?
+        let destructiveTextColor : UIColor?
         
-        init(backgroundColor : UIColor? = nil, textColor : UIColor? = nil, borderColor : UIColor? = nil, borderWidth : CGFloat = 0.0, cornerRadius : CGFloat = 0.0, cancelBackgroundColor : UIColor? = nil, cancelTextColor : UIColor? = nil) {
+        init(backgroundColor : UIColor? = nil, textColor : UIColor? = nil, borderColor : UIColor? = nil, borderWidth : CGFloat = 0.0, cornerRadius : CGFloat = 0.0, cancelBackgroundColor : UIColor? = nil, cancelTextColor : UIColor? = nil, destructiveBackgroundColor : UIColor? = nil, destructiveTextColor : UIColor? = nil ) {
             self.backgroundColor = backgroundColor
             self.textColor = textColor
             self.borderColor = borderColor
@@ -1982,6 +1984,8 @@ extension UIAlertController {
             self.cornerRadius = cornerRadius
             self.cancelBackgroundColor = cancelBackgroundColor
             self.cancelTextColor = cancelTextColor
+            self.destructiveBackgroundColor = destructiveBackgroundColor
+            self.destructiveTextColor = destructiveTextColor
         }
     }
     
@@ -1994,7 +1998,16 @@ extension UIAlertController {
     
     // Set how you want your defaults to be for all instances of UIAlertController
     func setDefaultOverrides() {
-        let overrides = UIAlertControllerOverrides(backgroundColor: UIColor.darkGray, textColor: UIColor.lightText, borderColor:  UIColor.init(white: 0.5, alpha: 0.5), borderWidth: 3.0, cornerRadius: 10.0, cancelBackgroundColor:  UIColor.init(red: 0.5, green: 0.1, blue: 0.1, alpha: 1.0), cancelTextColor: UIColor.white)
+        
+        let overrides = UIAlertControllerOverrides(backgroundColor: Theme.currentTheme.settingsCellBackground,
+                                                   textColor: Theme.currentTheme.settingsCellText,
+                                                   borderColor:  Theme.currentTheme.settingsCellText?.withAlphaComponent(0.8),
+                                                   borderWidth: 1.0,
+                                                   cornerRadius: 10.0,
+                                                   cancelBackgroundColor: Theme.currentTheme.settingsCellBackground,
+                                                   cancelTextColor: UIColor.green.withAlphaComponent(0.85),
+                                                   destructiveBackgroundColor: UIColor.init(red: 0.5, green: 0.15, blue: 0.15, alpha: 1.0),
+                                                   destructiveTextColor: UIColor.init(white: 0.9, alpha: 1))
         setOverrideSettings(overrides)
     }
     
@@ -2013,6 +2026,8 @@ extension UIAlertController {
         
         
         AlertContentViews.forEach() {
+            print("AlertContentSubview \(String(describing: $0))")
+            
             $0?.subviews.forEach({ (subview) in
                 if let backgroundColor = settings.backgroundColor {
                     subview.backgroundColor = backgroundColor
@@ -2037,13 +2052,34 @@ extension UIAlertController {
 
                     
                     // Check if the label is of the .cancel type
-                    if let text = $0.text, cancelTitles.contains(text) || destructiveTitles.contains(text)  {
+                    if let text = $0.text, cancelTitles.contains(text) {
                         if let cancelBackgroundColor = settings.cancelBackgroundColor {
-                            $0.superview?.superview?.backgroundColor = cancelBackgroundColor
+//                            if self.preferredStyle == .actionSheet {
+                                $0.superview?.superview?.backgroundColor = cancelBackgroundColor
+//                            }
+//                            else {
+//                                $0.superview?.backgroundColor = cancelBackgroundColor
+//                            }
                         }
                         if let cancelTextColor = settings.cancelTextColor {
                             $0.textColor = cancelTextColor
                             $0.tintColor = cancelTextColor
+                        } else {
+                            $0.textColor = textColor
+                            $0.tintColor = textColor
+                        }
+                    } else if let text = $0.text, destructiveTitles.contains(text) {
+                        if let destructiveBackgroundColor = settings.destructiveBackgroundColor {
+//                            if self.preferredStyle == .actionSheet {
+                                $0.superview?.superview?.backgroundColor = destructiveBackgroundColor
+//                            }
+//                            else {
+//                                $0.superview?.backgroundColor = destructiveBackgroundColor
+//                            }
+                        }
+                        if let destructiveTextColor = settings.destructiveTextColor {
+                            $0.textColor = destructiveTextColor
+                            $0.tintColor = destructiveTextColor
                         } else {
                             $0.textColor = textColor
                             $0.tintColor = textColor
