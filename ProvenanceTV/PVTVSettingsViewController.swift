@@ -56,7 +56,7 @@ class PVTVSettingsViewController: UITableViewController {
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
         let settings = PVSettingsModel.sharedInstance()
-        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.iCadeControllerSetting)
+        iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         updateWebDavTitleLabel()
     }
 

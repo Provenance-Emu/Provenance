@@ -183,6 +183,7 @@
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
 		AA9B6EDE1D70981000422E5F /* PVPSXControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96792055F2B400281880 /* PVGame+Spotlight.swift */; };
 		B32893731E0B250B0090B97A /* PVWonderSwanControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.m */; };
 		B32893781E0B4EA30090B97A /* PVLynxControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.m */; };
 		B328937D1E0B87960090B97A /* PVVBControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.m */; };
@@ -3656,6 +3657,7 @@
 				B3780B3F2057F1F60018211E /* PVCore.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				B3BE96892055F40000281880 /* PVFile.swift in Sources */,
+				B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

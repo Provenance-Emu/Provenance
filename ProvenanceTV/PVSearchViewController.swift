@@ -35,7 +35,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
         
         if let game = searchResults?[indexPath.item] {
-            cell.setup(with: game)
+            cell.game = game
         }
         cell.setNeedsLayout()
         return cell

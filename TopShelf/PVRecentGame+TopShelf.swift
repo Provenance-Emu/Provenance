@@ -38,9 +38,11 @@ extension PVRecentGame {
     }
     
     var imageType : TVContentItemImageShape {
-        guard let game = game, let system = game.system else {
+        guard let game = game else {
             return .square
         }
+        
+        let system = game.system.enumValue
         
         switch system {
         case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
