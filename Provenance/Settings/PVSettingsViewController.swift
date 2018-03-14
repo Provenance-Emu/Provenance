@@ -185,33 +185,24 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     // Show "Web Server Active" alert view
     func showServerActiveAlert() {
         let message = """
-            Upload/Download ROMs,
-            saves and cover art at:
-            
+            Read Importing ROMs wiki…
+            Upload/Download files at:
+
+
             """
         let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-        let ipField = UITextView(frame: CGRect(x: 20, y: 71, width: 231, height: 70))
+        let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
         ipField.backgroundColor = UIColor.clear
         ipField.textAlignment = .center
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
-        let ipFieldText = "\(PVWebServer.sharedInstance().urlString)\nWebDav: \(PVWebServer.sharedInstance().webDavURLString)"
+		let ipFieldText = """
+            WebUI:  \(PVWebServer.sharedInstance().urlString)
+            WebDav: \(PVWebServer.sharedInstance().webDavURLString)
+            """
         ipField.text = ipFieldText
         ipField.isUserInteractionEnabled = false
         alert.view.addSubview(ipField)
-        let importNote = UITextView(frame: CGRect(x: 2, y: 160, width: 267, height: 44))
-        importNote.isUserInteractionEnabled = false
-        importNote.font = UIFont.boldSystemFont(ofSize: 12)
-        importNote.textColor = UIColor.white
-        importNote.textAlignment = .center
-        importNote.backgroundColor = UIColor(white: 0.2, alpha: 0.3)
-        importNote.text = "Check the wiki for information about Importing ROMs."
-        importNote.layer.shadowOpacity = 0.8
-        importNote.layer.shadowRadius = 3.0
-        importNote.layer.cornerRadius = 8.0
-        importNote.layer.shadowColor = UIColor(white: 0.2, alpha: 0.7).cgColor
-        importNote.layer.shadowOffset = CGSize(width: 0.0, height: 0.0)
-        alert.view.addSubview(importNote)
         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
             PVWebServer.sharedInstance().stopServers()
             self.importLabel.text = "Web server: OFF"
