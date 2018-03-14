@@ -57,21 +57,22 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 
 ## Features
 
-- Very Accurate, Full Speed Emulation
+- Very Accurate, Full Speed Emulation at 60 FPS
 - Stereo Sound
 - Save States (save anywhere/_game freezing_)
 - Battery Saves (native game saves)
+- [Multi-disc Support](https://github.com/jasarien/Provenance/wiki/Importing-ROMs#multi-disc-games) (disc-swapping)
 - Adjustable Controller Overlay Opacity
 - Controller Support:
   - [MFi Game Controller](https://mfigames.com/compare-mfi-controllers/) Support
   - iCade Controller Support ([8bitdo](http://www.8bitdo.com/), etc…)
 - Local Multiplayer via External Controllers
 - Portrait and Landscape Orientation
-- Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
-- ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/jasarien/Provenance/wiki/Customizing-ROMs))
+- Automatic ROM Matching for Meta Data via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
+- ROM Customizations (cover art, title, description, genre, release date, publisher, play history…) ([Instructions](https://github.com/jasarien/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
   - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/jasarien/Provenance/wiki/Exporting-Files):
-    - Uploading _(via built-in web server)_
+    - Uploading _(via built-in web servers)_
   - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs):
     - Downloading _(from mobile browsers)_
     - Copying _(from other mobile apps)_
