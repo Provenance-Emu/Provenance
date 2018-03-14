@@ -348,7 +348,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
-            case .update(_, let deletions, let insertions, let modifications):
+            case .update(_, let deletions, let insertions, _):
                 guard let collectionView = self.collectionView else {return}
                 collectionView.performBatchUpdates({
                     let insertIndexes = insertions.map{ $0 + self.systemsSectionOffset }
@@ -1369,7 +1369,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let index: Int = group.numberOfAssets() - 1
             VLOG("Group: \(group)")
             if index >= 0 {
-                var indexPathsToUpdate = [IndexPath]()
+//                var indexPathsToUpdate = [IndexPath]()
                 
                 group.enumerateAssets(at: IndexSet(integer: index), options: [], using: { (result, index, stop) in
                     if let rep: ALAssetRepresentation = result?.defaultRepresentation() {
@@ -1400,9 +1400,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                     }
                 })
                 
-                DispatchQueue.main.async {
-                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
-                }
+//                DispatchQueue.main.async {
+//                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
+//                }
             }
             else {
                 let alert = UIAlertController(title: "No Photos", message: "There are no photos in your library to choose from", preferredStyle: .alert)
