@@ -1952,10 +1952,11 @@ extension PVGameLibraryViewController : UISearchResultsUpdating  {
 class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
     override init() {
         super.init()
-        
+        #if os(iOS)
         if #available(iOS 9.0, *) {
             self.sectionHeadersPinToVisibleBounds = true
         }
+        #endif
     }
     
     required init?(coder aDecoder: NSCoder) {
