@@ -33,11 +33,13 @@
                     <navigationItem key="navigationItem" id="v5U-SS-fQX">
                         <rightBarButtonItems>
                             <barButtonItem systemItem="bookmarks" id="kDw-kM-Yw5">
+                                <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="moreInfoButtonClicked:" destination="iWs-z6-SNP" id="2To-jY-Mqb"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem systemItem="play" id="k3H-6D-xYE">
+                                <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="playButtonTapped:" destination="iWs-z6-SNP" id="L95-bK-gGc"/>
                                 </connections>
@@ -252,13 +254,13 @@
                     <navigationItem key="navigationItem" id="UeK-8B-lTm">
                         <rightBarButtonItems>
                             <barButtonItem systemItem="bookmarks" id="7Gu-W5-aUh">
-                                <color key="tintColor" red="0.10980392156862745" green="0.51372549019607838" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="moreInfoButtonClicked:" destination="7RB-u6-8KS" id="vWd-92-3sk"/>
                                 </connections>
                             </barButtonItem>
                             <barButtonItem systemItem="play" id="sdY-gU-Fo2">
-                                <color key="tintColor" red="0.10980392156862745" green="0.51372549019607838" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <action selector="playButtonTapped:" destination="7RB-u6-8KS" id="0k3-gv-889"/>
                                 </connections>
@@ -360,6 +362,7 @@
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
                         <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" image="gear" id="daz-L9-06G">
+                            <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <segue destination="YzD-6V-3zn" kind="modal" identifier="SettingsSegue" modalPresentationStyle="formSheet" id="PHC-9h-QIz"/>
                             </connections>
@@ -376,6 +379,7 @@
                             </connections>
                         </textField>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
+                            <color key="tintColor" red="0.51764705882352935" green="0.51764705882352935" blue="0.53725490196078429" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                             </connections>
@@ -1188,5 +1192,5 @@
         <image name="gear" width="20" height="20"/>
         <image name="questionMark" width="20" height="20"/>
     </resources>
-    <color key="tintColor" red="0.10980392160000001" green="0.51372549020000002" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+    <color key="tintColor" red="0.51793235540390015" green="0.5159609317779541" blue="0.53913700580596924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>

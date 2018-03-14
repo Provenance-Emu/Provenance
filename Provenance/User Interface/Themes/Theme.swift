@@ -110,10 +110,10 @@ struct DarkTheme : iOSTheme {
     
     var navigationBarStyle : UIBarStyle { return UIBarStyle.black }
 
-    var defaultTintColor: UIColor? { return UIColor(hex: "#1C83F5")! }
+    var defaultTintColor: UIColor? { return UIColor(hex: "#848489")! }
     var keyboardAppearance: UIKeyboardAppearance = .dark
     
-    var switchON : UIColor? { return UIColor(hex: "#1C83F5")! }
+    var switchON : UIColor? { return UIColor(hex: "#848489")! }
     var switchThumb : UIColor? { return UIColor(hex: "#eee")! }
     
     var gameLibraryBackground : UIColor { return UIColor.black }
