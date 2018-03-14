@@ -141,7 +141,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight))
         imageView.contentMode = .scaleAspectFit
         imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
+
+		//Ignore Smart Invert
+		imageView.ignoresInvertColors = true
+		
         titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
         titleLabel.lineBreakMode = .byTruncatingTail
 #if os(tvOS)

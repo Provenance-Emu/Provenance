@@ -12,12 +12,15 @@ extension PVEmulatorViewController {
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         //Notifies UIKit that your view controller updated its preference regarding the visual indicator
-        
+		
         #if os(iOS)
         if #available(iOS 11.0, *) {
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
         #endif
+		
+		//Ignore Smart Invert
+		self.view.ignoresInvertColors = true
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
