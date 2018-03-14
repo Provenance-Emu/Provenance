@@ -22,11 +22,9 @@ class PVAppearanceViewController: UITableViewController {
 #if os(iOS)
         let settings = PVSettingsModel.sharedInstance()
         hideTitlesSwitch = UISwitch()
-        hideTitlesSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
         hideTitlesSwitch?.isOn = settings.showGameTitles
         hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
         recentlyPlayedSwitch = UISwitch()
-        recentlyPlayedSwitch?.onTintColor = UIColor(red: 0.20, green: 0.45, blue: 0.99, alpha: 1.00)
         recentlyPlayedSwitch?.isOn = settings.showRecentGames
         recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 #endif
@@ -73,6 +71,7 @@ class PVAppearanceViewController: UITableViewController {
 #if os(tvOS)
                 cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showGameTitles ? "On" : "Off"
 #else
+                cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = hideTitlesSwitch
 #endif
             }
@@ -81,6 +80,7 @@ class PVAppearanceViewController: UITableViewController {
 #if os(tvOS)
                 cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showRecentGames ? "On" : "Off"
 #else
+                cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = recentlyPlayedSwitch
 #endif
             }

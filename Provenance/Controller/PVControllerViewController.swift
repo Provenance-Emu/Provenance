@@ -83,6 +83,9 @@ public extension PVControllerViewController {
                     if dPad2 == nil && (control[Keys.ControlTitle] as? String == "Y") {
                         dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding
                         let dPad2 = JSDPad(frame: dPadFrame)
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            dPad2.tintColor = UIColor(hex: tintColor)
+                        }
                         self.dPad2 = dPad2
                         dPad2.delegate = self
                         dPad2.alpha = alpha
@@ -121,6 +124,11 @@ public extension PVControllerViewController {
                             let buttonFrame: CGRect = CGRectFromString(groupedButton[Keys.ControlFrame] as! String)
                             let button = JSButton(frame: buttonFrame)
                             button.titleLabel?.text = groupedButton[Keys.ControlTitle] as? String
+                            
+                            if let tintColor = groupedButton[Keys.ControlTint] as? String {
+                                button.tintColor = UIColor(hex: tintColor)
+                            }
+                            
                             button.backgroundImage = UIImage(named: "button")
                             button.backgroundImagePressed = UIImage(named: "button-pressed")
                             button.delegate = self
@@ -144,6 +152,9 @@ public extension PVControllerViewController {
                         let leftShoulderButton = JSButton(frame: leftShoulderFrame)
                         self.leftShoulderButton = leftShoulderButton
                         leftShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            leftShoulderButton.tintColor = UIColor(hex: tintColor)
+                        }
                         leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton.delegate = self
@@ -155,6 +166,9 @@ public extension PVControllerViewController {
                         leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
                         
                         let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            leftShoulderButton2.tintColor = UIColor(hex: tintColor)
+                        }
                         self.leftShoulderButton2 = leftShoulderButton2
                         leftShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
                         leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
@@ -178,6 +192,9 @@ public extension PVControllerViewController {
 
                     if rightShoulderButton == nil {
                         let rightShoulderButton = JSButton(frame: rightShoulderFrame)
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            rightShoulderButton.tintColor = UIColor(hex: tintColor)
+                        }
                         self.rightShoulderButton = rightShoulderButton
                         rightShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
                         rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
@@ -191,6 +208,9 @@ public extension PVControllerViewController {
                         rightShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
                         
                         let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            rightShoulderButton2.tintColor = UIColor(hex: tintColor)
+                        }
                         self.rightShoulderButton2 = rightShoulderButton2
                         rightShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
                         rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
@@ -214,6 +234,9 @@ public extension PVControllerViewController {
                         startButton.frame = startFrame
                     } else {
                         let startButton = JSButton(frame: startFrame)
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            startButton.tintColor = UIColor(hex: tintColor)
+                        }
                         self.startButton = startButton
                         startButton.titleLabel?.text = control[Keys.ControlTitle] as? String
                         startButton.backgroundImage = UIImage(named: "button-thin")
@@ -237,6 +260,9 @@ public extension PVControllerViewController {
                         let selectButton = JSButton(frame: selectFrame)
                         self.selectButton = selectButton
                         selectButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        if let tintColor = control[Keys.ControlTint] as? String {
+                            selectButton.tintColor = UIColor(hex: tintColor)
+                        }
                         selectButton.backgroundImage = UIImage(named: "button-thin")
                         selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         selectButton.delegate = self

@@ -21,18 +21,21 @@ public struct ControlGroupButton : Codable {
     let PVControlType : String
     let PVControlTitle : String
     let PVControlFrame : String
+    let PVControlTint : String?
 }
 
 public struct ControlLayoutEntry : Codable {
     let PVControlType : String
     let PVControlSize : String
-    let PVControlerTitle : String?
+    let PVControlTitle : String?
+    let PVControlTint : String?
     let PVGroupedButtons : [ControlGroupButton]?
     
     private enum CodingKeys: String, CodingKey {
         case PVControlType
         case PVControlSize
-        case PVControlerTitle
+        case PVControlTitle
+        case PVControlTint
         case PVGroupedButtons
     }
 }

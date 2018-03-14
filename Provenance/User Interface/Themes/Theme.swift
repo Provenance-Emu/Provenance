@@ -262,9 +262,9 @@ public class Theme : NSObject {
     }    
 }
 
-extension UIColor {
+public extension UIColor {
     
-    convenience init(rgb: UInt32) {
+    @objc convenience init(rgb: UInt32) {
         let red = CGFloat((rgb >> 16) & 0xff) / 255.0
         let green = CGFloat((rgb >> 8) & 0xff) / 255.0
         let blue = CGFloat(rgb & 0xff) / 255.0
@@ -272,7 +272,7 @@ extension UIColor {
         self.init(red: red, green: green, blue: blue, alpha: alpha);
     }
     
-    convenience init(rgba: UInt32) {
+    @objc convenience init(rgba: UInt32) {
         let red = CGFloat((rgba >> 16) & 0xff) / 255.0
         let green = CGFloat((rgba >> 8) & 0xff) / 255.0
         let blue = CGFloat(rgba & 0xff) / 255.0
@@ -282,7 +282,7 @@ extension UIColor {
     
     // Init a color from a hex string.
     // Supports 3, 4, 6 or 8 char lenghts #RBA #RGBA #RRGGBB #RRGGBBAA
-    convenience init?(hex: String) {
+    @objc convenience init?(hex: String) {
         
         // Remove #
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -33,6 +33,7 @@ public struct SystemDictionaryKeys {
         static let ControlFrame        = "PVControlFrame"
         static let ControlSize         = "PVControlSize"
         static let ControlTitle        = "PVControlTitle"
+        static let ControlTint         = "PVControlTint"
         static let ControlType         = "PVControlType"
         static let DPad                = "PVDPad"
         static let GroupedButtons      = "PVGroupedButtons"

@@ -38,8 +38,27 @@
 	return self;
 }
 
+-(void)setBackgroundImage:(UIImage *)backgroundImage {
+    if (![backgroundImage isEqual:_backgroundImage]) {
+        _backgroundImage = [backgroundImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+}
+
+-(void)setBackgroundImagePressed:(UIImage *)backgroundImagePressed {
+    if (![backgroundImagePressed isEqual:_backgroundImagePressed]) {
+        _backgroundImagePressed = [backgroundImagePressed imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+}
+
+- (void)setTintColor:(UIColor *)tintColor {
+    if(![_tintColor isEqual:tintColor]) {
+        _tintColor = tintColor;
+        _backgroundImageView.tintColor = _tintColor;
+    }
+}
+
 - (void)commonInit
-{	
+{
 	_backgroundImageView = [[UIImageView alloc] initWithImage:self.backgroundImage];
 	[_backgroundImageView setFrame:[self bounds]];
 	[_backgroundImageView setContentMode:UIViewContentModeCenter];

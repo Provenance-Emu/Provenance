@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UIImage *backgroundImage;
 @property (nonatomic, strong) UIImage *backgroundImagePressed;
 @property (nonatomic, assign) UIEdgeInsets titleEdgeInsets;
+@property (nonatomic, strong) UIColor* tintColor;
 @property (nonatomic, assign) BOOL pressed;
 
 @property (nonatomic, weak) IBOutlet id <JSButtonDelegate> delegate;
