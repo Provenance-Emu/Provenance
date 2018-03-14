@@ -265,8 +265,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         layer.shadowRadius = 4.0
         layer.shadowOpacity = 0.7
 		
+        #if os(iOS)
 		// Ignore Smart Invert
 		artworkImageView.ignoresInvertColors = true
+        #endif
     }
     
 //    override func viewWillDisappear(_ animated: Bool) {

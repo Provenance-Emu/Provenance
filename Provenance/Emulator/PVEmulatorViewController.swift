@@ -18,9 +18,11 @@ extension PVEmulatorViewController {
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
         #endif
-		
+        
+        #if os(iOS)
 		//Ignore Smart Invert
 		self.view.ignoresInvertColors = true
+        #endif
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
