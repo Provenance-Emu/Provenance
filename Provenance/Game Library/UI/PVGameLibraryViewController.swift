@@ -2002,8 +2002,8 @@ extension UIAlertController {
         
         let overrides = UIAlertControllerOverrides(backgroundColor: Theme.currentTheme.settingsCellBackground,
                                                    textColor: Theme.currentTheme.settingsCellText,
-                                                   borderColor:  Theme.currentTheme.settingsCellText?.withAlphaComponent(0.8),
-                                                   borderWidth: 1.0,
+                                                   borderColor:  Theme.currentTheme.settingsCellText?.withAlphaComponent(0.6),
+                                                   borderWidth: 0.5,
                                                    cornerRadius: 10.0,
                                                    cancelBackgroundColor: Theme.currentTheme.settingsCellBackground,
                                                    cancelTextColor: UIColor.green.withAlphaComponent(0.85),
