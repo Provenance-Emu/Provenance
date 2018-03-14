@@ -1963,9 +1963,9 @@
 	</dict>
 	<dict>
 		<key>PVSystemName</key>
-		<string>A7800</string>
-		<key>PVSystemShortName</key>
 		<string>Atari 7800</string>
+		<key>PVSystemShortName</key>
+		<string>7800</string>
 		<key>PVManufacturer</key>
 		<string>Atari</string>
 		<key>PVBit</key>
