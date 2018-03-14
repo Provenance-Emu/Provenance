@@ -1368,6 +1368,8 @@
 						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#c82522</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1376,6 +1378,8 @@
 						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#eeb944</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1384,6 +1388,8 @@
 						<string>X</string>
 						<key>PVControlFrame</key>
 						<string>{{60,4},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#07236e</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1392,6 +1398,8 @@
 						<string>Y</string>
 						<key>PVControlFrame</key>
 						<string>{{4,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#1d703a</string>
 					</dict>
 				</array>
 			</dict>
@@ -1705,6 +1713,8 @@
 						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#cf001d</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1713,6 +1723,8 @@
 						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#cf001d</string>
 					</dict>
 				</array>
 			</dict>
@@ -1920,6 +1932,8 @@
 						<string>Fire</string>
 						<key>PVControlFrame</key>
 						<string>{{76,84},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
 					</dict>
 				</array>
 			</dict>
@@ -1984,6 +1998,8 @@
 						<string>Fire 1</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -1992,6 +2008,8 @@
 						<string>Fire 2</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
 					</dict>
 				</array>
 			</dict>
@@ -2169,6 +2187,8 @@
 				<string>Reset</string>
 				<key>PVControlSize</key>
 				<string>{62,22}</string>
+				<key>PVControlTint</key>
+				<string>#f96763</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2184,6 +2204,8 @@
 						<string>Fire 2</string>
 						<key>PVControlFrame</key>
 						<string>{{116,60},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -2192,6 +2214,8 @@
 						<string>Fire 1</string>
 						<key>PVControlFrame</key>
 						<string>{{60,116},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#f96763</string>
 					</dict>
 				</array>
 			</dict>
@@ -2273,6 +2297,8 @@
 						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{8,92},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#006990</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -2281,6 +2307,8 @@
 						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{76,84},{60,60}}</string>
+						<key>PVControlTint</key>
+						<string>#006990</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -2297,6 +2325,8 @@
 				<string>PVDPad</string>
 				<key>PVControlSize</key>
 				<string>{180,180}</string>
+				<key>PVControlTint</key>
+				<string>#006990</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
