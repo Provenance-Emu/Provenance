@@ -120,6 +120,9 @@ class PVConflictViewController: UITableViewController {
             }
             else {
                 cell.textLabel?.text = "No Conflicts..."
+                #if os(iOS)
+                cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+                #endif
             }
             return cell
         } else {
