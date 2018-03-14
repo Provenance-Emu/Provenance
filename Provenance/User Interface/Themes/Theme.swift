@@ -215,6 +215,10 @@ public class Theme : NSObject {
             }
         }
         
+        let selectedView = UIView()
+        selectedView.backgroundColor = theme.defaultTintColor
+        UITableViewCell.appearance().selectedBackgroundView = selectedView
+        
         // Search bar
 //        appearance(in: UISearchBar.self) {
 //            UITextView.appearance {
