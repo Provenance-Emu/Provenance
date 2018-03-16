@@ -636,6 +636,7 @@
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
+		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
@@ -672,7 +673,7 @@
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
-		C6FD5CAC2058F5240048FF1A /* UIViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FD5CAB2058F5240048FF1A /* UIViewExtensions.swift */; };
+		C6FD5CAC2058F5240048FF1A /* (null) in Sources */ = {isa = PBXBuildFile; };
 		DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C6203C97E100F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C8203C97FA00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C7203C97FA00F63831 /* GLideN64.ini */; };
@@ -1388,6 +1389,7 @@
 		B3D2E38F1D6E8B3C0058544D /* PV32XControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PV32XControllerViewController.h; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
 		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
+		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
@@ -1789,7 +1791,6 @@
 				1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.swift */,
 				1AACCAE71BB615FE00DC21AE /* PVSynchronousURLSession.h */,
 				1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */,
-				B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */,
 			);
 			path = "Game Library";
 			sourceTree = "<group>";
@@ -2613,6 +2614,8 @@
 			children = (
 				B3B923A2202D2EAE00580FFC /* SwiftyAppearance */,
 				B3B923A9202D2EAE00580FFC /* Theme.swift */,
+				B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */,
+				B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */,
 			);
 			path = Themes;
 			sourceTree = "<group>";
@@ -2626,7 +2629,6 @@
 				B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */,
 				B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */,
 				B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */,
-				C6FD5CAB2058F5240048FF1A /* UIViewExtensions.swift */,
 			);
 			path = SwiftyAppearance;
 			sourceTree = "<group>";
@@ -3190,7 +3192,7 @@
 				B3B923B3202D417700580FFC /* Spotlight.swift in Sources */,
 				1AFA7C9F1D10B06D0058C637 /* PVAppConstants.swift in Sources */,
 				B349AF491E9ABCF900ACD416 /* PropVariantConv.cpp in Sources */,
-				C6FD5CAC2058F5240048FF1A /* UIViewExtensions.swift in Sources */,
+				C6FD5CAC2058F5240048FF1A /* (null) in Sources */,
 				B349AEAF1E9ABCF900ACD416 /* CoderMixer2.cpp in Sources */,
 				B349AEDB1E9ABCF900ACD416 /* OffsetStream.cpp in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,
@@ -3240,6 +3242,7 @@
 				B349AE6F1E9ABCF900ACD416 /* Lzma86Enc.c in Sources */,
 				B3BE96872055F40000281880 /* PVFile.swift in Sources */,
 				B349AED51E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
+				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				AA9B6EDE1D70981000422E5F /* PVPSXControllerViewController.m in Sources */,
 				B349AF151E9ABCF900ACD416 /* 7zAes.cpp in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
