@@ -145,11 +145,12 @@ class PVTVSettingsViewController: UITableViewController {
                                 let webServerAddress: String = PVWebServer.sharedInstance().urlString
                                 let webDavAddress: String = PVWebServer.sharedInstance().webDavURLString
                                 let message = """
-                                    Upload/Download ROMs,
-                                    saves and cover art at:
-                                    \(webServerAddress)
-                                     Or WebDav at:
-                                    \(webDavAddress)
+                                    Read Importing ROMs wiki…
+                                    Upload/Download files at:
+                                    
+                                    \(webServerAddress)  ᵂᵉᵇᵁᴵ
+                                    \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+                                    
                                     """
                                 let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in

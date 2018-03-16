@@ -227,9 +227,14 @@ public extension PVControllerViewController {
                     }
                 }
                 else if (controlType == Keys.StartButton) {
-                    let yPadding: CGFloat = max(safeAreaInsets.bottom, 10)
-                    let startFrame = CGRect(x: (view.frame.size.width - controlSize.width) / 2, y: view.frame.size.height - controlSize.height - yPadding, width: controlSize.width, height: controlSize.height)
-                    
+                    let yPadding: CGFloat = 40
+                    let xSpacing: CGFloat = 20
+                    var startFrame: CGRect
+                    if UIDevice.current.orientation.isLandscape {
+                        startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                    } else {
+                        startFrame = CGRect(x: (view.frame.size.width / 2) + (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
+                    }
                     if let startButton = self.startButton {
                         startButton.frame = startFrame
                     } else {
@@ -238,7 +243,7 @@ public extension PVControllerViewController {
                             startButton.tintColor = UIColor(hex: tintColor)
                         }
                         self.startButton = startButton
-                        startButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        //startButton.titleLabel?.text = control[Keys.ControlTitle] as? String
                         startButton.backgroundImage = UIImage(named: "button-thin")
                         startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         startButton.delegate = self
@@ -249,20 +254,24 @@ public extension PVControllerViewController {
                     }
                 }
                 else if (controlType == Keys.SelectButton) {
-                    let yPadding: CGFloat = max(safeAreaInsets.bottom, 10)
-                    let ySeparation: CGFloat = 10
-                    let selectFrame = CGRect(x: (view.frame.size.width - controlSize.width) / 2, y: view.frame.size.height - yPadding - (controlSize.height * 2) - ySeparation, width: controlSize.width, height: controlSize.height)
-                    
+                    let yPadding: CGFloat = 40
+                    let xSpacing: CGFloat = 20
+                    var selectFrame: CGRect
+                    if UIDevice.current.orientation.isLandscape {
+                        selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                    } else {
+                        selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
+                    }
                     if let selectButton = self.selectButton {
                         selectButton.frame = selectFrame
                     }
                     else {
                         let selectButton = JSButton(frame: selectFrame)
-                        self.selectButton = selectButton
-                        selectButton.titleLabel?.text = control[Keys.ControlTitle] as? String
                         if let tintColor = control[Keys.ControlTint] as? String {
                             selectButton.tintColor = UIColor(hex: tintColor)
                         }
+                        self.selectButton = selectButton
+                        //selectButton.titleLabel?.text = control[Keys.ControlTitle] as? String
                         selectButton.backgroundImage = UIImage(named: "button-thin")
                         selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         selectButton.delegate = self

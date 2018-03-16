@@ -212,12 +212,12 @@ void uncaughtExceptionHandler(NSException *exception)
 	CGFloat alpha = [[PVSettingsModel sharedInstance] controllerOpacity];
 	self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	[self.menuButton setAutoresizingMask:UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin| UIViewAutoresizingFlexibleBottomMargin];
-	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin"] forState:UIControlStateNormal];
-	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-thin-pressed"] forState:UIControlStateHighlighted];
-	[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
+	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-menu"] forState:UIControlStateNormal];
+	[self.menuButton setBackgroundImage:[UIImage imageNamed:@"button-menu-pressed"] forState:UIControlStateHighlighted];
+	//[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
 	[[self.menuButton titleLabel] setShadowOffset:CGSizeMake(0, 1)];
 	[self.menuButton setTitleShadowColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
-	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:15]];
+	[[self.menuButton titleLabel] setFont:[UIFont boldSystemFontOfSize:12]];
 	[self.menuButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 	[self.menuButton setAlpha:alpha];
 	[self.menuButton addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];

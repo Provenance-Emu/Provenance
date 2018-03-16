@@ -285,6 +285,8 @@
 		<string>com.provenance.psx</string>
 		<key>PVSystemShortName</key>
 		<string>PSX</string>
+		<key>PVSystemShortNameAlt</key>
+		<string>PS1</string>
 		<key>PVSystemName</key>
 		<string>PlayStation</string>
 		<key>PVManufacturer</key>
@@ -676,8 +678,12 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ws</string>
 		<key>PVSystemShortName</key>
+		<string>WS</string>
+		<key>PVSystemShortNames</key>
 		<string>WS/WSC</string>
 		<key>PVSystemName</key>
+		<string>WonderSwan</string>
+		<key>PVSystemNames</key>
 		<string>WonderSwan/Wonderswan Color</string>
 		<key>PVManufacturer</key>
 		<string>Bandai</string>
@@ -748,8 +754,12 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pce</string>
 		<key>PVSystemShortName</key>
+		<string>TG16</string>
+		<key>PVSystemShortNames</key>
 		<string>PCE/TG16</string>
 		<key>PVSystemName</key>
+		<string>TurboGrafx-16</string>
+		<key>PVSystemNames</key>
 		<string>PC Engine/TurboGrafx-16</string>
 		<key>PVManufacturer</key>
 		<string>NEC</string>
@@ -822,8 +832,12 @@
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.pcecd</string>
 		<key>PVSystemShortName</key>
+		<string>TG16CD</string>
+		<key>PVSystemShortNames</key>
 		<string>PCECD/TG16CD</string>
 		<key>PVSystemName</key>
+		<string>TurboGrafx-CD</string>
+		<key>PVSystemNames</key>
 		<string>PC Engine CD/TurboGrafx-CD</string>
 		<key>PVManufacturer</key>
 		<string>NEC</string>
@@ -973,8 +987,12 @@
 	<dict>
 		<key>PVSystemShortName</key>
 		<string>SCD</string>
+		<key>PVSystemShortNames</key>
+		<string>SCD/MCD</string>
 		<key>PVSystemName</key>
 		<string>Sega CD</string>
+		<key>PVSystemNames</key>
+		<string>Sega CD/MegaCD</string>
 		<key>PVManufacturer</key>
 		<string>Sega</string>
 		<key>PVBit</key>
@@ -1105,8 +1123,12 @@
 	</dict>
 	<dict>
 		<key>PVSystemShortName</key>
+		<string>SG</string>
+		<key>PVSystemShortNames</key>
 		<string>SG/SMD</string>
 		<key>PVSystemName</key>
+		<string>Genesis</string>
+		<key>PVSystemNames</key>
 		<string>Genesis/Mega Drive</string>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.genesis</string>
@@ -1334,6 +1356,8 @@
 		<key>PVSystemShortName</key>
 		<string>SNES</string>
 		<key>PVSystemName</key>
+		<string>Super Nintendo</string>
+		<key>PVSystemLongName</key>
 		<string>Super Nintendo Entertainment System</string>
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
@@ -1680,7 +1704,13 @@
 		<key>PVSystemShortName</key>
 		<string>NES</string>
 		<key>PVSystemName</key>
+		<string>Nintendo</string>
+		<key>PVSystemNames</key>
+		<string>Nintendo/Famicom</string>
+		<key>PVSystemLongName</key>
 		<string>Nintendo Entertainment System</string>
+		<key>PVSystemLongNames</key>
+		<string>Nintendo Entertainment System/Famicom</string>
 		<key>PVManufacturer</key>
 		<string>Nintendo</string>
 		<key>PVBit</key>
