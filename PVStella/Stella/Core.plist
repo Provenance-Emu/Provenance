@@ -8,17 +8,7 @@
 	<string>PVStellaGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.psx</string>
-		<string>com.provenance.lynx</string>
-		<string>com.provenance.ngp</string>
-		<string>com.provenance.nbpc</string>
-		<string>com.provenance.pce</string>
-		<string>com.provenance.pcecd</string>
-		<string>com.provenance.pcfx</string>
-		<string>com.provenance.sgfx</string>
-		<string>com.provenance.vb</string>
-		<string>com.provenance.ws</string>
-		<string>com.provenance.wsc</string>
+		<string>com.provenance.2600</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Stella</string>

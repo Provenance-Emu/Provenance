@@ -3,18 +3,27 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenane.core.gambatte</string>
+	<string>com.provenane.core.mednafen</string>
 	<key>PVPrincipleClass</key>
-	<string>PVFCEUEmulatorCore</string>
+	<string>MednafenGameCore</string>
+	<key>PVProjectName</key>
+	<string>Mednafen</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.gb</string>
-		<string></string>
+		<string>com.provenance.psx</string>
+		<string>com.provenance.lynx</string>
+		<string>com.provenance.ngp</string>
+		<string>com.provenance.nbpc</string>
+		<string>com.provenance.pce</string>
+		<string>com.provenance.pcecd</string>
+		<string>com.provenance.pcfx</string>
+		<string>com.provenance.sgfx</string>
+		<string>com.provenance.vb</string>
+		<string>com.provenance.ws</string>
+		<string>com.provenance.wsc</string>
 	</array>
-	<key>PVProjectName</key>
-	<string>Gambatte</string>
 	<key>PVProjectURL</key>
-	<string>https://github.com/sinamas/gambatte</string>
+	<string>https://mednafen.github.io</string>
 	<key>PVProjectVersion</key>
 	<string>unknown</string>
 </dict>
