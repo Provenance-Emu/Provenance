@@ -224,15 +224,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         title = "Library"
         
         let layout = UICollectionViewFlowLayout()
-        
-        if #available(tvOS 11.0, iOS 11.0, *) {
-            var safeArea = view.safeAreaInsets
-            safeArea.top += 20
-            safeArea.bottom += 20
-            layout.sectionInset = safeArea;
-        } else {
-            layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
-        }
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
@@ -246,7 +237,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.keyboardDismissMode = .interactive
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
-
+        
 #if os(tvOS)
         collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
 #else
@@ -257,6 +248,23 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        
+        // Adjust collection view layout for iPhone X Safe areas
+        // Can remove this when we go iOS 9+ and just use safe areas
+        // in the story board directly - jm
+        if #available(tvOS 11.0, iOS 11.0, *) {
+            collectionView.translatesAutoresizingMaskIntoConstraints = false
+            let guide = view.safeAreaLayoutGuide
+            NSLayoutConstraint.activate([
+                collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
+                collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
+                collectionView.topAnchor.constraint(equalTo: guide.topAnchor),
+                collectionView.bottomAnchor.constraintEqualToSystemSpacingBelow(guide.bottomAnchor, multiplier: 1.0)
+                ])
+            layout.sectionInsetReference = .fromSafeArea
+        } else {
+            layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+        }
         
         // Force touch
         #if os(iOS)
