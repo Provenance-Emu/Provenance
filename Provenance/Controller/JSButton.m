@@ -63,19 +63,23 @@
 	[_backgroundImageView setFrame:[self bounds]];
 	[_backgroundImageView setContentMode:UIViewContentModeCenter];
 	[_backgroundImageView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
-	[self addSubview:_backgroundImageView];
-	
+    [_backgroundImageView.layer setShadowColor: [UIColor blackColor].CGColor];
+    [_backgroundImageView.layer setShadowRadius:4.0];
+    [_backgroundImageView.layer setShadowOpacity:0.75];
+    [_backgroundImageView.layer setShadowOffset:CGSizeMake(0.0, 1.0)];
+    [self addSubview:_backgroundImageView];
+
 	_titleLabel = [[UILabel alloc] init];
 	[_titleLabel setBackgroundColor:[UIColor clearColor]];
-	[_titleLabel setTextColor:[UIColor whiteColor]];
-	[_titleLabel setShadowColor:[UIColor darkGrayColor]];
+	[_titleLabel setTextColor:[[UIColor whiteColor] colorWithAlphaComponent:0.6f]];
+	[_titleLabel setShadowColor:[UIColor blackColor]];
 	[_titleLabel setShadowOffset:CGSizeMake(0, 1)];
 	[_titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
 	[_titleLabel setFrame:[self bounds]];
 	[_titleLabel setTextAlignment:NSTextAlignmentCenter];
 	[_titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[self addSubview: _titleLabel];
-	
+    
 	[self addObserver:self
 		   forKeyPath:@"pressed"
 			  options:NSKeyValueObservingOptionNew

@@ -671,6 +671,7 @@
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		BE9FDCCA1C210CC20046DF0E /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
+		C6FD5CAC2058F5240048FF1A /* UIViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FD5CAB2058F5240048FF1A /* UIViewExtensions.swift */; };
 		DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C6203C97E100F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C8203C97FA00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C7203C97FA00F63831 /* GLideN64.ini */; };
@@ -2622,6 +2623,7 @@
 				B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */,
 				B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */,
 				B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */,
+				C6FD5CAB2058F5240048FF1A /* UIViewExtensions.swift */,
 			);
 			path = SwiftyAppearance;
 			sourceTree = "<group>";
@@ -3184,6 +3186,7 @@
 				B3B923B3202D417700580FFC /* Spotlight.swift in Sources */,
 				1AFA7C9F1D10B06D0058C637 /* PVAppConstants.swift in Sources */,
 				B349AF491E9ABCF900ACD416 /* PropVariantConv.cpp in Sources */,
+				C6FD5CAC2058F5240048FF1A /* UIViewExtensions.swift in Sources */,
 				B349AEAF1E9ABCF900ACD416 /* CoderMixer2.cpp in Sources */,
 				B349AEDB1E9ABCF900ACD416 /* OffsetStream.cpp in Sources */,
 				1A47C97B17BC310700C27644 /* JSButton.m in Sources */,

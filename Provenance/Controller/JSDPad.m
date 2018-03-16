@@ -44,6 +44,11 @@
 {
 	_dPadImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"dPad-None"]];
 	[_dPadImageView setFrame:CGRectMake(0, 0, [self bounds].size.width, [self bounds].size.height)];
+    [_dPadImageView.layer setShadowColor: [UIColor blackColor].CGColor];
+    [_dPadImageView.layer setShadowRadius:4.0];
+    [_dPadImageView.layer setShadowOpacity:0.75];
+    [_dPadImageView.layer setShadowOffset:CGSizeMake(0.0, 1.0)];
+    
 	[self addSubview:_dPadImageView];
 	
 	_currentDirection = JSDPadDirectionNone;
