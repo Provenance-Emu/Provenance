@@ -258,7 +258,7 @@ public extension PVControllerViewController {
                     let xSpacing: CGFloat = 20
                     var selectFrame: CGRect
                     if UIDevice.current.orientation.isLandscape {
-                        selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        selectFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
                     } else {
                         selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
                     }
