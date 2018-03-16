@@ -324,7 +324,11 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         genresLabel.text = game?.genres?.components(separatedBy: ",").joined(separator: ", ")  ?? ""
         regionLabel.text = game?.regionName
         
-        descriptionTextView.text = game?.gameDescription  ?? ""
+        var descriptionText = game?.gameDescription  ?? ""
+        #if DEBUG
+            descriptionText = [game?.debugDescription ?? "", descriptionText].joined(separator: "\n")
+        #endif
+        descriptionTextView.text = descriptionText
         
         let playsText : String
         if let playCount = game?.playCount {
