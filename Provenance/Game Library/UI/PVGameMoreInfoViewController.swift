@@ -199,7 +199,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
     @objc
-    public var game : PVGame? {
+    public var game : PVGame! {
         didSet {
             assert(game != nil, "Set a nil game")
             
@@ -641,6 +641,17 @@ extension PVGameMoreInfoViewController {
             }
         }
         
+        let isFavorite = game?.isFavorite ?? false
+        let favoriteToggle = UIPreviewAction(title: "Favorite", style:isFavorite ? .selected : .default) { (action, viewController) in
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    self.game.isFavorite = !self.game.isFavorite
+                }
+            } catch {
+                ELOG("\(error)")
+            }
+        }
+        
         let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { (action, viewController) in
             let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
@@ -657,7 +668,7 @@ extension PVGameMoreInfoViewController {
 //            print("I believe I can fly")
 //        }
 //        let actionGroup = UIPreviewActionGroup(title: "Look at me, I can grow!", style: .default, actions: [action1, action2, action3])
-        return [playAction, deleteAction]
+        return [playAction, favoriteToggle, deleteAction]
     }
 }
 
