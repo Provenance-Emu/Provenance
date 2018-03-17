@@ -382,6 +382,8 @@
 		<string>Atari</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVHeaderByteSize</key>
+		<integer>64</integer>
 		<key>PVReleaseYear</key>
 		<string>1989</string>
 		<key>PVPortable</key>
@@ -1715,6 +1717,8 @@
 		<string>Nintendo</string>
 		<key>PVBit</key>
 		<string>8</string>
+		<key>PVHeaderByteSize</key>
+		<integer>16</integer>
 		<key>PVReleaseYear</key>
 		<string>1983</string>
 		<key>PVPortable</key>
@@ -2006,6 +2010,8 @@
 		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.7800</string>
+		<key>PVHeaderByteSize</key>
+		<integer>128</integer>
 		<key>PVDatabaseID</key>
 		<string>5</string>
 		<key>PVSupportedExtensions</key>

@@ -61,9 +61,11 @@ public struct SytemPlistEntry: Codable {
     var PVReleaseYear : String
     var PVSystemName : String
     var PVSystemShortName : String
+    var PVSystemShortNameAlt : String?
     var PVBIOSNames : [SystemPlistBIOSEntry]?
     var PVSupportedExtensions : [String]
     var PVControlLayout : [ControlLayoutEntry]
+    var PVHeaderByteSize : Int?
     var PVUsesCDs : Bool?
     var PVPortable : Bool?
     var PVScreenType : String?

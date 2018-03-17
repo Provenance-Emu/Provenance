@@ -99,10 +99,12 @@ public extension PVEmulatorConfiguration {
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
         pvSystem.shortName = system.PVSystemShortName
+        pvSystem.shortNameAlt = system.PVSystemShortNameAlt
         pvSystem.controllerLayout = system.PVControlLayout
         pvSystem.portableSystem = system.PVPortable ?? false
         pvSystem.usesCDs = system.PVUsesCDs ?? false
         pvSystem.supportsRumble = system.PVSupportsRumble ?? false
+        pvSystem.headerByteSize = system.PVHeaderByteSize ?? 0
         
         if let screenType = system.PVScreenType {
             pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown
