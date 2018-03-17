@@ -96,6 +96,8 @@
 			  context:NULL];
 	
 	self.pressed = NO;
+    
+    self.tintColor = [UIColor whiteColor];
 }
 
 - (void)dealloc
