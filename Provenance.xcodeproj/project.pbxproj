@@ -637,6 +637,8 @@
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
+		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
+		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
@@ -661,6 +663,8 @@
 		B3E3B5CE202ED24600A11871 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
+		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
+		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		B3F9CDA120315599007F808D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
@@ -1390,6 +1394,7 @@
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PV32XControllerViewController.m; sourceTree = "<group>"; };
 		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
 		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
+		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87631D6A5A5300D216D4 /* PVStellaControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVStellaControllerViewController.h; sourceTree = "<group>"; };
@@ -1580,6 +1585,7 @@
 				1AB9600217C572B400D3E392 /* PVSettingsModel.swift */,
 				1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */,
 				1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */,
+				B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2982,6 +2988,7 @@
 				B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
 				B349AE3A1E9ABCF900ACD416 /* .travis.yml in Resources */,
 				B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
+				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
 				B349AE3E1E9ABCF900ACD416 /* LICENSE in Resources */,
 				1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */,
@@ -3149,6 +3156,7 @@
 				B3E3B5C4202E21B400A11871 /* RomDatabase.swift in Sources */,
 				B349AEE51E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				B349AEE91E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
+				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.m in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
 				B3B3B89D1DECF9D700602746 /* PVN64ControllerViewController.m in Sources */,
@@ -3434,6 +3442,7 @@
 				B349AEC21E9ABCF900ACD416 /* LzmaHandler.cpp in Sources */,
 				B349AF2C1E9ABCF900ACD416 /* MyString.cpp in Sources */,
 				1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */,
+				B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */,
 				B349AF0C1E9ABCF900ACD416 /* LzmaEncoder.cpp in Sources */,
 				B349AE461E9ABCF900ACD416 /* 7zBuf2.c in Sources */,
 				B349AEDC1E9ABCF900ACD416 /* OffsetStream.cpp in Sources */,
@@ -3451,6 +3460,7 @@
 				B349AEEA1E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
 				B349AE6E1E9ABCF900ACD416 /* Lzma86Dec.c in Sources */,
 				B349AF541E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
+				B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
 				B349AE421E9ABCF900ACD416 /* 7zArcIn.c in Sources */,
 				1AD482011BA354B100FDA50A /* kICadeControllerSetting.m in Sources */,
 				B349AF1E1E9ABCF900ACD416 /* RandGen.cpp in Sources */,

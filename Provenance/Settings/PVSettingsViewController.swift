@@ -278,10 +278,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 ELOG("No game importer instance")
             }
         }
-        else if indexPath.section == 7 && indexPath.row == 0 {
-            let licensesViewController = PVLicensesViewController()
-            navigationController?.pushViewController(licensesViewController, animated: true)
-        }
         else if indexPath.section == 0 && indexPath.row == 8 {
             if #available(iOS 9.0, *) {
                 let themeSelectorViewController = ThemeSelectorViewController()
