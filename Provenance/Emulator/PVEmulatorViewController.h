@@ -7,9 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JSDPad.h"
-#import "JSButton.h"
-#import "PVControllerViewController.h"
 
 @class PVEmulatorCore, PVGame, PVEmulatorConfiguration;
 

@@ -15,7 +15,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var shortcutItemMD5 : String? = nil
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.sharedInstance().disableAutoLock
+        UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
         
 #if os(iOS)
         if #available(iOS 9.0, *) {
@@ -40,7 +40,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             tabBarController.viewControllers = viewControllers
         }
 #else
-        let currentTheme = PVSettingsModel.sharedInstance().theme
+        let currentTheme = PVSettingsModel.shared.theme
         Theme.setTheme(currentTheme.theme)
 #endif
         
@@ -158,8 +158,8 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     
     func startOptionalWebDavServer() {
         // Check if the user setting is set or the optional ENV variable
-        if PVSettingsModel.sharedInstance().webDavAlwaysOn || isWebDavServerEnviromentVariableSet() {
-            PVWebServer.sharedInstance().startWebDavServer()
+        if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnviromentVariableSet() {
+            PVWebServer.shared.startWebDavServer()
         }
     }
 }

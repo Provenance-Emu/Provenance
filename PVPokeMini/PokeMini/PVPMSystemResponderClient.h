@@ -27,7 +27,7 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
 
-typedef NS_ENUM(NSUInteger, PVPMButton) {
+typedef NS_ENUM(NSInteger, PVPMButton) {
     PVPMButtonMenu,
     PVPMButtonA,
     PVPMButtonB,

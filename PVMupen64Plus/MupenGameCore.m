@@ -981,16 +981,16 @@ static void MupenSetAudioSpeed(int percent)
 {
     switch (button)
     {
-        case OEN64AnalogUp:
+        case OEN64ButtonAnalogUp:
             yAxis[player] = value * N64_ANALOG_MAX;
             break;
-        case OEN64AnalogDown:
+        case OEN64ButtonAnalogDown:
             yAxis[player] = value * -N64_ANALOG_MAX;
             break;
-        case OEN64AnalogLeft:
+        case OEN64ButtonAnalogLeft:
             xAxis[player] = value * -N64_ANALOG_MAX;
             break;
-        case OEN64AnalogRight:
+        case OEN64ButtonAnalogRight:
             xAxis[player] = value * N64_ANALOG_MAX;
             break;
         default:

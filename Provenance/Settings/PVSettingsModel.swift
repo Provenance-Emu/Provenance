@@ -150,10 +150,11 @@ public class PVSettingsModel: NSObject {
     }
     #endif
     
-    private static var _sharedInstace = PVSettingsModel()
+    static var shared = PVSettingsModel()
+    
     @objc
     class func sharedInstance() -> PVSettingsModel {
-        return PVSettingsModel._sharedInstace
+        return PVSettingsModel.shared
     }
 
     override init() {

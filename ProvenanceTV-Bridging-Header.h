@@ -25,7 +25,7 @@
 
 #import "MBProgressHUD.h"
 #import "NSData+Hashing.h"
-#import "PVControllerManager.h"
+#import "PViCade8BitdoController.h"
 #import "PVEmulatorViewController.h"
 #import "PVWebServer.h"
 #import "Reachability.h"

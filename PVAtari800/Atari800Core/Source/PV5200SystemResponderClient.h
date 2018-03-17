@@ -29,7 +29,7 @@
 
 //@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, PV5200Button) {
+typedef NS_ENUM(NSInteger, PV5200Button) {
 	PV5200ButtonUp,
 	PV5200ButtonDown,
 	PV5200ButtonLeft,
@@ -39,16 +39,16 @@ typedef NS_ENUM(NSUInteger, PV5200Button) {
     PV5200ButtonStart,
 	PV5200ButtonPause,
     PV5200ButtonReset,
-    PV5200Button1,
-    PV5200Button2,
-    PV5200Button3,
-    PV5200Button4,
-    PV5200Button5,
-    PV5200Button6,
-    PV5200Button7,
-    PV5200Button8,
-    PV5200Button9,
-    PV5200Button0,
+    PV5200ButtonNumber1,
+    PV5200ButtonNumber2,
+    PV5200ButtonNumber3,
+    PV5200ButtonNumber4,
+    PV5200ButtonNumber5,
+    PV5200ButtonNumber6,
+    PV5200ButtonNumber7,
+    PV5200ButtonNumber8,
+    PV5200ButtonNumber9,
+    PV5200ButtonNumber0,
     PV5200ButtonAsterisk,
     PV5200ButtonPound,
 	PV5200ButtonCount

@@ -28,7 +28,7 @@
 
 //@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OE7800Button) {
+typedef NS_ENUM(NSInteger, OE7800Button) {
 	OE7800ButtonUp,
 	OE7800ButtonDown,
 	OE7800ButtonLeft,

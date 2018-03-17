@@ -57,7 +57,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Settings"
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         autoSaveSwitch.isOn = settings.autoSave
         autoLoadSwitch.isOn = settings.autoLoadAutoSaves
         opacitySlider.value = Float(settings.controllerOpacity)
@@ -104,7 +104,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         
         if #available(iOS 9.0, *) {
@@ -121,48 +121,48 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func toggleFPSCount(_ sender: Any) {
-        PVSettingsModel.sharedInstance().showFPSCount = fpsCountSwitch.isOn
+        PVSettingsModel.shared.showFPSCount = fpsCountSwitch.isOn
     }
 
     @IBAction func toggleAutoSave(_ sender: Any) {
-        PVSettingsModel.sharedInstance().autoSave = autoSaveSwitch.isOn
+        PVSettingsModel.shared.autoSave = autoSaveSwitch.isOn
     }
 
     @IBAction func toggleAutoLoadAutoSaves(_ sender: Any) {
-        PVSettingsModel.sharedInstance().autoLoadAutoSaves = autoLoadSwitch.isOn
+        PVSettingsModel.shared.autoLoadAutoSaves = autoLoadSwitch.isOn
     }
 
     @IBAction func controllerOpacityChanged(_ sender: Any) {
         opacitySlider.value = floor(opacitySlider.value / 0.05) * 0.05
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-        PVSettingsModel.sharedInstance().controllerOpacity = CGFloat(opacitySlider.value)
+        PVSettingsModel.shared.controllerOpacity = CGFloat(opacitySlider.value)
     }
 
     @IBAction func toggleAutoLock(_ sender: Any) {
-        PVSettingsModel.sharedInstance().disableAutoLock = autoLockSwitch.isOn
+        PVSettingsModel.shared.disableAutoLock = autoLockSwitch.isOn
     }
 
     @IBAction func toggleVibration(_ sender: Any) {
-        PVSettingsModel.sharedInstance().buttonVibration = vibrateSwitch.isOn
+        PVSettingsModel.shared.buttonVibration = vibrateSwitch.isOn
     }
 
     @IBAction func toggleSmoothing(_ sender: Any) {
-        PVSettingsModel.sharedInstance().imageSmoothing = imageSmoothing.isOn
+        PVSettingsModel.shared.imageSmoothing = imageSmoothing.isOn
     }
 
     @IBAction func toggleCRTFilter(_ sender: Any) {
-        PVSettingsModel.sharedInstance().crtFilterEnabled = crtFilterSwitch.isOn
+        PVSettingsModel.shared.crtFilterEnabled = crtFilterSwitch.isOn
     }
 
     @IBAction func volumeChanged(_ sender: Any) {
-        PVSettingsModel.sharedInstance().volume = volumeSlider.value
+        PVSettingsModel.shared.volume = volumeSlider.value
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
     }
 
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
-        let ipURL: String = PVWebServer.sharedInstance().urlString
+        let ipURL: String = PVWebServer.shared.urlString
         let safariVC = SFSafariViewController(url: URL(string: ipURL)!, entersReaderIfAvailable: false)
         safariVC.delegate = self
         present(safariVC, animated: true) {() -> Void in }
@@ -178,7 +178,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         // Done button pressed
         navigationController?.popViewController(animated: true)
-        PVWebServer.sharedInstance().stopServers()
+        PVWebServer.shared.stopServers()
         importLabel.text = "Web server: OFF"
     }
 
@@ -197,14 +197,14 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
 		let ipFieldText = """
-            WebUI:  \(PVWebServer.sharedInstance().urlString)
-            WebDav: \(PVWebServer.sharedInstance().webDavURLString)
-            """
+        WebUI:  \(PVWebServer.shared.urlString)
+        WebDav: \(PVWebServer.shared.webDavURLString)
+        """
         ipField.text = ipFieldText
         ipField.isUserInteractionEnabled = false
         alert.view.addSubview(ipField)
         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.sharedInstance().stopServers()
+            PVWebServer.shared.stopServers()
             self.importLabel.text = "Web server: OFF"
         }))
         
@@ -238,7 +238,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             else {
                 // connected via wifi, let's continue
                 // start web transfer service
-                if PVWebServer.sharedInstance().startServers() {
+                if PVWebServer.shared.startServers() {
                     importLabel.text = "Web server: ON"
                     //show alert view
                     showServerActiveAlert()
@@ -320,10 +320,10 @@ class ThemeSelectorViewController : UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             Theme.setTheme(LightTheme())
-            PVSettingsModel.sharedInstance().theme = .light
+            PVSettingsModel.shared.theme = .light
         } else if indexPath.row == 1 {
             Theme.setTheme(DarkTheme())
-            PVSettingsModel.sharedInstance().theme = .dark
+            PVSettingsModel.shared.theme = .dark
         }
         
         tableView.reloadData()

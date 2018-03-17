@@ -20,7 +20,7 @@ class PVAppearanceViewController: UITableViewController {
         super.viewDidLoad()
         title = "Appearance"
 #if os(iOS)
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         hideTitlesSwitch = UISwitch()
         hideTitlesSwitch?.isOn = settings.showGameTitles
         hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
@@ -38,10 +38,10 @@ class PVAppearanceViewController: UITableViewController {
 #if os(iOS)
     @objc func switchChangedValue(_ switchItem: UISwitch) {
         if switchItem == hideTitlesSwitch {
-            PVSettingsModel.sharedInstance().showGameTitles = switchItem.isOn
+            PVSettingsModel.shared.showGameTitles = switchItem.isOn
         }
         else if switchItem == recentlyPlayedSwitch {
-            PVSettingsModel.sharedInstance().showRecentGames = switchItem.isOn
+            PVSettingsModel.shared.showRecentGames = switchItem.isOn
         }
 
         NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
@@ -69,7 +69,7 @@ class PVAppearanceViewController: UITableViewController {
             if indexPath.row == 0 {
                 cell?.textLabel?.text = "Show Game Titles"
 #if os(tvOS)
-                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showGameTitles ? "On" : "Off"
+                cell?.detailTextLabel?.text = PVSettingsModel.shared.showGameTitles ? "On" : "Off"
 #else
                 cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = hideTitlesSwitch
@@ -78,7 +78,7 @@ class PVAppearanceViewController: UITableViewController {
             else if indexPath.row == 1 {
                 cell?.textLabel?.text = "Show recently played games"
 #if os(tvOS)
-                cell?.detailTextLabel?.text = PVSettingsModel.sharedInstance().showRecentGames ? "On" : "Off"
+                cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentGames ? "On" : "Off"
 #else
                 cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = recentlyPlayedSwitch
@@ -92,7 +92,7 @@ class PVAppearanceViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 #if os(tvOS)
         let cell: UITableViewCell? = tableView.cellForRow(at: indexPath)
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 settings.showGameTitles = !settings.showGameTitles

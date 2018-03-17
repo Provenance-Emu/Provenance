@@ -28,7 +28,7 @@
 
 //@protocol OESystemResponderClient;
 
-typedef enum _OEN64Button
+typedef NS_ENUM(NSInteger, OEN64Button)
 {
     // D-Pad
     OEN64ButtonDPadUp,
@@ -52,12 +52,13 @@ typedef enum _OEN64Button
     
     OEN64ButtonStart,
     
-    OEN64AnalogUp,
-    OEN64AnalogDown,
-    OEN64AnalogLeft,
-    OEN64AnalogRight,
+    OEN64ButtonAnalogUp,
+    OEN64ButtonAnalogDown,
+    OEN64ButtonAnalogLeft,
+    OEN64ButtonAnalogRight,
     OEN64ButtonCount
-} OEN64Button;
+};
+
 // FIXME: analog stick (x,y), memory pack, rumble pack
 
 @protocol OEN64SystemResponderClient </*OESystemResponderClient, */NSObject>

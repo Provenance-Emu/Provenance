@@ -173,7 +173,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             emulatorViewController.modalTransitionStyle = .crossDissolve
             self.present(emulatorViewController, animated: true) {() -> Void in }
             
-            PVControllerManager.shared().iCadeController?.refreshListener()
+            PVControllerManager.shared.iCadeController?.refreshListener()
             
             do {
                 try RomDatabase.sharedInstance.writeTransaction {

@@ -10,7 +10,6 @@ import Foundation
 import PVSupport
 
 public final class PVCoreFactory : NSObject {
-    @objc
     class func emulatorCore(forGame game: PVGame) ->  PVEmulatorCore? {
         guard let system = game.system else {
             ELOG("No system for game \(game.title)")
@@ -36,61 +35,53 @@ public final class PVCoreFactory : NSObject {
     }
     
     #if os(iOS)
-    @objc
-    class func controllerViewController(forSystemIdentifier systemID : String) -> PVControllerViewController? {
-        guard let systemID = SystemIdentifier(rawValue: systemID) else {
-            return nil
+    class func controllerViewController<T:PVEmulatorCore>(forSystemIdentifier systemID : String) -> PVControllerViewController<T> {
+        guard let system = RomDatabase.sharedInstance.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemID) else {
+            fatalError("No system for id \(systemID)")
         }
-        return controllerViewController(forSystemIdentifier : systemID)
+        return controllerViewController(forSystem : system)
     }
 
-    class func controllerViewController(forSystemIdentifier systemID: SystemIdentifier) -> PVControllerViewController? {
-        guard let controllerLayoutStruct = PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: systemID) else {
-            ELOG("No controller layout config defined for system \(systemID)")
-            return nil
+    class func controllerViewController<T:PVEmulatorCore>(forSystem system: PVSystem) -> PVControllerViewController<T> {
+        guard let controllerLayout = system.controllerLayout else {
+            fatalError("No controller layout config defined for system \(system.name)")
         }
         
-        let controllerLayout = controllerLayoutStruct.reduce([[String:Any]]()) { (result, layoutEntry) -> [[String:Any]] in
-            var result = result
-            result.append(layoutEntry.dictionaryValue)
-            return result
-        }
-        
-        switch systemID {
+        switch system.enumValue {
         case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
-            return PVGenesisControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVGenesisControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .SNES:
-            return PVSNESControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVSNESControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .GBA:
-            return PVGBAControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVGBAControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .GB, .GBC:
-            return PVGBControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVGBControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .NES, .FDS:
-            return PVNESControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVNESControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .Atari2600:
-            return PVStellaControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVStellaControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .Atari5200:
-            return PVAtari5200ControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVAtari5200ControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .Atari7800:
-            return PVAtari7800ControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVAtari7800ControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .Sega32X:
-            return PV32XControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PV32XControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .PokemonMini:
-            return PVPokeMiniControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVPokeMiniControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .PSX:
-            return PVPSXControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVPSXControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .Lynx:
-            return PVLynxControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVLynxControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .PCE, .PCECD, .PCFX, .SGFX:
-            return PVPCEControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVPCEControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .NGP, .NGPC:
-            return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .VirtualBoy:
-            return PVVBControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVVBControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .WonderSwan, .WonderSwanColor:
-            return PVWonderSwanControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVWonderSwanControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         case .N64:
-            return PVN64ControllerViewController(controlLayout: controllerLayout , systemIdentifier: systemID.rawValue)
+            return PVN64ControllerViewController(controlLayout: controllerLayout , system: system) as! PVControllerViewController<T>
         }
     }
     #endif

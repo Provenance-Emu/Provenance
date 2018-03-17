@@ -29,7 +29,7 @@
 
 //@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, PVA8Button) {
+typedef NS_ENUM(NSInteger, PVA8Button) {
     PVA8ButtonUp,
     PVA8ButtonDown,
     PVA8ButtonLeft,

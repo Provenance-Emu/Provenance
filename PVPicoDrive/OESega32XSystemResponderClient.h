@@ -28,23 +28,23 @@
 
 //@protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OESega32XButton) {
-    OESega32XButtonUp,
-    OESega32XButtonDown,
-    OESega32XButtonLeft,
-    OESega32XButtonRight,
-    OESega32XButtonA,
-    OESega32XButtonB,
-    OESega32XButtonC,
-    OESega32XButtonX,
-    OESega32XButtonY,
-    OESega32XButtonZ,
-    OESega32XButtonStart,
-    OESega32XButtonMode,
-    OESega32XButtonCount,
+typedef NS_ENUM(NSInteger, PVSega32XButton) {
+    PVSega32XButtonUp,
+    PVSega32XButtonDown,
+    PVSega32XButtonLeft,
+    PVSega32XButtonRight,
+    PVSega32XButtonA,
+    PVSega32XButtonB,
+    PVSega32XButtonC,
+    PVSega32XButtonX,
+    PVSega32XButtonY,
+    PVSega32XButtonZ,
+    PVSega32XButtonStart,
+    PVSega32XButtonMode,
+    PVSega32XButtonCount,
 };
 
 @protocol OESega32XSystemResponderClient <NSObject>
-- (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 @end

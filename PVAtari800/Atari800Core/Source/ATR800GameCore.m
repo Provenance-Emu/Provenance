@@ -505,34 +505,34 @@ __weak static ATR800GameCore * _currentCore;
 //            controllerStates[player].reset = 1;
             INPUT_key_code = AKEY_5200_RESET;
             break;
-        case PV5200Button1:
+        case PV5200ButtonNumber1:
             INPUT_key_code = AKEY_5200_1;
             break;
-        case PV5200Button2:
+        case PV5200ButtonNumber2:
             INPUT_key_code = AKEY_5200_2;
             break;
-        case PV5200Button3:
+        case PV5200ButtonNumber3:
             INPUT_key_code = AKEY_5200_3;
             break;
-        case PV5200Button4:
+        case PV5200ButtonNumber4:
             INPUT_key_code = AKEY_5200_4;
             break;
-        case PV5200Button5:
+        case PV5200ButtonNumber5:
             INPUT_key_code = AKEY_5200_5;
             break;
-        case PV5200Button6:
+        case PV5200ButtonNumber6:
             INPUT_key_code = AKEY_5200_6;
             break;
-        case PV5200Button7:
+        case PV5200ButtonNumber7:
             INPUT_key_code = AKEY_5200_7;
             break;
-        case PV5200Button8:
+        case PV5200ButtonNumber8:
             INPUT_key_code = AKEY_5200_8;
             break;
-        case PV5200Button9:
+        case PV5200ButtonNumber9:
             INPUT_key_code = AKEY_5200_9;
             break;
-        case PV5200Button0:
+        case PV5200ButtonNumber0:
             INPUT_key_code = AKEY_5200_0;
             break;
         case PV5200ButtonAsterisk:
@@ -578,34 +578,34 @@ __weak static ATR800GameCore * _currentCore;
         case PV5200ButtonReset:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button1:
+        case PV5200ButtonNumber1:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button2:
+        case PV5200ButtonNumber2:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button3:
+        case PV5200ButtonNumber3:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button4:
+        case PV5200ButtonNumber4:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button5:
+        case PV5200ButtonNumber5:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button6:
+        case PV5200ButtonNumber6:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button7:
+        case PV5200ButtonNumber7:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button8:
+        case PV5200ButtonNumber8:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button9:
+        case PV5200ButtonNumber9:
             INPUT_key_code = AKEY_NONE;
             break;
-        case PV5200Button0:
+        case PV5200ButtonNumber0:
             INPUT_key_code = AKEY_NONE;
             break;
         case PV5200ButtonAsterisk:

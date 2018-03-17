@@ -27,7 +27,7 @@ class PVTVSettingsViewController: UITableViewController {
         tableView.backgroundView = nil
         tableView.backgroundColor = UIColor.clear
         
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
         autoLoadValueLabel.text = settings.autoLoadAutoSaves ? "On" : "Off"
         showFPSCountValueLabel.text = settings.showFPSCount ? "On" : "Off"
@@ -55,13 +55,13 @@ class PVTVSettingsViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         splitViewController?.title = "Settings"
-        let settings = PVSettingsModel.sharedInstance()
+        let settings = PVSettingsModel.shared
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         updateWebDavTitleLabel()
     }
 
     func updateWebDavTitleLabel() {
-        let isAlwaysOn: Bool = PVSettingsModel.sharedInstance().webDavAlwaysOn
+        let isAlwaysOn: Bool = PVSettingsModel.shared.webDavAlwaysOn
         // Set the status indicator text
         webDavAlwaysOnValueLabel.text = isAlwaysOn ? "On" : "Off"
         // Use 2 lines if on to make space for the sub title
@@ -71,7 +71,7 @@ class PVTVSettingsViewController: UITableViewController {
         let titleString = NSMutableAttributedString(string: "Always on WebDav server", attributes: firstLineAttributes)
         // Make a new line sub title with instructions to connect in lighter text
         if isAlwaysOn {
-            let subTitleText = "\nPoint a WebDav client to \(PVWebServer.sharedInstance().webDavURLString)"
+            let subTitleText = "\nPoint a WebDav client to \(PVWebServer.shared.webDavURLString)"
 
             let subTitleAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 26), NSAttributedStringKey.foregroundColor: UIColor.gray]
             let subTitleAttrString = NSMutableAttributedString(string: subTitleText, attributes: subTitleAttributes)
@@ -111,16 +111,16 @@ class PVTVSettingsViewController: UITableViewController {
                 // Actions
                 switch indexPath.row {
                     case 0:
-                        PVSettingsModel.sharedInstance().webDavAlwaysOn = !PVSettingsModel.sharedInstance().webDavAlwaysOn
+                        PVSettingsModel.shared.webDavAlwaysOn = !PVSettingsModel.shared.webDavAlwaysOn
                         // Always on WebDav server
                         // Currently this is only exposed on ATV since it would be a drain on battery
                         // for a mobile device to have this on and doesn't seem nearly as useful.
                         // Web dav can still be manually started alone side the web server
-                        if PVSettingsModel.sharedInstance().webDavAlwaysOn && !PVWebServer.sharedInstance().isWebDavServerRunning {
-                            PVWebServer.sharedInstance().startWebDavServer()
+                        if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
+                            PVWebServer.shared.startWebDavServer()
                         }
-                        else if !(PVSettingsModel.sharedInstance().webDavAlwaysOn && PVWebServer.sharedInstance().isWebDavServerRunning) {
-                            PVWebServer.sharedInstance().stopWebDavServer()
+                        else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
+                            PVWebServer.shared.stopWebDavServer()
                         }
 
                         // Update the label to hide / show the instructions to connect
@@ -140,10 +140,10 @@ class PVTVSettingsViewController: UITableViewController {
                         else {
                             // connected via wifi, let's continue
                             // start web transfer service
-                            if PVWebServer.sharedInstance().startServers() {
+                            if PVWebServer.shared.startServers() {
                                     // get the IP address of the device
-                                let webServerAddress: String = PVWebServer.sharedInstance().urlString
-                                let webDavAddress: String = PVWebServer.sharedInstance().webDavURLString
+                                let webServerAddress: String = PVWebServer.shared.urlString
+                                let webDavAddress: String = PVWebServer.shared.webDavURLString
                                 let message = """
                                     Read Importing ROMs wiki…
                                     Upload/Download files at:
@@ -154,7 +154,7 @@ class PVTVSettingsViewController: UITableViewController {
                                     """
                                 let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                                    PVWebServer.sharedInstance().stopServers()
+                                    PVWebServer.shared.stopServers()
                                 }))
                                 present(alert, animated: true) {() -> Void in }
                             }
@@ -208,9 +208,9 @@ fileprivate extension Bool {
 }
 
 fileprivate func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel)  {
-    let currentValue = PVSettingsModel.sharedInstance()[keyPath: setting]
+    let currentValue = PVSettingsModel.shared[keyPath: setting]
     let newValue = !currentValue
     
-    PVSettingsModel.sharedInstance()[keyPath: setting] = newValue
+    PVSettingsModel.shared[keyPath: setting] = newValue
     label.text = newValue.onOffString
 }

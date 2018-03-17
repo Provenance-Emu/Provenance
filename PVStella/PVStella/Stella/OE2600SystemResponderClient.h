@@ -28,24 +28,24 @@
 
 @protocol OESystemResponderClient;
 
-typedef NS_ENUM(NSUInteger, OE2600Button) {
-	OE2600ButtonUp,
-	OE2600ButtonDown,
-	OE2600ButtonLeft,
-	OE2600ButtonRight,
-	OE2600ButtonFire1,
-    OE2600ButtonLeftDiffA,
-    OE2600ButtonLeftDiffB,
-	OE2600ButtonRightDiffA,
-    OE2600ButtonRightDiffB,
-    OE2600ButtonReset,
-	OE2600ButtonSelect,
-	OE2600ButtonCount
+typedef NS_ENUM(NSInteger, PV2600Button) {
+	PV2600ButtonUp,
+	PV2600ButtonDown,
+	PV2600ButtonLeft,
+	PV2600ButtonRight,
+	PV2600ButtonFire1,
+    PV2600ButtonLeftDiffA,
+    PV2600ButtonLeftDiffB,
+	PV2600ButtonRightDiffA,
+    PV2600ButtonRightDiffB,
+    PV2600ButtonReset,
+	PV2600ButtonSelect,
+	PV2600ButtonCount
 };
 
 @protocol OE2600SystemResponderClient <NSObject>
 
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 
 @end

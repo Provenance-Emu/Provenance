@@ -14,14 +14,14 @@
     iCadeReaderView* _internalReader;
 }
 
-+(PViCadeReader*) sharedReader;
++(instancetype __nonnull) sharedReader;
 
--(void) listenToWindow:(UIWindow *)window;
+-(void) listenToWindow:(UIWindow * __nullable)window;
 -(void) listenToKeyWindow;
 -(void) stopListening;
 -(iCadeState) state;
 
-@property (copy) void (^buttonDown)(iCadeState state);
-@property (copy) void (^buttonUp)(iCadeState state);
+@property (copy, nullable) void (^buttonDown)(iCadeState state);
+@property (copy, nullable) void (^buttonUp)(iCadeState state);
 
 @end

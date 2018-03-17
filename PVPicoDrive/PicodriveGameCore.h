@@ -39,6 +39,6 @@
 
 __attribute__((visibility("default")))
 @interface PicodriveGameCore : PVEmulatorCore <OESega32XSystemResponderClient>
-- (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 @end

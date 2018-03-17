@@ -59,122 +59,122 @@ typedef NS_ENUM(NSInteger, PVPSXButton)
     PVPSXButtonStart,
     PVPSXButtonSelect,
     PVPSXButtonAnalogMode,
-    OEPSXLeftAnalogUp,
-    OEPSXLeftAnalogDown,
-    OEPSXLeftAnalogLeft,
-    OEPSXLeftAnalogRight,
-    OEPSXRightAnalogUp,
-    OEPSXRightAnalogDown,
-    OEPSXRightAnalogLeft,
-    OEPSXRightAnalogRight,
+    PVPSXButtonLeftAnalogUp,
+    PVPSXButtonLeftAnalogDown,
+    PVPSXButtonLeftAnalogLeft,
+    PVPSXButtonLeftAnalogRight,
+    PVPSXButtonRightAnalogUp,
+    PVPSXButtonRightAnalogDown,
+    PVPSXButtonRightAnalogLeft,
+    PVPSXButtonRightAnalogRight,
     PVPSXButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OEWSButton) {
-    OEWSButtonX1, // Up
-    OEWSButtonX3, // Down
-    OEWSButtonX4, // Left
-    OEWSButtonX2, // Right
-    OEWSButtonY1,
-    OEWSButtonY3,
-    OEWSButtonY4,
-    OEWSButtonY2,
-    OEWSButtonA,
-    OEWSButtonB,
-    OEWSButtonStart,
-    OEWSButtonSound,
-    OEWSButtonCount
+typedef NS_ENUM(NSInteger, PVWSButton) {
+    PVWSButtonX1, // Up
+    PVWSButtonX3, // Down
+    PVWSButtonX4, // Left
+    PVWSButtonX2, // Right
+    PVWSButtonY1,
+    PVWSButtonY3,
+    PVWSButtonY4,
+    PVWSButtonY2,
+    PVWSButtonA,
+    PVWSButtonB,
+    PVWSButtonStart,
+    PVWSButtonSound,
+    PVWSButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OEVBButton) {
-    OEVBButtonLeftUp,
-    OEVBButtonLeftDown,
-    OEVBButtonLeftLeft,
-    OEVBButtonLeftRight,
-    OEVBButtonRightUp,
-    OEVBButtonRightDown,
-    OEVBButtonRightLeft,
-    OEVBButtonRightRight,
-    OEVBButtonL,
-    OEVBButtonR,
-    OEVBButtonA,
-    OEVBButtonB,
-    OEVBButtonStart,
-    OEVBButtonSelect,
-    OEVBButtonCount
+typedef NS_ENUM(NSInteger, PVVBButton) {
+    PVVBButtonLeftUp,
+    PVVBButtonLeftDown,
+    PVVBButtonLeftLeft,
+    PVVBButtonLeftRight,
+    PVVBButtonRightUp,
+    PVVBButtonRightDown,
+    PVVBButtonRightLeft,
+    PVVBButtonRightRight,
+    PVVBButtonL,
+    PVVBButtonR,
+    PVVBButtonA,
+    PVVBButtonB,
+    PVVBButtonStart,
+    PVVBButtonSelect,
+    PVVBButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OEPCEButton) {
-    OEPCEButtonUp,
-    OEPCEButtonDown,
-    OEPCEButtonLeft,
-    OEPCEButtonRight,
-    OEPCEButton1,
-    OEPCEButton2,
-    OEPCEButton3,
-    OEPCEButton4,
-    OEPCEButton5,
-    OEPCEButton6,
-    OEPCEButtonRun,
-    OEPCEButtonSelect,
-    OEPCEButtonMode,
-    OEPCEButtonCount
+typedef NS_ENUM(NSInteger, PVPCEButton) {
+    PVPCEButtonUp,
+    PVPCEButtonDown,
+    PVPCEButtonLeft,
+    PVPCEButtonRight,
+    PVPCEButtonButton1,
+    PVPCEButtonButton2,
+    PVPCEButtonButton3,
+    PVPCEButtonButton4,
+    PVPCEButtonButton5,
+    PVPCEButtonButton6,
+    PVPCEButtonRun,
+    PVPCEButtonSelect,
+    PVPCEButtonMode,
+    PVPCEButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OEPCFXButton) {
-    OEPCFXButtonUp,
-    OEPCFXButtonDown,
-    OEPCFXButtonLeft,
-    OEPCFXButtonRight,
-    OEPCFXButton1,
-    OEPCFXButton2,
-    OEPCFXButton3,
-    OEPCFXButton4,
-    OEPCFXButton5,
-    OEPCFXButton6,
-    OEPCFXButtonRun,
-    OEPCFXButtonSelect,
-    OEPCFXButtonCount,
+typedef NS_ENUM(NSInteger, PVPCFXButton) {
+    PVPCFXButtonUp,
+    PVPCFXButtonDown,
+    PVPCFXButtonLeft,
+    PVPCFXButtonRight,
+    PVPCFXButtonButton1,
+    PVPCFXButtonButton2,
+    PVPCFXButtonButton3,
+    PVPCFXButtonButton4,
+    PVPCFXButtonButton5,
+    PVPCFXButtonButton6,
+    PVPCFXButtonRun,
+    PVPCFXButtonSelect,
+    PVPCFXButtonCount,
 };
 
-typedef NS_ENUM(NSInteger, OEPCECDButton) {
-    OEPCECDButtonUp,
-    OEPCECDButtonDown,
-    OEPCECDButtonLeft,
-    OEPCECDButtonRight,
-    OEPCECDButton1,
-    OEPCECDButton2,
-    OEPCECDButton3,
-    OEPCECDButton4,
-    OEPCECDButton5,
-    OEPCECDButton6,
-    OEPCECDButtonRun,
-    OEPCECDButtonSelect,
-    OEPCECDButtonMode,
-    OEPCECDButtonCount
+typedef NS_ENUM(NSInteger, PVPCECDButton) {
+    PVPCECDButtonUp,
+    PVPCECDButtonDown,
+    PVPCECDButtonLeft,
+    PVPCECDButtonRight,
+    PVPCECDButtonButton1,
+    PVPCECDButtonButton2,
+    PVPCECDButtonButton3,
+    PVPCECDButtonButton4,
+    PVPCECDButtonButton5,
+    PVPCECDButtonButton6,
+    PVPCECDButtonRun,
+    PVPCECDButtonSelect,
+    PVPCECDButtonMode,
+    PVPCECDButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OELynxButton) {
-    OELynxButtonUp,
-    OELynxButtonDown,
-    OELynxButtonLeft,
-    OELynxButtonRight,
-    OELynxButtonA,
-    OELynxButtonB,
-    OELynxButtonOption1,
-    OELynxButtonOption2,
-    OELynxButtonCount
+typedef NS_ENUM(NSInteger, PVLynxButton) {
+    PVLynxButtonUp,
+    PVLynxButtonDown,
+    PVLynxButtonLeft,
+    PVLynxButtonRight,
+    PVLynxButtonA,
+    PVLynxButtonB,
+    PVLynxButtonOption1,
+    PVLynxButtonOption2,
+    PVLynxButtonCount
 };
 
-typedef NS_ENUM(NSInteger, OENGPButton) {
-    OENGPButtonUp,
-    OENGPButtonDown,
-    OENGPButtonLeft,
-    OENGPButtonRight,
-    OENGPButtonA,
-    OENGPButtonB,
-    OENGPButtonOption,
-    OENGPButtonCount,
+typedef NS_ENUM(NSInteger, PVNGPButton) {
+    PVNGPButtonUp,
+    PVNGPButtonDown,
+    PVNGPButtonLeft,
+    PVNGPButtonRight,
+    PVNGPButtonA,
+    PVNGPButtonB,
+    PVNGPButtonOption,
+    PVNGPButtonCount,
 };
 
 __attribute__((visibility("default")))
@@ -184,20 +184,20 @@ __attribute__((visibility("default")))
 @property (nonatomic) BOOL isSelectPressed;
 
 // Atari Lynx
-- (oneway void)didPushLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseLynxButton:(OELynxButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSUInteger)player;
 
 // Neo Geo Pocket + Color
-- (oneway void)didPushNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseNGPButton:(OENGPButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseNGPButton:(PVNGPButton)button forPlayer:(NSUInteger)player;
 
 // PC-*
-- (oneway void)didPushPCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleasePCEButton:(OEPCEButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didPushPCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleasePCECDButton:(OEPCECDButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didPushPCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleasePCFXButton:(OEPCFXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCEButton:(PVPCEButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSUInteger)player;
 
 // PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
@@ -205,12 +205,12 @@ __attribute__((visibility("default")))
 - (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player;
 
 // Virtual Boy
-- (oneway void)didPushVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseVBButton:(OEVBButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushVBButton:(PVVBButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSUInteger)player;
 
 // WonderSwan
-- (oneway void)didPushWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseWSButton:(OEWSButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushWSButton:(PVWSButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseWSButton:(PVWSButton)button forPlayer:(NSUInteger)player;
 
 @end
 

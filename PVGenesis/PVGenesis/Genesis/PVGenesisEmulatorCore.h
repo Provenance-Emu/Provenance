@@ -10,7 +10,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVGenesis/libretro.h>
 
-typedef NS_ENUM(NSUInteger, PVGenesisButton)
+typedef NS_ENUM(NSInteger, PVGenesisButton)
 {
     PVGenesisButtonUp = RETRO_DEVICE_ID_JOYPAD_UP,
     PVGenesisButtonDown = RETRO_DEVICE_ID_JOYPAD_DOWN,

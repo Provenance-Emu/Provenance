@@ -15,29 +15,6 @@
 #import <PicoDrive/PicodriveGameCore.h>
 
 // -----------------------------------------------------------------------------
-// Controller UIs
-#import "PVButtonGroupOverlayView.h"
-#import "PVControllerViewController.h"
-
-#import "PV32XControllerViewController.h"
-#import "PVAtari5200ControllerViewController.h"
-#import "PVAtari7800ControllerViewController.h"
-#import "PVGBAControllerViewController.h"
-#import "PVGBControllerViewController.h"
-#import "PVGenesisControllerViewController.h"
-#import "PVLynxControllerViewController.h"
-#import "PVN64ControllerViewController.h"
-#import "PVNESControllerViewController.h"
-#import "PVNeoGeoPocketControllerViewController.h"
-#import "PVPCEControllerViewController.h"
-#import "PVPSXControllerViewController.h"
-#import "PVPokeMiniControllerViewController.h"
-#import "PVSNESControllerViewController.h"
-#import "PVStellaControllerViewController.h"
-#import "PVVBControllerViewController.h"
-#import "PVWonderSwanControllerViewController.h"
-
-// -----------------------------------------------------------------------------
 // Begin Swiftify generated imports
 
 // NOTE:
@@ -49,6 +26,8 @@
 // • Add `@class MySwiftClass` to your .h files depending on the Swift code;
 // • No need to import the Swift Bridging Header (Provenance-Swift.h), since it's already being imported fom the .pch file.
 
+#import "UIDevice+Hardware.h"
+#import "PViCade8BitdoController.h"
 #import "kICadeControllerSetting.h"
 #import "PVWebServer.h"
 #import "Reachability.h"
@@ -56,8 +35,6 @@
 #import "NSData+Hashing.h"
 #import "NSFileManager+Hashing.h"
 #import "OESQLiteDatabase.h"
-#import "PVControllerManager.h"
-#import "PVControllerSelectionViewController.h"
 #import "PVEmulatorViewController.h"
 #import "PVSynchronousURLSession.h"
 #import "UIActionSheet+BlockAdditions.h"

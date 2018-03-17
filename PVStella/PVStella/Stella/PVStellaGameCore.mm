@@ -443,11 +443,11 @@ static void writeSaveFile(const char* path, int type)
     }
 }
 
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player {
+- (oneway void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 1;
 }
 
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player {
+- (oneway void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
 

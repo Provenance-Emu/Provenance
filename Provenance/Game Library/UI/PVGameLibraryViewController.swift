@@ -482,7 +482,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        PVControllerManager.shared()
+        _ = PVControllerManager.shared
         if isInitialAppearance {
             isInitialAppearance = false
 #if os(tvOS)
@@ -527,7 +527,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
-        let ipURL = URL(string: PVWebServer.sharedInstance().urlString)
+        let ipURL = URL(string: PVWebServer.shared.urlString)
         let safariVC = SFSafariViewController(url: ipURL!, entersReaderIfAvailable: false)
         safariVC.delegate = self
         present(safariVC, animated: true) {() -> Void in }
@@ -543,7 +543,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         // Done button pressed
         navigationController?.popViewController(animated: true)
-        PVWebServer.sharedInstance().stopServers()
+        PVWebServer.shared.stopServers()
     }
 
 #endif
@@ -562,14 +562,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
         let ipFieldText = """
-            WebUI:  \(PVWebServer.sharedInstance().urlString)
-            WebDav: \(PVWebServer.sharedInstance().webDavURLString)
+            WebUI:  \(PVWebServer.shared.urlString)
+            WebDav: \(PVWebServer.shared.webDavURLString)
             """
         ipField.text = ipFieldText
         ipField.isUserInteractionEnabled = false
         alert.view.addSubview(ipField)
         alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.sharedInstance().stopServers()
+            PVWebServer.shared.stopServers()
             if self.needToShowConflictsAlert {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
                     self.showConflictsAlert()
@@ -655,7 +655,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     
     func startWebServer() {
         // start web transfer service
-        if PVWebServer.sharedInstance().startServers() {
+        if PVWebServer.shared.startServers() {
             //show alert view
             self.showServerActiveAlert()
         }
@@ -1753,7 +1753,7 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
             let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
             return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
         #else
-            if PVSettingsModel.sharedInstance().showGameTitles {
+            if PVSettingsModel.shared.showGameTitles {
                 return CGSize(width: 100, height: 144)
             }
             return CGSize(width: 100, height: 100)

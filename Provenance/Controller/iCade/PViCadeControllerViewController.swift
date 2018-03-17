@@ -38,7 +38,7 @@ class PViCadeControllerViewController: UITableViewController {
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         }
-        if indexPath.row == PVSettingsModel.sharedInstance().myiCadeControllerSetting.rawValue {
+        if indexPath.row == PVSettingsModel.shared.myiCadeControllerSetting.rawValue {
             cell?.accessoryType = .checkmark
         }
         else {
@@ -57,7 +57,7 @@ class PViCadeControllerViewController: UITableViewController {
         if let aRow = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: aRow, animated: true)
         }
-        PVSettingsModel.sharedInstance().myiCadeControllerSetting = iCadeControllerSetting(rawValue:indexPath.row)!
+        PVSettingsModel.shared.myiCadeControllerSetting = iCadeControllerSetting(rawValue:indexPath.row)!
         navigationController?.popViewController(animated: true)
     }
 }

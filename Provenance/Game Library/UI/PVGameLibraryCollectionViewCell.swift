@@ -75,15 +75,15 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
         let originalArtworkURL: String = game.originalArtworkURL
-        if PVSettingsModel.sharedInstance().showGameTitles {
+        if PVSettingsModel.shared.showGameTitles {
             titleLabel.text = game.title
         }
         
             // TODO: May be renabled later
-        let placeholderImageText: String = PVEmulatorConfiguration.shortName(forSystemIdentifier: game.systemIdentifier) ?? "No System"
+        let placeholderImageText: String = game.title
         if artworkURL.isEmpty && originalArtworkURL.isEmpty {
             var artworkText: String
-            if PVSettingsModel.sharedInstance().showGameTitles {
+            if PVSettingsModel.shared.showGameTitles {
                 artworkText = placeholderImageText
             }
             else {
@@ -99,7 +99,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             if let key = maybeKey {
                 operation = PVMediaCache.shareInstance().image(forKey: key, completion: {(_ image: UIImage?) -> Void in
                     var artworkText: String
-                    if PVSettingsModel.sharedInstance().showGameTitles {
+                    if PVSettingsModel.shared.showGameTitles {
                         artworkText = placeholderImageText
                     }
                     else {
@@ -113,7 +113,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     self.imageView.frame = CGRect(x: 0, y: 0, width: width, height: boxartSize.height)
 #else
                     var imageHeight: CGFloat = self.frame.size.height
-                    if PVSettingsModel.sharedInstance().showGameTitles {
+                    if PVSettingsModel.shared.showGameTitles {
                         imageHeight -= 44
                     }
                     self.imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: imageHeight)
@@ -134,11 +134,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         var imageHeight: CGFloat = frame.size.height
-        if PVSettingsModel.sharedInstance().showGameTitles {
+        if PVSettingsModel.shared.showGameTitles {
             imageHeight -= 44
         }
         
-        imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight))
+        self.imageView = imageView
         imageView.contentMode = .scaleAspectFit
         imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
        
@@ -147,7 +148,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		imageView.ignoresInvertColors = true
         #endif
         
-        titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
+        let titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
+        self.titleLabel = titleLabel
         titleLabel.lineBreakMode = .byTruncatingTail
 #if os(tvOS)
         // The label's alpha will get set to 1 on focus
@@ -180,11 +182,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.minimumScaleFactor = 0.85
-        if PVSettingsModel.sharedInstance().showGameTitles {
-            contentView.addSubview(titleLabel ?? UIView())
+        if PVSettingsModel.shared.showGameTitles {
+            contentView.addSubview(titleLabel)
         }
-        contentView.addSubview(imageView ?? UIView())
-    
+        contentView.addSubview(imageView)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -192,16 +193,21 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
     
     func image(withText text: String) -> UIImage? {
+        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+
         if text == "" {
-            let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
             return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
         }
             // TODO: To be replaced with the correct system placeholder
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
-        let backgroundColor: UIColor = UIColor(white: 0.9, alpha: 0.9)
-        let missingArtworkImage = UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: attributedText)
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
+ 
+        let height : CGFloat = CGFloat(PVThumbnailMaxResolution)
+        let ratio : CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
+        let width : CGFloat = height * ratio
+        let size = CGSize(width: width, height: height)
+        let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
         return missingArtworkImage
     }
     
@@ -228,7 +234,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         titleLabel.transform = titleTransform
 #else
         var imageHeight: CGFloat = frame.size.height
-        if PVSettingsModel.sharedInstance().showGameTitles {
+        if PVSettingsModel.shared.showGameTitles {
             imageHeight -= 44
         }
 #endif

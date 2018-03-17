@@ -29,7 +29,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 
 
-typedef NS_ENUM(NSUInteger, PVSNESButton)
+typedef NS_ENUM(NSInteger, PVSNESButton)
 {
     PVSNESButtonUp,
     PVSNESButtonDown,

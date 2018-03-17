@@ -308,7 +308,7 @@
 // | 15       | Console      | Left Difficulty
 // | 16       | Console      | Right Difficulty
 // +----------+--------------+-------------------------------------------------
-typedef NS_ENUM(NSUInteger, PV7800MFiButton) {
+typedef NS_ENUM(NSInteger, PV7800MFiButton) {
     PV7800MFiButtonJoy1Right,
     PV7800MFiButtonJoy1Left,
     PV7800MFiButtonJoy1Down,

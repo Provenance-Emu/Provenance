@@ -228,12 +228,12 @@ static void writeSaveFile(const char* path, int type)
 
 #pragma mark - Input
 
-- (oneway void)didPushSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player][Sega32XEmulatorValues[button]] = 1;
 }
 
-- (oneway void)didReleaseSega32XButton:(OESega32XButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player][Sega32XEmulatorValues[button]] = 0;
 }
@@ -256,27 +256,27 @@ static void writeSaveFile(const char* path, int type)
         GCExtendedGamepad *gamePad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-            case OESega32XButtonUp:
+            case PVSega32XButtonUp:
                 return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] isPressed];
-            case OESega32XButtonDown:
+            case PVSega32XButtonDown:
                 return [[dpad down] isPressed]?:[[[gamePad leftThumbstick] down] isPressed];
-            case OESega32XButtonLeft:
+            case PVSega32XButtonLeft:
                 return [[dpad left] isPressed]?:[[[gamePad leftThumbstick] left] isPressed];
-            case OESega32XButtonRight:
+            case PVSega32XButtonRight:
                 return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] isPressed];
-            case OESega32XButtonA:
+            case PVSega32XButtonA:
                 return [[gamePad buttonX] isPressed];
-            case OESega32XButtonB:
+            case PVSega32XButtonB:
                 return [[gamePad buttonA] isPressed];
-            case OESega32XButtonC:
+            case PVSega32XButtonC:
                 return [[gamePad buttonB] isPressed];
-            case OESega32XButtonX:
+            case PVSega32XButtonX:
                 return [[gamePad leftShoulder] isPressed];
-            case OESega32XButtonY:
+            case PVSega32XButtonY:
                 return [[gamePad buttonY] isPressed];
-            case OESega32XButtonZ:
+            case PVSega32XButtonZ:
                 return [[gamePad rightShoulder] isPressed];
-            case OESega32XButtonStart:
+            case PVSega32XButtonStart:
                 return [[gamePad leftTrigger] isPressed];
             default:
                 break;
@@ -287,25 +287,25 @@ static void writeSaveFile(const char* path, int type)
         GCGamepad *gamePad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-            case OESega32XButtonUp:
+            case PVSega32XButtonUp:
                 return [[dpad up] isPressed];
-            case OESega32XButtonDown:
+            case PVSega32XButtonDown:
                 return [[dpad down] isPressed];
-            case OESega32XButtonLeft:
+            case PVSega32XButtonLeft:
                 return [[dpad left] isPressed];
-            case OESega32XButtonRight:
+            case PVSega32XButtonRight:
                 return [[dpad right] isPressed];
-            case OESega32XButtonA:
+            case PVSega32XButtonA:
                 return [[gamePad buttonX] isPressed];
-            case OESega32XButtonB:
+            case PVSega32XButtonB:
                 return [[gamePad buttonA] isPressed];
-            case OESega32XButtonC:
+            case PVSega32XButtonC:
                 return [[gamePad buttonB] isPressed];
-            case OESega32XButtonX:
+            case PVSega32XButtonX:
                 return [[gamePad leftShoulder] isPressed];
-            case OESega32XButtonY:
+            case PVSega32XButtonY:
                 return [[gamePad buttonY] isPressed];
-            case OESega32XButtonZ:
+            case PVSega32XButtonZ:
                 return [[gamePad rightShoulder] isPressed];
             default:
                 break;
@@ -317,22 +317,22 @@ static void writeSaveFile(const char* path, int type)
         GCMicroGamepad *gamePad = [controller microGamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-            case OESega32XButtonUp:
+            case PVSega32XButtonUp:
                 return [[dpad up] value] > 0.5;
                 break;
-            case OESega32XButtonDown:
+            case PVSega32XButtonDown:
                 return [[dpad down] value] > 0.5;
                 break;
-            case OESega32XButtonLeft:
+            case PVSega32XButtonLeft:
                 return [[dpad left] value] > 0.5;
                 break;
-            case OESega32XButtonRight:
+            case PVSega32XButtonRight:
                 return [[dpad right] value] > 0.5;
                 break;
-            case OESega32XButtonA:
+            case PVSega32XButtonA:
                 return [[gamePad buttonA] isPressed];
                 break;
-            case OESega32XButtonB:
+            case PVSega32XButtonB:
                 return [[gamePad buttonX] isPressed];
                 break;
             default:

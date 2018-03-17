@@ -13,3 +13,4 @@ import UIKit
     var numberOfDiscs : UInt {get}
     func swapDisc(number: UInt)
 }
+

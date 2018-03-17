@@ -32,7 +32,7 @@
 @class OERingBuffer;
 
 __attribute__((visibility("default")))
-@interface PVStellaGameCore : PVEmulatorCore
-- (oneway void)didPush2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease2600Button:(OE2600Button)button forPlayer:(NSUInteger)player;
+@interface PVStellaGameCore : PVEmulatorCore <OE2600SystemResponderClient>
+- (oneway void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end

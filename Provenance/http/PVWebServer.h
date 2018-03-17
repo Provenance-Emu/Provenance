@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN;
 
-+ (instancetype)sharedInstance;
+@property (class, nonatomic, strong, readonly, nonnull) PVWebServer * sharedInstance NS_SWIFT_NAME(shared);
 
 @property (nonatomic, strong, readonly) NSString *documentsDirectory;
 @property (nonatomic, strong, readonly) NSString *IPAddress;

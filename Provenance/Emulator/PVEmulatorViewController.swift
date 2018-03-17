@@ -120,7 +120,7 @@ public extension PVEmulatorViewController {
 		}
 		
         self.present(actionSheet, animated: true) {
-            PVControllerManager.shared().iCadeController?.refreshListener()
+            PVControllerManager.shared.iCadeController?.refreshListener()
         }
     }
 }
