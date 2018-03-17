@@ -8,7 +8,7 @@
 	<string>PVPokeMiniEmulatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
-		<string>com.provenance.pokemini</string>
+		<string>com.provenance.pokemonmini</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>PokeMini</string>
