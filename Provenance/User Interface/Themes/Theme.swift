@@ -263,6 +263,24 @@ public class Theme : NSObject {
         
         // Status bar
         UIApplication.shared.statusBarStyle = theme.statusBarStyle
+        
+        // Force touch sheet // _UIInterfaceActionSystemRepresentationView
+        if let actionSystemView = NSClassFromString("_UIInterfaceActionRepresentationsSequenceView") as? (UIView.Type) {
+            actionSystemView.appearance {
+                $0.backgroundColor = theme.settingsCellBackground
+//                $0.layer.borderColor = theme.settingsCellText?.withAlphaComponent(0.6).cgColor
+//                $0.layer.cornerRadius = 10.0
+//                $0.layer.borderWidth = 0.5
+                $0.tintColor = theme.gameLibraryText
+            }
+            
+            appearance(inAny: [actionSystemView.self]) {
+                UILabel.appearance {
+                    $0.textColor = theme.gameLibraryText
+                }
+            }
+        }
+        
     }    
 }
 
