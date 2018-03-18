@@ -152,13 +152,14 @@ public extension PVControllerViewController {
                         let leftShoulderButton = JSButton(frame: leftShoulderFrame)
                         self.leftShoulderButton = leftShoulderButton
                         leftShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        leftShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 8)
                         if let tintColor = control[Keys.ControlTint] as? String {
                             leftShoulderButton.tintColor = UIColor(hex: tintColor)
                         }
                         leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton.delegate = self
-                        leftShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        leftShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
                         leftShoulderButton.alpha = alpha
                         leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton)
@@ -171,10 +172,11 @@ public extension PVControllerViewController {
                         }
                         self.leftShoulderButton2 = leftShoulderButton2
                         leftShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        leftShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 8)
                         leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton2.delegate = self
-                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
                         leftShoulderButton2.alpha = alpha
                         leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton2)
@@ -197,10 +199,11 @@ public extension PVControllerViewController {
                         }
                         self.rightShoulderButton = rightShoulderButton
                         rightShoulderButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        rightShoulderButton.titleLabel?.font = UIFont.systemFont(ofSize: 8)
                         rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton.delegate = self
-                        rightShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        rightShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
                         rightShoulderButton.alpha = alpha
                         rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton)
@@ -213,10 +216,11 @@ public extension PVControllerViewController {
                         }
                         self.rightShoulderButton2 = rightShoulderButton2
                         rightShoulderButton2.titleLabel?.text = control[Keys.ControlTitle] as? String
+                        rightShoulderButton2.titleLabel?.font = UIFont.systemFont(ofSize: 8)
                         rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton2.delegate = self
-                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
                         rightShoulderButton2.alpha = alpha
                         rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton2)
@@ -227,11 +231,17 @@ public extension PVControllerViewController {
                     }
                 }
                 else if (controlType == Keys.StartButton) {
-                    let yPadding: CGFloat = 40
+                    let yPadding: CGFloat = safeAreaInsets.bottom + 10
+                    let xPadding: CGFloat = safeAreaInsets.right + 10
                     let xSpacing: CGFloat = 20
                     var startFrame: CGRect
                     if UIDevice.current.orientation.isLandscape {
-                        startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        if (buttonGroup != nil) {
+                            startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        } else {
+                            startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        }
+
                     } else {
                         startFrame = CGRect(x: (view.frame.size.width / 2) + (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
                     }
@@ -254,11 +264,17 @@ public extension PVControllerViewController {
                     }
                 }
                 else if (controlType == Keys.SelectButton) {
-                    let yPadding: CGFloat = 40
+                    let yPadding: CGFloat = safeAreaInsets.bottom + 10
+                    let xPadding: CGFloat = safeAreaInsets.left + 10
                     let xSpacing: CGFloat = 20
                     var selectFrame: CGRect
                     if UIDevice.current.orientation.isLandscape {
-                        selectFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        if (dPad != nil) {
+                            selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        } else {
+                            selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                        }
+
                     } else {
                         selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
                     }
