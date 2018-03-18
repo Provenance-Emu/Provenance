@@ -166,7 +166,7 @@ public class PVSettingsModel: NSObject {
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadAutoSavesKey: false,
-                                                  kControllerOpacityKey: 0.2,
+                                                  kControllerOpacityKey: 0.8,
                                                   kDisableAutoLockKey: false,
                                                   kButtonVibrationKey: true,
                                                   kImageSmoothingKey: false,
