@@ -26,9 +26,9 @@
             continue; // skip over the PVButtonGroupOverlayView
         }
         
-        if ([[[button titleLabel] text] isEqualToString:@"Fire 1"]) {
+        if ([[[button titleLabel] text] isEqualToString:@"1"]) {
             [button setTag:PV5200ButtonFire1];
-        } else  if ([[[button titleLabel] text] isEqualToString:@"Fire 2"]) {
+        } else  if ([[[button titleLabel] text] isEqualToString:@"2"]) {
             [button setTag:PV5200ButtonFire2];
         }
     }

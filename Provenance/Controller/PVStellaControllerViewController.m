@@ -26,7 +26,7 @@
             continue; // skip over the PVButtonGroupOverlayView
         }
         
-        if ([[[button titleLabel] text] isEqualToString:@"Fire"])
+        if ([[[button titleLabel] text] isEqualToString:@""])
         {
             [button setTag:OE2600ButtonFire1];
         } else if ([[[button titleLabel] text] isEqualToString:@"Select"]) {
