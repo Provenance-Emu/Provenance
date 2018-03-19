@@ -1716,14 +1716,7 @@
 		8CB3E09D17F1DFFF0090372A /* trionan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trionan.h; sourceTree = "<group>"; };
 		8CB3E09E17F1DFFF0090372A /* triop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triop.h; sourceTree = "<group>"; };
 		8CB3E09F17F1DFFF0090372A /* triostr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
-		8CB3E0A517F1E1B80090372A /* OELynxSystemResponderClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OELynxSystemResponderClient.h; path = ../OpenEmu/Lynx/OELynxSystemResponderClient.h; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		940553AC17A3533E009B505D /* OEPCECDSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEPCECDSystemResponderClient.h; path = "../OpenEmu/PC Engine CD/OEPCECDSystemResponderClient.h"; sourceTree = "<group>"; };
-		944543EE17852820006C057B /* OEPSXSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEPSXSystemResponderClient.h; path = ../OpenEmu/PlayStation/OEPSXSystemResponderClient.h; sourceTree = "<group>"; };
-		944543EF1785282E006C057B /* OEPCESystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEPCESystemResponderClient.h; path = "../OpenEmu/PC Engine/OEPCESystemResponderClient.h"; sourceTree = "<group>"; };
-		944543F01785283A006C057B /* OEPCFXSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEPCFXSystemResponderClient.h; path = "../OpenEmu/PC-FX/OEPCFXSystemResponderClient.h"; sourceTree = "<group>"; };
-		944543F21785288D006C057B /* OEVBSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEVBSystemResponderClient.h; path = "../OpenEmu/Virtual Boy/OEVBSystemResponderClient.h"; sourceTree = "<group>"; };
-		944543F31785289B006C057B /* OEWSSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OEWSSystemResponderClient.h; path = ../OpenEmu/WonderSwan/OEWSSystemResponderClient.h; sourceTree = "<group>"; };
 		94454E3617852E44006C057B /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.cpp; sourceTree = "<group>"; };
 		94454E3717852E44006C057B /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
 		94454E3B17852E61006C057B /* stubs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stubs.cpp; sourceTree = "<group>"; };
@@ -1917,13 +1910,6 @@
 			children = (
 				8CB3E08917F1DFFF0090372A /* include */,
 				8CB3D51D17F1DE5A0090372A /* mednafen */,
-				8CB3E0A517F1E1B80090372A /* OELynxSystemResponderClient.h */,
-				944543EF1785282E006C057B /* OEPCESystemResponderClient.h */,
-				940553AC17A3533E009B505D /* OEPCECDSystemResponderClient.h */,
-				944543F01785283A006C057B /* OEPCFXSystemResponderClient.h */,
-				944543EE17852820006C057B /* OEPSXSystemResponderClient.h */,
-				944543F21785288D006C057B /* OEVBSystemResponderClient.h */,
-				944543F31785289B006C057B /* OEWSSystemResponderClient.h */,
 				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
@@ -5062,7 +5048,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -5165,7 +5151,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;

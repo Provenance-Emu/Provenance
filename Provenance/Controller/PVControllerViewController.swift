@@ -517,7 +517,8 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             }
             self.startButton = startButton
             //startButton.titleLabel?.text = control[Keys.ControlTitle] as? String
-            startButton.backgroundImage = UIImage(named: "button-thin")
+            let buttonThinImage = UIImage(named: "button-thin")
+            startButton.backgroundImage = buttonThinImage
             startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             startButton.delegate = self
             startButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)

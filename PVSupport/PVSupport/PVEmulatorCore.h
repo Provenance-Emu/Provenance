@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import <GameController/GameController.h>
-#import <PVSupport/OERingBuffer.h>
 
 #pragma mark -
 

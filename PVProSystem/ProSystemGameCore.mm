@@ -30,6 +30,7 @@
 #import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #include "ProSystem.h"
 #include "Database.h"
@@ -42,6 +43,15 @@
 
 #define VIDEO_WIDTH     320
 #define VIDEO_HEIGHT    292
+
+@interface PVProSystemGameCore (PV7800SystemResponderClient) <PV7800SystemResponderClient>
+#pragma mark - OE7800SystemResponderClient
+- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
+- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
+- (oneway void)mouseMovedAtPoint:(CGPoint)point;
+- (oneway void)leftMouseDownAtPoint:(CGPoint)point;
+- (oneway void)leftMouseUp;
+@end
 
 @interface PVProSystemGameCore () <PV7800SystemResponderClient> {
     uint32_t *_videoBuffer;
@@ -422,15 +432,30 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSUInteger)player {
-    int playerShift = player == 0 ? 0 : 6;
 
+#pragma mark - Misc Helper Methods
+// Set palette 32bpp
+- (void)setPalette32 {
+    for(int index = 0; index < 256; index++) {
+        uint32_t r = CFSwapInt32LittleToHost(palette_data[(index * 3) + 0] << 16);
+        uint32_t g = CFSwapInt32LittleToHost(palette_data[(index * 3) + 1] << 8);
+        uint32_t b = CFSwapInt32LittleToHost(palette_data[(index * 3) + 2] << 0);
+        _displayPalette[index] = r | g | b;
+    }
+}
+
+@end
+
+@implementation PVProSystemGameCore (PV7800SystemResponderClient)
+- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
+    int playerShift = player == 0 ? 0 : 6;
+    
     switch(button)
     {
             // Controller buttons P1 + P2
         case PV7800ButtonUp:
-//            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-//            break;
+            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+            //            break;
         case PV7800ButtonDown:
         case PV7800ButtonLeft:
         case PV7800ButtonRight:
@@ -449,21 +474,21 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         case PV7800ButtonRightDiff:
             _inputState[ProSystemMap[button + 6]] ^= (1 << 0);
             break;
-
+            
         default:
             break;
     }
 }
 
-- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSUInteger)player {
+- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
     int playerShift = player == 0 ? 0 : 6;
-
+    
     switch(button)
     {
             // Controller buttons P1 + P2
         case PV7800ButtonUp:
-//            _inputState[ProSystemMap[button + playerShift]] ^= 1;
-//            break;
+            //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
+            //            break;
         case PV7800ButtonDown:
         case PV7800ButtonLeft:
         case PV7800ButtonRight:
@@ -477,7 +502,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         case PV7800ButtonReset:
             _inputState[ProSystemMap[button + 6]] = 0;
             break;
-
+            
         default:
             break;
     }
@@ -487,16 +512,16 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     if(_isLightgunEnabled) {
         // All of this really needs to be tweaked per the 5 games that support light gun
         int yoffset = (cartridge_region == REGION_NTSC ? 2 : -2);
-
+        
         // The number of scanlines for the current cartridge
         int scanlines = _videoHeight;
-
+        
         float yratio = ((float)scanlines / (float)_videoHeight);
         float xratio = ((float)LG_CYCLES_PER_SCANLINE / (float)_videoWidth);
-
+        
         lightgun_scanline = (((float)aPoint.y * yratio) + (maria_visibleArea.top - maria_displayArea.top + 1) + yoffset);
         lightgun_cycle = (HBLANK_CYCLES + LG_CYCLES_INDENT + ((float)aPoint.x * xratio));
-
+        
         if(lightgun_cycle > CYCLES_PER_SCANLINE) {
             lightgun_scanline++;
             lightgun_cycle -= CYCLES_PER_SCANLINE;
@@ -507,7 +532,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 - (oneway void)leftMouseDownAtPoint:(CGPoint)aPoint {
     if(_isLightgunEnabled) {
         [self mouseMovedAtPoint:aPoint];
-
+        
         _inputState[3] = 0;
     }
 }
@@ -517,16 +542,4 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
         _inputState[3] = 1;
     }
 }
-
-#pragma mark - Misc Helper Methods
-// Set palette 32bpp
-- (void)setPalette32 {
-    for(int index = 0; index < 256; index++) {
-        uint32_t r = CFSwapInt32LittleToHost(palette_data[(index * 3) + 0] << 16);
-        uint32_t g = CFSwapInt32LittleToHost(palette_data[(index * 3) + 1] << 8);
-        uint32_t b = CFSwapInt32LittleToHost(palette_data[(index * 3) + 2] << 0);
-        _displayPalette[index] = r | g | b;
-    }
-}
-
 @end

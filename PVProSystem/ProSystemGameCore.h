@@ -27,15 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
 
 __attribute__((visibility("default")))
-@interface PVProSystemGameCore : PVEmulatorCore <PV7800SystemResponderClient>
-
-#pragma mark - OE7800SystemResponderClient
-- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSUInteger)player;
-- (oneway void)mouseMovedAtPoint:(CGPoint)point;
-- (oneway void)leftMouseDownAtPoint:(CGPoint)point;
-- (oneway void)leftMouseUp;
+@interface PVProSystemGameCore : PVEmulatorCore
 @end

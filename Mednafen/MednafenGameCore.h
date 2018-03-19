@@ -27,8 +27,8 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
 
+@class OERingBuffer;
 
 typedef NS_ENUM(NSInteger, MednaSystem) {
     MednaSystemLynx,
@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, MednaSystem) {
 };
 
 __attribute__((visibility("default")))
-@interface MednafenGameCore : PVEmulatorCore <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient>
+@interface MednafenGameCore : PVEmulatorCore
 
 @property (nonatomic) BOOL isStartPressed;
 @property (nonatomic) BOOL isSelectPressed;

@@ -38,6 +38,8 @@
 
 #import <UIKit/UIKit.h>
 #import <PVSupport/OERingBuffer.h>
+#import <PVSupport/PVSupport-Swift.h>
+
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
@@ -94,7 +96,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore ()
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -772,18 +774,18 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 }
 
 #pragma mark Neo Geo
-- (oneway void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSUInteger)player
+- (oneway void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player
 {
     inputBuffer[player][0] |= 1 << NeoMap[button];
 }
 
-- (oneway void)didReleaseNGPButton:(PVNGPButton)button forPlayer:(NSUInteger)player
+- (oneway void)didReleaseNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player
 {
     inputBuffer[player][0] &= ~(1 << NeoMap[button]);
 }
 
 #pragma mark PC-*
-- (oneway void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSUInteger)player
+- (oneway void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSInteger)player
 {
     if (button != PVPCEButtonMode) { // Check for six button mode toggle
         inputBuffer[player][0] |= 1 << PCEMap[button];
@@ -792,13 +794,13 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     }
 }
 
-- (oneway void)didReleasePCEButton:(PVPCEButton)button forPlayer:(NSUInteger)player
+- (oneway void)didReleasePCEButton:(PVPCEButton)button forPlayer:(NSInteger)player
 {
     if (button != PVPCEButtonMode)
         inputBuffer[player][0] &= ~(1 << PCEMap[button]);
 }
 
-- (oneway void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSUInteger)player
+- (oneway void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player
 {
     if (button != PVPCECDButtonMode) { // Check for six button mode toggle
         inputBuffer[player][0] |= 1 << PCEMap[button];
@@ -807,25 +809,25 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     }
 }
 
-- (oneway void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player;
 {
     if (button != PVPCECDButtonMode) {
         inputBuffer[player][0] &= ~(1 << PCEMap[button]);
     }
 }
 
-- (oneway void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] |= 1 << PCFXMap[button];
 }
 
-- (oneway void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] &= ~(1 << PCFXMap[button]);
 }
 
 #pragma mark PSX
-- (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 {
     if (button == PVPSXButtonStart) {
         self.isStartPressed = true;
@@ -835,7 +837,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] |= 1 << PSXMap[button];
 }
 
-- (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
 {
     if (button == PVPSXButtonStart) {
         self.isStartPressed = false;
@@ -845,7 +847,7 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 
-- (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
+- (oneway void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player
 {
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
@@ -860,23 +862,23 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 }
 
 #pragma mark Virtual Boy
-- (oneway void)didPushVBButton:(PVVBButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] |= 1 << VBMap[button];
 }
 
-- (oneway void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] &= ~(1 << VBMap[button]);
 }
 
 #pragma mark WonderSwan
-- (oneway void)didPushWSButton:(PVWSButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didPushWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] |= 1 << WSMap[button];
 }
 
-- (oneway void)didReleaseWSButton:(PVWSButton)button forPlayer:(NSUInteger)player;
+- (oneway void)didReleaseWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
 {
     inputBuffer[player][0] &= ~(1 << WSMap[button]);
 }
