@@ -16,6 +16,12 @@ extension Notification.Name {
 
 typealias iCadeListenCompletion = () -> Void
 
+#if (arch(i386) || arch(x86_64))
+let isSimulator = true
+#else
+let isSimulator = false
+#endif
+    
 class PVControllerManager: NSObject {
     
     var allLiveControllers : [Int:GCController] {
@@ -90,6 +96,11 @@ class PVControllerManager: NSObject {
     override init() {
         super.init()
 
+        //
+        if isSimulator {
+            return
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
