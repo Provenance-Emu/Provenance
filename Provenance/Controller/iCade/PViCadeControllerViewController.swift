@@ -34,23 +34,20 @@ class PViCadeControllerViewController: UITableViewController {
         return "Your controller must be paired with your device in order to work"
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell? = self.tableView.dequeueReusableCell(withIdentifier: "Cell")
-        if cell == nil {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
-        }
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .default, reuseIdentifier: "Cell")
+
         if indexPath.row == PVSettingsModel.shared.myiCadeControllerSetting.rawValue {
-            cell?.accessoryType = .checkmark
+            cell.accessoryType = .checkmark
         }
         else {
-            cell?.accessoryType = .none
+            cell.accessoryType = .none
         }
-        cell?.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue:indexPath.row))!)
+        cell.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue:indexPath.row))!)
         
 #if os(iOS)
-        cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+        cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
 #endif
-        
-        return cell ?? UITableViewCell()
+        return cell
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
