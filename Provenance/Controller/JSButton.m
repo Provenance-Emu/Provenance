@@ -7,6 +7,7 @@
 //
 
 #import "JSButton.h"
+#import "Provenance-Swift.h"
 
 @interface JSButton () {
 	
@@ -51,10 +52,15 @@
 }
 
 - (void)setTintColor:(UIColor *)tintColor {
-    if(![_tintColor isEqual:tintColor]) {
-        _tintColor = tintColor;
-        _backgroundImageView.tintColor = _tintColor;
-    }
+        if ([[PVSettingsModel sharedInstance] buttonTints]) {
+            if(![_tintColor isEqual:tintColor]) {
+                _tintColor = tintColor;
+                _backgroundImageView.tintColor = _tintColor;
+            }
+        } else {
+                _tintColor = [UIColor whiteColor];
+                _backgroundImageView.tintColor = [UIColor whiteColor];
+        }
 }
 
 - (void)commonInit
@@ -98,6 +104,7 @@
 	self.pressed = NO;
     
     self.tintColor = [UIColor whiteColor];
+    
 }
 
 - (void)dealloc
