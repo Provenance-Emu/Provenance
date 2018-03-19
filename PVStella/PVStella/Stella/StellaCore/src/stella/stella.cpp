@@ -75,9 +75,9 @@ static const InputDeviceInputInfoStruct GamepadIDII[] =
     {"down",	"Down",					1,	IDIT_BUTTON, NULL},
     {"left",	"Left",					2,	IDIT_BUTTON, NULL},
     {"right",	"Right",				3,	IDIT_BUTTON, NULL},
-    {"fire1",	"Fire 1",				4,	IDIT_BUTTON, NULL},
-    {"fire2",	"Fire 2",				5,	IDIT_BUTTON, NULL},
-    {"fire3",	"Fire 3",				6,	IDIT_BUTTON, NULL},
+    {"fire1",	"1",				4,	IDIT_BUTTON, NULL},
+    {"fire2",	"2",				5,	IDIT_BUTTON, NULL},
+    {"fire3",	"3",				6,	IDIT_BUTTON, NULL},
     
     {"one",		"Keyboard One",			7,	IDIT_BUTTON, NULL},
     {"two",		"Keyboard Two",			8,	IDIT_BUTTON, NULL},

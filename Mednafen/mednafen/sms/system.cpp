@@ -312,8 +312,8 @@ static const IDIISG SMSGamepadIDII =
  { "down", "DOWN ↓", 1, IDIT_BUTTON, "up" },
  { "left", "LEFT ←", 2, IDIT_BUTTON, "right" },
  { "right", "RIGHT →", 3, IDIT_BUTTON, "left" },
- { "fire1", "Fire 1/Start", 4, IDIT_BUTTON_CAN_RAPID, NULL },
- { "fire2", "Fire 2", 5, IDIT_BUTTON_CAN_RAPID,  NULL },
+ { "fire1", "1/Start", 4, IDIT_BUTTON_CAN_RAPID, NULL },
+ { "fire2", "2", 5, IDIT_BUTTON_CAN_RAPID,  NULL },
  { "pause", "Pause", 6, IDIT_BUTTON, NULL },
 };
 

@@ -24,6 +24,7 @@ let kFPSCountKey = "kFPSCountKey"
 let kShowGameTitlesKey = "kShowGameTitlesKey"
 let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
 let kThemeKey = "kThemeKey"
+let kButtonTintsKey = "kButtonsTintsKey"
 
 
 public class PVSettingsModel: NSObject {
@@ -132,6 +133,14 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
+    
+    @objc
+    var buttonTints: Bool {
+        didSet {
+            UserDefaults.standard.set(buttonTints, forKey: kButtonTintsKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
 
     @objc
     var volume: Float {
@@ -167,7 +176,7 @@ public class PVSettingsModel: NSObject {
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadAutoSavesKey: false,
-                                                  kControllerOpacityKey: 0.2,
+                                                  kControllerOpacityKey: 0.8,
                                                   kDisableAutoLockKey: false,
                                                   kButtonVibrationKey: true,
                                                   kImageSmoothingKey: false,
@@ -178,6 +187,7 @@ public class PVSettingsModel: NSObject {
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
+                                                  kButtonTintsKey: true,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
         
@@ -196,6 +206,7 @@ public class PVSettingsModel: NSObject {
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)
         webDavAlwaysOn = UserDefaults.standard.bool(forKey: kWebDayAlwwaysOnKey)
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
+        buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
         
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue

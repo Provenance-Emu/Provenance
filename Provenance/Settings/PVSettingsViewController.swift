@@ -40,6 +40,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var volumeValueLabel: UILabel!
     @IBOutlet weak var fpsCountSwitch: UISwitch!
     @IBOutlet weak var importLabel: UILabel!
+    @IBOutlet weak var tintSwitch: UISwitch!
     
     @IBOutlet weak var themeValueLabel: UILabel!
     
@@ -66,6 +67,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         imageSmoothing.isOn = settings.imageSmoothing
         crtFilterSwitch.isOn = settings.crtFilterEnabled
         fpsCountSwitch.isOn = settings.showFPSCount
+        tintSwitch.isOn = settings.buttonTints
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
@@ -85,17 +87,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             revisionLabel.textColor = color ?? UIColor.clear
             revisionLabel.text = "(none)"
         }
-    }
-
-    //Hide Dummy Cell Separator
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == 1 && indexPath.section == 4 {
-            cell.separatorInset = UIEdgeInsetsMake(0, cell.bounds.size.width, 0, 0)
-        }
-        else if indexPath.row == 2 && indexPath.section == 4 {
-            cell.isHidden = true
-        }
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -159,6 +150,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
     }
 
+    @IBAction func toggleButtonTints(_ sender: Any) {
+        PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
+    }
+    
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -218,11 +213,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 3 && indexPath.row == 0 {
+        if indexPath.section == 1 && indexPath.row == 3 {
             let iCadeControllerViewController = PViCadeControllerViewController()
             navigationController?.pushViewController(iCadeControllerViewController, animated: true)
         }
-        else if indexPath.section == 4 && indexPath.row == 0 {
+        else if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
                 // Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -252,7 +247,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 }
             }
         }
-        else if indexPath.section == 5 && indexPath.row == 0 {
+        else if indexPath.section == 4 && indexPath.row == 0 {
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -261,7 +256,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
         }
-        else if indexPath.section == 5 && indexPath.row == 1 {
+        else if indexPath.section == 4 && indexPath.row == 1 {
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -270,7 +265,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
         }
-        else if indexPath.section == 5 && indexPath.row == 2 {
+        else if indexPath.section == 4 && indexPath.row == 2 {
             if let gameImporter = gameImporter {
                 let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
                 navigationController?.pushViewController(conflictViewController, animated: true)
