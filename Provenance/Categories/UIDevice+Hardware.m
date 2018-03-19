@@ -33,14 +33,20 @@
 ///All known Device Types for iPhone 7 or iPhone 7 Plus
 + (BOOL)hasTapticMotor
 {
-    NSInteger supportLevel = ((NSNumber *) [UIDevice.currentDevice valueForKey:@"_feedbackSupportLevel"]).integerValue;
-    NSInteger iPhoneVersionNumber = [[UIDevice.currentDevice.modelIdentifier componentsSeparatedByString:@","].firstObject stringByReplacingOccurrencesOfString:@"iPhone" withString:@""].integerValue;
-    if (iPhoneVersionNumber >= 9 || supportLevel == 2) { // 9 is iPhone 7
-        return YES;
-    }
-    else {
-        return NO;
-    }
+    static BOOL hasTapticMotor;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSInteger supportLevel = ((NSNumber *) [UIDevice.currentDevice valueForKey:@"_feedbackSupportLevel"]).integerValue;
+        NSInteger iPhoneVersionNumber = [[UIDevice.currentDevice.modelIdentifier componentsSeparatedByString:@","].firstObject stringByReplacingOccurrencesOfString:@"iPhone" withString:@""].integerValue;
+        if (iPhoneVersionNumber >= 9 || supportLevel == 2) { // 9 is iPhone 7
+            hasTapticMotor = YES;
+        }
+        else {
+            hasTapticMotor = NO;
+        }
+    });
+
+    return hasTapticMotor;
 }
 
 @end

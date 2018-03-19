@@ -13,7 +13,7 @@
 // https://bitbucket.org/rileytestut/gba4ios/src/6c363f7503ecc1e29a32f6869499113c3a3a6297/GBA4iOS/GBAControllerView.m?at=master#cl-245
 
 void AudioServicesStopSystemSound(int);
-void AudioServicesPlaySystemSoundWithVibration(int, id, NSDictionary *);
+void AudioServicesPlaySystemSoundWithVibration(int, id _Nullable , NSDictionary * _Nonnull);
 
 @interface UIDevice (Hardware)
 
