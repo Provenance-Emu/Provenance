@@ -345,6 +345,9 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         view.addSubview(dPad2)
                     } else if dPad == nil {
                         let dPad = JSDPad(frame: dPadFrame)
+                        if let tintColor = control.PVControlTint {
+                            dPad.tintColor = UIColor(hex: tintColor)
+                        }
                         self.dPad = dPad
                         dPad.delegate = self
                         dPad.alpha = alpha

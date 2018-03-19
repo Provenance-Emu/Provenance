@@ -29,37 +29,39 @@ class JSDPad: UIView {
     weak var delegate: JSDPadDelegate?
 
     private var currentDirection: JSDPadDirection = .none
-    private var dPadImageView: UIImageView?
+    
+    private var dPadImageView: UIImageView = UIImageView(image: UIImage(named: "dPad-None")) {
+        didSet {
+            dPadImageView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
+            dPadImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            dPadImageView.contentMode = .center
+            dPadImageView.layer.shadowColor = UIColor.black.cgColor
+            dPadImageView.layer.shadowRadius = 4.0
+            dPadImageView.layer.shadowOpacity = 0.75
+            dPadImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        }
+    }
 
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
     }
 
+    override var tintColor: UIColor? {
+        didSet {
+            dPadImageView.tintColor = PVSettingsModel.shared.buttonTints ? tintColor : .white
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        commonInit()
+        tintColor = .white
+        addSubview(dPadImageView)
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonInit()
-    }
-
-    func commonInit() {
-        let dPadImageView = UIImageView(image: UIImage(named: "dPad-None"))
-        self.dPadImageView = dPadImageView
-        dPadImageView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
-        dPadImageView.layer.shadowColor = UIColor.black.cgColor
-        dPadImageView.layer.shadowRadius = 4.0
-        dPadImageView.layer.shadowOpacity = 0.75
-        dPadImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        tintColor = .white
         addSubview(dPadImageView)
-
-        currentDirection = .none
-    }
-
-    deinit {
-        delegate = nil
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {
@@ -105,7 +107,7 @@ class JSDPad: UIView {
         let direction: JSDPadDirection = self.direction(for: point)
         if direction != currentDirection {
             currentDirection = direction
-            dPadImageView?.image = image(for: currentDirection)
+            dPadImageView.image = image(for: currentDirection)
 
             delegate?.dPad(self, didPress: currentDirection)
         }
@@ -117,20 +119,20 @@ class JSDPad: UIView {
         let direction: JSDPadDirection = self.direction(for: point)
         if direction != currentDirection {
             currentDirection = direction
-            dPadImageView?.image = image(for: currentDirection)
+            dPadImageView.image = image(for: currentDirection)
             delegate?.dPad(self, didPress: currentDirection)
         }
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         currentDirection = .none
-        dPadImageView?.image = image(for: currentDirection)
+        dPadImageView.image = image(for: currentDirection)
         delegate?.dPadDidReleaseDirection(self)
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         currentDirection = .none
-        dPadImageView?.image = image(for: currentDirection)
+        dPadImageView.image = image(for: currentDirection)
         delegate?.dPadDidReleaseDirection(self)
     }
 }

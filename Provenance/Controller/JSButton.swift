@@ -37,7 +37,7 @@ class JSButton: UIView {
         }
     }
         
-    var titleEdgeInsets: UIEdgeInsets {
+    var titleEdgeInsets: UIEdgeInsets = .zero {
         didSet {
             setNeedsLayout()
         }
@@ -56,22 +56,17 @@ class JSButton: UIView {
     var pressed = false
     weak var delegate: JSButtonDelegate?
 
-
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
     }
 
     override init(frame: CGRect) {
-        titleEdgeInsets = .zero
         super.init(frame: frame)
-
         commonInit()
     }
 
     required init?(coder aDecoder: NSCoder) {
-        titleEdgeInsets = .zero
         super.init(coder: aDecoder)
-
         commonInit()
     }
 
@@ -101,14 +96,13 @@ class JSButton: UIView {
         addObserver(self as NSObject, forKeyPath: "backgroundImage", options: .new, context: nil)
         addObserver(self as NSObject, forKeyPath: "backgroundImagePressed", options: .new, context: nil)
         pressed = false
-        tintColor = nil
+        tintColor = UIColor.white
     }
 
     deinit {
         removeObserver(self as NSObject, forKeyPath: "pressed")
         removeObserver(self as NSObject, forKeyPath: "backgroundImage")
         removeObserver(self as NSObject, forKeyPath: "backgroundImagePressed")
-        delegate = nil
     }
 
     override func layoutSubviews() {
