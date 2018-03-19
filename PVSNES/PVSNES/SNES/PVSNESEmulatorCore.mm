@@ -369,12 +369,12 @@ static void FinalizeSamplesAudioCallback(void *)
 
 #pragma mark - Input
 
-- (void)pushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
     S9xReportButton((player+1 << 16) | button, true);
 }
 
-- (void)releaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player
 {
     S9xReportButton((player+1 << 16) | button, false);
 }

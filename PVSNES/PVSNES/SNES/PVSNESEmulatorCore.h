@@ -31,8 +31,8 @@
 
 @interface PVSNESEmulatorCore : PVEmulatorCore <PVSNESSystemResponderClient>
 
-- (void)pushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
-- (void)releaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
+- (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;
 - (void)flipBuffers;
 
 @end

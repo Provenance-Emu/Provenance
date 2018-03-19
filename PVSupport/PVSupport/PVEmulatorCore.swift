@@ -28,7 +28,7 @@ import UIKit
     func didMoveJoystick(_ button: Int, withValue value: CGFloat, forPlayer player: Int)
 }
 
-extension PVEmulatorCore : ResponderClient {}
+@objc extension PVEmulatorCore : ResponderClient {}
 
 // MARK: - Sega 32X
 @objc public enum PVSega32XButton : Int {
