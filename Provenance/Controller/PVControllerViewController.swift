@@ -516,12 +516,12 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 startButton.tintColor = UIColor(hex: tintColor)
             }
             self.startButton = startButton
-            //startButton.titleLabel?.text = control[Keys.ControlTitle] as? String
-            let buttonThinImage = UIImage(named: "button-thin")
-            startButton.backgroundImage = buttonThinImage
+            startButton.titleLabel?.text = control.PVControlTitle
+            startButton.titleLabel?.font = UIFont.systemFont(ofSize: 8)
+            startButton.backgroundImage = UIImage(named: "button-thin")
             startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             startButton.delegate = self
-            startButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+            startButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
             startButton.alpha = alpha
             startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(startButton)
@@ -553,11 +553,12 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 selectButton.tintColor = UIColor(hex: tintColor)
             }
             self.selectButton = selectButton
-            //selectButton.titleLabel?.text = control[Keys.ControlTitle] as? String
+            selectButton.titleLabel?.text = control.PVControlTitle
+            selectButton.titleLabel?.font = UIFont.systemFont(ofSize: 8)
             selectButton.backgroundImage = UIImage(named: "button-thin")
             selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             selectButton.delegate = self
-            selectButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 4, 0)
+            selectButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
             selectButton.alpha = alpha
             selectButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(selectButton)
