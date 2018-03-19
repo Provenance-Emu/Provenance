@@ -13,7 +13,7 @@ import UIKit
 class PVControllerSelectionViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: Selector("handleControllerReassigned:"), name: NSNotification.Name.PVControllerManagerControllerReassigned, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVControllerSelectionViewController.handleReassigned(_:)), name: NSNotification.Name.PVControllerManagerControllerReassigned, object: nil)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -48,7 +48,7 @@ class PVControllerSelectionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "controllerCell")!
         
-        let labelText = "Player \(indexPath.row)"
+        let labelText = "Player \(indexPath.row + 1)"
         cell.textLabel?.text = labelText
         
         var controller : GCController? = nil

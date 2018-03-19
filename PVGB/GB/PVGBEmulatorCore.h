@@ -26,23 +26,11 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport-Swift.h>
 
-typedef NS_ENUM(NSInteger, PVGBButton)
-{
-    PVGBButtonUp,
-    PVGBButtonDown,
-    PVGBButtonLeft,
-    PVGBButtonRight,
-    PVGBButtonA,
-    PVGBButtonB,
-    PVGBButtonStart,
-    PVGBButtonSelect,
-    PVGBButtonCount,
-};
+@interface PVGBEmulatorCore : PVEmulatorCore <PVGBSystemResponderClient>
 
-@interface PVGBEmulatorCore : PVEmulatorCore
-
-- (oneway void)pushGBButton:(PVGBButton)button;
-- (oneway void)releaseGBButton:(PVGBButton)button;
+- (oneway void)didPushGBButton:(PVGBButton)button;
+- (oneway void)didReleaseGBButton:(PVGBButton)button;
 
 @end

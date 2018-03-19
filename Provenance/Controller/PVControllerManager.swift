@@ -38,22 +38,30 @@ class PVControllerManager: NSObject {
     
     var player1: GCController? {
         didSet {
-            setController(player1, toPlayer: 1)
+            if player1 != oldValue {
+                setController(player1, toPlayer: 1)
+            }
         }
     }
     var player2: GCController? {
         didSet {
-            setController(player2, toPlayer: 2)
+            if player2 != oldValue {
+                setController(player2, toPlayer: 2)
+            }
         }
     }
     var player3: GCController? {
         didSet {
-            setController(player3, toPlayer: 3)
+            if player3 != oldValue {
+                setController(player3, toPlayer: 3)
+            }
         }
     }
     var player4: GCController? {
         didSet {
-            setController(player4, toPlayer: 4)
+            if player4 != oldValue {
+                setController(player4, toPlayer: 4)
+            }
         }
     }
 

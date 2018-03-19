@@ -26,7 +26,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVAtari800/PV5200SystemResponderClient.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 @class OERingBuffer;
 

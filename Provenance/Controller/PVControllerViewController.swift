@@ -12,7 +12,7 @@ import PVSupport
 import QuartzCore
 import UIKit
 
-protocol PVController {
+protocol JSButtonDisplayer {
     var dPad: JSDPad? { get set }
     var dPad2: JSDPad? { get set }
     var buttonGroup: UIView? { get set }
@@ -27,10 +27,118 @@ protocol PVController {
 fileprivate typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 fileprivate let kDPadTopMargin: CGFloat = 96.0
 
-class PVControllerViewController<CoreType:PVEmulatorCore>: UIViewController, JSButtonDelegate, JSDPadDelegate {
-    var emulatorCore: CoreType?
-    var system: PVSystem!
-    var controlLayout : [ControlLayoutEntry]!
+protocol StartSelectDelegate {
+    func pressStart(forPlayer player: Int)
+    func releaseStart(forPlayer player: Int)
+    func pressSelect(forPlayer player: Int)
+    func releaseSelect(forPlayer player: Int)
+}
+
+protocol ControllerVC : StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self : UIViewController {
+    associatedtype ResponderType : ResponderClient
+    var emulatorCore: ResponderType {get}
+    var system: PVSystem {get set}
+    var controlLayout : [ControlLayoutEntry] {get set}
+    
+    var dPad: JSDPad? {get}
+    var dPad2: JSDPad? {get}
+    var buttonGroup: UIView? {get}
+    var leftShoulderButton: JSButton? {get}
+    var rightShoulderButton: JSButton? {get}
+    var leftShoulderButton2: JSButton? {get}
+    var rightShoulderButton2: JSButton? {get}
+    var startButton: JSButton? {get}
+    var selectButton: JSButton? {get}
+
+    func layoutViews()
+    func vibrate()
+}
+
+// Dummy implmentations
+//extension ControllerVC {
+//extension PVControllerViewController {
+//    func layoutViews() {
+//        ILOG("Dummy called")
+//    }
+//
+//    func pressStart(forPlayer player: Int) {
+//        vibrate()
+//        ILOG("Dummy called")
+//    }
+//
+//    func releaseStart(forPlayer player: Int) {
+//        ILOG("Dummy called")
+//    }
+//
+//    func pressSelect(forPlayer player: Int) {
+//        vibrate()
+//        ILOG("Dummy called")
+//    }
+//
+//    func releaseSelect(forPlayer player: Int) {
+//        ILOG("Dummy called")
+//    }
+//
+//    // MARK: - JSButtonDelegate
+//    func buttonPressed(_ button: JSButton) {
+//        ILOG("Dummy called")
+//    }
+//
+//    func buttonReleased(_ button: JSButton) {
+//        ILOG("Dummy called")
+//    }
+//
+//    // MARK: - JSDPadDelegate
+//    func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
+//        ILOG("Dummy called")
+//    }
+//    func dPadDidReleaseDirection(_ dPad: JSDPad) {
+//        ILOG("Dummy called")
+//    }
+//}
+
+class PVControllerViewController<T:ResponderClient> : UIViewController, ControllerVC {
+    func layoutViews() {
+        
+    }
+    
+    func pressStart(forPlayer player: Int) {
+        vibrate()
+    }
+    
+    func releaseStart(forPlayer player: Int) {
+        
+    }
+    
+    func pressSelect(forPlayer player: Int) {
+        vibrate()
+    }
+    
+    func releaseSelect(forPlayer player: Int) {
+        
+    }
+    
+    func buttonPressed(_ button: JSButton) {
+        vibrate()
+    }
+    
+    func buttonReleased(_ button: JSButton) {
+        
+    }
+    
+    func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
+        vibrate()
+    }
+    
+    func dPadDidReleaseDirection(_ dPad: JSDPad) {
+        
+    }
+
+    typealias ResponderType = T
+    var emulatorCore: ResponderType
+
+    var system: PVSystem
+    var controlLayout : [ControlLayoutEntry]
     
     var dPad: JSDPad?
     var dPad2: JSDPad?
@@ -58,29 +166,17 @@ class PVControllerViewController<CoreType:PVEmulatorCore>: UIViewController, JSB
     }
     #endif
     
-    init(controlLayout: [ControlLayoutEntry], system: PVSystem) {
-        super.init(nibName: nil, bundle: nil)
+    required init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
+        self.emulatorCore = responder
         self.controlLayout = controlLayout
         self.system = system
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func pressStart(forPlayer player: Int) {
-        vibrate()
-    }
-    func releaseStart(forPlayer player: Int) {
-    }
-    
-    func pressSelect(forPlayer player: Int) {
-        vibrate()
-    }
-    
-    func releaseSelect(forPlayer player: Int) {
-    }
-    
     deinit {
         NotificationCenter.default.removeObserver(self)
         GCController.controllers().forEach {
@@ -189,6 +285,7 @@ class PVControllerViewController<CoreType:PVEmulatorCore>: UIViewController, JSB
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupTouchControls()
+        layoutViews()
         updateHideTouchControls()
     }
     
@@ -213,7 +310,6 @@ class PVControllerViewController<CoreType:PVEmulatorCore>: UIViewController, JSB
     // MARK: - Controller Position And Size Editing
     func setupTouchControls() {
         #if os(iOS)
-            
             var safeAreaInsets = UIEdgeInsets.zero
             if #available(iOS 11.0, *) {
                 safeAreaInsets = view.safeAreaInsets
@@ -449,19 +545,4 @@ class PVControllerViewController<CoreType:PVEmulatorCore>: UIViewController, JSB
             view.addSubview(selectButton)
         }
     }
-    
-    // MARK: - JSButtonDelegate
-    func buttonPressed(_ button: JSButton) {
-        vibrate()
-    }
-    func buttonReleased(_ button: JSButton) {
-    }
-    
-    // MARK: - JSDPadDelegate
-    func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        vibrate()
-    }
-    func dPadDidReleaseDirection(_ dPad: JSDPad) {
-    }
-    
 }

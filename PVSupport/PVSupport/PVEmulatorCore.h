@@ -84,6 +84,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
 @property (nonatomic, strong) GCController *controller1;
 @property (nonatomic, strong) GCController *controller2;
+@property (nonatomic, strong) GCController *controller3;
+@property (nonatomic, strong) GCController *controller4;
 
 @property (nonatomic, strong) NSLock  *emulationLoopThreadLock;
 @property (nonatomic, strong) NSCondition  *frontBufferCondition;

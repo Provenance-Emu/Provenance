@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
+		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1A1A83D01C0A1675008ED0EC /* PViCadeSteelSeriesController.m in Sources */ = {isa = PBXBuildFile; fileRef = F43211991BFB6AB300387909 /* PViCadeSteelSeriesController.m */; };
 		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE291AD9FFBF004EA30B /* ioapi.c */; };
@@ -24,7 +24,7 @@
 		1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		1A3D40A217B2DCE4004DFFFC = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
+		1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D432B17B2FDFE004DFFFC /* libz.dylib */; };
@@ -43,11 +43,8 @@
 		1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
 		1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
-		1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.swift */; };
 		1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A9442561AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m */; };
 		1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = 1A9FBE1A1ABD23DD004E778B /* vba-over.ini */; };
-		1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.swift */; };
-		1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.swift */; };
 		1AACCAE31BB60D8E00DC21AE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; };
 		1AACCAE51BB60DB500DC21AE /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1AACCAE01BB60D8200DC21AE /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */; };
@@ -62,7 +59,7 @@
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
 		1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ACE9A091BACBC9E00C72AA5 /* PVTVSettingsViewController.swift */; };
-		1AD481C11BA350A400FDA50A = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Provenance.storyboard */; };
+		1AD481C11BA350A400FDA50A /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481BF1BA350A400FDA50A /* Provenance.storyboard */; };
 		1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		1AD481CA1BA353F300FDA50A /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
@@ -87,7 +84,7 @@
 		1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
 		1AD481E21BA3545B00FDA50A /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */; };
 		1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */; };
-		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */; };
+		1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
 		1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB9600217C572B400D3E392 /* PVSettingsModel.swift */; };
 		1AD481E91BA3547800FDA50A /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE321AD9FFBF004EA30B /* SSZipArchive.m */; };
@@ -137,7 +134,6 @@
 		1AD9AA3A1ACC988F00EC87A0 /* Provenance_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA391ACC988F00EC87A0 /* Provenance_Tests.m */; };
 		1AD9AA411ACC98A200EC87A0 /* Systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* Systems.plist */; };
 		1AD9AA431ACC98F500EC87A0 /* PVGameImporterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA421ACC98F500EC87A0 /* PVGameImporterTests.m */; };
-		1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.swift */; };
 		1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ADDA5B317B30CD7008A7ADD /* GLKit.framework */; };
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
@@ -167,15 +163,10 @@
 		423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 423BB97A17DD35B10048F457 /* AssetsLibrary.framework */; };
 		423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.swift */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
-		AA9B6EDE1D70981000422E5F /* PVPSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.swift */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96792055F2B400281880 /* PVGame+Spotlight.swift */; };
-		B32893731E0B250B0090B97A /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */; };
-		B32893781E0B4EA30090B97A /* PVLynxControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.swift */; };
-		B328937D1E0B87960090B97A /* PVVBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.swift */; };
 		B32D8F7D1EA7F79900175FBF /* PVEmulatorConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B32D8F7C1EA7F79900175FBF /* PVEmulatorConfigurationTests.m */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
@@ -486,7 +477,6 @@
 		B349AF701E9ABCFA00ACD416 /* LzmaSDKObjCUpdateCallback.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE341E9ABCF900ACD416 /* LzmaSDKObjCUpdateCallback.mm */; };
 		B349AF711E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */; };
 		B349AF721E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */; };
-		B35469381DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B35BB7F6202F3CE500FCB513 /* RLMSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7F5202F3CE500FCB513 /* RLMSupport.swift */; };
@@ -501,12 +491,10 @@
 		B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B35D26FD2033977600F17D58 /* VolumeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FC2033977500F17D58 /* VolumeBar.swift */; };
-		B35D26FF2033A32500F17D58 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */; };
 		B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		B36CBFEB20397D9100728482 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36CBFEA20397D9100728482 /* PVMednafen.framework */; };
 		B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36CBFEA20397D9100728482 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B36CBFEE2039878F00728482 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */; };
 		B36D9DF520351C9600D583C4 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */; };
 		B36D9DF620351C9600D583C4 /* PVEmulatorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
@@ -515,7 +503,6 @@
 		B36D9DFB2035F6AB00D583C4 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B36D9DFE203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */; };
 		B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B375C68E2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */ = {isa = PBXBuildFile; fileRef = B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */; };
 		B3780B3F2057F1F60018211E /* PVCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96832055F3D900281880 /* PVCore.swift */; };
@@ -523,8 +510,6 @@
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
-		B39578C21E6D2D8B00854D7A /* PVPCEControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39578C11E6D2D8B00854D7A /* PVPCEControllerViewController.swift */; };
-		B39578C71E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift */; };
 		B3995E4C2058228E001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; };
 		B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4B2058228E001D4985 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3995E4E2058229F001D4985 /* PVFCEU.framework */; };
@@ -548,8 +533,6 @@
 		B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B8981DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B3B89D1DECF9D700602746 /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.swift */; };
-		B3B3B89F1DECF9D700602746 /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.swift */; };
 		B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9751DED14A100602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9751DED14A100602746 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B9791DED14A100602746 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -564,6 +547,7 @@
 		B3B923AF202D2EAE00580FFC /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3B923B3202D417700580FFC /* Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923B2202D417700580FFC /* Spotlight.swift */; };
+		B3BCDA1D205F59B400EFBEDA /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.swift */; };
 		B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */; };
 		B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */; };
 		B3BDEC931DED60A1002BD7A4 /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */; };
@@ -619,9 +603,7 @@
 		B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85BE1E9BFB07009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; };
 		B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3CB85C71E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift */; };
 		B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4F9369C1B50BF3B009403C5 /* PViCadeControllerViewController.swift */; };
-		B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.swift */; };
 		B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
@@ -632,7 +614,6 @@
 		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
 		B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.swift */; };
 		B3E21D6420320E6C009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E21D6520320E6E009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E21D6620320E6F009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
@@ -669,6 +650,22 @@
 		B3F9CDA120315599007F808D /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; };
 		B3F9CDA220315599007F808D /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CC202ED24600A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F9CDA42031FF4D007F808D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3FF4413205F94EF00E5A84B /* PV32XControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.swift */; };
+		B3FF4414205F9AAF00E5A84B /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DF87641D6A5A5300D216D4 /* PVAtari2600ControllerViewController.swift */; };
+		B3FF4415205F9C3F00E5A84B /* PVAtari5200ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift */; };
+		B3FF4416205F9C3F00E5A84B /* PVAtari7800ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36DE7C91D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift */; };
+		B3FF4417205F9C3F00E5A84B /* PVLynxControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32893771E0B4EA30090B97A /* PVLynxControllerViewController.swift */; };
+		B3FF4418205F9C3F00E5A84B /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0CF1ABE3E5900FF6AEF /* PVGBControllerViewController.swift */; };
+		B3FF4419205F9C3F00E5A84B /* PVGBAControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBE221ABD28DA004E778B /* PVGBAControllerViewController.swift */; };
+		B3FF441A205F9C3F00E5A84B /* PVGenesisControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB316417D9341600DB6043 /* PVGenesisControllerViewController.swift */; };
+		B3FF441B205F9C3F00E5A84B /* PVNeoGeoPocketControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39578C61E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift */; };
+		B3FF441C205F9C3F00E5A84B /* PVPCEControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39578C11E6D2D8B00854D7A /* PVPCEControllerViewController.swift */; };
+		B3FF441D205F9C3F00E5A84B /* PVPSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.swift */; };
+		B3FF441E205F9C3F00E5A84B /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A74171C1ABF231500F3CD3C /* PVNESControllerViewController.swift */; };
+		B3FF441F205F9C3F00E5A84B /* PVPokeMiniControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift */; };
+		B3FF4420205F9C3F00E5A84B /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E63AE817E12ECE00FE7098 /* PVSNESControllerViewController.swift */; };
+		B3FF4421205F9C3F00E5A84B /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */; };
+		B3FF4422205F9C3F00E5A84B /* PVVBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B328937C1E0B87960090B97A /* PVVBControllerViewController.swift */; };
 		B3FF744E202F7C4D008C964A /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE1E266D1C22552800499BA0 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.swift */; };
 		BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.swift */; };
@@ -810,8 +807,7 @@
 
 /* Begin PBXFileReference section */
 		1A0938B917CD45D400029021 /* README.mdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.mdown; sourceTree = SOURCE_ROOT; };
-		1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorViewController.h; sourceTree = "<group>"; };
-		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorViewController.m; sourceTree = "<group>"; };
+		1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
 		1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1A26EE281AD9FFBF004EA30B /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
 		1A26EE291AD9FFBF004EA30B /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
@@ -1303,7 +1299,6 @@
 		B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
 		B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLaunchingViewController.swift; sourceTree = "<group>"; };
 		B35D26FC2033977500F17D58 /* VolumeBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeBar.swift; sourceTree = "<group>"; };
-		B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVEmulatorViewController.swift; sourceTree = "<group>"; };
 		B36CBFEA20397D9100728482 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
@@ -1367,7 +1362,7 @@
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVStellaControllerViewController.swift; sourceTree = "<group>"; };
+		B3DF87641D6A5A5300D216D4 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
 		B3E21D602032074F009939D3 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		B3E21D6B203211BE009939D3 /* Spotlight.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Spotlight.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
@@ -1569,9 +1564,7 @@
 			children = (
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
 				1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */,
-				1A164EB117BC03E800FAC391 /* PVEmulatorViewController.h */,
-				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.m */,
-				B35D26FE2033A32400F17D58 /* PVEmulatorViewController.swift */,
+				1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */,
 				B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */,
 				B3995E51205840CE001D4985 /* PlistDataModels.swift */,
 				B375C68C2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift */,
@@ -1722,6 +1715,7 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				E41448871B3125D90056D80A /* iCade */,
 				B3D2E3941D6E8B460058544D /* 32X */,
 				B3DF87681D6A5A6200D216D4 /* Atari2600 */,
 				B35469351DECD8250018B6F3 /* Atari5200 */,
@@ -1733,7 +1727,6 @@
 				B39578C41E6D4D6700854D7A /* Neo Geo */,
 				B39578BF1E6D2D5700854D7A /* PCE */,
 				AA9B6EDB1D7097C400422E5F /* PSX */,
-				E41448871B3125D90056D80A /* iCade */,
 				B3B3B89A1DECF9A700602746 /* N64 */,
 				1A74171A1ABF22FD00F3CD3C /* NES */,
 				B3CB85C41E9BFB4B009155A6 /* PokeMini */,
@@ -2619,7 +2612,7 @@
 		B3DF87681D6A5A6200D216D4 /* Atari2600 */ = {
 			isa = PBXGroup;
 			children = (
-				B3DF87641D6A5A5300D216D4 /* PVStellaControllerViewController.swift */,
+				B3DF87641D6A5A5300D216D4 /* PVAtari2600ControllerViewController.swift */,
 			);
 			name = Atari2600;
 			sourceTree = "<group>";
@@ -2735,12 +2728,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
-				B3FF744F202F7D67008C964A /* ShellScript */,
+				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
-				1A44C0AD1D0A1DE80018751A /* ShellScript */,
-				E3D030EE1D980D9F00045BE6 /* ShellScript */,
+				1A44C0AD1D0A1DE80018751A /* Set Build Number */,
+				E3D030EE1D980D9F00045BE6 /* Set Git SHA */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				B3E21D77203211BE009939D3 /* Embed App Extensions */,
 			);
@@ -2758,12 +2751,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
-				B3F9CDA320315CA8007F808D /* ShellScript */,
+				B3F9CDA320315CA8007F808D /* Create Version.h */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
-				1A44C0AE1D0A1E730018751A /* ShellScript */,
-				E32D548D1D99C82E00C41A52 /* ShellScript */,
+				1A44C0AE1D0A1E730018751A /* Set Build Number */,
+				E32D548D1D99C82E00C41A52 /* Set Git SHA */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
 				B3F9CDA72031FF4E007F808D /* Embed App Extensions */,
 			);
@@ -2884,7 +2877,7 @@
 				Base,
 			);
 			mainGroup = 1A3D408B17B2DCE4004DFFFC;
-			productRefGroup = 1A3D409517B2DCE4004DFFFC;
+			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -2902,7 +2895,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A3D40A217B2DCE4004DFFFC,
+				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				DFCD6EBF203762AF00719289 /* shaders in Resources */,
 				B349AF4B1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
@@ -2944,7 +2937,7 @@
 				1AD482391BA35A3800FDA50A /* vba-over.ini in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
-				1AD481C11BA350A400FDA50A,
+				1AD481C11BA350A400FDA50A /* Provenance.storyboard in Resources */,
 				DFCD6EC0203762AF00719289 /* shaders in Resources */,
 				B3BDEC941DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				B349AE3C1E9ABCF900ACD416 /* CHANGELOG in Resources */,
@@ -2979,7 +2972,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A44C0AD1D0A1DE80018751A /* ShellScript */ = {
+		1A44C0AD1D0A1DE80018751A /* Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2993,7 +2986,7 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
-		1A44C0AE1D0A1E730018751A /* ShellScript */ = {
+		1A44C0AE1D0A1E730018751A /* Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3007,7 +3000,7 @@
 			shellPath = /bin/sh;
 			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=`git rev-list --count HEAD`\n#/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
-		B3F9CDA320315CA8007F808D /* ShellScript */ = {
+		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3021,7 +3014,7 @@
 			shellPath = /bin/sh;
 			shellScript = "";
 		};
-		B3FF744F202F7D67008C964A /* ShellScript */ = {
+		B3FF744F202F7D67008C964A /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3035,7 +3028,7 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
-		E32D548D1D99C82E00C41A52 /* ShellScript */ = {
+		E32D548D1D99C82E00C41A52 /* Set Git SHA */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3049,7 +3042,7 @@
 			shellPath = /bin/bash;
 			shellScript = "revision=$(git rev-parse --short HEAD)\n#/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n# Use the built products dir so GIT doesn't want to constantly upload a changed Info.plist in the code directory - jm\n/usr/libexec/PlistBuddy -c \"Set :Revision $revision\" \"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"";
 		};
-		E3D030EE1D980D9F00045BE6 /* ShellScript */ = {
+		E3D030EE1D980D9F00045BE6 /* Set Git SHA */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3070,14 +3063,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A9FBE231ABD28DA004E778B /* PVGBAControllerViewController.swift in Sources */,
 				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
 				B349AEA31E9ABCF900ACD416 /* 7zOut.cpp in Sources */,
 				B349AEF51E9ABCF900ACD416 /* BranchMisc.cpp in Sources */,
 				B3B923AB202D2EAE00580FFC /* UITraitCollectionExtensions.swift in Sources */,
 				B349AEFF1E9ABCF900ACD416 /* CopyRegister.cpp in Sources */,
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
-				B3CB85C71E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A26EE341AD9FFBF004EA30B /* mztools.c in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B349AEFB1E9ABCF900ACD416 /* CodecExports.cpp in Sources */,
@@ -3087,7 +3078,6 @@
 				B349AE9F1E9ABCF900ACD416 /* 7zHeader.cpp in Sources */,
 				B349AE891E9ABCF900ACD416 /* XzCrc64Opt.c in Sources */,
 				B349AEDD1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
-				1AABE0D01ABE3E5900FF6AEF /* PVGBControllerViewController.swift in Sources */,
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */,
@@ -3108,13 +3098,12 @@
 				B349AEE51E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				B349AEE91E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
-				42E63AE917E12ECE00FE7098 /* PVSNESControllerViewController.swift in Sources */,
+				B3FF441B205F9C3F00E5A84B /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
-				B3B3B89D1DECF9D700602746 /* PVN64ControllerViewController.swift in Sources */,
 				B35BB7F6202F3CE500FCB513 /* RLMSupport.swift in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
-				B35469381DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
+				B3FF441F205F9C3F00E5A84B /* PVPokeMiniControllerViewController.swift in Sources */,
 				B349AF0D1E9ABCF900ACD416 /* LzmaRegister.cpp in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				B349AE611E9ABCF900ACD416 /* CpuArch.c in Sources */,
@@ -3129,7 +3118,7 @@
 				B349AE651E9ABCF900ACD416 /* LzFind.c in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B349AE3F1E9ABCF900ACD416 /* 7zAlloc.c in Sources */,
-				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.m in Sources */,
+				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */,
 				1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
 				B349AEF11E9ABCF900ACD416 /* BcjCoder.cpp in Sources */,
 				B349AEB71E9ABCF900ACD416 /* ItemNameUtils.cpp in Sources */,
@@ -3137,13 +3126,14 @@
 				B349AE491E9ABCF900ACD416 /* 7zCrcOpt.c in Sources */,
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.swift in Sources */,
 				B349AE431E9ABCF900ACD416 /* 7zBuf.c in Sources */,
+				B3FF441D205F9C3F00E5A84B /* PVPSXControllerViewController.swift in Sources */,
 				B349AF311E9ABCF900ACD416 /* NewHandler.cpp in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				B349AEB11E9ABCF900ACD416 /* DummyOutStream.cpp in Sources */,
+				B3FF4416205F9C3F00E5A84B /* PVAtari7800ControllerViewController.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B349AF0F1E9ABCF900ACD416 /* PpmdDecoder.cpp in Sources */,
 				B349AF591E9ABCFA00ACD416 /* LzmaSDKObjCError.mm in Sources */,
-				1A74171D1ABF231500F3CD3C /* PVNESControllerViewController.swift in Sources */,
 				B349AF331E9ABCF900ACD416 /* Sha256Reg.cpp in Sources */,
 				B349AEFD1E9ABCF900ACD416 /* CopyCoder.cpp in Sources */,
 				B349AEA71E9ABCF900ACD416 /* 7zRegister.cpp in Sources */,
@@ -3166,9 +3156,9 @@
 				B349AE6D1E9ABCF900ACD416 /* Lzma86Dec.c in Sources */,
 				B349AF071E9ABCF900ACD416 /* Lzma2Register.cpp in Sources */,
 				1AECF4AC1966D7A600F8704E /* OESQLiteDatabase.m in Sources */,
-				B35D26FF2033A32500F17D58 /* PVEmulatorViewController.swift in Sources */,
 				B349AEC51E9ABCF900ACD416 /* CreateCoder.cpp in Sources */,
 				B349AE851E9ABCF900ACD416 /* Xz.c in Sources */,
+				B3BCDA1D205F59B400EFBEDA /* PVN64ControllerViewController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
 				B349AF111E9ABCF900ACD416 /* PpmdEncoder.cpp in Sources */,
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
@@ -3176,6 +3166,7 @@
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B349AE9D1E9ABCF900ACD416 /* 7zHandlerOut.cpp in Sources */,
 				B349AF2B1E9ABCF900ACD416 /* MyString.cpp in Sources */,
+				B3FF441C205F9C3F00E5A84B /* PVPCEControllerViewController.swift in Sources */,
 				B349AE971E9ABCF900ACD416 /* 7zExtract.cpp in Sources */,
 				B349AECF1E9ABCF900ACD416 /* InBuffer.cpp in Sources */,
 				B349AE531E9ABCF900ACD416 /* AesOpt.c in Sources */,
@@ -3200,7 +3191,7 @@
 				B349AED51E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
-				AA9B6EDE1D70981000422E5F /* PVPSXControllerViewController.swift in Sources */,
+				B3FF4415205F9C3F00E5A84B /* PVAtari5200ControllerViewController.swift in Sources */,
 				B349AF151E9ABCF900ACD416 /* 7zAes.cpp in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				B349AEB51E9ABCF900ACD416 /* InStreamWithCRC.cpp in Sources */,
@@ -3214,7 +3205,6 @@
 				B349AEEF1E9ABCF900ACD416 /* Bcj2Register.cpp in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
 				B349AF271E9ABCF900ACD416 /* IntToString.cpp in Sources */,
-				B39578C71E6D4DC200854D7A /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */,
 				1AB9600317C572B400D3E392 /* PVSettingsModel.swift in Sources */,
 				B349AECB1E9ABCF900ACD416 /* FileStreams.cpp in Sources */,
@@ -3223,9 +3213,11 @@
 				B349AEAD1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.swift in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
+				B3FF4413205F94EF00E5A84B /* PV32XControllerViewController.swift in Sources */,
 				B349AF5B1E9ABCFA00ACD416 /* LzmaSDKObjCExtern.mm in Sources */,
 				B3F64ECF205CD1F100C273C7 /* JSButton.swift in Sources */,
 				B349AE871E9ABCF900ACD416 /* XzCrc64.c in Sources */,
+				B3FF4421205F9C3F00E5A84B /* PVWonderSwanControllerViewController.swift in Sources */,
 				B349AF531E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
 				B3BE967A2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
@@ -3233,13 +3225,12 @@
 				B349AE8F1E9ABCF900ACD416 /* XzIn.c in Sources */,
 				B349AF471E9ABCF900ACD416 /* PropVariant.cpp in Sources */,
 				E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */,
-				B328937D1E0B87960090B97A /* PVVBControllerViewController.swift in Sources */,
 				B349AEED1E9ABCF900ACD416 /* Bcj2Coder.cpp in Sources */,
 				B349AED91E9ABCF900ACD416 /* MethodProps.cpp in Sources */,
 				B3BE96902056025B00281880 /* PVSaveState.swift in Sources */,
 				B349AE711E9ABCF900ACD416 /* LzmaDec.c in Sources */,
 				B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */,
-				B36DE7CA1D6B80CA002EE3ED /* PVAtari7800ControllerViewController.swift in Sources */,
+				B3FF4422205F9C3F00E5A84B /* PVVBControllerViewController.swift in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AEE31E9ABCF900ACD416 /* StreamBinder.cpp in Sources */,
 				B349AE7D1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
@@ -3255,6 +3246,7 @@
 				B349AF3B1E9ABCF900ACD416 /* StringToInt.cpp in Sources */,
 				B349AF711E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */,
 				B349AF391E9ABCF900ACD416 /* StringConvert.cpp in Sources */,
+				B3FF4420205F9C3F00E5A84B /* PVSNESControllerViewController.swift in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
 				B349AF2F1E9ABCF900ACD416 /* MyWindows.cpp in Sources */,
 				B349AEBD1E9ABCF900ACD416 /* ParseProperties.cpp in Sources */,
@@ -3273,20 +3265,21 @@
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */,
+				B3FF4417205F9C3F00E5A84B /* PVLynxControllerViewController.swift in Sources */,
 				B349AF6D1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
 				B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */,
+				B3FF441E205F9C3F00E5A84B /* PVNESControllerViewController.swift in Sources */,
 				B349AE571E9ABCF900ACD416 /* Bcj2.c in Sources */,
 				B349AE5F1E9ABCF900ACD416 /* BraIA64.c in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
 				B349AE731E9ABCF900ACD416 /* LzmaEnc.c in Sources */,
 				B349AEC31E9ABCF900ACD416 /* SplitHandler.cpp in Sources */,
+				B3FF4418205F9C3F00E5A84B /* PVGBControllerViewController.swift in Sources */,
 				B349AEBB1E9ABCF900ACD416 /* OutStreamWithCRC.cpp in Sources */,
-				B32893731E0B250B0090B97A /* PVWonderSwanControllerViewController.swift in Sources */,
 				B349AEC11E9ABCF900ACD416 /* LzmaHandler.cpp in Sources */,
 				B349AE511E9ABCF900ACD416 /* Aes.c in Sources */,
 				B3995E52205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
-				B32893781E0B4EA30090B97A /* PVLynxControllerViewController.swift in Sources */,
 				B349AE791E9ABCF900ACD416 /* Ppmd7.c in Sources */,
 				B349AE4F1E9ABCF900ACD416 /* 7zStream.c in Sources */,
 				B349AF091E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
@@ -3301,12 +3294,12 @@
 				B349AE7F1E9ABCF900ACD416 /* Sha256.c in Sources */,
 				B349AE931E9ABCF900ACD416 /* 7zDecode.cpp in Sources */,
 				B349AEF31E9ABCF900ACD416 /* BcjRegister.cpp in Sources */,
+				B3FF4419205F9C3F00E5A84B /* PVGBAControllerViewController.swift in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
 				B349AF671E9ABCFA00ACD416 /* LzmaSDKObjCMutableItem.mm in Sources */,
 				B349AE831E9ABCF900ACD416 /* Threads.c in Sources */,
 				B349AF551E9ABCF900ACD416 /* LzmaSDKObjCBufferProcessor.mm in Sources */,
-				1ADB316517D9341600DB6043 /* PVGenesisControllerViewController.swift in Sources */,
-				B3DF87651D6A5A5300D216D4 /* PVStellaControllerViewController.swift in Sources */,
+				B3FF4414205F9AAF00E5A84B /* PVAtari2600ControllerViewController.swift in Sources */,
 				B349AF3F1E9ABCF900ACD416 /* UTFConvert.cpp in Sources */,
 				378F4A091B63D7CD0065FA39 /* GCDWebServerDataResponse.m in Sources */,
 				B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */,
@@ -3319,12 +3312,11 @@
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
 				B36D9DF520351C9600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B349AE8D1E9ABCF900ACD416 /* XzEnc.c in Sources */,
+				B3FF441A205F9C3F00E5A84B /* PVGenesisControllerViewController.swift in Sources */,
 				1A26EE331AD9FFBF004EA30B /* ioapi.c in Sources */,
-				B3D2E3911D6E8B3C0058544D /* PV32XControllerViewController.swift in Sources */,
 				B349AE951E9ABCF900ACD416 /* 7zEncode.cpp in Sources */,
 				B349AF431E9ABCF900ACD416 /* XzCrc64Reg.cpp in Sources */,
 				B3C0EE4A1EA853A600C6414C /* PVGameImporter.swift in Sources */,
-				B39578C21E6D2D8B00854D7A /* PVPCEControllerViewController.swift in Sources */,
 				B349AEEB1E9ABCF900ACD416 /* VirtThread.cpp in Sources */,
 				B349AF651E9ABCFA00ACD416 /* LzmaSDKObjCItem.mm in Sources */,
 				B349AE451E9ABCF900ACD416 /* 7zBuf2.c in Sources */,
@@ -3371,7 +3363,7 @@
 				B349AEBC1E9ABCF900ACD416 /* OutStreamWithCRC.cpp in Sources */,
 				B349AF201E9ABCF900ACD416 /* C_FileIO.cpp in Sources */,
 				B349AEC81E9ABCF900ACD416 /* CWrappers.cpp in Sources */,
-				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.m in Sources */,
+				1AD481E41BA3546400FDA50A /* PVEmulatorViewController.swift in Sources */,
 				B349AEAE1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B349AF481E9ABCF900ACD416 /* PropVariant.cpp in Sources */,
@@ -3458,7 +3450,6 @@
 				B349AF0E1E9ABCF900ACD416 /* LzmaRegister.cpp in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
-				B36CBFEE2039878F00728482 /* PVEmulatorViewController.swift in Sources */,
 				B349AF001E9ABCF900ACD416 /* CopyRegister.cpp in Sources */,
 				B349AE761E9ABCF900ACD416 /* LzmaLib.c in Sources */,
 				B349AF221E9ABCF900ACD416 /* CommandLineParser.cpp in Sources */,
@@ -3577,7 +3568,6 @@
 			files = (
 				1AD9AA3A1ACC988F00EC87A0 /* Provenance_Tests.m in Sources */,
 				1AD9AA431ACC98F500EC87A0 /* PVGameImporterTests.m in Sources */,
-				B3B3B89F1DECF9D700602746 /* PVN64ControllerViewController.swift in Sources */,
 				B32D8F7D1EA7F79900175FBF /* PVEmulatorConfigurationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

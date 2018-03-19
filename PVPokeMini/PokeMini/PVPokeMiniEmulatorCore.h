@@ -26,10 +26,8 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVPokeMini/PVPMSystemResponderClient.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 __attribute__((visibility("default")))
-@interface PVPokeMiniEmulatorCore : PVEmulatorCore <PVPMSystemResponderClient>
+@interface PVPokeMiniEmulatorCore : PVEmulatorCore <PVPokeMiniSystemResponderClient>
 @end
-
-extern PVPokeMiniEmulatorCore *current;

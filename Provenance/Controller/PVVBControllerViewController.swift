@@ -6,7 +6,7 @@
 //  Copyright © 2018 Joe Mattiello. All rights reserved.
 //
 
-import PVMednafen
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVVBButton {
@@ -19,55 +19,52 @@ fileprivate extension JSButton {
     }
 }
 
-class PVVBControllerViewController: PVControllerViewController<MednafenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVVBControllerViewController: PVControllerViewController<PVVirtualBoySystemResponderClient> {
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
             if title == "A" {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if title == "B" {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
         }
 
-        leftShoulderButton?.buttonTag = .L
-        rightShoulderButton?.buttonTag = .R
+        leftShoulderButton?.buttonTag = .l
+        rightShoulderButton?.buttonTag = .r
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let vbCore = emulatorCore
-        vbCore?.didRelease(PVVBButton.leftUp, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftDown, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftLeft, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftRight, forPlayer: 0)
+        emulatorCore.didRelease(.leftUp, forPlayer: 0)
+        emulatorCore.didRelease(.leftDown, forPlayer: 0)
+        emulatorCore.didRelease(.leftLeft, forPlayer: 0)
+        emulatorCore.didRelease(.leftRight, forPlayer: 0)
         switch direction {
             case .upLeft:
-                vbCore?.didPush(PVVBButton.leftUp, forPlayer: 0)
-                vbCore?.didPush(PVVBButton.leftLeft, forPlayer: 0)
+                emulatorCore.didPush(.leftUp, forPlayer: 0)
+                emulatorCore.didPush(.leftLeft, forPlayer: 0)
             case .up:
-                vbCore?.didPush(PVVBButton.leftUp, forPlayer: 0)
+                emulatorCore.didPush(.leftUp, forPlayer: 0)
             case .upRight:
-                vbCore?.didPush(PVVBButton.leftUp, forPlayer: 0)
-                vbCore?.didPush(PVVBButton.leftRight, forPlayer: 0)
+                emulatorCore.didPush(.leftUp, forPlayer: 0)
+                emulatorCore.didPush(.leftRight, forPlayer: 0)
             case .left:
-                vbCore?.didPush(PVVBButton.leftLeft, forPlayer: 0)
+                emulatorCore.didPush(.leftLeft, forPlayer: 0)
             case .right:
-                vbCore?.didPush(PVVBButton.leftRight, forPlayer: 0)
+                emulatorCore.didPush(.leftRight, forPlayer: 0)
             case .downLeft:
-                vbCore?.didPush(PVVBButton.leftDown, forPlayer: 0)
-                vbCore?.didPush(PVVBButton.leftLeft, forPlayer: 0)
+                emulatorCore.didPush(.leftDown, forPlayer: 0)
+                emulatorCore.didPush(.leftLeft, forPlayer: 0)
             case .down:
-                vbCore?.didPush(PVVBButton.leftDown, forPlayer: 0)
+                emulatorCore.didPush(.leftDown, forPlayer: 0)
             case .downRight:
-                vbCore?.didPush(PVVBButton.leftDown, forPlayer: 0)
-                vbCore?.didPush(PVVBButton.leftRight, forPlayer: 0)
+                emulatorCore.didPush(.leftDown, forPlayer: 0)
+                emulatorCore.didPush(.leftRight, forPlayer: 0)
             default:
                 break
         }
@@ -75,41 +72,34 @@ class PVVBControllerViewController: PVControllerViewController<MednafenGameCore>
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let vbCore = emulatorCore
-        vbCore?.didRelease(PVVBButton.leftUp, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftDown, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftLeft, forPlayer: 0)
-        vbCore?.didRelease(PVVBButton.leftRight, forPlayer: 0)
+        emulatorCore.didRelease(.leftUp, forPlayer: 0)
+        emulatorCore.didRelease(.leftDown, forPlayer: 0)
+        emulatorCore.didRelease(.leftLeft, forPlayer: 0)
+        emulatorCore.didRelease(.leftRight, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let vbCore = emulatorCore
-        vbCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let vbCore = emulatorCore
-        vbCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let vbCore = emulatorCore
-        vbCore?.didPush(PVVBButton.start, forPlayer: UInt(player))
+        emulatorCore.didPush(.start, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let vbCore = emulatorCore
-        vbCore?.didRelease(PVVBButton.start, forPlayer: UInt(player))
+        emulatorCore.didRelease(.start, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let vbCore = emulatorCore
-        vbCore?.didPush(PVVBButton.select, forPlayer: UInt(player))
+        emulatorCore.didPush(.select, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let vbCore = emulatorCore
-        vbCore?.didRelease(PVVBButton.select, forPlayer: UInt(player))
+        emulatorCore.didRelease(.select, forPlayer: player)
     }
 }

@@ -7,7 +7,7 @@
 //  Copyright © 2017 James Addyman. All rights reserved.
 //
 
-import PVMednafen
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVNGPButton {
@@ -20,19 +20,18 @@ fileprivate extension JSButton {
     }
 }
 
-class PVNeoGeoPocketControllerViewController: PVControllerViewController<MednafenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVNeoGeoPocketControllerViewController: PVControllerViewController<PVNeoGeoPocketSystemResponderClient> {
+ 
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel?.text else {
                 return
             }
             if text == "A" {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if text == "B" {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
         }
 
@@ -41,32 +40,31 @@ class PVNeoGeoPocketControllerViewController: PVControllerViewController<Mednafe
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let ngCore = emulatorCore
-        ngCore?.didRelease(PVNGPButton.up, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.down, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.left, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                ngCore?.didPush(PVNGPButton.up, forPlayer: 0)
-                ngCore?.didPush(PVNGPButton.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                ngCore?.didPush(PVNGPButton.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                ngCore?.didPush(PVNGPButton.up, forPlayer: 0)
-                ngCore?.didPush(PVNGPButton.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                ngCore?.didPush(PVNGPButton.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                ngCore?.didPush(PVNGPButton.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                ngCore?.didPush(PVNGPButton.down, forPlayer: 0)
-                ngCore?.didPush(PVNGPButton.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                ngCore?.didPush(PVNGPButton.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                ngCore?.didPush(PVNGPButton.down, forPlayer: 0)
-                ngCore?.didPush(PVNGPButton.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -74,41 +72,34 @@ class PVNeoGeoPocketControllerViewController: PVControllerViewController<Mednafe
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let ngCore = emulatorCore
-        ngCore?.didRelease(PVNGPButton.up, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.down, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.left, forPlayer: 0)
-        ngCore?.didRelease(PVNGPButton.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let ngCore = emulatorCore
-        ngCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let ngCore = emulatorCore
-        ngCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let ngCore = emulatorCore
-        ngCore?.didPush(PVNGPButton.option, forPlayer: UInt(player))
+        emulatorCore.didPush(.option, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let ngCore = emulatorCore
-        ngCore?.didRelease(PVNGPButton.option, forPlayer: UInt(player))
+        emulatorCore.didRelease(.option, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let ngCore = emulatorCore
-        ngCore?.didPush(PVNGPButton.option, forPlayer: UInt(player))
+        emulatorCore.didPush(.option, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let ngCore = emulatorCore
-        ngCore?.didRelease(PVNGPButton.option, forPlayer: UInt(player))
+        emulatorCore.didRelease(.option, forPlayer: player)
     }
 }

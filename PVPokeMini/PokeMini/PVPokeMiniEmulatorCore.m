@@ -32,7 +32,6 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 #import <AudioToolbox/AudioToolbox.h>
-#import "PVPMSystemResponderClient.h"
 #import "PokeMini.h"
 #import "Hardware.h"
 #import "Joystick.h"

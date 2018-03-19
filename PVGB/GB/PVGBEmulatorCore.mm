@@ -250,12 +250,12 @@ public:
 # pragma mark - Input
 
 const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gambatte::InputGetter::LEFT, gambatte::InputGetter::RIGHT, gambatte::InputGetter::A, gambatte::InputGetter::B, gambatte::InputGetter::START, gambatte::InputGetter::SELECT};
-- (oneway void)pushGBButton:(PVGBButton)button
+- (oneway void)didPushGBButton:(PVGBButton)button
 {
     gb_pad[0] |= GBMap[button];
 }
 
-- (oneway void)releaseGBButton:(PVGBButton)button
+- (oneway void)didReleaseGBButton:(PVGBButton)button
 {
     gb_pad[0] &= ~GBMap[button];
 }

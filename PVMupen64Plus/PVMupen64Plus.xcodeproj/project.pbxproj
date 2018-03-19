@@ -226,7 +226,6 @@
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B3B3B8571DECE9D800602746 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8561DECE9D800602746 /* PVSupport.framework */; };
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3B3B85A1DECEA0200602746 /* PVN64SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8A31DED130B00602746 /* emulate_speaker_via_audio_plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C103D01C72DDA000DD066C /* emulate_speaker_via_audio_plugin.c */; };
@@ -308,7 +307,6 @@
 		B3B3B8FE1DED130B00602746 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103151C72AA3800DD066C /* Foundation.framework */; };
 		B3B3B9001DED130B00602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B9021DED130B00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3B3B9031DED130B00602746 /* PVN64SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B90C1DED137100602746 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
 		B3B3B90D1DED137100602746 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
 		B3B3B90E1DED137100602746 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
@@ -1598,9 +1596,6 @@
 		B3C103111C72AA2B00DD066C /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C103131C72AA3200DD066C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3C103151C72AA3800DD066C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B3C103171C72AA8F00DD066C /* PVN64SystemResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVN64SystemResponder.h; sourceTree = "<group>"; };
-		B3C103181C72AA8F00DD066C /* PVN64SystemResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVN64SystemResponder.m; sourceTree = "<group>"; };
-		B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVN64SystemResponderClient.h; sourceTree = "<group>"; };
 		B3C1031E1C72C9BA00DD066C /* SDL_opengles2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_opengles2.h; sourceTree = "<group>"; };
 		B3C103201C72CFBD00DD066C /* OGLES2FragmentShaders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OGLES2FragmentShaders.cpp; sourceTree = "<group>"; };
 		B3C103211C72CFBD00DD066C /* OGLES2FragmentShaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OGLES2FragmentShaders.h; sourceTree = "<group>"; };
@@ -2345,9 +2340,6 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B3C103171C72AA8F00DD066C /* PVN64SystemResponder.h */,
-				B3C103181C72AA8F00DD066C /* PVN64SystemResponder.m */,
-				B3C103191C72AA8F00DD066C /* PVN64SystemResponderClient.h */,
 				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
 				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
 			);
@@ -4666,7 +4658,6 @@
 			files = (
 				B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */,
 				B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */,
-				B3B3B85A1DECEA0200602746 /* PVN64SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4694,7 +4685,6 @@
 			files = (
 				B3B3B9001DED130B00602746 /* MupenGameCore.h in Headers */,
 				B3B3B9021DED130B00602746 /* PVMupen64Plus.h in Headers */,
-				B3B3B9031DED130B00602746 /* PVN64SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

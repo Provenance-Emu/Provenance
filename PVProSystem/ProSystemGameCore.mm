@@ -26,7 +26,6 @@
  */
 
 #import "ProSystemGameCore.h"
-#import "OE7800SystemResponderClient.h"
 
 #import <PVSupport/OERingBuffer.h>
 #import <OpenGLES/ES3/gl.h>
@@ -44,7 +43,7 @@
 #define VIDEO_WIDTH     320
 #define VIDEO_HEIGHT    292
 
-@interface PVProSystemGameCore () <OE7800SystemResponderClient> {
+@interface PVProSystemGameCore () <PV7800SystemResponderClient> {
     uint32_t *_videoBuffer;
     uint32_t _displayPalette[256];
     uint8_t  *_soundBuffer;
@@ -423,31 +422,31 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)didPush7800Button:(OE7800Button)button forPlayer:(NSUInteger)player {
+- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSUInteger)player {
     int playerShift = player == 0 ? 0 : 6;
 
     switch(button)
     {
             // Controller buttons P1 + P2
-        case OE7800ButtonUp:
+        case PV7800ButtonUp:
 //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
 //            break;
-        case OE7800ButtonDown:
-        case OE7800ButtonLeft:
-        case OE7800ButtonRight:
-        case OE7800ButtonFire1:
-        case OE7800ButtonFire2:
+        case PV7800ButtonDown:
+        case PV7800ButtonLeft:
+        case PV7800ButtonRight:
+        case PV7800ButtonFire1:
+        case PV7800ButtonFire2:
             _inputState[ProSystemMap[button + playerShift]] = 1;
             break;
             // Console buttons
-        case OE7800ButtonSelect:
-        case OE7800ButtonPause:
-        case OE7800ButtonReset:
+        case PV7800ButtonSelect:
+        case PV7800ButtonPause:
+        case PV7800ButtonReset:
             _inputState[ProSystemMap[button + 6]] = 1;
             break;
             // Difficulty switches
-        case OE7800ButtonLeftDiff:
-        case OE7800ButtonRightDiff:
+        case PV7800ButtonLeftDiff:
+        case PV7800ButtonRightDiff:
             _inputState[ProSystemMap[button + 6]] ^= (1 << 0);
             break;
 
@@ -456,26 +455,26 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)didRelease7800Button:(OE7800Button)button forPlayer:(NSUInteger)player {
+- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSUInteger)player {
     int playerShift = player == 0 ? 0 : 6;
 
     switch(button)
     {
             // Controller buttons P1 + P2
-        case OE7800ButtonUp:
+        case PV7800ButtonUp:
 //            _inputState[ProSystemMap[button + playerShift]] ^= 1;
 //            break;
-        case OE7800ButtonDown:
-        case OE7800ButtonLeft:
-        case OE7800ButtonRight:
-        case OE7800ButtonFire1:
-        case OE7800ButtonFire2:
+        case PV7800ButtonDown:
+        case PV7800ButtonLeft:
+        case PV7800ButtonRight:
+        case PV7800ButtonFire1:
+        case PV7800ButtonFire2:
             _inputState[ProSystemMap[button + playerShift]] = 0;
             break;
             // Console buttons
-        case OE7800ButtonSelect:
-        case OE7800ButtonPause:
-        case OE7800ButtonReset:
+        case PV7800ButtonSelect:
+        case PV7800ButtonPause:
+        case PV7800ButtonReset:
             _inputState[ProSystemMap[button + 6]] = 0;
             break;
 

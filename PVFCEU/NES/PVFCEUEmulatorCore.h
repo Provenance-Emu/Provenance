@@ -26,25 +26,16 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVSupport/PVSupport-Swift.h>
 
-typedef NS_ENUM(NSInteger, PVNESButton)
-{
-    PVNESButtonUp,
-    PVNESButtonDown,
-    PVNESButtonLeft,
-    PVNESButtonRight,
-    PVNESButtonA,
-    PVNESButtonB,
-    PVNESButtonStart,
-    PVNESButtonSelect,
-    PVNESButtonCount
-};
 
 @interface PVFCEUEmulatorCore : PVEmulatorCore
 
-- (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
-- (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
+@end
 
+@interface PVFCEUEmulatorCore() <PVNESSystemResponderClient>
+- (oneway void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
+- (oneway void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
 @end
 
 // For swift

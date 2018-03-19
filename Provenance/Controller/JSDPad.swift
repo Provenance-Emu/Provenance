@@ -20,7 +20,6 @@ enum JSDPadDirection : Int {
     case downRight
 }
 
-
 protocol JSDPadDelegate : class {
     func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection)
     func dPadDidReleaseDirection(_ dPad: JSDPad)

@@ -93,8 +93,6 @@
 		B3CB85B61E9BF19B009155A6 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85B71E9BF19C009155A6 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85B81E9BF9DB009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3CB85BC1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3CB85BD1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */; };
 		B3CB85CC1E9C1BB9009155A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
@@ -186,7 +184,6 @@
 		B3CB85B01E9BF185009155A6 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3CB85B21E9BF189009155A6 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85B41E9BF18D009155A6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVPMSystemResponderClient.h; sourceTree = "<group>"; };
 		B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
@@ -239,7 +236,6 @@
 		081A458E1B955FA800565444 /* PokeMini */ = {
 			isa = PBXGroup;
 			children = (
-				B3CB85BB1E9BFABC009155A6 /* PVPMSystemResponderClient.h */,
 				081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */,
 				081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */,
 				081A46181B9565F800565444 /* freebios */,
@@ -378,7 +374,6 @@
 			files = (
 				B3CB854D1E9BECBF009155A6 /* PVPokeMini.h in Headers */,
 				B3CB85B61E9BF19B009155A6 /* PVPokeMiniEmulatorCore.h in Headers */,
-				B3CB85BC1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +383,6 @@
 			files = (
 				B3CB85B81E9BF9DB009155A6 /* PVPokeMini.h in Headers */,
 				B3CB85B71E9BF19C009155A6 /* PVPokeMiniEmulatorCore.h in Headers */,
-				B3CB85BD1E9BFABC009155A6 /* PVPMSystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

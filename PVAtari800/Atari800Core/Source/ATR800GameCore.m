@@ -31,9 +31,6 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#import "PVA8SystemResponderClient.h"
-#import "PV5200SystemResponderClient.h"
-
 // ataria800 project includes
 #include "afile.h"
 #include "akey.h"

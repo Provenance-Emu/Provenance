@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-@objcMembers public class PVCore : Object {
+@objcMembers public class PVCore : Object {    
     dynamic var identifier : String = ""
     dynamic var principleClass : String = ""
     dynamic var supportedSystems = List<PVSystem>()

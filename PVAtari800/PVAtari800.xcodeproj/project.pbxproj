@@ -64,8 +64,6 @@
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE7871D6AB45B002EE3ED /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7861D6AB45B002EE3ED /* PVSupport.framework */; };
-		B36DE78D1D6AB493002EE3ED /* PVA8SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78A1D6AB493002EE3ED /* PVA8SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B36DE7981D6ABA87002EE3ED /* PV5200SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7971D6ABA7D002EE3ED /* PV5200SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B3D73CF31E9EAF1C0023925B /* rtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 0269540F143177DF003A07D4 /* rtime.c */; };
 		B3D73CF41E9EAF1C0023925B /* ide.c in Sources */ = {isa = PBXBuildFile; fileRef = 02695425143179E9003A07D4 /* ide.c */; };
@@ -117,8 +115,6 @@
 		B3D73D241E9EAF1C0023925B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B3D73D261E9EAF1C0023925B /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D271E9EAF1C0023925B /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269544614317D34003A07D4 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3D73D281E9EAF1C0023925B /* PV5200SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7971D6ABA7D002EE3ED /* PV5200SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3D73D291E9EAF1C0023925B /* PVA8SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE78A1D6AB493002EE3ED /* PVA8SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D2B1E9EAF1C0023925B /* jakub.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E467198C11A10075135C /* jakub.act */; };
 		B3D73D2C1E9EAF1C0023925B /* default.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E465198C11A10075135C /* default.act */; };
 		B3D73D2D1E9EAF1C0023925B /* Real.act in Resources */ = {isa = PBXBuildFile; fileRef = 9491E468198C11A10075135C /* Real.act */; };
@@ -246,12 +242,6 @@
 		B36DE7821D6AB43A002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B36DE7841D6AB44D002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B36DE7861D6AB45B002EE3ED /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
-		B36DE7881D6AB493002EE3ED /* PVA8SystemResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVA8SystemResponder.h; path = Source/PVA8SystemResponder.h; sourceTree = "<group>"; };
-		B36DE7891D6AB493002EE3ED /* PVA8SystemResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVA8SystemResponder.m; path = Source/PVA8SystemResponder.m; sourceTree = "<group>"; };
-		B36DE78A1D6AB493002EE3ED /* PVA8SystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVA8SystemResponderClient.h; path = Source/PVA8SystemResponderClient.h; sourceTree = "<group>"; };
-		B36DE7951D6ABA7D002EE3ED /* PV5200SystemResponder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PV5200SystemResponder.h; path = Source/PV5200SystemResponder.h; sourceTree = "<group>"; };
-		B36DE7961D6ABA7D002EE3ED /* PV5200SystemResponder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PV5200SystemResponder.m; path = Source/PV5200SystemResponder.m; sourceTree = "<group>"; };
-		B36DE7971D6ABA7D002EE3ED /* PV5200SystemResponderClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PV5200SystemResponderClient.h; path = Source/PV5200SystemResponderClient.h; sourceTree = "<group>"; };
 		B36DE7991D6AD049002EE3ED /* libedit.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libedit.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libedit.tbd; sourceTree = DEVELOPER_DIR; };
 		B3D73D331E9EAF1C0023925B /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D73D381E9EAF820023925B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
@@ -457,12 +447,6 @@
 				0269544514317B62003A07D4 /* platform.h */,
 				0269544614317D34003A07D4 /* ATR800GameCore.h */,
 				0269544714317D34003A07D4 /* ATR800GameCore.m */,
-				B36DE7881D6AB493002EE3ED /* PVA8SystemResponder.h */,
-				B36DE7891D6AB493002EE3ED /* PVA8SystemResponder.m */,
-				B36DE78A1D6AB493002EE3ED /* PVA8SystemResponderClient.h */,
-				B36DE7951D6ABA7D002EE3ED /* PV5200SystemResponder.h */,
-				B36DE7961D6ABA7D002EE3ED /* PV5200SystemResponder.m */,
-				B36DE7971D6ABA7D002EE3ED /* PV5200SystemResponderClient.h */,
 			);
 			name = Classes;
 			path = Atari800Core;
@@ -500,8 +484,6 @@
 			files = (
 				B36DE74B1D6AB19C002EE3ED /* PVAtari800.h in Headers */,
 				B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */,
-				B36DE7981D6ABA87002EE3ED /* PV5200SystemResponderClient.h in Headers */,
-				B36DE78D1D6AB493002EE3ED /* PVA8SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,8 +493,6 @@
 			files = (
 				B3D73D261E9EAF1C0023925B /* PVAtari800.h in Headers */,
 				B3D73D271E9EAF1C0023925B /* ATR800GameCore.h in Headers */,
-				B3D73D281E9EAF1C0023925B /* PV5200SystemResponderClient.h in Headers */,
-				B3D73D291E9EAF1C0023925B /* PVA8SystemResponderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

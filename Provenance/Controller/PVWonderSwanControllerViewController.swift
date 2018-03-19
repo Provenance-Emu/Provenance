@@ -7,7 +7,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-import PVMednafen
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVWSButton {
@@ -20,90 +20,87 @@ fileprivate extension JSButton {
     }
 }
 
-class PVWonderSwanControllerViewController: PVControllerViewController<MednafenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderSwanSystemResponderClient> {
+ 
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
             if title == "A" {
-                button.buttonTag = PVWSButton.A
+                button.buttonTag = .a
             }
             else if title == "B" {
-                button.buttonTag = PVWSButton.B
+                button.buttonTag = .b
             }
         }
-        
-        selectButton?.buttonTag = PVWSButton.sound
-        startButton?.buttonTag = PVWSButton.start
+        selectButton?.buttonTag = .sound
+        startButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let wsCore = emulatorCore
         /*
-             PVWSButton.X1 == Up
-             PVWSButton.X2 == Right
-             PVWSButton.X3 == Down
-             PVWSButton.X4 == Left
+             .x1 == Up
+             .x2 == Right
+             .x3 == Down
+             .x4 == Left
              */
         if dPad == self.dPad {
-            wsCore?.didRelease(PVWSButton.X1, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X2, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X3, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X4, forPlayer: 0)
+            emulatorCore.didRelease(.x1, forPlayer: 0)
+            emulatorCore.didRelease(.x2, forPlayer: 0)
+            emulatorCore.didRelease(.x3, forPlayer: 0)
+            emulatorCore.didRelease(.x4, forPlayer: 0)
             switch direction {
                 case .upLeft:
-                    wsCore?.didPush(PVWSButton.X1, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.X4, forPlayer: 0)
+                    emulatorCore.didPush(.x1, forPlayer: 0)
+                    emulatorCore.didPush(.x4, forPlayer: 0)
                 case .up:
-                    wsCore?.didPush(PVWSButton.X1, forPlayer: 0)
+                    emulatorCore.didPush(.x1, forPlayer: 0)
                 case .upRight:
-                    wsCore?.didPush(PVWSButton.X1, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.X2, forPlayer: 0)
+                    emulatorCore.didPush(.x1, forPlayer: 0)
+                    emulatorCore.didPush(.x2, forPlayer: 0)
                 case .left:
-                    wsCore?.didPush(PVWSButton.X4, forPlayer: 0)
+                    emulatorCore.didPush(.x4, forPlayer: 0)
                 case .right:
-                    wsCore?.didPush(PVWSButton.X2, forPlayer: 0)
+                    emulatorCore.didPush(.x2, forPlayer: 0)
                 case .downLeft:
-                    wsCore?.didPush(PVWSButton.X3, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.X4, forPlayer: 0)
+                    emulatorCore.didPush(.x3, forPlayer: 0)
+                    emulatorCore.didPush(.x4, forPlayer: 0)
                 case .down:
-                    wsCore?.didPush(PVWSButton.X3, forPlayer: 0)
+                    emulatorCore.didPush(.x3, forPlayer: 0)
                 case .downRight:
-                    wsCore?.didPush(PVWSButton.X3, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.X2, forPlayer: 0)
+                    emulatorCore.didPush(.x3, forPlayer: 0)
+                    emulatorCore.didPush(.x2, forPlayer: 0)
                 default:
                     break
             }
         }
         else {
-            wsCore?.didRelease(PVWSButton.Y1, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y2, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y3, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y4, forPlayer: 0)
+            emulatorCore.didRelease(.y1, forPlayer: 0)
+            emulatorCore.didRelease(.y2, forPlayer: 0)
+            emulatorCore.didRelease(.y3, forPlayer: 0)
+            emulatorCore.didRelease(.y4, forPlayer: 0)
             switch direction {
                 case .upLeft:
-                    wsCore?.didPush(PVWSButton.Y1, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.Y4, forPlayer: 0)
+                    emulatorCore.didPush(.y1, forPlayer: 0)
+                    emulatorCore.didPush(.y4, forPlayer: 0)
                 case .up:
-                    wsCore?.didPush(PVWSButton.Y1, forPlayer: 0)
+                    emulatorCore.didPush(.y1, forPlayer: 0)
                 case .upRight:
-                    wsCore?.didPush(PVWSButton.Y1, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.Y2, forPlayer: 0)
+                    emulatorCore.didPush(.y1, forPlayer: 0)
+                    emulatorCore.didPush(.y2, forPlayer: 0)
                 case .left:
-                    wsCore?.didPush(PVWSButton.Y4, forPlayer: 0)
+                    emulatorCore.didPush(.y4, forPlayer: 0)
                 case .right:
-                    wsCore?.didPush(PVWSButton.Y2, forPlayer: 0)
+                    emulatorCore.didPush(.y2, forPlayer: 0)
                 case .downLeft:
-                    wsCore?.didPush(PVWSButton.Y3, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.Y4, forPlayer: 0)
+                    emulatorCore.didPush(.y3, forPlayer: 0)
+                    emulatorCore.didPush(.y4, forPlayer: 0)
                 case .down:
-                    wsCore?.didPush(PVWSButton.Y3, forPlayer: 0)
+                    emulatorCore.didPush(.y3, forPlayer: 0)
                 case .downRight:
-                    wsCore?.didPush(PVWSButton.Y3, forPlayer: 0)
-                    wsCore?.didPush(PVWSButton.Y2, forPlayer: 0)
+                    emulatorCore.didPush(.y3, forPlayer: 0)
+                    emulatorCore.didPush(.y2, forPlayer: 0)
                 default:
                     break
             }
@@ -112,49 +109,42 @@ class PVWonderSwanControllerViewController: PVControllerViewController<MednafenG
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let wsCore = emulatorCore
         if dPad == self.dPad {
-            wsCore?.didRelease(PVWSButton.X1, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X2, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X3, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.X4, forPlayer: 0)
+            emulatorCore.didRelease(.x1, forPlayer: 0)
+            emulatorCore.didRelease(.x2, forPlayer: 0)
+            emulatorCore.didRelease(.x3, forPlayer: 0)
+            emulatorCore.didRelease(.x4, forPlayer: 0)
         }
         else {
-            wsCore?.didRelease(PVWSButton.Y1, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y2, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y3, forPlayer: 0)
-            wsCore?.didRelease(PVWSButton.Y4, forPlayer: 0)
+            emulatorCore.didRelease(.y1, forPlayer: 0)
+            emulatorCore.didRelease(.y2, forPlayer: 0)
+            emulatorCore.didRelease(.y3, forPlayer: 0)
+            emulatorCore.didRelease(.y4, forPlayer: 0)
         }
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let wsCore = emulatorCore
-        wsCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let wsCore = emulatorCore
-        wsCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let wsCore = emulatorCore
-        wsCore?.didPush(PVWSButton.start, forPlayer: UInt(player))
+        emulatorCore.didPush(.start, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let wsCore = emulatorCore
-        wsCore?.didRelease(PVWSButton.start, forPlayer: UInt(player))
+        emulatorCore.didRelease(.start, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let wsCore = emulatorCore
-        wsCore?.didPush(PVWSButton.sound, forPlayer: UInt(player))
+        emulatorCore.didPush(.sound, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let wsCore = emulatorCore
-        wsCore?.didRelease(PVWSButton.sound, forPlayer: UInt(player))
+        emulatorCore.didRelease(.sound, forPlayer: player)
     }
 }

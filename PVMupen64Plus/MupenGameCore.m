@@ -45,7 +45,7 @@
 #import "memory.h"
 //#import "mupen64plus-core/src/main/main.h"
 #import <dispatch/dispatch.h>
-#import <PVSupport/OERingBuffer.h>
+#import <PVSupport/PVSupport.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
@@ -62,7 +62,7 @@ NSString *MupenControlNames[] = {
 
 #define N64_ANALOG_MAX 80
 
-@interface MupenGameCore () <OEN64SystemResponderClient, GLKViewDelegate>
+@interface MupenGameCore () <PVN64SystemResponderClient, GLKViewDelegate>
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
 
 @end
@@ -205,20 +205,20 @@ static void MupenGetKeys(int Control, BUTTONS *Keys)
     
     [current pollControllers];
 
-    Keys->R_DPAD = current->padData[Control][OEN64ButtonDPadRight];
-    Keys->L_DPAD = current->padData[Control][OEN64ButtonDPadLeft];
-    Keys->D_DPAD = current->padData[Control][OEN64ButtonDPadDown];
-    Keys->U_DPAD = current->padData[Control][OEN64ButtonDPadUp];
-    Keys->START_BUTTON = current->padData[Control][OEN64ButtonStart];
-    Keys->Z_TRIG = current->padData[Control][OEN64ButtonZ];
-    Keys->B_BUTTON = current->padData[Control][OEN64ButtonB];
-    Keys->A_BUTTON = current->padData[Control][OEN64ButtonA];
-    Keys->R_CBUTTON = current->padData[Control][OEN64ButtonCRight];
-    Keys->L_CBUTTON = current->padData[Control][OEN64ButtonCLeft];
-    Keys->D_CBUTTON = current->padData[Control][OEN64ButtonCDown];
-    Keys->U_CBUTTON = current->padData[Control][OEN64ButtonCUp];
-    Keys->R_TRIG = current->padData[Control][OEN64ButtonR];
-    Keys->L_TRIG = current->padData[Control][OEN64ButtonL];
+    Keys->R_DPAD = current->padData[Control][PVN64ButtonDPadRight];
+    Keys->L_DPAD = current->padData[Control][PVN64ButtonDPadLeft];
+    Keys->D_DPAD = current->padData[Control][PVN64ButtonDPadDown];
+    Keys->U_DPAD = current->padData[Control][PVN64ButtonDPadUp];
+    Keys->START_BUTTON = current->padData[Control][PVN64ButtonStart];
+    Keys->Z_TRIG = current->padData[Control][PVN64ButtonZ];
+    Keys->B_BUTTON = current->padData[Control][PVN64ButtonB];
+    Keys->A_BUTTON = current->padData[Control][PVN64ButtonA];
+    Keys->R_CBUTTON = current->padData[Control][PVN64ButtonCRight];
+    Keys->L_CBUTTON = current->padData[Control][PVN64ButtonCLeft];
+    Keys->D_CBUTTON = current->padData[Control][PVN64ButtonCDown];
+    Keys->U_CBUTTON = current->padData[Control][PVN64ButtonCUp];
+    Keys->R_TRIG = current->padData[Control][PVN64ButtonR];
+    Keys->L_TRIG = current->padData[Control][PVN64ButtonL];
     Keys->X_AXIS = current->xAxis[Control];
     Keys->Y_AXIS = current->yAxis[Control];
 }
@@ -258,25 +258,25 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
             yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
             
-            padData[playerIndex][OEN64ButtonDPadUp] = dpad.up.isPressed;
-            padData[playerIndex][OEN64ButtonDPadDown] = dpad.down.isPressed;
-            padData[playerIndex][OEN64ButtonDPadLeft] = dpad.left.isPressed;
-            padData[playerIndex][OEN64ButtonDPadRight] = dpad.right.isPressed;
+            padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
+            padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
+            padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
+            padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
             
-            padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
-            padData[playerIndex][OEN64ButtonStart] = gamepad.rightTrigger.isPressed;
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
             
-            padData[playerIndex][OEN64ButtonL] = gamepad.leftShoulder.isPressed;
-            padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
-            padData[playerIndex][OEN64ButtonZ] = gamepad.leftTrigger.isPressed;
+            padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
+            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+            padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
             
             float rightJoystickDeadZone = 0.45;
             
-            padData[playerIndex][OEN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
-            padData[playerIndex][OEN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
-            padData[playerIndex][OEN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
-            padData[playerIndex][OEN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.rightThumbstick.down.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.rightThumbstick.left.value > rightJoystickDeadZone;
+            padData[playerIndex][PVN64ButtonCRight] = gamepad.rightThumbstick.right.value > rightJoystickDeadZone;
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -284,14 +284,14 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
             yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
             
-            padData[playerIndex][OEN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][OEN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
             
-            padData[playerIndex][OEN64ButtonCLeft] = gamepad.buttonY.isPressed;
-            padData[playerIndex][OEN64ButtonCDown] = gamepad.buttonB.isPressed;
+            padData[playerIndex][PVN64ButtonCLeft] = gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonCDown] = gamepad.buttonB.isPressed;
             
-            padData[playerIndex][OEN64ButtonZ] = gamepad.leftShoulder.isPressed;
-            padData[playerIndex][OEN64ButtonR] = gamepad.rightShoulder.isPressed;
+            padData[playerIndex][PVN64ButtonZ] = gamepad.leftShoulder.isPressed;
+            padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
         }
 #if TARGET_OS_TV
         else if ([controller microGamepad]) {
@@ -301,8 +301,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             xAxis[playerIndex] = (dpad.left.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.right.value > 0.5 ? N64_ANALOG_MAX : 0);
             yAxis[playerIndex] = (dpad.down.value > 0.5 ? -N64_ANALOG_MAX : 0) + (dpad.up.value > 0.5 ? N64_ANALOG_MAX : 0);
             
-            padData[playerIndex][OEN64ButtonB] = gamepad.buttonA.isPressed;
-            padData[playerIndex][OEN64ButtonA] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonA.isPressed;
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonX.isPressed;
         }
 #endif
     }
@@ -977,20 +977,20 @@ static void MupenSetAudioSpeed(int percent)
     return sampleRate;
 }
 
-- (oneway void)didMoveN64JoystickDirection:(OEN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
+- (oneway void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
 {
     switch (button)
     {
-        case OEN64ButtonAnalogUp:
+        case PVN64ButtonAnalogUp:
             yAxis[player] = value * N64_ANALOG_MAX;
             break;
-        case OEN64ButtonAnalogDown:
+        case PVN64ButtonAnalogDown:
             yAxis[player] = value * -N64_ANALOG_MAX;
             break;
-        case OEN64ButtonAnalogLeft:
+        case PVN64ButtonAnalogLeft:
             xAxis[player] = value * -N64_ANALOG_MAX;
             break;
-        case OEN64ButtonAnalogRight:
+        case PVN64ButtonAnalogRight:
             xAxis[player] = value * N64_ANALOG_MAX;
             break;
         default:
@@ -998,12 +998,12 @@ static void MupenSetAudioSpeed(int percent)
     }
 }
 
-- (oneway void)didPushN64Button:(OEN64Button)button forPlayer:(NSUInteger)player
+- (oneway void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
 {
     padData[player][button] = 1;
 }
 
-- (oneway void)didReleaseN64Button:(OEN64Button)button forPlayer:(NSUInteger)player
+- (oneway void)didReleaseN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
 {
     padData[player][button] = 0;
 }

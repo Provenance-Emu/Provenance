@@ -32,7 +32,6 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 
-#import "OE2600SystemResponderClient.h"
 #include "libretro.h"
 
 // Size and screen buffer consants

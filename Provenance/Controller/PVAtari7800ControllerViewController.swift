@@ -14,12 +14,12 @@
 //  Copyright (c) 2016 Joe Mattiello. All rights reserved.
 //
 
-import ProSystem
+import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : OE7800Button {
+    var buttonTag : PV7800Button {
         get {
-            return OE7800Button(rawValue: tag)!
+            return PV7800Button(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -27,10 +27,9 @@ fileprivate extension JSButton {
     }
 }
 
-class PVAtari7800ControllerViewController: PVControllerViewController<PVProSystemGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVAtari7800ControllerViewController: PVControllerViewController<PV7800SystemResponderClient> {
+ 
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
@@ -57,32 +56,31 @@ class PVAtari7800ControllerViewController: PVControllerViewController<PVProSyste
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didRelease7800Button(.up, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.down, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.left, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                proSystemCore?.didPush7800Button(.up, forPlayer: 0)
-                proSystemCore?.didPush7800Button(.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                proSystemCore?.didPush7800Button(.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                proSystemCore?.didPush7800Button(.up, forPlayer: 0)
-                proSystemCore?.didPush7800Button(.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                proSystemCore?.didPush7800Button(.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                proSystemCore?.didPush7800Button(.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                proSystemCore?.didPush7800Button(.down, forPlayer: 0)
-                proSystemCore?.didPush7800Button(.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                proSystemCore?.didPush7800Button(.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                proSystemCore?.didPush7800Button(.down, forPlayer: 0)
-                proSystemCore?.didPush7800Button(.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -90,41 +88,34 @@ class PVAtari7800ControllerViewController: PVControllerViewController<PVProSyste
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didRelease7800Button(.up, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.down, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.left, forPlayer: 0)
-        proSystemCore?.didRelease7800Button(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didPush7800Button(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didRelease7800Button(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didPush7800Button(.reset, forPlayer: UInt(player))
+        emulatorCore.didPush(.reset, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didRelease7800Button(.reset, forPlayer: UInt(player))
+        emulatorCore.didRelease(.reset, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didPush7800Button(.select, forPlayer: UInt(player))
+        emulatorCore.didPush(.select, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let proSystemCore = emulatorCore
-        proSystemCore?.didRelease7800Button(.select, forPlayer: UInt(player))
+        emulatorCore.didRelease(.select, forPlayer: player)
     }
 }

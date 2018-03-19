@@ -881,7 +881,7 @@ This is a test</string>
         <!--Controller Selection View Controller-->
         <scene sceneID="rf3-j3-Qnd">
             <objects>
-                <tableViewController id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" sceneMemberID="viewController">
+                <tableViewController id="fjc-Kp-2ru" customClass="PVControllerSelectionViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" id="0Cx-LN-DBW">
                         <rect key="frame" x="0.0" y="0.0" width="1285" height="1080"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

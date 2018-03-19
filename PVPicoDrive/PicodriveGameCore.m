@@ -27,13 +27,13 @@
 
 #import "PicodriveGameCore.h"
 #import <PVSupport/OERingBuffer.h>
-#import "OESega32XSystemResponderClient.h"
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
+#import <TargetConditionals.h>
 
 #include "libretro.h"
 
-@interface PicodriveGameCore () <OESega32XSystemResponderClient>
+@interface PicodriveGameCore () <PVSega32XSystemResponderClient>
 {
     uint16_t *videoBuffer;
     int videoWidth, videoHeight;

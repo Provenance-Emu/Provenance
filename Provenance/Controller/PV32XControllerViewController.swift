@@ -7,7 +7,7 @@
 //  Copyright (c) 2018 Joe Mattiello. All rights reserved.
 //
 
-import PicoDrive
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVSega32XButton {
@@ -20,31 +20,31 @@ fileprivate extension JSButton {
     }
 }
 
-class PV32XControllerViewController: PVControllerViewController<PicodriveGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVSega32XControllerViewController : PVControllerViewController<PVSega32XSystemResponderClient> {
+// extension PVControllerViewController where ResponderClass : PVSega32XSystemResponderClient {
+//extension ControllerVC where ResponderType : PVSega32XSystemResponderClient {
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
             if title == "A" {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if title == "B" {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
             else if title == "C" {
-                button.buttonTag = .C
+                button.buttonTag = .c
             }
             else if title == "X" {
-                button.buttonTag = .X
+                button.buttonTag = .x
             }
             else if title == "Y" {
-                button.buttonTag = .Y
+                button.buttonTag = .y
             }
             else if title == "Z" {
-                button.buttonTag = .Z
+                button.buttonTag = .z
             }
             else if title == "Mode" {
                 button.buttonTag = .mode
@@ -59,32 +59,31 @@ class PV32XControllerViewController: PVControllerViewController<PicodriveGameCor
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let three2xCore = emulatorCore
-        three2xCore?.didRelease(.up, forPlayer: 0)
-        three2xCore?.didRelease(.down, forPlayer: 0)
-        three2xCore?.didRelease(.left, forPlayer: 0)
-        three2xCore?.didRelease(.right, forPlayer: 0)
+        self.emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                three2xCore?.didPush(.up, forPlayer: 0)
-                three2xCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                three2xCore?.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                three2xCore?.didPush(.up, forPlayer: 0)
-                three2xCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                three2xCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                three2xCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                three2xCore?.didPush(.down, forPlayer: 0)
-                three2xCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                three2xCore?.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                three2xCore?.didPush(.down, forPlayer: 0)
-                three2xCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -92,41 +91,34 @@ class PV32XControllerViewController: PVControllerViewController<PicodriveGameCor
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let three2xCore = emulatorCore
-        three2xCore?.didRelease(.up, forPlayer: 0)
-        three2xCore?.didRelease(.down, forPlayer: 0)
-        three2xCore?.didRelease(.left, forPlayer: 0)
-        three2xCore?.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let three2xCore = emulatorCore
-        three2xCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let three2xCore = emulatorCore
-        three2xCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let three2xCore = emulatorCore
-        three2xCore?.didPush(.start, forPlayer: UInt(player))
+        emulatorCore.didPush(.start, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let three2xCore = emulatorCore
-        three2xCore?.didRelease(.start, forPlayer: UInt(player))
+        emulatorCore.didRelease(.start, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let three2xCore = emulatorCore
-        three2xCore?.didPush(.mode, forPlayer: UInt(player))
+        emulatorCore.didPush(.mode, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let three2xCore = emulatorCore
-        three2xCore?.didRelease(.mode, forPlayer: UInt(player))
+        emulatorCore.didRelease(.mode, forPlayer: player)
     }
 }

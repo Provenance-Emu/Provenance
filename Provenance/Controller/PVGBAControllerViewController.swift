@@ -7,8 +7,7 @@
 //  Copyright (c) 2015 James Addyman. All rights reserved.
 //
 
-import AudioToolbox
-import PVGBA
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVGBAButton {
@@ -21,56 +20,55 @@ fileprivate extension JSButton {
     }
 }
 
-class PVGBAControllerViewController: PVControllerViewController<PVGBAEmulatorCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+class PVGBAControllerViewController: PVControllerViewController<PVGBASystemResponderClient> {
+    
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
             
             if (button.titleLabel?.text == "A") {
-                button.buttonTag =  .A
+                button.buttonTag =  .a
             }
             else if (button.titleLabel?.text == "B") {
-                button.buttonTag =  .B
+                button.buttonTag =  .b
             }
         }
 
-        leftShoulderButton?.buttonTag =  .L
-        rightShoulderButton?.buttonTag =  .R
+        leftShoulderButton?.buttonTag =  .l
+        rightShoulderButton?.buttonTag =  .r
         
         startButton?.buttonTag =  .start
         selectButton?.buttonTag =  .select
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let gbaCore = emulatorCore
-        gbaCore?.release( .up, forPlayer: 0)
-        gbaCore?.release( .down, forPlayer: 0)
-        gbaCore?.release( .left, forPlayer: 0)
-        gbaCore?.release( .right, forPlayer: 0)
+        emulatorCore.didRelease( .up, forPlayer: 0)
+        emulatorCore.didRelease( .down, forPlayer: 0)
+        emulatorCore.didRelease( .left, forPlayer: 0)
+        emulatorCore.didRelease( .right, forPlayer: 0)
         switch direction {
         case .upLeft:
-            gbaCore?.push( .up, forPlayer: 0)
-            gbaCore?.push( .left, forPlayer: 0)
+            emulatorCore.didPush( .up, forPlayer: 0)
+            emulatorCore.didPush( .left, forPlayer: 0)
         case .up:
-            gbaCore?.push( .up, forPlayer: 0)
+            emulatorCore.didPush( .up, forPlayer: 0)
         case .upRight:
-            gbaCore?.push( .up, forPlayer: 0)
-            gbaCore?.push( .right, forPlayer: 0)
+            emulatorCore.didPush( .up, forPlayer: 0)
+            emulatorCore.didPush( .right, forPlayer: 0)
         case .left:
-            gbaCore?.push( .left, forPlayer: 0)
+            emulatorCore.didPush( .left, forPlayer: 0)
         case .right:
-            gbaCore?.push( .right, forPlayer: 0)
+            emulatorCore.didPush( .right, forPlayer: 0)
         case .downLeft:
-            gbaCore?.push( .down, forPlayer: 0)
-            gbaCore?.push( .left, forPlayer: 0)
+            emulatorCore.didPush( .down, forPlayer: 0)
+            emulatorCore.didPush( .left, forPlayer: 0)
         case .down:
-            gbaCore?.push( .down, forPlayer: 0)
+            emulatorCore.didPush( .down, forPlayer: 0)
         case .downRight:
-            gbaCore?.push( .down, forPlayer: 0)
-            gbaCore?.push( .right, forPlayer: 0)
+            emulatorCore.didPush( .down, forPlayer: 0)
+            emulatorCore.didPush( .right, forPlayer: 0)
         case .none:
             break
         }
@@ -78,47 +76,40 @@ class PVGBAControllerViewController: PVControllerViewController<PVGBAEmulatorCor
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let gbaCore = emulatorCore
-        gbaCore?.release( .up, forPlayer: 0)
-        gbaCore?.release( .down, forPlayer: 0)
-        gbaCore?.release( .left, forPlayer: 0)
-        gbaCore?.release( .right, forPlayer: 0)
+        emulatorCore.didRelease( .up, forPlayer: 0)
+        emulatorCore.didRelease( .down, forPlayer: 0)
+        emulatorCore.didRelease( .left, forPlayer: 0)
+        emulatorCore.didRelease( .right, forPlayer: 0)
         super.dPadDidReleaseDirection(dPad)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let gbaCore = emulatorCore
-        gbaCore?.push(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let gbaCore = emulatorCore
-        gbaCore?.release(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
         super.buttonReleased(button)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let gbaCore = emulatorCore
-        gbaCore?.push( .start, forPlayer: player)
+        emulatorCore.didPush( .start, forPlayer: player)
         super.pressStart(forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let gbaCore = emulatorCore
-        gbaCore?.release( .start, forPlayer: player)
+        emulatorCore.didRelease( .start, forPlayer: player)
         super.releaseStart(forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let gbaCore = emulatorCore
-        gbaCore?.push( .select, forPlayer: player)
+        emulatorCore.didPush( .select, forPlayer: player)
         super.pressSelect(forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let gbaCore = emulatorCore
-        gbaCore?.release( .select, forPlayer: player)
+        emulatorCore.didRelease( .select, forPlayer: player)
         super.releaseSelect(forPlayer: player)
     }
 }

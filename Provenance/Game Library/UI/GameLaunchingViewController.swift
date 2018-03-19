@@ -160,14 +160,21 @@ extension GameLaunchingViewController where Self : UIViewController {
         do {
             try self.canLoad(game)
             // Init emulator VC
-            let emulatorViewController = PVEmulatorViewController(game: game)
+            
+            // TODO: let the user choose the core here
+            let core = game.system.cores.first!
+            guard let coreInstance = core.createInstance(forSystem: game.system) else {
+                ELOG("Failed to init core instance")
+                return
+            }
+            
+            let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
             
             // Configure emulator VC
             // NOTE: These technically could be derived in PVEmulatorViewController directly
             emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
             emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
-            emulatorViewController.biosPath = PVEmulatorConfiguration.biosPath(forGame: game).path
-            emulatorViewController.systemID = game.systemIdentifier
+            emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
             
             // Present the emulator VC
             emulatorViewController.modalTransitionStyle = .crossDissolve

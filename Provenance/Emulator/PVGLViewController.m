@@ -1,5 +1,5 @@
 //
-//  PVEmulatorViewController.m
+//  PVGLViewController.m
 //  Provenance
 //
 //  Created by James Addyman on 08/08/2013.

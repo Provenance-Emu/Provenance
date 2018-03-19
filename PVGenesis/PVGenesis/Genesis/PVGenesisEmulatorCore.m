@@ -9,6 +9,7 @@
 #import "PVGenesisEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
+#import <PVGenesis/libretro.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 
@@ -375,12 +376,12 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - Input
 
-- (void)pushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
+- (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
 {
 	_pad[player][button] = 1;
 }
 
-- (void)releaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
+- (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player
 {
 	_pad[player][button] = 0;
 }

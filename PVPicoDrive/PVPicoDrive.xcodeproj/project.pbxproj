@@ -83,7 +83,6 @@
 		B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
 		B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
 		B3A3E9701D6BE0A100CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
-		B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A3E9731D6BE50400CCD7C8 /* sh2pico.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94DB17829B4400A212AC /* sh2pico.c */; };
 		B3A3E97B1D6BE85600CCD7C8 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 946B94E317829B4400A212AC /* memory.c */; };
 		B3A3E9871D6BFF6F00CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
@@ -154,7 +153,6 @@
 		B3A3E9C91D6BFF6F00CCD7C8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
 		B3A3E9CA1D6BFF6F00CCD7C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
 		B3A3E9CD1D6BFF6F00CCD7C8 /* PicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A3E9CE1D6BFF6F00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A3E9CF1D6BFF6F00CCD7C8 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D2E38A1D6E7E5C0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3891D6E7E5C0058544D /* PVSupport.framework */; };
 		B3D2E38B1D6E7E650058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */; };
@@ -585,7 +583,6 @@
 		B37937F81D6BDF4E00EBAE81 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B37937FC1D6BDF5F00EBAE81 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OESega32XSystemResponderClient.h; sourceTree = "<group>"; };
 		B3A3E9D41D6BFF6F00CCD7C8 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3E9D61D6BFFEC00CCD7C8 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E3891D6E7E5C0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
@@ -654,7 +651,6 @@
 			isa = PBXGroup;
 			children = (
 				946B948B17829AFD00A212AC /* picodrive */,
-				B3A3E9711D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h */,
 				82287C33101E9DB40072172D /* PicodriveGameCore.h */,
 				82287C34101E9DB40072172D /* PicodriveGameCore.m */,
 			);
@@ -1486,7 +1482,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */,
-				B3A3E9721D6BE0CD00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */,
 				B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1496,7 +1491,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3A3E9CD1D6BFF6F00CCD7C8 /* PicoDrive.h in Headers */,
-				B3A3E9CE1D6BFF6F00CCD7C8 /* OESega32XSystemResponderClient.h in Headers */,
 				B3A3E9CF1D6BFF6F00CCD7C8 /* PicodriveGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

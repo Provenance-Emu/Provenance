@@ -8,28 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVGenesis/libretro.h>
-
-typedef NS_ENUM(NSInteger, PVGenesisButton)
-{
-    PVGenesisButtonUp = RETRO_DEVICE_ID_JOYPAD_UP,
-    PVGenesisButtonDown = RETRO_DEVICE_ID_JOYPAD_DOWN,
-    PVGenesisButtonLeft = RETRO_DEVICE_ID_JOYPAD_LEFT,
-    PVGenesisButtonRight = RETRO_DEVICE_ID_JOYPAD_RIGHT,
-    PVGenesisButtonA = RETRO_DEVICE_ID_JOYPAD_Y,
-    PVGenesisButtonB = RETRO_DEVICE_ID_JOYPAD_B,
-    PVGenesisButtonC = RETRO_DEVICE_ID_JOYPAD_A,
-    PVGenesisButtonX = RETRO_DEVICE_ID_JOYPAD_L,
-    PVGenesisButtonY = RETRO_DEVICE_ID_JOYPAD_X,
-    PVGenesisButtonZ = RETRO_DEVICE_ID_JOYPAD_R,
-    PVGenesisButtonStart = RETRO_DEVICE_ID_JOYPAD_START,
-    PVGenesisButtonMode = RETRO_DEVICE_ID_JOYPAD_SELECT,
-    PVGenesisButtonCount,
-};
+#import <PVSupport/PVSupport-Swift.h>
 
 @interface PVGenesisEmulatorCore : PVEmulatorCore
 
-- (void)pushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
-- (void)releaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
+- (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
 
 @end

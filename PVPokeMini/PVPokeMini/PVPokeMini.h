@@ -16,4 +16,4 @@ FOUNDATION_EXPORT const unsigned char PVPokeMiniVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVPokeMini/PublicHeader.h>
 #import <PVPokeMini/PVPokeMiniEmulatorCore.h>
-#import <PVPokeMini/PVPMSystemResponderClient.h>
+

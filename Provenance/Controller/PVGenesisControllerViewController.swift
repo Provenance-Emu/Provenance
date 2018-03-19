@@ -7,7 +7,7 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-import PVGenesis
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVGenesisButton {
@@ -20,31 +20,30 @@ fileprivate extension JSButton {
     }
 }
 
-class PVGenesisControllerViewController: PVControllerViewController<PVGenesisEmulatorCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSystemResponderClient> {
+  
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
             if title == "A" {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if title == "B" || title == "1" {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
             else if title == "C" || title == "2" {
-                button.buttonTag = .C
+                button.buttonTag = .c
             }
             else if title == "X" {
-                button.buttonTag = .X
+                button.buttonTag = .x
             }
             else if title == "Y" {
-                button.buttonTag = .Y
+                button.buttonTag = .y
             }
             else if title == "Z" {
-                button.buttonTag = .Z
+                button.buttonTag = .z
             }
         }
 
@@ -52,32 +51,31 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisEmu
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let genesisCore = emulatorCore
-        genesisCore?.release(.up, forPlayer: 0)
-        genesisCore?.release(.down, forPlayer: 0)
-        genesisCore?.release(.left, forPlayer: 0)
-        genesisCore?.release(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                genesisCore?.push(.up, forPlayer: 0)
-                genesisCore?.push(.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                genesisCore?.push(.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                genesisCore?.push(.up, forPlayer: 0)
-                genesisCore?.push(.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                genesisCore?.push(.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                genesisCore?.push(.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                genesisCore?.push(.down, forPlayer: 0)
-                genesisCore?.push(.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                genesisCore?.push(.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                genesisCore?.push(.down, forPlayer: 0)
-                genesisCore?.push(.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -85,47 +83,40 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisEmu
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let genesisCore = emulatorCore
-        genesisCore?.release(.up, forPlayer: 0)
-        genesisCore?.release(.down, forPlayer: 0)
-        genesisCore?.release(.left, forPlayer: 0)
-        genesisCore?.release(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         super.dPadDidReleaseDirection(dPad)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let genesisCore = emulatorCore
-        genesisCore?.push(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let genesisCore = emulatorCore
-        genesisCore?.release(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
         super.buttonReleased(button)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let genesisCore = emulatorCore
-        genesisCore?.push(.start, forPlayer: player)
+        emulatorCore.didPush(.start, forPlayer: player)
         super.pressStart(forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let genesisCore = emulatorCore
-        genesisCore?.release(.start, forPlayer: player)
+        emulatorCore.didRelease(.start, forPlayer: player)
         super.releaseStart(forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let genesisCore = emulatorCore
-        genesisCore?.push(.mode, forPlayer: player)
+        emulatorCore.didPush(.mode, forPlayer: player)
         super.pressSelect(forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let genesisCore = emulatorCore
-        genesisCore?.release(.mode, forPlayer: player)
+        emulatorCore.didRelease(.mode, forPlayer: player)
         releaseSelect(forPlayer: player)
     }
 }

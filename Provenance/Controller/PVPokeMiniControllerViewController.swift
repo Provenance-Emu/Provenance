@@ -7,7 +7,7 @@
 //  Copyright (c) 2017 Joe Mattiello. All rights reserved.
 //
 
-import PVPokeMini
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVPMButton {
@@ -20,57 +20,55 @@ fileprivate extension JSButton {
     }
 }
 
-class PVPokeMiniControllerViewController: PVControllerViewController<PVPokeMiniEmulatorCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVPokeMiniControllerViewController : PVControllerViewController<PVPokeMiniSystemResponderClient> {
+    
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
             if (button.titleLabel?.text == "A") {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if (button.titleLabel?.text == "B") {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
             else if (button.titleLabel?.text == "C") {
-                button.buttonTag = .C
+                button.buttonTag = .c
             }
         }
 
-        leftShoulderButton?.buttonTag = .menu
+        leftShoulderButton2?.buttonTag = .menu
         startButton?.buttonTag = .power
         selectButton?.buttonTag = .shake
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let pokeCore = emulatorCore
-        pokeCore?.didRelease(.up, forPlayer: 0)
-        pokeCore?.didRelease(.down, forPlayer: 0)
-        pokeCore?.didRelease(.left, forPlayer: 0)
-        pokeCore?.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                pokeCore?.didPush(.up, forPlayer: 0)
-                pokeCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                pokeCore?.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                pokeCore?.didPush(.up, forPlayer: 0)
-                pokeCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                pokeCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                pokeCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                pokeCore?.didPush(.down, forPlayer: 0)
-                pokeCore?.didPush(.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                pokeCore?.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                pokeCore?.didPush(.down, forPlayer: 0)
-                pokeCore?.didPush(.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -78,47 +76,40 @@ class PVPokeMiniControllerViewController: PVControllerViewController<PVPokeMiniE
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let pokeCore = emulatorCore
-        pokeCore?.didRelease(.up, forPlayer: 0)
-        pokeCore?.didRelease(.down, forPlayer: 0)
-        pokeCore?.didRelease(.left, forPlayer: 0)
-        pokeCore?.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         super.dPadDidReleaseDirection(dPad)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let pokeCore = emulatorCore
-        pokeCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let pokeCore = emulatorCore
-        pokeCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
         super.buttonReleased(button)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let pokeCore = emulatorCore
-        pokeCore?.didPush(.power, forPlayer: UInt(player))
+        emulatorCore.didPush(.power, forPlayer: player)
         super.pressStart(forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let pokeCore = emulatorCore
-        pokeCore?.didRelease(.power, forPlayer: UInt(player))
+        emulatorCore.didRelease(.power, forPlayer: player)
         super.releaseStart(forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let pokeCore = emulatorCore
-        pokeCore?.didPush(.shake, forPlayer: UInt(player))
+        emulatorCore.didPush(.shake, forPlayer: player)
         super.pressSelect(forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let pokeCore = emulatorCore
-        pokeCore?.didRelease(.shake, forPlayer: UInt(player))
+        emulatorCore.didRelease(.shake, forPlayer: player)
         super.releaseSelect(forPlayer: player)
     }
 }

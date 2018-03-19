@@ -827,11 +827,21 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 #pragma mark PSX
 - (oneway void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
+    if (button == PVPSXButtonStart) {
+        self.isStartPressed = true;
+    } else if (button == PVPSXButtonSelect) {
+        self.isSelectPressed = true;
+    }
     inputBuffer[player][0] |= 1 << PSXMap[button];
 }
 
 - (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player;
 {
+    if (button == PVPSXButtonStart) {
+        self.isStartPressed = false;
+    } else if (button == PVPSXButtonSelect) {
+        self.isSelectPressed = false;
+    }
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 

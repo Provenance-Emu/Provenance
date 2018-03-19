@@ -7,7 +7,7 @@
 //  Copyright © 2016 James Addyman. All rights reserved.
 //
 
-import PVMednafen
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag : PVLynxButton {
@@ -20,55 +20,54 @@ fileprivate extension JSButton {
     }
 }
 
-class PVLynxControllerViewController: PVControllerViewController<MednafenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemResponderClient> {
+    
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
             if title == "A" {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if title == "B" {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
         }
 
-        leftShoulderButton?.buttonTag = PVLynxButton.option1
-        rightShoulderButton?.buttonTag = PVLynxButton.option2
-        selectButton?.buttonTag = PVLynxButton.option2
-        startButton?.buttonTag = PVLynxButton.option1
+        leftShoulderButton?.buttonTag = .option1
+        rightShoulderButton?.buttonTag = .option2
+        selectButton?.buttonTag = .option2
+        startButton?.buttonTag = .option1
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didRelease(PVLynxButton.up, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.down, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.left, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.right, forPlayer: 0)
+        
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                lynxCore?.didPush(PVLynxButton.up, forPlayer: 0)
-                lynxCore?.didPush(PVLynxButton.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                lynxCore?.didPush(PVLynxButton.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                lynxCore?.didPush(PVLynxButton.up, forPlayer: 0)
-                lynxCore?.didPush(PVLynxButton.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                lynxCore?.didPush(PVLynxButton.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                lynxCore?.didPush(PVLynxButton.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                lynxCore?.didPush(PVLynxButton.down, forPlayer: 0)
-                lynxCore?.didPush(PVLynxButton.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                lynxCore?.didPush(PVLynxButton.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                lynxCore?.didPush(PVLynxButton.down, forPlayer: 0)
-                lynxCore?.didPush(PVLynxButton.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -76,41 +75,34 @@ class PVLynxControllerViewController: PVControllerViewController<MednafenGameCor
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didRelease(PVLynxButton.up, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.down, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.left, forPlayer: 0)
-        lynxCore?.didRelease(PVLynxButton.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didPush(PVLynxButton.option1, forPlayer: UInt(player))
+        emulatorCore.didPush(.option1, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didRelease(PVLynxButton.option1, forPlayer: UInt(player))
+        emulatorCore.didRelease(.option1, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didPush(PVLynxButton.option2, forPlayer: UInt(player))
+        emulatorCore.didPush(.option2, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let lynxCore = emulatorCore 
-        lynxCore?.didRelease(PVLynxButton.option2, forPlayer: UInt(player))
+        emulatorCore.didRelease(.option2, forPlayer: player)
     }
 }

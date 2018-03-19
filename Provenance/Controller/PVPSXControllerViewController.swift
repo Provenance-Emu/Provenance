@@ -20,10 +20,9 @@ fileprivate extension JSButton {
     }
 }
 
-class PVPSXControllerViewController: PVControllerViewController<MednafenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemResponderClient> {
+    
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
@@ -42,41 +41,40 @@ class PVPSXControllerViewController: PVControllerViewController<MednafenGameCore
             }
         }
 
-        leftShoulderButton?.buttonTag = .L1
-        rightShoulderButton?.buttonTag = .R1
-        leftShoulderButton2?.buttonTag = .L2
-        rightShoulderButton2?.buttonTag = .R2
+        leftShoulderButton?.buttonTag = .l1
+        rightShoulderButton?.buttonTag = .r1
+        leftShoulderButton2?.buttonTag = .l2
+        rightShoulderButton2?.buttonTag = .r2
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let psxCore = emulatorCore
-        psxCore?.didRelease(PVPSXButton.up, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.down, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.left, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
             case .upLeft:
-                psxCore?.didPush(PVPSXButton.up, forPlayer: 0)
-                psxCore?.didPush(PVPSXButton.left, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .up:
-                psxCore?.didPush(PVPSXButton.up, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
             case .upRight:
-                psxCore?.didPush(PVPSXButton.up, forPlayer: 0)
-                psxCore?.didPush(PVPSXButton.right, forPlayer: 0)
+                emulatorCore.didPush(.up, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .left:
-                psxCore?.didPush(PVPSXButton.left, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .right:
-                psxCore?.didPush(PVPSXButton.right, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             case .downLeft:
-                psxCore?.didPush(PVPSXButton.down, forPlayer: 0)
-                psxCore?.didPush(PVPSXButton.left, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.left, forPlayer: 0)
             case .down:
-                psxCore?.didPush(PVPSXButton.down, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
             case .downRight:
-                psxCore?.didPush(PVPSXButton.down, forPlayer: 0)
-                psxCore?.didPush(PVPSXButton.right, forPlayer: 0)
+                emulatorCore.didPush(.down, forPlayer: 0)
+                emulatorCore.didPush(.right, forPlayer: 0)
             default:
                 break
         }
@@ -84,47 +82,36 @@ class PVPSXControllerViewController: PVControllerViewController<MednafenGameCore
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let psxCore = emulatorCore
-        psxCore?.didRelease(PVPSXButton.up, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.down, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.left, forPlayer: 0)
-        psxCore?.didRelease(PVPSXButton.right, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let psxCore = emulatorCore
-        psxCore?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         super.buttonPressed(button)
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let psxCore = emulatorCore
-        psxCore?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let psxCore = emulatorCore
-        psxCore?.didPush(PVPSXButton.start, forPlayer: UInt(player))
-        psxCore?.isStartPressed = true
+        emulatorCore.didPush(.start, forPlayer: player)
         super.pressStart(forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let psxCore = emulatorCore
-        psxCore?.didRelease(PVPSXButton.start, forPlayer: UInt(player))
-        psxCore?.isStartPressed = false
+        emulatorCore.didRelease(.start, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let psxCore = emulatorCore
-        psxCore?.didPush(PVPSXButton.select, forPlayer: UInt(player))
-        psxCore?.isSelectPressed = true
+        emulatorCore.didPush(.select, forPlayer: player)
         super.pressSelect(forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let psxCore = emulatorCore
-        psxCore?.didRelease(PVPSXButton.select, forPlayer: UInt(player))
-        psxCore?.isSelectPressed = false
+        emulatorCore.didRelease(.select, forPlayer: player)
     }
 }

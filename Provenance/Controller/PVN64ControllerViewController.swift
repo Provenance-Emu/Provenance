@@ -7,12 +7,12 @@
 //  Copyright (c) 2016 James Addyman. All rights reserved.
 //
 
-import PVMupen64Plus
+import PVMednafen
 
 fileprivate extension JSButton {
-    var buttonTag : OEN64Button {
+    var buttonTag : PVN64Button {
         get {
-            return OEN64Button(rawValue: tag)!
+            return PVN64Button(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -20,19 +20,27 @@ fileprivate extension JSButton {
     }
 }
 
-class PVN64ControllerViewController: PVControllerViewController<MupenGameCore> {
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
+
+// These should override the default protocol but theyu're not.
+// I made a test Workspace with the same protocl inheritance with assoicated type
+// and the extension overrides in this format overrode the default extension implimentations.
+// I give up after many many hours figuringn out why. Just use a descrete subclass for now.
+
+//extension ControllerVC where Self == PVN64ControllerViewController {
+//extension ControllerVC where ResponderType : PVN64SystemResponderClient {
+
+class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResponderClient> {
+
+    override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
             if (button.titleLabel?.text == "A") {
-                button.buttonTag = .A
+                button.buttonTag = .a
             }
             else if (button.titleLabel?.text == "B") {
-                button.buttonTag = .B
+                button.buttonTag = .b
             }
             else if (button.titleLabel?.text == "C▲") {
                 button.buttonTag = .cUp
@@ -48,39 +56,38 @@ class PVN64ControllerViewController: PVControllerViewController<MupenGameCore> {
             }
         }
        
-        leftShoulderButton?.buttonTag = .L
-        rightShoulderButton?.buttonTag = .R
-        selectButton?.buttonTag = .Z
+        leftShoulderButton?.buttonTag = .l
+        rightShoulderButton?.buttonTag = .r
+        selectButton?.buttonTag = .z
         startButton?.buttonTag = .start
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        let n64Core = emulatorCore
-        n64Core?.didMoveN64JoystickDirection(.analogUp, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogLeft, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogRight, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogDown, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
         switch direction {
             case .upLeft:
-                n64Core?.didMoveN64JoystickDirection(.analogUp, withValue: 1, forPlayer: 0)
-                n64Core?.didMoveN64JoystickDirection(.analogLeft, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
             case .up:
-                n64Core?.didMoveN64JoystickDirection(.analogUp, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
             case .upRight:
-                n64Core?.didMoveN64JoystickDirection(.analogUp, withValue: 1, forPlayer: 0)
-                n64Core?.didMoveN64JoystickDirection(.analogRight, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
             case .left:
-                n64Core?.didMoveN64JoystickDirection(.analogLeft, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
             case .right:
-                n64Core?.didMoveN64JoystickDirection(.analogRight, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
             case .downLeft:
-                n64Core?.didMoveN64JoystickDirection(.analogDown, withValue: 1, forPlayer: 0)
-                n64Core?.didMoveN64JoystickDirection(.analogLeft, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
             case .down:
-                n64Core?.didMoveN64JoystickDirection(.analogDown, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
             case .downRight:
-                n64Core?.didMoveN64JoystickDirection(.analogDown, withValue: 1, forPlayer: 0)
-                n64Core?.didMoveN64JoystickDirection(.analogRight, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+                emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
             default:
                 break
         }
@@ -88,43 +95,36 @@ class PVN64ControllerViewController: PVControllerViewController<MupenGameCore> {
     }
 
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        let n64Core = emulatorCore
-        n64Core?.didMoveN64JoystickDirection(.analogUp, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogLeft, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogRight, withValue: 0, forPlayer: 0)
-        n64Core?.didMoveN64JoystickDirection(.analogDown, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
+        emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
     }
 
     override func buttonPressed(_ button: JSButton) {
-        let n64Core = emulatorCore
-        n64Core?.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        let n64Core = emulatorCore
-        n64Core?.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        let n64Core = emulatorCore
-        n64Core?.didPush(.start, forPlayer: UInt(player))
+        emulatorCore.didPush(.start, forPlayer: player)
         vibrate()
     }
 
     override func releaseStart(forPlayer player: Int) {
-        let n64Core = emulatorCore
-        n64Core?.didRelease(.start, forPlayer: UInt(player))
+        emulatorCore.didRelease(.start, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        let n64Core = emulatorCore
-        n64Core?.didPush(.Z, forPlayer: UInt(player))
+        emulatorCore.didPush(.z, forPlayer: player)
         vibrate()
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        let n64Core = emulatorCore
-        n64Core?.didRelease(.Z, forPlayer: UInt(player))
+        emulatorCore.didRelease(.z, forPlayer: player)
     }
 }

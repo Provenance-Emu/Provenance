@@ -35,7 +35,6 @@
 		B36DE7C11D6B75CD002EE3ED /* Unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599417A6189D0005D7EA /* Unzip.c */; };
 		B36DE7C21D6B75CD002EE3ED /* Zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599717A6189D0005D7EA /* Zip.c */; };
 		B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
-		B36DE7C51D6B766C002EE3ED /* OE7800SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7C41D6B766C002EE3ED /* OE7800SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D701D6BAD4100060D71 /* Common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598717A6189D0005D7EA /* Common.cpp */; };
 		B3FA5D711D6BAD4100060D71 /* Riot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59AB17A6189D0005D7EA /* Riot.cpp */; };
@@ -61,7 +60,6 @@
 		B3FA5D861D6BAD4100060D71 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */; };
 		B3FA5D871D6BAD4100060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7AA1D6B7583002EE3ED /* Foundation.framework */; };
 		B3FA5D881D6BAD4100060D71 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7A81D6B757F002EE3ED /* libz.tbd */; };
-		B3FA5D8A1D6BAD4100060D71 /* OE7800SystemResponderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7C41D6B766C002EE3ED /* OE7800SystemResponderClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8B1D6BAD4100060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8C1D6BAD4100060D71 /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D8E1D6BAD4100060D71 /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
@@ -138,7 +136,6 @@
 		B36DE7A81D6B757F002EE3ED /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B36DE7AA1D6B7583002EE3ED /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B36DE7AC1D6B758B002EE3ED /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
-		B36DE7C41D6B766C002EE3ED /* OE7800SystemResponderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OE7800SystemResponderClient.h; sourceTree = "<group>"; };
 		B3FA5D921D6BAD4100060D71 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProSystemGameCore.h; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -205,7 +202,6 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B36DE7C41D6B766C002EE3ED /* OE7800SystemResponderClient.h */,
 				B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */,
 				941DFB2615B6425200C6552F /* ProSystemGameCore.mm */,
 			);
@@ -352,7 +348,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36DE7C51D6B766C002EE3ED /* OE7800SystemResponderClient.h in Headers */,
 				B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */,
 				B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */,
 			);
@@ -362,7 +357,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FA5D8A1D6BAD4100060D71 /* OE7800SystemResponderClient.h in Headers */,
 				B3FA5D8B1D6BAD4100060D71 /* ProSystemGameCore.h in Headers */,
 				B3FA5D8C1D6BAD4100060D71 /* ProSystem.h in Headers */,
 			);

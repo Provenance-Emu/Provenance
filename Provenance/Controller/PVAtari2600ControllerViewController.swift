@@ -1,6 +1,5 @@
-//  Converted to Swift 4 by Swiftify v4.1.6640 - https://objectivec2swift.com/
 //
-//  PVPCEControllerViewController.swift
+//  PVStellaControllerViewController.swift
 //  Provenance
 //
 //  Created by Joe Mattiello on 17/03/2018.
@@ -10,9 +9,9 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVPCEButton {
+    var buttonTag : PV2600Button {
         get {
-            return PVPCEButton(rawValue: tag)!
+            return PV2600Button(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -20,35 +19,26 @@ fileprivate extension JSButton {
     }
 }
 
-class PVPCEControllerViewController: PVControllerViewController<PVPCESystemResponderClient> {
-   
+class PVAtari2600ControllerViewController: PVControllerViewController<PV2600SystemResponderClient> {
+        
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "I" {
-                button.buttonTag = .button1
+            if title == "Fire" {
+                button.buttonTag = .fire1
             }
-            else if title == "II" {
-                button.buttonTag = .button2
+            else if title == "Select" {
+                button.buttonTag = .select
             }
-            else if title == "III" {
-                button.buttonTag = .button3
-            }
-            else if title == "IV" {
-                button.buttonTag = .button4
-            }
-            else if title == "V" {
-                button.buttonTag = .button5
-            }
-            else if title == "VI" {
-                button.buttonTag = .button6
+            else if title == "Reset" {
+                button.buttonTag = .reset
             }
         }
-
+        
+        startButton?.buttonTag = .reset
         selectButton?.buttonTag = .select
-        startButton?.buttonTag = .run
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
@@ -100,11 +90,11 @@ class PVPCEControllerViewController: PVControllerViewController<PVPCESystemRespo
     }
 
     override func pressStart(forPlayer player: Int) {
-        emulatorCore.didPush(.mode, forPlayer: player)
+        emulatorCore.didPush(.reset, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        emulatorCore.didRelease(.mode, forPlayer: player)
+        emulatorCore.didRelease(.reset, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
