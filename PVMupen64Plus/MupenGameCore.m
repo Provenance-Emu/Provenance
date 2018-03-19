@@ -237,7 +237,7 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
 
 - (void)pollControllers
 {
-    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
+    for (NSInteger playerIndex = 0; playerIndex < 4; playerIndex++)
     {
         GCController *controller = nil;
         
@@ -248,6 +248,14 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
         else if (self.controller2 && playerIndex == 1)
         {
             controller = self.controller2;
+        }
+        else if (self.controller3 && playerIndex == 3)
+        {
+            controller = self.controller3;
+        }
+        else if (self.controller4 && playerIndex == 4)
+        {
+            controller = self.controller4;
         }
         
         if ([controller extendedGamepad])
