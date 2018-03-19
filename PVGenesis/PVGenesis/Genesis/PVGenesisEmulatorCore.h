@@ -10,7 +10,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
-@interface PVGenesisEmulatorCore : PVEmulatorCore
+@interface PVGenesisEmulatorCore : PVEmulatorCore <PVGenesisSystemResponderClient>
 
 - (void)didPushGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseGenesisButton:(PVGenesisButton)button forPlayer:(NSInteger)player;
