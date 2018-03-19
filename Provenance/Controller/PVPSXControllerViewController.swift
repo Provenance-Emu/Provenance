@@ -24,19 +24,19 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
     
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
-            guard let button = $0 as? JSButton else {
+            guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
             }
-            if (button.titleLabel?.text == "✖") {
+            if text == "✖" || text == "✕" {
                 button.buttonTag = .cross
             }
-            else if (button.titleLabel?.text == "●") {
+            else if text == "●" || text == "○" {
                 button.buttonTag = .circle
             }
-            else if (button.titleLabel?.text == "◼") {
+            else if text == "◼" || text == "□" {
                 button.buttonTag = .square
             }
-            else if (button.titleLabel?.text == "▲") {
+            else if text == "▲" || text == "▵" {
                 button.buttonTag = .triangle
             }
         }

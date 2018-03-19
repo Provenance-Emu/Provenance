@@ -37,7 +37,11 @@ class JSButton: UIView {
     
     override var tintColor: UIColor? {
         didSet {
-            backgroundImageView?.tintColor = tintColor
+            if PVSettingsModel.shared.buttonTints {
+                backgroundImageView?.tintColor = tintColor
+            } else {
+                backgroundImageView?.tintColor = UIColor.white
+            }
         }
     }
 

@@ -26,10 +26,10 @@ class PVAtari5200ControllerViewController: PVControllerViewController<PV5200Syst
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "Fire 1" {
+            if title == "Fire 1" || title == "1" {
                 button.buttonTag = .fire1
             }
-            else if title == "Fire 2" {
+            else if title == "Fire 2" || title == "2" {
                 button.buttonTag = .fire2
             }
         }

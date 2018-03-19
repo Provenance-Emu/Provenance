@@ -26,7 +26,7 @@ class PVAtari2600ControllerViewController: PVControllerViewController<PV2600Syst
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
                 return
             }
-            if title == "Fire" {
+            if title == "Fire" || title == "" {
                 button.buttonTag = .fire1
             }
             else if title == "Select" {
