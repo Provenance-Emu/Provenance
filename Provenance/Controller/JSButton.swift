@@ -16,19 +16,27 @@ protocol JSButtonDelegate : class {
 
 class JSButton: UIView {
     private(set) var titleLabel: UILabel!
+    private var backgroundImageView: UIImageView! {
+        didSet {
+            backgroundImageView.image = backgroundImage
+        }
+    }
 
     var backgroundImage: UIImage? {
         didSet {
-            backgroundImage = backgroundImage?.withRenderingMode(.alwaysTemplate)
+            if pressed {
+                backgroundImageView.image = backgroundImage
+            }
         }
     }
-
     var backgroundImagePressed: UIImage? {
         didSet {
-            backgroundImagePressed = backgroundImagePressed?.withRenderingMode(.alwaysTemplate)
+            if !pressed {
+                backgroundImageView.image = backgroundImage
+            }
         }
     }
-    
+        
     var titleEdgeInsets: UIEdgeInsets {
         didSet {
             setNeedsLayout()
@@ -48,7 +56,6 @@ class JSButton: UIView {
     var pressed = false
     weak var delegate: JSButtonDelegate?
 
-    private var backgroundImageView: UIImageView!
 
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
