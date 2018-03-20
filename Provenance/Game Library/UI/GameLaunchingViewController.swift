@@ -162,8 +162,13 @@ extension GameLaunchingViewController where Self : UIViewController {
             // Init emulator VC
             
             // TODO: let the user choose the core here
-            let core = game.system.cores.first!
+            guard let core = game.system.cores.first else {
+                displayAndLogError(withTitle: "Cannot open game", message: "No core gound for game system '\(system.shortName)'.")
+                return
+            }
+
             guard let coreInstance = core.createInstance(forSystem: game.system) else {
+                displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
                 ELOG("Failed to init core instance")
                 return
             }
