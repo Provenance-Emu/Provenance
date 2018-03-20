@@ -67,7 +67,12 @@ class PVTVSettingsViewController: UITableViewController {
         // Use 2 lines if on to make space for the sub title
         webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1
             // The main title is always present
-        let firstLineAttributes = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
+        var firstLineAttributes : [NSAttributedStringKey:Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
+
+        if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
+            firstLineAttributes[NSAttributedStringKey.foregroundColor] = UIColor.white
+        }
+        
         let titleString = NSMutableAttributedString(string: "Always on WebDav server", attributes: firstLineAttributes)
         // Make a new line sub title with instructions to connect in lighter text
         if isAlwaysOn {
