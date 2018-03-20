@@ -39,9 +39,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     
     var glViewController: PVGLViewController!
     var gameAudio: OEGameAudio!
-    #if os(iOS)
     let controllerViewController: (UIViewController & StartSelectDelegate)?
-    #endif
     var fpsTimer: Timer?
     var fpsLabel: UILabel?
     var secondaryScreen: UIScreen?
@@ -214,7 +212,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .right, relatedBy: .equal, toItem: glViewController?.view, attribute: .right, multiplier: 1.0, constant: -40))
             }
 
-            if #available(iOS 10, *) {
+            if #available(iOS 10.0, tvOS 10.0, *) {
                 // Block-based NSTimer method is only available on iOS 10 and later
                 fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {(_ timer: Timer) -> Void in
                     if self.core.renderFPS == self.core.emulationFPS {
@@ -284,7 +282,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #if os(tvOS)
         // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
         if menuGestureRecognizer == nil {
-            menuGestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("controllerPauseButtonPressed:"))
+            menuGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(PVEmulatorViewController.controllerPauseButtonPressed(_:)))
             menuGestureRecognizer?.allowedPressTypes = [.menu]
         }
         if let aRecognizer = menuGestureRecognizer {
@@ -388,6 +386,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         return documentsDirectoryPath
     }
 
+    #if os(iOS)
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -399,6 +398,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
     }
+    #endif
 
     @objc func appWillEnterForeground(_ note: Notification?) {
         updatePlayedDuration()
@@ -896,3 +896,47 @@ extension PVEmulatorViewController : VolumeController {
     
 }
 #endif
+
+// Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
+extension NSNumber {
+    static var menu: NSNumber {
+        return NSNumber(pressType: .menu)
+    }
+    static var playPause: NSNumber {
+        return NSNumber(pressType: .playPause)
+    }
+    static var select: NSNumber {
+        return NSNumber(pressType: .select)
+    }
+    static var upArrow: NSNumber {
+        return NSNumber(pressType: .upArrow)
+    }
+    
+    static var downArrow: NSNumber {
+        return NSNumber(pressType: .downArrow)
+    }
+    static var leftArrow: NSNumber {
+        return NSNumber(pressType: .leftArrow)
+    }
+    static var rightArrow: NSNumber {
+        return NSNumber(pressType: .rightArrow)
+    }
+    // MARK: - Private
+    
+    private convenience init(pressType: UIPressType) {
+        self.init(integerLiteral: pressType.rawValue)
+    }
+}
+extension NSNumber {
+    static var direct: NSNumber {
+        return NSNumber(touchType: .direct)
+    }
+    static var indirect: NSNumber {
+        return NSNumber(touchType: .indirect)
+    }
+    // MARK: - Private
+    
+    private convenience init(touchType: UITouchType) {
+        self.init(integerLiteral: touchType.rawValue)
+    }
+}

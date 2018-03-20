@@ -193,16 +193,24 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     }
     
     func image(withText text: String) -> UIImage? {
+        #if os(iOS)
         let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
-
+        #else
+        let backgroundColor: UIColor = UIColor.init(white: 0.9, alpha: 0.9)
+        #endif
         if text == "" {
             return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
         }
             // TODO: To be replaced with the correct system placeholder
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
+        
+        #if os(iOS)
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
- 
+        #else
+        let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
+        #endif
+        
         let height : CGFloat = CGFloat(PVThumbnailMaxResolution)
         let ratio : CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
         let width : CGFloat = height * ratio

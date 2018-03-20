@@ -48,7 +48,7 @@ class PVLicensesViewController: UIViewController {
             textView.isUserInteractionEnabled = true
             textView.isSelectable = true
             textView.isScrollEnabled = true
-            textView.panGestureRecognizer.allowedTouchTypes = [NSNumber.init(value: UITouchType.indirect.rawValue)]
+            textView.panGestureRecognizer.allowedTouchTypes = [.indirect]
             textView.showsVerticalScrollIndicator = true
             textView.bounces = true
             

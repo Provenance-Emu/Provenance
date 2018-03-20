@@ -14,7 +14,7 @@ class PVButtonGroupOverlayView: UIView {
     init(buttons: [JSButton]) {
         super.init(frame: CGRect.zero)
 
-#if !TARGET_OS_TV
+#if os(iOS)
         isMultipleTouchEnabled = true
 #endif
         backgroundColor = UIColor.clear

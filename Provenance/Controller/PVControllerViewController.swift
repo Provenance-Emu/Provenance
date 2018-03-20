@@ -271,9 +271,11 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         #endif
     }
     
+    #if os(iOS)
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
     }
+    #endif
     
     open override func didMove(toParentViewController parent: UIViewController?) {
         super.didMove(toParentViewController: parent)
@@ -308,7 +310,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
     }
     
     var safeAreaInsets : UIEdgeInsets {
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11.0, tvOS 11.0, *) {
             return view.safeAreaInsets
         } else {
             return UIEdgeInsets.zero
@@ -495,6 +497,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         #endif
     }
     
+    #if os(iOS)
     func layoutStartButton(control:ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
@@ -567,4 +570,5 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             view.addSubview(selectButton)
         }
     }
+    #endif
 }
