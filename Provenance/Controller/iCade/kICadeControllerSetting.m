@@ -23,6 +23,9 @@ NSString* iCadeControllerSettingToString(iCadeControllerSetting value) {
         case iCadeControllerSetting8Bitdo:
             stringRepresentation = @"8Bitdo Controller";
             break;
+        case iCadeControllerSetting8BitdoZero:
+            stringRepresentation =  @"8Bitdo Zero Controller";
+            break;
         case iCadeControllerSettingSteelSeries:
             stringRepresentation = @"SteelSeries Free Controller";
         default:

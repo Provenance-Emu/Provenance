@@ -12,3 +12,7 @@
 @interface PViCade8BitdoController : PViCadeController
 
 @end
+
+@interface PViCade8BitdoZeroController : PViCadeController
+
+@end

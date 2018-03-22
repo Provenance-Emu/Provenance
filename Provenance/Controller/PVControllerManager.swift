@@ -120,6 +120,15 @@ class PVControllerManager: NSObject {
             }
         }
     }
+    
+    func resetICadeController() {
+        if iCadeController != nil {
+            stopListeningForICadeControllers()
+            iCadeController = nil
+        }
+        
+        setupICade()
+    }
 
     @objc func handleControllerDidConnect(_ note: Notification?) {
         guard let controller = note?.object as? GCController else {
@@ -150,7 +159,7 @@ class PVControllerManager: NSObject {
         }
         
         var assigned = false
-        if (controller is PViCade8BitdoController) {
+        if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             // For 8Bitdo, we set to listen again for controllers after disconnecting
             // so we can detect when they connect again
             if iCadeController != nil {
