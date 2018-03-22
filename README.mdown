@@ -1,3 +1,5 @@
+![Discord Widget](https://img.shields.io/discord/421819941835243520.svg)
+
 # Provenance
 An iOS & tvOS Frontend for Multiple Emulators
 
