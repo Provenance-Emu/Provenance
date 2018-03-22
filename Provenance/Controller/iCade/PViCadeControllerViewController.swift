@@ -55,6 +55,7 @@ class PViCadeControllerViewController: UITableViewController {
             self.tableView.deselectRow(at: aRow, animated: true)
         }
         PVSettingsModel.shared.myiCadeControllerSetting = iCadeControllerSetting(rawValue:indexPath.row)!
+        PVControllerManager.shared.resetICadeController()
         navigationController?.popViewController(animated: true)
     }
 }

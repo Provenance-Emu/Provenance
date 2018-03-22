@@ -757,7 +757,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     @objc func controllerDidConnect(_ note: Notification?) {
         let controller = note?.object as? GCController
         // 8Bitdo controllers don't have a pause button, so don't hide the menu
-        if !(controller is PViCade8BitdoController) {
+        if !(controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             menuButton?.isHidden = true
                 // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
 #if os(iOS)
