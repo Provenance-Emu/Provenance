@@ -1,4 +1,24 @@
-![Discord Widget](https://img.shields.io/discord/421819941835243520.svg)
+![GitHub release](https://img.shields.io/github/release/jasarien/provenance.svg?style=flat-square) 
+![GitHub Release Date](https://img.shields.io/github/release-date/jasarien/provenance.svg?style=flat-square)
+![Github commits (since latest release)](https://img.shields.io/github/commits-since/jasarien/provenance/latest.svg?style=flat-square) 
+
+![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
+[![GitHub forks](https://img.shields.io/github/forks/jasarien/Provenance.svg?style=flat-square)](https://github.com/jasarien/Provenance/network) 
+[![GitHub stars](https://img.shields.io/github/stars/jasarien/Provenance.svg?style=flat-square)](https://github.com/jasarien/Provenance/stargazers)
+![GitHub language count](https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square)
+[![GitHub license](https://img.shields.io/github/license/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/jasarien/Provenance)
+
+[![GitHub open issues](https://img.shields.io/github/issues-raw/jasarien/Provenance.svg?style=flat-square)](https://github.com/jasarien/Provenance/issues)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/jasarien/Provenance.svg?style=flat-square)](https://github.com/jasarien/Provenance/issues)
+![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/jasarien/provenance.svg?style=flat-square)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/jasarien/provenance.svg?style=flat-square)
+
+![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance.svg?style=flat-square)
+![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/provenance-emu/provenance.svg?style=flat-square)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/provenance-emu/provenance.svg?style=flat-square)
+
+![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)
+![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
 
 # Provenance
 An iOS & tvOS Frontend for Multiple Emulators
