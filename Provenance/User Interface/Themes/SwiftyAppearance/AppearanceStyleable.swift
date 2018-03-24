@@ -117,6 +117,6 @@ fileprivate extension AppearanceStyleable {
         guard subclassName.hasPrefix(subclassPrefix) else {
             return nil
         }
-        return subclassName.substring(from: subclassPrefix.endIndex)
-    }
+		return String(subclassName[subclassPrefix.endIndex...])
+	}
 }
