@@ -360,7 +360,7 @@ import UIKit
     @objc(didPushPSXButton:forPlayer:)
     func didPush(_ button: PVPSXButton, forPlayer player: Int)
 
-    @objc(didPushReleaseButton:forPlayer:)
+    @objc(didReleasePSXButton:forPlayer:)
     func didRelease(_ button: PVPSXButton, forPlayer player: Int)
 
     @objc(didMovePSXJoystickDirection:withValue:forPlayer:)
