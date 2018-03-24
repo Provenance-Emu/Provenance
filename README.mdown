@@ -106,6 +106,9 @@ Before posting new issues, we ask you to please read up on [Issues Usage](https:
 
 We also have a developer-focused Slack at [provenance-dev.slack.com](http://provenance-dev.slack.com). Request an invite via [@provenanceapp] on Twitter to join the conversation.
 
+### Community
+💬 Join us and the rest of the community on the [Provenence-Emu Discord](https://discord.gg/2fcX34C).<br><br>
+
 ----
 
 ### Attributions
