@@ -98,9 +98,37 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B36DE7471D6AB19C002EE3ED"
+               BuildableName = "PVAtari800.framework"
+               BlueprintName = "PVAtari800"
+               ReferencedContainer = "container:PVAtari800/PVAtari800.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37EFF371C72F43300857158"
                BuildableName = "PVMupen64Plus.framework"
                BlueprintName = "PVMupen64Plus"
+               ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3B3B85F1DECEA9100602746"
+               BuildableName = "PVMupen64PlusRspHLE.framework"
+               BlueprintName = "PVMupen64PlusRspHLE"
                ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -130,6 +158,20 @@
                BuildableName = "PVMupen64PlusVideoGlideN64.framework"
                BlueprintName = "PVMupen64PlusVideoGlideN64"
                ReferencedContainer = "container:PVMupen64Plus/PVMupen64Plus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B340E4611E08887600AD0E8B"
+               BuildableName = "PVMednafen.framework"
+               BlueprintName = "PVMednafen"
+               ReferencedContainer = "container:Mednafen/PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
