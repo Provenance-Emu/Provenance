@@ -162,7 +162,7 @@ public class Theme : NSObject {
         
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.tintColor = theme.navigationBarBackgroundColor
+            $0.barTintColor = theme.navigationBarBackgroundColor
             $0.barStyle = theme.navigationBarStyle
         }
         
