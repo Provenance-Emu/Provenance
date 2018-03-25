@@ -72,6 +72,11 @@ void uncaughtExceptionHandler(NSException *exception)
 
 - (void)dealloc
 {
+    if (self.menuGestureRecognizer) {
+        [[UIApplication sharedApplication].keyWindow removeGestureRecognizer:self.menuGestureRecognizer];
+        [self setMenuGestureRecognizer:nil];
+    }
+    
     [self.emulatorCore stopEmulation]; //Leave emulation loop first
     [self.gameAudio stopAudio];
 
@@ -337,11 +342,11 @@ void uncaughtExceptionHandler(NSException *exception)
 #if TARGET_OS_TV
     // Adding a tap gesture recognizer for the menu type will override the default 'back' functionality of tvOS
     if (!_menuGestureRecognizer) {
-        _menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
-        _menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+        self.menuGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(controllerPauseButtonPressed:)];
+        self.menuGestureRecognizer.allowedPressTypes = @[@(UIPressTypeMenu)];
+        
+        [[UIApplication sharedApplication].keyWindow addGestureRecognizer:self.menuGestureRecognizer];
     }
-    
-    [self.view addGestureRecognizer:_menuGestureRecognizer];
 #else
 	__weak PVEmulatorViewController *weakSelf = self;
 	for (GCController *controller in [GCController controllers])
