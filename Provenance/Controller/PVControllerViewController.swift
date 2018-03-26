@@ -410,7 +410,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton.delegate = self
-                        leftShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        leftShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         leftShoulderButton.alpha = alpha
                         leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton)
@@ -427,7 +427,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton2.delegate = self
-                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         leftShoulderButton2.alpha = alpha
                         leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton2)
@@ -453,7 +453,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton.delegate = self
-                        rightShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        rightShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         rightShoulderButton.alpha = alpha
                         rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton)
@@ -470,7 +470,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton2.delegate = self
-                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         rightShoulderButton2.alpha = alpha
                         rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton2)
@@ -518,7 +518,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             startButton.backgroundImage = UIImage(named: "button-thin")
             startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             startButton.delegate = self
-            startButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+            startButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             startButton.alpha = alpha
             startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(startButton)
@@ -554,7 +554,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             selectButton.backgroundImage = UIImage(named: "button-thin")
             selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             selectButton.delegate = self
-            selectButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+            selectButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             selectButton.alpha = alpha
             selectButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(selectButton)

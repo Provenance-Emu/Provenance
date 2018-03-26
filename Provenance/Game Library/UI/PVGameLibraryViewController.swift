@@ -239,7 +239,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
 #if os(tvOS)
-        collectionView.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+        collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 #else
     collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
     searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
@@ -263,7 +263,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 ])
             layout.sectionInsetReference = .fromSafeArea
         } else {
-            layout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+            layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         }
 
         // Force touch
@@ -1763,9 +1763,9 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         #if os(tvOS)
-            return UIEdgeInsetsMake(40, 0, 120, 0)
+            return UIEdgeInsets(top: 40, left: 0, bottom: 120, right: 0)
         #else
-            return UIEdgeInsetsMake(section == 0 ? 5 : 15, 10, 5, 10)
+            return UIEdgeInsets(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
         #endif
     }
 }

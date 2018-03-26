@@ -24,8 +24,8 @@ disabled_rules:
   # - statement_position
   - type_body_length
   - todo
-  - legacy_constructor
-  - valid_docs
+  # - legacy_constructor
+  # - valid_docs
   - missing_docs
   - file_length
   # - leading_whitespace

@@ -18,9 +18,9 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
     override func viewDidLoad() {
         super.viewDidLoad()
         RomDatabase.sharedInstance.refresh()
-        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: "SearchResultCell")
-        collectionView?.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -60,7 +60,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(40, 40, 120, 40)
+        return UIEdgeInsets(top: 40, left: 40, bottom: 120, right: 40)
     }
 }
 

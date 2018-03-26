@@ -28,7 +28,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 #if os(tvOS)
         if let tabBarController = window?.rootViewController as? UITabBarController {
             let flowLayout = UICollectionViewFlowLayout()
-            flowLayout.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+            flowLayout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
             let searchViewController = PVSearchViewController(collectionViewLayout: flowLayout)
             let searchController = UISearchController(searchResultsController: searchViewController)
             searchController.searchResultsUpdater = searchViewController
