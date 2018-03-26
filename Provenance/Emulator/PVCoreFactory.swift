@@ -144,8 +144,6 @@ public final class PVCoreFactory : NSObject {
             } else {
                 fatalError("Core doesn't impliment PVN64SystemResponderClient")
             }
-        default:
-            fatalError("No controllers found")
         }
     }
 }

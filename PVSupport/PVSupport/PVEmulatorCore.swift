@@ -127,9 +127,9 @@ import UIKit
 }
 
 @objc public protocol PVNESSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(didPushNESButton:forPlayer:)
+    @objc(pushNESButton:forPlayer:)
     func didPush(_ button: PVNESButton, forPlayer player: Int)
-    @objc(didReleaseNESButton:forPlayer:)
+    @objc(releaseNESButton:forPlayer:)
     func didRelease(_ button: PVNESButton, forPlayer player: Int)
 }
 
@@ -360,7 +360,7 @@ import UIKit
     @objc(didPushPSXButton:forPlayer:)
     func didPush(_ button: PVPSXButton, forPlayer player: Int)
 
-    @objc(didPushReleaseButton:forPlayer:)
+    @objc(didReleasePSXButton:forPlayer:)
     func didRelease(_ button: PVPSXButton, forPlayer player: Int)
 
     @objc(didMovePSXJoystickDirection:withValue:forPlayer:)
