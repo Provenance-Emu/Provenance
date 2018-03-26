@@ -1825,7 +1825,7 @@ extension PVGameLibraryViewController {
     }
     
     private func deleteAllGamesFromSpotlight() {
-        CSSearchableIndex.default().deleteAllSearchableItems() { (error) in
+        CSSearchableIndex.default().deleteAllSearchableItems { (error) in
             if let error = error {
                 print("Error deleting all games spotlight index: \(error)")
             } else {

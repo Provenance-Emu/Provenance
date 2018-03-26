@@ -61,14 +61,14 @@ import UIKit
             let AlertContentViews : [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
             
             // Find the titles of UIAlertActions that are .cancel type
-            let cancelTitles : [String] = self.actions.filter() {$0.style == .cancel}.flatMap() {return $0.title}
+            let cancelTitles : [String] = self.actions.filter {$0.style == .cancel}.flatMap {return $0.title}
             
             // Find the titles of UIAlertActions that are .destructive type
-            let destructiveTitles : [String] = self.actions.filter() {$0.style == .destructive}.flatMap() {return $0.title}
+            let destructiveTitles : [String] = self.actions.filter {$0.style == .destructive}.flatMap {return $0.title}
             
             // TODO: Could do the same for 'destructive' types
             
-            AlertContentViews.forEach() {
+            AlertContentViews.forEach {
                 print("AlertContentSubview \(String(describing: $0))")
                 
                 $0?.subviews.forEach({ (subview) in

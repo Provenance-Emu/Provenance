@@ -43,15 +43,15 @@ disabled_rules:
   # - empty_parameters
   - discarded_notification_center_observer
   # - class_delegate_protocol
-  - syntactic_sugar
-  - function_parameter_count
-  - trailing_comma
-  - weak_delegate
-  - redundant_string_enum_value
-  - unused_enumerated
-  - empty_enum_arguments
-  - shorthand_operator
-  - empty_parentheses_with_trailing_closure
+  # - syntactic_sugar
+  # - function_parameter_count
+  # - trailing_comma
+  # - weak_delegate
+  # - redundant_string_enum_value
+  # - unused_enumerated
+  # - empty_enum_arguments
+  # - shorthand_operator
+  # - empty_parentheses_with_trailing_closure
   - closure_parameter_position
   - redundant_discardable_let
   - large_tuple
