@@ -3,9 +3,9 @@ An iOS & tvOS Frontend for Multiple Emulators
 
 ![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
 
-
 [![GitHub forks](https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/network) 
 [![GitHub stars](https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/stargazers)
+![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
 ![GitHub language count](https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square)
 
 
@@ -106,7 +106,6 @@ We track upcoming releases in our GitHub [Milestones](https://github.com/jasarie
 
 
 ### <a id="contributions-footnote"></a>Contributions
-![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
 [![GitHub open issues](https://img.shields.io/github/issues-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
 [![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
 ![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance.svg?style=flat-square)
@@ -114,8 +113,6 @@ We track upcoming releases in our GitHub [Milestones](https://github.com/jasarie
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance.svg?style=flat-square)
 ![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/provenance-emu/provenance.svg?style=flat-square)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/provenance-emu/provenance.svg?style=flat-square)
-
 
 To contribute to the Provenance project please take look at the [open issues](https://github.com/jasarien/Provenance/issues). If you see something you can help with: bugfixing, testing, implementation or relevant suggestions, discussion and research.[°](#contributions-footnote)
 
@@ -124,7 +121,7 @@ Before posting new issues, we ask you to please read up on [Issues Usage](https:
 <sup>° Please note that Issues _is not_ a discussion board _nor_ a help desk. Please help us keep it focused on improving Provenance. </sup><br> 
 
 ### Community
-![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)
+[![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)](https://discord.gg/4TK7PU5)
 ![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
 
 💬 Join us and the rest of the community on the [Provenence-Emu Discord](https://discord.gg/4TK7PU5).<br><br>
