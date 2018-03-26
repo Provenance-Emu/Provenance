@@ -465,7 +465,6 @@ static void emulation_run() {
             maxValue = PVWSButtonCount;
             map = WSMap;
             break;
-            return;
     }
 
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
