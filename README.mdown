@@ -7,6 +7,8 @@ ___
 ![GitHub release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square) 
 ![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
 ![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square) 
+[![Travis](https://img.shields.io/travis/provenance-emu/provenance.svg?style=flat-square)](https://travis-ci.org/Provenance-Emu/Provenance)]
+
 
 ![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
 [![GitHub forks](https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/network) 
