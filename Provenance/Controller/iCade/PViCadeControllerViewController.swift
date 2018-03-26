@@ -38,8 +38,7 @@ class PViCadeControllerViewController: UITableViewController {
 
         if indexPath.row == PVSettingsModel.shared.myiCadeControllerSetting.rawValue {
             cell.accessoryType = .checkmark
-        }
-        else {
+        } else {
             cell.accessoryType = .none
         }
         cell.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue:indexPath.row))!)

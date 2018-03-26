@@ -27,8 +27,7 @@ class PVNESControllerViewController: PVControllerViewController<PVNESSystemRespo
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
             }
         }

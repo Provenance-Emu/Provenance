@@ -43,8 +43,7 @@ public class RealmConfiguration {
             var path: String? = nil
             if RealmConfiguration.supportsAppGroups {
                 path = RealmConfiguration.appGroupPath
-            }
-            else {
+            } else {
                 let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
                 path = paths.first
             }

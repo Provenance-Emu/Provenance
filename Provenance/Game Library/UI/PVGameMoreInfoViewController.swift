@@ -902,8 +902,7 @@ extension PVGameMoreInfoViewController {
             var key: String
             if let pastedURL = pastedURL {
                 key = pastedURL.lastPathComponent
-            }
-            else {
+            } else {
                 key = UUID().uuidString
             }
 

@@ -85,13 +85,11 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             var artworkText: String
             if PVSettingsModel.shared.showGameTitles {
                 artworkText = placeholderImageText
-            }
-            else {
+            } else {
                 artworkText = game.title
             }
             imageView.image = image(withText: artworkText)
-        }
-        else {
+        } else {
             var maybeKey: String? = !artworkURL.isEmpty ? artworkURL : nil
             if maybeKey == nil {
                 maybeKey = !originalArtworkURL.isEmpty ? originalArtworkURL : nil
@@ -101,8 +99,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     var artworkText: String
                     if PVSettingsModel.shared.showGameTitles {
                         artworkText = placeholderImageText
-                    }
-                    else {
+                    } else {
                         artworkText = game.title
                     }
                     let artwork: UIImage? = image ?? self.image(withText: artworkText)
@@ -256,8 +253,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                 transform = transform.translatedBy(x: 0, y: 40)
                 self.titleLabel.alpha = 1
                 self.titleLabel.transform = transform
-            }
-            else {
+            } else {
                 self.titleLabel.alpha = 0
                 self.titleLabel.transform = .identity
             }

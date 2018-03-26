@@ -36,17 +36,13 @@ class PVAtari7800ControllerViewController: PVControllerViewController<PV7800Syst
             }
             if title == "Fire 1" || title == "1" {
                 button.buttonTag = .fire1
-            }
-            else if title == "Fire 2" || title == "2" {
+            } else if title == "Fire 2" || title == "2" {
                 button.buttonTag = .fire2
-            }
-            else if title == "Select" {
+            } else if title == "Select" {
                 button.buttonTag = .select
-            }
-            else if title == "Reset" {
+            } else if title == "Reset" {
                 button.buttonTag = .reset
-            }
-            else if title == "Pause" {
+            } else if title == "Pause" {
                 button.buttonTag = .pause
             }
         }

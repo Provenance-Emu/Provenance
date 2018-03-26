@@ -45,8 +45,7 @@ class PVTVSettingsViewController: UITableViewController {
         let color = UIColor(white: 0.0, alpha: 0.1)
         if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             revisionLabel.text = revisionString
-        }
-        else {
+        } else {
             revisionLabel.textColor = color
             revisionLabel.text = "(none)"
         }
@@ -127,8 +126,7 @@ class PVTVSettingsViewController: UITableViewController {
                         // Web dav can still be manually started alone side the web server
                         if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
                             PVWebServer.shared.startWebDavServer()
-                        }
-                        else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
+                        } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
                             PVWebServer.shared.stopWebDavServer()
                         }
 
@@ -145,8 +143,7 @@ class PVTVSettingsViewController: UITableViewController {
                             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                             }))
                             present(alert, animated: true) {() -> Void in }
-                        }
-                        else {
+                        } else {
                             // connected via wifi, let's continue
                             // start web transfer service
                             if PVWebServer.shared.startServers() {
@@ -166,8 +163,7 @@ class PVTVSettingsViewController: UITableViewController {
                                     PVWebServer.shared.stopServers()
                                 }))
                                 present(alert, animated: true) {() -> Void in }
-                            }
-                            else {
+                            } else {
                                     // Display error
                                 let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in

@@ -156,8 +156,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 secondaryWindow?.addSubview(aView)
             }
             secondaryWindow?.isHidden = false
-        }
-        else {
+        } else {
             if let aController = glViewController {
                 addChildViewController(aController)
             }
@@ -217,13 +216,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {(_ timer: Timer) -> Void in
                     if self.core.renderFPS == self.core.emulationFPS {
                         self.fpsLabel?.text = String(format: "%2.02f", self.core.renderFPS)
-                    }
-                    else {
+                    } else {
                         self.fpsLabel?.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
                     }
                 })
-            }
-            else {
+            } else {
 
                 // Use traditional scheduledTimerWithTimeInterval method on older version of iOS
                 fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateFPSLabel), userInfo: nil, repeats: true)
@@ -248,8 +245,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
             if shouldAutoLoadSaveState {
                 self.core.loadStateFromFile(atPath: autoSavePath)
-            }
-            else if shouldAskToLoadSaveState {
+            } else if shouldAskToLoadSaveState {
                 core.setPauseEmulation(true)
                 let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
@@ -736,8 +732,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
         if let press = presses.first, press.type == .menu && !isShowingMenu {
             //         [self controllerPauseButtonPressed];
-        }
-        else {
+        } else {
             super.pressesBegan(presses, with: event)
         }
     }
@@ -747,8 +742,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         DispatchQueue.main.async(execute: {() -> Void in
             if !self.isShowingMenu {
                 self.showMenu(self)
-            }
-            else {
+            } else {
                 self.hideMenu()
             }
         })

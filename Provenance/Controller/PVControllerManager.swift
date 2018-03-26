@@ -165,8 +165,7 @@ class PVControllerManager: NSObject {
             if iCadeController != nil {
                 listenForICadeControllers()
             }
-        }
-        else {
+        } else {
             // Reassign any controller which we are unassigned
             // (we don't do this for 8Bitdo, instead we listen for them to connect)
             assigned = assignControllers()
@@ -179,8 +178,7 @@ class PVControllerManager: NSObject {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if (keyPath == "kICadeControllerSettingKey") {
             setupICade()
-        }
-        else {
+        } else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
@@ -204,7 +202,7 @@ class PVControllerManager: NSObject {
             player1 = controller
         } else if player == 2 {
             player2 = controller
-        }else if player == 3 {
+        } else if player == 3 {
             player3 = controller
         } else if player == 4 {
             player4 = controller

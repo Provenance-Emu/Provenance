@@ -124,8 +124,7 @@ class JSButton: UIView {
         if (keyPath == "pressed") || (keyPath == "backgroundImage") || (keyPath == "backgroundImagePressed") {
             if pressed {
                 backgroundImageView?.image = backgroundImagePressed
-            }
-            else {
+            } else {
                 backgroundImageView?.image = backgroundImage
             }
         }

@@ -117,8 +117,7 @@ class PVConflictViewController: UITableViewController {
             cell.textLabel?.textAlignment = .center
             if indexPath.row == 0 || indexPath.row == 1 {
                 cell.textLabel?.text = ""
-            }
-            else {
+            } else {
                 cell.textLabel?.text = "No Conflicts..."
                 #if os(iOS)
                 cell.textLabel?.textColor = Theme.currentTheme.settingsCellText

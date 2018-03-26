@@ -20,8 +20,8 @@ disabled_rules:
   - line_length
   # - return_arrow_whitespace
   # - trailing_whitespace
-  - closing_brace
-  - statement_position
+  # - closing_brace
+  # - statement_position
   - type_body_length
   - todo
   - legacy_constructor

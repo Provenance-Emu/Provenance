@@ -39,8 +39,7 @@ class PVAppearanceViewController: UITableViewController {
     @objc func switchChangedValue(_ switchItem: UISwitch) {
         if switchItem == hideTitlesSwitch {
             PVSettingsModel.shared.showGameTitles = switchItem.isOn
-        }
-        else if switchItem == recentlyPlayedSwitch {
+        } else if switchItem == recentlyPlayedSwitch {
             PVSettingsModel.shared.showRecentGames = switchItem.isOn
         }
 
@@ -74,8 +73,7 @@ class PVAppearanceViewController: UITableViewController {
                 cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = hideTitlesSwitch
 #endif
-            }
-            else if indexPath.row == 1 {
+            } else if indexPath.row == 1 {
                 cell?.textLabel?.text = "Show recently played games"
 #if os(tvOS)
                 cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentGames ? "On" : "Off"
@@ -97,8 +95,7 @@ class PVAppearanceViewController: UITableViewController {
             if indexPath.row == 0 {
                 settings.showGameTitles = !settings.showGameTitles
                 cell?.detailTextLabel?.text = settings.showGameTitles ? "On" : "Off"
-            }
-            else if indexPath.row == 1 {
+            } else if indexPath.row == 1 {
                 settings.showRecentGames = !settings.showRecentGames
                 cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
             }

@@ -105,14 +105,11 @@ class PVControllerSelectionViewController: UITableViewController {
             actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 if indexPath.row == 0 {
                     PVControllerManager.shared.player1 = controller
-                }
-                else if indexPath.row == 1 {
+                } else if indexPath.row == 1 {
                     PVControllerManager.shared.player2 = controller
-                }
-                else if indexPath.row == 2 {
+                } else if indexPath.row == 2 {
                     PVControllerManager.shared.player3 = controller
-                }
-                else if indexPath.row == 3 {
+                } else if indexPath.row == 3 {
                     PVControllerManager.shared.player4 = controller
                 }
                 self.tableView.reloadData()
@@ -123,14 +120,11 @@ class PVControllerSelectionViewController: UITableViewController {
         actionSheet.addAction(UIAlertAction(title: "Not Playing", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             if indexPath.row == 0 {
                 PVControllerManager.shared.player1 = nil
-            }
-            else if indexPath.row == 1 {
+            } else if indexPath.row == 1 {
                 PVControllerManager.shared.player2 = nil
-            }
-            else if indexPath.row == 2 {
+            } else if indexPath.row == 2 {
                 PVControllerManager.shared.player3 = nil
-            }
-            else if indexPath.row == 3 {
+            } else if indexPath.row == 3 {
                 PVControllerManager.shared.player4 = nil
             }
             self.tableView.reloadData()

@@ -275,8 +275,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
-        }
-        else {
+        } else {
             registerForChange()
         }
 
@@ -614,8 +613,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) {() -> Void in }
-        }
-        else {
+        } else {
 
             #if os(iOS)
             // connected via wifi, let's continue
@@ -658,8 +656,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         if PVWebServer.shared.startServers() {
             //show alert view
             self.showServerActiveAlert()
-        }
-        else {
+        } else {
             let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             }))
@@ -1394,8 +1391,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //                DispatchQueue.main.async {
 //                    self.collectionView?.reloadItems(at: indexPathsToUpdate)
 //                }
-            }
-            else {
+            } else {
                 let alert = UIAlertController(title: "No Photos", message: "There are no photos in your library to choose from", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 self.present(alert, animated: true) {() -> Void in }
@@ -1439,8 +1435,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             var key: String
             if let pastedURL = pastedURL {
                 key = pastedURL.lastPathComponent
-            }
-            else {
+            } else {
                 key = UUID().uuidString
             }
 
@@ -1484,8 +1479,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         if searchResults != nil {
             return 1
-        }
-        else {
+        } else {
             let count = systemsSectionOffset + systems.count
             ILOG("Sections : \(count)")
             return count
@@ -1511,8 +1505,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func indexTitles(for collectionView: UICollectionView) -> [String]? {
         if searchResults != nil {
             return nil
-        }
-        else {
+        } else {
             return sectionTitles
         }
     }
@@ -1529,8 +1522,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         var game: PVGame? = nil
         if let searchResults = searchResults {
             game = searchResults[indexPath.item]
-        }
-        else {
+        } else {
             game = self.game(at: indexPath)
         }
 
@@ -1543,8 +1535,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         var game: PVGame? = nil
         if let searchResults = searchResults {
             game = Array(searchResults)[indexPath.item]
-        }
-        else {
+        } else {
             let section = indexPath.section
             let row = indexPath.row
 
@@ -1595,8 +1586,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField != searchField {
             doneRenaming(self)
-        }
-        else {
+        } else {
             textField.resignFirstResponder()
         }
         return true
@@ -1613,8 +1603,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     @objc func handleTextFieldDidChange(_ notification: Notification) {
         if let text = searchField?.text, !text.isEmpty {
             searchLibrary(text)
-        }
-        else {
+        } else {
             clearSearch()
         }
     }

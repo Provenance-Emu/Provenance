@@ -212,8 +212,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
                     self.hideTouchControls(for: controller)
                 })
-            }
-            else {
+            } else {
                 dPad?.isHidden = false
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
                 buttonGroup?.isHidden = false
@@ -235,8 +234,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         self.hideTouchControls(for: controller)
                     })
                 }
-            }
-            else {
+            } else {
                 dPad?.isHidden = false
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
                 buttonGroup?.isHidden = false
@@ -257,8 +255,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 // everything else should fall back to the vibration motor.
                 if #available(iOS 10.0, *), UIDevice.hasTapticMotor {
                     feedbackGenerator?.selectionChanged()
-                }
-                else {
+                } else {
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
                     let vibrationLength: Int = 30
                     let pattern : [Any] = [false, 0, true, vibrationLength]
@@ -359,8 +356,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         dPad?.frame = dPadFrame
                     }
                     dPad2?.isHidden = compactVertical
-                }
-                else if (controlType == Keys.ButtonGroup) {
+                } else if (controlType == Keys.ButtonGroup) {
                     let xPadding: CGFloat = safeAreaInsets.right + 5
                     let bottomPadding: CGFloat = 16
                     let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
@@ -368,8 +364,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
 
                     if let buttonGroup = self.buttonGroup {
                         buttonGroup.frame = buttonsFrame
-                    }
-                    else {
+                    } else {
                         let buttonGroup = UIView(frame: buttonsFrame)
                         self.buttonGroup = buttonGroup
                         buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
@@ -399,8 +394,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         buttonGroup.alpha = alpha
                         view.addSubview(buttonGroup)
                     }
-                }
-                else if (controlType == Keys.LeftShoulderButton) {
+                } else if (controlType == Keys.LeftShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.left + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
                     var leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
@@ -443,8 +437,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
                         leftShoulderButton2?.frame = leftShoulderFrame
                     }
-                }
-                else if (controlType == Keys.RightShoulderButton) {
+                } else if (controlType == Keys.RightShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.right + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
                     var rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
@@ -486,11 +479,9 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderFrame.origin.y += rightShoulderButton!.frame.size.height + 20
                         rightShoulderButton2?.frame = rightShoulderFrame
                     }
-                }
-                else if (controlType == Keys.StartButton) {
+                } else if (controlType == Keys.StartButton) {
                     layoutStartButton(control: control)
-                }
-                else if (controlType == Keys.SelectButton) {
+                } else if (controlType == Keys.SelectButton) {
                     layoutSelectButton(control: control)
                 }
             }
@@ -552,8 +543,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         }
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame
-        }
-        else {
+        } else {
             let selectButton = JSButton(frame: selectFrame)
             if let tintColor = control.PVControlTint {
                 selectButton.tintColor = UIColor(hex: tintColor)

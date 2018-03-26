@@ -29,14 +29,11 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
             }
             if text == "✖" || text == "✕" {
                 button.buttonTag = .cross
-            }
-            else if text == "●" || text == "○" {
+            } else if text == "●" || text == "○" {
                 button.buttonTag = .circle
-            }
-            else if text == "◼" || text == "□" {
+            } else if text == "◼" || text == "□" {
                 button.buttonTag = .square
-            }
-            else if text == "▲" || text == "▵" {
+            } else if text == "▲" || text == "▵" {
                 button.buttonTag = .triangle
             }
         }

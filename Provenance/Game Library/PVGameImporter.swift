@@ -184,8 +184,7 @@ public class PVGameImporter {
                     // Is artwork, import that
                     ILOG("Found artwork \(canidate.filePath.lastPathComponent) for game <\(game.title)>")
                     return nil
-                }
-                else {
+                } else {
                     return canidate
                 }
             } else {
@@ -706,8 +705,7 @@ public extension PVGameImporter {
             var gameTitleLen: Int
             if nonCharRange.length > 0 && nonCharRange.location > 1 {
                 gameTitleLen = nonCharRange.location - 1
-            }
-            else {
+            } else {
                 gameTitleLen = fileName.count
             }
             let subfileName = String(fileName.prefix(gameTitleLen))
@@ -833,8 +831,7 @@ public extension PVGameImporter {
         let queryString: String
         if key == "romFileName" {
             queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
-        }
-        else {
+        } else {
             queryString = String(format: exactQuery, key, value)
         }
 

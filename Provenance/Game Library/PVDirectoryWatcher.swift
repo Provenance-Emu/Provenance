@@ -187,8 +187,7 @@ public class PVDirectoryWatcher: NSObject {
                 serialQueue.async {
                     self.extractArchive(at: path)
                 }
-            }
-            else {
+            } else {
                 if extractionCompleteHandler != nil {
                     DispatchQueue.main.async(execute: {() -> Void in
                         self.extractionCompleteHandler?([path])
@@ -247,8 +246,7 @@ public class PVDirectoryWatcher: NSObject {
                     } catch {
                         ELOG("Unable to delete file at path \(filePath), because \(error.localizedDescription)")
                     }
-                }
-                else if let error = error {
+                } else if let error = error {
                     ELOG("Unable to unzip file: \(filePath) because: \(error.localizedDescription)")
                     DispatchQueue.main.async(execute: {() -> Void in
                         self.extractionCompleteHandler?(nil)
@@ -258,8 +256,7 @@ public class PVDirectoryWatcher: NSObject {
                 self.unzippedFiles.removeAll()
                 self.delayedStartMonitoring()
             })
-        }
-        else if ext == "7z" {
+        } else if ext == "7z" {
             let reader = LzmaSDKObjCReader(fileURL: filePath, andType: LzmaSDKObjCFileType7z)
             self.reader = reader
             reader.delegate = self

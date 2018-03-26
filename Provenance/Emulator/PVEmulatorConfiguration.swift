@@ -486,21 +486,17 @@ public extension PVEmulatorConfiguration {
             // Check m3u, put last
             if obj1Extension == "m3u" && obj2Extension == "m3u" {
                 return obj1Filename < obj2Filename
-            }
-            else if obj1Extension == "m3u" {
+            } else if obj1Extension == "m3u" {
                 return false
-            }
-            else if obj2Extension == "m3u" {
+            } else if obj2Extension == "m3u" {
                 return true
             }
                 // Check cue
             else if obj1Extension == "cue" && obj2Extension == "cue" {
                 return obj1Filename < obj2Filename
-            }
-            else if obj1Extension == "cue" {
+            } else if obj1Extension == "cue" {
                 return true
-            }
-            else if obj2Extension == "cue" {
+            } else if obj2Extension == "cue" {
                 return false
             } // Check if image, put last
             else if artworkExtensions.contains(obj1Extension) {

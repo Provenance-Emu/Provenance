@@ -37,20 +37,15 @@ class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResp
             }
             if (button.titleLabel?.text == "A") {
                 button.buttonTag = .a
-            }
-            else if (button.titleLabel?.text == "B") {
+            } else if (button.titleLabel?.text == "B") {
                 button.buttonTag = .b
-            }
-            else if (button.titleLabel?.text == "C▲") {
+            } else if (button.titleLabel?.text == "C▲") {
                 button.buttonTag = .cUp
-            }
-            else if (button.titleLabel?.text == "C▼") {
+            } else if (button.titleLabel?.text == "C▼") {
                 button.buttonTag = .cDown
-            }
-            else if (button.titleLabel?.text == "C◀") {
+            } else if (button.titleLabel?.text == "C◀") {
                 button.buttonTag = .cLeft
-            }
-            else if (button.titleLabel?.text == "C▶") {
+            } else if (button.titleLabel?.text == "C▶") {
                 button.buttonTag = .cRight
             }
         }

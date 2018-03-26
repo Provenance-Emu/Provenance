@@ -96,8 +96,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 ELOG("Unsupported host <\(url.host?.removingPercentEncoding ?? "nil")>")
                 return false
             }
-        }
-        else if let components = components,
+        } else if let components = components,
             (components.path == PVGameControllerKey) && (components.queryItems?.first?.name == PVGameMD5Key) {
             shortcutItemMD5 = components.queryItems?.first?.value ?? ""
             return true

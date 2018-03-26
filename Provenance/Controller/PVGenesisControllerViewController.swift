@@ -29,20 +29,15 @@ class PVGenesisControllerViewController: PVControllerViewController<PVGenesisSys
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" || title == "1" {
+            } else if title == "B" || title == "1" {
                 button.buttonTag = .b
-            }
-            else if title == "C" || title == "2" {
+            } else if title == "C" || title == "2" {
                 button.buttonTag = .c
-            }
-            else if title == "X" {
+            } else if title == "X" {
                 button.buttonTag = .x
-            }
-            else if title == "Y" {
+            } else if title == "Y" {
                 button.buttonTag = .y
-            }
-            else if title == "Z" {
+            } else if title == "Z" {
                 button.buttonTag = .z
             }
         }

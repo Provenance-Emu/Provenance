@@ -29,8 +29,7 @@ class PVNeoGeoPocketControllerViewController: PVControllerViewController<PVNeoGe
             }
             if text == "A" {
                 button.buttonTag = .a
-            }
-            else if text == "B" {
+            } else if text == "B" {
                 button.buttonTag = .b
             }
         }

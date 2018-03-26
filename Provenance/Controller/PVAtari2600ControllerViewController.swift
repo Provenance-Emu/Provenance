@@ -28,11 +28,9 @@ class PVAtari2600ControllerViewController: PVControllerViewController<PV2600Syst
             }
             if title == "Fire" || title == "" {
                 button.buttonTag = .fire1
-            }
-            else if title == "Select" {
+            } else if title == "Select" {
                 button.buttonTag = .select
-            }
-            else if title == "Reset" {
+            } else if title == "Reset" {
                 button.buttonTag = .reset
             }
         }

@@ -46,8 +46,7 @@ class PVButtonGroupOverlayView: UIView {
             let buttonFrame: CGRect = convert(button.frame, to: self)
             if touchArea.intersects(buttonFrame) {
                 button.touchesMoved(touches, with: event)
-            }
-            else if button.pressed {
+            } else if button.pressed {
                 button.touchesEnded(touches, with: event)
             }
         }

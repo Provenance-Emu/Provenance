@@ -30,26 +30,19 @@ class PVSega32XControllerViewController : PVControllerViewController<PVSega32XSy
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
-            }
-            else if title == "C" {
+            } else if title == "C" {
                 button.buttonTag = .c
-            }
-            else if title == "X" {
+            } else if title == "X" {
                 button.buttonTag = .x
-            }
-            else if title == "Y" {
+            } else if title == "Y" {
                 button.buttonTag = .y
-            }
-            else if title == "Z" {
+            } else if title == "Z" {
                 button.buttonTag = .z
-            }
-            else if title == "Mode" {
+            } else if title == "Mode" {
                 button.buttonTag = .mode
-            }
-            else if title == "Start" {
+            } else if title == "Start" {
                 button.buttonTag = .start
             }
         }
