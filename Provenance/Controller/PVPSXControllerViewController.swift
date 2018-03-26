@@ -10,7 +10,7 @@
 import PVMednafen
 
 fileprivate extension JSButton {
-    var buttonTag : PVPSXButton {
+    var buttonTag: PVPSXButton {
         get {
             return PVPSXButton(rawValue: tag)!
         }

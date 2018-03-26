@@ -39,8 +39,8 @@ extension URLSession {
 }
 
 struct ImportCanidateFile {
-    var filePath : URL
-    var md5 : String? {
+    var filePath: URL
+    var md5: String? {
         if let cached = cache.md5 {
             return cached
         } else {
@@ -58,7 +58,7 @@ struct ImportCanidateFile {
     // The struct only contains a reference to the class, not the class itself,
     // so the struct cannot prevent the class from mutating.
     private class Cache {
-        var md5 : String?
+        var md5: String?
     }
     private var cache = Cache()
 }
@@ -81,9 +81,9 @@ public class PVGameImporter {
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
 
     // MARK: - Paths
-    let documentsPath : URL = PVEmulatorConfiguration.documentsPath
-    let romsImportPath : URL = PVEmulatorConfiguration.romsImportPath
-    let conflictPath  : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+    let documentsPath: URL = PVEmulatorConfiguration.documentsPath
+    let romsImportPath: URL = PVEmulatorConfiguration.romsImportPath
+    let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -106,7 +106,7 @@ public class PVGameImporter {
         return _openVGDB
     }()
 
-    public var conflictedFiles : [URL]? {
+    public var conflictedFiles: [URL]? {
         return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
     }
 
@@ -140,8 +140,8 @@ public class PVGameImporter {
     }
 
     @objc
-    func calculateMD5(forGame game : PVGame ) -> String? {
-        var offset : UInt = 0
+    func calculateMD5(forGame game: PVGame ) -> String? {
+        var offset: UInt = 0
         if game.system.enumValue == .SNES {
             offset = 16
         }
@@ -230,7 +230,7 @@ public class PVGameImporter {
                 try? FileManager.default.createDirectory(at: subfolder, withIntermediateDirectories: true, attributes: nil)
             }
 
-            let sourceFilename : String = filePath.lastPathComponent
+            let sourceFilename: String = filePath.lastPathComponent
             let sourcePath: URL = filePath
             let destinationPath: URL = subfolder.appendingPathComponent(sourceFilename, isDirectory: false)
 
@@ -312,7 +312,7 @@ public class PVGameImporter {
 
 public extension PVGameImporter {
     func updateSystemToPathMap() -> [String: URL] {
-        let map = PVSystem.all.reduce([String: URL]()) { (dict, system) -> [String:URL] in
+        let map = PVSystem.all.reduce([String: URL]()) { (dict, system) -> [String: URL] in
             var dict = dict
             dict[system.identifier] = system.romsDirectory
             return dict
@@ -322,11 +322,11 @@ public extension PVGameImporter {
     }
 
     func updateromExtensionToSystemsMap() -> [String: [String]] {
-        return PVSystem.all.reduce([String:[String]](), { (dict, system) -> [String:[String]] in
+        return PVSystem.all.reduce([String:[String]](), { (dict, system) -> [String: [String]] in
             let extensionsForSystem = system.supportedExtensions
             // Make a new dict of [ext : systemID] for each ext in extions for that ID, then merge that dictionary with the current one,
             // if the dictionary already has that key, the arrays are joined so you end up with a ext mapping to multpiple systemIDs
-            let extsToCurrentSystemID = extensionsForSystem.reduce([String:[String]](), { (dict, ext) -> [String:[String]] in
+            let extsToCurrentSystemID = extensionsForSystem.reduce([String:[String]](), { (dict, ext) -> [String: [String]] in
                 var dict = dict
                 dict[ext] = [system.identifier]
                 return dict
@@ -351,7 +351,7 @@ public extension PVGameImporter {
     class func importArtwork(fromPath imageFullPath: URL) -> PVGame? {
 
         // Check the file exists (and is not a directory for some reason)
-        var isDirectory :ObjCBool = false
+        var isDirectory: ObjCBool = false
         let fileExists = FileManager.default.fileExists(atPath: imageFullPath.path, isDirectory: &isDirectory)
         if !fileExists || isDirectory.boolValue {
             WLOG("File doesn't exist or is directory at \(imageFullPath)")
@@ -420,7 +420,7 @@ public extension PVGameImporter {
             // We could get here with Sega games. They use .bin, which is CD extension.
             // See if we can match any of the potential paths to a current game
             // See if we have any current games that could match based on searching for any, [systemIDs]/filename
-            guard let existingGames = findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename:gameFilename) else {
+            guard let existingGames = findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename: gameFilename) else {
                 ELOG("System for extension \(gameExtension) is a CD system and {\(gameExtension)} not the right matching file type of cue or m3u")
                 return nil
             }
@@ -456,7 +456,7 @@ public extension PVGameImporter {
         let system = systems.first!
 
         // TODO: This will break if we move the ROMS to a new spot
-        let gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory:true).appendingPathComponent(gameFilename).path
+        let gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory: true).appendingPathComponent(gameFilename).path
         if gamePartialPath.isEmpty {
             ELOG("Game path was empty")
             return nil
@@ -484,9 +484,9 @@ public extension PVGameImporter {
         return game
     }
 
-    fileprivate class func scaleAndMoveImageToCache(imageFullPath : URL) -> String? {
+    fileprivate class func scaleAndMoveImageToCache(imageFullPath: URL) -> String? {
         // Read the data
-        let coverArtFullData : Data
+        let coverArtFullData: Data
         do {
             coverArtFullData = try Data.init(contentsOf: imageFullPath, options: [])
         } catch {
@@ -526,7 +526,7 @@ public extension PVGameImporter {
         return hash
     }
 
-    fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems : [PVSystem], romFilename : String) -> [PVGame]? {
+    fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem], romFilename: String) -> [PVGame]? {
         // Check if existing ROM
 
         let database = RomDatabase.sharedInstance
@@ -690,7 +690,7 @@ public extension PVGameImporter {
             return
         }
 
-        var resultsMaybe:[[String : Any]]? = nil
+        var resultsMaybe: [[String: Any]]? = nil
         do {
             resultsMaybe = try self.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
         } catch {
@@ -698,7 +698,7 @@ public extension PVGameImporter {
         }
 
         if resultsMaybe == nil || resultsMaybe!.isEmpty {
-            let fileName: String = URL(fileURLWithPath:game.romPath, isDirectory:true).lastPathComponent
+            let fileName: String = URL(fileURLWithPath: game.romPath, isDirectory: true).lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
 
             let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: PVGameImporter.charset)
@@ -845,7 +845,7 @@ public extension PVGameImporter {
         return results as? [[String: NSObject]]
     }
 
-    static var charset : CharacterSet = {
+    static var charset: CharacterSet = {
         var c = CharacterSet.punctuationCharacters
         c.remove(charactersIn: ",-+&.'")
         return c
@@ -871,7 +871,7 @@ extension PVGameImporter {
 
         var subfolderPathMaybe: URL? = nil
 
-        var matchedSystemID : String?
+        var matchedSystemID: String?
 
         if systemsForExtension.count > 1 {
             // Try to match by MD5 or filename
@@ -933,7 +933,7 @@ extension PVGameImporter {
 
     // TODO: Mabye this should throw
     @discardableResult
-    private func importToDatabaseROM(atPath path : URL, system: PVSystem) -> PVGame? {
+    private func importToDatabaseROM(atPath path: URL, system: PVSystem) -> PVGame? {
         let database = RomDatabase.sharedInstance
 
         let filename = path.lastPathComponent
@@ -955,7 +955,7 @@ extension PVGameImporter {
         game.md5Hash = md5
 
         do {
-            try database.add(game, update:true)
+            try database.add(game, update: true)
         } catch {
             ELOG("Couldn't add new game \(title): \(error.localizedDescription)")
             return nil
@@ -1018,7 +1018,7 @@ extension PVGameImporter {
         let urlResponseMaybe: HTTPURLResponse?
 
         // TODO: Is a synchronous data task just a bad idea here?
-        let dataMaybe : Data?
+        let dataMaybe: Data?
         do {
             (dataMaybe, urlResponseMaybe) = try URLSession.shared.synchronousDataTask(urlrequest: request)
         } catch {
@@ -1152,10 +1152,10 @@ extension PVGameImporter {
 
         if systemsForExtension.count > 1, let fileMD5 = canidateFile.md5?.uppercased() {
             // Multiple hits - Check by MD5
-            var foundSystemIDMaybe : String?
+            var foundSystemIDMaybe: String?
 
             // Any results of MD5 match?
-            var results:  [[String: NSObject]]?
+            var results: [[String: NSObject]]?
             for currentSystem: String in systemsForExtension {
                 // TODO: Would be better performance to search EVERY system MD5 in a single query?
                 if let gotit = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemID: currentSystem) {
@@ -1247,7 +1247,7 @@ extension PVGameImporter {
         ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
         let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
 
-        let contents : [URL]
+        let contents: [URL]
         let fromDirectory = inputFile.deletingLastPathComponent()
         do {
             contents = try FileManager.default.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsPackageDescendants])

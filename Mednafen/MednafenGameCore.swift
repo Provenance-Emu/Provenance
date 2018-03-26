@@ -10,11 +10,11 @@ import PVSupport
 //import PVMednafen.Private
 
 extension MednafenGameCore: DiscSwappable {
-    public var numberOfDiscs : UInt {
+    public var numberOfDiscs: UInt {
         return maxDiscs
     }
 
-    public var currentGameSupportsMultipleDiscs : Bool {
+    public var currentGameSupportsMultipleDiscs: Bool {
         switch systemType {
         case .PSX:
             return numberOfDiscs > 1

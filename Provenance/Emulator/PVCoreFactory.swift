@@ -35,7 +35,7 @@ extension PVCore {
     }
 }
 
-public final class PVCoreFactory : NSObject {
+public final class PVCoreFactory: NSObject {
     class func controllerViewController(forSystem system: PVSystem, core: ResponderClient) -> (UIViewController & StartSelectDelegate)? {
         guard let controllerLayout = system.controllerLayout else {
             fatalError("No controller layout config defined for system \(system.name)")

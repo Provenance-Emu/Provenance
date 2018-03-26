@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVLynxButton {
+    var buttonTag: PVLynxButton {
         get {
             return PVLynxButton(rawValue: tag)!
         }

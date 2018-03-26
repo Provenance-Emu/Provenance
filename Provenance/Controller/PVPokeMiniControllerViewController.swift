@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVPMButton {
+    var buttonTag: PVPMButton {
         get {
             return PVPMButton(rawValue: tag)!
         }
@@ -20,7 +20,7 @@ fileprivate extension JSButton {
     }
 }
 
-class PVPokeMiniControllerViewController : PVControllerViewController<PVPokeMiniSystemResponderClient> {
+class PVPokeMiniControllerViewController: PVControllerViewController<PVPokeMiniSystemResponderClient> {
 
     override func layoutViews() {
         buttonGroup?.subviews.forEach {

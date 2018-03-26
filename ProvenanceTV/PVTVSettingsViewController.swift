@@ -66,7 +66,7 @@ class PVTVSettingsViewController: UITableViewController {
         // Use 2 lines if on to make space for the sub title
         webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1
             // The main title is always present
-        var firstLineAttributes : [NSAttributedStringKey:Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
+        var firstLineAttributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
 
         if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
             firstLineAttributes[NSAttributedStringKey.foregroundColor] = UIColor.white
@@ -207,7 +207,7 @@ class PVTVSettingsViewController: UITableViewController {
 
 // Reduce code, use a macro!
 fileprivate extension Bool {
-    var onOffString : String {
+    var onOffString: String {
         return self ? "On" : "Off"
     }
 }

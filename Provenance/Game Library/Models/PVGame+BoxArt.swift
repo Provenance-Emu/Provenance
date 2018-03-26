@@ -10,14 +10,14 @@ import Foundation
 import CoreGraphics
 import RealmSwift
 
-public enum PVGameBoxArtAspectRatio : CGFloat {
+public enum PVGameBoxArtAspectRatio: CGFloat {
     case square = 1.0
     case wide = 1.45
     case tall = 0.7
 }
 
 public extension PVGame {
-    var boxartAspectRatio : PVGameBoxArtAspectRatio {
+    var boxartAspectRatio: PVGameBoxArtAspectRatio {
         switch self.system.enumValue {
         case .SNES, .N64:
             return .wide

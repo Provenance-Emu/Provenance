@@ -35,7 +35,7 @@ public class PVDirectoryWatcher: NSObject {
     public init(directory: URL, extractionStartedHandler startedHandler: PVExtractionStartedHandler?, extractionUpdatedHandler updatedHandler: PVExtractionUpdatedHandler?, extractionCompleteHandler completeHandler: PVExtractionCompleteHandler?) {
         watchedDirectory = directory
 
-        var isDirectory :ObjCBool = false
+        var isDirectory: ObjCBool = false
         let fileExists: Bool = FileManager.default.fileExists(atPath: directory.path, isDirectory: &isDirectory)
         if (fileExists == false) || (isDirectory.boolValue == false) {
             do {
@@ -55,7 +55,7 @@ public class PVDirectoryWatcher: NSObject {
 
         serialQueue.async {
             do {
-                let contents = try FileManager.default.contentsOfDirectory(at:directory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                let contents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
                 contents.forEach { file in
                     let exts = PVEmulatorConfiguration.archiveExtensions
                     let ext = file.pathExtension.lowercased()
@@ -73,7 +73,7 @@ public class PVDirectoryWatcher: NSObject {
         DLOG("Start Monitoring \(watchedDirectory.path)")
         _stopMonitoring()
 
-        let fd : Int32 = open(self.watchedDirectory.path, O_EVTONLY)
+        let fd: Int32 = open(self.watchedDirectory.path, O_EVTONLY)
 
         if fd == 0 {
             ELOG("Unable open file system ref \(self.watchedDirectory)")
@@ -159,12 +159,12 @@ public class PVDirectoryWatcher: NSObject {
     @objc
     func checkFileProgress(_ timer: Timer) {
 
-        guard let userInfo = timer.userInfo as? [String:Any], let path = userInfo["path"] as? URL, let previousFilesize = userInfo["filesize"] as? UInt64 else {
+        guard let userInfo = timer.userInfo as? [String: Any], let path = userInfo["path"] as? URL, let previousFilesize = userInfo["filesize"] as? UInt64 else {
             ELOG("Timer missing userInfo or elements of it.")
             return
         }
 
-        let attributes : [FileAttributeKey : Any]
+        let attributes: [FileAttributeKey: Any]
         do {
             attributes = try FileManager.default.attributesOfItem(atPath: path.path)
         } catch {
@@ -233,7 +233,7 @@ public class PVDirectoryWatcher: NSObject {
                         self.extractionUpdatedHandler?(filePath, entryNumber, total, Float(bytesRead) / Float(fileSize))
                     }
                 }
-            }, completionHandler: { (path : String?, succeeded : Bool, error: Error?) in
+            }, completionHandler: { (path: String?, succeeded: Bool, error: Error?) in
                 if succeeded {
                     if self.extractionCompleteHandler != nil {
                         let unzippedItems = self.unzippedFiles

@@ -29,7 +29,7 @@ class PVConflictViewController: UITableViewController {
         splitViewController?.title = "Solve Conflicts"
 #else
         let currentTableview = self.tableView!
-        self.tableView = SettingsTableView(frame: currentTableview.frame, style:currentTableview.style)
+        self.tableView = SettingsTableView(frame: currentTableview.frame, style: currentTableview.style)
 
         title = "Solve Conflicts"
         if !conflictedFiles.isEmpty {

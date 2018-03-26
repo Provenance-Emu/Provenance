@@ -16,15 +16,15 @@ import RealmSwift
  
  */
 
-public protocol GameLaunchingViewController : class {
-    var mustRefreshDataSource : Bool {get set}
+public protocol GameLaunchingViewController: class {
+    var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
     func load(_ game: PVGame)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
 }
 
-public enum GameLaunchingError : Error {
+public enum GameLaunchingError: Error {
     case systemNotFound
     case generic(String)
     case missingBIOSes([String])
@@ -32,7 +32,7 @@ public enum GameLaunchingError : Error {
 
 extension GameLaunchingViewController where Self : UIViewController {
 
-    private func biosCheck(system : PVSystem) throws {
+    private func biosCheck(system: PVSystem) throws {
         guard system.requiresBIOS else {
             // Nothing to do
             return
@@ -45,7 +45,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             throw GameLaunchingError.generic("Invalid configuration for system \(system.name). Missing BIOS dictionary in systems.plist")
         }
 
-        let biosPathContents : [String]
+        let biosPathContents: [String]
         do {
             biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
         } catch {
@@ -62,7 +62,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
         // Store the HASH : FILENAME of the BIOS directory contents
         // Only generated if needed for matching if filename fails
-        var biosPathContentsMD5Cache : [String:String]?
+        var biosPathContentsMD5Cache: [String: String]?
 
         var missingBIOSES = [String]()
 
@@ -77,7 +77,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
                 // 1 - Lazily generate the hashes of files in the BIOS directory
                 if biosPathContentsMD5Cache == nil {
-                    biosPathContentsMD5Cache = biosPathContents.reduce([String:String](), { (hashDictionary, filename) -> [String:String] in
+                    biosPathContentsMD5Cache = biosPathContents.reduce([String:String](), { (hashDictionary, filename) -> [String: String] in
                         let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
                         if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
                             // Make mutable
@@ -115,7 +115,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             } else {
                 // Not as important, but log if MD5 is mismatched.
                 // Cores care about filenames for some reason, not MD5s
-                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset:0) ?? ""
+                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset: 0) ?? ""
                 if fileMD5 != $0.expectedMD5.uppercased() {
                     WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
                 }
@@ -136,7 +136,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         try biosCheck(system: system)
     }
 
-    private func displayAndLogError(withTitle title : String, message : String) {
+    private func displayAndLogError(withTitle title: String, message: String) {
         ELOG(message)
 
         let alertController = UIAlertController(title: "Missing BIOS Files", message: message, preferredStyle: .alert)
@@ -253,14 +253,14 @@ extension GameLaunchingViewController where Self : UIViewController {
         if let currentRecent = game.recentPlays.first {
             do {
                 currentRecent.lastPlayedDate = Date()
-                try database.add(currentRecent, update:true)
+                try database.add(currentRecent, update: true)
             } catch {
                 ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
             }
         } else {
             let newRecent = PVRecentGame(withGame: game)
             do {
-                try database.add(newRecent, update:false)
+                try database.add(newRecent, update: false)
 
                 let activity = game.spotlightActivity
                 // Make active, causes it to index also
@@ -283,7 +283,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
                 let favorites = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true)
                 for game in favorites {
-                    let icon : UIApplicationShortcutIcon?
+                    let icon: UIApplicationShortcutIcon?
                     if #available(iOS 9.1, *) {
                         icon  = UIApplicationShortcutIcon(type: .favorite)
                     } else {
@@ -299,7 +299,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                 for recentGame in sortedRecents {
                     if let game = recentGame.game {
 
-                        let icon : UIApplicationShortcutIcon?
+                        let icon: UIApplicationShortcutIcon?
                         icon = UIApplicationShortcutIcon(type: .play)
 
                         let shortcut = UIApplicationShortcutItem(type: "kRecentGameShortcut", localizedTitle: game.title, localizedSubtitle: PVEmulatorConfiguration.name(forSystemIdentifier: game.systemIdentifier), icon: icon, userInfo: ["PVGameHash": game.md5Hash])

@@ -15,19 +15,19 @@ import UIKit
 
 public extension PVGame {
 
-    var url : URL {
+    var url: URL {
         return file.url
     }
 
     #if os(iOS)
     @available(iOS 9.0, *)
-    var spotlightContentSet : CSSearchableItemAttributeSet {
+    var spotlightContentSet: CSSearchableItemAttributeSet {
         let systemName = self.systemName
 
         var description = "\(systemName ?? "")"
 
         // Determine if any of these have a value, and if so, seperate them by a space
-        let optionalEntries : [String?] = [isFavorite ? "⭐" : nil,
+        let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
                                            developer,
                                            publishDate != nil ? "(\(publishDate!)" : nil,
                                            regionName != nil ? "(\(regionName!))" : nil]
@@ -68,7 +68,7 @@ public extension PVGame {
         return contentSet
     }
 
-    var pathOfCachedImage : URL? {
+    var pathOfCachedImage: URL? {
         let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
         if !PVMediaCache.fileExists(forKey: artworkKey) {
             return nil
@@ -77,12 +77,12 @@ public extension PVGame {
         return artworkURL
     }
 
-    var spotlightUniqueIdentifier : String {
+    var spotlightUniqueIdentifier: String {
         return "com.provenance-emu.game.\(md5Hash)"
     }
     #endif
 
-    var spotlightActivity : NSUserActivity {
+    var spotlightActivity: NSUserActivity {
         let activity = NSUserActivity(activityType: "com.provenance-emu.game.play")
         activity.title = title
         activity.userInfo = ["md5" : md5Hash]
@@ -103,7 +103,7 @@ public extension PVGame {
     }
 
     // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
-    private var systemName : String? {
+    private var systemName: String? {
         return self.system.name
     }
 }

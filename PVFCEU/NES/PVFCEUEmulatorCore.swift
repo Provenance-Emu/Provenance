@@ -10,11 +10,11 @@ import PVSupport
 import Foundation
 
 extension PVFCEUEmulatorCore: DiscSwappable {
-    public var numberOfDiscs : UInt {
+    public var numberOfDiscs: UInt {
         return 2
     }
 
-    public var currentGameSupportsMultipleDiscs : Bool {
+    public var currentGameSupportsMultipleDiscs: Bool {
         return true
     }
 

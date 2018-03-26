@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum JSDPadDirection : Int {
+enum JSDPadDirection: Int {
     case upLeft = 1
     case up
     case upRight
@@ -20,7 +20,7 @@ enum JSDPadDirection : Int {
     case downRight
 }
 
-protocol JSDPadDelegate : class {
+protocol JSDPadDelegate: class {
     func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection)
     func dPadDidReleaseDirection(_ dPad: JSDPad)
 }

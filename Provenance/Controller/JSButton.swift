@@ -9,7 +9,7 @@
 
 import UIKit
 
-protocol JSButtonDelegate : class {
+protocol JSButtonDelegate: class {
     func buttonPressed(_ button: JSButton)
     func buttonReleased(_ button: JSButton)
 }
@@ -120,7 +120,7 @@ class JSButton: UIView {
         }
     }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if (keyPath == "pressed") || (keyPath == "backgroundImage") || (keyPath == "backgroundImagePressed") {
             if pressed {
                 backgroundImageView?.image = backgroundImagePressed

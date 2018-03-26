@@ -71,13 +71,13 @@ class PVCoresTableViewController: UITableViewController {
 
 #if os(iOS)
     import WebKit
-    class WebkitViewController : UIViewController {
-        private let url : URL
-        private var webView : WKWebView!
-        private var hud : MBProgressHUD!
-        private var token : NSKeyValueObservation?
+    class WebkitViewController: UIViewController {
+        private let url: URL
+        private var webView: WKWebView!
+        private var hud: MBProgressHUD!
+        private var token: NSKeyValueObservation?
 
-        init(url : URL) {
+        init(url: URL) {
             self.url = url
             super.init(nibName: nil, bundle: nil)
         }
@@ -122,7 +122,7 @@ class PVCoresTableViewController: UITableViewController {
         }
     }
 
-    extension WebkitViewController : WKNavigationDelegate {
+    extension WebkitViewController: WKNavigationDelegate {
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
             self.hud.show(true)

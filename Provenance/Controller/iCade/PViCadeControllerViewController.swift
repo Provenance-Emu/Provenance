@@ -41,7 +41,7 @@ class PViCadeControllerViewController: UITableViewController {
         } else {
             cell.accessoryType = .none
         }
-        cell.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue:indexPath.row))!)
+        cell.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue: indexPath.row))!)
 
 #if os(iOS)
         cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
@@ -53,7 +53,7 @@ class PViCadeControllerViewController: UITableViewController {
         if let aRow = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: aRow, animated: true)
         }
-        PVSettingsModel.shared.myiCadeControllerSetting = iCadeControllerSetting(rawValue:indexPath.row)!
+        PVSettingsModel.shared.myiCadeControllerSetting = iCadeControllerSetting(rawValue: indexPath.row)!
         PVControllerManager.shared.resetICadeController()
         navigationController?.popViewController(animated: true)
     }

@@ -10,12 +10,12 @@ import UIKit
 
 // MARK: - Shared Protocolcs
 @objc public protocol DiscSwappable {
-    var currentGameSupportsMultipleDiscs : Bool {get}
-    var numberOfDiscs : UInt {get}
+    var currentGameSupportsMultipleDiscs: Bool {get}
+    var numberOfDiscs: UInt {get}
     func swapDisc(number: UInt)
 }
 
-@objc public protocol ResponderClient : class {
+@objc public protocol ResponderClient: class {
 
 }
 
@@ -28,10 +28,10 @@ import UIKit
     func didMoveJoystick(_ button: Int, withValue value: CGFloat, forPlayer player: Int)
 }
 
-@objc extension PVEmulatorCore : ResponderClient {}
+@objc extension PVEmulatorCore: ResponderClient {}
 
 // MARK: - Sega 32X
-@objc public enum PVSega32XButton : Int {
+@objc public enum PVSega32XButton: Int {
     case up
     case down
     case left
@@ -55,7 +55,7 @@ import UIKit
 }
 
 // MARK: - N64
-@objc public enum PVN64Button : Int {
+@objc public enum PVN64Button: Int {
     // D-Pad
     case dPadUp
     case dPadDown
@@ -91,7 +91,7 @@ import UIKit
 }
 
 // MARK: - Atari 2600
-@objc public enum PV2600Button : Int {
+@objc public enum PV2600Button: Int {
     case up
     case down
     case left
@@ -106,7 +106,7 @@ import UIKit
     case count
 }
 
-@objc public protocol PV2600SystemResponderClient : ResponderClient, ButtonResponder {
+@objc public protocol PV2600SystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPushPV2600Button:forPlayer:)
     func didPush(_ button: PV2600Button, forPlayer player: Int)
     @objc(didReleasePV2600Button:forPlayer:)
@@ -114,7 +114,7 @@ import UIKit
 }
 
 // MARK: - NES
-@objc public enum PVNESButton : Int {
+@objc public enum PVNESButton: Int {
     case up
     case down
     case left
@@ -134,7 +134,7 @@ import UIKit
 }
 
 // MARK: - Game Boy
-@objc public enum PVGBButton : Int {
+@objc public enum PVGBButton: Int {
     case up
     case down
     case left
@@ -154,7 +154,7 @@ import UIKit
 }
 
 // MARK: - Pokemon Mini
-@objc public enum PVPMButton : Int {
+@objc public enum PVPMButton: Int {
     case menu
     case a
     case b
@@ -175,7 +175,7 @@ import UIKit
 }
 
 // MARK: - SNES
-@objc public enum PVSNESButton : Int {
+@objc public enum PVSNESButton: Int {
     case up
     case down
     case left
@@ -199,7 +199,7 @@ import UIKit
 }
 
 // MARK: - Atari 7800
-@objc public enum PV7800Button : Int {
+@objc public enum PV7800Button: Int {
     case up
     case down
     case left
@@ -226,7 +226,7 @@ import UIKit
 }
 
 // MARK: - Genesis
-@objc public enum PVGenesisButton : Int {
+@objc public enum PVGenesisButton: Int {
     case b = 0
     case a
     case mode
@@ -250,7 +250,7 @@ import UIKit
 }
 
 // MARK: - Game Boy Advanced
-@objc public enum PVGBAButton : Int {
+@objc public enum PVGBAButton: Int {
     case up
     case down
     case left
@@ -272,7 +272,7 @@ import UIKit
 }
 
 // MARK: - Atari 5200
-@objc public enum PV5200Button : Int {
+@objc public enum PV5200Button: Int {
     case up
     case down
     case left
@@ -304,7 +304,7 @@ import UIKit
     func didRelease(_ button: PV5200Button, forPlayer player: Int)
 }
 
-@objc public enum PVA8Button : Int {
+@objc public enum PVA8Button: Int {
     case up
     case down
     case left
@@ -327,7 +327,7 @@ import UIKit
 
 // MARK: - PSX
 
-@objc public enum PVPSXButton : Int {
+@objc public enum PVPSXButton: Int {
     case up
     case down
     case left
@@ -369,7 +369,7 @@ import UIKit
 
 // MARK: - WonderSwan
 
-@objc public enum PVWSButton : Int {
+@objc public enum PVWSButton: Int {
     case x1
     // Up
     case x3
@@ -398,7 +398,7 @@ import UIKit
 
 // MARK: - VirtualBoy
 
-@objc public enum PVVBButton : Int {
+@objc public enum PVVBButton: Int {
     case leftUp
     case leftDown
     case leftLeft
@@ -424,7 +424,7 @@ import UIKit
 }
 
 // MARK: - PCE
-@objc public enum PVPCEButton : Int {
+@objc public enum PVPCEButton: Int {
     case up
     case down
     case left
@@ -449,7 +449,7 @@ import UIKit
 }
 
 // MARK: - PCE FX
-@objc public enum PVPCFXButton : Int {
+@objc public enum PVPCFXButton: Int {
     case up
     case down
     case left
@@ -473,7 +473,7 @@ import UIKit
 }
 
 // MARK: - PCE CD
-@objc public enum PVPCECDButton : Int {
+@objc public enum PVPCECDButton: Int {
     case up
     case down
     case left
@@ -498,7 +498,7 @@ import UIKit
 }
 
 // MARK: - Atari Lynx
-@objc public enum PVLynxButton : Int {
+@objc public enum PVLynxButton: Int {
     case up
     case down
     case left
@@ -518,7 +518,7 @@ import UIKit
 }
 
 // MARK: - Neo Geo Pocket + Color
-@objc public enum PVNGPButton : Int {
+@objc public enum PVNGPButton: Int {
     case up
     case down
     case left

@@ -30,7 +30,7 @@ import UIKit
 import AudioToolbox
 import MediaPlayer
 
-protocol VolumeController : class {
+protocol VolumeController: class {
     func startVolumeControl()
     func stopVolumeControl()
 }
@@ -60,7 +60,7 @@ extension VolumeController where Self : UIViewController {
 }
 
 /// Conforming types can receive notifications on when the VolumeBar shows and hides.
-public protocol VolumeDelegate : class {
+public protocol VolumeDelegate: class {
 	/// Notifies the delegate that a VolumeBar is about to be shown.
 	///
 	/// - parameter volumeBar: The volume bar.

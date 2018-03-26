@@ -47,7 +47,7 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.sharedInstance
 
-            let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format:"md5Hash IN %@", identifiers))
+            let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format: "md5Hash IN %@", identifiers))
             indexResults(allGamesMatching)
         } else {
             WLOG("App Groups not setup")
@@ -97,8 +97,8 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
         }
     }
 
-    private func indexResults(_ results : Results<PVGame>) {
-        let items : [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
+    private func indexResults(_ results: Results<PVGame>) {
+        let items: [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
             if !game.md5Hash.isEmpty {
                 return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
             } else {

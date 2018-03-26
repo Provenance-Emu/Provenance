@@ -13,12 +13,12 @@ public extension Notification.Name {
 }
 
 extension String {
-    var md5Hash : String {
+    var md5Hash: String {
         return (self as NSString).md5Hash()
     }
 }
 
-public enum MediaCacheError : Error {
+public enum MediaCacheError: Error {
     case keyWasEmpty
     case failedToScaleImage
 }
@@ -27,12 +27,12 @@ public class PVMediaCache: NSObject {
     private var operationQueue: OperationQueue = OperationQueue() // Was this meant to be a serial queue?
 
 // MARK: - Object life cycle
-    static var _sharedInstance : PVMediaCache = PVMediaCache()
+    static var _sharedInstance: PVMediaCache = PVMediaCache()
     public class func shareInstance() -> PVMediaCache {
         return _sharedInstance
     }
 
-    static var cachePath : URL = {
+    static var cachePath: URL = {
         let cachesDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
 
         let cachePath = URL(fileURLWithPath: cachesDir).appendingPathComponent(kPVCachePath)

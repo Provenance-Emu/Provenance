@@ -35,8 +35,8 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         titleLabel.textColor = colorForText
 #else
-    let labelHeight : CGFloat = 20.0
-    let labelBottomMargin : CGFloat = 3.0
+    let labelHeight: CGFloat = 20.0
+    let labelBottomMargin: CGFloat = 3.0
 
     titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
     titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -76,7 +76,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         titleLabel.textColor = colorForText
     }
-    var colorForText : UIColor {
+    var colorForText: UIColor {
         if #available(tvOS 10.0, *) {
             if traitCollection.userInterfaceStyle == .dark {
                 return UIColor.lightGray

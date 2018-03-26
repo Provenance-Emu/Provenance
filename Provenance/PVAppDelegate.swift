@@ -12,9 +12,9 @@ import CoreSpotlight
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    var shortcutItemMD5 : String?
+    var shortcutItemMD5: String?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 
 #if os(iOS)
@@ -52,7 +52,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {

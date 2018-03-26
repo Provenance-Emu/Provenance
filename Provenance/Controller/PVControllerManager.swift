@@ -24,7 +24,7 @@ let isSimulator = false
 
 class PVControllerManager: NSObject {
 
-    var allLiveControllers : [Int:GCController] {
+    var allLiveControllers: [Int: GCController] {
         var allLiveControllers = [Int:GCController]()
         if let player1 = player1 {
             allLiveControllers[1] = player1
@@ -76,7 +76,7 @@ class PVControllerManager: NSObject {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
     }
 
-    static let shared : PVControllerManager = PVControllerManager()
+    static let shared: PVControllerManager = PVControllerManager()
 
     func listenForICadeControllers(forPlayer player: Int, window: UIWindow?, completion: iCadeListenCompletion? = nil) {
         iCadeController?.controllerPressedAnyKey = {[weak self] (controller) -> Void in
@@ -175,7 +175,7 @@ class PVControllerManager: NSObject {
         }
     }
 
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if (keyPath == "kICadeControllerSettingKey") {
             setupICade()
         } else {

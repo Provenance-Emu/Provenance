@@ -43,7 +43,7 @@ public struct SystemDictionaryKeys {
     }
 }
 
-public enum SystemIdentifier : String {
+public enum SystemIdentifier: String {
     case Atari2600    = "com.provenance.2600"
     case Atari5200    = "com.provenance.5200"
     case Atari7800    = "com.provenance.7800"
@@ -75,7 +75,7 @@ public enum SystemIdentifier : String {
 
     // MARK: Assistance accessors for properties
 
-    var system : PVSystem? {
+    var system: PVSystem? {
         return PVEmulatorConfiguration.system(forIdentifier: self)
     }
 
@@ -115,11 +115,11 @@ public enum SystemIdentifier : String {
 
 // MARK: - PVSystem convenience extension
 public extension PVSystem {
-    var biosDirectory : URL {
+    var biosDirectory: URL {
         return PVEmulatorConfiguration.biosPath(forSystemIdentifier: enumValue)
     }
 
-    var romsDirectory : URL {
+    var romsDirectory: URL {
         return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: enumValue)
     }
 }
@@ -127,28 +127,28 @@ public extension PVSystem {
 // MARK: - PVGame convenience extension
 public extension PVGame {
     // TODO: See above TODO, this should be based on the ROM systemid/md5
-    var batterSavesPath : URL {
+    var batterSavesPath: URL {
         return PVEmulatorConfiguration.batterySavesPath(forGame: self)
     }
 
-    var saveStatePath : URL {
+    var saveStatePath: URL {
         return PVEmulatorConfiguration.saveStatePath(forGame: self)
     }
 }
 
-public enum PVEmulatorConfigurationError : Error {
+public enum PVEmulatorConfigurationError: Error {
     case systemNotFound
 }
 
 @objc
-public class PVEmulatorConfiguration : NSObject {
+public class PVEmulatorConfiguration: NSObject {
 
     /*
      TODO: It really makes more sense for each core to have it's own plist file in it's framework
      and iterate those and create SystemConfiguration structions based off of parsing them
      instead of key / value matching a single plist
      */
-    fileprivate static var systems : [PVSystem] {
+    fileprivate static var systems: [PVSystem] {
         return Array(RomDatabase.sharedInstance.all(PVSystem.self))
     }
 
@@ -212,20 +212,20 @@ public class PVEmulatorConfiguration : NSObject {
         return documentsPath.appendingPathComponent("Imports", isDirectory: true)
     }()
 
-    static let batterySavesPath : URL = {
+    static let batterySavesPath: URL = {
         return documentsPath.appendingPathComponent("Battery States", isDirectory: true)
     }()
 
-    static let saveSavesPath : URL = {
+    static let saveSavesPath: URL = {
         return documentsPath.appendingPathComponent("Save States", isDirectory: true)
     }()
 
-    static let biosesPath : URL = {
+    static let biosesPath: URL = {
         return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
     }()
 
-    static let archiveExtensions : [String] = ["zip", "7z"]
-    static let artworkExtensions : [String] = ["png", "jpg", "jpeg"]
+    static let archiveExtensions: [String] = ["zip", "7z"]
+    static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
 
     @objc
     class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
@@ -250,10 +250,10 @@ public class PVEmulatorConfiguration : NSObject {
         })
     }
 
-    class func systems(forFileExtension fileExtension:String) -> [PVSystem]? {
+    class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
-                var newSystems : [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
+                var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
                 newSystems.append(system)
                 return newSystems
             } else {
@@ -271,7 +271,7 @@ public class PVEmulatorConfiguration : NSObject {
     }
 }
 
-public struct ClassInfo : CustomStringConvertible, Equatable {
+public struct ClassInfo: CustomStringConvertible, Equatable {
     let classObject: AnyClass
     let className: String
     let bundle: Bundle
@@ -398,7 +398,7 @@ public extension PVEmulatorConfiguration {
 
     class func batterySavesPath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let batterySavesDirectory = self.batterySavesPath.appendingPathComponent(romName, isDirectory:true)
+        let batterySavesDirectory = self.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: batterySavesPath, withIntermediateDirectories: true, attributes: nil)
@@ -415,7 +415,7 @@ public extension PVEmulatorConfiguration {
 
     class func saveStatePath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let saveSavesPath = self.saveSavesPath.appendingPathComponent(romName, isDirectory:true)
+        let saveSavesPath = self.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
@@ -426,14 +426,14 @@ public extension PVEmulatorConfiguration {
         return saveSavesPath
     }
 
-    class func path(forGame game :PVGame) -> URL {
+    class func path(forGame game: PVGame) -> URL {
         return game.file.url
     }
 }
 
 // MARK: m3u
 public extension PVEmulatorConfiguration {
-    class func stripDiscNames(fromFilename filename : String) -> String {
+    class func stripDiscNames(fromFilename filename: String) -> String {
         return filename.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
     }
 
@@ -462,7 +462,7 @@ public extension PVEmulatorConfiguration {
 
 // MARK: Helpers
 public extension PVEmulatorConfiguration {
-    class func createBIOSDirectory(forSystemIdentifier system : SystemIdentifier) {
+    class func createBIOSDirectory(forSystemIdentifier system: SystemIdentifier) {
         let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system)
         let fm = FileManager.default
         if !fm.fileExists(atPath: biosPath.path) {
@@ -474,7 +474,7 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    class func sortImportUURLs(urls : [URL]) -> [URL] {
+    class func sortImportUURLs(urls: [URL]) -> [URL] {
         let sortedPaths = urls.sorted { (obj1, obj2) -> Bool in
 
             let obj1Filename = obj1.lastPathComponent
@@ -516,11 +516,11 @@ public extension PVEmulatorConfiguration {
 
 // MARK: System queries
 public extension PVEmulatorConfiguration {
-    class func romDirectory(forSystemIdentifier system : SystemIdentifier) -> URL {
+    class func romDirectory(forSystemIdentifier system: SystemIdentifier) -> URL {
         return romDirectory(forSystemIdentifier: system.rawValue)
     }
 
-    class func romDirectory(forSystemIdentifier system : String) -> URL {
+    class func romDirectory(forSystemIdentifier system: String) -> URL {
         return documentsPath.appendingPathComponent(system, isDirectory: true)
     }
 }

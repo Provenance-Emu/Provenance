@@ -64,7 +64,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
     }
 }
 
-extension PVSearchViewController : UISearchResultsUpdating {
+extension PVSearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text ?? ""
 

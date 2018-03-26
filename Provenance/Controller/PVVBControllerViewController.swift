@@ -9,7 +9,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVVBButton {
+    var buttonTag: PVVBButton {
         get {
             return PVVBButton(rawValue: tag)!
         }

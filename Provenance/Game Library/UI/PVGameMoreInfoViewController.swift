@@ -23,7 +23,7 @@ import AssetsLibrary
  */
 
 // Special label that renders Countries as flag emojis when available
-class RegionLabel : LongPressLabel {
+class RegionLabel: LongPressLabel {
     override var text: String? {
         get {
             return super.text
@@ -39,7 +39,7 @@ class RegionLabel : LongPressLabel {
     }
 }
 
-class LongPressLabel : UILabel {
+class LongPressLabel: UILabel {
     #if os(tvOS)
     override var canBecomeFocused: Bool {
         return true
@@ -66,11 +66,11 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
         self.delegate = self
     }
 
-    var game : PVGame? {
+    var game: PVGame? {
         return (self.viewControllers?.first as? PVGameMoreInfoViewController)?.game
     }
 
-    lazy var games : Results<PVGame> = {
+    lazy var games: Results<PVGame> = {
         RomDatabase.sharedInstance.allGamesSortedBySystemThenTitle()
     }()
 
@@ -167,7 +167,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
         #if os(iOS)
 
         if #available(iOS 9.0, *) {
-            if let urlString = game?.referenceURL, let url = URL(string:urlString) {
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
                     let config = SFSafariViewController.Configuration()
                     config.barCollapsingEnabled = true
@@ -194,7 +194,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
     @objc
-    public var game : PVGame! {
+    public var game: PVGame! {
         didSet {
             assert(game != nil, "Set a nil game")
 
@@ -209,7 +209,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     @objc
-    var showsPlayButton : Bool = true {
+    var showsPlayButton: Bool = true {
         didSet {
             #if os(iOS)
             if showsPlayButton {
@@ -235,8 +235,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     @IBOutlet var doubleImageTapGesture: UITapGestureRecognizer!
     @IBOutlet var imageLongPressGestureRecognizer: UILongPressGestureRecognizer!
 
-    @IBOutlet var playCountLabel : LongPressLabel!
-    @IBOutlet var timeSpentLabel : LongPressLabel!
+    @IBOutlet var playCountLabel: LongPressLabel!
+    @IBOutlet var timeSpentLabel: LongPressLabel!
 
     #if os(iOS)
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
@@ -297,7 +297,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         // Pass the selected object to the new view controller.
     }
     */
-    private func secondsToHoursMinutesSeconds (seconds : Int) -> (Int, Int, Int) {
+    private func secondsToHoursMinutesSeconds (seconds: Int) -> (Int, Int, Int) {
         return (seconds / 3600, (seconds % 3600) / 60, (seconds % 3600) % 60)
     }
 
@@ -325,7 +325,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
         descriptionTextView.text = descriptionText
 
-        let playsText : String
+        let playsText: String
         if let playCount = game?.playCount {
             playsText = "\(playCount)"
         } else {
@@ -333,7 +333,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
         playCountLabel.text = playsText
 
-        let timeSpentText : String
+        let timeSpentText: String
         if let timeSpent = game?.timeSpentInGame {
             let calendar = Calendar(identifier: .gregorian)
             let calendarUnitFlags: Set<Calendar.Component> = Set([.year, .month, .day, .hour, .minute, .second])
@@ -380,7 +380,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     var showingFrontArt = true
 
-    var canShowBackArt : Bool {
+    var canShowBackArt: Bool {
         if let backArt = game?.boxBackArtworkURL, !backArt.isEmpty {
             return true
         } else {
@@ -391,7 +391,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     #if os(iOS)
     @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
         if #available(iOS 9.0, *) {
-            if let urlString = game?.referenceURL, let url = URL(string:urlString) {
+            if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
                     let config = SFSafariViewController.Configuration()
                     config.barCollapsingEnabled = true
@@ -479,8 +479,8 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
     }
 
-    private func flipImageView(withImage image : UIImage) {
-        let direction : UIViewAnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
+    private func flipImageView(withImage image: UIImage) {
+        let direction: UIViewAnimationOptions = showingFrontArt ? .transitionFlipFromLeft : .transitionFlipFromRight
         UIView.transition(with: artworkImageView, duration: 0.4, options: direction, animations: {
             self.artworkImageView.image = image
         }, completion: nil)
@@ -530,7 +530,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     // Deal will nullable key paths
-    private func editKey(_ key : WritableKeyPath<PVGame, String?>, title: String, label: UILabel) {
+    private func editKey(_ key: WritableKeyPath<PVGame, String?>, title: String, label: UILabel) {
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
 
@@ -563,7 +563,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     // Deal with non-null - non-empty keys paths
-    private func editKey(_ key : WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
+    private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
 
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
@@ -603,7 +603,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         present(alert, animated: true, completion: nil)
     }
 
-    var token : NotificationToken?
+    var token: NotificationToken?
     func registerForChange() {
         token = game?.observe({ (change) in
             switch change {
@@ -626,7 +626,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 extension PVGameMoreInfoViewController {
 
      // Buttons that shw up under thie VC when it's in a push/pop preview display mode
-    override var previewActionItems : [UIPreviewActionItem] {
+    override var previewActionItems: [UIPreviewActionItem] {
         let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
                 libVC.load(self.game!)
@@ -634,7 +634,7 @@ extension PVGameMoreInfoViewController {
         }
 
         let isFavorite = game?.isFavorite ?? false
-        let favoriteToggle = UIPreviewAction(title: "Favorite", style:isFavorite ? .selected : .default) { (action, viewController) in
+        let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { (action, viewController) in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
                     self.game.isFavorite = !self.game.isFavorite
@@ -664,7 +664,7 @@ extension PVGameMoreInfoViewController {
     }
 }
 
-extension PVGameMoreInfoViewController : UITextViewDelegate {
+extension PVGameMoreInfoViewController: UITextViewDelegate {
     func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         return true
     }

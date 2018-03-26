@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVSega32XButton {
+    var buttonTag: PVSega32XButton {
         get {
             return PVSega32XButton(rawValue: tag)!
         }
@@ -20,7 +20,7 @@ fileprivate extension JSButton {
     }
 }
 
-class PVSega32XControllerViewController : PVControllerViewController<PVSega32XSystemResponderClient> {
+class PVSega32XControllerViewController: PVControllerViewController<PVSega32XSystemResponderClient> {
 // extension PVControllerViewController where ResponderClass : PVSega32XSystemResponderClient {
 //extension ControllerVC where ResponderType : PVSega32XSystemResponderClient {
     override func layoutViews() {

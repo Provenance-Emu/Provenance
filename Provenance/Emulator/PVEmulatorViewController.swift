@@ -46,8 +46,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
 
-    weak var menuActionSheet : UIAlertController?
-    var isShowingMenu : Bool = false
+    weak var menuActionSheet: UIAlertController?
+    var isShowingMenu: Bool = false
 
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
@@ -885,7 +885,7 @@ extension PVEmulatorViewController {
 
 // Inherits the default behaviour
 #if os(iOS)
-extension PVEmulatorViewController : VolumeController {
+extension PVEmulatorViewController: VolumeController {
 
 }
 #endif

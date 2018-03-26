@@ -27,18 +27,18 @@ protocol JSButtonDisplayer {
 fileprivate typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
 
-protocol StartSelectDelegate : class {
+protocol StartSelectDelegate: class {
     func pressStart(forPlayer player: Int)
     func releaseStart(forPlayer player: Int)
     func pressSelect(forPlayer player: Int)
     func releaseSelect(forPlayer player: Int)
 }
 
-protocol ControllerVC : StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self : UIViewController {
-    associatedtype ResponderType : ResponderClient
+protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
+    associatedtype ResponderType: ResponderClient
     var emulatorCore: ResponderType {get}
     var system: PVSystem {get set}
-    var controlLayout : [ControlLayoutEntry] {get set}
+    var controlLayout: [ControlLayoutEntry] {get set}
 
     var dPad: JSDPad? {get}
     var dPad2: JSDPad? {get}
@@ -97,7 +97,7 @@ protocol ControllerVC : StartSelectDelegate, JSButtonDelegate, JSDPadDelegate wh
 //    }
 //}
 
-class PVControllerViewController<T:ResponderClient> : UIViewController, ControllerVC {
+class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
     func layoutViews() {
 
     }
@@ -138,7 +138,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
     var emulatorCore: ResponderType
 
     var system: PVSystem
-    var controlLayout : [ControlLayoutEntry]
+    var controlLayout: [ControlLayoutEntry]
 
     var dPad: JSDPad?
     var dPad2: JSDPad?
@@ -258,7 +258,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 } else {
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
                     let vibrationLength: Int = 30
-                    let pattern : [Any] = [false, 0, true, vibrationLength]
+                    let pattern: [Any] = [false, 0, true, vibrationLength]
                     var dictionary = [AnyHashable: Any]()
                     dictionary["VibePattern"] = pattern
                     dictionary["Intensity"] = 1
@@ -298,7 +298,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         rightShoulderButton2?.isHidden = true
 
         //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
-        let useStandardGamepad : [SystemIdentifier] = [.GB, .GBC, .GBA]
+        let useStandardGamepad: [SystemIdentifier] = [.GB, .GBC, .GBA]
 
         if (controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue) {
             startButton?.isHidden = true
@@ -306,7 +306,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         }
     }
 
-    var safeAreaInsets : UIEdgeInsets {
+    var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
             return view.safeAreaInsets
         } else {
@@ -489,7 +489,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
     }
 
     #if os(iOS)
-    func layoutStartButton(control:ControlLayoutEntry) {
+    func layoutStartButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.right + 10

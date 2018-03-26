@@ -36,12 +36,12 @@ public extension Notification.Name {
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
 
-enum SortOptions : String {
+enum SortOptions: String {
     case title = "Title"
     case importDate = "Imported"
     case lastPlayed = "Last Played"
 
-    var row : UInt {
+    var row: UInt {
         switch self {
         case .title:
             return 0
@@ -52,7 +52,7 @@ enum SortOptions : String {
         }
     }
 
-    static func optionForRow(_ row:UInt) -> SortOptions {
+    static func optionForRow(_ row: UInt) -> SortOptions {
         switch row {
         case 0:
             return .title
@@ -74,7 +74,7 @@ let USE_IOS_11_SEARCHBAR = true
 #endif
 
 #if os(iOS)
-class PVDocumentPickerViewController : UIDocumentPickerViewController {
+class PVDocumentPickerViewController: UIDocumentPickerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.barStyle = Theme.currentTheme.navigationBarStyle
@@ -97,7 +97,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var gameToRename: PVGame?
     var gameForCustomArt: PVGame?
 
-    var sectionTitles : [String] {
+    var sectionTitles: [String] {
         var sectionsTitles = [String]()
         if !favoritesIsHidden {
             sectionsTitles.append("Favorites")
@@ -119,7 +119,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var needToShowConflictsAlert = false
 
     @IBOutlet var sortOptionsTableView: UITableView!
-    var currentSort : SortOptions = .title {
+    var currentSort: SortOptions = .title {
         didSet {
             if isViewLoaded {
                 fetchGames()
@@ -283,22 +283,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         becomeFirstResponder()
     }
 
-    var systems : Results<PVSystem>!
-    var favoriteGames : Results<PVGame>!
-    var recentGames : Results<PVRecentGame>!
+    var systems: Results<PVSystem>!
+    var favoriteGames: Results<PVGame>!
+    var recentGames: Results<PVRecentGame>!
 
-    var systemsToken : NotificationToken?
-    var favoritesToken : NotificationToken?
-    var recentGamesToken : NotificationToken?
+    var systemsToken: NotificationToken?
+    var favoritesToken: NotificationToken?
+    var recentGamesToken: NotificationToken?
 
     var favoritesIsHidden = true
     var recentGamesIsHidden = true
 
-    var favoritesSection : Int {
+    var favoritesSection: Int {
         return favoritesIsHidden ? -1 : 0
     }
 
-    var recentGamesSection : Int {
+    var recentGamesSection: Int {
         if recentGamesIsHidden {
             return -1
         } else {
@@ -307,11 +307,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     var systemSectionsTokens = [String : NotificationToken]()
-    var systemsSectionOffset : Int {
+    var systemsSectionOffset: Int {
         return recentGamesSection + 1
     }
 
-    func addSectionToken(forSystem system : PVSystem) {
+    func addSectionToken(forSystem system: PVSystem) {
         let newToken = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true).observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
             switch changes {
             case .initial:
@@ -434,7 +434,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
 
-    func handleUpdate(forSection section : Int, deletions : [Int], insertions: [Int], modifications : [Int], needsInsert : Bool = false, needsDelete : Bool = false) {
+    func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
         guard let collectionView = collectionView else { return }
         collectionView.performBatchUpdates({
             if needsInsert {
@@ -700,7 +700,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
-        let contents : [URL]
+        let contents: [URL]
         do {
             contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
         } catch {
@@ -720,7 +720,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         filteredContents.forEach { path in
-            var isDir : ObjCBool = false
+            var isDir: ObjCBool = false
             let exists: Bool = FileManager.default.fileExists(atPath: path.path, isDirectory: &isDir)
 
             if exists && !isDir.boolValue && !path.path.lowercased().contains("realm") {
@@ -802,7 +802,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
         }
 
-        let labelMaker : (URL) -> String = { path in
+        let labelMaker: (URL) -> String = { path in
             #if os(tvOS)
             return "Extracting Archive: \(path.lastPathComponent)"
             #else
@@ -1267,7 +1267,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
         do {
-            try FileManager.default.removeItem(at:batteryPath)
+            try FileManager.default.removeItem(at: batteryPath)
         } catch {
             WLOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
         }
@@ -1302,7 +1302,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let romDirectory = system.romsDirectory
         let relatedFileName: String = game.url.deletingPathExtension().lastPathComponent
 
-        let contents : [URL]
+        let contents: [URL]
         do {
             contents = try FileManager.default.contentsOfDirectory(at: romDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
         } catch {
@@ -1316,7 +1316,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         matchingFiles.forEach {
-            let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory:false)
+            let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory: false)
             do {
                 try FileManager.default.removeItem(at: file)
             } catch {
@@ -1648,7 +1648,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #endif
 // MARK: - Image Picker Delegate
 #if os(iOS)
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
         guard let gameForCustomArt = self.gameForCustomArt else {
             ELOG("gameForCustomArt pointer was null.")
             return
@@ -1733,7 +1733,7 @@ extension PVGameLibraryViewController {
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
-extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
+extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         #if os(tvOS)
             let game = self.game(at: indexPath)!
@@ -1771,12 +1771,12 @@ extension PVGameLibraryViewController : UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - UICollectionViewDataSource
-extension PVGameLibraryViewController : UICollectionViewDataSource {
+extension PVGameLibraryViewController: UICollectionViewDataSource {
 
 }
 
 // MARK: - UICollectionViewDelegate
-extension PVGameLibraryViewController : UICollectionViewDelegate {
+extension PVGameLibraryViewController: UICollectionViewDelegate {
     #if os(tvOS)
     func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
     return true
@@ -1803,7 +1803,7 @@ extension PVGameLibraryViewController : UICollectionViewDelegate {
 #if os(iOS)
 @available(iOS 9.0, *)
 extension PVGameLibraryViewController {
-    private func deleteFromSpotlight(game : PVGame) {
+    private func deleteFromSpotlight(game: PVGame) {
         CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
             if let error = error {
                 print("Error deleting game spotlight item: \(error)")
@@ -1827,7 +1827,7 @@ extension PVGameLibraryViewController {
 
 // MARK: UIDocumentMenuDelegate
 #if os(iOS)
-extension PVGameLibraryViewController : UIDocumentMenuDelegate {
+extension PVGameLibraryViewController: UIDocumentMenuDelegate {
 
     func documentMenu(_ documentMenu: UIDocumentMenuViewController, didPickDocumentPicker documentPicker: UIDocumentPickerViewController) {
         documentPicker.delegate = self
@@ -1841,7 +1841,7 @@ extension PVGameLibraryViewController : UIDocumentMenuDelegate {
 }
 
 // MARK: UIDocumentPickerDelegate
-extension PVGameLibraryViewController : UIDocumentPickerDelegate {
+extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         let sortedUrls = PVEmulatorConfiguration.sortImportUURLs(urls: urls)
 
@@ -1878,7 +1878,7 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
 
 #if os(iOS)
     @available(iOS 9.0, *)
-    extension PVGameLibraryViewController : UIViewControllerPreviewingDelegate {
+    extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
 
         let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
@@ -1906,19 +1906,19 @@ extension PVGameLibraryViewController : UIDocumentPickerDelegate {
     }
 }
 
-extension PVGameLibraryViewController : UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
+extension PVGameLibraryViewController: UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
 
 }
 #endif
 
-extension PVGameLibraryViewController : UISearchControllerDelegate {
+extension PVGameLibraryViewController: UISearchControllerDelegate {
     func didDismissSearchController(_ searchController: UISearchController) {
         clearSearch()
     }
 }
 
 // MARK: - UISearchResultsUpdating
-extension PVGameLibraryViewController : UISearchResultsUpdating {
+extension PVGameLibraryViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text, !text.isEmpty {
             searchLibrary(searchController.searchBar.text ?? "")
@@ -1928,7 +1928,7 @@ extension PVGameLibraryViewController : UISearchResultsUpdating {
     }
 }
 
-class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
+class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
     override init() {
         super.init()
         #if os(iOS)
@@ -1943,7 +1943,7 @@ class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
     }
 }
 
-extension PVGameLibraryViewController : UITableViewDataSource {
+extension PVGameLibraryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 3 : 0
     }
@@ -1959,7 +1959,7 @@ extension PVGameLibraryViewController : UITableViewDataSource {
     }
 }
 
-extension PVGameLibraryViewController : UITableViewDelegate {
+extension PVGameLibraryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentSort = SortOptions.optionForRow(UInt(indexPath.row))
         tableView.reloadData()
@@ -1968,7 +1968,7 @@ extension PVGameLibraryViewController : UITableViewDelegate {
 }
 
 #if os(iOS)
-extension PVGameLibraryViewController : UIPopoverControllerDelegate {
+extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 
 }
 #endif

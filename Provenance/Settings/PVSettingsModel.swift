@@ -199,7 +199,7 @@ public class PVSettingsModel: NSObject {
         crtFilterEnabled = UserDefaults.standard.bool(forKey: kCRTFilterKey)
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
         let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
-        myiCadeControllerSetting = iCadeControllerSetting(rawValue:Int(iCade))!
+        myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade))!
         volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
         showFPSCount = UserDefaults.standard.bool(forKey: kFPSCountKey)
         showGameTitles = UserDefaults.standard.bool(forKey: kShowGameTitlesKey)

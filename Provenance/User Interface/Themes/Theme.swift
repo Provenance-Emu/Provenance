@@ -9,15 +9,15 @@
 import Foundation
 import UIKit
 
-public enum Themes : String {
+public enum Themes: String {
     case light = "Light"
     case dark  = "Dark"
 
-    public static var defaultTheme : Themes {
+    public static var defaultTheme: Themes {
         return .dark
     }
 
-    public var theme : iOSTheme {
+    public var theme: iOSTheme {
         switch self {
         case .light:
             return LightTheme()
@@ -32,32 +32,32 @@ protocol tvOSTheme {
 
 public protocol iOSTheme {
 
-    var theme : Themes {get}
+    var theme: Themes {get}
 
-    var navigationBarStyle : UIBarStyle { get}
+    var navigationBarStyle: UIBarStyle { get}
 
     // Mandatory
-    var gameLibraryBackground : UIColor {get}
-    var gameLibraryText : UIColor {get}
+    var gameLibraryBackground: UIColor {get}
+    var gameLibraryText: UIColor {get}
 
-    var gameLibraryHeaderBackground : UIColor {get}
-    var gameLibraryHeaderText : UIColor {get}
+    var gameLibraryHeaderBackground: UIColor {get}
+    var gameLibraryHeaderText: UIColor {get}
 
     // Optional - Defaults to nil (OS chooses)
-    var defaultTintColor : UIColor? {get}
+    var defaultTintColor: UIColor? {get}
 
-    var keyboardAppearance : UIKeyboardAppearance {get}
+    var keyboardAppearance: UIKeyboardAppearance {get}
 
-    var barButtonItemTint : UIColor? {get}
-    var navigationBarBackgroundColor : UIColor? {get}
+    var barButtonItemTint: UIColor? {get}
+    var navigationBarBackgroundColor: UIColor? {get}
 
-    var switchON : UIColor? {get}
-    var switchThumb : UIColor? {get}
+    var switchON: UIColor? {get}
+    var switchThumb: UIColor? {get}
 
-    var statusBarStyle : UIStatusBarStyle {get}
+    var statusBarStyle: UIStatusBarStyle {get}
 
-    var settingsHeaderBackground : UIColor? {get}
-    var settingsSeperator : UIColor? {get}
+    var settingsHeaderBackground: UIColor? {get}
+    var settingsSeperator: UIColor? {get}
     var settingsHeaderText: UIColor? {get}
 
     var settingsCellBackground: UIColor? {get}
@@ -71,7 +71,7 @@ public protocol iOSTheme {
 
 // Default implimentnations
 extension iOSTheme {
-    var keyboardAppearance : UIKeyboardAppearance {return .default}
+    var keyboardAppearance: UIKeyboardAppearance {return .default}
 
     // Defaults to NIL will use iOS defaults
     var defaultTintColor: UIColor? {return nil}
@@ -82,9 +82,9 @@ extension iOSTheme {
     var settingsHeaderText: UIColor? {return nil}
     var settingsCellBackground: UIColor? {return nil}
     var settingsCellText: UIColor? {return nil}
-    var settingsSeperator : UIColor? {return nil}
+    var settingsSeperator: UIColor? {return nil}
 
-    var navigationBarStyle : UIBarStyle { return .default }
+    var navigationBarStyle: UIBarStyle { return .default }
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? {return defaultTintColor}
@@ -99,29 +99,29 @@ extension iOSTheme {
         sharedApp.delegate?.window??.tintColor = self.defaultTintColor
     }
 
-    var statusBarStyle : UIStatusBarStyle {
+    var statusBarStyle: UIStatusBarStyle {
         return UIStatusBarStyle.default
     }
 }
 
-struct DarkTheme : iOSTheme {
+struct DarkTheme: iOSTheme {
     let theme = Themes.dark
 
-    var navigationBarStyle : UIBarStyle { return UIBarStyle.black }
+    var navigationBarStyle: UIBarStyle { return UIBarStyle.black }
 
     var defaultTintColor: UIColor? { return UIColor(hex: "#848489")! }
     var keyboardAppearance: UIKeyboardAppearance = .dark
 
-    var switchON : UIColor? { return UIColor(hex: "#848489")! }
-    var switchThumb : UIColor? { return UIColor(hex: "#eee")! }
+    var switchON: UIColor? { return UIColor(hex: "#848489")! }
+    var switchThumb: UIColor? { return UIColor(hex: "#eee")! }
 
-    var gameLibraryBackground : UIColor { return UIColor.black }
-    var gameLibraryText : UIColor { return UIColor(hex: "#6F6F6F")! }
+    var gameLibraryBackground: UIColor { return UIColor.black }
+    var gameLibraryText: UIColor { return UIColor(hex: "#6F6F6F")! }
 
-    var gameLibraryHeaderBackground : UIColor {return UIColor.black}
-    var gameLibraryHeaderText :UIColor { return UIColor(hex: "#333")! }
+    var gameLibraryHeaderBackground: UIColor {return UIColor.black}
+    var gameLibraryHeaderText: UIColor { return UIColor(hex: "#333")! }
 
-    var barButtonItemTint : UIColor? { return UIColor.darkGray }
+    var barButtonItemTint: UIColor? { return UIColor.darkGray }
     var navigationBarBackgroundColor: UIColor? {return UIColor(hex: "#1C1C1C") }
 
     var alertViewBackground: UIColor { return UIColor.darkGray }
@@ -135,28 +135,28 @@ struct DarkTheme : iOSTheme {
     var settingsCellBackground: UIColor? { return UIColor(hex: "#292929")! }
     var settingsCellText: UIColor? { return UIColor.init(white: 0.8, alpha: 1.0) }
 
-    var settingsSeperator : UIColor? {return UIColor.black }
+    var settingsSeperator: UIColor? {return UIColor.black }
 
 }
 
-struct LightTheme : iOSTheme {
+struct LightTheme: iOSTheme {
     let theme = Themes.light
 
-    var defaultTintColor : UIColor? {return UIColor.init(hex: "#007aff")} // iOS Blue
+    var defaultTintColor: UIColor? {return UIColor.init(hex: "#007aff")} // iOS Blue
 
     let gameLibraryBackground = UIColor.white
-    let gameLibraryText : UIColor = UIColor.black
+    let gameLibraryText: UIColor = UIColor.black
 
     let gameLibraryHeaderBackground = UIColor.init(white: 0.9, alpha: 0.6)
     let gameLibraryHeaderText = UIColor.darkGray
 }
 
 //@available(iOS 9.0, *)
-public class Theme : NSObject {
+public class Theme: NSObject {
 
-    public static var currentTheme : iOSTheme = LightTheme()
+    public static var currentTheme: iOSTheme = LightTheme()
 
-    class func setTheme(_ theme : iOSTheme) {
+    class func setTheme(_ theme: iOSTheme) {
         currentTheme = theme
 
         UINavigationBar.appearance {

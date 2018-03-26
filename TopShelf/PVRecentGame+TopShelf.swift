@@ -29,7 +29,7 @@ extension PVRecentGame {
         return item
     }
 
-    var displayURL : URL {
+    var displayURL: URL {
         var components = URLComponents()
         components.scheme = PVAppURLKey
         components.path = PVGameControllerKey
@@ -37,7 +37,7 @@ extension PVRecentGame {
         return (components.url)!
     }
 
-    var imageType : TVContentItemImageShape {
+    var imageType: TVContentItemImageShape {
         guard let game = game else {
             return .square
         }

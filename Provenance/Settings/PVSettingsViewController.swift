@@ -11,7 +11,7 @@ import SafariServices
 import UIKit
 
 // Subclass to help with themeing
-@objc public class SettingsTableView : UITableView {
+@objc public class SettingsTableView: UITableView {
     public override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame: frame, style: style)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
@@ -281,7 +281,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 }
 
 @available(iOS 9.0, *)
-class ThemeSelectorViewController : UITableViewController {
+class ThemeSelectorViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 2 : 0

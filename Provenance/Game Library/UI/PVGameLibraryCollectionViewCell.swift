@@ -42,8 +42,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         return CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
     }
 
-    var token : NotificationToken?
-    var game : PVGame? {
+    var token: NotificationToken?
+    var game: PVGame? {
         didSet {
 
             DispatchQueue.main.async { [unowned self] in
@@ -208,9 +208,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
         #endif
 
-        let height : CGFloat = CGFloat(PVThumbnailMaxResolution)
-        let ratio : CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
-        let width : CGFloat = height * ratio
+        let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
+        let ratio: CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
+        let width: CGFloat = height * ratio
         let size = CGSize(width: width, height: height)
         let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
         return missingArtworkImage

@@ -10,7 +10,7 @@
 import PVMednafen
 
 fileprivate extension JSButton {
-    var buttonTag : PVN64Button {
+    var buttonTag: PVN64Button {
         get {
             return PVN64Button(rawValue: tag)!
         }
@@ -28,7 +28,7 @@ fileprivate extension JSButton {
 //extension ControllerVC where Self == PVN64ControllerViewController {
 //extension ControllerVC where ResponderType : PVN64SystemResponderClient {
 
-class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResponderClient> {
+class PVN64ControllerViewController: PVControllerViewController<PVN64SystemResponderClient> {
 
     override func layoutViews() {
         buttonGroup?.subviews.forEach {

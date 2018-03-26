@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LogLevel : Int {
+public enum LogLevel: Int {
     case trace = 0
     case debug
     case info
@@ -19,9 +19,9 @@ public enum LogLevel : Int {
 private let startDate = Date()
 
 #if DEBUG
-let LOG_LEVEL : LogLevel = .debug
+let LOG_LEVEL: LogLevel = .debug
 #else
-let LOG_LEVEL : LogLevel = .debug
+let LOG_LEVEL: LogLevel = .debug
 #endif
 
 public func VLOG(_ message: @autoclosure () -> String, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
