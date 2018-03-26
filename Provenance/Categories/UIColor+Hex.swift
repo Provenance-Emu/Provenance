@@ -15,7 +15,7 @@ public extension UIColor {
         let green = CGFloat((rgb >> 8) & 0xff) / 255.0
         let blue = CGFloat(rgb & 0xff) / 255.0
         let alpha = CGFloat(1.0)
-        self.init(red: red, green: green, blue: blue, alpha: alpha);
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
     }
     
     @objc convenience init(rgba: UInt32) {
@@ -23,7 +23,7 @@ public extension UIColor {
         let green = CGFloat((rgba >> 8) & 0xff) / 255.0
         let blue = CGFloat(rgba & 0xff) / 255.0
         let alpha = CGFloat((rgba >> 24) & 0xff) / 255.0
-        self.init(red: red, green: green, blue: blue, alpha: alpha);
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
     }
     
     // Init a color from a hex string.

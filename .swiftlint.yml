@@ -7,7 +7,7 @@ disabled_rules:
   - force_cast
   - type_name
   - variable_name_min_length
-  - trailing_semicolon
+  # - trailing_semicolon
   - force_try
   - function_body_length
   - nesting

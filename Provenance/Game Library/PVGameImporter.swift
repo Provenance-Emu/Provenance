@@ -149,7 +149,7 @@ public class PVGameImporter {
         let romPath = documentsPath.appendingPathComponent(game.romPath, isDirectory: false)
         let fm = FileManager.default
         if !fm.fileExists(atPath: romPath.path) {
-            ELOG("Cannot find file at path: \(romPath)");
+            ELOG("Cannot find file at path: \(romPath)")
             return nil
         }
         
@@ -721,7 +721,7 @@ public extension PVGameImporter {
         }
         
         guard let results = resultsMaybe, !results.isEmpty else {
-            DLOG("Unable to find ROM \(game.romPath) in DB");
+            DLOG("Unable to find ROM \(game.romPath) in DB")
             try? database.writeTransaction {
                 game.requiresSync = false
             }
@@ -741,7 +741,7 @@ public extension PVGameImporter {
         }
         
         guard let chosenResult = chosenResultMaybse else {
-            DLOG("Unable to find ROM \(game.romPath) in DB");
+            DLOG("Unable to find ROM \(game.romPath) in DB")
             return
         }
         

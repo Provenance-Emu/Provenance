@@ -59,8 +59,8 @@ public class RealmConfiguration {
                 ILOG("Migrating to version 2. Adding MD5s")
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
                
-                var counter = 0;
-                var deletions = 0;
+                var counter = 0
+                var deletions = 0
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
                     let romPath = oldObject!["romPath"] as! String
                     let systemID = oldObject!["systemIdentifier"] as! String
@@ -74,7 +74,7 @@ public class RealmConfiguration {
                     let fullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(romPath, isDirectory: false)
                     let fm = FileManager.default
                     if !fm.fileExists(atPath: fullPath.path) {
-                        ELOG("Cannot find file at path: \(fullPath). Deleting entry");
+                        ELOG("Cannot find file at path: \(fullPath). Deleting entry")
                         if let oldObject = oldObject {
                             migration.delete(oldObject)
                             deletions += 1

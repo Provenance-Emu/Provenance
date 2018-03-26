@@ -176,7 +176,7 @@ public extension PVFile {
         let fileSize : UInt64
         
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
-            fileSize = attr.fileSize();
+            fileSize = attr.fileSize()
         } else {
             fileSize = 0
         }
