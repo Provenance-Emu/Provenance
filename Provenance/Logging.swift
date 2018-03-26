@@ -44,7 +44,7 @@ public func ELOG(_ message: @autoclosure () -> String, file: StaticString = #fil
     _LogMessage(message, file: file, function: function, line: line, level: .error)
 }
 
-fileprivate func _LogMessage(_ message: @autoclosure () -> String, file: StaticString, function: StaticString, line: UInt, level: LogLevel) {
+private func _LogMessage(_ message: @autoclosure () -> String, file: StaticString, function: StaticString, line: UInt, level: LogLevel) {
     guard level.rawValue >= LOG_LEVEL.rawValue else {
         return
     }
