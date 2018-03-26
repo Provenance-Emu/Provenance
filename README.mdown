@@ -3,6 +3,28 @@ An iOS & tvOS Frontend for Multiple Emulators
 
 ![Provenance](https://static1.squarespace.com/static/584075871b631b9469f02885/t/58571894725e25a3d82cd6a9/1482102948632/?format=2500w)
 
+___
+![GitHub release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square) 
+![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
+![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square) 
+
+![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
+[![GitHub forks](https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/network) 
+[![GitHub stars](https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/stargazers)
+![GitHub language count](https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square)
+[![GitHub license](https://img.shields.io/github/license/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance)
+
+[![GitHub open issues](https://img.shields.io/github/issues-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
+[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/issues)
+![GitHub open pull requests](https://img.shields.io/github/issues-pr-raw/provenance-emu/provenance.svg?style=flat-square)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/provenance-emu/provenance.svg?style=flat-square)
+
+![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance.svg?style=flat-square)
+![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/provenance-emu/provenance.svg?style=flat-square)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/provenance-emu/provenance.svg?style=flat-square)
+
+![Discord Widget](https://img.shields.io/discord/421819941835243520.svg?style=flat-square)
+![Twitter Follow](https://img.shields.io/twitter/follow/provenanceapp.svg?style=social&logo=twitter&label=Follow)
 
 ## Installation
 
