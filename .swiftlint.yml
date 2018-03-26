@@ -54,12 +54,12 @@ disabled_rules:
   # - empty_parentheses_with_trailing_closure
   # - closure_parameter_position
   # - redundant_discardable_let
-  - large_tuple
+  # - large_tuple
   # - vertical_parameter_alignment
   - switch_case_alignment
   - block_based_kvo
   - multiple_closures_with_trailing_closure
-  - compiler_protocol_init
+  # - compiler_protocol_init
   # - private_over_fileprivate
 excluded: # paths to ignore during linting. overridden byincluded.
   - Carthage
@@ -81,3 +81,6 @@ variable_name_min_length:
 function_body_length:
   - 150 # warning
   - 180 # error
+large_tuple:
+  - 4 # warning
+  - 6 # error

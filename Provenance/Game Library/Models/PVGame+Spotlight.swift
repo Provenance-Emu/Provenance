@@ -48,7 +48,7 @@ public extension PVGame {
         contentSet.title                   = title
         contentSet.relatedUniqueIdentifier = md5Hash
         contentSet.contentDescription      = description
-        contentSet.rating                  = NSNumber(booleanLiteral: isFavorite)
+        contentSet.rating                  = NSNumber.init(value: isFavorite)
         contentSet.thumbnailURL            = pathOfCachedImage
         var keywords                       = ["rom"]
         if let systemName = systemName {
