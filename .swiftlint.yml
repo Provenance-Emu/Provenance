@@ -9,8 +9,8 @@ disabled_rules:
   - variable_name_min_length
   # - trailing_semicolon
   - force_try
-  - function_body_length
-  - nesting
+  # - function_body_length
+  # - nesting
   - variable_name
   - conditional_binding_cascade
   - variable_name_max_length
@@ -38,8 +38,8 @@ disabled_rules:
   - unused_closure_parameter
   - mark
   - notification_center_detachment
-  - for_where
-  - vertical_whitespace
+  # - for_where
+  # - vertical_whitespace
   - empty_parameters
   - discarded_notification_center_observer
   - class_delegate_protocol
@@ -55,7 +55,7 @@ disabled_rules:
   - closure_parameter_position
   - redundant_discardable_let
   - large_tuple
-  - vertical_parameter_alignment
+  # - vertical_parameter_alignment
   - switch_case_alignment
   - block_based_kvo
   - multiple_closures_with_trailing_closure
@@ -78,3 +78,6 @@ variable_name_max_length:
 variable_name_min_length:
   - 3 # warning
   - 2 # error
+function_body_length:
+  - 150 # warning
+  - 180 # error

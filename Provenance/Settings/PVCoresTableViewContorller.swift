@@ -128,7 +128,6 @@ class PVCoresTableViewController: UITableViewController {
             self.hud.show(true)
         }
         
-        
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
             self.hud.hide(true, afterDelay: 0.0)

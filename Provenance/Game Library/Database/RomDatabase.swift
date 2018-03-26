@@ -111,7 +111,6 @@ public class RealmConfiguration {
     }()
 }
 
-
 internal class WeakWrapper : NSObject {
     static var associatedKey = "WeakWrapper"
     weak var weakObject : RomDatabase?
@@ -193,7 +192,6 @@ public extension RomDatabase {
     public func all<T:Object>(_ type : T.Type) -> Results<T> {
         return realm.objects(type)
     }
-    
     
     // Testing a Swift hack to make Swift 4 keypaths work with KVC keypaths
 /*

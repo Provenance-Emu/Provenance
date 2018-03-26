@@ -24,7 +24,6 @@ class PVGameLibrarySectionFooterView: UICollectionReusableView {
     }
 }
 
-
 class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
     

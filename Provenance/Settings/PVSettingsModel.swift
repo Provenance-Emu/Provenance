@@ -26,7 +26,6 @@ let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
 let kThemeKey = "kThemeKey"
 let kButtonTintsKey = "kButtonsTintsKey"
 
-
 public class PVSettingsModel: NSObject {
     
     @objc

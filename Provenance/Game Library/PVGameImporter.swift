@@ -542,7 +542,6 @@ public extension PVGameImporter {
         let database = RomDatabase.sharedInstance
         database.refresh()
         
-        
         paths.forEach { (path) in
             
             let isDirectory: Bool
@@ -698,7 +697,6 @@ public extension PVGameImporter {
         } catch {
             ELOG("\(error.localizedDescription)")
         }
-        
         
         if resultsMaybe == nil || resultsMaybe!.isEmpty {
             let fileName: String = URL(fileURLWithPath:game.romPath, isDirectory:true).lastPathComponent
@@ -1040,7 +1038,6 @@ extension PVGameImporter {
             DLOG("HTTP Error: \(urlResponse.statusCode). \nResponse: \(urlResponse)")
         }
         
-        
         if let artwork = UIImage(data: data) {
             do {
                 let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
@@ -1099,8 +1096,6 @@ extension PVGameImporter {
             } catch {
                 ELOG("Unable to move BIOS \(filePath.path) to \(destiaionPath.path) : \(error.localizedDescription)")
             }
-            
-          
             
             do {
                 if let file = biosEntry.file {

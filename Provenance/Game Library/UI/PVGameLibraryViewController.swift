@@ -695,7 +695,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 ILOG("Unable to delete PVGame.sqlite-wal because \(error.localizedDescription)")
         }
 
-
         do {
             try FileManager.default.createDirectory(at: PVEmulatorConfiguration.romsImportPath, withIntermediateDirectories: true, attributes: nil)} catch {
                 ELOG("Unable to create roms directory because \(error.localizedDescription)")
@@ -1162,7 +1161,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
         #endif
     }
-    
 
     func renameGame(_ game: PVGame) {
 #if os(tvOS)
@@ -1940,7 +1938,6 @@ extension PVGameLibraryViewController : UISearchResultsUpdating {
         }
     }
 }
-
 
 class PVGameLibraryCollectionFlowLayout : UICollectionViewFlowLayout {
     override init() {

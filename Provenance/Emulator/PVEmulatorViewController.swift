@@ -889,7 +889,6 @@ extension PVEmulatorViewController {
     }
 }
 
-
 // Inherits the default behaviour
 #if os(iOS)
 extension PVEmulatorViewController : VolumeController {

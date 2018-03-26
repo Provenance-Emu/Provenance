@@ -44,7 +44,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     
     @IBOutlet weak var themeValueLabel: UILabel!
     
-    
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {

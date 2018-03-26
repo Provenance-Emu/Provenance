@@ -66,9 +66,7 @@ import UIKit
             // Find the titles of UIAlertActions that are .destructive type
             let destructiveTitles : [String] = self.actions.filter() {$0.style == .destructive}.flatMap() {return $0.title}
             
-            
             // TODO: Could do the same for 'destructive' types
-            
             
             AlertContentViews.forEach() {
                 print("AlertContentSubview \(String(describing: $0))")
@@ -94,7 +92,6 @@ import UIKit
                 // Set label colors
                 if let view = $0, let textColor = settings.textColor {
                     getAllSubviews(ofType: UILabel.self, forView: view)?.forEach {
-                        
                         
                         // Check if the label is of the .cancel type
                         if let text = $0.text, cancelTitles.contains(text) {

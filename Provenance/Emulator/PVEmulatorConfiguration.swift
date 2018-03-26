@@ -25,7 +25,6 @@ public struct SystemDictionaryKeys {
     static let SupportsRumble      = "PVSupportsRumble"
     static let ScreenType          = "PVScreenType"
     static let Portable            = "PVPortable"
-
     
     struct ControllerLayoutKeys {
         static let Button              = "PVButton"
@@ -73,7 +72,6 @@ public enum SystemIdentifier : String {
     case VirtualBoy   = "com.provenance.vb"
     case WonderSwan   = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
-    
  
     // MARK: Assistance accessors for properties
     

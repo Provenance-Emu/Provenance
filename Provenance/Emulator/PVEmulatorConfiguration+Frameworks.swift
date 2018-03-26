@@ -48,7 +48,6 @@ public extension PVEmulatorConfiguration {
             }
         }
     }
-
     
     class func updateSystems(fromPlists plists : [URL]) {
         typealias SystemPlistEntries = [SytemPlistEntry]

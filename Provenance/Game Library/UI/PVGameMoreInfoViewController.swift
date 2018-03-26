@@ -81,7 +81,6 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
         
     }
     
-    
     // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
     public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed {
@@ -101,7 +100,6 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     public func pageViewController(_ pageViewController: UIPageViewController, spineLocationFor orientation: UIInterfaceOrientation) -> UIPageViewControllerSpineLocation {
         return .min
     }
-    
     
     public func pageViewControllerSupportedInterfaceOrientations(_ pageViewController: UIPageViewController) -> UIInterfaceOrientationMask {
         return [.portrait]
@@ -143,7 +141,6 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
             ELOG("Game or current index was nil")
             return nil
         }
-        
 
         let nextGameIndex = direction == .forward ? games.index(after: currentIndex) : games.index(before: currentIndex)
         guard nextGameIndex != currentIndex, nextGameIndex < games.count, nextGameIndex >= 0 else {
@@ -165,7 +162,6 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
             load(game)
         }
     }
-    
     
     @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
         #if os(iOS)
@@ -194,7 +190,6 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
 }
-
     
 class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
 
@@ -491,7 +486,6 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }, completion: nil)
     }
     
-    
     @IBAction func nameTapped(_ sender: Any) {
         editKey(\PVGame.title, title: "Title", label: nameLabel)
     }
@@ -540,7 +534,6 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
         
-        
         alert.addTextField { (textField) in
             textField.placeholder = title
             textField.text = currentValue
@@ -574,7 +567,6 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
-        
         
         alert.addTextField { (textField) in
             textField.placeholder = title

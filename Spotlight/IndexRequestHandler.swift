@@ -47,7 +47,6 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.sharedInstance
             
-            
             let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format:"md5Hash IN %@", identifiers))
             indexResults(allGamesMatching)
         } else {

@@ -20,7 +20,6 @@ fileprivate extension JSButton {
     }
 }
 
-
 // These should override the default protocol but theyu're not.
 // I made a test Workspace with the same protocl inheritance with assoicated type
 // and the extension overrides in this format overrode the default extension implimentations.

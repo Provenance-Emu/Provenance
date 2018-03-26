@@ -48,7 +48,6 @@ public protocol iOSTheme {
     
     var keyboardAppearance : UIKeyboardAppearance {get}
     
-    
     var barButtonItemTint : UIColor? {get}
     var navigationBarBackgroundColor : UIColor? {get}
     

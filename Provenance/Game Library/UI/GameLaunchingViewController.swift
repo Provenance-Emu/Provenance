@@ -294,7 +294,6 @@ extension GameLaunchingViewController where Self : UIViewController {
                     shortcuts.append(shortcut)
                 }
                 
-                
                 let sortedRecents: Results<PVRecentGame> = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
                 
                 for recentGame in sortedRecents {
