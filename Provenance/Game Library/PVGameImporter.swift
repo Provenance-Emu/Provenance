@@ -291,7 +291,13 @@ public class PVGameImporter {
                 }
             }
             
+            let systemRef = ThreadSafeReference(to: system)
+            
             serialImportQueue.async(execute: {[unowned self] () -> Void in
+                let realm = try! Realm()
+                guard let system = realm.resolve(systemRef) else {
+                    return // person was deleted
+                }
                 self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
                 
                 // TODO: Shouldn't this only be colled after all conflicts have been resolved?
