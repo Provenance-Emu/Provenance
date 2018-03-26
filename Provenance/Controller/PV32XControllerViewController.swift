@@ -53,7 +53,7 @@ class PVSega32XControllerViewController : PVControllerViewController<PVSega32XSy
                 button.buttonTag = .start
             }
         }
-        
+
         startButton?.buttonTag = .start
         selectButton?.buttonTag = .mode
     }

@@ -20,13 +20,13 @@ class PVTVSettingsViewController: UITableViewController {
     @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
     @IBOutlet weak var imageSmoothingLabel: UILabel!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         splitViewController?.title = "Settings"
         tableView.backgroundView = nil
         tableView.backgroundColor = UIColor.clear
-        
+
         let settings = PVSettingsModel.shared
         autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
         autoLoadValueLabel.text = settings.autoLoadAutoSaves ? "On" : "Off"
@@ -41,7 +41,7 @@ class PVTVSettingsViewController: UITableViewController {
 #else
         modeValueLabel.text = "RELEASE"
 #endif
-        
+
         let color = UIColor(white: 0.0, alpha: 0.1)
         if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             revisionLabel.text = revisionString
@@ -72,7 +72,7 @@ class PVTVSettingsViewController: UITableViewController {
         if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
             firstLineAttributes[NSAttributedStringKey.foregroundColor] = UIColor.white
         }
-        
+
         let titleString = NSMutableAttributedString(string: "Always on WebDav server", attributes: firstLineAttributes)
         // Make a new line sub title with instructions to connect in lighter text
         if isAlwaysOn {
@@ -90,7 +90,7 @@ class PVTVSettingsViewController: UITableViewController {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
+
         switch indexPath.section {
             case 0:
                 // Emu Settings
@@ -156,10 +156,10 @@ class PVTVSettingsViewController: UITableViewController {
                                 let message = """
                                     Read Importing ROMs wiki…
                                     Upload/Download files at:
-                                    
+
                                     \(webServerAddress)  ᵂᵉᵇᵁᴵ
                                     \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-                                    
+
                                     """
                                 let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -219,7 +219,7 @@ fileprivate extension Bool {
 private func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel) {
     let currentValue = PVSettingsModel.shared[keyPath: setting]
     let newValue = !currentValue
-    
+
     PVSettingsModel.shared[keyPath: setting] = newValue
     label.text = newValue.onOffString
 }

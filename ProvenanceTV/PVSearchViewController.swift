@@ -12,7 +12,7 @@ import RealmSwift
 
 class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false
-    
+
     var searchResults: Results<PVGame>?
 
     override func viewDidLoad() {
@@ -22,7 +22,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
         collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: "SearchResultCell")
         collectionView?.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
     }
-    
+
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -33,7 +33,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
-        
+
         if let game = searchResults?[indexPath.item] {
             cell.game = game
         }
@@ -67,7 +67,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
 extension PVSearchViewController : UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text ?? ""
-        
+
         let sorted = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         searchResults = sorted
         collectionView?.reloadData()

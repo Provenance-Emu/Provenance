@@ -30,7 +30,7 @@ public struct ControlLayoutEntry : Codable {
     let PVControlTitle : String?
     let PVControlTint : String?
     let PVGroupedButtons : [ControlGroupButton]?
-    
+
     private enum CodingKeys: String, CodingKey {
         case PVControlType
         case PVControlSize

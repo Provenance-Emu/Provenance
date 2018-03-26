@@ -10,7 +10,7 @@
 class PVGameLibrarySectionFooterView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         #if os(iOS)
             let separator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 0.75))
             separator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
@@ -26,7 +26,7 @@ class PVGameLibrarySectionFooterView: UICollectionReusableView {
 
 class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 #if os(tvOS)
@@ -46,13 +46,13 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //        topSeparator.autoresizingMask = .flexibleWidth
 //
 //        addSubview(topSeparator)
-    
+
         let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 0.5))
         bottomSeparator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
         bottomSeparator.autoresizingMask = .flexibleWidth
-        
+
         addSubview(bottomSeparator)
-    
+
         // Style
 //        backgroundColor = UIColor.black
         titleLabel.textAlignment = .left
@@ -65,13 +65,13 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.numberOfLines = 0
         titleLabel.autoresizingMask = .flexibleWidth
         addSubview(titleLabel)
-    
+
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
 #if os(tvOS)
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         titleLabel.textColor = colorForText
@@ -82,7 +82,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
                 return UIColor.lightGray
             }
         }
-        
+
         return UIColor.darkGray
     }
 #endif

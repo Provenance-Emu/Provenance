@@ -20,7 +20,7 @@ fileprivate extension JSButton {
 }
 
 class PVAtari2600ControllerViewController: PVControllerViewController<PV2600SystemResponderClient> {
-        
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -36,7 +36,7 @@ class PVAtari2600ControllerViewController: PVControllerViewController<PV2600Syst
                 button.buttonTag = .reset
             }
         }
-        
+
         startButton?.buttonTag = .reset
         selectButton?.buttonTag = .select
     }

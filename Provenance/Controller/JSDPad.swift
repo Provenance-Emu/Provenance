@@ -29,7 +29,7 @@ class JSDPad: UIView {
     weak var delegate: JSDPadDelegate?
 
     private var currentDirection: JSDPadDirection = .none
-    
+
     private var dPadImageView: UIImageView = UIImageView(image: UIImage(named: "dPad-None")) {
         didSet {
             dPadImageView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
@@ -51,7 +51,7 @@ class JSDPad: UIView {
             dPadImageView.tintColor = PVSettingsModel.shared.buttonTints ? tintColor : .white
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         tintColor = .white

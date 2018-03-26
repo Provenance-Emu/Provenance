@@ -21,9 +21,9 @@ let isSimulator = true
 #else
 let isSimulator = false
 #endif
-    
+
 class PVControllerManager: NSObject {
-    
+
     var allLiveControllers : [Int:GCController] {
         var allLiveControllers = [Int:GCController]()
         if let player1 = player1 {
@@ -38,10 +38,10 @@ class PVControllerManager: NSObject {
         if let player4 = player4 {
             allLiveControllers[4] = player4
         }
-        
+
         return allLiveControllers
     }
-    
+
     var player1: GCController? {
         didSet {
             if player1 != oldValue {
@@ -100,7 +100,7 @@ class PVControllerManager: NSObject {
         if isSimulator {
             return
         }
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
@@ -108,7 +108,7 @@ class PVControllerManager: NSObject {
         // prefer gamepad or extendedGamepad over a microGamepad
         assignControllers()
         setupICade()
-    
+
     }
 
     func setupICade() {
@@ -120,13 +120,13 @@ class PVControllerManager: NSObject {
             }
         }
     }
-    
+
     func resetICadeController() {
         if iCadeController != nil {
             stopListeningForICadeControllers()
             iCadeController = nil
         }
-        
+
         setupICade()
     }
 
@@ -135,7 +135,7 @@ class PVControllerManager: NSObject {
             ELOG("Object wasn't a GCController")
             return
         }
-        
+
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
         assign(controller)
     }
@@ -145,9 +145,9 @@ class PVControllerManager: NSObject {
             ELOG("Object wasn't a GCController")
             return
         }
-        
+
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
-        
+
         if controller == player1 {
             player1 = nil
         } else if controller == player2 {
@@ -157,7 +157,7 @@ class PVControllerManager: NSObject {
         } else if controller == player4 {
             player4 = nil
         }
-        
+
         var assigned = false
         if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
             // For 8Bitdo, we set to listen again for controllers after disconnecting
@@ -209,7 +209,7 @@ class PVControllerManager: NSObject {
         } else if player == 4 {
             player4 = controller
         }
-        
+
         if let controller = controller {
             ILOG("Controller [\(controller.vendorName ?? "No Vendor")] assigned to player \(player)")
         }
@@ -251,7 +251,7 @@ class PVControllerManager: NSObject {
             let previouslyAssignedController: GCController? = self.controller(forPlayer: i)
             let newGamepadNotRemote = controller?.gamepad != nil || controller?.extendedGamepad != nil
             let previousGamepadNotRemote = previouslyAssignedController?.gamepad != nil || previouslyAssignedController?.extendedGamepad != nil
-            
+
             if previouslyAssignedController == nil || (newGamepadNotRemote && !previousGamepadNotRemote) {
                 setController(controller, toPlayer: i)
                 // Move the previously assigned controller to another player

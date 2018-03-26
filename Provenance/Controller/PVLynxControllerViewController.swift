@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -42,7 +42,7 @@ class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemRes
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        
+
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)

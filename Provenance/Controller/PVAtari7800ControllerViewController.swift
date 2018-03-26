@@ -28,7 +28,7 @@ fileprivate extension JSButton {
 }
 
 class PVAtari7800ControllerViewController: PVControllerViewController<PV7800SystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

@@ -13,12 +13,12 @@ class PVLicensesViewController: UIViewController {
     #if os(tvOS)
     @IBOutlet weak var textView: UITextView!
     #endif
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         title = "Acknowledgements"
-        
+
         #if os(iOS)
             self.view.backgroundColor = UIColor.black
             let filesystemPath: String? = Bundle.main.path(forResource: "licenses", ofType: "html")
@@ -37,13 +37,13 @@ class PVLicensesViewController: UIViewController {
                 ELOG("Failed to read licenses.html")
                 return
             }
-            
+
             let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
             // Change font colors for tvOS
             let html = try! String.init(contentsOf: url).replacingOccurrences(of: "white", with: "black").replacingOccurrences(of: "#dddddd", with: "#555").replacingOccurrences(of: "#ccc", with: "#444")
 
             let attributedString = try! NSMutableAttributedString(data: html.data(using: .utf8)!, options: options, documentAttributes: nil)
-            
+
             textView.attributedText = attributedString
             textView.isUserInteractionEnabled = true
             textView.isSelectable = true
@@ -51,7 +51,7 @@ class PVLicensesViewController: UIViewController {
             textView.panGestureRecognizer.allowedTouchTypes = [.indirect]
             textView.showsVerticalScrollIndicator = true
             textView.bounces = true
-            
+
             textView.becomeFirstResponder()
         #endif
     }
@@ -60,7 +60,7 @@ class PVLicensesViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+
     #if os(tvOS)
     override var preferredFocusedView: UIView? {
         return textView

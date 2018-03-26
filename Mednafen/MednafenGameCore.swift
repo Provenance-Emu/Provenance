@@ -13,7 +13,7 @@ extension MednafenGameCore: DiscSwappable {
     public var numberOfDiscs : UInt {
         return maxDiscs
     }
-    
+
     public var currentGameSupportsMultipleDiscs : Bool {
         switch systemType {
         case .PSX:

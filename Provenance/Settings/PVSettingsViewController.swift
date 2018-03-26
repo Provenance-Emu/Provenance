@@ -16,7 +16,7 @@ import UIKit
         super.init(frame: frame, style: style)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
@@ -41,9 +41,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var fpsCountSwitch: UISwitch!
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
-    
+
     @IBOutlet weak var themeValueLabel: UILabel!
-    
+
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
@@ -96,7 +96,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         super.viewWillAppear(animated)
         let settings = PVSettingsModel.shared
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
-        
+
         if #available(iOS 9.0, *) {
             themeValueLabel.text = settings.theme.rawValue
         }
@@ -152,7 +152,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBAction func toggleButtonTints(_ sender: Any) {
         PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
     }
-    
+
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -201,7 +201,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             PVWebServer.shared.stopServers()
             self.importLabel.text = "Web server: OFF"
         }))
-        
+
         if #available(iOS 9.0, *) {
             let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.showServer()
@@ -210,7 +210,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         }
         present(alert, animated: true) {() -> Void in }
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 && indexPath.row == 3 {
             let iCadeControllerViewController = PViCadeControllerViewController()
@@ -290,16 +290,16 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 
 @available(iOS 9.0, *)
 class ThemeSelectorViewController : UITableViewController {
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 2 : 0
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        
+
         let currentTheme = Theme.currentTheme
-        
+
         if indexPath.row == 0 {
             cell.textLabel?.text = Themes.light.rawValue
             cell.accessoryType = currentTheme.theme == .light ? .checkmark : .none
@@ -307,10 +307,10 @@ class ThemeSelectorViewController : UITableViewController {
             cell.textLabel?.text = Themes.dark.rawValue
             cell.accessoryType = currentTheme.theme == .dark ? .checkmark : .none
         }
-        
+
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             Theme.setTheme(LightTheme())
@@ -319,7 +319,7 @@ class ThemeSelectorViewController : UITableViewController {
             Theme.setTheme(DarkTheme())
             PVSettingsModel.shared.theme = .dark
         }
-        
+
         tableView.reloadData()
     }
 }

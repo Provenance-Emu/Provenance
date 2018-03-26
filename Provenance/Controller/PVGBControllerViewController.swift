@@ -20,7 +20,7 @@ fileprivate extension JSButton {
 }
 
 class PVGBControllerViewController: PVControllerViewController<PVGBSystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {

@@ -13,11 +13,11 @@ extension PVFCEUEmulatorCore: DiscSwappable {
     public var numberOfDiscs : UInt {
         return 2
     }
-    
+
     public var currentGameSupportsMultipleDiscs : Bool {
         return true
     }
-    
+
     public func swapDisc(number: UInt) {
         internalSwapDisc(number)
     }

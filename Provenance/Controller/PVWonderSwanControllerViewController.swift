@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderSwanSystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {

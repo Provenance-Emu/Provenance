@@ -48,36 +48,36 @@ private func _LogMessage(_ message: @autoclosure () -> String, file: StaticStrin
     guard level.rawValue >= LOG_LEVEL.rawValue else {
         return
     }
-    
+
     let icon: String
     let levelString: String
     switch level {
-        
+
     case .trace:
         icon = "🔀"
         levelString = ""
-        
+
     case .debug:
         icon = "🔹"
         levelString = "Debug"
-        
+
     case .info:
         icon = "🔸"
         levelString = "Info"
-        
+
     case .warn:
         icon = "⚠️"
         levelString = "Warning"
-        
+
     case .error:
         icon = "❗"
         levelString = "Error"
     }
-    
+
     let fileName = (String(describing: file) as NSString).lastPathComponent
     let messageString = message()
-    
+
     let logString = "\(Int(floor(startDate.timeIntervalSinceNow * -1))) \(icon) [\(levelString)] \(fileName):\(line) \(function)\n  ↪︎ \(messageString)\n"
-    
+
     print(logString)
 }

@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVNeoGeoPocketControllerViewController: PVControllerViewController<PVNeoGeoPocketSystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel?.text else {

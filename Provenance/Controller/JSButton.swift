@@ -36,13 +36,13 @@ class JSButton: UIView {
             }
         }
     }
-        
+
     var titleEdgeInsets: UIEdgeInsets = .zero {
         didSet {
             setNeedsLayout()
         }
     }
-    
+
     override var tintColor: UIColor? {
         didSet {
             if PVSettingsModel.shared.buttonTints {
@@ -108,7 +108,7 @@ class JSButton: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         backgroundImageView?.frame = bounds
-        
+
         if let titleLabel = titleLabel {
             titleLabel.frame = bounds
             var frame = titleLabel.frame
@@ -149,7 +149,7 @@ class JSButton: UIView {
             pressed = true
             delegate?.buttonPressed(self)
         }
-        
+
         if !touchArea.intersects(frame) {
             if pressed {
                 pressed = false

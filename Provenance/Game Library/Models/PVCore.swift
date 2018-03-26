@@ -9,15 +9,15 @@
 import Foundation
 import RealmSwift
 
-@objcMembers public class PVCore : Object {    
+@objcMembers public class PVCore : Object {
     dynamic var identifier : String = ""
     dynamic var principleClass : String = ""
     dynamic var supportedSystems = List<PVSystem>()
-    
+
     dynamic var projectName = ""
     dynamic var projectURL = ""
     dynamic var projectVersion = ""
-    
+
     public convenience init(withIdentifier identifier : String, principleClass : String, supportedSystems : [PVSystem], name : String, url : String, version : String) {
         self.init()
         self.identifier = identifier
@@ -28,7 +28,7 @@ import RealmSwift
         self.projectURL = url
         self.projectVersion = version
     }
-    
+
     override public static func primaryKey() -> String? {
         return "identifier"
     }

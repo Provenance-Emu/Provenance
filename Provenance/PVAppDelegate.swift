@@ -10,13 +10,13 @@ import CoreSpotlight
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
-    
+
     var window: UIWindow?
     var shortcutItemMD5 : String?
-    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
-        
+
 #if os(iOS)
         if #available(iOS 9.0, *) {
             if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut" {
@@ -24,7 +24,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
 #endif
-        
+
 #if os(tvOS)
         if let tabBarController = window?.rootViewController as? UITabBarController {
             let flowLayout = UICollectionViewFlowLayout()
@@ -43,47 +43,47 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let currentTheme = PVSettingsModel.shared.theme
         Theme.setTheme(currentTheme.theme)
 #endif
-        
+
         startOptionalWebDavServer()
-        
+
         let database = RomDatabase.sharedInstance
         database.refresh()
-        
+
         return true
     }
-    
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
         if url.isFileURL {
             let filename = url.lastPathComponent
             let destinationPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(filename, isDirectory: false)
-            
+
             do {
                 try FileManager.default.moveItem(at: url, to: destinationPath)
             } catch {
                 ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
                 return false
             }
-            
+
             return true
         } else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
-            
+
             guard let components = components else {
                 ELOG("Failed to parse url <\(url.absoluteString)>")
                 return false
             }
-            
+
             if #available(iOS 9.0, *) {
                 let sendingAppID = options[.sourceApplication]
                 ILOG("App with id <\(sendingAppID ?? "nil")> requested to open url \(url.absoluteString)")
             }
-            
+
             if components.host == "open" {
                 guard let queryItems = components.queryItems, let firstQueryItem = queryItems.first else {
                     return false
                 }
-    
+
                 if firstQueryItem.name == PVGameMD5Key, let value = firstQueryItem.value, !value.isEmpty {
                     shortcutItemMD5 = value
                     return true
@@ -91,7 +91,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
                     ELOG("Query didn't have acceptable values")
                     return false
                 }
-                
+
             } else {
                 ELOG("Unsupported host <\(url.host?.removingPercentEncoding ?? "nil")>")
                 return false
@@ -114,7 +114,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         completionHandler(true)
     }
 #endif
-    
+
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
 
         // Spotlight search click-through
@@ -134,7 +134,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         return false
     }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
     }
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -145,7 +145,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
     func applicationWillTerminate(_ application: UIApplication) {
     }
-    
+
 // MARK: - Helpers
     func isWebDavServerEnviromentVariableSet() -> Bool {
             // Start optional always on WebDav server using enviroment variable
@@ -155,7 +155,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         let buildConfiguration = ProcessInfo.processInfo.environment["ALWAYS_ON_WEBDAV"]
         return buildConfiguration == "1"
     }
-    
+
     func startOptionalWebDavServer() {
         // Check if the user setting is set or the optional ENV variable
         if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnviromentVariableSet() {

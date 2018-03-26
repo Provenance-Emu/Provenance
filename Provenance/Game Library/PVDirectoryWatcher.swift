@@ -18,23 +18,23 @@ public extension NSNotification.Name {
 }
 
 public class PVDirectoryWatcher: NSObject {
-    
+
     private let watchedDirectory: URL
-    
+
     private let extractionStartedHandler: PVExtractionStartedHandler?
     private let extractionUpdatedHandler: PVExtractionUpdatedHandler?
     private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     var dispatch_source: DispatchSourceFileSystemObject?
     let serialQueue: DispatchQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialExtractorQueue")
-    
+
     var previousContents: [URL]?
     private var reader: LzmaSDKObjCReader?
     private var unzippedFiles = [URL]()
-    
+
     public init(directory: URL, extractionStartedHandler startedHandler: PVExtractionStartedHandler?, extractionUpdatedHandler updatedHandler: PVExtractionUpdatedHandler?, extractionCompleteHandler completeHandler: PVExtractionCompleteHandler?) {
         watchedDirectory = directory
-        
+
         var isDirectory :ObjCBool = false
         let fileExists: Bool = FileManager.default.fileExists(atPath: directory.path, isDirectory: &isDirectory)
         if (fileExists == false) || (isDirectory.boolValue == false) {
@@ -44,15 +44,15 @@ public class PVDirectoryWatcher: NSObject {
                 DLOG("Unable to create directory at: \(directory.path), because: \(error.localizedDescription)")
             }
         }
-        
+
         unzippedFiles = [URL]()
-        
+
         extractionStartedHandler = startedHandler
         extractionUpdatedHandler = updatedHandler
         extractionCompleteHandler = completeHandler
-        
+
         super.init()
-        
+
         serialQueue.async {
             do {
                 let contents = try FileManager.default.contentsOfDirectory(at:directory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
@@ -68,11 +68,11 @@ public class PVDirectoryWatcher: NSObject {
             }
         }
     }
-    
+
     func startMonitoring() {
         DLOG("Start Monitoring \(watchedDirectory.path)")
         _stopMonitoring()
-        
+
         let fd : Int32 = open(self.watchedDirectory.path, O_EVTONLY)
 
         if fd == 0 {
@@ -89,15 +89,15 @@ public class PVDirectoryWatcher: NSObject {
             dispatch_source.setEventHandler(handler: {
                 let contents = try? FileManager.default.contentsOfDirectory(at: self.watchedDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
                 let previousContentsSet = Set(self.previousContents ?? [URL]())
-                
+
                 var contentsSet = Set(contents ?? [URL]())
                 contentsSet.subtract(previousContentsSet)
-                
+
                 contentsSet = contentsSet.filter({ (url) -> Bool in
                     // Ignore special files
                     return url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
                 })
-                
+
                 contentsSet.forEach { file in
                     self.watchFile(at: file)
                 }
@@ -106,12 +106,12 @@ public class PVDirectoryWatcher: NSObject {
                     self.previousContents = aContents
                 }
             })
-            
+
             dispatch_source.setCancelHandler(handler: {
                 close(fd)
             })
         }
-        
+
         dispatch_source.resume()
             // trigger the event watcher above to start an initial import on launch
         let triggerPath = self.watchedDirectory.appendingPathComponent("0")
@@ -123,12 +123,12 @@ public class PVDirectoryWatcher: NSObject {
             ELOG("\(error.localizedDescription)")
         }
     }
-    
+
     func stopMonitoring() {
         DLOG("Stop Monitoring \(watchedDirectory.path)")
         _stopMonitoring()
     }
-    
+
     private func _stopMonitoring() {
         if let dispatch_source = self.dispatch_source {
             dispatch_source.cancel()
@@ -137,9 +137,9 @@ public class PVDirectoryWatcher: NSObject {
     }
 
     func watchFile(at path: URL) {
-        
+
         DLOG("Start watching \(path.lastPathComponent)")
-        
+
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
 
@@ -155,10 +155,10 @@ public class PVDirectoryWatcher: NSObject {
             return
         }
     }
-    
+
     @objc
     func checkFileProgress(_ timer: Timer) {
-        
+
         guard let userInfo = timer.userInfo as? [String:Any], let path = userInfo["path"] as? URL, let previousFilesize = userInfo["filesize"] as? UInt64 else {
             ELOG("Timer missing userInfo or elements of it.")
             return
@@ -182,7 +182,7 @@ public class PVDirectoryWatcher: NSObject {
         if sizeHasntChanged && (currentFilesize > 0 || wasZeroBefore) {
             let compressedExtensions = PVEmulatorConfiguration.archiveExtensions
             let ext = path.pathExtension
-            
+
             if compressedExtensions.contains(ext) {
                 serialQueue.async {
                     self.extractArchive(at: path)
@@ -197,16 +197,16 @@ public class PVDirectoryWatcher: NSObject {
             }
             return
         }
-        
+
         Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(PVDirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
     }
-    
+
     func extractArchive(at filePath: URL) {
 
         if filePath.path.contains("MACOSX") {
             return
         }
-        
+
         DispatchQueue.main.async(execute: {() -> Void in
             self.extractionStartedHandler?(filePath)
         })
@@ -219,16 +219,16 @@ public class PVDirectoryWatcher: NSObject {
         let watchedDirectory = self.watchedDirectory
         // watchedDirectory will be nil when we call stop
         stopMonitoring()
-        
+
         let ext = filePath.pathExtension.lowercased()
-        
+
         if ext == "zip" {
             SSZipArchive.unzipFile(atPath: filePath.path, toDestination: watchedDirectory.path, overwrite: true, password: nil, progressHandler: { (entry : String?, zipInfo : unz_file_info, entryNumber : Int, total : Int, fileSize : UInt64, bytesRead : UInt64) in
                 if let entry = entry, !entry.isEmpty {
                     let url = watchedDirectory.appendingPathComponent(entry)
                     self.unzippedFiles.append(url)
                 }
-                
+
                 if self.extractionUpdatedHandler != nil {
                     DispatchQueue.main.async {
                         self.extractionUpdatedHandler?(filePath, entryNumber, total, Float(bytesRead) / Float(fileSize))
@@ -263,7 +263,7 @@ public class PVDirectoryWatcher: NSObject {
             let reader = LzmaSDKObjCReader(fileURL: filePath, andType: LzmaSDKObjCFileType7z)
             self.reader = reader
             reader.delegate = self
-            
+
             do {
                 try reader.open()
             } catch {
@@ -271,9 +271,9 @@ public class PVDirectoryWatcher: NSObject {
                 startMonitoring()
                 return
             }
-            
+
             var items = [LzmaSDKObjCItem]()
-            
+
             // Array with selected items.
             // Iterate all archive items, track what items do you need & hold them in array.
             reader.iterate(handler: { (item, error) -> Bool in
@@ -281,24 +281,24 @@ public class PVDirectoryWatcher: NSObject {
                     ELOG("7z error: \(error.localizedDescription)")
                     return true // Continue to iterate, false to stop
                 }
-                
+
                 items.append(item)
                 // if needs this item - store to array.
                 if !(item.isDirectory && item.fileName != nil) {
                     let fullPath = watchedDirectory.appendingPathComponent(item.fileName!)
                     self.unzippedFiles.append(fullPath)
                 }
-                
+
                 return true // Continue to iterate
             })
-            
+
             stopMonitoring()
             reader.extract(items, toPath: watchedDirectory.path, withFullPaths: false)
         } else {
             self.startMonitoring()
         }
     }
-    
+
     // Delay start so we have a moment to move files and stuff
     fileprivate func delayedStartMonitoring() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
@@ -312,7 +312,7 @@ extension PVDirectoryWatcher: LzmaSDKObjCReaderDelegate {
             ELOG("fileURL of reader was nil")
             return
         }
-        
+
         if progress >= 1 {
             if extractionCompleteHandler != nil {
                 let unzippedItems = unzippedFiles
@@ -320,13 +320,13 @@ extension PVDirectoryWatcher: LzmaSDKObjCReaderDelegate {
                     self.extractionCompleteHandler?(unzippedItems)
                 })
             }
-            
+
             do {
                 try FileManager.default.removeItem(at: fileURL)
             } catch {
                 ELOG("Unable to delete file at path \(fileURL.path), because \(error.localizedDescription)")
             }
-            
+
             unzippedFiles.removeAll()
             delayedStartMonitoring()
         } else {

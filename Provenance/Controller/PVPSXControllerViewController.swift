@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {

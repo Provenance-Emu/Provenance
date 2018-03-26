@@ -14,7 +14,7 @@ public extension NSNotification.Name {
 }
 
 public extension UIApplication {
-    
+
     @nonobjc private func _refreshAppearance(animated: Bool) {
         for window in windows {
             window.refreshAppearance(animated: animated)

@@ -19,11 +19,11 @@ public class RealmConfiguration {
     class public var supportsAppGroups : Bool {
         return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
     }
-    
+
     class public var appGroupContainer : URL? {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
     }
-    
+
     class public var appGroupPath : String? {
         guard let appGroupContainer = RealmConfiguration.appGroupContainer else {
             return nil
@@ -32,12 +32,12 @@ public class RealmConfiguration {
         let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/").path
         return appGroupPath
     }
-    
+
     class public func setDefaultRealmConfig() {
         let config = RealmConfiguration.realmConfig
         Realm.Configuration.defaultConfiguration = config
     }
-    
+
     private static var realmConfig : Realm.Configuration = {
         #if os(tvOS)
             var path: String? = nil
@@ -53,12 +53,12 @@ public class RealmConfiguration {
             let path: String? = paths.first
         #endif
         let realmURL = URL(fileURLWithPath: path!).appendingPathComponent("default.realm")
-        
+
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
                 ILOG("Migrating to version 2. Adding MD5s")
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
-               
+
                 var counter = 0
                 var deletions = 0
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
@@ -92,15 +92,15 @@ public class RealmConfiguration {
                             deletions += 1
                         }
                     }
-                    
+
                     newObject!["importDate"] = Date()
                 }
-                
+
                 NotificationCenter.default.post(name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
             }
         }
-        
+
         #if DEBUG
             let deleteIfMigrationNeeded = true
         #else
@@ -114,7 +114,7 @@ public class RealmConfiguration {
 internal class WeakWrapper : NSObject {
     static var associatedKey = "WeakWrapper"
     weak var weakObject : RomDatabase?
-    
+
     init(_ weakObject: RomDatabase?) {
         self.weakObject = weakObject
     }
@@ -139,7 +139,7 @@ extension Thread {
 }
 
 public final class RomDatabase {
-    
+
     // Private shared instance that propery initializes
     private static var _sharedInstance : RomDatabase = {
         RealmConfiguration.setDefaultRealmConfig()
@@ -156,7 +156,7 @@ public final class RomDatabase {
     public static var sharedInstance : RomDatabase {
         // Make sure real shared is inited first
         let shared = RomDatabase._sharedInstance
-        
+
         if Thread.isMainThread {
             return shared
         } else {
@@ -169,14 +169,14 @@ public final class RomDatabase {
             }
         }
     }
-    
+
     // For multi-threading
     fileprivate static func temporaryDatabaseContext() -> RomDatabase {
         return RomDatabase()
     }
-    
+
     private(set) public var realm : Realm
-    
+
     private init() {
         do {
             self.realm = try Realm()
@@ -192,7 +192,7 @@ public extension RomDatabase {
     public func all<T:Object>(_ type : T.Type) -> Results<T> {
         return realm.objects(type)
     }
-    
+
     // Testing a Swift hack to make Swift 4 keypaths work with KVC keypaths
 /*
     public func all<T:Object>(sortedByKeyPath keyPath : KeyPath<T, AnyKeyPath>, ascending: Bool = true) -> Results<T> {
@@ -208,40 +208,40 @@ public extension RomDatabase {
      }
 
 */
-    
+
     public func all<T:Object>(_ type : T.Type, sortedByKeyPath keyPath : String, ascending: Bool = true) -> Results<T> {
         return realm.objects(T.self).sorted(byKeyPath: keyPath, ascending: ascending)
     }
-    
+
     public func all<T:Object>(_ type : T.Type, where keyPath: String, value : String) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
     }
-    
+
     public func all<T:Object>(_ type : T.Type, where keyPath: String, value : Bool) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(value: value)))
     }
-    
+
     public func all<T:Object,KeyType>(_ type : T.Type, where keyPath: String, value : KeyType) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", [value]))
     }
-    
+
     public func all<T:Object>(_ type : T.Type, filter: NSPredicate) -> Results<T> {
         return realm.objects(T.self).filter(filter)
     }
-    
+
     public func object<T:Object, KeyType>(ofType type : T.Type, wherePrimaryKeyEquals value : KeyType) -> T? {
         return realm.object(ofType: T.self, forPrimaryKey: value)
     }
-    
+
     // HELPERS -- TODO: Get rid once we're all swift
     public var allGames : Results<PVGame> {
         return self.all(PVGame.self)
     }
-    
+
     public func allGames(sortedByKeyPath keyPath: String, ascending: Bool = true) -> Results<PVGame> {
         return all(PVGame.self, sortedByKeyPath: keyPath, ascending: ascending)
     }
-    
+
     public func allGamesSortedBySystemThenTitle() -> Results<PVGame> {
         return realm.objects(PVGame.self).sorted(byKeyPath: "systemIdentifier").sorted(byKeyPath: "title")
     }
@@ -255,33 +255,33 @@ public extension RomDatabase {
             block()
         }
     }
-    
+
     @objc
     public func add(_ object: Object, update: Bool = false) throws {
         try realm.write {
             realm.add(object, update: update)
         }
     }
-    
+
     public func add<T:Object>(objects: [T], update: Bool = false) throws {
         try realm.write {
             realm.add(objects, update: update)
         }
     }
-    
+
     @objc
     public func deleteAll() throws {
         try realm.write {
             realm.deleteAll()
         }
     }
-    
+
     public func deleteAll<T:Object>(_ type : T.Type) throws {
         try realm.write {
             realm.delete(realm.objects(type))
         }
     }
-    
+
     @objc
     public func delete(_ object: Object) throws {
         try realm.write {
@@ -303,19 +303,19 @@ public extension PVObject where Self : Object {
     static var all : Results<Self> {
         return RomDatabase.sharedInstance.all(Self.self)
     }
-    
+
     func add(update: Bool = false) throws {
         try RomDatabase.sharedInstance.add(self, update: update)
     }
-    
+
     static func deleteAll() throws {
         try RomDatabase.sharedInstance.deleteAll(Self.self)
     }
-    
+
     func delete() throws {
         try RomDatabase.sharedInstance.delete(self)
     }
-    
+
     static func with(primaryKey : String) -> Self? {
         return RomDatabase.sharedInstance.object(ofType: Self.self, wherePrimaryKeyEquals: primaryKey)
     }
@@ -331,7 +331,7 @@ public extension PVFiled where Self : Object {
     var missing : Bool {
         return file == nil || file!.missing
     }
-    
+
     var md5 : String? {
         guard let file = file else {
             return nil

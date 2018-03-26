@@ -54,7 +54,7 @@ class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResp
                 button.buttonTag = .cRight
             }
         }
-       
+
         leftShoulderButton?.buttonTag = .l
         rightShoulderButton?.buttonTag = .r
         selectButton?.buttonTag = .z

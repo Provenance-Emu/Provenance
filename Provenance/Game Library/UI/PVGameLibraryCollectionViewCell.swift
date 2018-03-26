@@ -11,14 +11,14 @@ private let LabelHeight: CGFloat = 44.0
 
 extension UIImage {
     class func image(withSize size: CGSize, color: UIColor, text: NSAttributedString) -> UIImage? {
-        
+
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         UIGraphicsBeginImageContextWithOptions(rect.size, false, UIScreen.main.scale)
-        
+
         guard let context: CGContext = UIGraphicsGetCurrentContext() else {
             return nil
         }
-        
+
         context.setFillColor(color.cgColor)
         context.setStrokeColor(UIColor(white: 0.7, alpha: 0.6).cgColor)
         context.setLineWidth(0.5)
@@ -41,14 +41,14 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
         return CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
     }
-    
+
     var token : NotificationToken?
     var game : PVGame? {
         didSet {
-            
+
             DispatchQueue.main.async { [unowned self] in
                 self.token?.invalidate()
-                
+
                 if let game = self.game {
                     self.token = game.observe { [weak self] change in
                         switch change {
@@ -67,18 +67,18 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
+
     deinit {
         token?.invalidate()
     }
-    
+
     private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
         let originalArtworkURL: String = game.originalArtworkURL
         if PVSettingsModel.shared.showGameTitles {
             titleLabel.text = game.title
         }
-        
+
             // TODO: May be renabled later
         let placeholderImageText: String = game.title
         if artworkURL.isEmpty && originalArtworkURL.isEmpty {
@@ -132,22 +132,22 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         var imageHeight: CGFloat = frame.size.height
         if PVSettingsModel.shared.showGameTitles {
             imageHeight -= 44
         }
-        
+
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight))
         self.imageView = imageView
         imageView.contentMode = .scaleAspectFit
         imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-       
+
         #if os(iOS)
 		//Ignore Smart Invert
 		imageView.ignoresInvertColors = true
         #endif
-        
+
         let titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
         self.titleLabel = titleLabel
         titleLabel.lineBreakMode = .byTruncatingTail
@@ -169,7 +169,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         titleLabel.textAlignment = .center
 #if os(iOS)
         titleLabel.font = titleLabel.font.withSize(12)
-    
+
         titleLabel.backgroundColor = UIColor.clear
         titleLabel.textColor = UIColor.white
         titleLabel.textAlignment = .center
@@ -187,11 +187,11 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
         contentView.addSubview(imageView)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
         let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
@@ -204,13 +204,13 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             // TODO: To be replaced with the correct system placeholder
         let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        
+
         #if os(iOS)
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
         #else
         let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
         #endif
-        
+
         let height : CGFloat = CGFloat(PVThumbnailMaxResolution)
         let ratio : CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
         let width : CGFloat = height * ratio
@@ -218,7 +218,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
         return missingArtworkImage
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
@@ -226,7 +226,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         token?.invalidate()
         token = nil
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
 #if os(tvOS)
@@ -247,7 +247,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 #endif
     }
-    
+
 #if os(tvOS)
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         coordinator.addCoordinatedAnimations({() -> Void in

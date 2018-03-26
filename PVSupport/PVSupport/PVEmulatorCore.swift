@@ -16,7 +16,7 @@ import UIKit
 }
 
 @objc public protocol ResponderClient : class {
-    
+
 }
 
 @objc public protocol ButtonResponder {
@@ -219,7 +219,7 @@ import UIKit
     func didPush(_ button: PV7800Button, forPlayer player: Int)
     @objc(didRelease7800Button:forPlayer:)
     func didRelease(_ button: PV7800Button, forPlayer player: Int)
-    
+
     func mouseMoved(at point: CGPoint)
     func leftMouseDown(at point: CGPoint)
     func leftMouseUp()

@@ -27,7 +27,7 @@ let kThemeKey = "kThemeKey"
 let kButtonTintsKey = "kButtonsTintsKey"
 
 public class PVSettingsModel: NSObject {
-    
+
     @objc
     var autoSave: Bool {
         didSet {
@@ -51,7 +51,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var disableAutoLock: Bool {
        didSet {
@@ -60,7 +60,7 @@ public class PVSettingsModel: NSObject {
             UIApplication.shared.isIdleTimerDisabled = disableAutoLock
         }
     }
-    
+
     @objc
     var buttonVibration: Bool {
         didSet {
@@ -68,7 +68,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var imageSmoothing: Bool {
         didSet {
@@ -76,7 +76,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var crtFilterEnabled: Bool {
         didSet {
@@ -84,7 +84,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var showRecentGames: Bool {
         didSet {
@@ -116,7 +116,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var myiCadeControllerSetting: iCadeControllerSetting {
         didSet {
@@ -132,7 +132,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var buttonTints: Bool {
         didSet {
@@ -157,9 +157,9 @@ public class PVSettingsModel: NSObject {
         }
     }
     #endif
-    
+
     static var shared = PVSettingsModel()
-    
+
     @objc
     class func sharedInstance() -> PVSettingsModel {
         return PVSettingsModel.shared
@@ -171,7 +171,7 @@ public class PVSettingsModel: NSObject {
         #else
         let theme = ""
         #endif
-        
+
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadAutoSavesKey: false,
@@ -189,7 +189,7 @@ public class PVSettingsModel: NSObject {
                                                   kButtonTintsKey: true,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
-        
+
         autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
         autoLoadAutoSaves = UserDefaults.standard.bool(forKey: kAutoLoadAutoSavesKey)
         controllerOpacity = CGFloat(UserDefaults.standard.float(forKey: kControllerOpacityKey))
@@ -206,12 +206,12 @@ public class PVSettingsModel: NSObject {
         webDavAlwaysOn = UserDefaults.standard.bool(forKey: kWebDayAlwwaysOnKey)
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
         buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
-        
+
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue
         self.theme = Themes(rawValue: themeString) ?? Themes.defaultTheme
         #endif
-        
+
         super.init()
     }
 }

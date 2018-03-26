@@ -14,7 +14,7 @@ protocol PVLibraryEntry where Self: Object {}
 
 @objcMembers public class PVGame : Object, PVLibraryEntry {
     dynamic var title : String              = ""
-    
+
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying
     // any methods that use this path. Everything should use PVEmulatorConfigure path(forGame:)
@@ -31,19 +31,19 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var isFavorite : Bool           = false
 
     dynamic var romSerial : String          = ""
-    
+
     dynamic var importDate : Date           = Date()
-    
+
     dynamic var systemIdentifier : String   = ""
     dynamic var system : PVSystem!
-    
+
     dynamic var md5Hash : String            = ""
-    
+
     /* Links to other objects */
     var saveStates = List<PVSaveState>()
     var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
     var screenShots = List<PVImageFile>()
-    
+
     /* Tracking data */
     dynamic var lastPlayed : Date?
     dynamic var playCount : Int = 0
@@ -58,7 +58,7 @@ protocol PVLibraryEntry where Self: Object {}
             }
         }
     }
-    
+
     /* Extra metadata from OpenBG */
     dynamic var gameDescription : String?
     dynamic var boxBackArtworkURL : String?
@@ -77,7 +77,7 @@ protocol PVLibraryEntry where Self: Object {}
         self.system = system
         self.systemIdentifier = system.identifier
     }
-    
+
     /*
         Primary key must be set at import time and can't be changed after.
         I had to change the import flow to calculate the MD5 before import.
@@ -87,7 +87,7 @@ protocol PVLibraryEntry where Self: Object {}
     override public static func primaryKey() -> String? {
         return "md5Hash"
     }
-    
+
     override public static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
     }

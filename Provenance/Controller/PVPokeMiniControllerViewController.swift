@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVPokeMiniControllerViewController : PVControllerViewController<PVPokeMiniSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {

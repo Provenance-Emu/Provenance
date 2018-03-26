@@ -10,12 +10,12 @@
 import UIKit
 
 class PVAppearanceViewController: UITableViewController {
-    
+
     #if os(iOS)
     var hideTitlesSwitch: UISwitch?
     var recentlyPlayedSwitch: UISwitch?
     #endif
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Appearance"

@@ -22,21 +22,21 @@ typealias PVEmulatorViewControllerRootClass = GCEventViewController
 #else
 typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
-    
+
 class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate {
-    
+
     var core: PVEmulatorCore {
         didSet {
             staticCore = core
         }
     }
     var game: PVGame
-    
+
     var batterySavesPath = ""
     var saveStatePath = ""
     var BIOSPath = ""
     var menuButton: UIButton?
-    
+
     var glViewController: PVGLViewController!
     var gameAudio: OEGameAudio!
     let controllerViewController: (UIViewController & StartSelectDelegate)?
@@ -45,16 +45,16 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var secondaryScreen: UIScreen?
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
-    
+
     weak var menuActionSheet : UIAlertController?
     var isShowingMenu : Bool = false
 
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
-        
+
         controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
-        
+
         super.init(nibName: nil, bundle: nil)
 
         if PVSettingsModel.sharedInstance().autoSave {
@@ -63,11 +63,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             NSSetUncaughtExceptionHandler(nil)
         }
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     deinit {
         core.stopEmulation()
         //Leave emulation loop first
@@ -100,7 +100,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
-        
+
         core.audioDelegate = self
         core.saveStatesPath = self.saveStatePath
         core.batterySavesPath = batterySavesPath
@@ -121,7 +121,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         if m3uFile != nil {
             romPath = m3uFile
         }
-        
+
         do {
             try core.loadFile(atPath: romPath?.path)
         } catch {
@@ -300,27 +300,27 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         //Notifies UIKit that your view controller updated its preference regarding the visual indicator
-        
+
         #if os(iOS)
         if #available(iOS 11.0, *) {
             setNeedsUpdateOfHomeIndicatorAutoHidden()
         }
         #endif
-        
+
         #if os(iOS)
         //Ignore Smart Invert
         self.view.ignoresInvertColors = true
         #endif
     }
-    
+
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         #if os(iOS)
         stopVolumeControl()
         #endif
     }
-    
+
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         #if os(iOS)
@@ -334,7 +334,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         guard let startTime = game.lastPlayed else {
             return
         }
-        
+
         let duration = startTime.timeIntervalSinceNow * -1
         let totalTimeSpent = game.timeSpentInGame + Int(duration)
 
@@ -347,7 +347,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             ELOG("\(error.localizedDescription)")
         }
     }
-    
+
     @objc public func updateLastPlayedTime() {
         do {
             try RomDatabase.sharedInstance.writeTransaction {
@@ -710,7 +710,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     typealias QuitCompletion = () -> Void
-    
+
     func quit(_ completion: QuitCompletion? = nil) {
         if PVSettingsModel.sharedInstance().autoSave {
             core.autoSaveState()
@@ -733,7 +733,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     // Ensure that override of menu gesture is caught and handled properly for tvOS
     @available(iOS 9.0, *)
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
-        
+
         if let press = presses.first, press.type == .menu && !isShowingMenu {
             //         [self controllerPauseButtonPressed];
         }
@@ -842,13 +842,13 @@ extension PVEmulatorViewController {
             ELOG("No core?")
             return
         }
-        
+
         let numberOfDiscs = core.numberOfDiscs
         guard numberOfDiscs > 1 else {
             ELOG("Only 1 disc?")
             return
         }
-        
+
         // Add action for each disc
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
@@ -858,7 +858,7 @@ extension PVEmulatorViewController {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                     core.swapDisc(number: index)
                 })
-                
+
                 core.setPauseEmulation(false)
 
                 self.isShowingMenu = false
@@ -892,7 +892,7 @@ extension PVEmulatorViewController {
 // Inherits the default behaviour
 #if os(iOS)
 extension PVEmulatorViewController : VolumeController {
-    
+
 }
 #endif
 
@@ -911,7 +911,7 @@ extension NSNumber {
     static var upArrow: NSNumber {
         return NSNumber(pressType: .upArrow)
     }
-    
+
     static var downArrow: NSNumber {
         return NSNumber(pressType: .downArrow)
     }
@@ -922,7 +922,7 @@ extension NSNumber {
         return NSNumber(pressType: .rightArrow)
     }
     // MARK: - Private
-    
+
     private convenience init(pressType: UIPressType) {
         self.init(integerLiteral: pressType.rawValue)
     }
@@ -937,7 +937,7 @@ extension NSNumber {
         return NSNumber(touchType: .indirect)
     }
     // MARK: - Private
-    
+
     private convenience init(touchType: UITouchType) {
         self.init(integerLiteral: touchType.rawValue)
     }

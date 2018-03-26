@@ -17,7 +17,7 @@ import RealmSwift
     override public static func indexedProperties() -> [String] {
         return ["lastPlayedDate"]
     }
-    
+
     public convenience init(withGame game: PVGame) {
         self.init()
         self.game = game

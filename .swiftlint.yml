@@ -12,14 +12,14 @@ disabled_rules:
   # - function_body_length
   # - nesting
   - variable_name
-  - conditional_binding_cascade
-  - variable_name_max_length
-  - operator_whitespace
+  # - conditional_binding_cascade
+  # - variable_name_max_length
+  # - operator_whitespace
   - control_statement
-  - legacy_constant
+  # - legacy_constant
   - line_length
-  - return_arrow_whitespace
-  - trailing_whitespace
+  # - return_arrow_whitespace
+  # - trailing_whitespace
   - closing_brace
   - statement_position
   - type_body_length

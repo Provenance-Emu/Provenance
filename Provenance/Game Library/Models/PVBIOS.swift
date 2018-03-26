@@ -13,13 +13,13 @@ import RealmSwift
     public dynamic var system : PVSystem!
     public dynamic var descriptionText: String = ""
     public dynamic var optional : Bool = false
-    
+
     public dynamic var expectedMD5 : String = ""
     public dynamic var expectedSize : Int = 0
     public dynamic var expectedFilename : String = ""
-    
+
     public dynamic var file : PVFile?
-    
+
     public convenience init(withSystem system : PVSystem, descriptionText: String, optional : Bool = false, expectedMD5 : String, expectedSize : Int, expectedFilename : String) {
         self.init()
         self.system = system
@@ -29,7 +29,7 @@ import RealmSwift
         self.expectedSize = expectedSize
         self.expectedFilename = expectedFilename
     }
-    
+
     override public static func primaryKey() -> String? {
         return "expectedFilename"
     }

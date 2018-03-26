@@ -43,7 +43,7 @@ class PViCadeControllerViewController: UITableViewController {
             cell.accessoryType = .none
         }
         cell.textLabel?.text = iCadeControllerSettingToString((iCadeControllerSetting(rawValue:indexPath.row))!)
-        
+
 #if os(iOS)
         cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
 #endif

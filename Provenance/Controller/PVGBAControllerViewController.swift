@@ -21,13 +21,13 @@ fileprivate extension JSButton {
 }
 
 class PVGBAControllerViewController: PVControllerViewController<PVGBASystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
-            
+
             if (button.titleLabel?.text == "A") {
                 button.buttonTag =  .a
             }
@@ -38,7 +38,7 @@ class PVGBAControllerViewController: PVControllerViewController<PVGBASystemRespo
 
         leftShoulderButton?.buttonTag =  .l
         rightShoulderButton?.buttonTag =  .r
-        
+
         startButton?.buttonTag =  .start
         selectButton?.buttonTag =  .select
     }

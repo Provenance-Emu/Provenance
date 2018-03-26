@@ -25,11 +25,11 @@ extension PVCore {
             ELOG("Couldn't get class for <\(self.principleClass)>")
             return nil
         }
-        
+
         let emuCore = coreClass.init()
-        
+
         DLOG("Created core : <\(emuCore.debugDescription)>")
-        
+
         emuCore.systemIdentifier = system.identifier
         return emuCore
     }
@@ -40,7 +40,7 @@ public final class PVCoreFactory : NSObject {
         guard let controllerLayout = system.controllerLayout else {
             fatalError("No controller layout config defined for system \(system.name)")
         }
-        
+
         switch system.enumValue {
         case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
             if let core = core as? PVGenesisSystemResponderClient {

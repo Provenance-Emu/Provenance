@@ -31,20 +31,20 @@ public enum ScreenType : String {
     dynamic var portableSystem : Bool = false
     dynamic var supportsRumble : Bool = false
     dynamic var _screenType : String = ScreenType.unknown.rawValue
-    
+
     var supportedExtensions = List<String>()
-    
+
     // Reverse Links
     var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
     var games = LinkingObjects(fromType: PVGame.self, property: "system")
     var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
     dynamic var identifier : String = ""
-    
+
     override public static func primaryKey() -> String? {
         return "identifier"
     }
-    
+
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
     @objc private dynamic var controlLayoutData: Data?
@@ -60,13 +60,13 @@ public enum ScreenType : String {
                 return nil
             }
         }
-        
+
         set {
             guard let newDictionaryData = newValue else {
                 controlLayoutData = nil
                 return
             }
-            
+
             do {
                 let data = try JSONEncoder().encode(newDictionaryData)
                 controlLayoutData = data
@@ -76,7 +76,7 @@ public enum ScreenType : String {
             }
         }
     }
-    
+
     override public static func ignoredProperties() -> [String] {
         return ["controllerLayout"]
     }
@@ -93,27 +93,27 @@ public extension PVSystem {
 //            }
         }
     }
-    
+
     var enumValue : SystemIdentifier {
         return SystemIdentifier(rawValue: identifier)!
     }
-    
+
     var biosesHave : [PVBIOS]? {
         let have = bioses.filter({ (bios) -> Bool in
             return !bios.missing
         })
-        
+
         return !have.isEmpty ? Array(have) : nil
     }
-    
+
     var missingBIOSes : [PVBIOS]? {
         let missing = bioses.filter({ (bios) -> Bool in
             return bios.missing
         })
-        
+
         return !missing.isEmpty ? Array(missing) : nil
     }
-    
+
     var hasAllRequiredBIOSes : Bool {
         return missingBIOSes != nil
     }
