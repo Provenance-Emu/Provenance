@@ -32,5 +32,3 @@ public func PVMaxRecentsCount() -> Int {
     #endif
 #endif
 }
-
-

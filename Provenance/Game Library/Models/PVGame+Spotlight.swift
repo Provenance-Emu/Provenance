@@ -107,4 +107,3 @@ public extension PVGame {
         return self.system.name
     }
 }
-

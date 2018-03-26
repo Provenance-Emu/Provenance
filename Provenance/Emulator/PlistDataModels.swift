@@ -81,4 +81,3 @@ public struct CorePlistEntry: Codable {
     let PVProjectURL : String
     let PVProjectVersion : String
 }
-

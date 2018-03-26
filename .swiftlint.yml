@@ -1,5 +1,5 @@
 disabled_rules:
-  - trailing_newline
+  # - trailing_newline
   - opening_brace
   - empty_count
   - comma
@@ -61,3 +61,20 @@ disabled_rules:
   - multiple_closures_with_trailing_closure
   - compiler_protocol_init
   - private_over_fileprivate
+excluded: # paths to ignore during linting. overridden byincluded.
+  - Carthage
+  - Pods
+# parameterized rules can be customized from this configuration file
+line_length: 200
+# parameterized rules are first parameterized as a warning level, then error level.
+type_body_length:
+  - 300 # warning
+  - 400 # error
+# parameterized rules are first parameterized as a warning level, then error level.
+variable_name_max_length:
+  - 40 # warning
+  - 60 # error
+# parameterized rules are first parameterized as a warning level, then error level.
+variable_name_min_length:
+  - 3 # warning
+  - 2 # error

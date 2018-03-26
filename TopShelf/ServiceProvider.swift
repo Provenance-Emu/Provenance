@@ -61,4 +61,3 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
         return topShelfItems
     }
 }
-
