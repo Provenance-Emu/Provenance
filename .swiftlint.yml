@@ -1,11 +1,8 @@
 disabled_rules:
-  # - trailing_newline
-  # - opening_brace
   - switch_case_alignment
   - block_based_kvo
   - multiple_closures_with_trailing_closure
-  - empty_count
-  # - colon
+  - colon
   - force_cast
   - type_name
   - variable_name_min_length
@@ -19,6 +16,9 @@ disabled_rules:
   - file_length
   - cyclomatic_complexity
   - unused_closure_parameter
+  # - trailing_newline
+  # - opening_brace
+  # - empty_count
   # - comma
   # - trailing_semicolon
   # - function_body_length
