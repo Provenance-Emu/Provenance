@@ -965,7 +965,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
     }()
 
     public var maxAlpha: CGFloat = 1
-    public var hideHandler: (() -> ())?
+    public var hideHandler: (() -> Void)?
     public var useBlurEffect = false
     public var animationTime: Double
     public var originalImageView: UIImageView
@@ -1011,7 +1011,7 @@ public class MediaZoom: UIView, UIScrollViewDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func show(onHide callback: (() -> ())? = nil) {
+    public func show(onHide callback: (() -> Void)? = nil) {
         let frame = MediaZoom.currentFrame()
         self.frame = frame
         backgroundView.frame = frame

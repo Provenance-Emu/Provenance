@@ -457,7 +457,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderButton.alpha = alpha
                         rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton)
-                    } else if rightShoulderButton2 == nil ,let title = control.PVControlTitle, title == "R2"{
+                    } else if rightShoulderButton2 == nil, let title = control.PVControlTitle, title == "R2"{
                         rightShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
 
                         let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)

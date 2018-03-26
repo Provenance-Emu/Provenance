@@ -1,47 +1,50 @@
 disabled_rules:
   # - trailing_newline
   # - opening_brace
+  - switch_case_alignment
+  - block_based_kvo
+  - multiple_closures_with_trailing_closure
   - empty_count
-  - comma
   - colon
   - force_cast
   - type_name
   - variable_name_min_length
-  # - trailing_semicolon
+  - discarded_notification_center_observer
   - force_try
+  - variable_name
+  - control_statement
+  - line_length
+  - type_body_length
+  - todo
+  - file_length
+  - cyclomatic_complexity
+  - unused_closure_parameter
+  # - comma
+  # - trailing_semicolon
   # - function_body_length
   # - nesting
-  - variable_name
   # - conditional_binding_cascade
   # - variable_name_max_length
   # - operator_whitespace
-  - control_statement
   # - legacy_constant
-  - line_length
   # - return_arrow_whitespace
   # - trailing_whitespace
   # - closing_brace
   # - statement_position
-  - type_body_length
-  - todo
   # - legacy_constructor
   # - valid_docs
-  - missing_docs
-  - file_length
+  # - missing_docs
   # - leading_whitespace
   # - redundant_optional_initialization
   # - unused_optional_initialization
-  - cyclomatic_complexity
-  - unused_optional_binding
-  - void_return
-  - implicit_getter
-  - unused_closure_parameter
-  - mark
-  - notification_center_detachment
+  # - unused_optional_binding
+  # - void_return
+  # - implicit_getter
+  # - mark
+  # - notification_center_detachment
   # - for_where
   # - vertical_whitespace
   # - empty_parameters
-  - discarded_notification_center_observer
   # - class_delegate_protocol
   # - syntactic_sugar
   # - function_parameter_count
@@ -56,9 +59,6 @@ disabled_rules:
   # - redundant_discardable_let
   # - large_tuple
   # - vertical_parameter_alignment
-  - switch_case_alignment
-  - block_based_kvo
-  - multiple_closures_with_trailing_closure
   # - compiler_protocol_init
   # - private_over_fileprivate
 excluded: # paths to ignore during linting. overridden byincluded.

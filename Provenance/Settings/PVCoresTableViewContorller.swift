@@ -41,7 +41,7 @@ class PVCoresTableViewController: UITableViewController {
         cell.detailTextLabel?.text = "\(core.projectVersion) : \(systemsText)"
 
         #if os(iOS)
-        if let _ = URL.init(string: core.projectURL) {
+        if URL.init(string: core.projectURL) != nil {
             cell.accessoryType = .disclosureIndicator
         } else {
             cell.accessoryType = .none

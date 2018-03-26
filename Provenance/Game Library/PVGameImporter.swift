@@ -332,7 +332,7 @@ public extension PVGameImporter {
                 return dict
             })
 
-            return dict.merging( extsToCurrentSystemID , uniquingKeysWith: {  var newArray = $0; newArray.append(contentsOf: $1); return newArray;  })
+            return dict.merging( extsToCurrentSystemID, uniquingKeysWith: {  var newArray = $0; newArray.append(contentsOf: $1); return newArray;  })
 
         })
     }
@@ -1250,7 +1250,7 @@ extension PVGameImporter {
         let contents : [URL]
         let fromDirectory = inputFile.deletingLastPathComponent()
         do {
-            contents = try FileManager.default.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles,.skipsPackageDescendants])
+            contents = try FileManager.default.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsPackageDescendants])
         } catch {
             ELOG("Error scanning \(fromDirectory.path), \(error.localizedDescription)")
             return nil

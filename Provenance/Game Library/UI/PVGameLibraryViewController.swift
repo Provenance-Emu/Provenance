@@ -712,7 +712,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         // Skip the battery and saves folder
         // Don't move the Imge cache files, or delete them
 
-        let ignoredExtensions = ["jpg","png","gif"]
+        let ignoredExtensions = ["jpg", "png", "gif"]
         let filteredContents = contents.filter { (url) -> Bool in
             let dbFile = url.path.lowercased().contains("realm")
             let ignoredExtension = ignoredExtensions.contains(url.pathExtension)

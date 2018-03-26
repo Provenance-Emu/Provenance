@@ -44,49 +44,49 @@ public final class PVCoreFactory : NSObject {
         switch system.enumValue {
         case .Genesis, .GameGear, .MasterSystem, .SegaCD, .SG1000:
             if let core = core as? PVGenesisSystemResponderClient {
-                return PVGenesisControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVGenesisControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVGenesisSystemResponderClient")
             }
         case .SNES:
             if let core = core as? PVSNESSystemResponderClient {
-                return PVSNESControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVSNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVSNESSystemResponderClient")
             }
         case .GBA:
             if let core = core as? PVGBASystemResponderClient {
-                return PVGBAControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVGBAControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVGBASystemResponderClient")
             }
         case .GB, .GBC:
             if let core = core as? PVGBSystemResponderClient {
-                return PVGBControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVGBControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVGBSystemResponderClient")
             }
         case .NES, .FDS:
             if let core = core as? PVNESSystemResponderClient {
-                return PVNESControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVNESSystemResponderClient")
             }
         case .Atari2600:
             if let core = core as? PV2600SystemResponderClient {
-                return PVAtari2600ControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVAtari2600ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PV2600SystemResponderClient")
             }
         case .Atari5200:
             if let core = core as? PV5200SystemResponderClient {
-                return PVAtari5200ControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVAtari5200ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PV5200SystemResponderClient")
             }
         case .Atari7800:
             if let core = core as? PV7800SystemResponderClient {
-                return PVAtari7800ControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVAtari7800ControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PV7800SystemResponderClient")
             }
@@ -98,43 +98,43 @@ public final class PVCoreFactory : NSObject {
             }
         case .PokemonMini:
             if let core = core as? PVPokeMiniSystemResponderClient {
-                return PVPokeMiniControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVPokeMiniControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVPokeMiniSystemResponderClient")
             }
         case .PSX:
             if let core = core as? PVPSXSystemResponderClient {
-                return PVPSXControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVPSXControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVPSXSystemResponderClient")
             }
         case .Lynx:
             if let core = core as? PVLynxSystemResponderClient {
-                return PVLynxControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVLynxControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVLynxSystemResponderClient")
             }
         case .PCE, .PCECD, .PCFX, .SGFX:
             if let core = core as? PVPCESystemResponderClient {
-                return PVPCEControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVPCEControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVPCESystemResponderClient")
             }
         case .NGP, .NGPC:
             if let core = core as? PVNeoGeoPocketSystemResponderClient {
-                return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVNeoGeoPocketSystemResponderClient")
             }
         case .VirtualBoy:
             if let core = core as? PVVirtualBoySystemResponderClient {
-                return PVVBControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVVBControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVVirtualBoySystemResponderClient")
             }
         case .WonderSwan, .WonderSwanColor:
             if let core = core as? PVWonderSwanSystemResponderClient {
-                return PVWonderSwanControllerViewController(controlLayout: controllerLayout , system: system, responder: core)
+                return PVWonderSwanControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else {
                 fatalError("Core doesn't impliment PVWonderSwanSystemResponderClient")
             }

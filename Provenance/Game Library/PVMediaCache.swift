@@ -38,7 +38,7 @@ public class PVMediaCache: NSObject {
         let cachePath = URL(fileURLWithPath: cachesDir).appendingPathComponent(kPVCachePath)
 
         do {
-            try FileManager.default.createDirectory(at: cachePath , withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: cachePath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             fatalError("Error creating cache directory at \(cachePath) : \(error.localizedDescription)")
         }

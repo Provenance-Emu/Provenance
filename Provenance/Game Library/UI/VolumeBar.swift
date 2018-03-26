@@ -213,11 +213,9 @@ public final class VolumeBar: NSObject {
 	/// On iPhone, the status bar is always hidden when the device is in landscape mode,
 	/// regardless of the return value of `prefersStatusBarHidden()` for the view controller.
 	fileprivate var statusBarActuallyHidden: Bool {
-		get {
-			let orientation = UIApplication.shared.statusBarOrientation
-			let phoneLandscape = UI_USER_INTERFACE_IDIOM() == .phone && (orientation == .landscapeLeft || orientation == .landscapeRight)
-			return phoneLandscape ? true : statusBarHidden
-		}
+        let orientation = UIApplication.shared.statusBarOrientation
+        let phoneLandscape = UI_USER_INTERFACE_IDIOM() == .phone && (orientation == .landscapeLeft || orientation == .landscapeRight)
+        return phoneLandscape ? true : statusBarHidden
 	}
 
 	/// The internal view controller used to show the current system volume.
