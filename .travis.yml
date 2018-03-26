@@ -15,7 +15,15 @@ before_install:
   - gem install xcpretty -N
   - brew update
   - brew install swiftlint || true
+after_success:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+after_failure:
+  - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
 script:
   - set -o pipefail
-  - xcodebuild clean build -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO | xcpretty -c
+  - xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO | xcpretty -c
   - swiftlint
