@@ -110,7 +110,7 @@ public class PVGameImporter {
         return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
     }
     
-    var notificationToken: NotificationToken? = nil
+    var notificationToken: NotificationToken?
     
     required public init(completionHandler: PVGameImporterCompletionHandler?) {
 

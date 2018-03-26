@@ -20,7 +20,7 @@ public enum ScreenType : String {
 @objcMembers public class PVSystem : Object {
     dynamic var name : String = ""
     dynamic var shortName : String = ""
-    dynamic var shortNameAlt : String? = nil
+    dynamic var shortNameAlt : String?
     dynamic var manufacturer : String = ""
     dynamic var releaseYear : Int = 0
     dynamic var bit : Int = 0

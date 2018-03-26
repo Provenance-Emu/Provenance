@@ -28,9 +28,9 @@ disabled_rules:
   - valid_docs
   - missing_docs
   - file_length
-  - leading_whitespace
-  - redundant_optional_initialization
-  - unused_optional_initialization
+  # - leading_whitespace
+  # - redundant_optional_initialization
+  # - unused_optional_initialization
   - cyclomatic_complexity
   - unused_optional_binding
   - void_return

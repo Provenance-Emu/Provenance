@@ -12,7 +12,7 @@ import CoreSpotlight
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    var shortcutItemMD5 : String? = nil
+    var shortcutItemMD5 : String?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock

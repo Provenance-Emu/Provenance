@@ -75,7 +75,7 @@ class PVCoresTableViewController: UITableViewController {
         private let url : URL
         private var webView : WKWebView!
         private var hud : MBProgressHUD!
-        private var token : NSKeyValueObservation? = nil
+        private var token : NSKeyValueObservation?
         
         init(url : URL) {
             self.url = url
