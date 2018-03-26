@@ -133,7 +133,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         super.init(coder: aDecoder)
 
         // A hack to make sure the main thread instance lives first
-        let _ = RomDatabase.sharedInstance
+        _ = RomDatabase.sharedInstance
 
         initSystemPlists()
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])

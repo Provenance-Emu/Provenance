@@ -52,8 +52,8 @@ disabled_rules:
   # - empty_enum_arguments
   # - shorthand_operator
   # - empty_parentheses_with_trailing_closure
-  - closure_parameter_position
-  - redundant_discardable_let
+  # - closure_parameter_position
+  # - redundant_discardable_let
   - large_tuple
   # - vertical_parameter_alignment
   - switch_case_alignment
