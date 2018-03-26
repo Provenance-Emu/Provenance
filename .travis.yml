@@ -9,14 +9,13 @@ osx_image: xcode9.2
 #   only:
 #     - develop
 #     - master
-# env:
-#   - LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
-# before_install:
-#   - rvm install ruby-2.2.2
-#   - gem install xcpretty -N
-#   - brew update
-#   - brew install swiftlint || true
-# script:
-#   - set -o pipefail
-#   - xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty -c
-#   - swiftlint
+env:
+  - LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
+before_install:
+  - gem install xcpretty -N
+  - brew update
+  - brew install swiftlint || true
+script:
+  - set -o pipefail
+  - xcodebuild clean build -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO | xcpretty -c
+  - swiftlint
