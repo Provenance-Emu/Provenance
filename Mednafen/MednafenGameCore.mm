@@ -384,6 +384,24 @@ static void emulation_run() {
             multiDiscGame = YES;
         }
         
+        // PSX: Set multitap configuration if detected
+        NSString *serial = [self romSerial];
+        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
+        
+        if (multitapCount != nil)
+        {
+            multiTapPlayerCount = [multitapCount intValue];
+            
+            if([[MednafenGameCore multiTap5PlayerPort2] containsObject:serial]) {
+                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+            } else {
+                MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
+                if(multiTapPlayerCount > 5) {
+                    MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+                }
+            }
+        }
+        
         if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
             NSString *m3uPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"m3u"];
             NSRange rangeOfDocuments = [m3uPath rangeOfString:@"/Documents/" options:NSCaseInsensitiveSearch];
@@ -432,6 +450,28 @@ static void emulation_run() {
     MDFNI_SetMedia(0, open ? 0 : 2, disc, 0);
 }
 
+-(NSUInteger)maxNumberPlayers {
+    NSUInteger maxPlayers = 2;
+    switch (self.systemType) {
+        case MednaSystemPSX:
+            maxPlayers = multiTapPlayerCount;
+            break;
+        case MednaSystemPCE:
+            maxPlayers = 5;
+            break;
+        case MednaSystemPCFX:
+            maxPlayers = 2;
+            break;
+        case MednaSystemNeoGeo:
+        case MednaSystemLynx:
+        case MednaSystemVirtualBoy:
+        case MednaSystemWonderSwan:
+            maxPlayers = 1;
+            break;
+    }
+    
+    return maxPlayers;
+}
 
 - (void)pollControllers {
     unsigned maxValue = 0;
@@ -466,8 +506,10 @@ static void emulation_run() {
             map = WSMap;
             break;
     }
+    
+    NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 4);
 
-    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
+    for (NSInteger playerIndex = 0; playerIndex < maxNumberPlayers; playerIndex++) {
         GCController *controller = nil;
         
         if (self.controller1 && playerIndex == 0) {
@@ -476,6 +518,14 @@ static void emulation_run() {
         else if (self.controller2 && playerIndex == 1)
         {
             controller = self.controller2;
+        }
+        else if (self.controller3 && playerIndex == 3)
+        {
+            controller = self.controller3;
+        }
+        else if (self.controller4 && playerIndex == 4)
+        {
+            controller = self.controller4;
         }
         
         if (controller) {
@@ -503,7 +553,7 @@ static void emulation_run() {
 - (void)executeFrame
 {
     // Should we be using controller callbacks instead?
-    if (self.controller1 || self.controller2) {
+    if (self.controller1 || self.controller2 || self.controller3 || self.controller4) {
         [self pollControllers];
     }
     
@@ -887,10 +937,17 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     
     if (player == 0) {
         controller = self.controller1;
-    } else {
+    }
+    else if (player == 2) {
         controller = self.controller2;
     }
-    
+    else if (player == 3) {
+        controller = self.controller3;
+    }
+    else if (player == 4) {
+        controller = self.controller4;
+    }
+        
     switch (self.systemType) {
         case MednaSystemNeoGeo:
             return [self NeoGeoValueForButtonID:buttonID forController:controller];
