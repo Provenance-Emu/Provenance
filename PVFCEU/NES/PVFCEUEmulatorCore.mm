@@ -274,7 +274,7 @@ static __weak PVFCEUEmulatorCore *_current;
 # pragma mark - Input
 
 const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
-- (oneway void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
+- (void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
     int playerShift = player != 0 ? 8 : 0;
 

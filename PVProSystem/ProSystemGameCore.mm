@@ -46,11 +46,11 @@
 
 @interface PVProSystemGameCore (PV7800SystemResponderClient) <PV7800SystemResponderClient>
 #pragma mark - OE7800SystemResponderClient
-- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
-- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
-- (oneway void)mouseMovedAtPoint:(CGPoint)point;
-- (oneway void)leftMouseDownAtPoint:(CGPoint)point;
-- (oneway void)leftMouseUp;
+- (void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
+- (void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player;
+- (void)mouseMovedAtPoint:(CGPoint)point;
+- (void)leftMouseDownAtPoint:(CGPoint)point;
+- (void)leftMouseUp;
 @end
 
 @interface PVProSystemGameCore () <PV7800SystemResponderClient> {
@@ -447,7 +447,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
 @end
 
 @implementation PVProSystemGameCore (PV7800SystemResponderClient)
-- (oneway void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
+- (void)didPush7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
     int playerShift = player == 0 ? 0 : 6;
     
     switch(button)
@@ -480,7 +480,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
+- (void)didRelease7800Button:(PV7800Button)button forPlayer:(NSInteger)player {
     int playerShift = player == 0 ? 0 : 6;
     
     switch(button)
@@ -508,7 +508,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)mouseMovedAtPoint:(CGPoint)aPoint {
+- (void)mouseMovedAtPoint:(CGPoint)aPoint {
     if(_isLightgunEnabled) {
         // All of this really needs to be tweaked per the 5 games that support light gun
         int yoffset = (cartridge_region == REGION_NTSC ? 2 : -2);
@@ -529,7 +529,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)leftMouseDownAtPoint:(CGPoint)aPoint {
+- (void)leftMouseDownAtPoint:(CGPoint)aPoint {
     if(_isLightgunEnabled) {
         [self mouseMovedAtPoint:aPoint];
         
@@ -537,7 +537,7 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
-- (oneway void)leftMouseUp {
+- (void)leftMouseUp {
     if(_isLightgunEnabled) {
         _inputState[3] = 1;
     }

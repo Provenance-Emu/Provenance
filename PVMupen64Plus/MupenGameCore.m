@@ -985,7 +985,7 @@ static void MupenSetAudioSpeed(int percent)
     return sampleRate;
 }
 
-- (oneway void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
+- (void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player
 {
     switch (button)
     {
@@ -1006,12 +1006,12 @@ static void MupenSetAudioSpeed(int percent)
     }
 }
 
-- (oneway void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
+- (void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
 {
     padData[player][button] = 1;
 }
 
-- (oneway void)didReleaseN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
+- (void)didReleaseN64Button:(PVN64Button)button forPlayer:(NSUInteger)player
 {
     padData[player][button] = 0;
 }

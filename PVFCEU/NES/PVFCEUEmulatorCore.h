@@ -34,8 +34,8 @@
 @end
 
 @interface PVFCEUEmulatorCore() <PVNESSystemResponderClient>
-- (oneway void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
-- (oneway void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
+- (void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player;
 @end
 
 // For swift

@@ -228,12 +228,12 @@ static void writeSaveFile(const char* path, int type)
 
 #pragma mark - Input
 
-- (oneway void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
+- (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player][Sega32XEmulatorValues[button]] = 1;
 }
 
-- (oneway void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
+- (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 {
     pad[player][Sega32XEmulatorValues[button]] = 0;
 }

@@ -31,6 +31,6 @@
 
 __attribute__((visibility("default")))
 @interface PVStellaGameCore : PVEmulatorCore <PV2600SystemResponderClient>
-- (oneway void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end

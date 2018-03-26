@@ -315,17 +315,17 @@ int saveEEPROM(const char *filename)
 
 #pragma mark - Input
 
-- (oneway void)didPushPMButton:(PVPMButton)button forPlayer:(NSUInteger)player
+- (void)didPushPMButton:(PVPMButton)button forPlayer:(NSUInteger)player
 {
     JoystickButtonsEvent(button, 1);
 }
 
-- (oneway void)didReleasePMButton:(PVPMButton)button forPlayer:(NSUInteger)player
+- (void)didReleasePMButton:(PVPMButton)button forPlayer:(NSUInteger)player
 {
     JoystickButtonsEvent(button, 0);
 }
 
-- (oneway void)dpadValueChanged:(GCControllerDirectionPad * _Nonnull)dpad {
+- (void)dpadValueChanged:(GCControllerDirectionPad * _Nonnull)dpad {
     // DPAD
     if (controllerState.up != dpad.up.isPressed) {
         JoystickButtonsEvent(PVPMButtonUp, dpad.up.isPressed ? 1 : 0);
@@ -352,7 +352,7 @@ int saveEEPROM(const char *filename)
     }
 }
 
-- (oneway void)setupController {
+- (void)setupController {
     
     if (self.controller1) {
         if (self.controller1.extendedGamepad) {

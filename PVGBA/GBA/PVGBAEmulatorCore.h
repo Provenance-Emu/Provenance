@@ -31,7 +31,7 @@
 
 @interface PVGBAEmulatorCore : PVEmulatorCore <PVGBASystemResponderClient>
 
-- (oneway void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
-- (oneway void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
+- (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 
 @end

@@ -375,42 +375,42 @@ __weak static ATR800GameCore * _currentCore;
 
 #pragma mark - Input
 
-- (oneway void)mouseMovedAtPoint:(CGPoint)point
+- (void)mouseMovedAtPoint:(CGPoint)point
 {
 
 }
 
-- (oneway void)leftMouseDownAtPoint:(CGPoint)point
+- (void)leftMouseDownAtPoint:(CGPoint)point
 {
 
 }
 
-- (oneway void)leftMouseUp
+- (void)leftMouseUp
 {
 
 }
 
-- (oneway void)rightMouseDownAtPoint:(CGPoint)point
+- (void)rightMouseDownAtPoint:(CGPoint)point
 {
 
 }
 
-- (oneway void)rightMouseUp
+- (void)rightMouseUp
 {
 
 }
 
-//- (oneway void)keyDown:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
+//- (void)keyDown:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
 //{
 
 //}
 
-//- (oneway void)keyUp:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
+//- (void)keyUp:(unsigned short)keyHIDCode characters:(NSString *)characters charactersIgnoringModifiers:(NSString *)charactersIgnoringModifiers flags:(NSEventModifierFlags)modifierFlags
 //{
 
 //}
 
-- (oneway void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
+- (void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
 {
     player--;
 
@@ -438,7 +438,7 @@ __weak static ATR800GameCore * _currentCore;
     }
 }
 
-- (oneway void)didReleaseA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
+- (void)didReleaseA8Button:(PVA8Button)button forPlayer:(NSUInteger)player
 {
     player--;
 
@@ -466,7 +466,7 @@ __weak static ATR800GameCore * _currentCore;
     }
 }
 
-- (oneway void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
+- (void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
 	switch (button)
     {
@@ -543,7 +543,7 @@ __weak static ATR800GameCore * _currentCore;
 	}
 }
 
-- (oneway void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
+- (void)didRelease5200Button:(PV5200Button)button forPlayer:(NSUInteger)player
 {
     switch (button)
     {
