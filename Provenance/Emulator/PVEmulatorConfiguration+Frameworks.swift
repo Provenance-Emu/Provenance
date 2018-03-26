@@ -22,8 +22,7 @@ public extension PVEmulatorConfiguration {
         for i in 0..<Int(count) {
             if let classInfo = ClassInfo(classList[i]),
                 let superclassInfo = classInfo.superclassInfo,
-                superclassInfo == motherClassInfo
-            {
+                superclassInfo == motherClassInfo {
                 subclassList.append(classInfo)
             }
         }

@@ -173,7 +173,7 @@ public class PVGameImporter {
                 if isCDROM(canidate), let movedToPaths = moveCDROM(toAppropriateSubfolder: canidate) {
                     
                     // Found a CD, can add moved files now to newPaths
-                    let pathsString = {return movedToPaths.map{ $0.path }.joined(separator: ", ") }
+                    let pathsString = {return movedToPaths.map { $0.path }.joined(separator: ", ") }
                     VLOG("Found a CD. Moved files to the following paths \(pathsString())")
                     
                     // Return nil since we don't need the ImportCanidateFile anymore
@@ -620,7 +620,7 @@ public extension PVGameImporter {
                             self.encounteredConflicts = true
                             do {
                                 try FileManager.default.moveItem(at: path, to: conflictPath)
-                                let matchedSystems = systems.map{return $0.identifier}.joined(separator: ", ")
+                                let matchedSystems = systems.map {return $0.identifier}.joined(separator: ", ")
                                 let matchedGames = existingGames.map { $0.romPath }.joined(separator: ", ")
                                 WLOG("Scanned game matched with multiple systems {\(matchedSystems)} and multiple existing games \({matchedGames}) so we moved \(filename) to conflicts dir. You figure it out!")
                             } catch {
@@ -713,7 +713,7 @@ public extension PVGameImporter {
                 gameTitleLen = fileName.count
             }
             let subfileName = String(fileName.prefix(gameTitleLen))
-            do  {
+            do {
                 resultsMaybe = try self.searchDatabase(usingKey: "romFileName", value: subfileName, systemID: game.systemIdentifier)
             } catch {
                 ELOG("\(error.localizedDescription)")

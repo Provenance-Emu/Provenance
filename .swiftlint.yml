@@ -1,6 +1,6 @@
 disabled_rules:
   # - trailing_newline
-  - opening_brace
+  # - opening_brace
   - empty_count
   - comma
   - colon

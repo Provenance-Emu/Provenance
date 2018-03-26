@@ -242,7 +242,7 @@ public class PVEmulatorConfiguration : NSObject {
     }
     
     class func systemID(forDatabaseID databaseID: Int) -> String? {
-        return systems.first{ $0.openvgDatabaseID == databaseID }?.identifier
+        return systems.first { $0.openvgDatabaseID == databaseID }?.identifier
     }
     
     @objc

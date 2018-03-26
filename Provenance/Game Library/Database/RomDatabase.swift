@@ -142,7 +142,7 @@ extension Thread {
 public final class RomDatabase {
     
     // Private shared instance that propery initializes
-    private static var _sharedInstance : RomDatabase =  {
+    private static var _sharedInstance : RomDatabase = {
         RealmConfiguration.setDefaultRealmConfig()
         return RomDatabase()
     }()

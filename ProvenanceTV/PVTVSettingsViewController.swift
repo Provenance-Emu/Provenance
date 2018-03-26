@@ -216,7 +216,7 @@ fileprivate extension Bool {
     }
 }
 
-fileprivate func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel)  {
+fileprivate func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel) {
     let currentValue = PVSettingsModel.shared[keyPath: setting]
     let newValue = !currentValue
     

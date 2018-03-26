@@ -164,7 +164,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         systemsToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
-        systemSectionsTokens.values.forEach{$0.invalidate()}
+        systemSectionsTokens.values.forEach {$0.invalidate()}
     }
 
     @objc func handleAppDidBecomeActive(_ note: Notification) {
@@ -359,10 +359,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             case .update(_, let deletions, let insertions, _):
                 guard let collectionView = self.collectionView else {return}
                 collectionView.performBatchUpdates({
-                    let insertIndexes = insertions.map{ $0 + self.systemsSectionOffset }
+                    let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
                     collectionView.insertSections(IndexSet(insertIndexes))
                     
-                    let delectIndexes = deletions.map{ $0 + self.systemsSectionOffset }
+                    let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
                     collectionView.deleteSections(IndexSet(delectIndexes))
                     // Not needed since we have watchers per section
                     // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
@@ -1931,7 +1931,7 @@ extension PVGameLibraryViewController : UISearchControllerDelegate {
 }
 
 // MARK: - UISearchResultsUpdating
-extension PVGameLibraryViewController : UISearchResultsUpdating  {
+extension PVGameLibraryViewController : UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text, !text.isEmpty {
             searchLibrary(searchController.searchBar.text ?? "")

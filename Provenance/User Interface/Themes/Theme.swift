@@ -71,7 +71,7 @@ public protocol iOSTheme {
 }
 
 // Default implimentnations
-extension iOSTheme  {
+extension iOSTheme {
     var keyboardAppearance : UIKeyboardAppearance {return .default}
 
     // Defaults to NIL will use iOS defaults
