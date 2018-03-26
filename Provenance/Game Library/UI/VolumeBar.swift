@@ -60,7 +60,7 @@ extension VolumeController where Self : UIViewController {
 }
 
 /// Conforming types can receive notifications on when the VolumeBar shows and hides.
-public protocol VolumeDelegate {
+public protocol VolumeDelegate : class {
 	/// Notifies the delegate that a VolumeBar is about to be shown.
 	///
 	/// - parameter volumeBar: The volume bar.
@@ -87,7 +87,7 @@ public final class VolumeBar: NSObject {
 	public static let sharedInstance = VolumeBar()
 	
 	/// The delegate must adopt the `VolumeDelegate` protocol.
-	public var delegate: VolumeDelegate?
+	public weak var delegate: VolumeDelegate?
 	
 	// MARK: Animation
 	

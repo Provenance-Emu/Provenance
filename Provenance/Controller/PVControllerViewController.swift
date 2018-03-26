@@ -27,7 +27,7 @@ protocol JSButtonDisplayer {
 fileprivate typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
 
-protocol StartSelectDelegate {
+protocol StartSelectDelegate : class {
     func pressStart(forPlayer player: Int)
     func releaseStart(forPlayer player: Int)
     func pressSelect(forPlayer player: Int)

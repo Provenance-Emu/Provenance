@@ -40,9 +40,9 @@ disabled_rules:
   - notification_center_detachment
   # - for_where
   # - vertical_whitespace
-  - empty_parameters
+  # - empty_parameters
   - discarded_notification_center_observer
-  - class_delegate_protocol
+  # - class_delegate_protocol
   - syntactic_sugar
   - function_parameter_count
   - trailing_comma
