@@ -292,8 +292,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var recentGamesToken: NotificationToken?
 
     var favoritesIsHidden = true
-    var recentGamesIsHidden = true
-
+    var recentGamesIsEmpty = true
+    var recentGamesIsHidden : Bool {
+        return recentGamesIsEmpty || !PVSettingsModel.shared.showRecentGames
+    }
+    
     var favoritesSection: Int {
         return favoritesIsHidden ? -1 : 0
     }
@@ -381,7 +384,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             switch changes {
             case .initial:
                 if !self.recentGames.isEmpty {
-                    self.recentGamesIsHidden = false
+                    self.recentGamesIsEmpty = false
                     let section = self.recentGamesSection
                     collectionView.insertSections([section])
                 }
@@ -393,17 +396,17 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 if needsInsert {
                     ILOG("Needs insert, recentGamesHidden - false")
-                    self.recentGamesIsHidden = false
+                    self.recentGamesIsEmpty = false
                 }
 
                 if needsDelete {
                     ILOG("Needs delete, recentGamesHidden - true")
-                    self.recentGamesIsHidden = true
+                    self.recentGamesIsEmpty = true
                 }
 
                 // Query results have changed, so apply them to the UICollectionView
                 self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
-                self.recentGamesIsHidden = needsDelete
+                self.recentGamesIsEmpty = needsDelete
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
