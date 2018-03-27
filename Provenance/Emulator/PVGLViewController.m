@@ -19,6 +19,11 @@ struct PVVertex
 
 #define BUFFER_OFFSET(x) ((char *)NULL + (x))
 
+struct RenderSettings {
+    BOOL crtFilterEnabled;
+    BOOL smoothingEnabled;
+} RenderSettings;
+
 @interface PVGLViewController () <PVRenderDelegate>
 {
     GLuint alternateThreadFramebufferBack;
@@ -43,6 +48,8 @@ struct PVVertex
     GLuint indexVBO, vertexVBO;
     
 	GLuint texture;
+    
+    struct RenderSettings renderSettings;
 }
 
 @property (nonatomic, strong) EAGLContext *glContext;
@@ -110,6 +117,9 @@ struct PVVertex
         {
             self.emulatorCore.renderDelegate = self;
         }
+        
+        renderSettings.crtFilterEnabled = [[PVSettingsModel sharedInstance] crtFilterEnabled];
+        renderSettings.smoothingEnabled = [[PVSettingsModel sharedInstance] imageSmoothing];
 	}
 
 	return self;
@@ -318,7 +328,7 @@ struct PVVertex
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, [self.emulatorCore internalPixelFormat], self.emulatorCore.bufferSize.width, self.emulatorCore.bufferSize.height, 0, [self.emulatorCore pixelFormat], [self.emulatorCore pixelType], self.emulatorCore.videoBuffer);
-	if ([[PVSettingsModel sharedInstance] imageSmoothing] || [[PVSettingsModel sharedInstance] crtFilterEnabled])
+	if (renderSettings.crtFilterEnabled || renderSettings.smoothingEnabled)
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -411,7 +421,7 @@ struct PVVertex
             glBindTexture(GL_TEXTURE_2D, frontBufferTex);
         }
         
-        if ([[PVSettingsModel sharedInstance] crtFilterEnabled])
+        if (renderSettings.crtFilterEnabled)
         {
             glUseProgram(crtShaderProgram);
             glUniform4f(crtUniform_DisplayRect, screenRect.origin.x, screenRect.origin.y, screenRect.size.width, screenRect.size.height);
