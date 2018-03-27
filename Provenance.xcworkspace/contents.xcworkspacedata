@@ -11,6 +11,9 @@
       location = "group:PVSupport/PVSupport.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Cores/VirtualJaguar/Core-VirtualJaguar.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PVAtari800/PVAtari800.xcodeproj">
    </FileRef>
    <FileRef

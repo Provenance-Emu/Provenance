@@ -104,6 +104,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PV7800SystemResponderClient")
             }
+        case .AtariJaguar:
+            if let core = core as? PVJaguarSystemResponderClient {
+                return PVAtariJaguarControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't impliment PVJaguarSystemResponderClient")
+            }
         case .Sega32X:
             if let core = core as? PVSega32XSystemResponderClient {
                 return PVSega32XControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
