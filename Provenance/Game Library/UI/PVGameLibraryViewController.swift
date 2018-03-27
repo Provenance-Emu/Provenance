@@ -311,7 +311,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     var systemSectionsTokens = [String : NotificationToken]()
     var systemsSectionOffset: Int {
-        return recentGamesSection + 1
+        var section = favoritesIsHidden ? 0 : 1
+        section += recentGamesIsHidden ? 0 : 1
+        return section
     }
 
     func addSectionToken(forSystem system: PVSystem) {
@@ -385,13 +387,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             case .initial:
                 if !self.recentGames.isEmpty {
                     self.recentGamesIsEmpty = false
-                    let section = self.recentGamesSection
-                    collectionView.insertSections([section])
+                    
+                    if !self.recentGamesIsHidden {
+                        let section = self.recentGamesSection
+                        collectionView.insertSections([section])
+                    }
                 }
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
                 let needsDelete = self.recentGames.isEmpty && !deletions.isEmpty
 
+                if self.recentGamesIsHidden {
+                    self.recentGamesIsEmpty = needsDelete
+                    return
+                }
+                
                 let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
 
                 if needsInsert {
@@ -1494,7 +1504,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return Int(searchResults.count)
         } else {
             if section >= systemsSectionOffset {
-                return Array(systems)[section - systemsSectionOffset].games.count
+                let sectionNumber = section - systemsSectionOffset
+                return Array(systems)[sectionNumber].games.count
             } else if section == favoritesSection {
                 return favoriteGames.count
             } else if section == recentGamesSection {
