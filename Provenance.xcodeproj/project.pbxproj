@@ -536,6 +536,9 @@
 		B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3995E55205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
+		B3AB064A2069C86F004057BE /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB06492069C86F004057BE /* QuickLook.framework */; };
+		B3AB064D2069C86F004057BE /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB064C2069C86F004057BE /* PreviewViewController.swift */; };
+		B3AB06502069C86F004057BE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3AB064E2069C86F004057BE /* MainInterface.storyboard */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
@@ -1330,6 +1333,11 @@
 		B3995E4B2058228E001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3995E51205840CE001D4985 /* PlistDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlistDataModels.swift; sourceTree = "<group>"; };
+		B3AB06482069C86F004057BE /* Quicklook Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Quicklook Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AB06492069C86F004057BE /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
+		B3AB064C2069C86F004057BE /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
+		B3AB064F2069C86F004057BE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		B3AB06512069C86F004057BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1532,6 +1540,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3AB06452069C86F004057BE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3AB064A2069C86F004057BE /* QuickLook.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D68203211BE009939D3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1634,6 +1650,7 @@
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
+				B3AB064B2069C86F004057BE /* Quicklook Extension */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1AACCADD1BB60D8200DC21AE /* Realm-iOS */,
 				1AACCADF1BB60D8200DC21AE /* Realm-tvOS */,
@@ -1653,6 +1670,7 @@
 				1AD481B41BA350A400FDA50A /* Provenance.app */,
 				BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */,
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
+				B3AB06482069C86F004057BE /* Quicklook Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1690,6 +1708,7 @@
 				B3C9D5E31DEA8AED0068D057 /* PVStella.framework */,
 				B3C9D5E61DEAA7E80068D057 /* PVStella.framework */,
 				B32F46331D6A8BD70085BA9F /* PVSupport.framework */,
+				B3AB06492069C86F004057BE /* QuickLook.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2570,6 +2589,17 @@
 			name = "Neo Geo";
 			sourceTree = "<group>";
 		};
+		B3AB064B2069C86F004057BE /* Quicklook Extension */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB067C2069D59A004057BE /* Icons */,
+				B3AB064C2069C86F004057BE /* PreviewViewController.swift */,
+				B3AB064E2069C86F004057BE /* MainInterface.storyboard */,
+				B3AB06512069C86F004057BE /* Info.plist */,
+			);
+			path = "Quicklook Extension";
+			sourceTree = "<group>";
+		};
 		B3B3B89A1DECF9A700602746 /* N64 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2805,6 +2835,23 @@
 			productReference = 1AD9AA351ACC988F00EC87A0 /* Provenance Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		B3AB06472069C86F004057BE /* Quicklook Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3AB06582069C870004057BE /* Build configuration list for PBXNativeTarget "Quicklook Extension" */;
+			buildPhases = (
+				B3AB06442069C86F004057BE /* Sources */,
+				B3AB06452069C86F004057BE /* Frameworks */,
+				B3AB06462069C86F004057BE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Quicklook Extension";
+			productName = "Quicklook Extension";
+			productReference = B3AB06482069C86F004057BE /* Quicklook Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B3E21D6A203211BE009939D3 /* Spotlight */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3E21D73203211BE009939D3 /* Build configuration list for PBXNativeTarget "Spotlight" */;
@@ -2869,6 +2916,11 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
+					B3AB06472069C86F004057BE = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = V78REPMQFZ;
+						ProvisioningStyle = Automatic;
+					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
 						DevelopmentTeam = V78REPMQFZ;
@@ -2903,6 +2955,7 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
+				B3AB06472069C86F004057BE /* Quicklook Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -2968,6 +3021,14 @@
 			files = (
 				1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */,
 				1AD9AA411ACC98A200EC87A0 /* Systems.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3AB06462069C86F004057BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3AB06502069C86F004057BE /* MainInterface.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3607,6 +3668,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3AB06442069C86F004057BE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3AB064D2069C86F004057BE /* PreviewViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3E21D67203211BE009939D3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3688,6 +3757,14 @@
 				1AD481C01BA350A400FDA50A /* Base */,
 			);
 			name = Provenance.storyboard;
+			sourceTree = "<group>";
+		};
+		B3AB064E2069C86F004057BE /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B3AB064F2069C86F004057BE /* Base */,
+			);
+			name = MainInterface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -4288,6 +4365,107 @@
 			};
 			name = AdHoc;
 		};
+		B3AB06552069C870004057BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = V78REPMQFZ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "Quicklook Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Quicklook-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3AB06562069C870004057BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V78REPMQFZ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "Quicklook Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Quicklook-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3AB06572069C870004057BE /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V78REPMQFZ;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "Quicklook Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.provenance.Quicklook-Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = AdHoc;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4565,6 +4743,16 @@
 				1AD9AA3E1ACC988F00EC87A0 /* Debug */,
 				1AD9AA3F1ACC988F00EC87A0 /* Release */,
 				1AD9AA401ACC988F00EC87A0 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3AB06582069C870004057BE /* Build configuration list for PBXNativeTarget "Quicklook Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3AB06552069C870004057BE /* Debug */,
+				B3AB06562069C870004057BE /* Release */,
+				B3AB06572069C870004057BE /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
