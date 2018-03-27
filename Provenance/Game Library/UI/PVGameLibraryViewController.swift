@@ -624,7 +624,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             
             actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
                 
-                let extensions : [String] = [UTI.rom.rawValue, UTI.bios.rawValue, UTI.zipArchive.rawValue, UTI.bzip2Archive.rawValue, UTI.gnuZipArchive.rawValue, UTI.sevenZipArchive.rawValue]
+                let extensions : [String] = [UTI.rom.rawValue, UTI.bios.rawValue, UTI.zipArchive.rawValue, UTI.bzip2Archive.rawValue, UTI.gnuZipArchive.rawValue, UTI.sevenZipArchive.rawValue, UTI.content.rawValue, UTI.data.rawValue]
 
                 //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
                 //        documentMenu.delegate = self
