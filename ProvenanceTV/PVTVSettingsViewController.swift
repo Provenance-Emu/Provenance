@@ -20,13 +20,13 @@ class PVTVSettingsViewController: UITableViewController {
     @IBOutlet weak var webDavAlwaysOnValueLabel: UILabel!
     @IBOutlet weak var webDavAlwaysOnTitleLabel: UILabel!
     @IBOutlet weak var imageSmoothingLabel: UILabel!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         splitViewController?.title = "Settings"
         tableView.backgroundView = nil
         tableView.backgroundColor = UIColor.clear
-        
+
         let settings = PVSettingsModel.shared
         autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
         autoLoadValueLabel.text = settings.autoLoadAutoSaves ? "On" : "Off"
@@ -41,12 +41,11 @@ class PVTVSettingsViewController: UITableViewController {
 #else
         modeValueLabel.text = "RELEASE"
 #endif
-        
+
         let color = UIColor(white: 0.0, alpha: 0.1)
         if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             revisionLabel.text = revisionString
-        }
-        else {
+        } else {
             revisionLabel.textColor = color
             revisionLabel.text = "(none)"
         }
@@ -67,12 +66,12 @@ class PVTVSettingsViewController: UITableViewController {
         // Use 2 lines if on to make space for the sub title
         webDavAlwaysOnTitleLabel.numberOfLines = isAlwaysOn ? 2 : 1
             // The main title is always present
-        var firstLineAttributes : [NSAttributedStringKey:Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
+        var firstLineAttributes: [NSAttributedStringKey: Any] = [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 38)]
 
         if #available(tvOS 10.0, *), traitCollection.userInterfaceStyle == .dark {
             firstLineAttributes[NSAttributedStringKey.foregroundColor] = UIColor.white
         }
-        
+
         let titleString = NSMutableAttributedString(string: "Always on WebDav server", attributes: firstLineAttributes)
         // Make a new line sub title with instructions to connect in lighter text
         if isAlwaysOn {
@@ -90,7 +89,7 @@ class PVTVSettingsViewController: UITableViewController {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
+
         switch indexPath.section {
             case 0:
                 // Emu Settings
@@ -127,8 +126,7 @@ class PVTVSettingsViewController: UITableViewController {
                         // Web dav can still be manually started alone side the web server
                         if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
                             PVWebServer.shared.startWebDavServer()
-                        }
-                        else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
+                        } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
                             PVWebServer.shared.stopWebDavServer()
                         }
 
@@ -145,8 +143,7 @@ class PVTVSettingsViewController: UITableViewController {
                             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                             }))
                             present(alert, animated: true) {() -> Void in }
-                        }
-                        else {
+                        } else {
                             // connected via wifi, let's continue
                             // start web transfer service
                             if PVWebServer.shared.startServers() {
@@ -156,18 +153,17 @@ class PVTVSettingsViewController: UITableViewController {
                                 let message = """
                                     Read Importing ROMs wiki…
                                     Upload/Download files at:
-                                    
+
                                     \(webServerAddress)  ᵂᵉᵇᵁᴵ
                                     \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-                                    
+
                                     """
                                 let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                                     PVWebServer.shared.stopServers()
                                 }))
                                 present(alert, animated: true) {() -> Void in }
-                            }
-                            else {
+                            } else {
                                     // Display error
                                 let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
                                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -211,15 +207,15 @@ class PVTVSettingsViewController: UITableViewController {
 
 // Reduce code, use a macro!
 fileprivate extension Bool {
-    var onOffString : String {
+    var onOffString: String {
         return self ? "On" : "Off"
     }
 }
 
-fileprivate func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel)  {
+private func TOGGLE_SETTING(_ setting: ReferenceWritableKeyPath<PVSettingsModel, Bool>, _ label: UILabel) {
     let currentValue = PVSettingsModel.shared[keyPath: setting]
     let newValue = !currentValue
-    
+
     PVSettingsModel.shared[keyPath: setting] = newValue
     label.text = newValue.onOffString
 }

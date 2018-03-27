@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-public enum ScreenType : String {
+public enum ScreenType: String {
     case unknown = ""
     case monochromaticLCD = "MonoLCD"
     case colorLCD = "ColorLCD"
@@ -17,38 +17,38 @@ public enum ScreenType : String {
     case modern = "Modern"
 }
 
-@objcMembers public class PVSystem : Object {
-    dynamic var name : String = ""
-    dynamic var shortName : String = ""
-    dynamic var shortNameAlt : String? = nil
-    dynamic var manufacturer : String = ""
-    dynamic var releaseYear : Int = 0
-    dynamic var bit : Int = 0
-    dynamic var headerByteSize : Int = 0
-    dynamic var openvgDatabaseID : Int = 0
-    dynamic var requiresBIOS : Bool = false
-    dynamic var usesCDs : Bool = false
-    dynamic var portableSystem : Bool = false
-    dynamic var supportsRumble : Bool = false
-    dynamic var _screenType : String = ScreenType.unknown.rawValue
-    
+@objcMembers public class PVSystem: Object {
+    dynamic var name: String = ""
+    dynamic var shortName: String = ""
+    dynamic var shortNameAlt: String?
+    dynamic var manufacturer: String = ""
+    dynamic var releaseYear: Int = 0
+    dynamic var bit: Int = 0
+    dynamic var headerByteSize: Int = 0
+    dynamic var openvgDatabaseID: Int = 0
+    dynamic var requiresBIOS: Bool = false
+    dynamic var usesCDs: Bool = false
+    dynamic var portableSystem: Bool = false
+    dynamic var supportsRumble: Bool = false
+    dynamic var _screenType: String = ScreenType.unknown.rawValue
+
     var supportedExtensions = List<String>()
-    
+
     // Reverse Links
     var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
     var games = LinkingObjects(fromType: PVGame.self, property: "system")
     var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
-    dynamic var identifier : String = ""
-    
+    dynamic var identifier: String = ""
+
     override public static func primaryKey() -> String? {
         return "identifier"
     }
-    
+
     // Hack to store controller layout because I don't want to make
     // all the complex objects it would require. Just store the plist dictionary data
     @objc private dynamic var controlLayoutData: Data?
-    var controllerLayout:  [ControlLayoutEntry]? {
+    var controllerLayout: [ControlLayoutEntry]? {
         get {
             guard let controlLayoutData = controlLayoutData else {
                 return nil
@@ -60,13 +60,13 @@ public enum ScreenType : String {
                 return nil
             }
         }
-        
+
         set {
             guard let newDictionaryData = newValue else {
                 controlLayoutData = nil
                 return
             }
-            
+
             do {
                 let data = try JSONEncoder().encode(newDictionaryData)
                 controlLayoutData = data
@@ -76,14 +76,14 @@ public enum ScreenType : String {
             }
         }
     }
-    
+
     override public static func ignoredProperties() -> [String] {
         return ["controllerLayout"]
     }
 }
 
 public extension PVSystem {
-    var screenType : ScreenType {
+    var screenType: ScreenType {
         get {
             return ScreenType(rawValue: _screenType)!
         }
@@ -93,28 +93,28 @@ public extension PVSystem {
 //            }
         }
     }
-    
-    var enumValue : SystemIdentifier {
+
+    var enumValue: SystemIdentifier {
         return SystemIdentifier(rawValue: identifier)!
     }
-    
-    var biosesHave : [PVBIOS]? {
+
+    var biosesHave: [PVBIOS]? {
         let have = bioses.filter({ (bios) -> Bool in
             return !bios.missing
         })
-        
+
         return !have.isEmpty ? Array(have) : nil
     }
-    
-    var missingBIOSes : [PVBIOS]? {
+
+    var missingBIOSes: [PVBIOS]? {
         let missing = bioses.filter({ (bios) -> Bool in
             return bios.missing
         })
-        
+
         return !missing.isEmpty ? Array(missing) : nil
     }
-    
-    var hasAllRequiredBIOSes : Bool {
+
+    var hasAllRequiredBIOSes: Bool {
         return missingBIOSes != nil
     }
 }

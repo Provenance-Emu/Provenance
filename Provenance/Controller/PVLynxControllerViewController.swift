@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVLynxButton {
+    var buttonTag: PVLynxButton {
         get {
             return PVLynxButton(rawValue: tag)!
         }
@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -29,8 +29,7 @@ class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemRes
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
             }
         }
@@ -42,7 +41,7 @@ class PVLynxControllerViewController: PVControllerViewController<PVLynxSystemRes
     }
 
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
-        
+
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)

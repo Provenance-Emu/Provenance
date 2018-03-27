@@ -25,21 +25,21 @@ protocol JSButtonDisplayer {
 }
 
 fileprivate typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
-fileprivate let kDPadTopMargin: CGFloat = 96.0
+private let kDPadTopMargin: CGFloat = 96.0
 
-protocol StartSelectDelegate {
+protocol StartSelectDelegate: class {
     func pressStart(forPlayer player: Int)
     func releaseStart(forPlayer player: Int)
     func pressSelect(forPlayer player: Int)
     func releaseSelect(forPlayer player: Int)
 }
 
-protocol ControllerVC : StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self : UIViewController {
-    associatedtype ResponderType : ResponderClient
+protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
+    associatedtype ResponderType: ResponderClient
     var emulatorCore: ResponderType {get}
     var system: PVSystem {get set}
-    var controlLayout : [ControlLayoutEntry] {get set}
-    
+    var controlLayout: [ControlLayoutEntry] {get set}
+
     var dPad: JSDPad? {get}
     var dPad2: JSDPad? {get}
     var buttonGroup: UIView? {get}
@@ -97,49 +97,49 @@ protocol ControllerVC : StartSelectDelegate, JSButtonDelegate, JSDPadDelegate wh
 //    }
 //}
 
-class PVControllerViewController<T:ResponderClient> : UIViewController, ControllerVC {
+class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC {
     func layoutViews() {
-        
+
     }
-    
+
     func pressStart(forPlayer player: Int) {
         vibrate()
     }
-    
+
     func releaseStart(forPlayer player: Int) {
-        
+
     }
-    
+
     func pressSelect(forPlayer player: Int) {
         vibrate()
     }
-    
+
     func releaseSelect(forPlayer player: Int) {
-        
+
     }
-    
+
     func buttonPressed(_ button: JSButton) {
         vibrate()
     }
-    
+
     func buttonReleased(_ button: JSButton) {
-        
+
     }
-    
+
     func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         vibrate()
     }
-    
+
     func dPadDidReleaseDirection(_ dPad: JSDPad) {
-        
+
     }
 
     typealias ResponderType = T
     var emulatorCore: ResponderType
 
     var system: PVSystem
-    var controlLayout : [ControlLayoutEntry]
-    
+    var controlLayout: [ControlLayoutEntry]
+
     var dPad: JSDPad?
     var dPad2: JSDPad?
     var buttonGroup: UIView?
@@ -149,9 +149,9 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
     var rightShoulderButton2: JSButton?
     var startButton: JSButton?
     var selectButton: JSButton?
-    
+
     let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
-    
+
     #if os(iOS)
     // Yuck
     private var _feedbackGenerator: AnyObject?
@@ -165,14 +165,14 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         }
     }
     #endif
-    
+
     required init(controlLayout: [ControlLayoutEntry], system: PVSystem, responder: T) {
         self.emulatorCore = responder
         self.controlLayout = controlLayout
         self.system = system
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -183,7 +183,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             $0.controllerPausedHandler = nil
         }
     }
-    
+
     func updateHideTouchControls() {
         if PVControllerManager.shared.hasControllers {
             PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
@@ -191,7 +191,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             })
         }
     }
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
@@ -204,7 +204,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             updateHideTouchControls()
         #endif
     }
-    
+
     // MARK: - GameController Notifications
     @objc func controllerDidConnect(_ note: Notification?) {
         #if os(iOS)
@@ -212,8 +212,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 PVControllerManager.shared.allLiveControllers.forEach({ (key, controller) in
                     self.hideTouchControls(for: controller)
                 })
-            }
-            else {
+            } else {
                 dPad?.isHidden = false
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
                 buttonGroup?.isHidden = false
@@ -226,7 +225,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             }
         #endif
     }
-    
+
     @objc func controllerDidDisconnect(_ note: Notification?) {
         #if os(iOS)
             if PVControllerManager.shared.hasControllers {
@@ -235,8 +234,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         self.hideTouchControls(for: controller)
                     })
                 }
-            }
-            else {
+            } else {
                 dPad?.isHidden = false
                 dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
                 buttonGroup?.isHidden = false
@@ -249,7 +247,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             }
         #endif
     }
-    
+
     func vibrate() {
         #if os(iOS)
             if PVSettingsModel.shared.buttonVibration {
@@ -257,11 +255,10 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                 // everything else should fall back to the vibration motor.
                 if #available(iOS 10.0, *), UIDevice.hasTapticMotor {
                     feedbackGenerator?.selectionChanged()
-                }
-                else {
+                } else {
                     AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
                     let vibrationLength: Int = 30
-                    let pattern : [Any] = [false, 0, true, vibrationLength]
+                    let pattern: [Any] = [false, 0, true, vibrationLength]
                     var dictionary = [AnyHashable: Any]()
                     dictionary["VibePattern"] = pattern
                     dictionary["Intensity"] = 1
@@ -270,27 +267,27 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             }
         #endif
     }
-    
+
     #if os(iOS)
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .landscape
     }
     #endif
-    
+
     open override func didMove(toParentViewController parent: UIViewController?) {
         super.didMove(toParentViewController: parent)
         if let s = view.superview {
             view.frame = s.bounds
         }
     }
-    
+
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         setupTouchControls()
         layoutViews()
         updateHideTouchControls()
     }
-    
+
     @objc
     func hideTouchControls(for controller: GCController) {
         dPad?.isHidden = true
@@ -299,41 +296,41 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
         rightShoulderButton?.isHidden = true
         leftShoulderButton2?.isHidden = true
         rightShoulderButton2?.isHidden = true
-        
+
         //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
-        let useStandardGamepad : [SystemIdentifier] = [.GB, .GBC, .GBA]
-        
+        let useStandardGamepad: [SystemIdentifier] = [.GB, .GBC, .GBA]
+
         if (controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue) {
             startButton?.isHidden = true
             selectButton?.isHidden = true
         }
     }
-    
-    var safeAreaInsets : UIEdgeInsets {
+
+    var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
             return view.safeAreaInsets
         } else {
             return UIEdgeInsets.zero
         }
     }
-    
+
     // MARK: - Controller Position And Size Editing
     func setupTouchControls() {
         #if os(iOS)
             let alpha = self.alpha
-            
+
             for control in controlLayout {
                 let controlType = control.PVControlType
                 let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
                 let compactVertical: Bool = traitCollection.verticalSizeClass == .compact
                 let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
-                
+
                 if (controlType == Keys.DPad) {
                     let xPadding: CGFloat = safeAreaInsets.left + 5
                     let bottomPadding: CGFloat = 16
                     let dPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     var dPadFrame = CGRect(x: xPadding, y: dPadOriginY, width: controlSize.width, height: controlSize.height)
-                    
+
                     if dPad2 == nil && (control.PVControlTitle == "Y") {
                         dPadFrame.origin.y = dPadOriginY - controlSize.height - bottomPadding
                         let dPad2 = JSDPad(frame: dPadFrame)
@@ -359,52 +356,49 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         dPad?.frame = dPadFrame
                     }
                     dPad2?.isHidden = compactVertical
-                }
-                else if (controlType == Keys.ButtonGroup) {
+                } else if (controlType == Keys.ButtonGroup) {
                     let xPadding: CGFloat = safeAreaInsets.right + 5
                     let bottomPadding: CGFloat = 16
                     let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
-                    
+
                     if let buttonGroup = self.buttonGroup {
                         buttonGroup.frame = buttonsFrame
-                    }
-                    else {
+                    } else {
                         let buttonGroup = UIView(frame: buttonsFrame)
                         self.buttonGroup = buttonGroup
                         buttonGroup.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
-                        
+
                         var buttons = [JSButton]()
-                        
+
                         let groupedButtons = control.PVGroupedButtons
                         groupedButtons?.forEach { groupedButton in
                             let buttonFrame: CGRect = CGRectFromString(groupedButton.PVControlFrame)
                             let button = JSButton(frame: buttonFrame)
                             button.titleLabel?.text = groupedButton.PVControlTitle
-                            
+
                             if let tintColor = groupedButton.PVControlTint {
                                 button.tintColor = UIColor(hex: tintColor)
                             }
-                            
+
                             button.backgroundImage = UIImage(named: "button")
                             button.backgroundImagePressed = UIImage(named: "button-pressed")
                             button.delegate = self
                             buttonGroup.addSubview(button)
                             buttons.append(button)
                         }
-                        
+
                         let buttonOverlay = PVButtonGroupOverlayView(buttons: buttons)
                         buttonOverlay.setSize(buttonGroup.bounds.size)
                         buttonGroup.addSubview(buttonOverlay)
                         buttonGroup.alpha = alpha
                         view.addSubview(buttonGroup)
                     }
-                }
-                else if (controlType == Keys.LeftShoulderButton) {
+                } else if (controlType == Keys.LeftShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.left + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
                     var leftShoulderFrame = CGRect(x: xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
-                    
+
                     if leftShoulderButton == nil {
                         let leftShoulderButton = JSButton(frame: leftShoulderFrame)
                         self.leftShoulderButton = leftShoulderButton
@@ -416,13 +410,13 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         leftShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton.delegate = self
-                        leftShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        leftShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         leftShoulderButton.alpha = alpha
                         leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton)
                     } else if leftShoulderButton2 == nil, let title = control.PVControlTitle, title == "L2" {
                         leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
-                        
+
                         let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
                         if let tintColor = control.PVControlTint {
                             leftShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -433,22 +427,21 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         leftShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         leftShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         leftShoulderButton2.delegate = self
-                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        leftShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         leftShoulderButton2.alpha = alpha
                         leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
                         view.addSubview(leftShoulderButton2)
-                        
+
                     } else {
                         leftShoulderButton?.frame = leftShoulderFrame
                         leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
                         leftShoulderButton2?.frame = leftShoulderFrame
                     }
-                }
-                else if (controlType == Keys.RightShoulderButton) {
+                } else if (controlType == Keys.RightShoulderButton) {
                     let xPadding: CGFloat = safeAreaInsets.right + 10
                     let yPadding: CGFloat = safeAreaInsets.top + 10
                     var rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding, width: controlSize.width, height: controlSize.height)
-                    
+
                     if rightShoulderButton == nil {
                         let rightShoulderButton = JSButton(frame: rightShoulderFrame)
                         if let tintColor = control.PVControlTint {
@@ -460,13 +453,13 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderButton.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton.delegate = self
-                        rightShoulderButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        rightShoulderButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         rightShoulderButton.alpha = alpha
                         rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton)
-                    } else if rightShoulderButton2 == nil ,let title = control.PVControlTitle, title == "R2"{
+                    } else if rightShoulderButton2 == nil, let title = control.PVControlTitle, title == "R2"{
                         rightShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
-                        
+
                         let rightShoulderButton2 = JSButton(frame: rightShoulderFrame)
                         if let tintColor = control.PVControlTint {
                             rightShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -477,7 +470,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderButton2.backgroundImage = UIImage(named: "button-thin")
                         rightShoulderButton2.backgroundImagePressed = UIImage(named: "button-thin-pressed")
                         rightShoulderButton2.delegate = self
-                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+                        rightShoulderButton2.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
                         rightShoulderButton2.alpha = alpha
                         rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
                         view.addSubview(rightShoulderButton2)
@@ -486,19 +479,17 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
                         rightShoulderFrame.origin.y += rightShoulderButton!.frame.size.height + 20
                         rightShoulderButton2?.frame = rightShoulderFrame
                     }
-                }
-                else if (controlType == Keys.StartButton) {
+                } else if (controlType == Keys.StartButton) {
                     layoutStartButton(control: control)
-                }
-                else if (controlType == Keys.SelectButton) {
+                } else if (controlType == Keys.SelectButton) {
                     layoutSelectButton(control: control)
                 }
             }
         #endif
     }
-    
+
     #if os(iOS)
-    func layoutStartButton(control:ControlLayoutEntry) {
+    func layoutStartButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.right + 10
@@ -510,7 +501,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             } else {
                 startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
-            
+
         } else {
             startFrame = CGRect(x: (view.frame.size.width / 2) + (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
         }
@@ -527,7 +518,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             startButton.backgroundImage = UIImage(named: "button-thin")
             startButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             startButton.delegate = self
-            startButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+            startButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             startButton.alpha = alpha
             startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(startButton)
@@ -546,14 +537,13 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             } else {
                 selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
-            
+
         } else {
             selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
         }
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame
-        }
-        else {
+        } else {
             let selectButton = JSButton(frame: selectFrame)
             if let tintColor = control.PVControlTint {
                 selectButton.tintColor = UIColor(hex: tintColor)
@@ -564,7 +554,7 @@ class PVControllerViewController<T:ResponderClient> : UIViewController, Controll
             selectButton.backgroundImage = UIImage(named: "button-thin")
             selectButton.backgroundImagePressed = UIImage(named: "button-thin-pressed")
             selectButton.delegate = self
-            selectButton.titleEdgeInsets = UIEdgeInsetsMake(2, 2, 4, 2)
+            selectButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 4, right: 2)
             selectButton.alpha = alpha
             selectButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(selectButton)

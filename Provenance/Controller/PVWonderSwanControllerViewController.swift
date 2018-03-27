@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVWSButton {
+    var buttonTag: PVWSButton {
         get {
             return PVWSButton(rawValue: tag)!
         }
@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderSwanSystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -29,8 +29,7 @@ class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderS
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
             }
         }
@@ -74,8 +73,7 @@ class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderS
                 default:
                     break
             }
-        }
-        else {
+        } else {
             emulatorCore.didRelease(.y1, forPlayer: 0)
             emulatorCore.didRelease(.y2, forPlayer: 0)
             emulatorCore.didRelease(.y3, forPlayer: 0)
@@ -114,8 +112,7 @@ class PVWonderSwanControllerViewController: PVControllerViewController<PVWonderS
             emulatorCore.didRelease(.x2, forPlayer: 0)
             emulatorCore.didRelease(.x3, forPlayer: 0)
             emulatorCore.didRelease(.x4, forPlayer: 0)
-        }
-        else {
+        } else {
             emulatorCore.didRelease(.y1, forPlayer: 0)
             emulatorCore.didRelease(.y2, forPlayer: 0)
             emulatorCore.didRelease(.y3, forPlayer: 0)

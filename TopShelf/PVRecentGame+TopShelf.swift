@@ -15,12 +15,12 @@ extension PVRecentGame {
         guard let game = game else {
             return nil
         }
-        
+
         guard let identifier = TVContentIdentifier(identifier: game.md5Hash, container: containerIdentifier),
         let item = TVContentItem(contentIdentifier: identifier) else {
             return nil
         }
-        
+
         item.title = game.title
         item.imageURL = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
         item.imageShape = imageType
@@ -28,22 +28,22 @@ extension PVRecentGame {
         item.lastAccessedDate = lastPlayedDate
         return item
     }
-    
-    var displayURL : URL {
+
+    var displayURL: URL {
         var components = URLComponents()
         components.scheme = PVAppURLKey
         components.path = PVGameControllerKey
         components.queryItems = [URLQueryItem(name: PVGameMD5Key, value: game!.md5Hash)]
         return (components.url)!
     }
-    
-    var imageType : TVContentItemImageShape {
+
+    var imageType: TVContentItemImageShape {
         guard let game = game else {
             return .square
         }
-        
+
         let system = game.system.enumValue
-        
+
         switch system {
         case .NES, .Genesis, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .Lynx, .WonderSwan, .WonderSwanColor:
             return .poster

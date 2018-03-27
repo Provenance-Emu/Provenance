@@ -17,46 +17,45 @@ public enum SpotlightError: Error {
 }
 
 public class IndexRequestHandler: CSIndexExtensionRequestHandler {
-    
+
     public override init() {
         super.init()
-        
+
         if RealmConfiguration.supportsAppGroups {
             RealmConfiguration.setDefaultRealmConfig()
         }
     }
 
     public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexAllSearchableItemsWithAcknowledgementHandler acknowledgementHandler: @escaping () -> Void) {
-        
+
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.sharedInstance
-            
+
             let allGames = database.all(PVGame.self)
             indexResults(allGames)
-            
+
         } else {
             WLOG("App Groups not setup")
         }
-        
+
         acknowledgementHandler()
     }
-    
+
     public override func searchableIndex(_ searchableIndex: CSSearchableIndex, reindexSearchableItemsWithIdentifiers identifiers: [String], acknowledgementHandler: @escaping () -> Void) {
         // Reindex any items with the given identifiers and the provided index
-        
+
         if RealmConfiguration.supportsAppGroups {
             let database = RomDatabase.sharedInstance
-            
-            
-            let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format:"md5Hash IN %@", identifiers))
+
+            let allGamesMatching = database.all(PVGame.self, filter: NSPredicate(format: "md5Hash IN %@", identifiers))
             indexResults(allGamesMatching)
         } else {
             WLOG("App Groups not setup")
         }
-        
+
         acknowledgementHandler()
     }
-    
+
 //    public override func data(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String) throws -> Data {
 //        if !RealmConfiguration.supportsAppGroups {
 //            throw SpotlightError.appGroupsNotSupported
@@ -75,19 +74,19 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
 //            throw SpotlightError.dontHandleDatatype
 //        }
 //    }
-    
+
     public override func fileURL(for searchableIndex: CSSearchableIndex, itemIdentifier: String, typeIdentifier: String, inPlace: Bool) throws -> URL {
-        
+
         if !RealmConfiguration.supportsAppGroups {
             throw SpotlightError.appGroupsNotSupported
         }
-        
+
         // We're assuming the typeIndentifier is the game one since that's all we've been using so far
-        
+
         // I think it's looking for the image path
         if typeIdentifier == (kUTTypeImage as String) {
             let md5 = itemIdentifier.components(separatedBy: ".").last ?? ""
-            
+
             if let game = RomDatabase.sharedInstance.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5).first, let artworkURL = game.pathOfCachedImage {
                 return artworkURL
             } else {
@@ -97,16 +96,16 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
             throw SpotlightError.dontHandleDatatype
         }
     }
-    
-    private func indexResults(_ results : Results<PVGame>) {
-        let items : [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
+
+    private func indexResults(_ results: Results<PVGame>) {
+        let items: [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
             if !game.md5Hash.isEmpty {
                 return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
             } else {
                 return nil
             }
         })
-        
+
         CSSearchableIndex.default().indexSearchableItems(items) { error in
             if let error = error {
                 ELOG("indexing error: \(error)")

@@ -9,7 +9,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVVBButton {
+    var buttonTag: PVVBButton {
         get {
             return PVVBButton(rawValue: tag)!
         }
@@ -27,8 +27,7 @@ class PVVBControllerViewController: PVControllerViewController<PVVirtualBoySyste
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
             }
         }

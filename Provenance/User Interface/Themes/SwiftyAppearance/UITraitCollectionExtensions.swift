@@ -9,7 +9,7 @@
 import UIKit
 
 public extension UITraitCollection {
-    
+
     /// Umbrella emun wrapping all possible traits
     ///
     /// - userInterfaceIdiom: user interface idiom specifier
@@ -21,27 +21,27 @@ public extension UITraitCollection {
     /// - preferredContentSizeCategory: preferred content size category specifier
     /// - displayGamut: display gamut specifier
     public enum Trait {
-        
+
         case userInterfaceIdiom(UIUserInterfaceIdiom)
-        
+
         case displayScale(CGFloat)
-        
+
         case horizontalSizeClass(UIUserInterfaceSizeClass)
-        
+
         case verticalSizeClass(UIUserInterfaceSizeClass)
-        
+
         case forceTouchCapability(UIForceTouchCapability)
-        
+
         @available(iOS 10.0, *)
         case layoutDirection(UITraitEnvironmentLayoutDirection)
-        
+
         @available(iOSApplicationExtension 10.0, *)
         case preferredContentSizeCategory(UIContentSizeCategory)
-        
+
         @available(iOS 10.0, *)
         case displayGamut(UIDisplayGamut)
     }
-    
+
     /// Returns a new trait collection containing single specified trait
     ///
     /// - Parameter trait: A Trait value specifying the trait for the new trait collection
@@ -81,7 +81,7 @@ public extension UITraitCollection {
             }
         }
     }
-    
+
     /// Returns a new trait collection consisting of traits merged from a specified array of traits
     ///
     /// - Parameter entities: An array of Trait values

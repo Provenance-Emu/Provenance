@@ -9,7 +9,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVNESButton {
+    var buttonTag: PVNESButton {
         get {
             return PVNESButton(rawValue: tag)!
         }
@@ -27,8 +27,7 @@ class PVNESControllerViewController: PVControllerViewController<PVNESSystemRespo
             }
             if title == "A" {
                 button.buttonTag = .a
-            }
-            else if title == "B" {
+            } else if title == "B" {
                 button.buttonTag = .b
             }
         }

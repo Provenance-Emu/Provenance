@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVPCEButton {
+    var buttonTag: PVPCEButton {
         get {
             return PVPCEButton(rawValue: tag)!
         }
@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVPCEControllerViewController: PVControllerViewController<PVPCESystemResponderClient> {
-   
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -29,20 +29,15 @@ class PVPCEControllerViewController: PVControllerViewController<PVPCESystemRespo
             }
             if title == "I" {
                 button.buttonTag = .button1
-            }
-            else if title == "II" {
+            } else if title == "II" {
                 button.buttonTag = .button2
-            }
-            else if title == "III" {
+            } else if title == "III" {
                 button.buttonTag = .button3
-            }
-            else if title == "IV" {
+            } else if title == "IV" {
                 button.buttonTag = .button4
-            }
-            else if title == "V" {
+            } else if title == "V" {
                 button.buttonTag = .button5
-            }
-            else if title == "VI" {
+            } else if title == "VI" {
                 button.buttonTag = .button6
             }
         }

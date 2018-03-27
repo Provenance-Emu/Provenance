@@ -13,13 +13,13 @@ public protocol AppearanceStyleable: NSObjectProtocol {
 
     /// <#Description#>
     associatedtype Style: RawRepresentable
-    
+
     /// <#Description#>
     var appearanceRoot: UIWindow? { get }
 }
 
 public extension AppearanceStyleable where Self.Style.RawValue == String {
-    
+
     /// <#Description#>
     ///
     /// - Parameter style: <#style description#>
@@ -33,7 +33,7 @@ public extension AppearanceStyleable where Self.Style.RawValue == String {
         get { return Style(rawValueOrNil: Self._styleName(class: object_getClass(self)!)) }
         set { setStyle(newValue, animated: false) }
     }
-    
+
     /// <#Description#>
     ///
     /// - Parameters:
@@ -54,7 +54,7 @@ public extension AppearanceStyleable where Self: UIView {
 }
 
 public extension AppearanceStyleable where Self: UIWindow {
-    
+
     /// <#Description#>
     public var appearanceRoot: UIWindow? {
         return self
@@ -62,7 +62,7 @@ public extension AppearanceStyleable where Self: UIWindow {
 }
 
 public extension AppearanceStyleable where Self: UIViewController {
-    
+
     /// <#Description#>
     public var appearanceRoot: UIWindow? {
         if #available(iOS 9.0, *) {
@@ -74,7 +74,7 @@ public extension AppearanceStyleable where Self: UIViewController {
 }
 
 fileprivate extension RawRepresentable {
-    
+
     fileprivate init?(rawValueOrNil: RawValue?) {
         guard let rawValue = rawValueOrNil else {
             return nil
@@ -84,19 +84,19 @@ fileprivate extension RawRepresentable {
 }
 
 fileprivate extension AppearanceStyleable {
-    
+
     private static var _subclassPrefix: String {
         return "__SwiftyAppearance_\(String(cString: class_getName(Self.self)))_style_"
     }
-    
+
     private static func _lookUpClass(_ className: String) -> AnyClass? {
         return className.withCString { objc_lookUpClass($0) }
     }
-    
+
     private static func _allocateClassPair(_ superclass: AnyClass, _ className: String, _ extraBytes: Int) -> AnyClass? {
         return className.withCString { objc_allocateClassPair(superclass, $0, extraBytes) }
     }
-    
+
     fileprivate static func _styleClass(name styleName: String?) -> Self.Type {
         guard let subclassName = styleName.flatMap({ _subclassPrefix + $0 }) else {
             return Self.self
@@ -110,7 +110,7 @@ fileprivate extension AppearanceStyleable {
         }
         fatalError("SwiftyAppearance: failed to subclass \(Self.self) as `\(subclassName)`")
     }
-    
+
     fileprivate static func _styleName(class styleClass: AnyClass) -> String? {
         let subclassName = String(cString: class_getName(styleClass))
         let subclassPrefix = _subclassPrefix

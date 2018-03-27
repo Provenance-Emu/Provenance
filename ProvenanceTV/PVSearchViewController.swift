@@ -12,17 +12,17 @@ import RealmSwift
 
 class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false
-    
+
     var searchResults: Results<PVGame>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         RomDatabase.sharedInstance.refresh()
-        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsetsMake(20, 0, 20, 0)
+        (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: "SearchResultCell")
-        collectionView?.contentInset = UIEdgeInsetsMake(40, 80, 40, 80)
+        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
     }
-    
+
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -33,7 +33,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
-        
+
         if let game = searchResults?[indexPath.item] {
             cell.game = game
         }
@@ -60,14 +60,14 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsetsMake(40, 40, 120, 40)
+        return UIEdgeInsets(top: 40, left: 40, bottom: 120, right: 40)
     }
 }
 
-extension PVSearchViewController : UISearchResultsUpdating {
+extension PVSearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text ?? ""
-        
+
         let sorted = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText])).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         searchResults = sorted
         collectionView?.reloadData()

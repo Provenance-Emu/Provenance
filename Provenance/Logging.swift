@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LogLevel : Int {
+public enum LogLevel: Int {
     case trace = 0
     case debug
     case info
@@ -19,9 +19,9 @@ public enum LogLevel : Int {
 private let startDate = Date()
 
 #if DEBUG
-let LOG_LEVEL : LogLevel = .debug
+let LOG_LEVEL: LogLevel = .debug
 #else
-let LOG_LEVEL : LogLevel = .debug
+let LOG_LEVEL: LogLevel = .debug
 #endif
 
 public func VLOG(_ message: @autoclosure () -> String, file: StaticString = #file, function: StaticString = #function, line: UInt = #line) {
@@ -44,40 +44,40 @@ public func ELOG(_ message: @autoclosure () -> String, file: StaticString = #fil
     _LogMessage(message, file: file, function: function, line: line, level: .error)
 }
 
-fileprivate func _LogMessage(_ message: @autoclosure () -> String, file: StaticString, function: StaticString, line: UInt, level: LogLevel) {
+private func _LogMessage(_ message: @autoclosure () -> String, file: StaticString, function: StaticString, line: UInt, level: LogLevel) {
     guard level.rawValue >= LOG_LEVEL.rawValue else {
         return
     }
-    
+
     let icon: String
     let levelString: String
     switch level {
-        
+
     case .trace:
         icon = "🔀"
         levelString = ""
-        
+
     case .debug:
         icon = "🔹"
         levelString = "Debug"
-        
+
     case .info:
         icon = "🔸"
         levelString = "Info"
-        
+
     case .warn:
         icon = "⚠️"
         levelString = "Warning"
-        
+
     case .error:
         icon = "❗"
         levelString = "Error"
     }
-    
+
     let fileName = (String(describing: file) as NSString).lastPathComponent
     let messageString = message()
-    
+
     let logString = "\(Int(floor(startDate.timeIntervalSinceNow * -1))) \(icon) [\(levelString)] \(fileName):\(line) \(function)\n  ↪︎ \(messageString)\n"
-    
+
     print(logString)
 }

@@ -11,17 +11,17 @@ import UIKit
 #if os(iOS)
     extension UIAlertController {
         public struct UIAlertControllerOverrides {
-            let backgroundColor : UIColor?
-            let textColor : UIColor?
-            let borderColor : UIColor?
-            let borderWidth : CGFloat
-            let cornerRadius : CGFloat
-            let cancelBackgroundColor : UIColor?
-            let cancelTextColor : UIColor?
-            let destructiveBackgroundColor : UIColor?
-            let destructiveTextColor : UIColor?
-            
-            init(backgroundColor : UIColor? = nil, textColor : UIColor? = nil, borderColor : UIColor? = nil, borderWidth : CGFloat = 0.0, cornerRadius : CGFloat = 0.0, cancelBackgroundColor : UIColor? = nil, cancelTextColor : UIColor? = nil, destructiveBackgroundColor : UIColor? = nil, destructiveTextColor : UIColor? = nil ) {
+            let backgroundColor: UIColor?
+            let textColor: UIColor?
+            let borderColor: UIColor?
+            let borderWidth: CGFloat
+            let cornerRadius: CGFloat
+            let cancelBackgroundColor: UIColor?
+            let cancelTextColor: UIColor?
+            let destructiveBackgroundColor: UIColor?
+            let destructiveTextColor: UIColor?
+
+            init(backgroundColor: UIColor? = nil, textColor: UIColor? = nil, borderColor: UIColor? = nil, borderWidth: CGFloat = 0.0, cornerRadius: CGFloat = 0.0, cancelBackgroundColor: UIColor? = nil, cancelTextColor: UIColor? = nil, destructiveBackgroundColor: UIColor? = nil, destructiveTextColor: UIColor? = nil ) {
                 self.backgroundColor = backgroundColor
                 self.textColor = textColor
                 self.borderColor = borderColor
@@ -33,17 +33,17 @@ import UIKit
                 self.destructiveTextColor = destructiveTextColor
             }
         }
-        
+
         // view{load,willAppear,didAppear} had GFX glitches. This seems to render accuratly before animation and after
         // Remove this method if you don't want ALL your UIAlertController's to look the same
         override open func viewDidLayoutSubviews() {
             super.viewDidLayoutSubviews()
             setDefaultOverrides()
         }
-        
+
         // Set how you want your defaults to be for all instances of UIAlertController
         func setDefaultOverrides() {
-            
+
             let overrides = UIAlertControllerOverrides(backgroundColor: Theme.currentTheme.settingsCellBackground,
                                                        textColor: Theme.currentTheme.settingsCellText,
                                                        borderColor:  Theme.currentTheme.settingsCellText?.withAlphaComponent(0.6),
@@ -55,47 +55,44 @@ import UIKit
                                                        destructiveTextColor: UIColor.init(white: 0.9, alpha: 1))
             setOverrideSettings(overrides)
         }
-        
-        func setOverrideSettings(_ settings : UIAlertControllerOverrides){
+
+        func setOverrideSettings(_ settings: UIAlertControllerOverrides) {
             let FirstSubview = self.view.subviews.first
-            let AlertContentViews : [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
-            
+            let AlertContentViews: [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
+
             // Find the titles of UIAlertActions that are .cancel type
-            let cancelTitles : [String] = self.actions.filter() {$0.style == .cancel}.flatMap(){return $0.title}
-            
+            let cancelTitles: [String] = self.actions.filter {$0.style == .cancel}.flatMap {return $0.title}
+
             // Find the titles of UIAlertActions that are .destructive type
-            let destructiveTitles : [String] = self.actions.filter() {$0.style == .destructive}.flatMap(){return $0.title}
-            
-            
+            let destructiveTitles: [String] = self.actions.filter {$0.style == .destructive}.flatMap {return $0.title}
+
             // TODO: Could do the same for 'destructive' types
-            
-            
-            AlertContentViews.forEach() {
+
+            AlertContentViews.forEach {
                 print("AlertContentSubview \(String(describing: $0))")
-                
+
                 $0?.subviews.forEach({ (subview) in
                     if let backgroundColor = settings.backgroundColor {
                         subview.backgroundColor = backgroundColor
                     }
-                    
+
                     subview.layer.cornerRadius = settings.cornerRadius
                     subview.layer.borderWidth = settings.borderWidth
                     subview.alpha = 1
-                    
+
                     if let label = subview as? UILabel, let textColor = settings.textColor {
                         label.textColor = textColor
                     }
-                    
+
                     if let borderColor = settings.borderColor {
                         subview.layer.borderColor = borderColor.cgColor
                     }
                 })
-                
+
                 // Set label colors
                 if let view = $0, let textColor = settings.textColor {
                     getAllSubviews(ofType: UILabel.self, forView: view)?.forEach {
-                        
-                        
+
                         // Check if the label is of the .cancel type
                         if let text = $0.text, cancelTitles.contains(text) {
                             if let cancelBackgroundColor = settings.cancelBackgroundColor {
@@ -137,18 +134,18 @@ import UIKit
                 }
             }
         }
-        
+
         // Assistance function to recursively get all subviews of a type
         func getAllSubviews<T: UIView>(ofType type: T.Type, forView view: UIView?) -> [T]? {
             let mapped = view?.subviews.flatMap { subView -> [T]? in
-                var result = getAllSubviews(ofType: T.self, forView:subView)
+                var result = getAllSubviews(ofType: T.self, forView: subView)
                 if let view = subView as? T {
                     result = result ?? [T]()
                     result!.append(view)
                 }
                 return result
             }
-            
+
             return mapped != nil ? Array(mapped!.joined()) : nil
         }
     }

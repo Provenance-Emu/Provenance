@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVGBAButton {
+    var buttonTag: PVGBAButton {
         get {
             return PVGBAButton(rawValue: tag)!
         }
@@ -21,24 +21,23 @@ fileprivate extension JSButton {
 }
 
 class PVGBAControllerViewController: PVControllerViewController<PVGBASystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton else {
                 return
             }
-            
+
             if (button.titleLabel?.text == "A") {
                 button.buttonTag =  .a
-            }
-            else if (button.titleLabel?.text == "B") {
+            } else if (button.titleLabel?.text == "B") {
                 button.buttonTag =  .b
             }
         }
 
         leftShoulderButton?.buttonTag =  .l
         rightShoulderButton?.buttonTag =  .r
-        
+
         startButton?.buttonTag =  .start
         selectButton?.buttonTag =  .select
     }

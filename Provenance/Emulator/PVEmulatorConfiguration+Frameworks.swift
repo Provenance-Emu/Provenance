@@ -12,26 +12,25 @@ import PVSupport
 
 // MARK: - System Scanner
 public extension PVEmulatorConfiguration {
-    static var coreClasses : [ClassInfo] {
+    static var coreClasses: [ClassInfo] {
         let motherClassInfo = ClassInfo(PVEmulatorCore.self)!
         var subclassList = [ClassInfo]()
-        
+
         var count = UInt32(0)
         let classList = objc_copyClassList(&count)!
-        
+
         for i in 0..<Int(count) {
             if let classInfo = ClassInfo(classList[i]),
                 let superclassInfo = classInfo.superclassInfo,
-                superclassInfo == motherClassInfo
-            {
+                superclassInfo == motherClassInfo {
                 subclassList.append(classInfo)
             }
         }
-        
+
         return subclassList
     }
-    
-    class func updateCores(fromPlists plists : [URL]) {
+
+    class func updateCores(fromPlists plists: [URL]) {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
@@ -50,8 +49,7 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    
-    class func updateSystems(fromPlists plists : [URL]) {
+    class func updateSystems(fromPlists plists: [URL]) {
         typealias SystemPlistEntries = [SytemPlistEntry]
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
@@ -59,8 +57,8 @@ public extension PVEmulatorConfiguration {
         plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
-                let systems : SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
-                
+                let systems: SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
+
                 systems?.forEach { system in
                     if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
@@ -82,7 +80,7 @@ public extension PVEmulatorConfiguration {
                             ELOG("Failed to make new system: \(error)")
                         }
                     }
-                    
+
                 }
             } catch {
                 // Handle error
@@ -90,8 +88,8 @@ public extension PVEmulatorConfiguration {
             }
         }
     }
-    
-    class func setPropertiesTo(pvSystem : PVSystem, fromSystemPlistEntry system : SytemPlistEntry) {
+
+    class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SytemPlistEntry) {
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID)!
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer
@@ -105,13 +103,13 @@ public extension PVEmulatorConfiguration {
         pvSystem.usesCDs = system.PVUsesCDs ?? false
         pvSystem.supportsRumble = system.PVSupportsRumble ?? false
         pvSystem.headerByteSize = system.PVHeaderByteSize ?? 0
-        
+
         if let screenType = system.PVScreenType {
             pvSystem.screenType = ScreenType(rawValue: screenType) ?? .unknown
         } else {
             pvSystem.screenType = .unknown
         }
-        
+
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)
@@ -128,7 +126,7 @@ public extension PVEmulatorConfiguration {
                 }
             } else {
                 let newBIOS = PVBIOS(withSystem: pvSystem, descriptionText: entry.Description, optional: entry.Optional ?? false, expectedMD5: entry.MD5, expectedSize: entry.Size, expectedFilename: entry.Name)
-                
+
                 if database.realm.isInWriteTransaction {
                     database.realm.add(newBIOS)
                 } else {
@@ -138,4 +136,3 @@ public extension PVEmulatorConfiguration {
          }
     }
 }
-

@@ -9,20 +9,20 @@
 import Foundation
 import RealmSwift
 
-public enum RelativeRoot : Int {
+public enum RelativeRoot: Int {
     case documents
     case caches
-    
+
     #if os(tvOS)
     public static let platformDefault = RelativeRoot.caches
     #else
     public static let platformDefault = RelativeRoot.documents
     #endif
-    
-    static let documentsDirectory = URL(fileURLWithPath:NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!)
-    static let cachesDirectory = URL(fileURLWithPath:NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!)
 
-    var directoryURL : URL {
+    static let documentsDirectory = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!)
+    static let cachesDirectory = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!)
+
+    var directoryURL: URL {
         switch self {
         case .documents:
             return RelativeRoot.documentsDirectory
@@ -30,26 +30,26 @@ public enum RelativeRoot : Int {
             return RelativeRoot.cachesDirectory
         }
     }
-    
-    func createRelativePath(fromURL url : URL) -> String {
-        let searchString : String
+
+    func createRelativePath(fromURL url: URL) -> String {
+        let searchString: String
         switch self {
         case .documents:
             searchString = "Documents/"
         case .caches:
             searchString = "Caches/"
         }
-        
+
         let path = url.path
         guard let range = path.range(of: searchString) else {
             return path
         }
-        
+
         let suffixPath = String(path.suffix(from: range.upperBound))
         return suffixPath
     }
-    
-    func appendingPath(_ path : String) -> URL {
+
+    func appendingPath(_ path: String) -> URL {
         if #available(iOS 9.0, *) {
             return URL.init(fileURLWithPath: path, relativeTo: directoryURL)
         } else {
@@ -58,38 +58,38 @@ public enum RelativeRoot : Int {
     }
 }
 
-@objcMembers public class PVImageFile : PVFile {
-    @objc private dynamic var _cgsize : String!
-    @objc dynamic var ratio : Float = 0.0
-    @objc dynamic var width : Int = 0
-    @objc dynamic var height : Int = 0
-    @objc dynamic var layout : String = ""
-    
-    public convenience init(withPartialPath partialPath : String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+@objcMembers public class PVImageFile: PVFile {
+    @objc private dynamic var _cgsize: String!
+    @objc dynamic var ratio: Float = 0.0
+    @objc dynamic var width: Int = 0
+    @objc dynamic var height: Int = 0
+    @objc dynamic var layout: String = ""
+
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
         calculateSizeData()
     }
-    
-    public convenience init(withURL url : URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = relativeRoot.createRelativePath(fromURL: url)
         calculateSizeData()
     }
-    
+
     private func calculateSizeData() {
         guard let image = UIImage(contentsOfFile: url.path) else {
             ELOG("Failed to create UIImage from path <\(url.path)>")
             return
         }
-        
+
         let size  = image.size
         cgsize = size
     }
-    
-    private(set) public var cgsize : CGSize {
+
+    private(set) public var cgsize: CGSize {
         get {
             return CGSizeFromString(_cgsize)
         }
@@ -103,19 +103,19 @@ public enum RelativeRoot : Int {
     }
 }
 
-@objcMembers public class PVFile : Object, Codable {
-    @objc fileprivate dynamic var partialPath : String = ""
-    @objc private dynamic var md5Cache : String?
+@objcMembers public class PVFile: Object, Codable {
+    @objc fileprivate dynamic var partialPath: String = ""
+    @objc private dynamic var md5Cache: String?
     @objc private(set) public dynamic var createdDate = Date()
-    @objc private dynamic var _relativeRoot : Int = RelativeRoot.documents.rawValue
-    
-    public convenience init(withPartialPath partialPath : String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    @objc private dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
+
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
     }
-    
-    public convenience init(withURL url : URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = relativeRoot.createRelativePath(fromURL: url)
@@ -123,15 +123,15 @@ public enum RelativeRoot : Int {
 }
 
 public extension PVFile {
-    var relativeRoot : RelativeRoot {
+    var relativeRoot: RelativeRoot {
         get {
             return RelativeRoot(rawValue: _relativeRoot)!
         } set {
             _relativeRoot = newValue.rawValue
         }
     }
-    
-    private(set) var url : URL {
+
+    private(set) var url: URL {
         get {
             let resolvedURL = relativeRoot.appendingPath(partialPath)
             return resolvedURL
@@ -146,18 +146,18 @@ public extension PVFile {
             }
         }
     }
-    
-    private(set) var md5 : String? {
+
+    private(set) var md5: String? {
         get {
             if let md5 = md5Cache {
                 return md5
             }
-            
+
             // Lazy make MD5
             guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
                 return nil
             }
-            
+
             self.md5 = calculatedMD5
             return calculatedMD5
         }
@@ -171,31 +171,31 @@ public extension PVFile {
             }
         }
     }
-    
-    var size : UInt64 {
-        let fileSize : UInt64
-        
+
+    var size: UInt64 {
+        let fileSize: UInt64
+
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
-            fileSize = attr.fileSize();
+            fileSize = attr.fileSize()
         } else {
             fileSize = 0
         }
         return fileSize
     }
-    
-    var missing : Bool {
+
+    var missing: Bool {
         return !FileManager.default.fileExists(atPath: url.path)
     }
-    
-    var pathExtension : String {
+
+    var pathExtension: String {
         return url.pathExtension
     }
-    
-    var fileName : String {
+
+    var fileName: String {
         return url.lastPathComponent
     }
-    
-    var fileNameWithoutExtension : String {
+
+    var fileNameWithoutExtension: String {
         return url.deletingPathExtension().lastPathComponent
     }
 }

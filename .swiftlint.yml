@@ -1,0 +1,86 @@
+disabled_rules:
+  - switch_case_alignment
+  - block_based_kvo
+  - multiple_closures_with_trailing_closure
+  - colon
+  - force_cast
+  - type_name
+  - variable_name_min_length
+  - discarded_notification_center_observer
+  - force_try
+  - variable_name
+  - control_statement
+  - line_length
+  - type_body_length
+  - todo
+  - file_length
+  - cyclomatic_complexity
+  - unused_closure_parameter
+  # - trailing_newline
+  # - opening_brace
+  # - empty_count
+  # - comma
+  # - trailing_semicolon
+  # - function_body_length
+  # - nesting
+  # - conditional_binding_cascade
+  # - variable_name_max_length
+  # - operator_whitespace
+  # - legacy_constant
+  # - return_arrow_whitespace
+  # - trailing_whitespace
+  # - closing_brace
+  # - statement_position
+  # - legacy_constructor
+  # - valid_docs
+  # - missing_docs
+  # - leading_whitespace
+  # - redundant_optional_initialization
+  # - unused_optional_initialization
+  # - unused_optional_binding
+  # - void_return
+  # - implicit_getter
+  # - mark
+  # - notification_center_detachment
+  # - for_where
+  # - vertical_whitespace
+  # - empty_parameters
+  # - class_delegate_protocol
+  # - syntactic_sugar
+  # - function_parameter_count
+  # - trailing_comma
+  # - weak_delegate
+  # - redundant_string_enum_value
+  # - unused_enumerated
+  # - empty_enum_arguments
+  # - shorthand_operator
+  # - empty_parentheses_with_trailing_closure
+  # - closure_parameter_position
+  # - redundant_discardable_let
+  # - large_tuple
+  # - vertical_parameter_alignment
+  # - compiler_protocol_init
+  # - private_over_fileprivate
+excluded: # paths to ignore during linting. overridden byincluded.
+  - Carthage
+  - Pods
+# parameterized rules can be customized from this configuration file
+line_length: 200
+# parameterized rules are first parameterized as a warning level, then error level.
+type_body_length:
+  - 300 # warning
+  - 400 # error
+# parameterized rules are first parameterized as a warning level, then error level.
+variable_name_max_length:
+  - 40 # warning
+  - 60 # error
+# parameterized rules are first parameterized as a warning level, then error level.
+variable_name_min_length:
+  - 3 # warning
+  - 2 # error
+function_body_length:
+  - 150 # warning
+  - 180 # error
+large_tuple:
+  - 4 # warning
+  - 6 # error

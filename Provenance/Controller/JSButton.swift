@@ -9,7 +9,7 @@
 
 import UIKit
 
-protocol JSButtonDelegate : class {
+protocol JSButtonDelegate: class {
     func buttonPressed(_ button: JSButton)
     func buttonReleased(_ button: JSButton)
 }
@@ -36,13 +36,13 @@ class JSButton: UIView {
             }
         }
     }
-        
+
     var titleEdgeInsets: UIEdgeInsets = .zero {
         didSet {
             setNeedsLayout()
         }
     }
-    
+
     override var tintColor: UIColor? {
         didSet {
             if PVSettingsModel.shared.buttonTints {
@@ -59,7 +59,7 @@ class JSButton: UIView {
                 return
             }
             
-            backgroundImageView?.image = isPressed ? backgroundImagePressed : backgroundImage
+            backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
         }
     }
     weak var delegate: JSButtonDelegate?
@@ -116,7 +116,7 @@ class JSButton: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         backgroundImageView?.frame = bounds
-        
+
         if let titleLabel = titleLabel {
             titleLabel.frame = bounds
             var frame = titleLabel.frame
@@ -146,7 +146,7 @@ class JSButton: UIView {
             pressed = true
             delegate?.buttonPressed(self)
         }
-        
+
         if !touchArea.intersects(frame) {
             if pressed {
                 pressed = false

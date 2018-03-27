@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVNGPButton {
+    var buttonTag: PVNGPButton {
         get {
             return PVNGPButton(rawValue: tag)!
         }
@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVNeoGeoPocketControllerViewController: PVControllerViewController<PVNeoGeoPocketSystemResponderClient> {
- 
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel?.text else {
@@ -29,8 +29,7 @@ class PVNeoGeoPocketControllerViewController: PVControllerViewController<PVNeoGe
             }
             if text == "A" {
                 button.buttonTag = .a
-            }
-            else if text == "B" {
+            } else if text == "B" {
                 button.buttonTag = .b
             }
         }

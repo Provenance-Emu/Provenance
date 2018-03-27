@@ -71,7 +71,7 @@ public func appearance(inAny containerTypes: [UIAppearanceContainer.Type], _ blo
 }
 
 public extension UIAppearanceContainer {
-    
+
     /// Nested appearance scope for `Self` container
     ///
     /// - Parameter block: appearance code block for current container
@@ -83,7 +83,7 @@ public extension UIAppearanceContainer {
 }
 
 public extension UIAppearance where Self: UIAppearanceContainer {
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for `Self` container
     ///
@@ -118,7 +118,7 @@ public extension UIAppearance {
             block(proxy)
         }
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for `Self` container with specified trait collection
     ///
@@ -131,7 +131,7 @@ public extension UIAppearance {
         appearance(block)
         AppearanceScope.main.pop()
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for specified trait
     ///
@@ -141,7 +141,7 @@ public extension UIAppearance {
     public static func appearance(for trait: UITraitCollection.Trait, _ block: (_ proxy: Self) -> Void) {
         appearance(for: UITraitCollection(trait: trait), block)
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for specified trait list
     ///
@@ -151,7 +151,7 @@ public extension UIAppearance {
     public static func appearance(for traits: [UITraitCollection.Trait], _ block: (_ proxy: Self) -> Void) {
         appearance(for: UITraitCollection(traits: traits), block)
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for `Self` container inside specified container type
     ///
@@ -164,7 +164,7 @@ public extension UIAppearance {
         appearance(block)
         AppearanceScope.main.pop()
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for `Self` container inside specified container chain
     ///
@@ -177,7 +177,7 @@ public extension UIAppearance {
         appearance(block)
         AppearanceScope.main.pop()
     }
-    
+
     /// Configure appearance for `Self` type and start
     /// nested appearance scope for `Self` container inside any of specified containers
     ///

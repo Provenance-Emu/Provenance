@@ -11,12 +11,12 @@ import SafariServices
 import UIKit
 
 // Subclass to help with themeing
-@objc public class SettingsTableView : UITableView {
+@objc public class SettingsTableView: UITableView {
     public override init(frame: CGRect, style: UITableViewStyle) {
         super.init(frame: frame, style: style)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
     }
-    
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.backgroundColor = Theme.currentTheme.settingsHeaderBackground
@@ -41,10 +41,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var fpsCountSwitch: UISwitch!
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
-    
+
     @IBOutlet weak var themeValueLabel: UILabel!
-    
-    
+
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
@@ -82,8 +81,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         let color: UIColor? = UIColor(white: 0.0, alpha: 0.1)
         if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             revisionLabel.text = revisionString
-        }
-        else {
+        } else {
             revisionLabel.textColor = color ?? UIColor.clear
             revisionLabel.text = "(none)"
         }
@@ -97,7 +95,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         super.viewWillAppear(animated)
         let settings = PVSettingsModel.shared
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
-        
+
         if #available(iOS 9.0, *) {
             themeValueLabel.text = settings.theme.rawValue
         }
@@ -153,7 +151,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBAction func toggleButtonTints(_ sender: Any) {
         PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
     }
-    
+
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -202,7 +200,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             PVWebServer.shared.stopServers()
             self.importLabel.text = "Web server: OFF"
         }))
-        
+
         if #available(iOS 9.0, *) {
             let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.showServer()
@@ -211,13 +209,12 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         }
         present(alert, animated: true) {() -> Void in }
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 && indexPath.row == 3 {
             let iCadeControllerViewController = PViCadeControllerViewController()
             navigationController?.pushViewController(iCadeControllerViewController, animated: true)
-        }
-        else if indexPath.section == 3 && indexPath.row == 0 {
+        } else if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
                 // Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -229,16 +226,14 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) {() -> Void in }
-            }
-            else {
+            } else {
                 // connected via wifi, let's continue
                 // start web transfer service
                 if PVWebServer.shared.startServers() {
                     importLabel.text = "Web server: ON"
                     //show alert view
                     showServerActiveAlert()
-                }
-                else {
+                } else {
                         // Display error
                     let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -246,8 +241,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                     present(alert, animated: true) {() -> Void in }
                 }
             }
-        }
-        else if indexPath.section == 4 && indexPath.row == 0 {
+        } else if indexPath.section == 4 && indexPath.row == 0 {
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Refresh Game Library?", message: "Attempt to get artwork and title information for your library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork. Please be patient, as this process can take several minutes.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -255,8 +249,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
-        }
-        else if indexPath.section == 4 && indexPath.row == 1 {
+        } else if indexPath.section == 4 && indexPath.row == 1 {
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
             let alert = UIAlertController(title: "Empty Image Cache?", message: "Empty the image cache to free up disk space. Images will be redownload on demand.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -264,16 +257,14 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             present(alert, animated: true) {() -> Void in }
-        }
-        else if indexPath.section == 4 && indexPath.row == 2 {
+        } else if indexPath.section == 4 && indexPath.row == 2 {
             if let gameImporter = gameImporter {
                 let conflictViewController = PVConflictViewController(gameImporter: gameImporter)
                 navigationController?.pushViewController(conflictViewController, animated: true)
             } else {
                 ELOG("No game importer instance")
             }
-        }
-        else if indexPath.section == 0 && indexPath.row == 8 {
+        } else if indexPath.section == 0 && indexPath.row == 8 {
             if #available(iOS 9.0, *) {
                 let themeSelectorViewController = ThemeSelectorViewController()
                 navigationController?.pushViewController(themeSelectorViewController, animated: true)
@@ -290,17 +281,17 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 }
 
 @available(iOS 9.0, *)
-class ThemeSelectorViewController : UITableViewController {
-    
+class ThemeSelectorViewController: UITableViewController {
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 ? 2 : 0
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
-        
+
         let currentTheme = Theme.currentTheme
-        
+
         if indexPath.row == 0 {
             cell.textLabel?.text = Themes.light.rawValue
             cell.accessoryType = currentTheme.theme == .light ? .checkmark : .none
@@ -308,10 +299,10 @@ class ThemeSelectorViewController : UITableViewController {
             cell.textLabel?.text = Themes.dark.rawValue
             cell.accessoryType = currentTheme.theme == .dark ? .checkmark : .none
         }
-        
+
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
             Theme.setTheme(LightTheme())
@@ -320,7 +311,7 @@ class ThemeSelectorViewController : UITableViewController {
             Theme.setTheme(DarkTheme())
             PVSettingsModel.shared.theme = .dark
         }
-        
+
         tableView.reloadData()
     }
 }

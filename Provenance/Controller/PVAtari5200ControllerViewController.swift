@@ -9,7 +9,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PV5200Button {
+    var buttonTag: PV5200Button {
         get {
             return PV5200Button(rawValue: tag)!
         }
@@ -28,12 +28,11 @@ class PVAtari5200ControllerViewController: PVControllerViewController<PV5200Syst
             }
             if title == "Fire 1" || title == "1" {
                 button.buttonTag = .fire1
-            }
-            else if title == "Fire 2" || title == "2" {
+            } else if title == "Fire 2" || title == "2" {
                 button.buttonTag = .fire2
             }
         }
-        
+
         leftShoulderButton?.buttonTag = .reset
         startButton?.buttonTag = .start
         selectButton?.buttonTag = .pause
@@ -70,31 +69,31 @@ class PVAtari5200ControllerViewController: PVControllerViewController<PV5200Syst
         }
         vibrate()
     }
-    
+
     override func dPadDidReleaseDirection(_ dPad: JSDPad) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
         emulatorCore.didRelease(.left, forPlayer: 0)
         emulatorCore.didRelease(.right, forPlayer: 0)
     }
-    
+
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)
         vibrate()
     }
-    
+
     override func buttonReleased(_ button: JSButton) {
         emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
     }
-    
+
     override func pressStart(forPlayer player: Int) {
         emulatorCore.didPush(.reset, forPlayer: player)
     }
-    
+
     override func releaseStart(forPlayer player: Int) {
         emulatorCore.didRelease(.reset, forPlayer: player)
     }
-    
+
     override func pressSelect(forPlayer player: Int) {
         emulatorCore.didPush(.pause, forPlayer: player)
     }

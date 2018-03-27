@@ -9,7 +9,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PV2600Button {
+    var buttonTag: PV2600Button {
         get {
             return PV2600Button(rawValue: tag)!
         }
@@ -20,7 +20,7 @@ fileprivate extension JSButton {
 }
 
 class PVAtari2600ControllerViewController: PVControllerViewController<PV2600SystemResponderClient> {
-        
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let title = button.titleLabel?.text else {
@@ -28,15 +28,13 @@ class PVAtari2600ControllerViewController: PVControllerViewController<PV2600Syst
             }
             if title == "Fire" || title == "" {
                 button.buttonTag = .fire1
-            }
-            else if title == "Select" {
+            } else if title == "Select" {
                 button.buttonTag = .select
-            }
-            else if title == "Reset" {
+            } else if title == "Reset" {
                 button.buttonTag = .reset
             }
         }
-        
+
         startButton?.buttonTag = .reset
         selectButton?.buttonTag = .select
     }

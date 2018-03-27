@@ -10,7 +10,7 @@
 import PVMednafen
 
 fileprivate extension JSButton {
-    var buttonTag : PVN64Button {
+    var buttonTag: PVN64Button {
         get {
             return PVN64Button(rawValue: tag)!
         }
@@ -20,7 +20,6 @@ fileprivate extension JSButton {
     }
 }
 
-
 // These should override the default protocol but theyu're not.
 // I made a test Workspace with the same protocl inheritance with assoicated type
 // and the extension overrides in this format overrode the default extension implimentations.
@@ -29,7 +28,7 @@ fileprivate extension JSButton {
 //extension ControllerVC where Self == PVN64ControllerViewController {
 //extension ControllerVC where ResponderType : PVN64SystemResponderClient {
 
-class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResponderClient> {
+class PVN64ControllerViewController: PVControllerViewController<PVN64SystemResponderClient> {
 
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
@@ -38,24 +37,19 @@ class PVN64ControllerViewController : PVControllerViewController<PVN64SystemResp
             }
             if (button.titleLabel?.text == "A") {
                 button.buttonTag = .a
-            }
-            else if (button.titleLabel?.text == "B") {
+            } else if (button.titleLabel?.text == "B") {
                 button.buttonTag = .b
-            }
-            else if (button.titleLabel?.text == "C▲") {
+            } else if (button.titleLabel?.text == "C▲") {
                 button.buttonTag = .cUp
-            }
-            else if (button.titleLabel?.text == "C▼") {
+            } else if (button.titleLabel?.text == "C▼") {
                 button.buttonTag = .cDown
-            }
-            else if (button.titleLabel?.text == "C◀") {
+            } else if (button.titleLabel?.text == "C◀") {
                 button.buttonTag = .cLeft
-            }
-            else if (button.titleLabel?.text == "C▶") {
+            } else if (button.titleLabel?.text == "C▶") {
                 button.buttonTag = .cRight
             }
         }
-       
+
         leftShoulderButton?.buttonTag = .l
         rightShoulderButton?.buttonTag = .r
         selectButton?.buttonTag = .z

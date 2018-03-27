@@ -10,7 +10,7 @@
 import PVSupport
 
 fileprivate extension JSButton {
-    var buttonTag : PVSNESButton {
+    var buttonTag: PVSNESButton {
         get {
             return PVSNESButton(rawValue: tag)!
         }
@@ -28,14 +28,11 @@ class PVSNESControllerViewController: PVControllerViewController<PVSNESSystemRes
             }
             if (button.titleLabel?.text == "A") {
                 button.buttonTag = .a
-            }
-            else if (button.titleLabel?.text == "B") || (button.titleLabel?.text == "1") {
+            } else if (button.titleLabel?.text == "B") || (button.titleLabel?.text == "1") {
                 button.buttonTag = .b
-            }
-            else if (button.titleLabel?.text == "X") || (button.titleLabel?.text == "2") {
+            } else if (button.titleLabel?.text == "X") || (button.titleLabel?.text == "2") {
                 button.buttonTag = .x
-            }
-            else if (button.titleLabel?.text == "Y") {
+            } else if (button.titleLabel?.text == "Y") {
                 button.buttonTag = .y
             }
         }

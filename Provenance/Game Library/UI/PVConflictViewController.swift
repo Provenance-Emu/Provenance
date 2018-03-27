@@ -18,18 +18,18 @@ class PVConflictViewController: UITableViewController {
 
         self.gameImporter = gameImporter
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 #if os(tvOS)
         splitViewController?.title = "Solve Conflicts"
 #else
         let currentTableview = self.tableView!
-        self.tableView = SettingsTableView(frame: currentTableview.frame, style:currentTableview.style)
+        self.tableView = SettingsTableView(frame: currentTableview.frame, style: currentTableview.style)
 
         title = "Solve Conflicts"
         if !conflictedFiles.isEmpty {
@@ -55,7 +55,7 @@ class PVConflictViewController: UITableViewController {
             conflictedFiles = [URL]()
             return
         }
-        
+
         var tempConflictedFiles = [URL]()
         for file: URL in filesInConflictsFolder {
             let ext: String = file.pathExtension.lowercased()
@@ -117,8 +117,7 @@ class PVConflictViewController: UITableViewController {
             cell.textLabel?.textAlignment = .center
             if indexPath.row == 0 || indexPath.row == 1 {
                 cell.textLabel?.text = ""
-            }
-            else {
+            } else {
                 cell.textLabel?.text = "No Conflicts..."
                 #if os(iOS)
                 cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
@@ -127,7 +126,7 @@ class PVConflictViewController: UITableViewController {
             return cell
         } else {
             let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ??  UITableViewCell(style: .default, reuseIdentifier: "Cell")
-            
+
             let file = conflictedFiles[indexPath.row]
             let name: String = file.deletingPathExtension().lastPathComponent
             cell.textLabel?.text = name
@@ -140,16 +139,16 @@ class PVConflictViewController: UITableViewController {
         if let aRow = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: aRow, animated: true)
         }
-        
+
         if conflictedFiles.isEmpty {
             return
         }
-        
+
         let path = conflictedFiles[indexPath.row]
         let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
         alertController.popoverPresentationController?.sourceView = view
         alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-       
+
         PVSystem.all.forEach { system in
             if system.supportedExtensions.contains(path.pathExtension) {
                 let name: String = system.name

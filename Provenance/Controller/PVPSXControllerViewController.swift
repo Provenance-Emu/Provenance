@@ -10,7 +10,7 @@
 import PVMednafen
 
 fileprivate extension JSButton {
-    var buttonTag : PVPSXButton {
+    var buttonTag: PVPSXButton {
         get {
             return PVPSXButton(rawValue: tag)!
         }
@@ -21,7 +21,7 @@ fileprivate extension JSButton {
 }
 
 class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemResponderClient> {
-    
+
     override func layoutViews() {
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
@@ -29,14 +29,11 @@ class PVPSXControllerViewController: PVControllerViewController<PVPSXSystemRespo
             }
             if text == "✖" || text == "✕" {
                 button.buttonTag = .cross
-            }
-            else if text == "●" || text == "○" {
+            } else if text == "●" || text == "○" {
                 button.buttonTag = .circle
-            }
-            else if text == "◼" || text == "□" {
+            } else if text == "◼" || text == "□" {
                 button.buttonTag = .square
-            }
-            else if text == "▲" || text == "▵" {
+            } else if text == "▲" || text == "▵" {
                 button.buttonTag = .triangle
             }
         }
