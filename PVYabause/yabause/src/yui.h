@@ -30,11 +30,11 @@
 #include "yabause.h"
 
 /* If Yabause encounters any fatal errors, it sends the error text to this function */
-void YuiErrorMsg(const char *string);
+extern void YuiErrorMsg(const char *string);
 
 /* Tells the yui to exchange front and back video buffers. This may end
    up being moved to the Video Core. */
-void YuiSwapBuffers(void);
+extern void YuiSwapBuffers(void);
 
 //////////////////////////////////////////////////////////////////////////////
 // Helper functions(you can use these in your own port)

@@ -152,7 +152,7 @@ void SNDOESetVolume(UNUSED int volume)
 
 SoundInterface_struct SNDOE = {
     SNDCORE_OE,
-    "OpenEmu Sound Interface",
+    "Provenance Sound Interface",
     SNDOEInit,
     SNDOEDeInit,
     SNDOEReset,
@@ -325,7 +325,7 @@ VideoInterface_struct *VIDCoreList[] = {
     
     yinit.mpegpath = NULL;
     yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
-    yinit.frameskip = true;
+    yinit.frameskip = false;
     yinit.clocksync = 0;
     yinit.basetime = 0;
     yinit.usethreads = 0;
@@ -343,6 +343,11 @@ VideoInterface_struct *VIDCoreList[] = {
     return CGSizeMake(HIRES_WIDTH, HIRES_HEIGHT);
 }
 
+- (CGSize)aspectSize
+{
+    return CGSizeMake(width, height);
+}
+
 - (CGRect)screenRect
 {
     return CGRectMake(0, 0, width, height);
@@ -357,36 +362,41 @@ VideoInterface_struct *VIDCoreList[] = {
 {
     filename = [path copy];
 	DLog(@"Saturn - %@", filename);
+    [self setupEmulation];
+    [self executeFrame];
     return YES;
 }
 
 // Save State is broken, fail more often than not
+- (BOOL)saveStateToFileAtPath:(NSString *)path {
 #if 0
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void(^)(BOOL success, NSError *error))block
-{
     ScspMuteAudio(SCSP_MUTE_SYSTEM);
     int error = YabSaveState([fileName UTF8String]);
     ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 
     block(!error, nil);
+#endif
+    return false;
 }
 
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void(^)(BOOL success, NSError *error))block
+- (BOOL)loadStateFromFileAtPath:(NSString *)path
 {
+#if 0
     ScspMuteAudio(SCSP_MUTE_SYSTEM);
     int error = YabLoadState([fileName UTF8String]);
     ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 
     block(!error, nil);
-}
 #endif
+    return false;
+}
 
 #pragma mark -
 #pragma mark Inputs
 
 - (oneway void)didPushSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player
 {
-	PerPad_struct *c = player == 1 ? c1 : c2;
+	PerPad_struct *c = player == 0 ? c1 : c2;
     switch (button)
     {
         case PVSaturnButtonUp:
@@ -435,7 +445,7 @@ VideoInterface_struct *VIDCoreList[] = {
 
 - (oneway void)didReleaseSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player
 {
-	PerPad_struct *c = player == 1 ? c1 : c2;
+	PerPad_struct *c = player == 0 ? c1 : c2;
     switch (button)
     {
         case PVSaturnButtonUp:

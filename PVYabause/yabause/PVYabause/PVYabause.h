@@ -15,5 +15,4 @@ FOUNDATION_EXPORT double PVYabauseVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVYabauseVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVYabause/PublicHeader.h>
-
-
+#import <PVYabause/YaubaseGameCore.h>

@@ -1327,6 +1327,21 @@
 		</array>
 	</dict>
 	<dict>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>Saturn BIOS</string>
+				<key>MD5</key>
+				<string>3240872c70984b6cbfda1586cab68dbe</string>
+				<key>Name</key>
+				<string>Saturn EU.bin</string>
+				<key>Size</key>
+				<integer>524288</integer>
+			</dict>
+		</array>
+		<key>PVRequiresBIOS</key>
+		<true/>
 		<key>PVUsesCDs</key>
 		<true/>
 		<key>PVManufacturer</key>

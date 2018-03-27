@@ -689,6 +689,6 @@ public protocol CoreActions {
 @objc public protocol PVSaturnSystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPushSaturnButton:forPlayer:)
     func didPush(_ button: PVSaturnButton, forPlayer player: Int)
-    @objc(didPReleaseSaturnButton:forPlayer:)
+    @objc(didReleaseSaturnButton:forPlayer:)
     func didRelease(_ button: PVSaturnButton, forPlayer player: Int)
 }
