@@ -53,7 +53,15 @@ class JSButton: UIView {
         }
     }
 
-    var pressed = false
+    var pressed = false {
+        didSet {
+            if pressed == oldValue {
+                return
+            }
+            
+            backgroundImageView?.image = isPressed ? backgroundImagePressed : backgroundImage
+        }
+    }
     weak var delegate: JSButtonDelegate?
 
     func setEnabled(_ enabled: Bool) {
@@ -117,17 +125,6 @@ class JSButton: UIView {
             frame.size.width -= titleEdgeInsets.right
             frame.size.height -= titleEdgeInsets.bottom
             titleLabel.frame = frame
-        }
-    }
-
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if (keyPath == "pressed") || (keyPath == "backgroundImage") || (keyPath == "backgroundImagePressed") {
-            if pressed {
-                backgroundImageView?.image = backgroundImagePressed
-            }
-            else {
-                backgroundImageView?.image = backgroundImage
-            }
         }
     }
 
