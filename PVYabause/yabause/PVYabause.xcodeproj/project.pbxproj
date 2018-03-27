@@ -59,7 +59,8 @@
 		B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775601E9C8539000FEC38 /* CoreAudio.framework */; };
 		B32775651E9C8546000FEC38 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775641E9C8546000FEC38 /* PVSupport.framework */; };
 		B32775691E9C887F000FEC38 /* cd-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935B152A32B90080990B /* cd-macosx.c */; };
-		B327756A1E9C8E29000FEC38 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
+		B376848C206A06620007A99C /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
+		B376848E206A074C0007A99C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B376848D206A074B0007A99C /* Core.plist */; };
 		EB1BA9B61587923900F8939D /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
 		EB3297141522671200307B0C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3297131522671200307B0C /* Cocoa.framework */; };
 		EB32971E1522671200307B0C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB32971C1522671200307B0C /* InfoPlist.strings */; };
@@ -67,7 +68,6 @@
 		EB851D11152397AB00715BD2 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB851D10152397AB00715BD2 /* OpenGL.framework */; };
 		EBDBB513152A39DC0091DA28 /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934C152A32B90080990B /* bios.c */; };
 		EBDBB514152A39DC0091DA28 /* c68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78934F152A32B90080990B /* c68k.c */; };
-		EBDBB515152A39DC0091DA28 /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; settings = {COMPILER_FLAGS = "-O0"; }; };
 		EBDBB516152A39DC0091DA28 /* gen68k.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789355152A32B90080990B /* gen68k.c */; };
 		EBDBB518152A39DC0091DA28 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935E152A32B90080990B /* cdbase.c */; };
 		EBDBB519152A39DC0091DA28 /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789360152A32B90080990B /* cheat.c */; };
@@ -149,6 +149,7 @@
 		B32775621E9C853D000FEC38 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
 		B32775641E9C8546000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B327756B1E9C8F0A000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
+		B376848D206A074B0007A99C /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		EB1BA9B51587923900F8939D /* osdcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osdcore.c; sourceTree = "<group>"; };
 		EB3297101522671200307B0C /* Yabause.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Yabause.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB3297131522671200307B0C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -399,6 +400,7 @@
 		EB3297191522671200307B0C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B376848D206A074B0007A99C /* Core.plist */,
 				EB78914E152A08600080990B /* Yabause.icns */,
 				EB789149152A06D60080990B /* Info.plist */,
 				EB32971C1522671200307B0C /* InfoPlist.strings */,
@@ -687,7 +689,7 @@
 		EB3297071522671200307B0C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0920;
 				TargetAttributes = {
 					B32775221E9C8444000FEC38 = {
 						CreatedOnToolsVersion = 8.3;
@@ -720,6 +722,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B376848E206A074C0007A99C /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,7 +767,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B327756A1E9C8E29000FEC38 /* c68kexec.c in Sources */,
 				B327752B1E9C84DE000FEC38 /* osdcore.c in Sources */,
 				B327752C1E9C84DE000FEC38 /* bios.c in Sources */,
 				B327752D1E9C84DE000FEC38 /* c68k.c in Sources */,
@@ -789,6 +791,7 @@
 				B32775441E9C84DE000FEC38 /* scsp2.c in Sources */,
 				B32775451E9C84DE000FEC38 /* scu.c in Sources */,
 				B32775461E9C84DE000FEC38 /* sh2core.c in Sources */,
+				B376848C206A06620007A99C /* c68kexec.c in Sources */,
 				B32775471E9C84DE000FEC38 /* sh2d.c in Sources */,
 				B32775481E9C84DE000FEC38 /* sh2idle.c in Sources */,
 				B32775491E9C84DE000FEC38 /* sh2int.c in Sources */,
@@ -818,7 +821,6 @@
 				EB1BA9B61587923900F8939D /* osdcore.c in Sources */,
 				EBDBB513152A39DC0091DA28 /* bios.c in Sources */,
 				EBDBB514152A39DC0091DA28 /* c68k.c in Sources */,
-				EBDBB515152A39DC0091DA28 /* c68kexec.c in Sources */,
 				EBDBB516152A39DC0091DA28 /* gen68k.c in Sources */,
 				EBDBB518152A39DC0091DA28 /* cdbase.c in Sources */,
 				EBDBB519152A39DC0091DA28 /* cheat.c in Sources */,
@@ -945,7 +947,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -955,8 +957,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_OPENMP_SUPPORT = NO;
 				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",
@@ -968,8 +970,10 @@
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
 				);
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
@@ -1000,7 +1004,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1010,6 +1014,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_OPENMP_SUPPORT = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",
@@ -1021,8 +1026,10 @@
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
 				);
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
@@ -1055,7 +1062,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1080,6 +1087,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1230,6 +1238,7 @@
 				B32775291E9C8444000FEC38 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EB32970A1522671200307B0C /* Build configuration list for PBXProject "PVYabause" */ = {
 			isa = XCConfigurationList;

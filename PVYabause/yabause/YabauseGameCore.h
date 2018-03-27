@@ -27,33 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-
-typedef NS_ENUM(NSUInteger, PVSaturnButton) {
-    PVSaturnButtonUp,
-    PVSaturnButtonDown,
-    PVSaturnButtonLeft,
-    PVSaturnButtonRight,
-    PVSaturnButtonA,
-    PVSaturnButtonB,
-    PVSaturnButtonC,
-    PVSaturnButtonX,
-    PVSaturnButtonY,
-    PVSaturnButtonZ,
-    PVSaturnButtonL,
-    PVSaturnButtonR,
-    PVSaturnButtonStart,
-    PVSaturnButtonCount
-} ;
-
-@protocol PVSaturnSystemResponderClient <NSObject>
-
-- (oneway void)didPushSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player;
-- (oneway void)didReleaseSaturnButton:(PVSaturnButton)button forPlayer:(NSUInteger)player;
-
-@end
-
-
-@class OERingBuffer;
+#import <PVSupport/PVSupport-Swift.h>
 
 __attribute__((visibility("default")))
 @interface YabauseGameCore : PVEmulatorCore <PVSaturnSystemResponderClient>

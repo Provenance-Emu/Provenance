@@ -152,6 +152,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PVNeoGeoPocketSystemResponderClient")
             }
+        case .Saturn:
+            if let core = core as? PVSaturnSystemResponderClient {
+                return PVSaturnControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't impliment PVSaturnSystemResponderClient")
+            }
         case .VirtualBoy:
             if let core = core as? PVVirtualBoySystemResponderClient {
                 return PVVBControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
