@@ -127,9 +127,9 @@ import UIKit
 }
 
 @objc public protocol PVNESSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(pushNESButton:forPlayer:)
+    @objc(didPushNESButton:forPlayer:)
     func didPush(_ button: PVNESButton, forPlayer player: Int)
-    @objc(releaseNESButton:forPlayer:)
+    @objc(didReleaseNESButton:forPlayer:)
     func didRelease(_ button: PVNESButton, forPlayer player: Int)
 }
 

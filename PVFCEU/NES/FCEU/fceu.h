@@ -15,6 +15,7 @@ extern int normalscanlines;
 extern int totalscanlines;
 extern int postrenderscanlines;
 extern int vblankscanlines;
+extern int pal_emulation;
 
 extern bool AutoResumePlay;
 extern char romNameWhenClosingEmulator[];

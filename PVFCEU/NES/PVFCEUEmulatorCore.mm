@@ -31,10 +31,16 @@
 
 #include "FCEU/fceu.h"
 #include "FCEU/driver.h"
+#include "FCEU/input.h"
+#include "FCEU/sound.h"
+#include "FCEU/movie.h"
 #include "FCEU/palette.h"
 #include "FCEU/state.h"
 #include "FCEU/emufile.h"
 #include "zlib.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic error "-Wall"
 
 extern uint8 *XBuf;
 static uint32_t palette[256];
@@ -46,6 +52,8 @@ static uint32_t palette[256];
     int32_t *soundBuffer;
     int32_t soundSize;
     uint32_t pad[2][PVNESButtonCount];
+    
+    NSUInteger currentDisc;
 }
 
 @end
@@ -59,6 +67,7 @@ static __weak PVFCEUEmulatorCore *_current;
     if((self = [super init]))
     {
         videoBuffer = (uint32_t *)malloc(256 * 240 * 4);
+        currentDisc = 1;
     }
 
 	_current = self;
@@ -73,6 +82,12 @@ static __weak PVFCEUEmulatorCore *_current;
 
 - (void)internalSwapDisc:(NSUInteger)discNumber
 {
+    if (discNumber == currentDisc) {
+        WLOG(@"Won't swap for same disc number <%lul>", (unsigned long)discNumber);
+        return;
+    }
+    currentDisc = discNumber;
+    
     [self setPauseEmulation:NO];
 
     FCEUI_FDSInsert();
@@ -270,18 +285,17 @@ static __weak PVFCEUEmulatorCore *_current;
     
     return result;
 }
-
 # pragma mark - Input
 
 const int NESMap[] = {JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT, JOY_A, JOY_B, JOY_START, JOY_SELECT};
-- (void)pushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
+- (void)didPushNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
     int playerShift = player != 0 ? 8 : 0;
 
     pad[player][0] |= NESMap[button] << playerShift;
 }
 
-- (oneway void)releaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player
+- (void)didReleaseNESButton:(PVNESButton)button forPlayer:(NSInteger)player
 {
     int playerShift = player != 0 ? 8 : 0;
 
@@ -394,7 +408,7 @@ EMUFILE_FILE *FCEUD_UTF8_fstream(const char *fn, const char *m)
     return new EMUFILE_FILE(fn, m);
     //return new std::fstream(fn,mode);
 }
-void FCEUD_NetplayText(uint8 *text) {};
+void FCEUD_NetplayText(uint8 *text) {}
 void FCEUD_NetworkClose(void) {}
 void FCEUD_VideoChanged (void) {}
 bool FCEUD_ShouldDrawInputAids() {return false;}
@@ -416,3 +430,6 @@ void FCEUD_Message(const char *s)
 }
 
 @end
+
+#pragma clang diagnostic pop
+

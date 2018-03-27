@@ -13,8 +13,8 @@ FILE *FCEUD_UTF8fopen(const char *fn, const char *mode);
 inline FILE *FCEUD_UTF8fopen(const std::string &n, const char *mode) { return FCEUD_UTF8fopen(n.c_str(),mode); }
 EMUFILE_FILE* FCEUD_UTF8_fstream(const char *n, const char *m);
 inline EMUFILE_FILE* FCEUD_UTF8_fstream(const std::string &n, const char *m) { return FCEUD_UTF8_fstream(n.c_str(),m); }
-FCEUFILE* FCEUD_OpenArchiveIndex(ArchiveScanRecord& asr, std::string& fname, int innerIndex);
-FCEUFILE* FCEUD_OpenArchive(ArchiveScanRecord& asr, std::string& fname, std::string* innerFilename);
+extern FCEUFILE* FCEUD_OpenArchiveIndex(ArchiveScanRecord& asr, std::string& fname, int innerIndex);
+extern FCEUFILE* FCEUD_OpenArchive(ArchiveScanRecord& asr, std::string& fname, std::string* innerFilename);
 ArchiveScanRecord FCEUD_ScanArchive(std::string fname);
 
 //mbg 7/23/06
@@ -25,8 +25,8 @@ void FCEU_printf(char *format, ...);
 #define FCEUI_printf FCEU_printf
 
 //Video interface
-void FCEUD_SetPalette(uint8 index, uint8 r, uint8 g, uint8 b);
-void FCEUD_GetPalette(uint8 i,uint8 *r, uint8 *g, uint8 *b);
+extern void FCEUD_SetPalette(uint8 index, uint8 r, uint8 g, uint8 b);
+extern void FCEUD_GetPalette(uint8 i,uint8 *r, uint8 *g, uint8 *b);
 
 //Displays an error.  Can block or not.
 void FCEUD_PrintError(const char *s);

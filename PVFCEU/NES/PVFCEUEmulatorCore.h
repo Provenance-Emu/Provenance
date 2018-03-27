@@ -28,6 +28,8 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic error "-Wall"
 
 @interface PVFCEUEmulatorCore : PVEmulatorCore
 
@@ -42,3 +44,6 @@
 @interface PVFCEUEmulatorCore()
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 @end
+
+#pragma clang diagnostic pop
+

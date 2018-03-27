@@ -12,6 +12,7 @@
 #include <cstdlib>
 
 struct FCEUFILE;
+extern int closeFinishedMovie;
 
 enum EMOVIE_FLAG
 {

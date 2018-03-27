@@ -720,7 +720,6 @@ static void StopPlayback()
 // Stop movie playback without closing the movie.
 static void FinishPlayback()
 {
-	extern int closeFinishedMovie;
 	if (closeFinishedMovie)
 		StopPlayback();
 	else

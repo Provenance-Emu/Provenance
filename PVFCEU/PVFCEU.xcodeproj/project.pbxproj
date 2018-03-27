@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B3547B4C205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
-		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
+		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; settings = {COMPILER_FLAGS = "-Weverything"; }; };
 		B39E8CB420539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F44D1DE87823008450F5 /* PVSupport.framework */; };
@@ -74,7 +74,7 @@
 		B3A9F4901DE87E09008450F5 /* fceu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77331ABF16A4002274A3 /* fceu.cpp */; };
 		B3A9F4911DE87E09008450F5 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77C71ABF16A5002274A3 /* sound.cpp */; };
 		B3A9F4921DE87E09008450F5 /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DA1ABF16A5002274A3 /* guid.cpp */; };
-		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
+		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; settings = {COMPILER_FLAGS = "-Weverything"; }; };
 		B3A9F4941DE87E09008450F5 /* 186.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE241D6ECD7500742D04 /* 186.cpp */; };
 		B3A9F4951DE87E09008450F5 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77E91ABF16A5002274A3 /* video.cpp */; };
 		B3A9F4961DE87E09008450F5 /* scale3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BFFD1D6ED36300742D04 /* scale3x.cpp */; };
