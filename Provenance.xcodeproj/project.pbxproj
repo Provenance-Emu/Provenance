@@ -539,6 +539,22 @@
 		B3AB064A2069C86F004057BE /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB06492069C86F004057BE /* QuickLook.framework */; };
 		B3AB064D2069C86F004057BE /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB064C2069C86F004057BE /* PreviewViewController.swift */; };
 		B3AB06502069C86F004057BE /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3AB064E2069C86F004057BE /* MainInterface.storyboard */; };
+		B3AB069C2069D5CF004057BE /* BIOSIcon-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06942069D59A004057BE /* BIOSIcon-Small@3x.png */; };
+		B3AB069D2069D5CF004057BE /* BIOSIcon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06962069D59A004057BE /* BIOSIcon-Small.png */; };
+		B3AB069E2069D5CF004057BE /* BIOSIcon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06972069D59A004057BE /* BIOSIcon-Small@2x.png */; };
+		B3AB069F2069D5F4004057BE /* RomIcon-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB067F2069D59A004057BE /* RomIcon-Small@3x.png */; };
+		B3AB06A02069D5F4004057BE /* RomIcon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06802069D59A004057BE /* RomIcon-Small@2x.png */; };
+		B3AB06A12069D5F4004057BE /* RomIcon-Small-40.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06812069D59A004057BE /* RomIcon-Small-40.png */; };
+		B3AB06A22069D608004057BE /* RomIcon-83.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06842069D59A004057BE /* RomIcon-83.5@2x.png */; };
+		B3AB06A32069D608004057BE /* BIOSIcon-83.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3AB06982069D59A004057BE /* BIOSIcon-83.5@2x.png */; };
+		B3AB06A62069D9A1004057BE /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB06A52069D9A1004057BE /* UTI.swift */; };
+		B3AB06A72069D9A1004057BE /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB06A52069D9A1004057BE /* UTI.swift */; };
+		B3AB06A82069D9A1004057BE /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB06A52069D9A1004057BE /* UTI.swift */; };
+		B3AB06A92069D9A1004057BE /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB06A52069D9A1004057BE /* UTI.swift */; };
+		B3AB06AA2069D9A1004057BE /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB06A52069D9A1004057BE /* UTI.swift */; };
+		B3AB06AC2069DBB8004057BE /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
+		B3AB06AD2069DBB8004057BE /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
+		B3AB06AE2069DBBA004057BE /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
@@ -635,7 +651,6 @@
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
 		B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6420320E6C009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
-		B3E21D6520320E6E009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E21D6620320E6F009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -643,7 +658,6 @@
 		B3E21D7920321B17009939D3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E3B5CA202ED22100A11871 /* RealmSwift.framework */; };
 		B3E21D7A20321B1A009939D3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AAE7D411BC870A2003066C0 /* Realm.framework */; };
 		B3E21D7B20321B53009939D3 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7F9202F3F2100FCB513 /* PVGame.swift */; };
-		B3E21D7C20321BCC009939D3 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D602032074F009939D3 /* Logging.swift */; };
 		B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1E266C1C22552800499BA0 /* PVAppConstants.swift */; };
 		B3E21D8120322879009939D3 /* Systems.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1A34C58517D517760058E7D1 /* Systems.plist */; };
 		B3E3B5C4202E21B400A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
@@ -1338,6 +1352,35 @@
 		B3AB064C2069C86F004057BE /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		B3AB064F2069C86F004057BE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		B3AB06512069C86F004057BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3AB067E2069D59A004057BE /* RomIcon-Notification@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Notification@3x.png"; sourceTree = "<group>"; };
+		B3AB067F2069D59A004057BE /* RomIcon-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small@3x.png"; sourceTree = "<group>"; };
+		B3AB06802069D59A004057BE /* RomIcon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small@2x.png"; sourceTree = "<group>"; };
+		B3AB06812069D59A004057BE /* RomIcon-Small-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small-40.png"; sourceTree = "<group>"; };
+		B3AB06822069D59A004057BE /* RomIcon-Notification@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Notification@2x.png"; sourceTree = "<group>"; };
+		B3AB06832069D59A004057BE /* RomIcon-Small-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small-40@2x.png"; sourceTree = "<group>"; };
+		B3AB06842069D59A004057BE /* RomIcon-83.5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-83.5@2x.png"; sourceTree = "<group>"; };
+		B3AB06852069D59A004057BE /* RomIcon-Small-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small-40@3x.png"; sourceTree = "<group>"; };
+		B3AB06862069D59A004057BE /* RomIcon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-76.png"; sourceTree = "<group>"; };
+		B3AB06872069D59A004057BE /* RomIcon-Notification.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Notification.png"; sourceTree = "<group>"; };
+		B3AB06882069D59A004057BE /* RomIcon-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-60@3x.png"; sourceTree = "<group>"; };
+		B3AB06892069D59A004057BE /* RomIcon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-60@2x.png"; sourceTree = "<group>"; };
+		B3AB068A2069D59A004057BE /* RomIcon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-76@2x.png"; sourceTree = "<group>"; };
+		B3AB068B2069D59A004057BE /* RomIcon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RomIcon-Small.png"; sourceTree = "<group>"; };
+		B3AB068D2069D59A004057BE /* BIOSIcon-Notification@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Notification@2x.png"; sourceTree = "<group>"; };
+		B3AB068E2069D59A004057BE /* BIOSIcon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-76.png"; sourceTree = "<group>"; };
+		B3AB068F2069D59A004057BE /* BIOSIcon-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-60@3x.png"; sourceTree = "<group>"; };
+		B3AB06902069D59A004057BE /* BIOSIcon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-60@2x.png"; sourceTree = "<group>"; };
+		B3AB06912069D59A004057BE /* BIOSIcon-Notification@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Notification@3x.png"; sourceTree = "<group>"; };
+		B3AB06922069D59A004057BE /* BIOSIcon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-76@2x.png"; sourceTree = "<group>"; };
+		B3AB06932069D59A004057BE /* BIOSIcon-Notification.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Notification.png"; sourceTree = "<group>"; };
+		B3AB06942069D59A004057BE /* BIOSIcon-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small@3x.png"; sourceTree = "<group>"; };
+		B3AB06952069D59A004057BE /* BIOSIcon-Small-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small-40.png"; sourceTree = "<group>"; };
+		B3AB06962069D59A004057BE /* BIOSIcon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small.png"; sourceTree = "<group>"; };
+		B3AB06972069D59A004057BE /* BIOSIcon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small@2x.png"; sourceTree = "<group>"; };
+		B3AB06982069D59A004057BE /* BIOSIcon-83.5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-83.5@2x.png"; sourceTree = "<group>"; };
+		B3AB06992069D59A004057BE /* BIOSIcon-Small-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small-40@2x.png"; sourceTree = "<group>"; };
+		B3AB069A2069D59A004057BE /* BIOSIcon-Small-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "BIOSIcon-Small-40@3x.png"; sourceTree = "<group>"; };
+		B3AB06A52069D9A1004057BE /* UTI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UTI.swift; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1731,7 +1774,7 @@
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				DFCD6EBE203762AE00719289 /* shaders */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
-				B3E21D602032074F009939D3 /* Logging.swift */,
+				B3AB06A42069D9A1004057BE /* Utilities */,
 			);
 			path = Provenance;
 			sourceTree = "<group>";
@@ -2600,6 +2643,66 @@
 			path = "Quicklook Extension";
 			sourceTree = "<group>";
 		};
+		B3AB067C2069D59A004057BE /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB067D2069D59A004057BE /* ROM */,
+				B3AB068C2069D59A004057BE /* BIOS */,
+			);
+			path = Icons;
+			sourceTree = "<group>";
+		};
+		B3AB067D2069D59A004057BE /* ROM */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB067E2069D59A004057BE /* RomIcon-Notification@3x.png */,
+				B3AB067F2069D59A004057BE /* RomIcon-Small@3x.png */,
+				B3AB06802069D59A004057BE /* RomIcon-Small@2x.png */,
+				B3AB06812069D59A004057BE /* RomIcon-Small-40.png */,
+				B3AB06822069D59A004057BE /* RomIcon-Notification@2x.png */,
+				B3AB06832069D59A004057BE /* RomIcon-Small-40@2x.png */,
+				B3AB06842069D59A004057BE /* RomIcon-83.5@2x.png */,
+				B3AB06852069D59A004057BE /* RomIcon-Small-40@3x.png */,
+				B3AB06862069D59A004057BE /* RomIcon-76.png */,
+				B3AB06872069D59A004057BE /* RomIcon-Notification.png */,
+				B3AB06882069D59A004057BE /* RomIcon-60@3x.png */,
+				B3AB06892069D59A004057BE /* RomIcon-60@2x.png */,
+				B3AB068A2069D59A004057BE /* RomIcon-76@2x.png */,
+				B3AB068B2069D59A004057BE /* RomIcon-Small.png */,
+			);
+			path = ROM;
+			sourceTree = "<group>";
+		};
+		B3AB068C2069D59A004057BE /* BIOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB068D2069D59A004057BE /* BIOSIcon-Notification@2x.png */,
+				B3AB068E2069D59A004057BE /* BIOSIcon-76.png */,
+				B3AB068F2069D59A004057BE /* BIOSIcon-60@3x.png */,
+				B3AB06902069D59A004057BE /* BIOSIcon-60@2x.png */,
+				B3AB06912069D59A004057BE /* BIOSIcon-Notification@3x.png */,
+				B3AB06922069D59A004057BE /* BIOSIcon-76@2x.png */,
+				B3AB06932069D59A004057BE /* BIOSIcon-Notification.png */,
+				B3AB06942069D59A004057BE /* BIOSIcon-Small@3x.png */,
+				B3AB06952069D59A004057BE /* BIOSIcon-Small-40.png */,
+				B3AB06962069D59A004057BE /* BIOSIcon-Small.png */,
+				B3AB06972069D59A004057BE /* BIOSIcon-Small@2x.png */,
+				B3AB06982069D59A004057BE /* BIOSIcon-83.5@2x.png */,
+				B3AB06992069D59A004057BE /* BIOSIcon-Small-40@2x.png */,
+				B3AB069A2069D59A004057BE /* BIOSIcon-Small-40@3x.png */,
+			);
+			path = BIOS;
+			sourceTree = "<group>";
+		};
+		B3AB06A42069D9A1004057BE /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				B3E21D602032074F009939D3 /* Logging.swift */,
+				B3AB06A52069D9A1004057BE /* UTI.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		B3B3B89A1DECF9A700602746 /* N64 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2967,10 +3070,13 @@
 			files = (
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				DFCD6EBF203762AF00719289 /* shaders in Resources */,
+				B3AB06A22069D608004057BE /* RomIcon-83.5@2x.png in Resources */,
+				B3AB06A32069D608004057BE /* BIOSIcon-83.5@2x.png in Resources */,
 				B349AF4B1E9ABCF900ACD416 /* LzmaSDK-ObjC.podspec in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				B349AF4D1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
 				1A2B0E8B1AD187F4005FB77C /* testdata.txt in Resources */,
+				B3AB069F2069D5F4004057BE /* RomIcon-Small@3x.png in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B349AE371E9ABCF900ACD416 /* .gitignore in Resources */,
 				7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */,
@@ -2978,12 +3084,17 @@
 				1A9FBE1B1ABD23DD004E778B /* vba-over.ini in Resources */,
 				DF0035C8203C97FA00F63831 /* GLideN64.ini in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
+				B3AB06A12069D5F4004057BE /* RomIcon-Small-40.png in Resources */,
+				B3AB06A02069D5F4004057BE /* RomIcon-Small@2x.png in Resources */,
+				B3AB069D2069D5CF004057BE /* BIOSIcon-Small.png in Resources */,
+				B3AB069E2069D5CF004057BE /* BIOSIcon-Small@2x.png in Resources */,
 				1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */,
 				B3BDEC931DED60A1002BD7A4 /* mupen64plus.ini in Resources */,
 				B349AE3D1E9ABCF900ACD416 /* LICENSE in Resources */,
 				DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */,
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* Systems.plist in Resources */,
+				B3AB069C2069D5CF004057BE /* BIOSIcon-Small@3x.png in Resources */,
 				B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
 				B349AE3B1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
@@ -3371,6 +3482,7 @@
 				B349AE4D1E9ABCF900ACD416 /* 7zFile.c in Sources */,
 				B349AE7F1E9ABCF900ACD416 /* Sha256.c in Sources */,
 				B349AE931E9ABCF900ACD416 /* 7zDecode.cpp in Sources */,
+				B3AB06A62069D9A1004057BE /* UTI.swift in Sources */,
 				B349AEF31E9ABCF900ACD416 /* BcjRegister.cpp in Sources */,
 				B3FF4419205F9C3F00E5A84B /* PVGBAControllerViewController.swift in Sources */,
 				E414489D1B34C4E50056D80A /* PViCadeInputAxis.m in Sources */,
@@ -3619,6 +3731,7 @@
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
 				B349AF621E9ABCFA00ACD416 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				B3BE96852055F3D900281880 /* PVCore.swift in Sources */,
+				B3AB06A72069D9A1004057BE /* UTI.swift in Sources */,
 				B349AED41E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
 				B3F7BE7A204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				B349AF4A1E9ABCF900ACD416 /* PropVariantConv.cpp in Sources */,
@@ -3672,6 +3785,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AB06AA2069D9A1004057BE /* UTI.swift in Sources */,
+				B3AB06AE2069DBBA004057BE /* Logging.swift in Sources */,
 				B3AB064D2069C86F004057BE /* PreviewViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3680,13 +3795,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AB06A92069D9A1004057BE /* UTI.swift in Sources */,
 				B3BE96932056026800281880 /* PVSaveState.swift in Sources */,
 				B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */,
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
+				B3AB06AD2069DBB8004057BE /* Logging.swift in Sources */,
 				B3E21D7B20321B53009939D3 /* PVGame.swift in Sources */,
 				B3E21D7820321AA8009939D3 /* RomDatabase.swift in Sources */,
 				B3BE96982056032600281880 /* PVGame+BoxArt.swift in Sources */,
-				B3E21D7C20321BCC009939D3 /* Logging.swift in Sources */,
 				B36D9DFA2035AC8600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B36D9DFB2035F6AB00D583C4 /* PVRecentGame.swift in Sources */,
 				B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */,
@@ -3703,14 +3819,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AB06A82069D9A1004057BE /* UTI.swift in Sources */,
 				B3BE96922056026700281880 /* PVSaveState.swift in Sources */,
 				B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
+				B3AB06AC2069DBB8004057BE /* Logging.swift in Sources */,
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
 				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */,
 				B3BE96972056032600281880 /* PVGame+BoxArt.swift in Sources */,
 				B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */,
-				B3E21D6520320E6E009939D3 /* Logging.swift in Sources */,
 				B36D9DF92035AC8300D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3BE968E2055F41A00281880 /* PVSystem.swift in Sources */,
