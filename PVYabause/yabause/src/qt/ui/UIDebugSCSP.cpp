@@ -21,6 +21,9 @@
 
 #include <QImageWriter>
 #include <QGraphicsPixmapItem>
+#include <QDebug>
+#include <QIODevice>
+#include <QTimer>
 
 UIDebugSCSP::UIDebugSCSP( QWidget* p )
 	: QDialog( p )
@@ -42,12 +45,104 @@ UIDebugSCSP::UIDebugSCSP( QWidget* p )
       pteCommonControlRegisters->moveCursor(QTextCursor::Start);
    }
 
+#ifdef HAVE_QT_MULTIMEDIA
+	audioBufferTimer = new QTimer(this);
+	audioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+	audioOutput = 0;
+	slot_workbuf = 0;
+	slot_buf = 0;
+	initAudio();
+#endif
+
    // Disable DSP Register display
    gbDSPControlRegisters->setVisible( false );
 
 	// retranslate widgets
 	QtYabause::retranslateWidget( this );
 }
+
+UIDebugSCSP::~UIDebugSCSP()
+{
+#ifdef HAVE_QT_MULTIMEDIA
+	delete slot_workbuf;
+	delete slot_buf;
+#endif
+}
+
+#ifdef HAVE_QT_MULTIMEDIA
+void UIDebugSCSP::initAudio()
+{
+	connect(audioBufferTimer, SIGNAL(timeout()), SLOT(audioBufferRefill()));
+
+	isPlaying = true;
+
+#if QT_VERSION < 0x040700
+	audioFormat.setFrequency(44100);
+	audioFormat.setChannels(2);
+#else
+	audioFormat.setSampleRate(44100);
+	audioFormat.setChannelCount(2);
+#endif
+	audioFormat.setSampleSize(16);
+	audioFormat.setCodec("audio/pcm");
+	audioFormat.setByteOrder(QAudioFormat::LittleEndian);
+	audioFormat.setSampleType(QAudioFormat::SignedInt);
+
+	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+	if (!info.isFormatSupported(audioFormat)) 
+	{
+		qWarning() << "Normal format not available, trying alternative";
+		audioFormat = info.nearestFormat(audioFormat);
+	}
+
+	delete audioOutput;
+	audioOutput = 0;
+	audioOutput = new QAudioOutput(audioDeviceInfo, audioFormat, this);
+	connect(audioOutput, SIGNAL(notify()), SLOT(notified()));
+	connect(audioOutput, SIGNAL(stateChanged(QAudio::State)), SLOT(stateChanged(QAudio::State)));
+
+	ScspSlotResetDebug(sbSlotNumber->value());
+}
+
+void UIDebugSCSP::notified()
+{
+	qWarning() << "bytesFree = " << audioOutput->bytesFree()
+		<< ", " << "elapsedUSecs = " << audioOutput->elapsedUSecs()
+		<< ", " << "processedUSecs = " << audioOutput->processedUSecs()
+		<< ", " << "periodSize = " << audioOutput->periodSize();
+}
+
+void UIDebugSCSP::audioBufferRefill()
+{
+	if (audioOutput && audioOutput->state() != QAudio::StoppedState) 
+	{
+		int chunks = audioOutput->bytesFree()/audioOutput->periodSize();
+		while (chunks) 
+		{
+			int len=audioOutput->periodSize();
+			len = (len/2) + (len%2);
+			if (ScspSlotDebugAudio (slot_workbuf, slot_buf, len) == 0)
+				break;
+			outputDevice->write((char *)slot_buf, audioOutput->periodSize());
+			--chunks;
+		}
+	}
+}
+
+void UIDebugSCSP::stateChanged(QAudio::State state)
+{
+	if (state == QAudio::IdleState)
+	{
+		delete slot_workbuf;
+		delete slot_buf;
+		slot_workbuf = 0;
+		slot_buf = 0;
+		notified();
+		slot_workbuf = new u32[audioOutput->periodSize()*4];
+		slot_buf = new s16[audioOutput->periodSize()];
+	}
+}
+#endif
 
 void UIDebugSCSP::on_sbSlotNumber_valueChanged ( int i )
 {
@@ -68,6 +163,28 @@ void UIDebugSCSP::on_sbSlotNumber_valueChanged ( int i )
       pbSaveSlotRegisters->setEnabled(false);
    }
 }
+
+#ifdef HAVE_QT_MULTIMEDIA
+void UIDebugSCSP::on_pbPlaySlot_clicked ()
+{
+	audioBufferTimer->stop();
+	audioOutput->stop();
+
+	if (isPlaying) 
+	{
+		ScspSlotResetDebug(sbSlotNumber->value());
+		pbPlaySlot->setText(QtYabause::translate("Stop Slot"));
+		outputDevice = audioOutput->start();
+		isPlaying = false;
+		audioBufferTimer->start(20);
+	} 
+	else 
+	{
+		pbPlaySlot->setText(QtYabause::translate("Play Slot"));
+		isPlaying = true;
+	}
+}
+#endif
 
 void UIDebugSCSP::on_pbSaveAsWav_clicked ()
 {

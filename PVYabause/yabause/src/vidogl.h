@@ -20,7 +20,7 @@
 #ifndef VIDOGL_H
 #define VIDOGL_H
 
-#ifdef HAVE_LIBGL
+#if defined(HAVE_LIBGL) || defined(__ANDROID__)
 
 #include "vdp1.h"
 

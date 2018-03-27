@@ -13,13 +13,14 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//#include <lapetus.h>
+#include <iapetus.h>
 #include "tests.h"
 
+#define SH2REG_CCR      (*(volatile u8  *)0xFFFFFE92)
 #define SH2REG_IPRA     (*(volatile u16 *)0xFFFFFEE2)
 #define SH2REG_DVSR     (*(volatile u32 *)0xFFFFFF00)
 #define SH2REG_DVDNT    (*(volatile u32 *)0xFFFFFF04)
@@ -227,7 +228,7 @@ void div_operation_test(void)
 
 void sh2_int_test_func(void) __attribute__ ((interrupt_handler));
 
-void sh2_int_test_func(void) 
+void sh2_int_test_func(void)
 {
    bios_set_sh2_interrupt(0x6E, 0);
    SH2REG_DVCR = 0;
@@ -257,3 +258,217 @@ void div_interrupt_test(void)
 
 //////////////////////////////////////////////////////////////////////////////
 
+void clear_framebuffer()
+{
+   u32* dest = (u32 *)VDP2_RAM;
+
+   int q;
+
+   for (q = 0; q < 0x10000; q++)
+   {
+      dest[q] = 0;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+//assuming the 28th bit is 0
+//0b0000 0x0 cache area
+//0b0010 0x2 cache through
+//0b0100 0x4 purge
+//0b0110 0x6 address array
+//0b1100 0xC data array
+//0x1110 0xE I/O area
+
+volatile u32 *wram_cache = (volatile u32 *)(0x06000000);
+volatile u32 *wram_cache_through = (volatile u32 *)(0x26000000);
+volatile u32 *address_array = (volatile u32 *)(0x60000000);
+volatile u32 *data_array = (volatile u32 *)(0xC0000000);
+
+//////////////////////////////////////////////////////////////////////////////
+
+void print_addr_data(int x_start, int y_start, u32 addr_val)
+{
+   int x_pos = x_start;
+   int y_pos = y_start;
+
+   u32 tag = addr_val & 0x1FFFFC00;
+   u32 lru = (addr_val >> 4) & 0x3f;
+   u32 v = (addr_val >> 2) & 1;
+
+   y_pos += 2;
+
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "tag: 0x%08x lru: 0x%02x v: 0x%01x", tag, lru, v);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void print_cache_for_way(int x_start, int y_start, int way, int index)
+{
+   int x_pos = x_start;
+   int y_pos = y_start;
+
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%02x", way);
+
+   x_pos += 5;
+
+   SH2REG_CCR = way << 6;
+
+   u32 addr = 0x60000000 | (index << 4);
+   u32 addr_val = (*(volatile u32 *)addr);
+
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%08x", addr_val);
+
+   x_pos += 11;
+
+   u32 data = data_array[(index * 4) + 0 + (way * 0x100)];
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%08x", data);
+
+   x_pos += 11;
+
+   data = data_array[(index * 4) + 1 + (way * 0x100)];
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%08x", data);
+
+   x_pos -= 11;
+   y_pos += 1;
+
+   data = data_array[(index * 4) + 2 + (way * 0x100)];
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%08x", data);
+
+   x_pos += 11;
+
+   data = data_array[(index * 4) + 3 + (way * 0x100)];
+   vdp_printf(&test_disp_font, x_pos * 8, y_pos * 8, 0xC, "0x%08x", data);
+
+   x_pos = 0;
+
+   print_addr_data(x_pos, y_pos, addr_val);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void print_cache_all_ways(int y_start, int index)
+{
+   int y = y_start;
+
+   vdp_printf(&test_disp_font, 0 * 8, y * 8, 0xC, "index: 0x%02x", index);
+   y += 2;
+
+   int way;
+
+   for (way = 0; way < 4; way++)
+   {
+      print_cache_for_way(0, y, way, index);
+      y += 6;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void print_cache_at_index(int index)
+{
+   clear_framebuffer();
+
+   vdp_printf(&test_disp_font, 0 * 8, 0 * 8, 0xC, "way    address    data");
+
+   print_cache_all_ways(2, index);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void cache_print_and_wait()
+{
+   int index = 0;
+
+   print_cache_at_index(0);
+
+   for (;;)
+   {
+      vdp_vsync();
+
+      if (per[0].but_push_once & PAD_A)
+      {
+         break;
+      }
+
+      if (per[0].but_push_once & PAD_Y)
+      {
+         reset_system();
+      }
+
+      if (per[0].but_push_once & PAD_UP)
+      {
+         index--;
+         if (index < 0)
+            index = 0;
+         print_cache_at_index(index);
+      }
+
+      if (per[0].but_push_once & PAD_DOWN)
+      {
+         index++;
+         print_cache_at_index(index);
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void cache_test()
+{
+   int i = 0;
+   int way = 0;
+
+   SH2REG_CCR = 0;//disable cache
+
+   //clear address arrays
+   for (way = 0; way < 4; way++)
+   {
+      //bank switch
+      SH2REG_CCR = way << 6;
+
+      for (i = 0; i < 64; i++)
+      {
+         address_array[i] = 0;
+      }
+   }
+
+   //clear data array
+   for (i = 0; i < 0x400; i++)
+      data_array[i] = 0;
+
+   wram_cache_through[0x11000] = 0xdeadbeef;
+   wram_cache_through[0x11001] = 0xcafef00d;
+   wram_cache_through[0x11002] = 0xb01dface;
+   wram_cache_through[0x11003] = 0xba5eba11;
+
+   for (i = 0; i < 64; i++)
+   {
+      wram_cache_through[0x12000 + i] = i;
+   }
+
+   SH2REG_CCR = (1 << 4); //purge
+   SH2REG_CCR = 1; //enable
+
+   //test write
+   wram_cache[0x10000] = wram_cache[0x11000];
+
+   SH2REG_CCR = 0;//disable cache
+
+   way = 0;
+
+   cache_print_and_wait();
+
+   //part 2
+
+   for (i = 0; i < 64; i+=4)
+   {
+      SH2REG_CCR = 1; //enable
+
+      wram_cache[0x13000 + i] = wram_cache[0x12000 + i];
+
+      SH2REG_CCR = 0;//disable
+
+      cache_print_and_wait();
+   }
+}

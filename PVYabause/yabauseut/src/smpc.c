@@ -13,11 +13,10 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-//#include <lapetus.h>
 #include <stdio.h>
 #include <string.h>
 #include "tests.h"
@@ -45,7 +44,305 @@ void smpc_test()
       choice = gui_do_menu(smpc_menu, &test_disp_font, 0, 0, "SMPC Tests", MTYPE_CENTER, -1);
       if (choice == -1)
          break;
-   }   
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void disable_iapetus_handler()
+{
+   bios_change_scu_interrupt_mask(0xFFFFFFF, MASK_VBLANKOUT | MASK_SYSTEMMANAGER);
+   bios_set_scu_interrupt(0x41, NULL);
+   bios_set_scu_interrupt(0x47, NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+volatile int hblank_timer = 0;
+volatile int issue_intback = 0;
+
+volatile int lines_since_vblank_out = 0;
+volatile int lines_since_vblank_in = 0;
+
+volatile int result_pos = 0;
+volatile int system_manager_occured = 0;
+
+volatile int frame_count = 0;
+volatile int stored_timer = 0;
+
+struct ResultType
+{
+   int type;
+   int since_vblank_out;
+   int since_vblank_in;
+   int free_timer;
+   int frame;
+   int total_time;
+};
+
+volatile struct ResultType results[64] = { { 0 } };
+
+char * result_types[] =
+{
+   "bad       ",
+   "intb issue",
+   "sys interu",
+   "in no data",
+   "data remai"
+};
+
+#define RESULT_START 1
+#define RESULT_SYS_MAN 2
+#define RESULT_NO_DATA 3
+#define RESULT_DATA_REM 4
+
+#define TEST_STATUS_ONLY 1
+#define TEST_STATUS_PERIPHERAL 2
+#define TEST_PERIPHERAL_ONLY 3
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_test_vblank_out_handler()
+{
+   lines_since_vblank_out = 0;
+   frame_count++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_test_hblank_in_handler()
+{
+   hblank_timer++;
+   lines_since_vblank_out++;
+   lines_since_vblank_in++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_test_vblank_in_handler()
+{
+   lines_since_vblank_in = 0;
+   issue_intback = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void reset_result(int pos)
+{
+   volatile struct ResultType * r = &results[pos];
+   r->type = 0;
+   r->since_vblank_out = 0;
+   r->since_vblank_in = 0;
+   r->free_timer = 0;
+   r->frame = 0;
+   r->total_time = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+inline void set_result(int type)
+{
+   volatile struct ResultType * r = &results[result_pos];
+
+   r->type = type;
+   r->since_vblank_out = lines_since_vblank_out;
+   r->since_vblank_in = lines_since_vblank_in;
+   r->free_timer = hblank_timer;
+   r->frame = frame_count;
+   r->total_time = hblank_timer - stored_timer;
+   result_pos++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_test_system_manager_handler()
+{
+   set_result(RESULT_SYS_MAN);
+
+   system_manager_occured = 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void intback_write_iregs(int status, int p2md, int p1md, int pen, int ope)
+{
+   SMPC_REG_IREG(0) = status;
+   SMPC_REG_IREG(1) = (p2md << 6) | (p1md << 4) | (pen << 3) | (ope << 0);
+   SMPC_REG_IREG(2) = 0xF0;
+   SMPC_REG_IREG(6) = 0xFE;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_intback_disable_interrupts()
+{
+   interrupt_set_level_mask(0xF);
+   bios_change_scu_interrupt_mask(0xFFFFFFFF, MASK_VBLANKOUT | MASK_HBLANKIN | MASK_VBLANKIN | MASK_SYSTEMMANAGER);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_intback_set_interrupts()
+{
+   bios_set_scu_interrupt(0x47, smpc_test_system_manager_handler);
+   bios_set_scu_interrupt(0x40, smpc_test_vblank_in_handler);
+   bios_set_scu_interrupt(0x41, smpc_test_vblank_out_handler);
+   bios_set_scu_interrupt(0x42, smpc_test_hblank_in_handler);
+   bios_change_scu_interrupt_mask(~(MASK_VBLANKOUT | MASK_HBLANKIN | MASK_VBLANKIN | MASK_SYSTEMMANAGER), 0);
+   interrupt_set_level_mask(0x1);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void reset_test_vars()
+{
+   int i;
+   for (i = 0; i < 64; i++)
+      reset_result(i);
+
+   hblank_timer = 0;
+   issue_intback = 0;
+
+   lines_since_vblank_out = 0;
+   lines_since_vblank_in = 0;
+
+   result_pos = 0;
+   system_manager_occured = 0;
+
+   frame_count = 0;
+   stored_timer = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_intback_issue_timing_test_main(int test_type, int vblank_line)
+{
+   smpc_intback_disable_interrupts();
+
+   reset_test_vars();
+
+   test_disp_font.transparent = 0;
+
+   smpc_intback_set_interrupts();
+
+   for (;;)
+   {
+      if (issue_intback && (lines_since_vblank_in == vblank_line))
+      {
+         issue_intback = 0;
+
+         if (test_type == TEST_STATUS_PERIPHERAL)
+            intback_write_iregs(1, 0, 0, 1, 0);
+         else if (test_type == TEST_PERIPHERAL_ONLY)
+            intback_write_iregs(0, 0, 0, 1, 0);
+         else if (test_type == TEST_STATUS_ONLY)
+            intback_write_iregs(1, 0, 0, 0, 0);
+
+         stored_timer = hblank_timer;
+
+         set_result(RESULT_START);
+
+         smpc_issue_command(SMPC_CMD_INTBACK);
+      }
+
+      if (system_manager_occured)
+      {
+         system_manager_occured = 0;
+
+         if (SMPC_REG_SR & (1 << 5))
+         {
+            set_result(RESULT_DATA_REM);
+            SMPC_REG_IREG(0) = 0x80;
+
+         }
+         else
+         {
+            set_result(RESULT_NO_DATA);
+         }
+      }
+
+      if (result_pos > 48)
+         break;
+   }
+
+   // Re-enable Peripheral Handler
+   per_init();
+
+   int i;
+   int j = 2;
+   int previous_frame = -1;
+
+   for (i = 0; i < 64; i++)
+   {
+      if (results[i].frame < 3)
+         continue;
+
+      if (results[i].frame != previous_frame)
+         j++;
+
+      previous_frame = results[i].frame;
+
+      vdp_printf(&test_disp_font, 0, 8 * j, 15,
+         "%s | %03d | %03d | %04d | %02d | %03d",
+         result_types[results[i].type],
+         results[i].since_vblank_out,
+         results[i].since_vblank_in,
+         results[i].free_timer,
+         results[i].frame,
+         results[i].total_time);
+
+      j++;
+
+      if (j > 27)
+         break;
+   }
+
+   for (;;)
+   {
+      vdp_vsync();
+
+      if (per[0].but_push_once & PAD_A)
+      {
+         break;
+      }
+
+      if (per[0].but_push_once & PAD_START)
+      {
+         reset_system();
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void smpc_intback_issue_timing_test()
+{
+   int line = 0;
+
+   vdp_printf(&test_disp_font, 0, 2 * 8, 15, "           | vbo | vbi | hbla | fr | lin", line);
+
+   int increment = 4;
+
+   for (line = 0; line < 41; line += increment)
+   {
+      vdp_printf(&test_disp_font, 0, 0, 15,"peripheral only, %d lines from vblank in    ", line);
+      smpc_intback_issue_timing_test_main(TEST_PERIPHERAL_ONLY, line);
+   }
+
+   for (line = 0; line < 41; line += increment)
+   {
+      vdp_printf(&test_disp_font, 0, 0, 15, "status before, %d lines from vblank in  ", line);
+      smpc_intback_issue_timing_test_main(TEST_STATUS_PERIPHERAL, line);
+   }
+
+   for (line = 0; line < 41; line += increment)
+   {
+      vdp_printf(&test_disp_font, 0, 0, 15, "status only, %d lines from vblank in  ", line);
+      smpc_intback_issue_timing_test_main(TEST_STATUS_ONLY, line);
+   }
+
+   test_disp_font.transparent = 1;
+   gui_clear_scr(&test_disp_font);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -71,24 +368,24 @@ void smpc_cmd_test()
    int i, j, k;
 
    // Disable Peripheral handler
-   bios_change_scu_interrupt_mask(0xFFFFFFF, MASK_VBLANKOUT | MASK_SYSTEMMANAGER);
+   disable_iapetus_handler();
    test_disp_font.transparent = 0;
-   
+
    vdp_printf(&test_disp_font, 2 * 8, 2 * 16, 15, "Starting test in X second(s)");
-   
+
    for (i = 5; i > 0; i--)
    {
       vdp_printf(&test_disp_font, 19 * 8, 2 * 16, 15, "%d", i);
-   	  
+
       for (j = 0; j < 60; j++)
          vdp_vsync();
-   }     
+   }
 
 //   SMPC_REG_IREG(0) = 0x40;
    SMPC_REG_IREG(0) = 0xFF;
    SMPC_REG_IREG(1) = 0x08;
    SMPC_REG_IREG(2) = 0xF0;
-   
+
    smpc_issue_command(SMPC_CMD_INTBACK);
    smpc_wait_till_ready();
 
@@ -96,23 +393,25 @@ void smpc_cmd_test()
 
    // Delay for a bit
    vdp_printf(&test_disp_font, 2 * 8, (6+17) * 8, 15, "Finishing up in X second(s)");
-   
+
    for (i = 9; i > 0; i--)
    {
       for (j = 0; j < 16; j++)
          vdp_printf(&test_disp_font, 2 * 8, (6+j) * 8, 15, "OREG%d = %08X", j, SMPC_REG_OREG(j));
       for (j = 0; j < 16; j++)
          vdp_printf(&test_disp_font, 20 * 8, (6+j) * 8, 15, "OREG%d = %08X", 16+j, SMPC_REG_OREG(16+j));
-      
+
    	vdp_printf(&test_disp_font, 18 * 8, (6+17) * 8, 15, "%d", i);
-   	  
+
       for (k = 0; k < 60; k++)
          vdp_vsync();
    }
 
    // Re-enable Peripheral Handler
-   bios_change_scu_interrupt_mask(~(MASK_VBLANKOUT | MASK_SYSTEMMANAGER), 0);
+   per_init();
+
    test_disp_font.transparent = 1;
+   gui_clear_scr(&test_disp_font);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -216,7 +515,7 @@ u8 disp_pad_data(u8 oreg_counter, int x, int y, u8 id)
    for (i = 0; i < 16; i++)
    {
       if (!(data & (1 << i)))
-      {        
+      {
          vdp_printf(&test_disp_font, x, y, 0xF, "%s ", pad_string[i]);
          x += (strlen(pad_string[i])+1) * 8;
       }
@@ -335,7 +634,6 @@ void per_test()
 #if 0
       for (i = 0; i < 16; i++)
         vdp_printf(&test_disp_font, 0 * 8, (4+i) * 8, 0xF, "OREG %02d: %02X", i, SMPC_REG_OREG(i));
-
       for (i = 0; i < 16; i++)
         vdp_printf(&test_disp_font, 16 * 8, (4+i) * 8, 0xF, "OREG %02d: %02X", i+16, SMPC_REG_OREG(i+16));
 #endif

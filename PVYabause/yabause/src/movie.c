@@ -46,11 +46,12 @@ int headersize=512;
 //////////////////////////////////////////////////////////////////////////////
 
 static void ReadHeader(FILE* fp) {
+   size_t num_read = 0;
 
 	fseek(fp, 0, SEEK_SET);
 
 	fseek(fp, 172, SEEK_SET);
-	fread(&Movie.Rerecords, sizeof(Movie.Rerecords), 1, fp);
+   num_read = fread(&Movie.Rerecords, sizeof(Movie.Rerecords), 1, fp);
 
 	fseek(fp, headersize, SEEK_SET);
 }
@@ -139,6 +140,8 @@ int framelength=16;
 void DoMovie(void) {
 
 	int x;
+   size_t num_read = 0;
+
 	if (Movie.Status == 0)
 		return;
 
@@ -158,10 +161,10 @@ void DoMovie(void) {
 
 	if(Movie.Status == Playback) {
 		for (x = 0; x < 8; x++) {
-			fread(&PORTDATA1.data[x], 1, 1, Movie.fp);
+         num_read = fread(&PORTDATA1.data[x], 1, 1, Movie.fp);
 		}
 		for (x = 0; x < 8; x++) {
-			fread(&PORTDATA2.data[x], 1, 1, Movie.fp);
+         num_read = fread(&PORTDATA2.data[x], 1, 1, Movie.fp);
 		}
 
 		//if we get to the end of the movie
@@ -192,7 +195,7 @@ void DoMovie(void) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-void MovieLoadState(const char * filename) {
+void MovieLoadState(void) {
 
 
 	if (Movie.ReadOnly == 1 && Movie.Status == Playback)  {
@@ -369,10 +372,10 @@ void SaveMovieInState(FILE* fp, IOCheck_struct check) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-void MovieReadState(FILE* fp, const char * filename) {
+void MovieReadState(FILE* fp) {
 
 	ReadMovieInState(fp);
-	MovieLoadState(filename);//file pointer and truncation
+	MovieLoadState();//file pointer and truncation
 
 }
 
@@ -380,17 +383,18 @@ void ReadMovieInState(FILE* fp) {
 
 	struct MovieBufferStruct tempbuffer;
 	int fpos;
+   size_t num_read = 0;
 
 	//overwrite the main movie on disk if we are recording or read+write playback
 	if(Movie.Status == Recording || (Movie.Status == Playback && Movie.ReadOnly == 0)) {
 
 		fpos=ftell(fp);//where we are in the savestate
-		fread(&tempbuffer.size, 4, 1, fp);//size
+      num_read = fread(&tempbuffer.size, 4, 1, fp);//size
 		if ((tempbuffer.data = (char *)malloc(tempbuffer.size)) == NULL)
 		{
 			return;
 		}
-		fread(tempbuffer.data, 1, tempbuffer.size, fp);//movie
+      num_read = fread(tempbuffer.data, 1, tempbuffer.size, fp);//movie
 		fseek(fp, fpos, SEEK_SET);//reset savestate position
 
 		rewind(Movie.fp);
@@ -405,6 +409,7 @@ struct MovieBufferStruct ReadMovieIntoABuffer(FILE* fp) {
 
 	int fpos;
 	struct MovieBufferStruct tempbuffer;
+   size_t num_read = 0;
 
 	fpos = ftell(fp);//save current pos
 
@@ -413,7 +418,7 @@ struct MovieBufferStruct ReadMovieIntoABuffer(FILE* fp) {
 	rewind(fp);
 
 	tempbuffer.data = (char*) malloc (sizeof(char)*tempbuffer.size);
-	fread (tempbuffer.data, 1, tempbuffer.size, fp);
+   num_read = fread(tempbuffer.data, 1, tempbuffer.size, fp);
 
 	fseek(fp, fpos, SEEK_SET); //reset back to correct pos
 	return(tempbuffer);
@@ -425,7 +430,7 @@ const char *MakeMovieStateName(const char *filename) {
 
 	static char *retbuf = NULL;  // Save the pointer to avoid memory leaks
 	if(Movie.Status == Recording || Movie.Status == Playback) {
-		const unsigned long newsize = strlen(filename) + 5 + 1;
+		const size_t newsize = strlen(filename) + 5 + 1;
 		free(retbuf);
 		retbuf = malloc(newsize);
 		if (!retbuf) {

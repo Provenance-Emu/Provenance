@@ -53,7 +53,21 @@ void YabauseGL::swapBuffers()
 
 QImage YabauseGL::grabFrameBuffer(bool withAlpha)
 {
-	return QImage();
+	int buf_width, buf_height;
+
+	if (dispbuffer == NULL) return QImage();
+
+	VIDCore->GetGlSize( &buf_width, &buf_height );
+
+#ifdef USE_RGB_555
+	QImage image = QImage((uchar *) dispbuffer, buf_width, buf_height, QImage::Format_RGB555);
+#elif USE_RGB_565
+	QImage image = QImage((uchar *) dispbuffer, buf_width, buf_height, QImage::Format_RGB16);
+#else
+	QImage image = QImage((uchar *) dispbuffer, buf_width, buf_height, QImage::Format_RGB32);
+	image = image.rgbSwapped();
+#endif
+	return image;
 }
 
 void YabauseGL::paintEvent( QPaintEvent * event )
@@ -70,8 +84,8 @@ void YabauseGL::paintEvent( QPaintEvent * event )
 	QImage image = QImage((uchar *) dispbuffer, buf_width, buf_height, QImage::Format_RGB16);
 #else
 	QImage image = QImage((uchar *) dispbuffer, buf_width, buf_height, QImage::Format_RGB32);
-#endif
 	image = image.rgbSwapped();
+#endif
 	QPainter p(this);
 	p.drawImage(this->rect(), image);
 }

@@ -2059,7 +2059,7 @@ void SCITransmitByte(UNUSED u8 val) {
 int SH2SaveState(SH2_struct *context, FILE *fp)
 {
    int offset;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
    sh2regs_struct regs;
 
    // Write header
@@ -2108,7 +2108,7 @@ int SH2SaveState(SH2_struct *context, FILE *fp)
 
 int SH2LoadState(SH2_struct *context, FILE *fp, UNUSED int version, int size)
 {
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
    sh2regs_struct regs;
 
    if (context->isslave == 1)

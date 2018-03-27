@@ -100,7 +100,7 @@ void FASTCALL JapModemCs2WriteByte(u32 addr, u8 val)
 	NETLINK_LOG("%08X Cs2 byte write. PC = %08X", addr, MSH2->regs.PC);
 }
 
-int JapModemInit(const char *setting)
+int JapModemInit(const char *ip, const char *port)
 {  
    if ((JapModemArea = malloc(sizeof(JapModem))) == NULL)
    {
@@ -109,7 +109,7 @@ int JapModemInit(const char *setting)
       return 0;
    }
 
-   return NetlinkInit(setting);
+   return NetlinkInit(ip, port);
 }
 
 void JapModemDeInit(void)

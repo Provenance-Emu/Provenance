@@ -36,7 +36,7 @@ void FASTCALL JapModemCs1WriteWord(u32 addr, u16 val);
 void FASTCALL JapModemCs1WriteLong(u32 addr, u32 val);
 u8 FASTCALL JapModemCs2ReadByte(u32 addr);
 void FASTCALL JapModemCs2WriteByte(u32 addr, u8 val);
-int JapModemInit(const char *setting);
+int JapModemInit(const char *ip, const char *port);
 void JapModemDeInit(void);
 void JapModemExec(u32 timing);
 

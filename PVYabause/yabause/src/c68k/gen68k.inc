@@ -807,21 +807,21 @@ static void set_add_flag(void)
     {
         case SIZE_BYTE:
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
-        	wf_op("\tCPU->flag_V = (src ^ res) & (dst ^ res);\n");
+        	wf_op("\tCPU->flag_V = (u32)((src ^ res) & (dst ^ res));\n");
             wf_op("\tCPU->flag_notZ = res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-        	wf_op("\tCPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;\n");
+        	wf_op("\tCPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;\n");
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ = res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ = res;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & (u32)dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & dst) | (~res & (src | dst))) >> 23;\n");
-        	wf_op("\tCPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -833,21 +833,21 @@ static void set_addx_flag(void)
     {
         case SIZE_BYTE:
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
-        	wf_op("\tCPU->flag_V = (src ^ res) & (dst ^ res);\n");
+        	wf_op("\tCPU->flag_V = (u32)((src ^ res) & (dst ^ res));\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-        	wf_op("\tCPU->flag_V = ((src ^ res) & (dst ^ res)) >> 8;\n");
+        	wf_op("\tCPU->flag_V = (u32)((src ^ res) & (dst ^ res)) >> 8;\n");
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ |= res;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & dst & 1) + (src >> 1) + (dst >> 1)) >> 23;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & dst & 1) + ((u32)src >> 1) + ((u32)dst >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & dst) | (~res & (src | dst))) >> 23;\n");
-        	wf_op("\tCPU->flag_V = ((src ^ res) & (dst ^ res)) >> 24;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ res) & ((u32)dst ^ res)) >> 24;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -859,21 +859,21 @@ static void set_sub_flag(void)
     {
         case SIZE_BYTE:
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
-        	wf_op("\tCPU->flag_V = (src ^ dst) & (res ^ dst);\n");
+        	wf_op("\tCPU->flag_V = ((u32)src ^ (u32)dst) & (res ^ (u32)dst);\n");
             wf_op("\tCPU->flag_notZ = res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 8;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 8;\n");
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ = res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ = res;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res & 1) + (src >> 1) + (res >> 1)) >> 23;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & res & 1) + ((u32)src >> 1) + (res >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res) | (~dst & (src | res))) >> 23;\n");
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 24;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 24;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -885,21 +885,21 @@ static void set_subx_flag(void)
     {
         case SIZE_BYTE:
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
-        	wf_op("\tCPU->flag_V = (src ^ dst) & (res ^ dst);\n");
+        	wf_op("\tCPU->flag_V = ((u32)src ^ (u32)dst) & (res ^ (u32)dst);\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 8;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 8;\n");
         	wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ |= res;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res & 1) + (src >> 1) + (res >> 1)) >> 23;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & res & 1) + ((u32)src >> 1) + (res >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res) | (~dst & (src | res))) >> 23;\n");
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 24;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 24;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -911,21 +911,21 @@ static void set_cmp_flag(void)
     {
         case SIZE_BYTE:
         	wf_op("\tCPU->flag_N = CPU->flag_C = res;\n");
-        	wf_op("\tCPU->flag_V = (src ^ dst) & (res ^ dst);\n");
+        	wf_op("\tCPU->flag_V = ((u32)src ^ (u32)dst) & (res ^ (u32)dst);\n");
             wf_op("\tCPU->flag_notZ = res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 8;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 8;\n");
         	wf_op("\tCPU->flag_N = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ = res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ = res;\n");
-	        wf_op("\tCPU->flag_C = ((src & res & 1) + (src >> 1) + (res >> 1)) >> 23;\n");
+	        wf_op("\tCPU->flag_C = (((u32)src & res & 1) + ((u32)src >> 1) + (res >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_C = ((src & res) | (~dst & (src | res))) >> 23;\n");
-        	wf_op("\tCPU->flag_V = ((src ^ dst) & (res ^ dst)) >> 24;\n");
+        	wf_op("\tCPU->flag_V = (((u32)src ^ (u32)dst) & (res ^ (u32)dst)) >> 24;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -936,22 +936,22 @@ static void set_negx_flag(void)
     switch(current_size)
     {
         case SIZE_BYTE:
-            wf_op("\tCPU->flag_V = res & src;\n");
+            wf_op("\tCPU->flag_V = res & (u32)src;\n");
             wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-            wf_op("\tCPU->flag_V = (res & src) >> 8;\n");
+            wf_op("\tCPU->flag_V = (res & (u32)src) >> 8;\n");
             wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ |= res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ |= res;\n");
-            wf_op("\tCPU->flag_V = (res & src) >> 24;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res & 1) + (src >> 1) + (res >> 1)) >> 23;\n");
-//            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res) | (~dst & (src | res))) >> 23;\n");
+            wf_op("\tCPU->flag_V = (res & (u32)src) >> 24;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & res & 1) + ((u32)src >> 1) + (res >> 1)) >> 23;\n");
+//            wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & res) | (~(u32)dst & ((u32)src | res))) >> 23;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
 	}
@@ -962,21 +962,21 @@ static void set_neg_flag(void)
     switch(current_size)
     {
         case SIZE_BYTE:
-            wf_op("\tCPU->flag_V = res & src;\n");
+            wf_op("\tCPU->flag_V = res & (u32)src;\n");
             wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res;\n");
             wf_op("\tCPU->flag_notZ = res & 0xFF;\n");
         	break;
 
         case SIZE_WORD:
-            wf_op("\tCPU->flag_V = (res & src) >> 8;\n");
+            wf_op("\tCPU->flag_V = (res & (u32)src) >> 8;\n");
             wf_op("\tCPU->flag_N = CPU->flag_X = CPU->flag_C = res >> 8;\n");
             wf_op("\tCPU->flag_notZ = res & 0xFFFF;\n");
         	break;
 
         case SIZE_LONG:
             wf_op("\tCPU->flag_notZ = res;\n");
-            wf_op("\tCPU->flag_V = (res & src) >> 24;\n");
-	        wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res & 1) + (src >> 1) + (res >> 1)) >> 23;\n");
+            wf_op("\tCPU->flag_V = (res & (u32)src) >> 24;\n");
+	        wf_op("\tCPU->flag_X = CPU->flag_C = (((u32)src & res & 1) + ((u32)src >> 1) + (res >> 1)) >> 23;\n");
 //            wf_op("\tCPU->flag_X = CPU->flag_C = ((src & res) | (~dst & (src | res))) >> 23;\n");
             wf_op("\tCPU->flag_N = res >> 24;\n");
         	break;
@@ -1179,12 +1179,12 @@ static void _ea_calc_free(u32 ea, u32 rsft)
 			break;
 
 		case EA_D16P:
-            wf_op("\tadr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;\n");
+            wf_op("\tadr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;\n");
             wf_op("\tPC += 2;\n");
 			break;
 
 		case EA_D8PX:
-            wf_op("\tadr = PC - CPU->BasePC;\n");
+            wf_op("\tadr = (u32)(PC - CPU->BasePC);\n");
             wf_op("\tDECODE_EXT_WORD\n");
 			break;
 	}
@@ -1283,13 +1283,13 @@ static void _ea_calc(u32 ea, u32 rsft)
 
 		case EA_D16P:
             current_cycle += (4 << cycle_sft) + 4;
-            wf_op("\tadr = (PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;\n");
+            wf_op("\tadr = (u32)(PC - CPU->BasePC) + (s32)(s16)FETCH_WORD;\n");
             wf_op("\tPC += 2;\n");
 			break;
 
 		case EA_D8PX:
             current_cycle += (4 << cycle_sft) + 6;
-            wf_op("\tadr = PC - CPU->BasePC;\n");
+            wf_op("\tadr = (u32)(PC - CPU->BasePC);\n");
             wf_op("\tDECODE_EXT_WORD\n");
 			break;
 	}
@@ -1607,7 +1607,7 @@ static void gen_privilege_exception(char *pre)
     do_pre_io();
 
     // push PC and SR
-    mem_op("%sPUSH_32_F(PC - CPU->BasePC)\n", pre);
+    mem_op("%sPUSH_32_F((u32)(PC - CPU->BasePC))\n", pre);
     mem_op("%sPUSH_16_F(GET_SR)\n", pre);
 
     // adjust SR
@@ -1636,7 +1636,7 @@ static void gen_exception(char *pre, char* exception)
     do_pre_io();
 
     // push PC and SR
-    mem_op("%sPUSH_32_F(PC - CPU->BasePC)\n", pre);
+    mem_op("%sPUSH_32_F((u32)(PC - CPU->BasePC))\n", pre);
     mem_op("%sPUSH_16_F(GET_SR)\n", pre);
 
     // adjust SR

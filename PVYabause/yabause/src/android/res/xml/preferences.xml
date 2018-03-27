@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
         <ListPreference
-            android:key="pref_game"
-            android:title="Game"
-            android:dialogTitle="Choose game" />
-
-        <ListPreference
             android:key="pref_bios"
             android:title="Bios"
             android:dialogTitle="Choose bios" />

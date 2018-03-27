@@ -2,9 +2,13 @@ project( yabause-qt )
 
 yab_port_start()
 
-find_package(Qt5 COMPONENTS Widgets)
+option(YAB_USE_QT5 "Use Qt 5 if available." ON)
 
-if(Qt5_FOUND) 
+if(YAB_USE_QT5)
+	find_package(Qt5 COMPONENTS Widgets QUIET)
+endif()
+
+if(Qt5_FOUND)
 	message(STATUS "Qt5 Found")
 
 	if( YAB_WANT_OPENGL )
@@ -12,21 +16,21 @@ if(Qt5_FOUND)
 	endif()
 
 	include_directories(${Qt5Widgets_INCLUDE_DIRS})
-	add_definitions(${Qt5Widgets_DEFINITIONS}) 
+	add_definitions(${Qt5Widgets_DEFINITIONS})
 
 	if (WIN32)
         	find_package(Qt5Core)
 	endif()
-else() 
-	find_package(Qt4)
+	find_package(Qt5Multimedia REQUIRED)
+	add_definitions(-DHAVE_QT_MULTIMEDIA=1)
 
-	if (NOT QT4_FOUND)
-		message(STATUS "NO QT4_FOUND OR Qt5_FOUND")
-		return()
-	endif (NOT QT4_FOUND)
-
+    # Since Qt5's cmake script doesn't set it, we will have to
+    SET(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
+    SET(QT_PLUGINS_DIR "${_qt5Core_install_prefix}/plugins")
+else()
 	set( QT_USE_QTCORE TRUE )
 	set( QT_USE_QTGUI TRUE )
+	set ( QT_USE_QTMULTIMEDIA TRUE )
 	if( YAB_WANT_OPENGL )
 		set( QT_USE_QTOPENGL TRUE )
 	endif()
@@ -34,9 +38,22 @@ else()
 		set( QT_USE_QTMAIN TRUE )
 	endif()
 
+	find_package(Qt4)
+
+	if (NOT QT4_FOUND)
+		message(STATUS "NO QT4_FOUND OR Qt5_FOUND")
+		return ()
+	endif ()
+
+	message (WARNING "Qt4 is deprecated. Support will be removed in the future.")
+
+	if (QT_QTMULTIMEDIA_FOUND)
+		add_definitions(-DHAVE_QT_MULTIMEDIA=1)
+	endif ()
+
 	# dunno what it does exactly ... but seem required
 	include( ${QT_USE_FILE} )
-endif() 
+endif()
 
 # qt resources file
 set( yabause_qt_RESOURCES resources/resources.qrc )
@@ -65,21 +82,21 @@ set( yabause_qt_FORMS
 	ui/UICheatAR.ui
 	ui/UICheatRaw.ui
 	ui/UICheatSearch.ui
-	ui/UIWaitInput.ui
 	ui/UIBackupRam.ui
 	ui/UIPortManager.ui
-	ui/UIPadSetting.ui 
-	ui/UI3DControlPadSetting.ui 
+	ui/UIPadSetting.ui
+	ui/UI3DControlPadSetting.ui
 	ui/UIGunSetting.ui
-	ui/UIMouseSetting.ui 
+	ui/UIMouseSetting.ui
     ui/UIDebugCPU.ui
     ui/UIDebugSCSP.ui
+    ui/UIDebugSCSPDSP.ui
     ui/UIDebugVDP1.ui
     ui/UIDebugVDP2.ui
     ui/UIDebugVDP2Viewer.ui
     ui/UIHexInput.ui
-    ui/UIMemoryTransfer.ui 
-    ui/UIMemoryEditor.ui 
+    ui/UIMemoryTransfer.ui
+    ui/UIMemoryEditor.ui
     ui/UIMemorySearch.ui )
 
 # pure C headers
@@ -98,7 +115,6 @@ set( yabause_qt_MOC_HEADERS
 	ui/UICheatAR.h
 	ui/UICheatRaw.h
 	ui/UICheatSearch.h
-	ui/UIWaitInput.h
 	ui/UIBackupRam.h
 	ui/UIPortManager.h
 	ui/UIControllerSetting.h
@@ -110,6 +126,7 @@ set( yabause_qt_MOC_HEADERS
     ui/UIDebugCPU.h
     ui/UIDebugM68K.h
     ui/UIDebugSCSP.h
+    ui/UIDebugSCSPDSP.h
     ui/UIDebugSCUDSP.h
     ui/UIDebugSH2.h
     ui/UIDebugVDP1.h
@@ -139,7 +156,6 @@ set( yabause_qt_SOURCES
 	ui/UICheatAR.cpp
 	ui/UICheatRaw.cpp
 	ui/UICheatSearch.cpp
-	ui/UIWaitInput.cpp
 	ui/UIBackupRam.cpp
 	ui/UIPortManager.cpp
 	ui/UIControllerSetting.cpp
@@ -151,6 +167,7 @@ set( yabause_qt_SOURCES
     ui/UIDebugCPU.cpp
     ui/UIDebugM68K.cpp
     ui/UIDebugSCSP.cpp
+    ui/UIDebugSCSPDSP.cpp
     ui/UIDebugSCUDSP.cpp
     ui/UIDebugSH2.cpp
     ui/UIDebugVDP1.cpp
@@ -173,15 +190,15 @@ else()
 	set( yabause_qt_SOURCES ${yabause_qt_SOURCES} YabauseSoftGL.cpp )
 endif()
 
-if(Qt5_FOUND) 
+if(Qt5_FOUND)
 	QT5_ADD_RESOURCES( yabause_qt_RCC_RESOURCES ${yabause_qt_RESOURCES} )
 	QT5_WRAP_UI( yabause_qt_UI_FORMS ${yabause_qt_FORMS} )
 	QT5_WRAP_CPP( yabause_qt_MOC_SOURCES ${yabause_qt_MOC_HEADERS} )
-else() 
+else()
 	QT4_ADD_RESOURCES( yabause_qt_RCC_RESOURCES ${yabause_qt_RESOURCES} )
 	QT4_WRAP_UI( yabause_qt_UI_FORMS ${yabause_qt_FORMS} )
 	QT4_WRAP_CPP( yabause_qt_MOC_SOURCES ${yabause_qt_MOC_HEADERS} )
-endif() 
+endif()
 
 set( yabause_qt_SOURCES ${yabause_qt_SOURCES} resources/icons/yabause.icns )
 set_source_files_properties( resources/icons/yabause.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources )
@@ -202,7 +219,8 @@ include_directories(
 	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}/ui
 	${Qt5Widgets_INCLUDE_DIRS}
-	${Qt5OpenGL_INCLUDE_DIRS} )
+	${Qt5OpenGL_INCLUDE_DIRS}
+	${Qt5Multimedia_INCLUDE_DIRS} )
 else()
 include_directories(
 	.
@@ -230,7 +248,7 @@ target_link_libraries( yabause-qt ${PORT_LIBRARIES} )
 target_link_libraries( yabause-qt ${yabause_qt_windows_LIBRARIES} )
 target_link_libraries( yabause-qt ${yabause_qt_macosx_LIBRARIES} )
 if (Qt5_FOUND)
-	target_link_libraries( yabause-qt ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Core_QTMAIN_LIBRARIES} ${Qt5Network_LIBRARIES} )
+	target_link_libraries( yabause-qt ${Qt5Widgets_LIBRARIES} ${Qt5OpenGL_LIBRARIES} ${Qt5Core_QTMAIN_LIBRARIES} ${Qt5Multimedia_LIBRARIES})
 else()
 	target_link_libraries( yabause-qt ${QT_LIBRARIES} )
 endif()
@@ -238,7 +256,7 @@ endif()
 yab_port_success(yabause-qt)
 configure_file(yabause.desktop.in ${YAB_PORT_NAME}.desktop)
 
-if (WIN32)
+if (WIN32 AND NOT MSYS2_BUILD)
 	install(TARGETS yabause-qt DESTINATION ".")
 	if (GLUT_FOUND)
 		install(FILES ${GLUT_INCLUDE_DIR}/../freeglut.dll DESTINATION ".")
@@ -247,21 +265,32 @@ if (WIN32)
 		get_filename_component(SDL_BINARY_DIR ${SDL_LIBRARY} PATH)
 		install(DIRECTORY ${SDL_BINARY_DIR}/
 			DESTINATION "."
-			FILES_MATCHING PATTERN "SDL*.dll")
+			FILES_MATCHING PATTERN "SDL.dll")
 	endif ()
-	if(Qt5_FOUND) 
+	if (SDL2_FOUND)
+		get_filename_component(SDL2_BINARY_DIR ${SDL2_LIBRARY} PATH)
+		install(DIRECTORY ${SDL2_BINARY_DIR}/
+			DESTINATION "."
+			FILES_MATCHING PATTERN "SDL2.dll")
+	endif ()
+	if(Qt5_FOUND)
 		install(FILES ${QT_BINARY_DIR}/Qt5Core.dll DESTINATION ".")
 		install(FILES ${QT_BINARY_DIR}/Qt5Gui.dll DESTINATION ".")
 		install(FILES ${QT_BINARY_DIR}/Qt5OpenGL.dll DESTINATION ".")
 		install(FILES ${QT_BINARY_DIR}/Qt5Widgets.dll DESTINATION ".")
-		install(FILES ${QT_BINARY_DIR}/icudt51.dll DESTINATION ".")
-		install(FILES ${QT_BINARY_DIR}/icuin51.dll DESTINATION ".")
-		install(FILES ${QT_BINARY_DIR}/icuuc51.dll DESTINATION ".")
-		install(FILES ${QT_BINARY_DIR}/../plugins/platforms/qwindows.dll DESTINATION "plugins/platforms")
+		install(FILES ${QT_BINARY_DIR}/Qt5Multimedia.dll DESTINATION ".")
+		install(FILES ${QT_BINARY_DIR}/Qt5Network.dll DESTINATION ".")
+		install(DIRECTORY ${QT_BINARY_DIR}/ DESTINATION "." FILES_MATCHING PATTERN "icudt*.dll")
+		install(DIRECTORY ${QT_BINARY_DIR}/ DESTINATION "." FILES_MATCHING PATTERN "icuin*.dll")
+		install(DIRECTORY ${QT_BINARY_DIR}/ DESTINATION "." FILES_MATCHING PATTERN "icuuc*.dll")
+		install(FILES ${QT_PLUGINS_DIR}/platforms/qwindows.dll DESTINATION "platforms")
 	else()
 		install(FILES ${QT_BINARY_DIR}/QtCore4.dll DESTINATION ".")
 		install(FILES ${QT_BINARY_DIR}/QtGui4.dll DESTINATION ".")
 		install(FILES ${QT_BINARY_DIR}/QtOpenGL4.dll DESTINATION ".")
+		if (QT_QTMULTIMEDIA_FOUND)
+			install(FILES ${QT_BINARY_DIR}/QtMultimedia4.dll DESTINATION ".")
+		endif()
 	endif()
 
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../AUTHORS    DESTINATION "." RENAME AUTHORS.txt)
@@ -269,7 +298,7 @@ if (WIN32)
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../COPYING    DESTINATION "." RENAME COPYING.txt)
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../README     DESTINATION "." RENAME README.txt)
 	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../README.WIN DESTINATION "." RENAME README.WIN.txt)
-	
+
 	if (MINGW)
 		get_filename_component( Mingw_Path ${CMAKE_CXX_COMPILER} PATH )
 		if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64" OR "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "AMD64")

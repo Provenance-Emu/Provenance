@@ -65,6 +65,11 @@ UIPortManager::UIPortManager( QWidget* parent )
 	{
 		connect( tb, SIGNAL( clicked() ), this, SLOT( tbClearJoystick_clicked() ) );
 	}
+
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbRemoveJoystick*", Qt::CaseInsensitive, QRegExp::Wildcard ) ) )
+	{
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbRemoveJoystick_clicked() ) );
+	}
 }
 
 UIPortManager::~UIPortManager()
@@ -98,6 +103,11 @@ void UIPortManager::loadSettings()
 	}
 
 	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbClearJoystick*", Qt::CaseInsensitive, QRegExp::Wildcard ) ) )
+	{
+		tb->setEnabled( false );
+	}
+
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbRemoveJoystick*", Qt::CaseInsensitive, QRegExp::Wildcard ) ) )
 	{
 		tb->setEnabled( false );
 	}
@@ -139,15 +149,22 @@ void UIPortManager::cbTypeController_currentIndexChanged( int id )
 		case PERMOUSE:
 			buttons.at( 0 )->setEnabled( true );
 			buttons.at( 1 )->setEnabled( true );
+			buttons.at( 2 )->setEnabled( true );
 			break;
 		case PERGUN:
 			buttons.at( 0 )->setEnabled( true );
 			buttons.at( 1 )->setEnabled( true );
+			buttons.at( 2 )->setEnabled( true );
 			break;
 		case PERKEYBOARD:
+			buttons.at( 0 )->setEnabled( false );
+			buttons.at( 1 )->setEnabled( false );
+			buttons.at( 2 )->setEnabled( true );
+			break;
 		default:
 			buttons.at( 0 )->setEnabled( false );
 			buttons.at( 1 )->setEnabled( false );
+			buttons.at( 2 )->setEnabled( false );
 			break;
 	}
 
@@ -271,4 +288,11 @@ void UIPortManager::tbClearJoystick_clicked()
 	{
 		settings->setValue( QString( mSettingsType ).arg( mPort ).arg( controllerId ), type );
 	}
+}
+
+void UIPortManager::tbRemoveJoystick_clicked()
+{
+	uint controllerId = sender()->objectName().remove( "tbRemoveJoystick" ).toUInt();
+	QComboBox* cb = findChild<QComboBox*>( QString( "cbTypeController%1" ).arg( controllerId ) );
+	cb->setCurrentIndex(0);
 }

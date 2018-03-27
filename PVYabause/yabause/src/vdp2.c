@@ -40,12 +40,14 @@ Vdp2 * Vdp2Regs;
 Vdp2Internal_struct Vdp2Internal;
 Vdp2External_struct Vdp2External;
 
-static Vdp2 Vdp2Lines[270];
+struct CellScrollData cell_scroll_data[270];
+Vdp2 Vdp2Lines[270];
 
 static int autoframeskipenab=0;
 static int throttlespeed=0;
 u64 lastticks=0;
 static int fps;
+int vdp2_is_odd_frame = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -245,7 +247,7 @@ void Vdp2Reset(void) {
    Vdp2Regs->COBG = 0x0000;
    Vdp2Regs->COBB = 0x0000;
 
-   yabsys.VBlankLineCount = 224;
+   yabsys.VBlankLineCount = 225;
    Vdp2Internal.ColorMode = 0;
 
    Vdp2External.disptoggle = 0xFF;
@@ -257,6 +259,7 @@ void Vdp2VBlankIN(void) {
    VIDCore->Vdp2DrawEnd();
    /* this should be done after a frame change or a plot trigger */
    Vdp1Regs->COPR = 0;
+
    /* I'm not 100% sure about this, but it seems that when using manual change
    we should swap framebuffers in the "next field" and thus, clear the CEF...
    now we're lying a little here as we're not swapping the framebuffers. */
@@ -282,16 +285,25 @@ void Vdp2HBlankIN(void) {
 //////////////////////////////////////////////////////////////////////////////
 
 void Vdp2HBlankOUT(void) {
+   int i;
    Vdp2Regs->TVSTAT &= ~0x0004;
 
    if (yabsys.LineCount < 270)
+   {
+      u32 cell_scroll_table_start_addr = (Vdp2Regs->VCSTA.all & 0x7FFFE) << 1;
       memcpy(Vdp2Lines + yabsys.LineCount, Vdp2Regs, sizeof(Vdp2));
+
+      for (i = 0; i < 88; i++)
+      {
+         cell_scroll_data[yabsys.LineCount].data[i] = Vdp2RamReadLong(cell_scroll_table_start_addr + i * 4);
+      }
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
-Vdp2 * Vdp2RestoreRegs(int line) {
-   return line > 270 ? NULL : Vdp2Lines + line;
+Vdp2 * Vdp2RestoreRegs(int line, Vdp2* lines) {
+   return line > 270 ? NULL : lines + line;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -336,7 +348,12 @@ void Vdp2VBlankOUT(void) {
    static u64 onesecondticks = 0;
    static VideoInterface_struct * saved = NULL;
 
-   Vdp2Regs->TVSTAT = (Vdp2Regs->TVSTAT & ~0x0008) | 0x0002;
+   if (vdp2_is_odd_frame)
+      vdp2_is_odd_frame = 0;
+   else
+      vdp2_is_odd_frame = 1;
+
+   Vdp2Regs->TVSTAT = ((Vdp2Regs->TVSTAT & ~0x0008) & ~0x0002) | (vdp2_is_odd_frame << 1);
 
    if (skipnextframe && (! saved))
    {
@@ -356,7 +373,7 @@ void Vdp2VBlankOUT(void) {
       if (Vdp1Regs->PTMR == 2) Vdp1Draw();
    }
    else
-      if (Vdp1Regs->PTMR == 2) Vdp1NoDraw();
+	   if (Vdp1Regs->PTMR == 2) Vdp1Draw();
 
    FPSDisplay();
    if ((Vdp1Regs->FBCR & 2) && (Vdp1Regs->TVMR & 8))
@@ -428,7 +445,7 @@ void Vdp2VBlankOUT(void) {
    }
 
    ScuSendVBlankOUT();
-   
+
    if (Vdp2Regs->EXTEN & 0x200) // Should be revised for accuracy(should occur only occur on the line it happens at, etc.)
    {
       // Only Latch if EXLTEN is enabled
@@ -486,7 +503,7 @@ u16 FASTCALL Vdp2ReadWord(u32 addr) {
          else
             return (tvstat | 0x8);
       }
-      case 0x006:         
+      case 0x006:
          return Vdp2Regs->VRSIZE;
       case 0x008:
          return Vdp2Regs->HCNT;
@@ -526,7 +543,7 @@ void FASTCALL Vdp2WriteWord(u32 addr, u16 val) {
    {
       case 0x000:
          Vdp2Regs->TVMD = val;
-         yabsys.VBlankLineCount = 224+(val & 0x30);
+         yabsys.VBlankLineCount = 225+(val & 0x30);
          return;
       case 0x002:
          Vdp2Regs->EXTEN = val;
@@ -873,7 +890,7 @@ void FASTCALL Vdp2WriteWord(u32 addr, u16 val) {
          return;
       case 0x0E6:
          Vdp2Regs->CRAOFB = val;
-         return;     
+         return;
       case 0x0E8:
          Vdp2Regs->LNCLEN = val;
          return;
@@ -882,7 +899,7 @@ void FASTCALL Vdp2WriteWord(u32 addr, u16 val) {
          return;
       case 0x0EC:
          Vdp2Regs->CCCTL = val;
-         return;     
+         return;
       case 0x0EE:
          Vdp2Regs->SFCCMD = val;
          return;
@@ -969,7 +986,7 @@ void FASTCALL Vdp2WriteWord(u32 addr, u16 val) {
 //////////////////////////////////////////////////////////////////////////////
 
 void FASTCALL Vdp2WriteLong(u32 addr, u32 val) {
-   
+
    Vdp2WriteWord(addr,val>>16);
    Vdp2WriteWord(addr+2,val&0xFFFF);
    return;
@@ -980,7 +997,7 @@ void FASTCALL Vdp2WriteLong(u32 addr, u32 val) {
 int Vdp2SaveState(FILE *fp)
 {
    int offset;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    offset = StateWriteHeader(fp, "VDP2", 1);
 
@@ -1003,7 +1020,7 @@ int Vdp2SaveState(FILE *fp)
 
 int Vdp2LoadState(FILE *fp, UNUSED int version, int size)
 {
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    // Read registers
    yread(&check, (void *)Vdp2Regs, sizeof(Vdp2), 1, fp);

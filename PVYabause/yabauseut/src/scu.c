@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -51,9 +51,6 @@
 #define SCUREG_T1MD  (*(volatile u32 *)0x25FE0098)
 
 #define SCUREG_IMS   (*(volatile u32 *)0x25FE00A0)
-#define SCUREG_IMS   (*(volatile u32 *)0x25FE00A0)
-
-#define SCUREG_IMS   (*(volatile u32 *)0x25FE00A0)
 #define SCUREG_IST   (*(volatile u32 *)0x25FE00A4)
 
 #define SCUREG_AIACK (*(volatile u32 *)0x25FE00A8)
@@ -83,7 +80,7 @@ void scu_test()
       choice = gui_do_menu(scumenu, &test_disp_font, 0, 0, "SCU Menu", MTYPE_CENTER, -1);
       if (choice == -1)
          break;
-   }   
+   }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -565,8 +562,8 @@ void test_indirect_dma()
    static u32 dma_array[3 * 3];
    static u32 dma_data_array[] = {
       0x02030405,
-      0x0708090A, 
-      0x0C0D0E0F, 
+      0x0708090A,
+      0x0C0D0E0F,
    };
 
    interrupt_set_level_mask(0xF);
@@ -655,5 +652,594 @@ void test_ist_and_ims()
 
 //////////////////////////////////////////////////////////////////////////////
 
+int dma_print_pos = 0;
+volatile int dma_finished = 0;
+volatile int interrupt_error = 0;
+volatile int num_interrupts = 0;
 
+struct DmaStruct
+{
+   u32 source_addr;
+   u32 dest_addr;
+   u32 length;
+   u32 read_add;
+   u32 write_add;
+   u32 factor;
+   u32 enable;
+   u32 level;
+};
 
+//////////////////////////////////////////////////////////////////////////////
+
+void frc_clear()
+{
+   SH2_REG_FRC_W(0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int frc_get()
+{
+   return SH2_REG_FRC_R;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void do_dma(u32 src_addr, u32 dst_addr, u32 read_add, u32 write_add, u32 length, u32 print_result, u32 factor)
+{
+   dma_finished = 0;
+
+   SCUREG_D0EN = 0;
+   SCUREG_D0R = src_addr;
+   SCUREG_D0W = dst_addr;
+   SCUREG_D0C = length;
+   SCUREG_D0AD = (read_add << 8) | write_add;
+   SCUREG_D0MD = factor;
+
+   frc_clear();
+
+   SCUREG_D0EN = 0x101;
+
+   while (!dma_finished) {}
+
+   u32 endtime = frc_get();
+
+   if (print_result)
+      vdp_printf(&test_disp_font, 0 * 8, dma_print_pos * 8, 0xF, "frc: %d (~%d cycles)", endtime, endtime * 8);
+
+   dma_print_pos++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void scu_dma_memset(u32 destination, u32 length)
+{
+
+   volatile u32 *p = (volatile u32 *)(0x260F0000);
+   p[0] = 0;
+   do_dma(0x260F0000, destination, 0, 1, length, 0, 7);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void memset_test_areas(u32 length)
+{
+   scu_dma_memset(0x25E00000, 320 * 224 * 2);
+   scu_dma_memset(0x25a00000, length);
+   scu_dma_memset(0x25C00000, length);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void dma_interrupt()
+{
+   if (dma_finished == 1)
+      interrupt_error = 1;
+
+   dma_finished = 1;
+
+   num_interrupts += 1;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void dma_interrupt_setup()
+{
+   bios_set_scu_interrupt(0x4B, dma_interrupt);
+   bios_change_scu_interrupt_mask(~MASK_DMA0, 0);
+   interrupt_set_level_mask(0x4);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+#define RSTCSR_W (*(volatile u16 *)0XFFFFFE82)
+
+#define WRITE_DEST(DESTINATION_ADDR) \
+   *DESTINATION_ADDR = 1; \
+   *DESTINATION_ADDR = 2; \
+   *DESTINATION_ADDR = 3; \
+   *DESTINATION_ADDR = 2;
+
+//////////////////////////////////////////////////////////////////////////////
+
+void write_timing(u32 destination, char*test_name)
+{
+   memset_test_areas(0x1000);
+
+#ifdef WANT_32
+   volatile u32 *dest_ptr = (volatile u32 *)(destination);
+#else
+   volatile u16 *dest_ptr = (volatile u16 *)(destination);
+#endif
+
+   dma_print_pos = 10;
+
+   int i;
+
+   int num_writes = 16;
+
+   vdp_printf(&test_disp_font, 0 * 8, 1 * 8, 0xF, "%s", test_name);
+
+   for (i = 0; i < 5; i++)
+   {
+      vdp_wait_vblankin();
+
+      //zero watchdog timer
+      SH2_REG_WTCNT_W(0);
+      RSTCSR_W = 0;
+
+      //enable timer
+      SH2_REG_WTCSR_W(1 << 5);
+
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+
+      u8 end_time = SH2_REG_WTCNT_R;
+
+      //disable timer
+      SH2_REG_WTCSR_W(0);
+
+      frc_clear();
+
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+      WRITE_DEST(dest_ptr);
+
+      u32 endtime = frc_get();
+
+      vdp_printf(&test_disp_font, 0 * 8, dma_print_pos * 8, 0xF, "frc: %d (~%d cycles), ~%d cycles per write", endtime, endtime * 8, (endtime * 8) / num_writes);
+      vdp_printf(&test_disp_font, 0 * 8, (dma_print_pos + 6) * 8, 0xF, "wdt: %d (~%d cycles), ~%d cycles per write", end_time, end_time * 2, (end_time * 2) / num_writes);
+
+      dma_print_pos++;
+   }
+
+   for (;;)
+   {
+      vdp_wait_vblankin();
+
+      if (per[0].but_push_once & PAD_A)
+      {
+         break;
+      }
+
+      if (per[0].but_push_once & PAD_Y)
+      {
+         reset_system();
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void write_timing_test()
+{
+   dma_interrupt_setup();
+
+   write_timing(0x25E00000, "to vdp2 vram");
+
+   write_timing(0x25a00000, "to scsp ram");
+
+   write_timing(0x25C00000, "to vdp1 ram");
+
+   write_timing(0x25C80000, "to vdp1 framebuffer");
+
+   write_timing(0x20200000, "to low work ram");
+
+   write_timing(0x260FF000, "to high work ram");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void print_data(u32 x_start, u32 y_start, u32 addr, u32 length, char * str)
+{
+   volatile u32 *ptr = (volatile u32 *)(addr);
+   int i;
+
+   vdp_printf(&test_disp_font, x_start * 8, y_start * 8, 0xF, str);
+
+   vdp_printf(&test_disp_font, x_start * 8, (y_start + 1) * 8, 0xF, "start");
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, x_start * 8, (i + y_start + 2) * 8, 0xF, "%08X", ptr[i]);
+   }
+
+   vdp_printf(&test_disp_font, (x_start + 9) * 8, (y_start + 1) * 8, 0xF, "end");
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, (x_start + 9) * 8, (i + y_start + 2) * 8, 0xF, "%08X", ptr[i + ((length / 4) - 16)]);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void memory_setup(u32 addr1, u32 addr2, u32 length)
+{
+   int i;
+
+   volatile u32 *dest_1 = (volatile u32*)(addr1);
+   volatile u32 *dest_2 = (volatile u32*)(addr2);
+
+   for (i = 0; i < (length / 4); i += 4)
+   {
+      dest_1[i + 0] = 0x00000008;
+      dest_1[i + 1] = 0x00010009;
+      dest_1[i + 2] = 0x0002000a;
+      dest_1[i + 3] = 0x0003000b;
+   }
+
+   for (i = 0; i < (length / 4); i += 4)
+   {
+      dest_2[i + 0] = 0x0004000c;
+      dest_2[i + 1] = 0x0005000d;
+      dest_2[i + 2] = 0x0006000e;
+      dest_2[i + 3] = 0x0007000f;
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void finish_loop()
+{
+   for (;;)
+   {
+      vdp_vsync();
+
+      if (interrupt_error)
+      {
+         vdp_printf(&test_disp_font, 0 * 8, 0 * 8, 0xF, "error");
+      }
+
+      if (per[0].but_push_once & PAD_A)
+      {
+         break;
+      }
+
+      if (per[0].but_push_once & PAD_Y)
+      {
+         reset_system();
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void test_boilerplate(u32 src_addr, u32 length, char* test_name)
+{
+   memset_test_areas(length);
+
+   memory_setup(src_addr, src_addr + length, length);
+
+   vdp_printf(&test_disp_font, 0 * 8, 2 * 8, 0xF, "%s", test_name);
+
+   //source data
+   print_data(0, 3, src_addr, length, "source");
+
+   dma_print_pos = 22;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void test_direct_dma(u32 src_addr, u32 dst_addr, u32 read_add, u32 write_add, u32 factor, u32 length, char* test_name)
+{
+   test_boilerplate(src_addr, length, test_name);
+
+   int i;
+   for (i = 0; i < 5; i++)
+   {
+      //vdp2 dma takes much longer during active display
+      vdp_wait_vblankin();
+      do_dma(src_addr, dst_addr, read_add, write_add, length, 1, factor);
+   }
+
+   //destination data
+   print_data(18, 3, dst_addr, length, "destination");
+
+   finish_loop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void do_dma_multiple_struct(
+struct DmaStruct * dma_struct,
+   u32 print_result,
+   u32 num_dmas)
+{
+   dma_finished = 0;
+
+   int i;
+
+   SCUREG_D0EN = 0;
+
+   for (i = 0; i < num_dmas; i++)
+   {
+      u32 level = dma_struct[i].level;
+
+      if (level == 0)
+      {
+         SCUREG_D0R = dma_struct[i].source_addr;
+         SCUREG_D0W = dma_struct[i].dest_addr;
+         SCUREG_D0C = dma_struct[i].length;
+         SCUREG_D0AD = (dma_struct[i].read_add << 8) | dma_struct[i].write_add;
+         SCUREG_D0MD = dma_struct[i].factor;
+         SCUREG_D0EN = dma_struct[i].enable;
+      }
+      else if (level == 1)
+      {
+         SCUREG_D1R = dma_struct[i].source_addr;
+         SCUREG_D1W = dma_struct[i].dest_addr;
+         SCUREG_D1C = dma_struct[i].length;
+         SCUREG_D1AD = (dma_struct[i].read_add << 8) | dma_struct[i].write_add;
+         SCUREG_D1MD = dma_struct[i].factor;
+         SCUREG_D1EN = dma_struct[i].enable;
+      }
+      else if (level == 2)
+      {
+         SCUREG_D2R = dma_struct[i].source_addr;
+         SCUREG_D2W = dma_struct[i].dest_addr;
+         SCUREG_D2C = dma_struct[i].length;
+         SCUREG_D2AD = (dma_struct[i].read_add << 8) | dma_struct[i].write_add;
+         SCUREG_D2MD = dma_struct[i].factor;
+         SCUREG_D2EN = dma_struct[i].enable;
+      }
+   }
+
+   frc_clear();
+
+   while (!dma_finished) {}
+
+   u32 endtime = frc_get();
+
+   if (print_result)
+      vdp_printf(&test_disp_font, 0 * 8, dma_print_pos * 8, 0xF, "frc: %d (~%d cycles)", endtime, endtime * 8);
+
+   dma_print_pos++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void test_multiple_direct_dma(u32 dst_addr, u32 read_add, u32 write_add, char* test_name, u32 num_dmas)
+{
+   u32 length = 0x800;
+   memset_test_areas(length);
+
+   vdp_printf(&test_disp_font, 0 * 8, 2 * 8, 0xF, "%s", test_name);
+
+   u32 src_addrs[32] = { 0 };
+   u32 dst_addrs[32] = { 0 };
+   u32 data[32] = { 0 };
+
+   struct DmaStruct dma_structs[16] = { { 0 } };
+
+   int i;
+
+   for (i = 0; i < num_dmas; i++)
+   {
+      dma_structs[i].source_addr = 0x260F0000 + length*i;
+      dma_structs[i].dest_addr = 0x25E00000 + length*i;
+      dma_structs[i].length = length;
+      dma_structs[i].read_add = read_add;
+      dma_structs[i].write_add = write_add;
+      dma_structs[i].factor = 7;
+      dma_structs[i].enable = 0x101;
+      dma_structs[i].level = 1;
+
+      src_addrs[i] = 0x260F0000 + length*i;
+      dst_addrs[i] = 0x25E00000 + length*i;
+      data[i] = 0xcafe0000 + i;
+   }
+
+   //source data
+   print_data(0, 3, src_addrs[0], length, "source");
+
+   dma_print_pos = 22;
+
+   int j;
+
+   for (i = 0; i < num_dmas; i++)
+   {
+      volatile u32 *dst = (volatile u32 *)(src_addrs[i]);
+
+      for (j = 0; j < (length / 4); j += 4)
+      {
+         dst[j + 0] = data[i];
+         dst[j + 1] = data[i];
+         dst[j + 2] = data[i];
+         dst[j + 3] = data[i];
+      }
+   }
+
+   num_interrupts = 0;
+
+   vdp_wait_vblankin();
+
+   do_dma_multiple_struct(dma_structs, 1, num_dmas);
+
+   for (i = 0; i < num_dmas; i++)
+   {
+      volatile u32 *ptr = (volatile u32 *)(dst_addrs[i]);
+      u32 x_start = 18;
+      u32 y_start = 3;
+      vdp_printf(&test_disp_font, (x_start + 9) * 8, (i + y_start + 2) * 8, 0xF, "%08X", ptr[(length / 4) - 1]);
+   }
+
+   vdp_printf(&test_disp_font, 18 * 8, 27 * 8, 0xF, "%08X", num_interrupts);
+
+   finish_loop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void test_all_direct_dma()
+{
+   u32 high_wram_addr = 0x260F0000;
+   u32 vdp2_vram_addr = 0x25E00000;
+   u32 scsp_ram_addr = 0x25a00000;
+   u32 vdp1_ram_addr = 0x25C00000;
+   u32 vdp1_fb_addr = 0x25C80000;
+
+   u32 length = 0x1000;
+
+   int i;
+
+   test_multiple_direct_dma(vdp2_vram_addr, 1, 1, "multiple dma %d", 1);
+
+   for (i = 1; i < 17; i++)
+   {
+      test_multiple_direct_dma(vdp2_vram_addr, 1, 1, "multiple dma %d", i);
+   }
+
+   test_direct_dma(high_wram_addr, vdp2_vram_addr, 1, 1, 7, length, "wram to vdp2 vram");
+   test_direct_dma(high_wram_addr, scsp_ram_addr, 1, 1, 7, length, "wram to scsp ram");
+   test_direct_dma(high_wram_addr, vdp1_ram_addr, 1, 1, 7, length, "wram to vdp1 ram");
+
+   vdp_vsync();
+   VDP1_REG_FBCR = 3;
+   vdp_vsync();
+
+   test_direct_dma(high_wram_addr, vdp1_fb_addr, 1, 1, 7, length, "wram to vdp1 fb");
+
+   test_direct_dma(vdp2_vram_addr, high_wram_addr, 1, 2, 7, length, "vdp2 vram to wram");
+   test_direct_dma(scsp_ram_addr, high_wram_addr, 1, 2, 7, length, "scsp ram to wram");
+   test_direct_dma(vdp1_ram_addr, high_wram_addr, 1, 2, 7, length, "vdp1 ram to wram");
+
+   vdp_vsync();
+   VDP1_REG_FBCR = 3;
+   vdp_vsync();
+
+   test_direct_dma(vdp1_fb_addr, high_wram_addr, 1, 2, 7, length, "vdp1 fb to wram");
+
+   vdp_vsync();
+   VDP1_REG_FBCR = 0;
+   vdp_vsync();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void indirect_dma_test()
+{
+   int length = 0x1000;
+
+   int i;
+
+   volatile u32 *dest_ptr = (volatile u32 *)(0x25E00000);
+   volatile u32 *dest_ptr_len = (volatile u32 *)(0x25E02000);
+
+   memory_setup(0x260F0000, 0x260F2000, length);
+
+   u32 indirect_table_addr = 0x260FF000;
+
+   volatile u32 *indirect_table = (volatile u32 *)(indirect_table_addr);
+
+   indirect_table[0] = length;
+   indirect_table[1] = 0x25E00000;
+   indirect_table[2] = 0x260F0000;
+
+   indirect_table[3] = length;
+   indirect_table[4] = 0x25E02000;
+   indirect_table[5] = 0x260F2000 | 0x80000000;
+
+   bios_set_scu_interrupt(0x4B, dma_interrupt);
+   bios_change_scu_interrupt_mask(~MASK_DMA0, 0);
+   dma_finished = 0;
+
+   SCUREG_D0W = indirect_table_addr;
+   SCUREG_D0AD = 0x101;
+   SCUREG_D0MD = (1 << 24) | 0x00000007;
+   SCUREG_D0EN = 0x101;
+
+   interrupt_set_level_mask(0x4);
+
+   while (!dma_finished) {}
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, 0 * 8, (i + 4) * 8, 0xF, "%08X", dest_ptr[i]);
+   }
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, 12 * 8, (i + 4) * 8, 0xF, "%08X", dest_ptr_len[i]);
+   }
+
+   finish_loop();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void dma_update_test(u32 write_address_update, u32 read_address_update, u32 write_add, u32 read_add)
+{
+   int i;
+
+   u32 src_addr = 0x260F0000;
+   u32 dest_addr = 0x25E00000;
+
+   int length = 0x1000;
+
+   volatile u32 *dest_ptr = (volatile u32 *)(dest_addr);
+   volatile u32 *dest_ptr2 = (volatile u32 *)(dest_addr + length);
+
+   memset_test_areas(length);
+
+   memory_setup(src_addr, src_addr + length, length);
+
+   bios_set_scu_interrupt(0x4B, dma_interrupt);
+   bios_change_scu_interrupt_mask(~MASK_DMA0, 0);
+
+   SCUREG_D0R = src_addr;
+   SCUREG_D0W = dest_addr;
+   SCUREG_D0C = length;
+   SCUREG_D0AD = (read_add << 8) | write_add;
+   SCUREG_D0MD = 0x00000007 | (write_address_update << 8) | (read_address_update << 16);
+   SCUREG_D0EN = 0x101;
+
+   interrupt_set_level_mask(0x4);
+
+   dma_finished = 0;
+
+   while (!dma_finished) {}
+
+   volatile u32 *ack = (volatile u32 *)(0x25fe00a4);
+
+   ack[0] = 0;
+
+   SCUREG_D0EN = 0x101;
+
+   dma_finished = 0;
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, 0 * 8, (i + 4) * 8, 0xF, "%08X", dest_ptr[i]);
+   }
+
+   for (i = 0; i < 16; i++)
+   {
+      vdp_printf(&test_disp_font, 12 * 8, (i + 4) * 8, 0xF, "%08X", dest_ptr2[i]);
+   }
+
+   finish_loop();
+}

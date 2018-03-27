@@ -290,11 +290,11 @@ VideoInterface_struct *VIDCoreList[] = {
     yinit.percoretype = PERCORE_DEFAULT;
     yinit.sh2coretype = SH2CORE_INTERPRETER;
     
-#ifdef HAVE_LIBGL
-    yinit.vidcoretype = VIDCORE_OGL;
-#else
+//#ifdef HAVE_LIBGL
+//    yinit.vidcoretype = VIDCORE_OGL;
+//#else
     yinit.vidcoretype = VIDCORE_SOFT;
-#endif
+//#endif
     
     yinit.sndcoretype = SNDCORE_OE;
     yinit.m68kcoretype = M68KCORE_C68K;
@@ -328,7 +328,9 @@ VideoInterface_struct *VIDCoreList[] = {
     yinit.frameskip = false;
     yinit.clocksync = 0;
     yinit.basetime = 0;
-    yinit.usethreads = 0;
+//    yinit.usethreads = 0;
+    yinit.usethreads      = 1;
+    yinit.numthreads      = 2;
 }
 
 - (void)startYabauseEmulation
@@ -363,7 +365,7 @@ VideoInterface_struct *VIDCoreList[] = {
     filename = [path copy];
 	DLog(@"Saturn - %@", filename);
     [self setupEmulation];
-    [self executeFrame];
+//    [self executeFrame];
     return YES;
 }
 

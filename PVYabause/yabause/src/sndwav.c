@@ -79,7 +79,7 @@ static int SNDWavInit(void)
    waveheader_struct waveheader;
    fmt_struct fmt;
    chunk_struct data;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (wavefilename)
    {
@@ -125,7 +125,7 @@ static void SNDWavDeInit(void)
    if (wavefp)
    {
       long length = ftell(wavefp);
-      IOCheck_struct check;
+      IOCheck_struct check = { 0, 0 };
 
       // Let's fix the riff chunk size and the data chunk size
       fseek(wavefp, sizeof(waveheader_struct)-0x8, SEEK_SET);

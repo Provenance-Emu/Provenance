@@ -81,6 +81,7 @@ static int SNDAudioTrackInit(void)
        return -1;
 
    cAudioTrack = (*env)->FindClass(env, "android/media/AudioTrack");
+   cAudioTrack = (jclass) (*env)->NewGlobalRef(env, cAudioTrack);
 
    mAudioTrack = (*env)->GetMethodID(env, cAudioTrack, "<init>", "(IIIIII)V");
 
@@ -177,12 +178,14 @@ static void SNDAudioTrackUpdateAudio(u32 *leftchanbuffer, u32 *rightchanbuffer, 
    if (soundoffset > mbufferSizeInBytes) {
       if (! muted) {
          JNIEnv * env;
+         jbyteArray array;
+
          if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
              return;
 
-         jshortArray array = (*env)->NewShortArray(env, soundoffset);
+         array = (*env)->NewByteArray(env, soundoffset);
          if(array) {
-            (*env)->SetShortArrayRegion(env, array, 0, soundoffset, stereodata16);
+            (*env)->SetByteArrayRegion(env, array, 0, soundoffset, (u8 *) stereodata16);
          }
 
          (*env)->CallNonvirtualIntMethod(env, gtrack, cAudioTrack, mWrite, array, 0, soundoffset);

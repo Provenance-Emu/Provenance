@@ -66,6 +66,9 @@ PerInterface_struct *PERCoreList[] = {
 #ifdef HAVE_DIRECTINPUT
 &PERDIRECTX,
 #endif
+#ifdef ARCH_IS_LINUX
+&PERLinuxJoy,
+#endif
 NULL
 };
 
@@ -190,7 +193,11 @@ QList <translation_struct> QtYabause::getTranslationList()
 		// Find the locale
 		QLocale locale = QLocale(localeStr);	
 		// Now we should be good for the language name
+#if QT_VERSION < 0x040800
+		trans.name = locale.name();
+#else
 		trans.name = locale.nativeLanguageName();
+#endif
 		translations.append(trans);
 	}
 #endif

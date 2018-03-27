@@ -137,7 +137,8 @@ void UIMemoryTransfer::accept()
       return;
    }
 
-   mYabauseThread->pauseEmulation( false, false );
+	if (mYabauseThread)
+      mYabauseThread->pauseEmulation( false, false );
 
    if (rbDownload->isChecked())
    {

@@ -164,6 +164,86 @@ static void M68KC68KSetWriteW(M68K_WRITE *Func) {
 	C68k_Set_WriteW(&C68K, Func);
 }
 
+static void C68k_Save_State(c68k_struc *mcpu, FILE * fp)
+{
+   IOCheck_struct check = { 0, 0 };
+   int i = 0;
+   u32 pc = 0;
+
+   for (i = 0; i < 8; i++)
+      ywrite(&check, (void *)&mcpu->D[i], sizeof(u32), 1, fp);
+
+   for (i = 0; i < 8; i++)
+      ywrite(&check, (void *)&mcpu->A[i], sizeof(u32), 1, fp);
+
+   ywrite(&check, (void *)&mcpu->flag_C, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->flag_V, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->flag_notZ, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->flag_N, sizeof(u32), 1, fp);
+
+   ywrite(&check, (void *)&mcpu->flag_X, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->flag_I, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->flag_S, sizeof(u32), 1, fp);
+
+   ywrite(&check, (void *)&mcpu->USP, sizeof(u32), 1, fp);
+
+   pc = C68k_Get_PC(&C68K);
+
+   ywrite(&check, (void *)&pc, sizeof(u32), 1, fp);
+
+   ywrite(&check, (void *)&mcpu->Status, sizeof(u32), 1, fp);
+   ywrite(&check, (void *)&mcpu->IRQLine, sizeof(s32), 1, fp);
+
+   ywrite(&check, (void *)&mcpu->CycleToDo, sizeof(s32), 1, fp);
+   ywrite(&check, (void *)&mcpu->CycleIO, sizeof(s32), 1, fp);
+   ywrite(&check, (void *)&mcpu->CycleSup, sizeof(s32), 1, fp);
+   ywrite(&check, (void *)&mcpu->dirty1, sizeof(u32), 1, fp);
+}
+
+static void M68KC68KSaveState(FILE *fp) {
+   C68k_Save_State(&C68K, fp);
+}
+
+static void C68k_Load_State(c68k_struc *mcpu, FILE * fp)
+{
+   IOCheck_struct check = { 0, 0 };
+   int i = 0;
+   u32 pc = 0;
+
+   for (i = 0; i < 8; i++)
+      yread(&check, (void *)&mcpu->D[i], sizeof(u32), 1, fp);
+
+   for (i = 0; i < 8; i++)
+      yread(&check, (void *)&mcpu->A[i], sizeof(u32), 1, fp);
+
+   yread(&check, (void *)&mcpu->flag_C, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->flag_V, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->flag_notZ, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->flag_N, sizeof(u32), 1, fp);
+
+   yread(&check, (void *)&mcpu->flag_X, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->flag_I, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->flag_S, sizeof(u32), 1, fp);
+
+   yread(&check, (void *)&mcpu->USP, sizeof(u32), 1, fp);
+
+   yread(&check, (void *)&pc, sizeof(u32), 1, fp);
+
+   C68k_Set_PC(&C68K, pc);
+
+   yread(&check, (void *)&mcpu->Status, sizeof(u32), 1, fp);
+   yread(&check, (void *)&mcpu->IRQLine, sizeof(s32), 1, fp);
+
+   yread(&check, (void *)&mcpu->CycleToDo, sizeof(s32), 1, fp);
+   yread(&check, (void *)&mcpu->CycleIO, sizeof(s32), 1, fp);
+   yread(&check, (void *)&mcpu->CycleSup, sizeof(s32), 1, fp);
+   yread(&check, (void *)&mcpu->dirty1, sizeof(u32), 1, fp);
+}
+
+static void M68KC68KLoadState(FILE *fp) {
+   C68k_Load_State(&C68K, fp);
+}
+
 M68K_struct M68KC68K = {
 	1,
 	"C68k Interface",
@@ -190,5 +270,7 @@ M68K_struct M68KC68K = {
 	M68KC68KSetReadB,
 	M68KC68KSetReadW,
 	M68KC68KSetWriteB,
-	M68KC68KSetWriteW
+	M68KC68KSetWriteW,
+   M68KC68KSaveState,
+   M68KC68KLoadState
 };

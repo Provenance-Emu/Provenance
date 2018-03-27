@@ -1,3 +1,4 @@
 #cmakedefine HAVE_C68K 1
 #cmakedefine HAVE_Q68 1
 #cmakedefine SH2_DYNAREC 1
+#cmakedefine HAVE_OPENSL 1

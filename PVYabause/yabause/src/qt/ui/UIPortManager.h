@@ -45,6 +45,7 @@ protected slots:
 	void cbTypeController_currentIndexChanged( int id );
 	void tbSetJoystick_clicked();
 	void tbClearJoystick_clicked();
+	void tbRemoveJoystick_clicked();
 };
 
 #endif // UIPORTMANAGER_H

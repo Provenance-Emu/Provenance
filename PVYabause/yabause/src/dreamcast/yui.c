@@ -96,6 +96,7 @@ int YuiInit(int sh2core)   {
     yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
     yinit.clocksync = 0;
     yinit.basetime = 0;
+    yinit.skip_load = 0;
 
     if(YabauseInit(&yinit) != 0)
       return -1;

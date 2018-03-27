@@ -26,6 +26,36 @@
 #define VIDCORE_DEFAULT         -1
 #define VIDCORE_DUMMY           0
 
+typedef struct {
+   u16 TVMR;
+   u16 FBCR;
+   u16 PTMR;
+   u16 EWDR;
+   u16 EWLR;
+   u16 EWRR;
+   u16 ENDR;
+   u16 EDSR;
+   u16 LOPR;
+   u16 COPR;
+   u16 MODR;
+
+   u32 addr;
+   int disptoggle_dont_use_me; // not used anymore, see Vdp1External_struct
+
+   s16 localX;
+   s16 localY;
+
+   u16 systemclipX1;
+   u16 systemclipY1;
+   u16 systemclipX2;
+   u16 systemclipY2;
+
+   u16 userclipX1;
+   u16 userclipY1;
+   u16 userclipX2;
+   u16 userclipY2;
+} Vdp1;
+
 typedef struct
 {
    int id;
@@ -38,21 +68,24 @@ typedef struct
    int (*Vdp1Reset)(void);
    void (*Vdp1DrawStart)(void);
    void (*Vdp1DrawEnd)(void);
-   void (*Vdp1NormalSpriteDraw)(void);
-   void (*Vdp1ScaledSpriteDraw)(void);
-   void (*Vdp1DistortedSpriteDraw)(void);
-   void (*Vdp1PolygonDraw)(void);
-   void (*Vdp1PolylineDraw)(void);
-   void (*Vdp1LineDraw)(void);
-   void (*Vdp1UserClipping)(void);
-   void (*Vdp1SystemClipping)(void);
-   void (*Vdp1LocalCoordinate)(void);
+   void(*Vdp1NormalSpriteDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1ScaledSpriteDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1DistortedSpriteDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1PolygonDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1PolylineDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1LineDraw)(u8 * ram, Vdp1 * regs, u8 * back_framebuffer);
+   void(*Vdp1UserClipping)(u8 * ram, Vdp1 * regs);
+   void(*Vdp1SystemClipping)(u8 * ram, Vdp1 * regs);
+   void(*Vdp1LocalCoordinate)(u8 * ram, Vdp1 * regs);
+   void(*Vdp1ReadFrameBuffer)(u32 type, u32 addr, void * out);
+   void(*Vdp1WriteFrameBuffer)(u32 type, u32 addr, u32 val);
    // VDP2 specific
    int (*Vdp2Reset)(void);
    void (*Vdp2DrawStart)(void);
    void (*Vdp2DrawEnd)(void);
    void (*Vdp2DrawScreens)(void);
    void (*GetGlSize)(int *width, int *height);
+   void (*GetNativeResolution)(int *width, int *height, int * interlace);
 } VideoInterface_struct;
 
 extern VideoInterface_struct *VIDCore;
@@ -73,35 +106,8 @@ void FASTCALL Vdp1FrameBufferWriteByte(u32, u8);
 void FASTCALL Vdp1FrameBufferWriteWord(u32, u16);
 void FASTCALL Vdp1FrameBufferWriteLong(u32, u32);
 
-typedef struct {
-   u16 TVMR;
-   u16 FBCR;
-   u16 PTMR;
-   u16 EWDR;
-   u16 EWLR;
-   u16 EWRR;
-   u16 ENDR;
-   u16 EDSR;
-   u16 LOPR;
-   u16 COPR;
-   u16 MODR;
-
-   u32 addr;
-   int disptoggle_dont_use_me; // not used anymore, see Vdp1External_struct
-
-   u16 localX;
-   u16 localY;
-
-   u16 systemclipX1;
-   u16 systemclipY1;
-   u16 systemclipX2;
-   u16 systemclipY2;
-
-   u16 userclipX1;
-   u16 userclipY1;
-   u16 userclipX2;
-   u16 userclipY2;
-} Vdp1;
+void Vdp1DrawCommands(u8 * ram, Vdp1 * regs, u8* back_framebuffer);
+void Vdp1FakeDrawCommands(u8 * ram, Vdp1 * regs);
 
 extern Vdp1 * Vdp1Regs;
 
@@ -130,7 +136,7 @@ typedef struct
    s16 CMDYC;
    s16 CMDXD;
    s16 CMDYD;
-   u16 CMDGRDA;   
+   u16 CMDGRDA;
 } vdp1cmd_struct;
 
 int Vdp1Init(void);
@@ -149,7 +155,7 @@ void FASTCALL	Vdp1WriteLong(u32, u32);
 
 void Vdp1Draw(void);
 void Vdp1NoDraw(void);
-void FASTCALL Vdp1ReadCommand(vdp1cmd_struct *cmd, u32 addr);
+void FASTCALL Vdp1ReadCommand(vdp1cmd_struct *cmd, u32 addr, u8* ram);
 
 int Vdp1SaveState(FILE *fp);
 int Vdp1LoadState(FILE *fp, int version, int size);

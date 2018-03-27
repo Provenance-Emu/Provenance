@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <glob.h>
 
 int  PERLinuxJoyInit(void);
 void PERLinuxJoyDeInit(void);
@@ -43,38 +44,89 @@ PERLinuxJoyFlush,
 PERLinuxKeyName
 };
 
-static int hJOY = -1;
+typedef struct
+{
+   int fd;
+   int * axis;
+   int axiscount;
+} perlinuxjoy_struct;
+
+static perlinuxjoy_struct * joysticks = NULL;
+static int joycount = 0;
 
 #define PACKEVENT(evt) ((evt.value < 0 ? 0x10000 : 0) | (evt.type << 8) | (evt.number))
+#define THRESHOLD 1000
+#define MAXAXIS 256
 
 //////////////////////////////////////////////////////////////////////////////
 
-int PERLinuxJoyInit(void)
+static void LinuxJoyInit(perlinuxjoy_struct * joystick, const char * path)
 {
-   hJOY = open("/dev/input/js0", O_RDONLY | O_NONBLOCK);
+   int i;
+   int fd;
+   int axisinit[MAXAXIS];
+   struct js_event evt;
+   size_t num_read;
 
-   if (hJOY == -1) return -1;
+   joystick->fd = open(path, O_RDONLY | O_NONBLOCK);
 
-   return 0;
+   if (joystick->fd == -1) return;
+
+   joystick->axiscount = 0;
+
+   while ((num_read = read(joystick->fd, &evt, sizeof(struct js_event))) > 0)
+   {
+      if (evt.type == (JS_EVENT_AXIS | JS_EVENT_INIT))
+      {
+         axisinit[evt.number] = evt.value;
+         if (evt.number + 1 > joystick->axiscount)
+         {
+            joystick->axiscount = evt.number + 1;
+         }
+      }
+   }
+
+   if (joystick->axiscount > MAXAXIS) joystick->axiscount = MAXAXIS;
+
+   joystick->axis = malloc(sizeof(int) * joystick->axiscount);
+   for(i = 0;i < joystick->axiscount;i++)
+   {
+      joystick->axis[i] = axisinit[i];
+   }
 }
 
-//////////////////////////////////////////////////////////////////////////////
-
-void PERLinuxJoyDeInit(void)
+static void LinuxJoyDeInit(perlinuxjoy_struct * joystick)
 {
-   if (hJOY != -1) close(hJOY);
+   if (joystick->fd == -1) return;
+
+   close(joystick->fd);
+   free(joystick->axis);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-
-int PERLinuxJoyHandleEvents(void)
+static void LinuxJoyHandleEvents(perlinuxjoy_struct * joystick)
 {
    struct js_event evt;
+   size_t num_read;
 
-   if (hJOY == -1) return -1;
+   if (joystick->fd == -1) return;
 
-   while (read(hJOY, &evt, sizeof(struct js_event)) > 0)
+   while ((num_read = read(joystick->fd, &evt, sizeof(struct js_event))) > 0)
    {
+      if (evt.type == JS_EVENT_AXIS)
+      {
+         int initvalue;
+         int disp;
+         u8 axis = evt.number;
+
+         if (axis >= joystick->axiscount) return;
+
+         initvalue = joystick->axis[axis];
+         disp = abs(initvalue - evt.value);
+         if (disp < THRESHOLD) evt.value = 0;
+         else if (evt.value < initvalue) evt.value = -1;
+         else evt.value = 1;
+      }
+
       if (evt.value != 0)
       {
          PerKeyDown(PACKEVENT(evt));
@@ -85,6 +137,86 @@ int PERLinuxJoyHandleEvents(void)
          PerKeyUp(0x10000 | PACKEVENT(evt));
       }
    }
+}
+
+static int LinuxJoyScan(perlinuxjoy_struct * joystick)
+{
+   struct js_event evt;
+   size_t num_read;
+
+   if (joystick->fd == -1) return 0;
+
+   if ((num_read = read(joystick->fd, &evt, sizeof(struct js_event))) <= 0) return 0;
+
+   if (evt.type == JS_EVENT_AXIS)
+   {
+      int initvalue;
+      int disp;
+      u8 axis = evt.number;
+
+      if (axis >= joystick->axiscount) return 0;
+
+      initvalue = joystick->axis[axis];
+      disp = abs(initvalue - evt.value);
+      if (disp < THRESHOLD) return 0;
+      else if (evt.value < initvalue) evt.value = -1;
+      else evt.value = 1;
+   }
+
+   return PACKEVENT(evt);
+}
+
+static void LinuxJoyFlush(perlinuxjoy_struct * joystick)
+{
+   struct js_event evt;
+   size_t num_read;
+
+   if (joystick->fd == -1) return;
+
+   while ((num_read = read(joystick->fd, &evt, sizeof(struct js_event))) > 0);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int PERLinuxJoyInit(void)
+{
+   int i;
+   int fd;
+   glob_t globbuf;
+
+   glob("/dev/input/js*", 0, NULL, &globbuf);
+
+   joycount = globbuf.gl_pathc;
+   joysticks = malloc(sizeof(perlinuxjoy_struct) * joycount);
+
+   for(i = 0;i < globbuf.gl_pathc;i++)
+      LinuxJoyInit(joysticks + i, globbuf.gl_pathv[i]);
+
+   globfree(&globbuf);
+
+   return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void PERLinuxJoyDeInit(void)
+{
+   int i;
+
+   for(i = 0;i < joycount;i++)
+      LinuxJoyDeInit(joysticks + i);
+
+   free(joysticks);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int PERLinuxJoyHandleEvents(void)
+{
+   int i;
+
+   for(i = 0;i < joycount;i++)
+      LinuxJoyHandleEvents(joysticks + i);
 
    // execute yabause
    if ( YabauseExec() != 0 )
@@ -99,23 +231,24 @@ int PERLinuxJoyHandleEvents(void)
 //////////////////////////////////////////////////////////////////////////////
 
 u32 PERLinuxJoyScan(u32 flags) {
-   struct js_event evt;
+   int i;
 
-   if (hJOY == -1) return 0;
+   for(i = 0;i < joycount;i++)
+   {
+      int ret = LinuxJoyScan(joysticks + i);
+      if (ret != 0) return ret;
+   }
 
-   if (read(hJOY, &evt, sizeof(struct js_event)) <= 0) return 0;
-
-   return PACKEVENT(evt);
+   return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 
 void PERLinuxJoyFlush(void) {
-   struct js_event evt;
+   int i;
 
-   if (hJOY == -1) return;
-
-   while (read(hJOY, &evt, sizeof(struct js_event)) > 0);
+   for (i = 0;i < joycount;i++)
+      LinuxJoyFlush(joysticks + i);
 }
 
 //////////////////////////////////////////////////////////////////////////////

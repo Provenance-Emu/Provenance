@@ -21,7 +21,6 @@
 #include "UISettings.h"
 #include "../Settings.h"
 #include "../CommonDialogs.h"
-#include "UIWaitInput.h"
 #include "UIPortManager.h"
 
 #include <QDir>
@@ -40,13 +39,14 @@ extern OSD_struct* OSDCoreList[];
 
 struct Item
 {
-	Item( const QString& i, const QString& n, bool e=true, bool s=true)
-	{ id = i; Name = n; enableFlag = e; saveFlag = s; }
+	Item( const QString& i, const QString& n, bool e=true, bool s=true, bool z=false)
+	{ id = i; Name = n; enableFlag = e; saveFlag = s; ipFlag = z; }
 	
 	QString id;
 	QString Name;
 	bool enableFlag;
 	bool saveFlag;
+	bool ipFlag;
 };
 
 typedef QList<Item> Items;
@@ -71,9 +71,9 @@ const Items mCartridgeTypes = Items()
 	<< Item( "5", "32 Mbit Backup Ram", true, true )
 	<< Item( "6", "8 Mbit Dram", false, false )
 	<< Item( "7", "32 Mbit Dram", false, false )
-	<< Item( "8", "Netlink", false, false )
+	<< Item( "8", "Netlink", false, false, true )
 	<< Item( "9", "16 Mbit ROM", true, false )
-	<< Item( "10", "Japanese Modem", false, false );
+	<< Item( "10", "Japanese Modem", false, false, true );
 
 const Items mVideoFormats = Items()
 	<< Item( "0", "NTSC" )
@@ -90,6 +90,10 @@ UISettings::UISettings( QList <supportedRes_struct> *supportedResolutions, QList
 	
 	leWinWidth->setValidator(new QIntValidator(0, maxWinRect.width(), leWinWidth));
 	leWinHeight->setValidator(new QIntValidator(0, maxWinRect.height(), leWinHeight));
+	
+	QString ipNum("(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
+	leCartridgeModemIP->setValidator(new QRegExpValidator(QRegExp("^" + ipNum + "\\." + ipNum + "\\." + ipNum + "\\." + ipNum + "$"), leCartridgeModemIP));
+	leCartridgeModemPort->setValidator(new QIntValidator(1, 65535, leCartridgeModemPort));
 
 	pmPort1->setPort( 1 );
 	pmPort1->loadSettings();
@@ -178,6 +182,7 @@ QStringList getCdDriveList()
 				list.append(drive_path);
 			}
 		}
+		fclose(f);
 	}
 #elif defined Q_OS_MAC
 #endif
@@ -206,7 +211,7 @@ void UISettings::tbBrowse_clicked()
 			return;
 		}
 		else if ( cbCdRom->currentText().contains( "iso", Qt::CaseInsensitive ) )
-			requestFile( QtYabause::translate( "Select your iso/cue/bin file" ), leCdRom, QtYabause::translate( "CD Images (*.iso *.cue *.bin *.mds)" ) );
+			requestFile( QtYabause::translate( "Select your iso/cue/bin file" ), leCdRom, QtYabause::translate( "CD Images (*.iso *.cue *.bin *.mds *.ccd)" ) );
 		else
 			requestFolder( QtYabause::translate( "Choose a cdrom drive/mount point" ), leCdRom );
 	}
@@ -272,6 +277,10 @@ void UISettings::on_cbCartridge_currentIndexChanged( int id )
 {
 	leCartridge->setVisible(mCartridgeTypes[id].enableFlag);
 	tbCartridge->setVisible(mCartridgeTypes[id].enableFlag);
+	lCartridgeModemIP->setVisible(mCartridgeTypes[id].ipFlag);
+	leCartridgeModemIP->setVisible(mCartridgeTypes[id].ipFlag);
+	lCartridgeModemPort->setVisible(mCartridgeTypes[id].ipFlag);
+	leCartridgeModemPort->setVisible(mCartridgeTypes[id].ipFlag);
 }
 
 void UISettings::loadCores()
@@ -316,6 +325,10 @@ void UISettings::loadCores()
 	// SH2 Interpreters
 	for ( int i = 0; SH2CoreList[i] != NULL; i++ )
 		cbSH2Interpreter->addItem( QtYabause::translate( SH2CoreList[i]->Name ), SH2CoreList[i]->id );
+
+	cbAspectRatio->addItem( QtYabause::translate( "Fit to window" ), 0 );
+	cbAspectRatio->addItem( QtYabause::translate( "Fixed aspect ratio: 4:3" ), 1 );
+	cbAspectRatio->addItem( QtYabause::translate( "Fixed aspect ratio: 16:9" ), 2 );
 }
 
 void UISettings::loadSupportedResolutions()
@@ -428,11 +441,13 @@ void UISettings::loadSettings()
 	cbOSDCore->setCurrentIndex( cbOSDCore->findData( s->value( "Video/OSDCore", QtYabause::defaultOSDCore().id ).toInt() ) );
 #endif
 
+	cbAspectRatio->setCurrentIndex( s->value( "Video/AspectRatio", 0 ).toInt() );
 	leWinWidth->setText( s->value( "Video/WindowWidth", s->value( "Video/Width", 640 ) ).toString() );
 	leWinHeight->setText( s->value( "Video/WindowHeight", s->value( "Video/Height", 480 ) ).toString() );
 	QString text = QString("%1x%2").arg(s->value( "Video/FullscreenWidth", s->value( "Video/Width", 640 ) ).toString(),
 										s->value( "Video/FullscreenHeight", s->value( "Video/Height", 480 ) ).toString());	
 	cbFullscreenResolution->setCurrentIndex(cbFullscreenResolution->findText(text));
+	cbBilinear->setChecked( s->value( "Video/Bilinear", false ).toBool() );
 	cbFullscreen->setChecked( s->value( "Video/Fullscreen", false ).toBool() );
 	cbVideoFormat->setCurrentIndex( cbVideoFormat->findData( s->value( "Video/VideoFormat", mVideoFormats.at( 0 ).id ).toInt() ) );
 
@@ -442,6 +457,8 @@ void UISettings::loadSettings()
 	// cartridge/memory
 	cbCartridge->setCurrentIndex( cbCartridge->findData( s->value( "Cartridge/Type", mCartridgeTypes.at( 0 ).id ).toInt() ) );
 	leCartridge->setText( s->value( "Cartridge/Path" ).toString() );
+	leCartridgeModemIP->setText( s->value( "Cartridge/ModemIP", QString("127.0.0.1") ).toString() );
+	leCartridgeModemPort->setText( s->value( "Cartridge/ModemPort", QString("1337") ).toString() );
 	leMemory->setText( s->value( "Memory/Path", getDataDirPath().append( "/bkram.bin" ) ).toString() );
 	leMpegROM->setText( s->value( "MpegROM/Path" ).toString() );
 	
@@ -503,6 +520,7 @@ void UISettings::saveSettings()
 	// Save new version of keys
 	s->setValue( "Video/WindowWidth", leWinWidth->text() );
 	s->setValue( "Video/WindowHeight", leWinHeight->text() );
+	s->setValue( "Video/AspectRatio", cbAspectRatio->currentIndex() );
 
 	if (supportedRes.count() > 0)
 	{
@@ -512,6 +530,7 @@ void UISettings::saveSettings()
 	}
 
 	s->setValue( "Video/Fullscreen", cbFullscreen->isChecked() );
+	s->setValue( "Video/Bilinear", cbBilinear->isChecked() );
 	s->setValue( "Video/VideoFormat", cbVideoFormat->itemData( cbVideoFormat->currentIndex() ).toInt() );
 
 	s->setValue( "General/ClockSync", cbClockSync->isChecked() );

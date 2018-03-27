@@ -525,6 +525,7 @@ static void SH2UpdateCodeList( YuiSh *sh2, u32 addr) {
   char address_s[20];
   char command_s[64];
   codebreakpoint_struct *cbp;
+  sh2regs_struct sh2regs;
 
   gtk_list_store_clear(sh2->store);
 
@@ -535,7 +536,8 @@ static void SH2UpdateCodeList( YuiSh *sh2, u32 addr) {
   cbp = SH2GetBreakpointList(sh2->debugsh);
 
   for (i = 0; i < 24; i++) {
-    SH2Disasm(offset+2*i, MappedMemoryReadWord(offset+2*i), 0, lineBuf);
+    SH2GetRegisters(sh2->debugsh, &sh2regs);
+    SH2Disasm(offset+2*i, MappedMemoryReadWord(offset+2*i), 0, &sh2regs, lineBuf);
 
     sscanf(lineBuf, "0x%8X: %[^\n]", &address, command_s);
     sprintf(address_s, "0x%08X", address);

@@ -261,14 +261,14 @@ extern void TRACE(int,c68k_struc*,int,int);
     CPU->flag_I = ((A) >> 8) & 7;   \
     CPU->flag_S = (A) & C68K_SR_S;
 
-#define CHECK_INT                                   \
-    {                                               \
-        s32 line, vect;                             \
-                                                    \
-        line = CPU->IRQLine;                        \
-                                                    \
-        if ((line == 7) || (line > CPU->flag_I))    \
-        {                                           \
+#define CHECK_INT                                     \
+    {                                                 \
+        s32 line, vect;                               \
+                                                      \
+        line = CPU->IRQLine;                          \
+                                                      \
+        if ((line == 7) || (line > (s32)CPU->flag_I)) \
+        {                                             \
             /* get vector */                                        \
             CPU->IRQLine = 0;                                       \
             vect = CPU->Interrupt_CallBack(line);                   \
@@ -278,30 +278,30 @@ extern void TRACE(int,c68k_struc*,int,int);
             /* adjust CCnt */                                       \
             CCnt -= c68k_exception_cycle_table[vect];               \
                                                                     \
-            /* swap A7 and USP */           \
-            if (!CPU->flag_S)               \
-            {                               \
-                u32 tmpSP;                  \
-                                            \
-                tmpSP = CPU->USP;           \
-                CPU->USP = CPU->A[7];       \
-                CPU->A[7] = tmpSP;          \
-            }                               \
-                                            \
-            PRE_IO                          \
-                                            \
-            /* push PC and SR */            \
-            PUSH_32_F(PC - CPU->BasePC)     \
-            PUSH_16_F(GET_SR)               \
-                                            \
-            /* adjust SR */                 \
-            CPU->flag_S = C68K_SR_S;        \
-            CPU->flag_I = line;             \
-                                            \
-            /* fetch new PC */              \
-            READ_LONG_F(vect * 4, PC)       \
-            SET_PC(PC)                      \
-                                            \
-            POST_IO                         \
-        }                                   \
+            /* swap A7 and USP */              \
+            if (!CPU->flag_S)                  \
+            {                                  \
+                u32 tmpSP;                     \
+                                               \
+                tmpSP = CPU->USP;              \
+                CPU->USP = CPU->A[7];          \
+                CPU->A[7] = tmpSP;             \
+            }                                  \
+                                               \
+            PRE_IO                             \
+                                               \
+            /* push PC and SR */               \
+            PUSH_32_F((u32)(PC - CPU->BasePC)) \
+            PUSH_16_F(GET_SR)                  \
+                                               \
+            /* adjust SR */                    \
+            CPU->flag_S = C68K_SR_S;           \
+            CPU->flag_I = line;                \
+                                               \
+            /* fetch new PC */                 \
+            READ_LONG_F(vect * 4, PC)          \
+            SET_PC(PC)                         \
+                                               \
+            POST_IO                            \
+        }                                      \
     }

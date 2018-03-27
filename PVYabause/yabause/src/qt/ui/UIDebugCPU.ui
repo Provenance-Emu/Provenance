@@ -532,6 +532,13 @@
       </widget>
      </item>
      <item>
+       <widget class="QPushButton" name="pbTraceLogging">
+         <property name="text">
+           <string>Trace Logging</string>
+         </property>
+       </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pbReserved1">
        <property name="text">
         <string>Reserved1</string>

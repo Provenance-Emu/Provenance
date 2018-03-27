@@ -68,7 +68,7 @@
 #endif 
 #endif
 
-#ifdef GEKKO
+#if defined(GEKKO) && !defined(__LIBRETRO__)
 /* Wii have both stdint.h and "yabause" definitions of fixed
 size types */
 #include <gccore.h>
@@ -150,7 +150,7 @@ static INLINE void yread(IOCheck_struct * check, void * ptr, size_t size, size_t
 }
 
 static INLINE int StateWriteHeader(FILE *fp, const char *name, int version) {
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
    fprintf(fp, "%s", name);
    check.done = 0;
    check.size = 0;
@@ -160,7 +160,7 @@ static INLINE int StateWriteHeader(FILE *fp, const char *name, int version) {
 }
 
 static INLINE int StateFinishHeader(FILE *fp, int offset) {
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
    int size = 0;
    size = ftell(fp) - offset;
    fseek(fp, offset - 4, SEEK_SET);
@@ -252,7 +252,9 @@ static INLINE int StateCheckRetrieveHeader(FILE *fp, const char *name, int *vers
 # define BSWAP16(x)  ((__builtin_bswap16((x) >> 16) << 16) | __builtin_bswap16((x)))
 # define BSWAP16L(x) (__builtin_bswap16((x)))
 #endif
+#ifdef HAVE_BUILTIN_BSWAP32
 # define BSWAP32(x)  (__builtin_bswap32((x)))
+#endif
 #endif
 
 #ifdef _MSC_VER

@@ -76,7 +76,7 @@ extern SoundInterface_struct *SNDCoreList[];  // Defined by each port
 //-------------------------------------------------------------------------
 // PSP cache management macros
 
-#ifdef PSP
+#if defined(PSP) && !defined(__LIBRETRO__)
 
 # include "psp/common.h"
 # include "psp/me.h"
@@ -1214,7 +1214,7 @@ void ScspExec(int decilines)
 
    if (scsp_thread_running)
    {
-#ifdef PSP
+#if defined(PSP) && !defined(__LIBRETRO__)
       if (!psp_writeback_cache_for_scsp())
           PSP_UC(scsp_clock_target) = new_target; // Push just this one through
 #endif
@@ -1679,7 +1679,7 @@ int SoundSaveState(FILE *fp)
    u32 temp;
    u8 temp8;
    int offset;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (scsp_thread_running)
       ScspSyncThread();
@@ -1810,7 +1810,7 @@ int SoundLoadState(FILE *fp, int version, int size)
    int i, i2;
    u32 temp;
    u8 temp8;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (scsp_thread_running)
       ScspSyncThread();
@@ -2229,7 +2229,7 @@ int ScspSlotDebugSaveRegisters(u8 slotnum, const char *filename)
 {
    FILE *fp;
    int i;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if ((fp = fopen(filename, "wb")) == NULL)
       return -1;
@@ -2287,7 +2287,7 @@ int ScspSlotDebugAudioSaveWav(u8 slotnum, const char *filename)
    fmt_struct fmt;
    chunk_struct data;
    long length;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (scsp.slot[slotnum].lea == 0)
       return 0;

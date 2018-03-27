@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -22,9 +22,17 @@
 
 #include <iapetus.h>
 
+#define AUTO_TEST_SELECT_ADDRESS 0x7F000
+#define AUTO_TEST_STATUS_ADDRESS 0x7F004
+#define AUTO_TEST_MESSAGE_ADDRESS 0x7F008
+#define AUTO_TEST_MESSAGE_SENT 1
+#define AUTO_TEST_MESSAGE_RECEIVED 2
+
 enum STAGESTAT
 {
-   STAGESTAT_USERCUSTOM=-6,
+   STAGESTAT_USERCUSTOM=-8,
+   STAGESTAT_NOTEST=-7,
+   STAGESTAT_BADSIZE=-6,
    STAGESTAT_BADGRAPHICS=-5,
    STAGESTAT_BADMIRROR=-4,
    STAGESTAT_BADINTERRUPT=-3,
@@ -36,13 +44,22 @@ enum STAGESTAT
    STAGESTAT_DONE=3
 };
 
-extern int stage_status;
+extern volatile int stage_status;
 extern u32 errordata;
 
 void init_test(void);
+void tests_wait_press();
 void do_tests(const char *testname, int x, int y);
 void register_test(void (*func)(void), const char *name);
 void unregister_all_tests();
+void tests_disp_iapetus_error(enum IAPETUS_ERR err, char *file, int line);
+
+void auto_test_all_finished();
+void auto_test_take_screenshot();
+void auto_test_section_start(char* test_section_name);
+void auto_test_sub_test_start(char* sub_test_name);
+void auto_test_section_end();
+void auto_test_get_framebuffer();
 
 extern screen_settings_struct test_disp_settings;
 extern font_struct test_disp_font;

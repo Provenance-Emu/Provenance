@@ -84,7 +84,7 @@ namespace Arguments
 				{
 					choosenOptions[option->priority] = option;
 					if (option->parameter)
-						params[option->priority] = argument.mid(strlen(option->longname));
+						params[option->priority] = argument.mid((int)strlen(option->longname));
 				}
 				option++;
 			}

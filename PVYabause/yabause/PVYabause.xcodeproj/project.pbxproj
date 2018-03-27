@@ -50,10 +50,7 @@
 		B32775541E9C84DE000FEC38 /* vidshared.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CB152A32B90080990B /* vidshared.c */; };
 		B32775551E9C84DE000FEC38 /* vidsoft.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CD152A32B90080990B /* vidsoft.c */; };
 		B32775561E9C84DE000FEC38 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CF152A32B90080990B /* yabause.c */; };
-		B32775571E9C84DE000FEC38 /* ygl.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893D1152A32B90080990B /* ygl.c */; };
-		B32775581E9C84DE000FEC38 /* yglshader.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893D3152A32B90080990B /* yglshader.c */; };
 		B32775591E9C84DE000FEC38 /* YabauseGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = EB851D0C152396CC00715BD2 /* YabauseGameCore.m */; };
-		B327755B1E9C851C000FEC38 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755A1E9C851C000FEC38 /* OpenGLES.framework */; };
 		B327755D1E9C8520000FEC38 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755C1E9C8520000FEC38 /* Foundation.framework */; };
 		B327755F1E9C852D000FEC38 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B327755E1E9C852D000FEC38 /* CoreFoundation.framework */; };
 		B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32775601E9C8539000FEC38 /* CoreAudio.framework */; };
@@ -61,6 +58,12 @@
 		B32775691E9C887F000FEC38 /* cd-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = EB78935B152A32B90080990B /* cd-macosx.c */; };
 		B376848C206A06620007A99C /* c68kexec.c in Sources */ = {isa = PBXBuildFile; fileRef = EB789351152A32B90080990B /* c68kexec.c */; };
 		B376848E206A074C0007A99C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B376848D206A074B0007A99C /* Core.plist */; };
+		B3AC5627206A1E8A004401F8 /* yglshaderes.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5625206A1E8A004401F8 /* yglshaderes.c */; };
+		B3AC5628206A1E8A004401F8 /* ygles.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5626206A1E8A004401F8 /* ygles.c */; };
+		B3AC562B206A1F19004401F8 /* gameinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5629206A1F18004401F8 /* gameinfo.c */; };
+		B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562D206A28BF004401F8 /* GLKit.framework */; };
+		B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AC562F206A28C6004401F8 /* OpenGLES.framework */; };
+		B3AC5632206A2903004401F8 /* yglcache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AC5631206A2902004401F8 /* yglcache.cpp */; };
 		EB1BA9B61587923900F8939D /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = EB1BA9B51587923900F8939D /* osdcore.c */; };
 		EB3297141522671200307B0C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB3297131522671200307B0C /* Cocoa.framework */; };
 		EB32971E1522671200307B0C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB32971C1522671200307B0C /* InfoPlist.strings */; };
@@ -106,8 +109,6 @@
 		EBDBB53B152A39DC0091DA28 /* vidshared.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CB152A32B90080990B /* vidshared.c */; };
 		EBDBB53C152A39DC0091DA28 /* vidsoft.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CD152A32B90080990B /* vidsoft.c */; };
 		EBDBB53D152A39DC0091DA28 /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893CF152A32B90080990B /* yabause.c */; };
-		EBDBB53E152A39DC0091DA28 /* ygl.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893D1152A32B90080990B /* ygl.c */; };
-		EBDBB53F152A39DC0091DA28 /* yglshader.c in Sources */ = {isa = PBXBuildFile; fileRef = EB7893D3152A32B90080990B /* yglshader.c */; };
 		EBDBB541152A3B2B0091DA28 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB540152A3B2B0091DA28 /* CoreFoundation.framework */; };
 		EBDBB543152A3B2F0091DA28 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB542152A3B2F0091DA28 /* IOKit.framework */; };
 		EBDBB545152A3B350091DA28 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBDBB544152A3B350091DA28 /* GLUT.framework */; };
@@ -150,6 +151,13 @@
 		B32775641E9C8546000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B327756B1E9C8F0A000FEC38 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B376848D206A074B0007A99C /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3AC5625206A1E8A004401F8 /* yglshaderes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yglshaderes.c; sourceTree = "<group>"; };
+		B3AC5626206A1E8A004401F8 /* ygles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ygles.c; sourceTree = "<group>"; };
+		B3AC5629206A1F18004401F8 /* gameinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gameinfo.c; sourceTree = "<group>"; };
+		B3AC562A206A1F19004401F8 /* gameinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameinfo.h; sourceTree = "<group>"; };
+		B3AC562D206A28BF004401F8 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3AC562F206A28C6004401F8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		B3AC5631206A2902004401F8 /* yglcache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = yglcache.cpp; sourceTree = "<group>"; };
 		EB1BA9B51587923900F8939D /* osdcore.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osdcore.c; sourceTree = "<group>"; };
 		EB3297101522671200307B0C /* Yabause.oecoreplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Yabause.oecoreplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB3297131522671200307B0C /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -287,9 +295,7 @@
 		EB7893CE152A32B90080990B /* vidsoft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vidsoft.h; sourceTree = "<group>"; };
 		EB7893CF152A32B90080990B /* yabause.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yabause.c; sourceTree = "<group>"; };
 		EB7893D0152A32B90080990B /* yabause.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yabause.h; sourceTree = "<group>"; };
-		EB7893D1152A32B90080990B /* ygl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ygl.c; sourceTree = "<group>"; };
 		EB7893D2152A32B90080990B /* ygl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ygl.h; sourceTree = "<group>"; };
-		EB7893D3152A32B90080990B /* yglshader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = yglshader.c; sourceTree = "<group>"; };
 		EB7893D4152A32B90080990B /* yui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = yui.h; sourceTree = "<group>"; };
 		EB851D0B152396CC00715BD2 /* YabauseGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YabauseGameCore.h; sourceTree = "<group>"; };
 		EB851D0C152396CC00715BD2 /* YabauseGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YabauseGameCore.m; sourceTree = "<group>"; };
@@ -313,11 +319,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AC5630206A28C6004401F8 /* OpenGLES.framework in Frameworks */,
+				B3AC562E206A28BF004401F8 /* GLKit.framework in Frameworks */,
 				B32775651E9C8546000FEC38 /* PVSupport.framework in Frameworks */,
 				B32775611E9C8539000FEC38 /* CoreAudio.framework in Frameworks */,
 				B327755F1E9C852D000FEC38 /* CoreFoundation.framework in Frameworks */,
 				B327755D1E9C8520000FEC38 /* Foundation.framework in Frameworks */,
-				B327755B1E9C851C000FEC38 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +379,8 @@
 		EB3297121522671200307B0C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3AC562F206A28C6004401F8 /* OpenGLES.framework */,
+				B3AC562D206A28BF004401F8 /* GLKit.framework */,
 				B327756B1E9C8F0A000FEC38 /* PVSupport.framework */,
 				B32775641E9C8546000FEC38 /* PVSupport.framework */,
 				B32775621E9C853D000FEC38 /* AudioUnit.framework */,
@@ -494,6 +503,8 @@
 				EB7893AE152A32B90080990B /* sh2trace.c */,
 				EB7893AF152A32B90080990B /* sh2trace.h */,
 				EB7893B0152A32B90080990B /* smpc.c */,
+				B3AC5629206A1F18004401F8 /* gameinfo.c */,
+				B3AC562A206A1F19004401F8 /* gameinfo.h */,
 				EB7893B1152A32B90080990B /* smpc.h */,
 				EB7893B2152A32B90080990B /* sndal.c */,
 				EB7893B3152A32B90080990B /* sndal.h */,
@@ -523,9 +534,10 @@
 				EB7893CE152A32B90080990B /* vidsoft.h */,
 				EB7893CF152A32B90080990B /* yabause.c */,
 				EB7893D0152A32B90080990B /* yabause.h */,
-				EB7893D1152A32B90080990B /* ygl.c */,
+				B3AC5626206A1E8A004401F8 /* ygles.c */,
+				B3AC5625206A1E8A004401F8 /* yglshaderes.c */,
+				B3AC5631206A2902004401F8 /* yglcache.cpp */,
 				EB7893D2152A32B90080990B /* ygl.h */,
-				EB7893D3152A32B90080990B /* yglshader.c */,
 				EB7893D4152A32B90080990B /* yui.h */,
 			);
 			path = src;
@@ -772,6 +784,7 @@
 				B327752D1E9C84DE000FEC38 /* c68k.c in Sources */,
 				B327752F1E9C84DE000FEC38 /* gen68k.c in Sources */,
 				B32775311E9C84DE000FEC38 /* cdbase.c in Sources */,
+				B3AC5632206A2903004401F8 /* yglcache.cpp in Sources */,
 				B32775321E9C84DE000FEC38 /* cheat.c in Sources */,
 				B32775331E9C84DE000FEC38 /* coffelf.c in Sources */,
 				B32775341E9C84DE000FEC38 /* cs0.c in Sources */,
@@ -781,11 +794,14 @@
 				B32775381E9C84DE000FEC38 /* error.c in Sources */,
 				B32775391E9C84DE000FEC38 /* japmodem.c in Sources */,
 				B327753A1E9C84DE000FEC38 /* m68kc68k.c in Sources */,
+				B3AC5627206A1E8A004401F8 /* yglshaderes.c in Sources */,
 				B327753B1E9C84DE000FEC38 /* m68kcore.c in Sources */,
 				B327753C1E9C84DE000FEC38 /* m68kd.c in Sources */,
+				B3AC562B206A1F19004401F8 /* gameinfo.c in Sources */,
 				B327753E1E9C84DE000FEC38 /* memory.c in Sources */,
 				B327753F1E9C84DE000FEC38 /* movie.c in Sources */,
 				B32775401E9C84DE000FEC38 /* netlink.c in Sources */,
+				B3AC5628206A1E8A004401F8 /* ygles.c in Sources */,
 				B32775411E9C84DE000FEC38 /* peripheral.c in Sources */,
 				B32775431E9C84DE000FEC38 /* profile.c in Sources */,
 				B32775441E9C84DE000FEC38 /* scsp2.c in Sources */,
@@ -808,8 +824,6 @@
 				B32775541E9C84DE000FEC38 /* vidshared.c in Sources */,
 				B32775551E9C84DE000FEC38 /* vidsoft.c in Sources */,
 				B32775561E9C84DE000FEC38 /* yabause.c in Sources */,
-				B32775571E9C84DE000FEC38 /* ygl.c in Sources */,
-				B32775581E9C84DE000FEC38 /* yglshader.c in Sources */,
 				B32775591E9C84DE000FEC38 /* YabauseGameCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -860,8 +874,6 @@
 				EBDBB53B152A39DC0091DA28 /* vidshared.c in Sources */,
 				EBDBB53C152A39DC0091DA28 /* vidsoft.c in Sources */,
 				EBDBB53D152A39DC0091DA28 /* yabause.c in Sources */,
-				EBDBB53E152A39DC0091DA28 /* ygl.c in Sources */,
-				EBDBB53F152A39DC0091DA28 /* yglshader.c in Sources */,
 				946CA3BD18495D3400CCA369 /* japmodem.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -939,8 +951,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -952,7 +964,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -969,6 +980,8 @@
 					HAVE_STRCASECMP,
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
+					HAVE_LIBGL,
+					_OGLES3_,
 				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -976,7 +989,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -996,8 +1009,8 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -1008,7 +1021,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1025,6 +1037,8 @@
 					HAVE_STRCASECMP,
 					not_HAVE_LIBGLUT,
 					not_HAVE_LIBGL,
+					HAVE_LIBGL,
+					_OGLES3_,
 				);
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1032,7 +1046,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				INFOPLIST_FILE = PVYabause/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVYabause;
@@ -1110,7 +1124,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = Yabause_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"USE_SCSP2=1",

@@ -33,7 +33,7 @@
 - (id)initWithFrame:(NSRect)frameRect
 {
     NSOpenGLPixelFormatAttribute attrs[] = {
-        NSOpenGLPFAWindow,
+        NSOpenGLPFAOpenGLProfile, (NSOpenGLPixelFormatAttribute)NSOpenGLProfileVersion3_2Core,
         NSOpenGLPFANoRecovery,
         NSOpenGLPFAColorSize, 32,
         NSOpenGLPFADepthSize, 32,

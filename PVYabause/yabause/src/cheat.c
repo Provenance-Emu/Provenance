@@ -284,7 +284,7 @@ int CheatSave(const char *filename)
    FILE *fp;
    int i;
    int num;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (!filename)
       return -1;
@@ -333,7 +333,7 @@ int CheatLoad(const char *filename)
    int i;
    char id[4];
    char desc[256];
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    if (!filename)
       return -1;

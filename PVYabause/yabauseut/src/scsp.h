@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -23,6 +23,7 @@
 void scsp_test();
 void scsp_timing_test();
 void scsp_misc_test();
+void scsp_dsp_test();
 
 void scu_interrupt_test(void);
 void scsp_timer_a_test();

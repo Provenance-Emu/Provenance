@@ -392,7 +392,7 @@ void PerMouseMove(PerMouse_struct * mouse, s32 dispx, s32 dispy)
    if (negy) diffy = ~(mouse->mousebits[2]) & 0xFF;
    else diffy = mouse->mousebits[2];
 
-   if (dispx > 0)
+   if (dispx >= 0)
    {
       if (negx)
       {
@@ -419,7 +419,7 @@ void PerMouseMove(PerMouse_struct * mouse, s32 dispx, s32 dispy)
       }
    }
 
-   if (dispy > 0)
+   if (dispy >= 0)
    {
       if (negy)
       {
@@ -934,7 +934,7 @@ int PERDummyHandleEvents(void) {
 
 u32 PERDummyScan(u32 flags) {
    // Scan and return next action based on flags value
-   // See PERSF_* in peripheral.h for full list of flags. 
+   // See PERSF_* in peripheral.h for full list of flags.
    // If no specified flags are supported return 0
 
    return 0;

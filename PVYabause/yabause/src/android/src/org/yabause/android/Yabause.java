@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.view.KeyEvent;
 import android.app.Dialog;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -44,6 +45,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.net.Uri;
+import org.yabause.android.GameInfo;
 
 class InputHandler extends Handler {
     private YabauseRunnable yr;
@@ -69,7 +71,8 @@ class YabauseRunnable implements Runnable
     public static native void exec();
     public static native void press(int key);
     public static native void release(int key);
-    public static native int initViewport( int width, int hieght);
+    public static native int initViewport();
+    public static native int cleanup();
     public static native int drawScreen();
     public static native int lockGL();
     public static native int unlockGL();
@@ -77,7 +80,8 @@ class YabauseRunnable implements Runnable
     public static native void enableFrameskip(int enable);
     public static native void setVolume(int volume);
     public static native void screenshot(Bitmap bitmap);
-    
+    public static native GameInfo gameInfo(String path);
+
     private boolean inited;
     private boolean paused;
     public InputHandler handler;
@@ -86,6 +90,7 @@ class YabauseRunnable implements Runnable
     {
         handler = new InputHandler(this);
         int ok = init(yabause);
+        Log.v("Yabause", "init = " + ok);
         inited = (ok == 0);
     }
 
@@ -114,7 +119,7 @@ class YabauseRunnable implements Runnable
         if (inited && (! paused))
         {
             exec();
-            
+
             handler.post(this);
         }
     }
@@ -146,6 +151,7 @@ public class Yabause extends Activity implements OnPadListener
     private String biospath;
     private String gamepath;
     private int carttype;
+    private PadManager padm;
 
     /** Called when the activity is first created. */
     @Override
@@ -153,6 +159,7 @@ public class Yabause extends Activity implements OnPadListener
     {
         super.onCreate(savedInstanceState);
 
+        hideSystemUI();
         setContentView(R.layout.main);
 
         audio = new YabauseAudio(this);
@@ -160,11 +167,25 @@ public class Yabause extends Activity implements OnPadListener
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         readPreferences();
 
+        Intent intent = getIntent();
+        String game = intent.getStringExtra("org.yabause.android.FileName");
+
+        if (game.length() > 0) {
+            YabauseStorage storage = YabauseStorage.getStorage();
+            gamepath = storage.getGamePath(game);
+        } else
+            gamepath = "";
+
         handler = new YabauseHandler(this);
         yabauseThread = new YabauseRunnable(this);
 
+        padm = PadManager.getPadManager();
+
         YabausePad pad = (YabausePad) findViewById(R.id.yabause_pad);
         pad.setOnPadListener(this);
+        if (padm.hasPad()) {
+            pad.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -197,66 +218,6 @@ public class Yabause extends Activity implements OnPadListener
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.emulation, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.pause:
-            yabauseThread.pause();
-            return true;
-        case R.id.quit:
-            this.finish();
-            return true;
-        case R.id.resume:
-            yabauseThread.resume();
-            return true;
-        case R.id.settings:
-            Intent intent = new Intent(this, YabauseSettings.class);
-            startActivity(intent);
-            return true;
-        case R.id.screenshot:
-            Bitmap bitmap = Bitmap.createBitmap(320, 224, Bitmap.Config.ARGB_8888);
-            yabauseThread.screenshot(bitmap);
-            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            if (! path.isDirectory()) path.mkdir();
-            File file = new File(path, "screenshot.png");
-            try {
-                file.createNewFile();
-                FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
-                ostream.close();
-
-                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                Uri contentUri = Uri.fromFile(file);
-                mediaScanIntent.setData(contentUri);
-                this.sendBroadcast(mediaScanIntent);
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (yabauseThread.paused()) {
-            menu.setGroupVisible(R.id.paused, true);
-            menu.setGroupVisible(R.id.running, false);
-        } else {
-            menu.setGroupVisible(R.id.paused, false);
-            menu.setGroupVisible(R.id.running, true);
-        }
-        return true;
-    }
-
-    @Override
     public Dialog onCreateDialog(int id, Bundle args) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(args.getString("message"))
@@ -275,14 +236,56 @@ public class Yabause extends Activity implements OnPadListener
         return alert;
     }
 
-    @Override
-    public boolean onPad(View v, PadEvent event) {
+    @Override public boolean onPad(PadEvent event) {
         Message message = handler.obtainMessage();
         message.arg1 = event.getAction();
         message.arg2 = event.getKey();
         yabauseThread.handler.sendMessage(message);
 
         return true;
+    }
+
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
+        PadEvent pe = padm.onKeyDown(keyCode, event);
+
+        if (pe != null) {
+            this.onPad(pe);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+        PadEvent pe = padm.onKeyUp(keyCode, event);
+
+        if (pe != null) {
+            this.onPad(pe);
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private void hideSystemUI() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            );
+        }
+    }
+
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus) {
+            hideSystemUI();
+        }
     }
 
     private void errorMsg(String msg) {
@@ -315,13 +318,6 @@ public class Yabause extends Activity implements OnPadListener
         } else
             biospath = "";
 
-        String game = sharedPref.getString("pref_game", "");
-        if (game.length() > 0) {
-            YabauseStorage storage = YabauseStorage.getStorage();
-            gamepath = storage.getGamePath(game);
-        } else
-            gamepath = "";
-
         String cart = sharedPref.getString("pref_cart", "");
         if (cart.length() > 0) {
             Integer i = new Integer(cart);
@@ -348,9 +344,5 @@ public class Yabause extends Activity implements OnPadListener
 
     public String getCartridgePath() {
         return YabauseStorage.getStorage().getCartridgePath(Cartridge.getDefaultFilename(carttype));
-    }
-
-    static {
-        System.loadLibrary("yabause");
     }
 }

@@ -1,70 +1,91 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>UIPortManager</class>
- <widget class="QGroupBox" name="UIPortManager" >
-  <property name="geometry" >
+ <widget class="QGroupBox" name="UIPortManager">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
-    <height>280</height>
+    <width>277</width>
+    <height>302</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="fController1" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController1">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout" >
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="lJoystick1" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>1</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController1" />
+       <widget class="QComboBox" name="cbTypeController1"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbSetJoystick1" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick1">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Edit configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick1" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbClearJoystick1">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick1">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -73,60 +94,80 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="fController2" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController2">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="lJoystick2" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>2</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController2" />
+       <widget class="QComboBox" name="cbTypeController2"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbSetJoystick2" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick2">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Edit configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick2" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbClearJoystick2">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick2">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -135,60 +176,87 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="fController3" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController3">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="lJoystick3" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>3</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController3" />
-      </item>
-      <item>
-       <widget class="QToolButton" name="tbSetJoystick3" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="toolTip" >
-         <string>Edit configuration</string>
-        </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
-          <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
-        </property>
-        <property name="autoRaise" >
+       <widget class="QComboBox" name="cbTypeController3">
+        <property name="enabled">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick3" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick3">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
+         <string>Edit configuration</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbClearJoystick3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick3">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -197,60 +265,80 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="fController4" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController4">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4" >
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QLabel" name="lJoystick4" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>4</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController4" />
+       <widget class="QComboBox" name="cbTypeController4"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbSetJoystick4" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick4">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Edit configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick4" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbClearJoystick4">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick4">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -259,60 +347,80 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="fController5" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController5">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_5" >
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QLabel" name="lJoystick5" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>5</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController5" />
+       <widget class="QComboBox" name="cbTypeController5"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbSetJoystick5" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick5">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Edit configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick5" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbClearJoystick5">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick5">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -321,60 +429,80 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="fController6" >
-     <property name="frameShape" >
+    <widget class="QFrame" name="fController6">
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_6" >
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <widget class="QLabel" name="lJoystick6" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+       <widget class="QLabel" name="lJoystick6">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>6</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="cbTypeController6" />
+       <widget class="QComboBox" name="cbTypeController6"/>
       </item>
       <item>
-       <widget class="QToolButton" name="tbSetJoystick6" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbSetJoystick6">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Edit configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/settings.png</normaloff>:/actions/icons/actions/settings.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="tbClearJoystick6" >
-        <property name="enabled" >
+       <widget class="QToolButton" name="tbClearJoystick6">
+        <property name="enabled">
          <bool>false</bool>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Clear configuration</string>
         </property>
-        <property name="icon" >
-         <iconset resource="../resources/resources.qrc" >
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
+          <normaloff>:/actions/icons/actions/reset.png</normaloff>:/actions/icons/actions/reset.png</iconset>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tbRemoveJoystick6">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Remove Peripheral</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/resources.qrc">
           <normaloff>:/actions/icons/actions/button_cancel.png</normaloff>:/actions/icons/actions/button_cancel.png</iconset>
         </property>
-        <property name="autoRaise" >
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>
@@ -385,7 +513,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources/resources.qrc" />
+  <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

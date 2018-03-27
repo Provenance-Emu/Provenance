@@ -33,6 +33,7 @@
 #include "cs2.h"
 #include "debug.h"
 #include "osdcore.h"
+#include "gameinfo.h"
 
 #include <stdio.h>
 #include <dlfcn.h>
@@ -49,6 +50,9 @@
 #include <pthread.h>
 
 #include "sndaudiotrack.h"
+#ifdef HAVE_OPENSL
+#include "sndopensl.h"
+#endif
 
 JavaVM * yvm;
 static jobject yabause;
@@ -57,17 +61,17 @@ static char mpegpath[256] = "\0";
 static char cartpath[256] = "\0";
 
 EGLDisplay g_Display = EGL_NO_DISPLAY;
-EGLSurface g_Surface = EGL_NO_SURFACE; 
-EGLContext g_Context = EGL_NO_CONTEXT; 
+EGLSurface g_Surface = EGL_NO_SURFACE;
+EGLContext g_Context = EGL_NO_CONTEXT;
 GLuint g_FrameBuffer = 0;
 GLuint g_VertexBuffer = 0;
 int g_buf_width = -1;
 int g_buf_height = -1;
 pthread_mutex_t g_mtxGlLock = PTHREAD_MUTEX_INITIALIZER;
-float vertices [] = { 
+float vertices [] = {
    0, 0, 0, 0,
-   320, 0, 0, 0, 
-   320, 224, 0, 0, 
+   320, 0, 0, 0,
+   320, 224, 0, 0,
    0, 224, 0, 0
 };
 
@@ -106,6 +110,9 @@ NULL
 SoundInterface_struct *SNDCoreList[] = {
 &SNDDummy,
 &SNDAudioTrack,
+#ifdef HAVE_OPENSL
+&SNDOpenSL,
+#endif
 NULL
 };
 
@@ -119,13 +126,13 @@ NULL
 #define  LOG_TAG    "yabause"
 
 /* Override printf for debug*/
-int printf( const char * fmt, ... )
+int yprintf( const char * fmt, ... )
 {
    va_list ap;
    va_start(ap, fmt);
    int result = __android_log_vprint(ANDROID_LOG_INFO, LOG_TAG, fmt, ap);
    va_end(ap);
-   return result;   
+   return result;
 }
 
 const char * GetBiosPath()
@@ -136,7 +143,7 @@ const char * GetBiosPath()
     jboolean dummy;
     JNIEnv * env;
     if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
-        return;
+        return NULL;
 
     yclass = (*env)->GetObjectClass(env, yabause);
     getBiosPath = (*env)->GetMethodID(env, yclass, "getBiosPath", "()Ljava/lang/String;");
@@ -155,7 +162,7 @@ const char * GetGamePath()
     jboolean dummy;
     JNIEnv * env;
     if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
-        return;
+        return NULL;
 
     yclass = (*env)->GetObjectClass(env, yabause);
     getGamePath = (*env)->GetMethodID(env, yclass, "getGamePath", "()Ljava/lang/String;");
@@ -174,7 +181,7 @@ const char * GetMemoryPath()
     jboolean dummy;
     JNIEnv * env;
     if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
-        return;
+        return NULL;
 
     yclass = (*env)->GetObjectClass(env, yabause);
     getMemoryPath = (*env)->GetMethodID(env, yclass, "getMemoryPath", "()Ljava/lang/String;");
@@ -191,10 +198,10 @@ int GetCartridgeType()
     jmethodID getCartridgeType;
     JNIEnv * env;
     if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
-        return;
+        return -1;
 
     yclass = (*env)->GetObjectClass(env, yabause);
-    getCartridgeType = (*env)->GetMethodID(env, yclass, "getCartridgePath", "()I");
+    getCartridgeType = (*env)->GetMethodID(env, yclass, "getCartridgeType", "()I");
     return (*env)->CallIntMethod(env, yabause, getCartridgeType);
 }
 
@@ -206,7 +213,7 @@ const char * GetCartridgePath()
     jboolean dummy;
     JNIEnv * env;
     if ((*yvm)->GetEnv(yvm, (void**) &env, JNI_VERSION_1_6) != JNI_OK)
-        return;
+        return NULL;
 
     yclass = (*env)->GetObjectClass(env, yabause);
     getCartridgePath = (*env)->GetMethodID(env, yclass, "getCartridgePath", "()Ljava/lang/String;");
@@ -236,10 +243,10 @@ void YuiSwapBuffers(void)
 {
    int buf_width, buf_height;
    int error;
-   
-   
+
+
    pthread_mutex_lock(&g_mtxGlLock);
-   if( g_Display == EGL_NO_DISPLAY ) 
+   if( g_Display == EGL_NO_DISPLAY )
    {
       pthread_mutex_unlock(&g_mtxGlLock);
       return;
@@ -247,15 +254,24 @@ void YuiSwapBuffers(void)
 
    if( eglMakeCurrent(g_Display,g_Surface,g_Surface,g_Context) == EGL_FALSE )
    {
-         printf( "eglMakeCurrent fail %04x",eglGetError());
+         yprintf( "eglMakeCurrent fail %04x",eglGetError());
          pthread_mutex_unlock(&g_mtxGlLock);
          return;
-   }   
-      
+   }
+
+   {
+      int swidth, sheight;
+
+      eglQuerySurface(g_Display, g_Surface, EGL_WIDTH, &swidth);
+      eglQuerySurface(g_Display, g_Surface, EGL_HEIGHT, &sheight);
+
+      glViewport(0,0,swidth,sheight);
+   }
+
    glClearColor( 0.0f,0.0f,0.0f,1.0f);
    glClear(GL_COLOR_BUFFER_BIT);
 
-   
+
    if( g_FrameBuffer == 0 )
    {
       glEnable(GL_TEXTURE_2D);
@@ -263,25 +279,25 @@ void YuiSwapBuffers(void)
       glBindTexture(GL_TEXTURE_2D, g_FrameBuffer);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);   
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
       glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
       error = glGetError();
       if( error != GL_NO_ERROR )
       {
-         printf("gl error %d", error );
+         yprintf("gl error %d", error );
          return;
       }
    }else{
       glBindTexture(GL_TEXTURE_2D, g_FrameBuffer);
    }
-   
+
 
    VIDCore->GetGlSize(&buf_width, &buf_height);
    glTexSubImage2D(GL_TEXTURE_2D, 0,0,0,buf_width,buf_height,GL_RGBA,GL_UNSIGNED_BYTE,dispbuffer);
-   
-   
+
+
    if( g_VertexBuffer == 0 )
    {
       glGenBuffers(1, &g_VertexBuffer);
@@ -290,36 +306,34 @@ void YuiSwapBuffers(void)
       error = glGetError();
       if( error != GL_NO_ERROR )
       {
-         printf("gl error %d", error );
+         yprintf("gl error %d", error );
          return;
-      }      
+      }
    }else{
       glBindBuffer(GL_ARRAY_BUFFER, g_VertexBuffer);
    }
-  
+
   if( buf_width != g_buf_width ||  buf_height != g_buf_height )
   {
      vertices[6]=vertices[10]=(float)buf_width/1024.f;
      vertices[11]=vertices[15]=(float)buf_height/1024.f;
      glBufferData(GL_ARRAY_BUFFER, sizeof(vertices),vertices,GL_STATIC_DRAW);
      glVertexPointer(2, GL_FLOAT, sizeof(float)*4, 0);
-     glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, (void*)(sizeof(float)*2));   
+     glTexCoordPointer(2, GL_FLOAT, sizeof(float)*4, (void*)(sizeof(float)*2));
      glEnableClientState(GL_VERTEX_ARRAY);
      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
      g_buf_width  = buf_width;
      g_buf_height = buf_height;
   }
-    
+
    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
    eglSwapBuffers(g_Display,g_Surface);
-   
+
    pthread_mutex_unlock(&g_mtxGlLock);
 }
 
-int Java_org_yabause_android_YabauseRunnable_initViewport( int width, int height)
+int Java_org_yabause_android_YabauseRunnable_initViewport()
 {
-   int swidth;
-   int sheight;
    int error;
    char * buf;
 
@@ -327,32 +341,35 @@ int Java_org_yabause_android_YabauseRunnable_initViewport( int width, int height
    g_Surface = eglGetCurrentSurface(EGL_READ);
    g_Context = eglGetCurrentContext();
 
-   eglQuerySurface(g_Display,g_Surface,EGL_WIDTH,&swidth);
-   eglQuerySurface(g_Display,g_Surface,EGL_HEIGHT,&sheight);
-   
-   glViewport(0,0,swidth,sheight);
-   
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
    glOrthof(0, 320, 224, 0, 1, 0);
-   
+
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 
    glMatrixMode(GL_TEXTURE);
    glLoadIdentity();
-   
+
    glDisable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   
-   printf(glGetString(GL_VENDOR));
-   printf(glGetString(GL_RENDERER));
-   printf(glGetString(GL_VERSION));
-   printf(glGetString(GL_EXTENSIONS));
-   printf(eglQueryString(g_Display,EGL_EXTENSIONS));
+
+   yprintf(glGetString(GL_VENDOR));
+   yprintf(glGetString(GL_RENDERER));
+   yprintf(glGetString(GL_VERSION));
+   yprintf(glGetString(GL_EXTENSIONS));
+   yprintf(eglQueryString(g_Display,EGL_EXTENSIONS));
    eglSwapInterval(g_Display,0);
    eglMakeCurrent(g_Display,EGL_NO_SURFACE,EGL_NO_SURFACE,EGL_NO_CONTEXT);
    return 0;
+}
+
+int Java_org_yabause_android_YabauseRunnable_cleanup()
+{
+    g_FrameBuffer = 0;
+    g_VertexBuffer = 0;
+    g_buf_width = -1;
+    g_buf_height = -1;
 }
 
 #ifdef _ANDROID_2_2_
@@ -364,37 +381,37 @@ int initEGLFunc()
    handle = dlopen("libEGL.so",RTLD_LAZY);
    if( handle == NULL )
    {
-      printf(dlerror());
+      yprintf(dlerror());
       return -1;
    }
-   
+
    eglGetCurrentDisplay = dlsym(handle, "eglGetCurrentDisplay");
-   if( eglGetCurrentDisplay == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglGetCurrentDisplay == NULL){ yprintf(dlerror()); return -1; }
+
    eglGetCurrentSurface = dlsym(handle, "eglGetCurrentSurface");
-   if( eglGetCurrentSurface == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglGetCurrentSurface == NULL){ yprintf(dlerror()); return -1; }
+
    eglGetCurrentContext = dlsym(handle, "eglGetCurrentContext");
-   if( eglGetCurrentContext == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglGetCurrentContext == NULL){ yprintf(dlerror()); return -1; }
+
    eglQuerySurface      = dlsym(handle, "eglQuerySurface");
-   if( eglQuerySurface == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglQuerySurface == NULL){ yprintf(dlerror()); return -1; }
+
    eglSwapInterval      = dlsym(handle, "eglSwapInterval");
-   if( eglSwapInterval == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglSwapInterval == NULL){ yprintf(dlerror()); return -1; }
+
    eglMakeCurrent       = dlsym(handle, "eglMakeCurrent");
-   if( eglMakeCurrent == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglMakeCurrent == NULL){ yprintf(dlerror()); return -1; }
+
    eglSwapBuffers       = dlsym(handle, "eglSwapBuffers");
-   if( eglSwapBuffers == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglSwapBuffers == NULL){ yprintf(dlerror()); return -1; }
+
    eglQueryString       = dlsym(handle, "eglQueryString");
-   if( eglQueryString == NULL){ printf(dlerror()); return -1; }  
-   
+   if( eglQueryString == NULL){ yprintf(dlerror()); return -1; }
+
    eglGetError          = dlsym(handle, "eglGetError");
-   if( eglGetError == NULL){ printf(dlerror()); return -1; }   
-   
+   if( eglGetError == NULL){ yprintf(dlerror()); return -1; }
+
    return 0;
 }
 #else
@@ -406,12 +423,12 @@ int initEGLFunc()
 
 int Java_org_yabause_android_YabauseRunnable_lockGL()
 {
-   pthread_mutex_lock(&g_mtxGlLock);  
+   pthread_mutex_lock(&g_mtxGlLock);
 }
 
 int Java_org_yabause_android_YabauseRunnable_unlockGL()
 {
-   pthread_mutex_unlock(&g_mtxGlLock);  
+   pthread_mutex_unlock(&g_mtxGlLock);
 }
 
 
@@ -421,10 +438,12 @@ Java_org_yabause_android_YabauseRunnable_init( JNIEnv* env, jobject obj, jobject
     yabauseinit_struct yinit;
     int res;
     void * padbits;
-    
+
     if( initEGLFunc() == -1 ) return -1;
 
     yabause = (*env)->NewGlobalRef(env, yab);
+
+    memset(&yinit, 0, sizeof(yabauseinit_struct));
 
     yinit.m68kcoretype = M68KCORE_C68K;
     yinit.percoretype = PERCORE_DUMMY;
@@ -434,9 +453,13 @@ Java_org_yabause_android_YabauseRunnable_init( JNIEnv* env, jobject obj, jobject
     yinit.sh2coretype = SH2CORE_DEFAULT;
 #endif
     yinit.vidcoretype = VIDCORE_SOFT;
+#ifdef HAVE_OPENSL
+    yinit.sndcoretype = SNDCORE_OPENSL;
+#else
     yinit.sndcoretype = SNDCORE_AUDIOTRACK;
+#endif
     yinit.cdcoretype = CDCORE_ISO;
-    yinit.carttype = CART_NONE;
+    yinit.carttype = GetCartridgeType();
     yinit.regionid = 0;
     yinit.biospath = GetBiosPath();
     yinit.cdpath = GetGamePath();
@@ -445,6 +468,7 @@ Java_org_yabause_android_YabauseRunnable_init( JNIEnv* env, jobject obj, jobject
     yinit.cartpath = GetCartridgePath();
     yinit.videoformattype = VIDEOFORMATTYPE_NTSC;
     yinit.frameskip = 0;
+    yinit.skip_load = 0;
 
     res = YabauseInit(&yinit);
 
@@ -542,6 +566,36 @@ Java_org_yabause_android_YabauseRunnable_screenshot( JNIEnv* env, jobject obj, j
     }
 
     AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+jobject Java_org_yabause_android_YabauseRunnable_gameInfo( JNIEnv* env, jobject obj, jobject path )
+{
+    jmethodID cons;
+    jboolean dummy;
+    jclass c;
+    jstring system, company, itemnum, version, date, cdinfo, region, peripheral, gamename;
+    GameInfo info;
+    const char * filename = (*env)->GetStringUTFChars(env, path, &dummy);
+
+    if (! GameInfoFromPath(filename, &info))
+    {
+       return NULL;
+    }
+
+    c = (*env)->FindClass(env, "org/yabause/android/GameInfo");
+    cons = (*env)->GetMethodID(env, c, "<init>", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+
+    system = (*env)->NewStringUTF(env, info.system);
+    company = (*env)->NewStringUTF(env, info.company);
+    itemnum = (*env)->NewStringUTF(env, info.itemnum);
+    version = (*env)->NewStringUTF(env, info.version);
+    date = (*env)->NewStringUTF(env, info.date);
+    cdinfo = (*env)->NewStringUTF(env, info.cdinfo);
+    region = (*env)->NewStringUTF(env, info.region);
+    peripheral = (*env)->NewStringUTF(env, info.peripheral);
+    gamename = (*env)->NewStringUTF(env, info.gamename);
+
+    return (*env)->NewObject(env, c, cons, system, company, itemnum, version, date, cdinfo, region, peripheral, gamename);
 }
 
 void log_callback(char * message)

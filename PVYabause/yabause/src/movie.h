@@ -52,7 +52,7 @@ struct MovieBufferStruct
 
 struct MovieBufferStruct ReadMovieIntoABuffer(FILE* fp);
 
-void MovieLoadState(const char * filename);
+void MovieLoadState(void);
 
 void SaveMovieInState(FILE* fp, IOCheck_struct check);
 void ReadMovieInState(FILE* fp); 
@@ -71,7 +71,7 @@ void StopMovie(void);
 
 const char *MakeMovieStateName(const char *filename);
 
-void MovieReadState(FILE* fp, const char * filename);
+void MovieReadState(FILE* fp);
 
 void PauseOrUnpause(void);
 

@@ -8,8 +8,8 @@
         <file>icons/actions/button_ok.png</file>
         <file>icons/actions/cd.png</file>
         <file>icons/actions/cheats.png</file>
+        <file>icons/actions/compatibility.png</file>
         <file alias="controller.png">icons/controller.png</file>
-        <file>icons/actions/emu-compatibility.png</file>
         <file>icons/actions/fps.png</file>
         <file>icons/actions/frame_skipping.png</file>
         <file alias="fullscreen.png">icons/actions/fullscreen.png</file>

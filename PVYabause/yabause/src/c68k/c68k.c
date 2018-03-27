@@ -259,7 +259,7 @@ u32 C68k_Get_AReg(c68k_struc *cpu, u32 num)
 
 u32 C68k_Get_PC(c68k_struc *cpu)
 {
-    return (cpu->PC - cpu->BasePC);
+    return (u32)(cpu->PC - cpu->BasePC);
 }
 
 u32 C68k_Get_SR(c68k_struc *cpu)

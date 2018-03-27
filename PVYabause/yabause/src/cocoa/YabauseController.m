@@ -267,6 +267,7 @@ static void FlipToggle(NSMenuItem *item) {
         yinit.clocksync = 0;
         yinit.basetime = 0;
         yinit.usethreads = 0;
+        yinit.skip_load = 0;
 
         /* Set up the internal save ram if specified. */
         if([bram length] > 0) {
@@ -280,12 +281,14 @@ static void FlipToggle(NSMenuItem *item) {
         /* Set up the cartridge stuff based on what was selected. */
         if(yinit.carttype == CART_NETLINK) {
             yinit.cartpath = NULL;
-            yinit.netlinksetting = ([cart length] > 0) ?
+            yinit.modemip = ([cart length] > 0) ?
                 [cart UTF8String] : NULL;
+            yinit.modemport = NULL;
         }
         else {
             yinit.cartpath = ([cart length] > 0) ? [cart UTF8String] : NULL;
-            yinit.netlinksetting = NULL;
+            yinit.modemip = NULL;
+            yinit.modemport = NULL;
         }
 
         if(cdcore == CDCORE_DUMMY && !yinit.biospath) {

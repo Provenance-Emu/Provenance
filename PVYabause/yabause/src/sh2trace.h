@@ -23,6 +23,8 @@
 
 #include "core.h"
 
+FASTCALL void SetInsTracing(int toggle);
+
 extern FASTCALL u64 sh2_cycle_count(void);
 extern FASTCALL void sh2_trace_add_cycles(s32 cycles);
 extern FASTCALL void sh2_trace_writeb(u32 address, u32 value);

@@ -30,4 +30,16 @@ extern VideoInterface_struct VIDSoft;
 
 void VIDSoftVdp2DrawScreen(int screen);
 
+void VIDSoftSetBilinear(int b);
+
+void VIDSoftSetNumPriorityThreads(int num);
+
+void Vdp2GetInterlaceInfo(int * start_line, int * line_increment);
+
+void VIDSoftSetNumLayerThreads(int num);
+
+void VIDSoftSetVdp1ThreadEnable(int b);
+
+void VidsoftWaitForVdp1Thread();
+
 #endif

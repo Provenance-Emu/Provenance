@@ -39,20 +39,26 @@
 #include "m68kcore.h"
 #include "peripheral.h"
 #include "scsp.h"
+#include "scspdsp.h"
 #include "scu.h"
 #include "sh2core.h"
 #include "smpc.h"
+#include "vidsoft.h"
 #include "vdp2.h"
 #include "yui.h"
 #include "bios.h"
 #include "movie.h"
 #include "osdcore.h"
 #ifdef HAVE_LIBSDL
- #if defined(__APPLE__) || defined(GEKKO)
-  #include <SDL/SDL.h>
+#if defined(__APPLE__) || defined(GEKKO)
+ #ifdef HAVE_LIBSDL2
+  #include <SDL2/SDL.h>
  #else
-  #include "SDL.h"
+  #include <SDL/SDL.h>
  #endif
+#else
+ #include "SDL.h"
+#endif
 #endif
 #if defined(_MSC_VER) || !defined(HAVE_SYS_TIME_H)
 #include <time.h>
@@ -84,11 +90,19 @@
     #include "gdb/stub.h"
 #endif
 
+#ifdef YAB_WANT_SSF
+#include "aosdk/ssf.h"
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 
 yabsys_struct yabsys;
 const char *bupfilename = NULL;
 u64 tickfreq;
+//todo this ought to be in scspdsp.c
+ScspDsp scsp_dsp = { 0 };
+char ssf_track_name[256] = { 0 };
+char ssf_artist[256] = { 0 };
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -138,6 +152,7 @@ int YabauseInit(yabauseinit_struct *init)
 {
    // Need to set this first, so init routines see it
    yabsys.UseThreads = init->usethreads;
+   yabsys.NumThreads = init->numthreads;
 
    // Initialize both cpu's
    if (SH2Init(init->sh2coretype) != 0)
@@ -186,7 +201,7 @@ int YabauseInit(yabauseinit_struct *init)
       return -1;
    }
 
-   if (Cs2Init(init->carttype, init->cdcoretype, init->cdpath, init->mpegpath, init->netlinksetting) != 0)
+   if (Cs2Init(init->carttype, init->cdcoretype, init->cdpath, init->mpegpath, init->modemip, init->modemport) != 0)
    {
       YabSetError(YAB_ERR_CANNOTINIT, _("CS2"));
       return -1;
@@ -269,6 +284,36 @@ int YabauseInit(yabauseinit_struct *init)
 
    YabauseResetNoLoad();
 
+#ifdef YAB_WANT_SSF
+
+   if (init->play_ssf && init->ssfpath != NULL && strlen(init->ssfpath))
+   {
+      if (!load_ssf((char*)init->ssfpath, init->m68kcoretype, init->sndcoretype))
+      {
+         YabSetError(YAB_ERR_FILENOTFOUND, (void *)init->ssfpath);
+
+         yabsys.playing_ssf = 0;
+
+         return -2;
+      }
+
+      yabsys.playing_ssf = 1;
+
+      get_ssf_info(1, ssf_track_name);
+      get_ssf_info(3, ssf_artist);
+
+      return 0;
+   }
+   else
+      yabsys.playing_ssf = 0;
+
+#endif
+
+   if (init->skip_load)
+   {
+	   return 0;
+   }
+
    if (yabsys.usequickload || yabsys.emulatebios)
    {
       if (YabauseQuickLoadGame() != 0)
@@ -287,7 +332,34 @@ int YabauseInit(yabauseinit_struct *init)
    GdbStubInit(MSH2, 43434);
 #endif
 
+   if (yabsys.UseThreads)
+   {
+      int num = yabsys.NumThreads < 1 ? 1 : yabsys.NumThreads;
+      VIDSoftSetVdp1ThreadEnable(num == 1 ? 0 : 1);
+      VIDSoftSetNumLayerThreads(num);
+      VIDSoftSetNumPriorityThreads(num);
+   }
+   else
+   {
+      VIDSoftSetVdp1ThreadEnable(0);
+      VIDSoftSetNumLayerThreads(0);
+      VIDSoftSetNumPriorityThreads(0);
+   }
+
    return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+void YabFlushBackups(void)
+{
+   if (BupRam)
+   {
+      if (T123Save(BupRam, 0x10000, 1, bupfilename) != 0)
+         YabSetError(YAB_ERR_FILEWRITE, (void *)bupfilename);
+   }
+
+   CartFlush();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -357,6 +429,10 @@ void YabauseResetNoLoad(void) {
 //////////////////////////////////////////////////////////////////////////////
 
 void YabauseReset(void) {
+
+   if (yabsys.playing_ssf)
+      yabsys.playing_ssf = 0;
+
    YabauseResetNoLoad();
 
    if (yabsys.usequickload || yabsys.emulatebios)
@@ -386,7 +462,7 @@ void YabauseResetButton(void) {
 int YabauseExec(void) {
 
 	//automatically advance lag frames, this should be optional later
-	if (FrameAdvanceVariable > 0 && LagFrameFlag == 1){ 
+	if (FrameAdvanceVariable > 0 && LagFrameFlag == 1){
 		FrameAdvanceVariable = NeedAdvance; //advance a frame
 		YabauseEmulate();
 		FrameAdvanceVariable = Paused; //pause next time
@@ -397,15 +473,15 @@ int YabauseExec(void) {
 		ScspMuteAudio(SCSP_MUTE_SYSTEM);
 		return(0);
 	}
-  
+
 	if (FrameAdvanceVariable == NeedAdvance){  //advance a frame
 		FrameAdvanceVariable = Paused; //pause next time
 		ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 		YabauseEmulate();
 	}
-	
+
 	if (FrameAdvanceVariable == RunNormal ) { //run normally
-		ScspUnMuteAudio(SCSP_MUTE_SYSTEM);	
+		ScspUnMuteAudio(SCSP_MUTE_SYSTEM);
 		YabauseEmulate();
 	}
 	return 0;
@@ -426,7 +502,7 @@ int YabauseEmulate(void) {
 #ifndef USE_SCSP2
    unsigned int m68kcycles;       // Integral M68k cycles per call
    unsigned int m68kcenticycles;  // 1/100 M68k cycles per call
-   
+
    if (yabsys.IsPal)
    {
       /* 11.2896MHz / 50Hz / 313 lines / 10 calls/line = 72.20 cycles/call */
@@ -467,14 +543,17 @@ int YabauseEmulate(void) {
          sh2cycles = (yabsys.SH2CycleFrac >> (YABSYS_TIMING_BITS + 1)) << 1;
          yabsys.SH2CycleFrac &= ((YABSYS_TIMING_MASK << 1) | 1);
 
-         PROFILE_START("MSH2");
-         SH2Exec(MSH2, sh2cycles);
-         PROFILE_STOP("MSH2");
+         if (!yabsys.playing_ssf)
+         {
+            PROFILE_START("MSH2");
+            SH2Exec(MSH2, sh2cycles);
+            PROFILE_STOP("MSH2");
 
-         PROFILE_START("SSH2");
-         if (yabsys.IsSSH2Running)
-            SH2Exec(SSH2, sh2cycles);
-         PROFILE_STOP("SSH2");
+            PROFILE_START("SSH2");
+            if (yabsys.IsSSH2Running)
+               SH2Exec(SSH2, sh2cycles);
+            PROFILE_STOP("SSH2");
+         }
 
 #ifdef USE_SCSP2
          PROFILE_START("SCSP");
@@ -502,26 +581,31 @@ int YabauseEmulate(void) {
          yabsys.SH2CycleFrac += cyclesinc;
          sh2cycles = (yabsys.SH2CycleFrac >> (YABSYS_TIMING_BITS + 1)) << 1;
          yabsys.SH2CycleFrac &= ((YABSYS_TIMING_MASK << 1) | 1);
-
-         PROFILE_START("MSH2");
-         SH2Exec(MSH2, sh2cycles - decilinecycles);
-         PROFILE_STOP("MSH2");
-         PROFILE_START("SSH2");
-         if (yabsys.IsSSH2Running)
-            SH2Exec(SSH2, sh2cycles - decilinecycles);
-         PROFILE_STOP("SSH2");
+         if (!yabsys.playing_ssf)
+         {
+            PROFILE_START("MSH2");
+            SH2Exec(MSH2, sh2cycles - decilinecycles);
+            PROFILE_STOP("MSH2");
+            PROFILE_START("SSH2");
+            if (yabsys.IsSSH2Running)
+               SH2Exec(SSH2, sh2cycles - decilinecycles);
+            PROFILE_STOP("SSH2");
+         }
 
          PROFILE_START("hblankin");
          Vdp2HBlankIN();
          PROFILE_STOP("hblankin");
 
-         PROFILE_START("MSH2");
-         SH2Exec(MSH2, decilinecycles);
-         PROFILE_STOP("MSH2");
-         PROFILE_START("SSH2");
-         if (yabsys.IsSSH2Running)
-            SH2Exec(SSH2, decilinecycles);
-         PROFILE_STOP("SSH2");
+         if (!yabsys.playing_ssf)
+         {
+            PROFILE_START("MSH2");
+            SH2Exec(MSH2, decilinecycles);
+            PROFILE_STOP("MSH2");
+            PROFILE_START("SSH2");
+            if (yabsys.IsSSH2Running)
+               SH2Exec(SSH2, decilinecycles);
+            PROFILE_STOP("SSH2");
+         }
 
 #ifdef USE_SCSP2
          PROFILE_START("SCSP");
@@ -606,6 +690,16 @@ int YabauseEmulate(void) {
    M68KSync();
 #endif
 
+#ifdef YAB_WANT_SSF
+
+   if (yabsys.playing_ssf)
+   {
+      OSDPushMessage(OSDMSG_FPS, 1, "NAME %s", ssf_track_name);
+      OSDPushMessage(OSDMSG_STATUS, 1, "ARTIST %s", ssf_artist);
+   }
+
+#endif
+
    return 0;
 }
 
@@ -635,7 +729,7 @@ void YabauseStartSlave(void) {
       CurrentSH2 = MSH2;
 
       SH2GetRegisters(SSH2, &SSH2->regs);
-      SSH2->regs.R[15] = 0x06001000;
+      SSH2->regs.R[15] = Cs2GetSlaveStackAdress();
       SSH2->regs.VBR = 0x06000400;
       SSH2->regs.PC = MappedMemoryReadLong(0x06000250);
       if (MappedMemoryReadLong(0x060002AC) != 0)
@@ -664,7 +758,7 @@ u64 YabauseGetTicks(void) {
    return ticks;
 #elif defined(_arch_dreamcast)
    return (u64) timer_ms_gettime64();
-#elif defined(GEKKO)  
+#elif defined(GEKKO)
    return gettime();
 #elif defined(PSP)
    return sceKernelGetSystemTimeWide();
@@ -767,7 +861,7 @@ void YabauseSpeedySetup(void)
    Cs2Area->reg.CR1 = (Cs2Area->status << 8) | ((Cs2Area->options & 0xF) << 4) | (Cs2Area->repcnt & 0xF);
    Cs2Area->reg.CR2 = (Cs2Area->ctrladdr << 8) | Cs2Area->track;
    Cs2Area->reg.CR3 = (Cs2Area->index << 8) | ((Cs2Area->FAD >> 16) & 0xFF);
-   Cs2Area->reg.CR4 = (u16) Cs2Area->FAD; 
+   Cs2Area->reg.CR4 = (u16) Cs2Area->FAD;
    Cs2Area->satauth = 4;
 
    // Set Master SH2 registers accordingly
@@ -864,7 +958,7 @@ int YabauseQuickLoadGame(void)
              (buffer[0xE2] << 8) |
               buffer[0xE3];
       blocks = size >> 11;
-      if ((size % 2048) != 0) 
+      if ((size % 2048) != 0)
          blocks++;
 
 
@@ -985,6 +1079,7 @@ int YabauseQuickLoadGame(void)
       // Now setup SH2 registers to start executing at ip code
       SH2GetRegisters(MSH2, &MSH2->regs);
       MSH2->regs.PC = 0x06002E00;
+      MSH2->regs.R[15] = Cs2GetMasterStackAdress();
       SH2SetRegisters(MSH2, &MSH2->regs);
    }
    else

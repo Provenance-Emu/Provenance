@@ -2828,6 +2828,7 @@ VideoInterface_struct VIDDC = {
     VIDDCVdp1UserClipping,
     VIDDCVdp1SystemClipping,
     VIDDCVdp1LocalCoordinate,
+    NULL,
     VIDDCVdp2Reset,
     VIDDCVdp2DrawStart,
     VIDDCVdp2DrawEnd,

@@ -105,7 +105,7 @@ extern Netlink *NetlinkArea;
 
 u8 FASTCALL NetlinkReadByte(u32 addr);
 void FASTCALL NetlinkWriteByte(u32 addr, u8 val);
-int NetlinkInit(const char *settingstring);
+int NetlinkInit(const char *ip, const char *port);
 void NetlinkDeInit(void);
 void NetlinkExec(u32 timing);
 

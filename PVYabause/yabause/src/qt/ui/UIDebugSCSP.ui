@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Debug VDP1</string>
+   <string>Debug SCSP</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_12">
    <item>
@@ -45,6 +45,13 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="pbPlaySlot">
+            <property name="text">
+             <string>Play Slot</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QPushButton" name="pbSaveAsWav">
             <property name="text">

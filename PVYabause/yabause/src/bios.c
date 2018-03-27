@@ -27,6 +27,7 @@
 #include "sh2core.h"
 #include "bios.h"
 #include "smpc.h"
+#include "yabause.h"
 
 static u8 sh2masklist[0x20] = {
 0xF0, 0xE0, 0xD0, 0xC0, 0xB0, 0xA0, 0x90, 0x80,
@@ -788,6 +789,8 @@ static void FASTCALL BiosBUPStatus(SH2_struct * sh)
    u32 blocksize;
    u32 ret;
    u32 freeblocks=0;
+   u32 needsize;
+   int aftersize;
 
    SH2GetRegisters(sh, &sh->regs);
 
@@ -808,12 +811,16 @@ static void FASTCALL BiosBUPStatus(SH2_struct * sh)
 
    freeblocks = GetFreeSpace(sh->regs.R[4], size, addr, blocksize);
 
+   needsize = sh->regs.R[5];
+   aftersize = (((blocksize - 6) * freeblocks) - 30) - needsize;
+   if (aftersize < 0) aftersize = 0;
+
    MappedMemoryWriteLong(sh->regs.R[6], size); // Size of Backup Ram (in bytes)
    MappedMemoryWriteLong(sh->regs.R[6]+0x4, size / blocksize); // Size of Backup Ram (in blocks)
    MappedMemoryWriteLong(sh->regs.R[6]+0x8, blocksize); // Size of block
    MappedMemoryWriteLong(sh->regs.R[6]+0xC, ((blocksize - 6) * freeblocks) - 30); // Free space(in bytes)
    MappedMemoryWriteLong(sh->regs.R[6]+0x10, freeblocks); // Free space(in blocks)
-   MappedMemoryWriteLong(sh->regs.R[6]+0x14, freeblocks); // Not sure, but seems to be the same as Free Space(in blocks)
+   MappedMemoryWriteLong(sh->regs.R[6]+0x14, aftersize / blocksize); // writable block size
 
    // cycles need to be incremented
 
@@ -981,6 +988,8 @@ static void FASTCALL BiosBUPWrite(SH2_struct * sh)
 
    free(blocktbl);
 
+   YabFlushBackups();
+
    sh->regs.R[0] = 0; // returns 0 if there's no error
    sh->regs.PC = sh->regs.PR;
    SH2SetRegisters(sh, &sh->regs);
@@ -1137,6 +1146,29 @@ static void FASTCALL BiosBUPDirectory(SH2_struct * sh)
       SH2SetRegisters(sh, &sh->regs);
       return;
    }
+
+   // Count Max size
+   for (i = 0; i < 256; i++)
+   {
+      u32 block = FindSave(sh->regs.R[4], sh->regs.R[5], blockoffset, size, addr, blocksize);
+
+      if (block == 0)
+         break;
+
+      blockoffset = block + 1;
+      block = addr + (blocksize * block * 2);
+   }
+
+   if (sh->regs.R[6] < i)
+   {
+      sh->regs.R[0] = -i; // returns the number of successfully read dir entries
+      sh->regs.PC = sh->regs.PR;
+      SH2SetRegisters(sh, &sh->regs);
+      return;
+   }
+
+   // reset offet
+   blockoffset = 2;
 
    for (i = 0; i < sh->regs.R[6]; i++)
    {
@@ -1874,6 +1906,7 @@ int BupImportSave(UNUSED u32 device, const char *filename)
    FILE *fp;
    u32 filesize;
    u8 *buffer;
+   size_t num_read = 0;
 
    if (!filename)
       return -1;
@@ -1892,7 +1925,7 @@ int BupImportSave(UNUSED u32 device, const char *filename)
       return -2;
    }
 
-   fread((void *)buffer, 1, filesize, fp);
+   num_read = fread((void *)buffer, 1, filesize, fp);
    fclose(fp);
 
    // Write save here

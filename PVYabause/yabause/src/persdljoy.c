@@ -24,10 +24,14 @@
 */
 
 #ifdef HAVE_LIBSDL
-#ifdef __APPLE__
-	#include <SDL/SDL.h>
+#if defined(__APPLE__) || defined(GEKKO)
+ #ifdef HAVE_LIBSDL2
+  #include <SDL2/SDL.h>
+ #else
+  #include <SDL/SDL.h>
+ #endif
 #else
-	#include "SDL.h"
+ #include "SDL.h"
 #endif
 
 #include "debug.h"

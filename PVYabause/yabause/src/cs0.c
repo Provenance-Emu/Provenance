@@ -1287,6 +1287,57 @@ int CartInit(const char * filename, int type)
 
 //////////////////////////////////////////////////////////////////////////////
 
+void CartFlush(void){
+   if (CartridgeArea)
+   {
+      if (CartridgeArea->carttype == CART_PAR)
+      {
+         if (CartridgeArea->rom)
+         {
+            if (T123Save(CartridgeArea->rom, 0x40000, 2, CartridgeArea->filename) != 0)
+               YabSetError(YAB_ERR_FILEWRITE, (void *)CartridgeArea->filename);
+         }
+      }
+
+      if (CartridgeArea->bupram)
+      {
+         u32 size = 0;
+
+         switch (CartridgeArea->carttype)
+         {
+            case CART_BACKUPRAM4MBIT: // 4 Mbit Backup Ram
+            {
+               size = 0x100000;
+               break;
+            }
+            case CART_BACKUPRAM8MBIT: // 8 Mbit Backup Ram
+            {
+               size = 0x200000;
+               break;
+            }
+            case CART_BACKUPRAM16MBIT: // 16 Mbit Backup Ram
+            {
+               size = 0x400000;
+               break;
+            }
+            case CART_BACKUPRAM32MBIT: // 32 Mbit Backup Ram
+            {
+               size = 0x800000;
+               break;
+            }
+         }
+
+         if (size != 0)
+         {
+            if (T123Save(CartridgeArea->bupram, size, 1, CartridgeArea->filename) != 0)
+               YabSetError(YAB_ERR_FILEWRITE, (void *)CartridgeArea->filename);
+         }
+      }
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
 void CartDeInit(void)
 {
    if (CartridgeArea)
@@ -1372,9 +1423,10 @@ int CartSaveState(FILE * fp)
 int CartLoadState(FILE * fp, UNUSED int version, int size)
 {
    int newtype;
+   size_t num_read = 0;
 
    // Read cart type
-   fread((void *)&newtype, 4, 1, fp);
+   num_read = fread((void *)&newtype, 4, 1, fp);
 
    // Check to see if old cart type and new cart type match, if they don't,
    // reallocate memory areas

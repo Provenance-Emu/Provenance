@@ -243,6 +243,7 @@ void UICheatSearch::on_pbRestart_clicked()
          if (search[j].results)
             free(search[j].results);
       }
+		search.clear();
    }
 
    // Setup initial values
@@ -262,22 +263,26 @@ void UICheatSearch::on_pbRestart_clicked()
 
 void UICheatSearch::on_pbSearch_clicked()
 {
-   // Search low wram and high wram areas
-   setSearchTypes();
-   
-   for (int i = 0; i < search.count(); i++)
-   {
-      search[i].results = MappedMemorySearch(search[i].startAddr, search[i].endAddr, searchType,
-         leSearchValue->text().toLatin1(), search[i].results, &search[i].numResults);
-   }
+	if (LowWram && HighWram)
+	{
+		// Search low wram and high wram areas
+		setSearchTypes();
 
-   listResults();
+		for (int i = 0; i < search.count(); i++)
+		{
+			search[i].results = MappedMemorySearch(search[i].startAddr, search[i].endAddr, searchType,
+				leSearchValue->text().toLatin1(), search[i].results, &search[i].numResults);
+		}
+
+		listResults();
+	}
 }
 
 void UICheatSearch::on_pbAddCheat_clicked()
 {
    UICheatRaw d( this );
    QString s;
+	bool b;
 
    // Insert current address/values into dialog
    QTreeWidgetItem *currentItem = twSearchResults->currentItem();
@@ -289,7 +294,7 @@ void UICheatSearch::on_pbAddCheat_clicked()
    d.rbLong->setChecked(rb32Bit->isChecked());
    if ( d.exec())
    {
-      if ( CheatAddCode( d.type(), d.leAddress->text().toUInt(), d.leValue->text().toUInt() ) != 0 )
+      if ( CheatAddCode( d.type(), d.leAddress->text().toUInt(&b, 16), d.leValue->text().toUInt(&b, 16) ) != 0 )
       {
          CommonDialogs::information( QtYabause::translate( "Unable to add code" ) );
          return;

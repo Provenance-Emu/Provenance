@@ -13,7 +13,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Lapetus; if not, write to the Free Software
+    along with YabauseUT; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
@@ -21,18 +21,23 @@
 #include "cdb.h"
 #include "cart.h"
 #include "m68k.h"
+#include "mpeg.h"
 #include "scsp.h"
 #include "scu.h"
+#include "slavesh.h"
 #include "sh2.h"
 #include "smpc.h"
 #include "vdp1.h"
 #include "vdp2.h"
 #include "main.h"
+#include "tests.h"
 
 menu_item_struct main_menu[] = {
 { "SH2 Test" , &sh2_test, },
+{ "Slave SH2 Test" , &slavesh2_test, },
 { "SCU Test", &scu_test, },
 { "CD Block Test" , &cdb_test, },
+{ "MPEG Card Test" , &mpeg_test, },
 { "Cartridge Test" , &cart_test, }, // Could almost autodetect the cart type
 { "68k Test" , &m68k_test, },
 { "SCSP Test" , &scsp_test, },
@@ -128,11 +133,65 @@ void yabauseut_init()
    vdp_disp_on();
 }
 
+#ifdef BUILD_AUTOMATED_TESTING
+
+void (*auto_tests[])() =
+{
+   //sh2
+   sh2_test,
+   //sh2 slave
+   slavesh2_test,
+   //scu
+   scu_register_test,
+   scu_int_test,
+   scu_dma_test,
+   scu_dsp_test,
+   //cd block
+   //mpeg card
+   //cartridge
+   //68k
+   //scsp
+   scsp_timing_test,
+   scsp_misc_test,
+   scsp_dsp_test,
+   //smpc
+   //vdp1
+   vdp1_framebuffer_tests,
+   //vdp2
+   vdp2_auto_tests,
+   auto_test_all_finished
+};
+
+#endif
+
+//by resetting the system inbetween tests, tests can't cause other tests to
+//fail due to incomplete system state cleanup
+
+int auto_test_get_selection()
+{
+#ifdef BUILD_AUTOMATED_TESTING
+   volatile u8* ptr = (volatile u8 *)VDP2_RAM;
+   return ptr[AUTO_TEST_SELECT_ADDRESS];
+#endif
+   return 0;
+}
+
+void auto_test_do_selected_test(int selection)
+{
+#ifdef BUILD_AUTOMATED_TESTING
+   (*auto_tests[selection])();
+#endif
+}
+
 int main()
 {
    int choice;
 
+   int auto_test_selection = auto_test_get_selection();
+
    yabauseut_init();
+
+   auto_test_do_selected_test(auto_test_selection);
 
    // Display Main Menu
    for(;;)

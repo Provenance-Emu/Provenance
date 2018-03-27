@@ -1,4 +1,4 @@
-/*	Copyright 2008 Filipe Azevedo <pasnox@gmail.com>
+/*	Copyright 2012 Theo Berkau <cwx@cyberwarriorx.com>
 
 	This file is part of Yabause.
 
@@ -16,30 +16,29 @@
 	along with Yabause; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 */
-#ifndef UIWAITINPUT_H
-#define UIWAITINPUT_H
+#ifndef UIDEBUGSCSPDSP_H
+#define UIDEBUGSCSPDSP_H
 
-#include "ui_UIWaitInput.h"
+#include "UIDebugCPU.h"
 #include "../QtYabause.h"
 
-class UIWaitInput : public QDialog, public Ui::UIWaitInput
+class UIDebugSCSPDSP : public UIDebugCPU
 {
 	Q_OBJECT
+private:
+
 public:
-	UIWaitInput( PerInterface_struct* core, const QString& padKey, QWidget* parent = 0 );
-
-	inline QString keyString() const { return mKeyString; }
-
+	UIDebugSCSPDSP( YabauseThread *mYabauseThread, QWidget* parent = 0 );
+   void updateRegList();
+   void updateCodeList(u32 addr);
+   u32 getRegister(int index, int *size);
+   void setRegister(int index, u32 value);
+   bool addCodeBreakpoint(u32 addr);
+   bool delCodeBreakpoint(u32 addr);
+   void stepInto();
 protected:
-	PerInterface_struct* mCore;
-	QString mPadKey;
-	QString mKeyString;
-	bool mScanningInput;
-
-	void keyPressEvent( QKeyEvent* event );
 
 protected slots:
-	void inputScan_timeout();
 };
 
-#endif // UIWAITINPUT_H
+#endif // UIDEBUGSCSPDSP_H

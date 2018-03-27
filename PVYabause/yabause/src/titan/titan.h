@@ -21,13 +21,26 @@
 #define TITAN_H
 
 #include "../core.h"
+#include "../vidshared.h"
 
 #define TITAN_BLEND_TOP     0
 #define TITAN_BLEND_BOTTOM  1
 #define TITAN_BLEND_ADD     2
 
+#define TITAN_SPRITE 5
+#define TITAN_RBG0 4
+#define TITAN_NBG0 3
+#define TITAN_NBG1 2
+#define TITAN_NBG2 1
+#define TITAN_NBG3 0
+#define TITAN_BACK -1
+
+#define TITAN_NORMAL_SHADOW 1
+#define TITAN_MSB_SHADOW 2
+
 int TitanInit();
 int TitanDeInit();
+void TitanErase();
 
 void TitanSetResolution(int width, int height);
 void TitanGetResolution(int * width, int * height);
@@ -38,10 +51,8 @@ void TitanPutBackHLine(s32 y, u32 color);
 
 void TitanPutLineHLine(int linescreen, s32 y, u32 color);
 
-void TitanPutPixel(int priority, s32 x, s32 y, u32 color, int linescreen);
+void TitanPutPixel(int priority, s32 x, s32 y, u32 color, int linescreen, vdp2draw_struct* info);
 void TitanPutHLine(int priority, s32 x, s32 y, s32 width, u32 color);
-
-void TitanPutShadow(int priority, s32 x, s32 y);
 
 void TitanRender(pixel_t * dispbuffer);
 

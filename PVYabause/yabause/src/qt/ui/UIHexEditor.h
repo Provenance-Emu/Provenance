@@ -41,6 +41,7 @@ public:
    void goToAddress(u32 address, bool setCursor=true);
    virtual void setFont(const QFont &font);
    bool saveSelected(QString filename);
+   bool saveTab(QString filename);
 private:
    void keyPressCursor(QKeyEvent *event);
    void keyPressSelect(QKeyEvent *event);
@@ -109,6 +110,7 @@ private slots:
    void autoScroll();
    void sliderUpdate(int value);
    virtual bool focusNextPrevChild(bool next);
+   bool saveMemory(QString filename, u32 startAddress, u32 endAddress);
 };
 
 class UIHexEditor : public QTabWidget
@@ -121,6 +123,7 @@ public:
    u32 getStartAddress();
    u32 getEndAddress();
    bool saveSelected(QString filename);
+   bool saveTab(QString filename);
 private:
    ;
 };

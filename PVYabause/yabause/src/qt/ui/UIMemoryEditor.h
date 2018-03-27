@@ -72,6 +72,7 @@ protected:
 protected slots:
    void on_pbGotoAddress_clicked();
    void on_pbSaveSelected_clicked();
+   void on_pbSaveTab_clicked();
    void on_pbSearchMemory_clicked();
    void searchResult(bool found, bool cancel, u32 address);
 };

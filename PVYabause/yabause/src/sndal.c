@@ -28,24 +28,24 @@
 #include <AL/alc.h>
 #endif
 
-#include <pthread.h>
-#include <unistd.h>
+#include "threads.h"
 #include <stdlib.h>
 #include <string.h>
+
 
 #include "error.h"
 #include "scsp.h"
 #include "sndal.h"
 #include "debug.h"
 
-int SNDALInit();
-void SNDALDeInit();
-int SNDALReset();
+int SNDALInit(void);
+void SNDALDeInit(void);
+int SNDALReset(void);
 int SNDALChangeVideoFormat(int vertfreq);
 void SNDALUpdateAudio(u32 *left, u32 *right, u32 samples);
-u32 SNDALGetAudioSpace();
-void SNDALMuteAudio();
-void SNDALUnMuteAudio();
+u32 SNDALGetAudioSpace(void);
+void SNDALMuteAudio(void);
+void SNDALUnMuteAudio(void);
 void SNDALSetVolume(int vol);
 
 SoundInterface_struct SNDAL =   {
@@ -74,16 +74,19 @@ static u16 *buffer;
 static u32 soundbufsize = 0;
 static u32 soundoffset;
 static volatile u32 soundpos;
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 static int thd_done = 0;
-static pthread_t thd;
+
 static int soundvolume = 1;
 static int soundlen;
 
-static void *sound_update_thd(void *ptr __attribute__((unused)))    {
+static void sound_update_thd(void *ptr)    {
+
     ALint proc;
     ALuint buf;
+
     u8 data[2048];
+
     u8 *soundbuf = (u8 *)buffer;
     int i;
 
@@ -95,13 +98,10 @@ static void *sound_update_thd(void *ptr __attribute__((unused)))    {
             continue;
         }
 
-        pthread_mutex_lock(&mutex);
-
         /* Go through each buffer that needs more data. */
         while(proc--)   {
             /* Unqueue the old buffer, so that it can be filled again. */
             alSourceUnqueueBuffers(source, 1, &buf);
-
             if(alGetError() != AL_NO_ERROR) {
                 continue;
             }
@@ -118,13 +118,10 @@ static void *sound_update_thd(void *ptr __attribute__((unused)))    {
             alSourceQueueBuffers(source, 1, &buf);
         }
 
-        pthread_mutex_unlock(&mutex);
-
-        /* Sleep for 5ms. */
-        usleep(5 * 1000);
+        YabThreadYield();
     }
 
-    return NULL;
+    //return NULL;
 }
 
 static void sdlConvert32uto16s(s32 *srcL, s32 *srcR, s16 *dst, u32 len)    {
@@ -145,13 +142,11 @@ static void sdlConvert32uto16s(s32 *srcL, s32 *srcR, s16 *dst, u32 len)    {
         else *dst = *srcR;
         srcR++;
         dst++;
-    } 
+    }
 }
 
 void SNDALUpdateAudio(u32 *left, u32 *right, u32 num_samples)   {
     u32 copy1size = 0, copy2size = 0;
-
-    pthread_mutex_lock(&mutex);
 
     if((soundbufsize - soundoffset) < (num_samples * sizeof(s16) * 2))  {
         copy1size = (soundbufsize - soundoffset);
@@ -171,10 +166,9 @@ void SNDALUpdateAudio(u32 *left, u32 *right, u32 num_samples)   {
                            (s32 *)right + (copy1size / sizeof(s16) / 2),
                            (s16 *)buffer, copy2size / sizeof(s16) / 2);
 
-    soundoffset += copy1size + copy2size;   
+    soundoffset += copy1size + copy2size;
     soundoffset %= soundbufsize;
 
-    pthread_mutex_unlock(&mutex);
 }
 
 int SNDALInit() {
@@ -182,7 +176,6 @@ int SNDALInit() {
 
     /* Attempt to grab the preferred device from OpenAL. */
     device = alcOpenDevice(NULL);
-
     if(!device) {
         rv = -1;
         goto err1;
@@ -224,6 +217,7 @@ int SNDALInit() {
     alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
 
     soundlen = SOUND_FREQ / 60;
+
     soundbufsize = soundlen * SOUND_BUFFERS * 2 * 2;
     soundvolume = 100;
 
@@ -245,8 +239,7 @@ int SNDALInit() {
     alSourcePlay(source);
 
     /* Start the update thread. */
-    pthread_create(&thd, NULL, &sound_update_thd, NULL);
-
+    YabThreadStart(YAB_THREAD_OPENAL,sound_update_thd,(void *)buffer);
     return 0;
 
     /* Error conditions. Errors cause cascading deinitialization, so hence this
@@ -271,9 +264,10 @@ err1:
 }
 
 void SNDALDeInit()  {
+
     /* Stop our update thread. */
     thd_done = 1;
-    pthread_join(thd, NULL);
+    YabThreadWait(YAB_THREAD_OPENAL);
 
     /* Stop playback. */
     alSourceStop(source);
@@ -297,7 +291,6 @@ int SNDALReset()    {
 }
 
 int SNDALChangeVideoFormat(int vertfreq)    {
-    pthread_mutex_lock(&mutex);
 
     soundlen = SOUND_FREQ / vertfreq;
     soundbufsize = soundlen * SOUND_BUFFERS * 2 * 2;
@@ -309,8 +302,6 @@ int SNDALChangeVideoFormat(int vertfreq)    {
         return -1;
 
     memset(buffer, 0, soundbufsize);
-
-    pthread_mutex_unlock(&mutex);
 
     return 0;
 }

@@ -20,7 +20,7 @@
 #ifndef SNDAL_H
 #define SNDAL_H
 
-#define SNDCORE_AL  2
+#define SNDCORE_AL  4
 
 extern SoundInterface_struct SNDAL;
 

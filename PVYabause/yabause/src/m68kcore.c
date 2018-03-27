@@ -141,6 +141,12 @@ static void M68KDummySetWriteB(UNUSED M68K_WRITE *Func) {
 static void M68KDummySetWriteW(UNUSED M68K_WRITE *Func) {
 }
 
+static void M68KDummySaveState(UNUSED FILE *fp) {
+}
+
+static void M68KDummyLoadState(UNUSED FILE *fp) {
+}
+
 M68K_struct M68KDummy = {
 	0,
 	"Dummy 68k Interface",
@@ -167,5 +173,7 @@ M68K_struct M68KDummy = {
 	M68KDummySetReadB,
 	M68KDummySetReadW,
 	M68KDummySetWriteB,
-	M68KDummySetWriteW
+	M68KDummySetWriteW,
+   M68KDummySaveState,
+   M68KDummyLoadState
 };

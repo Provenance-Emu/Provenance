@@ -254,7 +254,7 @@ void UIDebugCPU::on_pbStepOut_clicked()
 
 void UIDebugCPU::on_pbMemoryTransfer_clicked()
 {
-	UIMemoryTransfer( mYabauseThread, this ).exec();
+	UIMemoryTransfer( NULL, this ).exec();
 }
 
 void UIDebugCPU::on_pbMemoryEditor_clicked()

@@ -74,6 +74,7 @@ class UIYabause : public QMainWindow, public Ui::UIYabause
 	
 public:
 	UIYabause( QWidget* parent = 0 );
+	~UIYabause();
 
 	void swapBuffers();
 	virtual bool eventFilter( QObject* o, QEvent* e );
@@ -83,6 +84,7 @@ protected:
 	YabauseThread* mYabauseThread;
 	QDockWidget* mLogDock;
 	QTextEdit* teLog;
+	bool mCanLog;
 	bool mInit;
 	QList <cheatsearch_struct> search;
 	int searchType;
@@ -102,6 +104,7 @@ protected:
 	virtual void mousePressEvent( QMouseEvent* event );
 	virtual void mouseReleaseEvent( QMouseEvent* event );
 	virtual void mouseMoveEvent( QMouseEvent* event );
+	virtual void resizeEvent( QResizeEvent* event );
 
 public slots:
 	void appendLog( const char* msg );
@@ -115,9 +118,11 @@ public slots:
 	void breakpointHandlerSSH2(bool displayMessage);
 	void breakpointHandlerM68K();
 	void breakpointHandlerSCUDSP();
+	void breakpointHandlerSCSPDSP();
 protected slots:
 	void errorReceived( const QString& error, bool internal = true );
 	void sizeRequested( const QSize& size );
+	void fixAspectRatio( int width );
 	void getSupportedResolutions();
 	int isResolutionValid( int width, int height, int bpp, int freq );
 	int findBestVideoFreq( int width, int height, int bpp, int videoFormat );
@@ -160,10 +165,12 @@ protected slots:
 	void on_aViewDebugVDP2_triggered();
 	void on_aViewDebugM68K_triggered();
 	void on_aViewDebugSCSP_triggered();
+	void on_aViewDebugSCSPDSP_triggered();
 	void on_aViewDebugSCUDSP_triggered();
 	void on_aViewDebugMemoryEditor_triggered();
+	void on_aTraceLogging_triggered( bool toggled );
 	// help menu
-	void on_aHelpEmuCompatibility_triggered();
+	void on_aHelpCompatibilityList_triggered();
 	void on_aHelpAbout_triggered();
 	// toolbar
 	void on_aSound_triggered();

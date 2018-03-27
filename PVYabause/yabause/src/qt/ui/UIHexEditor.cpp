@@ -34,7 +34,7 @@ UIHexEditor::UIHexEditor( QWidget* p )
    startList << 0x00000000 << 0x00000000 << 0x00200000 << 0x06000000 <<
                 0x02000000 << 0x04000000 << 0x05800000 << 0x05A00000 <<
                 0x05C00000 << 0x05C80000 << 0x05E00000 << 0x05F00000;
-   endList   << 0xFFFFFFFF << 0x0017FFFF << 0x002FFFFF << 0x060FFFFF <<
+   endList   << 0x07FFFFFF << 0x0017FFFF << 0x002FFFFF << 0x060FFFFF <<
                 0x03FFFFFF << 0x04FFFFFF << 0x058FFFFF << 0x05AFFFFF <<
                 0x05C7FFFF << 0x05CFFFFF << 0x05EFFFFF << 0x05F7FFFF;
    for (int i=0; i < tabList.count(); i++)
@@ -69,6 +69,12 @@ bool UIHexEditor::saveSelected( QString filename )
 {
    UIHexEditorWnd *hexEditorWnd=(UIHexEditorWnd *)currentWidget();
    return hexEditorWnd->saveSelected(filename);
+}
+
+bool UIHexEditor::saveTab(QString filename)
+{
+	UIHexEditorWnd *hexEditorWnd = (UIHexEditorWnd *)currentWidget();
+	return hexEditorWnd->saveTab(filename);
 }
 
 UIHexEditorWnd::UIHexEditorWnd( QWidget* p )
@@ -969,30 +975,41 @@ u64 UIHexEditorWnd::getSelectionEnd()
 
 bool UIHexEditorWnd::saveSelected(QString filename)
 {
-   FILE *fp=fopen(filename.toLatin1(), "wb");
-   u32 size=(u32)(getSelectionEnd()-getSelectionStart())/2;
+	return saveMemory(filename, getSelectionStart(), getSelectionEnd());
+}
 
-   if (fp == NULL)
-      return false;
+bool UIHexEditorWnd::saveTab(QString filename)
+{
+	return saveMemory(filename, startAddress, endAddress + 1);
+}
 
-   u8 *buf = (unsigned char *)malloc(size);
-   if (buf == NULL)
-   {
-      fclose(fp);
-      return false;
-   }
 
-   for (u32 i = 0; i < size; i++)
-      buf[i] = MappedMemoryReadByte((getSelectionStart() / 2)+i);
+bool UIHexEditorWnd::saveMemory(QString filename, u32 startAddress, u32 endAddress)
+{
+	FILE *fp = fopen(filename.toLatin1(), "wb");
+	u32 size = (u32)(endAddress - startAddress);
 
-   if (fwrite((void *)buf, 1, size, fp) != size)
-   {
-      free(buf);
-      fclose(fp);
-      return false;
-   }
+	if (fp == NULL)
+		return false;
 
-   free(buf);
-   fclose(fp);
-   return true;
+	u8 *buf = (unsigned char *)malloc(size);
+	if (buf == NULL)
+	{
+		fclose(fp);
+		return false;
+	}
+
+	for (u32 i = 0; i < size; i++)
+		buf[i] = MappedMemoryReadByte((startAddress)+i);
+
+	if (fwrite((void *)buf, 1, size, fp) != size)
+	{
+		free(buf);
+		fclose(fp);
+		return false;
+	}
+
+	free(buf);
+	fclose(fp);
+	return true;
 }

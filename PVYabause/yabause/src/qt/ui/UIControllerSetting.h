@@ -50,6 +50,7 @@ protected:
 	QMap<u8, u32> mScanMasks;
 	QLabel *mlInfos;
 	u32 scanFlags;
+	QToolButton * curTb;
 
 	void keyPressEvent( QKeyEvent* event );
 	void mouseMoveEvent(QMouseEvent * event);

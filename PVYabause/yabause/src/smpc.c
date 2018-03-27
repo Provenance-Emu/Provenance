@@ -39,25 +39,26 @@
 #ifdef _arch_dreamcast
 # include "dreamcast/localtime.h"
 #endif
-#ifdef PSP
+#if defined(PSP) && !defined(__LIBRETRO__)
 # include "psp/localtime.h"
 #endif
 
 Smpc * SmpcRegs;
 u8 * SmpcRegsT;
 SmpcInternal * SmpcInternalVars;
+int intback_wait_for_line = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 
 int SmpcInit(u8 regionid, int clocksync, u32 basetime) {
    if ((SmpcRegsT = (u8 *) calloc(1, sizeof(Smpc))) == NULL)
       return -1;
- 
+
    SmpcRegs = (Smpc *) SmpcRegsT;
 
    if ((SmpcInternalVars = (SmpcInternal *) calloc(1, sizeof(SmpcInternal))) == NULL)
       return -1;
-  
+
    SmpcInternalVars->regionsetting = regionid;
    SmpcInternalVars->regionid = regionid;
    SmpcInternalVars->clocksync = clocksync;
@@ -155,10 +156,10 @@ static void SmpcSNDOFF(void) {
 
 void SmpcCKCHG352(void) {
    // Reset VDP1, VDP2, SCU, and SCSP
-   Vdp1Reset();  
-   Vdp2Reset();  
-   ScuReset();  
-   ScspReset();  
+   Vdp1Reset();
+   Vdp2Reset();
+   ScuReset();
+   ScspReset();
 
    // Clear VDP1/VDP2 ram
 
@@ -178,10 +179,10 @@ void SmpcCKCHG352(void) {
 
 void SmpcCKCHG320(void) {
    // Reset VDP1, VDP2, SCU, and SCSP
-   Vdp1Reset();  
-   Vdp2Reset();  
-   ScuReset();  
-   ScspReset();  
+   Vdp1Reset();
+   Vdp2Reset();
+   ScuReset();
+   ScspReset();
 
    // Clear VDP1/VDP2 ram
 
@@ -223,7 +224,7 @@ static void SmpcINTBACKStatus(void) {
 
    SmpcRegs->OREG[0] = 0x80 | (SmpcInternalVars->resd << 6);   // goto normal startup
    //SmpcRegs->OREG[0] = 0x0 | (SmpcInternalVars->resd << 6);  // goto setclock/setlanguage screen
-    
+
    // write time data in OREG1-7
    if (SmpcInternalVars->clocksync) {
       tmp = SmpcInternalVars->basetime + ((u64)framecounter * 1001 / 60000);
@@ -232,7 +233,9 @@ static void SmpcINTBACKStatus(void) {
    }
 #ifdef WIN32
    memcpy(&times, localtime(&tmp), sizeof(times));
-#elif defined(_arch_dreamcast) || defined(PSP)
+#elif defined(__CELLOS_LV2__)
+   memcpy(&times, localtime(&tmp), sizeof(times));
+#elif defined(_arch_dreamcast) || defined(PSP) && !defined(__LIBRETRO__)
    internal_localtime_r(&tmp, &times);
 #else
    localtime_r(&tmp, &times);
@@ -279,7 +282,7 @@ static void SmpcINTBACKStatus(void) {
 
    // write cartidge data in OREG8
    SmpcRegs->OREG[8] = 0; // FIXME : random value
-    
+
    // write zone data in OREG9 bits 0-7
    // 1 -> japan
    // 2 -> asia/ntsc
@@ -300,18 +303,18 @@ static void SmpcINTBACKStatus(void) {
    // 4   | 1      |
    // 3   | MSHNMI |
    // 2   | 1      |
-   // 1   | SYSRES | 
+   // 1   | SYSRES |
    // 0   | SNDRES |
    SmpcRegs->OREG[10] = 0x34|(SmpcInternalVars->dotsel<<6)|(SmpcInternalVars->mshnmi<<3)|(SmpcInternalVars->sysres<<1)|SmpcInternalVars->sndres;
-    
+
    // system state, second part in OREG11, bit 6
    // bit 6 -> CDRES
    SmpcRegs->OREG[11] = SmpcInternalVars->cdres << 6; // FIXME
-    
+
    // SMEM
    for(i = 0;i < 4;i++)
       SmpcRegs->OREG[12+i] = SmpcInternalVars->SMEM[i];
-    
+
    SmpcRegs->OREG[31] = 0x10; // set to intback command
 }
 
@@ -434,7 +437,7 @@ static void SmpcINTBACK(void) {
       return;
    }
 
-   //we think rayman sets 0x40 so that it breaks the intback command immediately when it blocks, 
+   //we think rayman sets 0x40 so that it breaks the intback command immediately when it blocks,
    //rather than having to set 0x40 in response to an interrupt
    if ((SmpcInternalVars->intbackIreg0 = (SmpcRegs->IREG[0] & 1))) {
       // Return non-peripheral data
@@ -505,9 +508,17 @@ static void SmpcRESDISA(void) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
 void SmpcExec(s32 t) {
    if (SmpcInternalVars->timing > 0) {
+
+      if (intback_wait_for_line)
+      {
+         if (yabsys.LineCount == 207)
+         {
+            SmpcInternalVars->timing = -1;
+            intback_wait_for_line = 0;
+         }
+      }
       SmpcInternalVars->timing -= t;
       if (SmpcInternalVars->timing <= 0) {
          switch(SmpcRegs->COMREG) {
@@ -571,7 +582,7 @@ void SmpcExec(s32 t) {
                SMPCLOG("smpc\t: Command %02X not implemented\n", SmpcRegs->COMREG);
                break;
          }
-  
+
          SmpcRegs->SF = 0;
       }
    }
@@ -581,7 +592,6 @@ void SmpcExec(s32 t) {
 
 u8 FASTCALL SmpcReadByte(u32 addr) {
    addr &= 0x7F;
-
    return SmpcRegsT[addr >> 1];
 }
 
@@ -623,21 +633,30 @@ static void SmpcSetTiming(void) {
          SmpcInternalVars->timing = 1; // this has to be tested on a real saturn
          return;
       case 0x10:
-         if (SmpcInternalVars->intback)
-            SmpcInternalVars->timing = 20; // this will need to be verified
+         if (SmpcInternalVars->intback)//continue was issued
+         {
+            SmpcInternalVars->timing = 16000;
+            intback_wait_for_line = 1;
+         }
          else {
             // Calculate timing based on what data is being retrieved
 
-            SmpcInternalVars->timing = 1;
-
-            // If retrieving non-peripheral data, add 0.2 milliseconds
-            if (SmpcRegs->IREG[0] == 0x01)
-               SmpcInternalVars->timing += 2;
-
-            // If retrieving peripheral data, add 15 milliseconds
-            if (SmpcRegs->IREG[1] & 0x8)
-               SmpcInternalVars->timing += 16000; // Strangely enough, this works better
-//               SmpcInternalVars->timing += 150;
+            if ((SmpcRegs->IREG[0] == 0x01) && (SmpcRegs->IREG[1] & 0x8))
+            {
+               //status followed by peripheral data
+               SmpcInternalVars->timing = 250;
+            }
+            else if ((SmpcRegs->IREG[0] == 0x01) && ((SmpcRegs->IREG[1] & 0x8) == 0))
+            {
+               //status only
+               SmpcInternalVars->timing = 250;
+            }
+            else if ((SmpcRegs->IREG[0] == 0) && (SmpcRegs->IREG[1] & 0x8))
+            {
+               //peripheral only
+             SmpcInternalVars->timing = 16000;
+               intback_wait_for_line = 1;
+            }
          }
          return;
       case 0x17:
@@ -647,7 +666,7 @@ static void SmpcSetTiming(void) {
          SmpcInternalVars->timing = 1;
          return;
       case 0x3:
-         SmpcInternalVars->timing = 1;                        
+         SmpcInternalVars->timing = 1;
          return;
       case 0x6:
       case 0x7:
@@ -679,7 +698,7 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
                SmpcRegs->SR &= 0x0F;
                break;
             }
-            else if (SmpcRegs->IREG[0] & 0x80) {                    
+            else if (SmpcRegs->IREG[0] & 0x80) {
                // Continue
                SmpcRegs->COMREG = 0x10;
                SmpcSetTiming();
@@ -695,7 +714,6 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
          return;
       case 0x75: // PDR1
          // FIX ME (should support other peripherals)
-
          switch (SmpcRegs->DDR[0] & 0x7F) { // Which Control Method do we use?
             case 0x00:
                if (PORTDATA1.data[1] == PERGUN && (val & 0x7F) == 0x7F)
@@ -704,7 +722,7 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
             case 0x60:
                switch (val & 0x60) {
                   case 0x60: // 1st Data
-                     val = (val & 0x80) | 0x14 | (PORTDATA1.data[1] & 0x8);
+                     val = (val & 0x80) | 0x14 | (PORTDATA1.data[3] & 0x8);
                      break;
                   case 0x20: // 2nd Data
                      val = (val & 0x80) | 0x10 | ((PORTDATA1.data[2] >> 4) & 0xF);
@@ -713,7 +731,7 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
                      val = (val & 0x80) | 0x10 | (PORTDATA1.data[2] & 0xF);
                      break;
                   case 0x00: // 4th Data
-                     val = (val & 0x80) | 0x10 | ((PORTDATA1.data[1] >> 4) & 0xF);
+                     val = (val & 0x80) | 0x10 | ((PORTDATA1.data[3] >> 4) & 0xF);
                      break;
                   default: break;
                }
@@ -725,7 +743,38 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
                break;
          }
 			break;
-      case 0x79: // DDR1
+	  case 0x77: // PDR1
+		  // FIX ME (should support other peripherals)
+		  switch (SmpcRegs->DDR[1] & 0x7F) { // Which Control Method do we use?
+		  case 0x00:
+			  if (PORTDATA2.data[1] == PERGUN && (val & 0x7F) == 0x7F)
+				  SmpcRegs->PDR[1] = PORTDATA2.data[2];
+			  break;
+		  case 0x60:
+			  switch (val & 0x60) {
+			  case 0x60: // 1st Data
+				  val = (val & 0x80) | 0x14 | (PORTDATA2.data[3] & 0x8);
+				  break;
+			  case 0x20: // 2nd Data
+				  val = (val & 0x80) | 0x10 | ((PORTDATA2.data[2] >> 4) & 0xF);
+				  break;
+			  case 0x40: // 3rd Data
+				  val = (val & 0x80) | 0x10 | (PORTDATA2.data[2] & 0xF);
+				  break;
+			  case 0x00: // 4th Data
+				  val = (val & 0x80) | 0x10 | ((PORTDATA2.data[3] >> 4) & 0xF);
+				  break;
+			  default: break;
+			  }
+
+			  SmpcRegs->PDR[1] = val;
+			  break;
+		  default:
+			  SMPCLOG("smpc\t: Peripheral Unknown Control Method not implemented\n");
+			  break;
+		  }
+		  break;
+	  case 0x79: // DDR1
          switch (SmpcRegs->DDR[0] & 0x7F) { // Which Control Method do we use?
             case 0x00: // Low Nibble of Peripheral ID
             case 0x40: // High Nibble of Peripheral ID
@@ -757,13 +806,13 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
                         case PERWHEEL:
                         case PERMISSIONSTICK:
                         case PERTWINSTICKS:
-                        default: 
+                        default:
                            SMPCLOG("smpc\t: Peripheral TH Control Method not supported for peripherl id %02X\n", PORTDATA1.data[1]);
                            break;
                      }
                      break;
                   }
-                  default: 
+                  default:
                      SmpcRegs->PDR[0] = 0x71;
                      break;
                }
@@ -772,6 +821,12 @@ void FASTCALL SmpcWriteByte(u32 addr, u8 val) {
             default: break;
          }
          break;
+	  case 0x7D: // IOSEL
+		  SmpcRegs->IOSEL = val;
+		  break;
+	  case 0x7F: // EXLE
+		  SmpcRegs->EXLE = val;
+		  break;
       default:
          return;
    }
@@ -796,7 +851,7 @@ void FASTCALL SmpcWriteLong(USED_IF_SMPC_DEBUG u32 addr, UNUSED u32 val) {
 int SmpcSaveState(FILE *fp)
 {
    int offset;
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
 
    offset = StateWriteHeader(fp, "SMPC", 3);
 
@@ -823,7 +878,7 @@ int SmpcSaveState(FILE *fp)
 
 int SmpcLoadState(FILE *fp, int version, int size)
 {
-   IOCheck_struct check;
+   IOCheck_struct check = { 0, 0 };
    int internalsizev2 = sizeof(SmpcInternal) - 8;
 
    // Read registers

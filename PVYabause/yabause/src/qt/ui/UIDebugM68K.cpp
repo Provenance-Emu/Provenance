@@ -146,7 +146,9 @@ u32 UIDebugM68K::getRegister(int index, int *size)
       case 17:
          value = m68kregs.PC;
          break;
-      default: break;
+      default: 
+			value = 0;
+			break;
    }
 
    *size = 4;
@@ -156,6 +158,9 @@ u32 UIDebugM68K::getRegister(int index, int *size)
 void UIDebugM68K::setRegister(int index, u32 value)
 {
    m68kregs_struct m68kregs;
+
+	memset(&m68kregs, 0, sizeof(m68kregs));
+	M68KGetRegisters(&m68kregs);
 
    switch (index)
    {
@@ -194,6 +199,8 @@ void UIDebugM68K::setRegister(int index, u32 value)
 
 bool UIDebugM68K::addCodeBreakpoint(u32 addr)
 {
+	if (!SoundRam)
+		return false;
    return M68KAddCodeBreakpoint(addr) == 0;     
 }
 

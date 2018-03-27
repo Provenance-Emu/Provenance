@@ -104,6 +104,8 @@ int SoundLoadState(FILE *fp, int version, int size);
 void ScspSlotDebugStats(u8 slotnum, char *outstring);
 void ScspCommonControlRegisterDebugStats(char *outstring);
 int ScspSlotDebugSaveRegisters(u8 slotnum, const char *filename);
+u32 ScspSlotDebugAudio (u32 *workbuf, s16 *buf, u32 len);
+void ScspSlotResetDebug(u8 slotnum);
 int ScspSlotDebugAudioSaveWav(u8 slotnum, const char *filename);
 void ScspMuteAudio(int flags);
 void ScspUnMuteAudio(int flags);
@@ -141,5 +143,11 @@ void M68KSortCodeBreakpoints(void);
 int M68KDelCodeBreakpoint(u32 addr);
 m68kcodebreakpoint_struct *M68KGetBreakpointList(void);
 void M68KClearCodeBreakpoints(void);
+
+void scsp_debug_instrument_get_data(int i, u32 * sa, int * is_muted);
+void scsp_debug_instrument_set_mute(u32 sa, int mute);
+void scsp_debug_instrument_clear();
+void scsp_debug_get_envelope(int chan, int * env, int * state);
+void scsp_debug_set_mode(int mode);
 
 #endif

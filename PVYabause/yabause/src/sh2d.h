@@ -22,6 +22,6 @@
 
 #include "core.h"
 
-void SH2Disasm(u32 v_addr, u16 op, int mode, char *string);
+void SH2Disasm(u32 v_addr, u16 op, int mode, sh2regs_struct *r, char *string);
 
 #endif

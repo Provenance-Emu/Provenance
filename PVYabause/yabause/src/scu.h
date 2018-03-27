@@ -161,8 +161,8 @@ typedef struct {
   u8 DataRamPage;
   u8 DataRamReadAddress;
   u8 CT[4];
-  u32 RX;
-  u32 RY;
+  s32 RX;
+  s32 RY;
   u32 RA0;
   u32 WA0;
 

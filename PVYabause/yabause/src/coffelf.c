@@ -118,11 +118,12 @@ int MappedMemoryLoadCoff(const char *filename)
    FILE *fp;
    u8 *buffer;
    u32 i, j;
+   size_t num_read = 0;
 
    if ((fp = fopen(filename, "rb")) == NULL)
       return -1;
 
-   fread((void *)&coff_header, sizeof(coff_header), 1, fp);
+   num_read = fread((void *)&coff_header, sizeof(coff_header), 1, fp);
 #ifndef WORDS_BIGENDIAN
    WordSwap(coff_header.numsections);
    DoubleWordSwap(coff_header.timedate);
@@ -141,7 +142,7 @@ int MappedMemoryLoadCoff(const char *filename)
       return -1;
    }
 
-   fread((void *)&aout_header, sizeof(aout_header), 1, fp);
+   num_read = fread((void *)&aout_header, sizeof(aout_header), 1, fp);
 #ifndef WORDS_BIGENDIAN
    WordSwap(aout_header.versionstamp);
    DoubleWordSwap(aout_header.textsize);
@@ -162,7 +163,7 @@ int MappedMemoryLoadCoff(const char *filename)
    // read in section headers
    for (i = 0; i < coff_header.numsections; i++)
    {
-      fread((void *)&section_headers[i], sizeof(section_header_struct), 1, fp);
+      num_read = fread((void *)&section_headers[i], sizeof(section_header_struct), 1, fp);
 #ifndef WORDS_BIGENDIAN
       DoubleWordSwap(section_headers[i].physaddr);
       DoubleWordSwap(section_headers[i].virtaddr);
@@ -197,7 +198,7 @@ int MappedMemoryLoadCoff(const char *filename)
       }
 
       fseek(fp, section_headers[i].sectionptr, SEEK_SET);
-      fread((void *)buffer, 1, section_headers[i].sectionsize, fp);
+      num_read = fread((void *)buffer, 1, section_headers[i].sectionsize, fp);
 
       for (j = 0; j < section_headers[i].sectionsize; j++)
          MappedMemoryWriteByte(section_headers[i].physaddr+j, buffer[j]);
@@ -228,13 +229,14 @@ int MappedMemoryLoadElf(const char *filename)
    u16 i;
    u32 j;
    u8 *buffer;
+   size_t num_read = 0;
 
    fp = fopen(filename, "rb");
 
    if(fp == NULL)
       return -1;
 
-   fread(&elf_hdr, sizeof(elf_header_struct), 1, fp);
+   num_read = fread(&elf_hdr, sizeof(elf_header_struct), 1, fp);
 
    if(elf_hdr.ident[0] != 0x7F || elf_hdr.ident[1] != 'E' ||
       elf_hdr.ident[2] != 'L' || elf_hdr.ident[3] != 'F' ||
@@ -306,7 +308,7 @@ int MappedMemoryLoadElf(const char *filename)
    /* Read in each section header. */
    for(i = 0; i < elf_hdr.shdrcount; ++i)
    {
-      fread(sections + i, sizeof(elf_section_header_struct), 1, fp);
+      num_read = fread(sections + i, sizeof(elf_section_header_struct), 1, fp);
 #ifndef WORDS_BIGENDIAN
       DoubleWordSwap(sections[i].name);
       DoubleWordSwap(sections[i].type);
@@ -365,7 +367,7 @@ int MappedMemoryLoadElf(const char *filename)
             }
 
             fseek(fp, sections[i].offs, SEEK_SET);
-            fread(buffer, 1, sections[i].size, fp);
+            num_read = fread(buffer, 1, sections[i].size, fp);
 
             for(j = 0; j < sections[i].size; ++j)
             {

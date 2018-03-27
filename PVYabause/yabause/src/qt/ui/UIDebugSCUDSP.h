@@ -31,6 +31,7 @@ public:
 	UIDebugSCUDSP( YabauseThread *mYabauseThread, QWidget* parent = 0 );
    void updateRegList();
    void updateCodeList(u32 addr);
+	void updateAll();
    u32 getRegister(int index, int *size);
    void setRegister(int index, u32 value);
    bool addCodeBreakpoint(u32 addr);

@@ -31,10 +31,10 @@
 /*************************************************************************/
 
 /* Define BINARY_LOG to log traces in a binary format (faster than text) */
-// #define BINARY_LOG
+//#define BINARY_LOG
 
 /* Define GZIP_LOG to compress log as it's created */
-#ifdef __linux__
+#if defined(__linux__) && !defined(__SWITCH__)
 # define GZIP_LOG
 #endif
 
@@ -49,11 +49,18 @@ static const u64 trace_stop  = 2800000000ULL;  // Last cycle to trace + 1
 
 /*----------------------------------*/
 
+static int is_ins_enabled = 0;
+
 static FILE *logfile;                // Trace log file
 static u64 cycle_accum = 0;     // Global cycle accumulator
 static u64 current_cycles = 0;  // Cycle count on last call to sh2_trace()
 
 /*************************************************************************/
+
+FASTCALL void SetInsTracing(int toggle)
+{
+	is_ins_enabled = toggle;
+}
 
 FASTCALL u64 sh2_cycle_count(void)
 {
@@ -168,6 +175,9 @@ static INLINE void HEXIT(char * const ptr, u32 val, int ndigits)
 
 FASTCALL void sh2_trace(SH2_struct *state, u32 address)
 {
+    if (!is_ins_enabled)
+        return;
+
     current_cycles = cycle_accum + state->cycles;
 
     if (current_cycles < trace_start) {
@@ -237,7 +247,7 @@ FASTCALL void sh2_trace(SH2_struct *state, u32 address)
 
         SH2GetRegisters(state, &state->regs);
 
-        SH2Disasm(address, opcode, 0, buf);
+        SH2Disasm(address, opcode, 0, &state->regs, buf);
         fprintf(logfile, "[%c] %08X: %04X  %-44s [%12llu]\n",
                 state==SSH2 ? 'S' : 'M', (int)address, (int)opcode, buf+12,
                 (unsigned long long)current_cycles);

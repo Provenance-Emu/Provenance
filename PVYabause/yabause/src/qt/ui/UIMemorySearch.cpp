@@ -111,6 +111,8 @@ void UIMemorySearch::adjustSearchValueQValidator()
             max = 0xFFFF;
          else if (data == SEARCHLONG)
             max = 0xFFFFFFFF;
+			else
+				max = 0xFF;
 
          if (isSigned)
          {
