@@ -106,6 +106,9 @@ struct RenderSettings {
         glDeleteShader(defaultVertexShader);
     }
     glDeleteTextures(1, &texture);
+    
+    [[PVSettingsModel sharedInstance] removeObserver:self forKeyPath:@"crtFilterEnabled"];
+    [[PVSettingsModel sharedInstance] removeObserver:self forKeyPath:@"imageSmoothing"];
 }
 
 - (instancetype)initWithEmulatorCore:(PVEmulatorCore *)emulatorCore
@@ -120,9 +123,22 @@ struct RenderSettings {
         
         renderSettings.crtFilterEnabled = [[PVSettingsModel sharedInstance] crtFilterEnabled];
         renderSettings.smoothingEnabled = [[PVSettingsModel sharedInstance] imageSmoothing];
+        
+        [[PVSettingsModel sharedInstance] addObserver:self forKeyPath:@"crtFilterEnabled" options:NSKeyValueObservingOptionNew context:nil];
+        [[PVSettingsModel sharedInstance] addObserver:self forKeyPath:@"imageSmoothing" options:NSKeyValueObservingOptionNew context:nil];
 	}
 
 	return self;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"crtFilterEnabled"]) {
+        renderSettings.crtFilterEnabled = [[PVSettingsModel sharedInstance] crtFilterEnabled];
+    } else if ([keyPath isEqualToString:@"imageSmoothing"]) {
+        renderSettings.smoothingEnabled = [[PVSettingsModel sharedInstance] imageSmoothing];
+    } else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
 }
 
 - (void)viewDidLoad
