@@ -6144,7 +6144,6 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = iphoneos;
-				VALID_ARCHS = arm64;
 			};
 			name = Debug;
 		};
@@ -6195,7 +6194,6 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = iphoneos;
-				VALID_ARCHS = arm64;
 			};
 			name = Release;
 		};
