@@ -30,17 +30,20 @@ class JSDPad: UIView {
 
     private var currentDirection: JSDPadDirection = .none
 
-    private var dPadImageView: UIImageView = UIImageView(image: UIImage(named: "dPad-None")) {
-        didSet {
-            dPadImageView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
-            dPadImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            dPadImageView.contentMode = .center
-            dPadImageView.layer.shadowColor = UIColor.black.cgColor
-            dPadImageView.layer.shadowRadius = 4.0
-            dPadImageView.layer.shadowOpacity = 0.75
-            dPadImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
-        }
-    }
+    private lazy var dPadImageView: UIImageView = {
+        let dPadImageView = UIImageView(image: UIImage(named: "dPad-None"))
+        let frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height)
+        dPadImageView.frame = frame
+        dPadImageView.translatesAutoresizingMaskIntoConstraints = true
+        dPadImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        dPadImageView.contentMode = .center
+        dPadImageView.layer.masksToBounds = false
+        dPadImageView.layer.shadowColor = UIColor.black.cgColor
+        dPadImageView.layer.shadowRadius = 4.0
+        dPadImageView.layer.shadowOpacity = 0.75
+        dPadImageView.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+        return dPadImageView
+    }()
 
     func setEnabled(_ enabled: Bool) {
         isUserInteractionEnabled = enabled
@@ -54,14 +57,18 @@ class JSDPad: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        tintColor = .white
-        addSubview(dPadImageView)
+        commonInit()
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        commonInit()
+    }
+    
+    private func commonInit() {
         tintColor = .white
         addSubview(dPadImageView)
+        clipsToBounds = false
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {
