@@ -379,15 +379,17 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             guard let collectionView = self.collectionView else { return }
 
             switch changes {
-            case .initial:
-                if !self.recentGames.isEmpty {
+            case .initial(let result):
+                if !result.isEmpty {
                     self.recentGamesIsEmpty = false
                     
-                    if !self.recentGamesIsHidden {
-                        let section = self.recentGamesSection
-                        collectionView.insertSections([section])
-                    }
+//                    if !self.recentGamesIsHidden {
+//                        let section = self.recentGamesSection
+//                        collectionView.insertSections([section])
+//                    }
                 }
+                
+                self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
                 let needsDelete = self.recentGames.isEmpty && !deletions.isEmpty
@@ -423,11 +425,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let section = 0
 
             switch changes {
-            case .initial:
-                if !self.favoriteGames.isEmpty {
+            case .initial(let result):
+                if !result.isEmpty {
                     self.favoritesIsHidden = false
-                    collectionView.insertSections([section])
+//                    collectionView.insertSections([section])
                 }
+                
+                self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.favoritesIsHidden
                 let needsDelete = self.favoriteGames.isEmpty
