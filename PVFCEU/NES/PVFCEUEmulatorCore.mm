@@ -430,6 +430,3 @@ void FCEUD_Message(const char *s)
 }
 
 @end
-
-#pragma clang diagnostic pop
-
