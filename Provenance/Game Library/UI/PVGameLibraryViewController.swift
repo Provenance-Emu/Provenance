@@ -105,8 +105,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         if !recentGamesIsHidden {
             sectionsTitles.append("Recently Played")
         }
-
-        sectionsTitles.append(contentsOf: systems.map {$0.name})
+        
+        if let systems = systems {
+            sectionsTitles.append(contentsOf: systems.map {$0.name})
+        }
         return sectionsTitles
     }
 
@@ -190,6 +192,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         })
         #endif
+        
+        if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
+            migrateLibrary()
+        }
+        initRealmResultsStorage()
+        setUpGameLibrary()
 
         #if os(iOS)
             if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
@@ -269,18 +277,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             registerForPreviewing(with: self, sourceView: collectionView)
         }
         #endif
-
-        if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
-            migrateLibrary()
-        }
         
         loadGameFromShortcut()
         becomeFirstResponder()
     }
 
-    var systems: Results<PVSystem>!
-    var favoriteGames: Results<PVGame>!
-    var recentGames: Results<PVRecentGame>!
+    var systems: Results<PVSystem>?
+    var favoriteGames: Results<PVGame>?
+    var recentGames: Results<PVRecentGame>?
 
     var systemsToken: NotificationToken?
     var favoritesToken: NotificationToken?
@@ -328,7 +332,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 break
             case .update(_, let deletions, let insertions, let modifications):
                 // Query results have changed, so apply them to the UICollectionView
-                let indexOfSystem = (self.systems.index(of: system) ?? 0)!
+                guard let indexOfSystem = self.systems?.index(of: system) else {
+                    return
+                }
                 let section = indexOfSystem + self.systemsSectionOffset
                 self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
             case .error(let error):
@@ -340,16 +346,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         systemSectionsTokens[system.identifier]?.invalidate()
         systemSectionsTokens[system.identifier] = newToken
     }
-
-    func registerForChange() {
+    
+    func initRealmResultsStorage() {
         systems = PVSystem.all.sorted(byKeyPath: #keyPath(PVSystem.identifier)).filter("games.@count > 0")
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+    }
+    
+    func deinitRealmResultsStorage() {
+        systems = nil
+        recentGames = nil
+        favoriteGames = nil
+    }
 
-        systemsToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
+    func registerForChange() {
+        systemsToken = systems!.observe { [unowned self] (changes: RealmCollectionChange) in
             switch changes {
-            case .initial:
-                self.systems.forEach { system in
+            case .initial(let result):
+                result.forEach { system in
                     self.addSectionToken(forSystem: system)
                 }
 
@@ -375,9 +389,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
 
-        recentGamesToken = recentGames.observe { [unowned self] (changes: RealmCollectionChange) in
-            guard let collectionView = self.collectionView else { return }
-
+        recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -392,7 +404,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
-                let needsDelete = self.recentGames.isEmpty && !deletions.isEmpty
+                let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
 
                 if self.recentGamesIsHidden {
                     self.recentGamesIsEmpty = needsDelete
@@ -420,8 +432,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
 
-        favoritesToken = favoriteGames.observe { [unowned self] (changes: RealmCollectionChange) in
-            guard let collectionView = self.collectionView else { return }
+        favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
             let section = 0
 
             switch changes {
@@ -434,7 +445,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.favoritesIsHidden
-                let needsDelete = self.favoriteGames.isEmpty
+                let needsDelete = self.favoriteGames?.isEmpty ?? false
                 self.favoritesIsHidden = needsDelete
 
                 // Query results have changed, so apply them to the UICollectionView
@@ -887,9 +898,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         watcher?.startMonitoring()
 
         // Scan each Core direxctory and looks for ROMs in them
-        let systems = PVSystem.all
+        let allSystems = PVSystem.all
 
-        systems.forEach { system in
+        allSystems.forEach { system in
             let systemDir = system.romsDirectory
             //URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
 
@@ -1510,7 +1521,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         if searchResults != nil {
             return 1
         } else {
-            let count = systemsSectionOffset + systems.count
+            let count = systemsSectionOffset + (systems?.count ?? 0)
             ILOG("Sections : \(count)")
             return count
         }
@@ -1522,11 +1533,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         } else {
             if section >= systemsSectionOffset {
                 let sectionNumber = section - systemsSectionOffset
-                return Array(systems)[sectionNumber].games.count
+                return systems?[sectionNumber].games.count ?? 0
             } else if section == favoritesSection {
-                return favoriteGames.count
+                return favoriteGames?.count ?? 0
             } else if section == recentGamesSection {
-                return recentGames.count
+                return recentGames?.count ?? 0
             } else {
                 fatalError("Shouldn't be here")
             }
@@ -1571,11 +1582,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let row = indexPath.row
 
             if section == favoritesSection {
-                game = Array(favoriteGames)[row]
+                game = favoriteGames?[row]
             } else if section == recentGamesSection {
-                game = Array(recentGames)[row].game
-            } else {
-                let system = systems[section - systemsSectionOffset]
+                game = recentGames?[row].game
+            } else if let system = systems?[section - systemsSectionOffset] {
                 game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
             }
         }
