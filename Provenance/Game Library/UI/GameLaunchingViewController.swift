@@ -139,7 +139,7 @@ extension GameLaunchingViewController where Self : UIViewController {
     private func displayAndLogError(withTitle title: String, message: String) {
         ELOG(message)
 
-        let alertController = UIAlertController(title: "Missing BIOS Files", message: message, preferredStyle: .alert)
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alertController, animated: true)
     }
@@ -163,7 +163,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
             // TODO: let the user choose the core here
             guard let core = game.system.cores.first else {
-                displayAndLogError(withTitle: "Cannot open game", message: "No core gound for game system '\(system.shortName)'.")
+                displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
                 return
             }
 
