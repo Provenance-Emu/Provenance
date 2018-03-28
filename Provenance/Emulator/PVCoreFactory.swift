@@ -144,6 +144,9 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PVN64SystemResponderClient")
             }
+        case .Unknown:
+            ELOG("No known sysem nameed: \(system.name) id: \(system.identifier)")
+            return nil
         }
     }
 }

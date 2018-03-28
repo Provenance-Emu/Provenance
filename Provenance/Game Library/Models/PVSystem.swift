@@ -95,7 +95,7 @@ public extension PVSystem {
     }
 
     var enumValue: SystemIdentifier {
-        return SystemIdentifier(rawValue: identifier)!
+        return SystemIdentifier(rawValue: identifier) ?? .Unknown
     }
 
     var biosesHave: [PVBIOS]? {

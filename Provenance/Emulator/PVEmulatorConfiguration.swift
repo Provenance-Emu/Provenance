@@ -72,6 +72,7 @@ public enum SystemIdentifier: String {
     case VirtualBoy   = "com.provenance.vb"
     case WonderSwan   = "com.provenance.ws"
     case WonderSwanColor = "com.provenance.wsc"
+    case Unknown
 
     // MARK: Assistance accessors for properties
 
