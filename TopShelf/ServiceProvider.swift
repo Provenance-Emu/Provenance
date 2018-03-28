@@ -36,26 +36,68 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
         var topShelfItems = [TVContentItem]()
         if RealmConfiguration.supportsAppGroups {
             let identifier = TVContentIdentifier(identifier: "id", container: nil)!
-
-            guard let recentItems = TVContentItem(contentIdentifier: identifier) else {
-                ELOG("Couldnt get TVContentItem for idenitifer \(identifier)")
+            let database = RomDatabase.sharedInstance
+            
+            guard let favoriteItems = TVContentItem(contentIdentifier: identifier) else {
+                ELOG("Couldn't get TVContentItem for identifier \(identifier)")
                 return topShelfItems
             }
-            recentItems.title = "Recently Played"
-
-            let database = RomDatabase.sharedInstance
-
-            let recentGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-
+            favoriteItems.title = "Favorites"
+            let favoriteGames = database.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+            var favoriteNames = [String]()
             var items = [TVContentItem]()
-            for game: PVRecentGame in recentGames {
+            for game: PVGame in favoriteGames {
                 if let contentItem = game.contentItem(with: identifier) {
                     items.append(contentItem)
+                    favoriteNames.append(game.title)
                 }
             }
+            favoriteItems.topShelfItems = items
 
-            recentItems.topShelfItems = items
-            topShelfItems.append(recentItems)
+            guard let recentlyPlayedItems = TVContentItem(contentIdentifier: identifier) else {
+                ELOG("Couldn't get TVContentItem for identifer \(identifier)")
+                return topShelfItems
+            }
+            recentlyPlayedItems.title = "Recently Played"
+            let recentlyPlayedGames = database.all(PVRecentGame.self, sortedByKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+            items = [TVContentItem]()
+            var recentlyPlayedNames = [String]()
+            for game: PVRecentGame in recentlyPlayedGames {
+                if let contentItem = game.contentItem(with: identifier) {
+                    if favoriteNames.index(of: game.game.title) == nil {
+                        items.append(contentItem)
+                        recentlyPlayedNames.append(game.game.title)
+                    }
+                }
+            }
+            recentlyPlayedItems.topShelfItems = items
+            topShelfItems.append(recentlyPlayedItems)
+            
+            // Show "recents" first
+            topShelfItems.append(favoriteItems)
+            
+            
+            guard let recentlyAddedItems = TVContentItem(contentIdentifier: identifier) else {
+                ELOG("Couldn't get TVContentItem for identifier \(identifier)")
+                return topShelfItems
+            }
+            recentlyAddedItems.title = "Recently Added"
+            
+            let recentlyAddedGames = database.all(PVGame.self, sortedByKeyPath:
+                #keyPath(PVGame.importDate), ascending: false)
+            
+            items = [TVContentItem]()
+            for game: PVGame in recentlyAddedGames {
+                if recentlyPlayedNames.index(of: game.title) == nil {
+                    if favoriteNames.index(of: game.title) == nil {
+                        if let contentItem = game.contentItem(with: identifier) {
+                            items.append(contentItem)
+                        }
+                    }
+                }
+            }
+            recentlyAddedItems.topShelfItems = items
+            topShelfItems.append(recentlyAddedItems)
         }
 
         return topShelfItems
