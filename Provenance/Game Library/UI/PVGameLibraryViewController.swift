@@ -161,12 +161,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     deinit {
         NotificationCenter.default.removeObserver(self)
 
-        systemsToken?.invalidate()
-        recentGamesToken?.invalidate()
-        favoritesToken?.invalidate()
-        systemSectionsTokens.values.forEach {$0.invalidate()}
+         unregisterForChange()
     }
-
+    
     @objc func handleAppDidBecomeActive(_ note: Notification) {
         loadGameFromShortcut()
     }
@@ -275,10 +272,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
-        } else {
-            registerForChange()
         }
-
+        
         loadGameFromShortcut()
         becomeFirstResponder()
     }
@@ -468,6 +463,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         })
     }
+    
+    func unregisterForChange() {
+        systemsToken?.invalidate()
+        recentGamesToken?.invalidate()
+        favoritesToken?.invalidate()
+        systemSectionsTokens.values.forEach {$0.invalidate()}
+        
+        systemsToken = nil
+        recentGamesToken = nil
+        favoritesToken = nil
+        systemSectionsTokens.removeAll()
+    }
 
     func loadGameFromShortcut() {
         let appDelegate = UIApplication.shared.delegate as! PVAppDelegate
@@ -485,11 +492,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         indexPaths?.forEach({ (indexPath) in
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
-
+        
         if (self.mustRefreshDataSource) {
             fetchGames()
             collectionView?.reloadData()
         }
+        
+        registerForChange()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        unregisterForChange()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -750,7 +764,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         hud.hide(true)
         UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
-        registerForChange()
 
         do {
             let paths = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
