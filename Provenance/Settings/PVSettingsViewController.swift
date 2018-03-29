@@ -79,7 +79,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         modeLabel.text = "RELEASE"
 #endif
         let color: UIColor? = UIColor(white: 0.0, alpha: 0.1)
-        if let revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
+        if var revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
+            if kGITBranch.lowercased() != "master" && !kGITBranch.isEmpty {
+                revisionString = "\(kGITBranch):\(revisionString)"
+            }
             revisionLabel.text = revisionString
         } else {
             revisionLabel.textColor = color ?? UIColor.clear

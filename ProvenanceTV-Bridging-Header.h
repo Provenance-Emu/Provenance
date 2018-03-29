@@ -10,6 +10,7 @@
 #import "kICadeControllerSetting.h"
 #import "LzmaSDKObjCReader.h"
 #import "SSZipArchive.h"
+#import "Provenance/Version.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports

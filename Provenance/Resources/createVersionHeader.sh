@@ -62,6 +62,7 @@ if [ "command -v '$GIT'" ] ; then
     GIT_COMMIT_COUNT_RAW=`"${GIT}" rev-list --count HEAD`
     GIT_TAG=`"${GIT}" describe --tags --always --dirty`
     GIT_DATE=`"${GIT}" log -1 --format="%cd" --date="local"`
+    GIT_BRANCH=`"${GIT}" branch | grep \* | cut -d ' ' -f2-`
     # Use this to bump the number by X
     GIT_COMMIT_COUNT=$(($GIT_COMMIT_COUNT_RAW+0))
     echo "Commit count is $GIT_COMMIT_COUNT"
@@ -88,6 +89,7 @@ static NSString* const kAppVersion              = @"${appversion}";
 static NSString* const kGITRevisionNumber       = @"${GIT_COMMIT_COUNT}";
 static NSString* const kGITTag                  = @"${GIT_TAG}";
 static NSString* const kGITDate                 = @"${GIT_DATE}";
+static NSString* const kGITBranch               = @"${GIT_BRANCH}";
 static NSString* const kAppBuildConfiguration   = @"${CONFIGURATION}";
 
 // Suppress warnings incase you choose not to use these variables
@@ -97,6 +99,7 @@ static NSString* const kAppBuildConfiguration   = @"${CONFIGURATION}";
 static const char* gitrevision          = "${GIT_COMMIT_COUNT}";
 static const char* gittag               = "${GIT_TAG}";
 static const char* gitdate              = "${GIT_DATE}";
+static const char* gitbranch            = "${GIT_BRANCH}";
 static const char* appversion           = "${appversion}";
 static const char* buildconfiguration   = "${CONFIGURATION}";
 static const char* compiletime          = __TIME__;
