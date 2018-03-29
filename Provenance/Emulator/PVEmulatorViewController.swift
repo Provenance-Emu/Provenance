@@ -176,10 +176,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         controllerViewController?.didMove(toParentViewController: self)
 #endif
         let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
-        menuButton = UIButton(type: .custom)
+        menuButton = UIButton(type: .system)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setBackgroundImage(UIImage(named: "button-menu"), for: .normal)
-        menuButton?.setBackgroundImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
+        menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
+        menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
         // Commenting out title label for now (menu has changed to graphic only)
         //[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
         //menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
