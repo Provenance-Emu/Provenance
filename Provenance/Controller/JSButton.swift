@@ -92,8 +92,10 @@ class JSButton: UIView {
         titleLabel = UILabel()
         titleLabel.backgroundColor = UIColor.clear
         titleLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-        titleLabel.shadowColor = UIColor.black
-        titleLabel.shadowOffset = CGSize(width: 0, height: 1)
+        titleLabel.layer.shadowColor = UIColor.black.cgColor
+        titleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
+        titleLabel.layer.shadowRadius = 1.0
+        titleLabel.layer.shadowOpacity = 0.75
         titleLabel.font = UIFont.boldSystemFont(ofSize: 15)
         titleLabel.frame = bounds
         titleLabel.textAlignment = .center
