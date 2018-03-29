@@ -74,7 +74,7 @@ class JSDPad: UIView {
     func direction(for point: CGPoint) -> JSDPadDirection {
         let x: CGFloat = point.x
         let y: CGFloat = point.y
-        if (x < 0) || (x > bounds.size.width) || (y < 0) || (y > bounds.size.height) {
+        if (x <= 0) || (x >= bounds.size.width) || (y <= 0) || (y >= bounds.size.height) {
             return .none
         }
         let column = Int((x / (bounds.size.width / 3)))
