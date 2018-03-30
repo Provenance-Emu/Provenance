@@ -241,8 +241,8 @@ typedef signed __int64          s64;
 typedef unsigned __int64        u64;
 
 #elif defined(__LP64__) && (0x00000000FFFFFFFFUL < ~0UL)
-typedef signed long             s64;
-typedef unsigned long           u64;
+typedef long long             s64;
+typedef unsigned long long           u64;
 #elif (LONG_MIN < -9223372036854775807L && LONG_MAX >= +9223372036854775807L)
 typedef signed long             s64;
 typedef unsigned long           u64;

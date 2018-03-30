@@ -1405,8 +1405,8 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
-		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
-		DF0035C7203C97FA00F63831 /* GLideN64.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.ini; path = "PVMupen64Plus/mupen64plus-video-gliden64/ini/GLideN64.ini"; sourceTree = "<group>"; };
+		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
+		DF0035C7203C97FA00F63831 /* GLideN64.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.ini"; sourceTree = "<group>"; };
 		DFB601882038AD65001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFB603BA2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3822,6 +3822,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
@@ -3867,6 +3868,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;
@@ -4282,6 +4284,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Provenance-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = NO;

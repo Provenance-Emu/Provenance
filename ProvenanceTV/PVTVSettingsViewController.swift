@@ -40,7 +40,7 @@ class PVTVSettingsViewController: UITableViewController {
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
             versionText = "\(versionText ?? "") Beta"
-            versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
+            versionValueLabel.textColor = UIColor.init(hex: "#F5F5A0")
         }
         versionValueLabel.text = versionText
 
@@ -52,7 +52,7 @@ class PVTVSettingsViewController: UITableViewController {
 
         let color = UIColor(white: 0.0, alpha: 0.1)
         if var revisionString = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
-            if kGITBranch.lowercased() != "master" && !kGITBranch.isEmpty {
+            if !masterBranch {
                 revisionString = "\(kGITBranch)/\(revisionString)"
             }
             revisionLabel.text = revisionString
