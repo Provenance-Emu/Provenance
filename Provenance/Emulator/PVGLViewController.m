@@ -55,6 +55,8 @@ struct RenderSettings {
 @property (nonatomic, strong) EAGLContext *glContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadGLContext;
 @property (nonatomic, strong) EAGLContext *alternateThreadBufferCopyGLContext;
+@property (nonatomic, assign) GLESVersion glesVersion;
+
 @end
 
 @implementation PVGLViewController
@@ -147,17 +149,7 @@ struct RenderSettings {
 
 	[self setPreferredFramesPerSecond:60];
 
-	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-    _emulatorCore.glesVersion = GLESVersion3;
-    if (self.glContext == nil)
-    {
-        self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-        _emulatorCore.glesVersion = GLESVersion2;
-        if (self.glContext == nil) {
-            self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-            _emulatorCore.glesVersion = GLESVersion1;
-        }
-    }
+    self.glContext = [self bestContext];
 
     if (self.glContext == nil) {
         // TODO: Alert NO gl here
@@ -181,6 +173,22 @@ struct RenderSettings {
     alternateThreadColorTextureBack = 0;
     alternateThreadColorTextureFront = 0;
     alternateThreadDepthRenderbuffer = 0;
+}
+
+-(EAGLContext*)bestContext {
+    EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    self.glesVersion = GLESVersion3;
+    if (context == nil)
+    {
+        context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        self.glesVersion = GLESVersion2;
+        if (context == nil) {
+            context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+            self.glesVersion = GLESVersion1;
+        }
+    }
+
+    return context;
 }
 
 - (void)viewDidLayoutSubviews
@@ -552,6 +560,7 @@ struct RenderSettings {
 
 - (void)startRenderingOnAlternateThread
 {
+    self.emulatorCore.glesVersion = self.glesVersion;
     self.alternateThreadBufferCopyGLContext = [[EAGLContext alloc] initWithAPI:[self.glContext API] sharegroup:[self.glContext sharegroup]];
     [EAGLContext setCurrentContext:self.alternateThreadBufferCopyGLContext];
     

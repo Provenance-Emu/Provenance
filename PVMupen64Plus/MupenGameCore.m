@@ -588,6 +588,9 @@ static void MupenSetAudioSpeed(int percent)
     // Load Video
 
 	BOOL success = NO;
+
+	EAGLContext* context = [self bestContext];
+
 	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
 		ILOG("No 64bit or GLES3. Using RICE GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
@@ -654,6 +657,22 @@ static void MupenSetAudioSpeed(int percent)
     }
     
     return YES;
+}
+
+-(EAGLContext*)bestContext {
+	EAGLContext* context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+	self.glesVersion = GLESVersion3;
+	if (context == nil)
+	{
+		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+		self.glesVersion = GLESVersion2;
+		if (context == nil) {
+			context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+			self.glesVersion = GLESVersion1;
+		}
+	}
+
+	return context;
 }
 
 - (void)startEmulation
