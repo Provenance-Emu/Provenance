@@ -586,8 +586,16 @@ static void MupenSetAudioSpeed(int percent)
     };
     
     // Load Video
-    //BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
-    BOOL success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
+
+	BOOL success = NO;
+	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
+		ILOG("No 64bit or GLES3. Using RICE GFX plugin.");
+		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+	} else {
+		ILOG("64bit and GLES3. Using GLiden64 GFX plugin.");
+		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
+	}
+
     if (!success) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
