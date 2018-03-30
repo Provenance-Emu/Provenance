@@ -78,6 +78,13 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 	GameSpeedNormal,
 	GameSpeedFast
 };
+
+typedef NS_ENUM(NSInteger, GLESVersion) {
+	GLESVersion1 = 0,
+	GLESVersion2,
+	GLESVersion3,
+};
+
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
@@ -90,6 +97,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
+@property (nonatomic, assign) GLESVersion glesVersion;
 
 - (BOOL)rendersToOpenGL;
 - (void)startEmulation;

@@ -148,10 +148,23 @@ struct RenderSettings {
 	[self setPreferredFramesPerSecond:60];
 
 	self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+    _emulatorCore.glesVersion = GLESVersion3;
     if (self.glContext == nil)
     {
         self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        _emulatorCore.glesVersion = GLESVersion2;
+        if (self.glContext == nil) {
+            self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+            _emulatorCore.glesVersion = GLESVersion1;
+        }
     }
+
+    if (self.glContext == nil) {
+        // TODO: Alert NO gl here
+        return;
+    }
+
+
 	[EAGLContext setCurrentContext:self.glContext];
 
 	GLKView *view = (GLKView *)self.view;
