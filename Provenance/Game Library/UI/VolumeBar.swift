@@ -339,7 +339,7 @@ extension VolumeBar {
 	/// - seealso: `barHeight`
 	@objc internal func updateHeight() {
 		guard let mainWindow = UIApplication.shared.keyWindow else { return }
-        
+
         /* Not used…
 		// Default to height of 20
         var height = CGFloat(20)
@@ -356,7 +356,7 @@ extension VolumeBar {
 			height = navigationController.navigationBar.frame.size.height
 		}
         */
-        
+
 		// Set the window frame, update status bar appearance (and check for iPhone X safe areas)
         if !UIDevice.current.orientation.isLandscape {
             volumeWindow.frame = CGRect(x: 0, y: safeAreaTopInset, width: mainWindow.bounds.width, height: barHeight)
@@ -559,7 +559,7 @@ private class VolumeBarViewController: UIViewController {
 			segment.frame = CGRect(x: segmentX, y: edgeInsets.top, width: segmentWidth, height: segmentHeight)
 		}
 	}
-    
+
 	/// Returns the `statusBarStyle` property of the `VolumeBar`.
 	fileprivate override var preferredStatusBarStyle: UIStatusBarStyle {
 		guard let bar = volumeBar else { return .default }

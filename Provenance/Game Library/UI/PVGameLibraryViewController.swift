@@ -105,7 +105,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         if !recentGamesIsHidden {
             sectionsTitles.append("Recently Played")
         }
-        
+
         if let systems = systems {
             sectionsTitles.append(contentsOf: systems.map {$0.name})
         }
@@ -165,7 +165,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
          unregisterForChange()
     }
-    
+
     @objc func handleAppDidBecomeActive(_ note: Notification) {
         loadGameFromShortcut()
     }
@@ -192,7 +192,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         })
         #endif
-        
+
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             migrateLibrary()
         }
@@ -277,7 +277,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             registerForPreviewing(with: self, sourceView: collectionView)
         }
         #endif
-        
+
         loadGameFromShortcut()
         becomeFirstResponder()
     }
@@ -295,7 +295,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var recentGamesIsHidden : Bool {
         return recentGamesIsEmpty || !PVSettingsModel.shared.showRecentGames
     }
-    
+
     var favoritesSection: Int {
         return favoritesIsHidden ? -1 : 0
     }
@@ -346,13 +346,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         systemSectionsTokens[system.identifier]?.invalidate()
         systemSectionsTokens[system.identifier] = newToken
     }
-    
+
     func initRealmResultsStorage() {
         systems = PVSystem.all.sorted(byKeyPath: #keyPath(PVSystem.identifier)).filter("games.@count > 0")
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
-    
+
     func deinitRealmResultsStorage() {
         systems = nil
         recentGames = nil
@@ -394,13 +394,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             case .initial(let result):
                 if !result.isEmpty {
                     self.recentGamesIsEmpty = false
-                    
+
 //                    if !self.recentGamesIsHidden {
 //                        let section = self.recentGamesSection
 //                        collectionView.insertSections([section])
 //                    }
                 }
-                
+
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
@@ -410,7 +410,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                     self.recentGamesIsEmpty = needsDelete
                     return
                 }
-                
+
                 let section = self.recentGamesSection > -1 ? self.recentGamesSection : 0
 
                 if needsInsert {
@@ -441,7 +441,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                     self.favoritesIsHidden = false
 //                    collectionView.insertSections([section])
                 }
-                
+
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
                 let needsInsert = self.favoritesIsHidden
@@ -478,13 +478,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         })
     }
-    
+
     func unregisterForChange() {
         systemsToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
         systemSectionsTokens.values.forEach {$0.invalidate()}
-        
+
         systemsToken = nil
         recentGamesToken = nil
         favoritesToken = nil
@@ -507,15 +507,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         indexPaths?.forEach({ (indexPath) in
             (self.collectionView?.deselectItem(at: indexPath, animated: true))!
         })
-        
+
         if (self.mustRefreshDataSource) {
             fetchGames()
             collectionView?.reloadData()
         }
-        
+
         registerForChange()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         unregisterForChange()

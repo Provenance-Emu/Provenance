@@ -58,7 +58,7 @@ class JSButton: UIView {
             if pressed == oldValue {
                 return
             }
-            
+
             backgroundImageView?.image = pressed ? backgroundImagePressed : backgroundImage
         }
     }

@@ -70,16 +70,16 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-        
+
         let masterBranch = kGITBranch.lowercased() == "master"
-        
+
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {
             versionText = "\(versionText ?? "") Beta"
             versionLabel.textColor = UIColor.init(hex: "#F5F5A0")
         }
-        
+
         versionLabel.text = versionText
 #if DEBUG
         modeLabel.text = "DEBUG"

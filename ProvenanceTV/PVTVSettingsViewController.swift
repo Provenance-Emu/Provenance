@@ -35,7 +35,7 @@ class PVTVSettingsViewController: UITableViewController {
         imageSmoothingLabel.text = settings.imageSmoothing.onOffString
 
         let masterBranch = kGITBranch.lowercased() == "master"
-        
+
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {

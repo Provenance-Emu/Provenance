@@ -64,7 +64,7 @@ class JSDPad: UIView {
         super.init(coder: aDecoder)
         commonInit()
     }
-    
+
     private func commonInit() {
         tintColor = .white
         addSubview(dPadImageView)
