@@ -4926,6 +4926,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFB601872038AD13001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64" */;
 			buildPhases = (
+				B36F9D00206E904000F04D1F /* Generate Revision.h */,
 				DFB6017B2038AD12001E70F1 /* Sources */,
 				DFB6017C2038AD13001E70F1 /* Frameworks */,
 				DFB6017D2038AD13001E70F1 /* Headers */,
@@ -4944,6 +4945,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DFB603B52038B582001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64 tvOS" */;
 			buildPhases = (
+				B36F9D01206E911300F04D1F /* Generate Revision.h */,
 				DFB603B02038B582001E70F1 /* Sources */,
 				DFB603B12038B582001E70F1 /* Frameworks */,
 				DFB603B22038B582001E70F1 /* Headers */,
@@ -5102,6 +5104,37 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B36F9D00206E904000F04D1F /* Generate Revision.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Revision.h";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
+		};
+		B36F9D01206E911300F04D1F /* Generate Revision.h */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Revision.h";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B3303E481DED23C600896D96 /* Sources */ = {
