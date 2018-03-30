@@ -586,7 +586,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     @objc func showSaveStateMenu() {
         let saveStatePath: String = self.saveStatePath
-        let infoPath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist").absoluteString
+        let infoPath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist").path
 
         var info = (NSArray(contentsOfFile: infoPath) as? [String]) ?? ["Slot 1 (empty)", "Slot 2 (empty)", "Slot 3 (empty)", "Slot 4 (empty)", "Slot 5 (empty)"]
 
@@ -604,8 +604,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 formatter.timeStyle = .short
                 info[i] = "Slot \(i + 1) (\(formatter.string(from: now)))"
                 (info as NSArray).write(toFile: infoPath, atomically: true)
-                let savePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(i).svs").absoluteString
-                self.core.saveStateToFile(atPath: savePath)
+                let savePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(i).svs").path
+				if self.core.saveStateToFile(atPath: savePath) {
+					DLOG("Succeeded saving state");
+				} else {
+					DLOG("failed to save state");
+				}
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
                 self.enableContorllerInput(false)
@@ -623,9 +627,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     @objc func showLoadStateMenu() {
         let saveStatePath: String = self.saveStatePath
-        let infoPath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist").absoluteString
-        let autoSavePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("auto.svs").absoluteString
-        let info = (NSArray(contentsOfFile: infoPath) as? [String]) ?? ["Slot 1 (empty)", "Slot 2 (empty)", "Slot 3 (empty)", "Slot 4 (empty)", "Slot 5 (empty)"]
+        let infoPath = URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist")
+        let autoSavePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("auto.svs").path
+        let info = (NSArray(contentsOf: infoPath) as? [String]) ?? ["Slot 1 (empty)", "Slot 2 (empty)", "Slot 3 (empty)", "Slot 4 (empty)", "Slot 5 (empty)"]
 
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad {
@@ -643,7 +647,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
         for (i, title) in info.enumerated() {
             actionsheet.addAction(UIAlertAction(title: title, style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                let savePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(i).svs").absoluteString
+                let savePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(i).svs").path
                 if FileManager.default.fileExists(atPath: savePath) {
                     self.core.loadStateFromFile(atPath: savePath)
                 }
