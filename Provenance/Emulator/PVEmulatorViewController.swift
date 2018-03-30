@@ -176,15 +176,19 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         controllerViewController?.didMove(toParentViewController: self)
 #endif
         let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
-        menuButton = UIButton(type: .custom)
+        menuButton = UIButton(type: .system)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setBackgroundImage(UIImage(named: "button-menu"), for: .normal)
-        menuButton?.setBackgroundImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
+        menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
+        menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
+        // Commenting out title label for now (menu has changed to graphic only)
         //[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
-        menuButton?.titleLabel?.shadowOffset = CGSize(width: 0, height: 1)
-        menuButton?.setTitleShadowColor(UIColor.darkGray, for: .normal)
-        menuButton?.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
-        menuButton?.setTitleColor(UIColor.white, for: .normal)
+        //menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        //menuButton?.setTitleColor(UIColor.white, for: .normal)
+        menuButton?.layer.shadowOffset = CGSize(width: 0, height: 1)
+        menuButton?.layer.shadowRadius = 3.0
+        menuButton?.layer.shadowColor = UIColor.black.cgColor
+        menuButton?.layer.shadowOpacity = 0.75
+        menuButton?.tintColor = UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
         view.addSubview(menuButton!)
@@ -198,7 +202,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             fpsLabel?.font = UIFont.systemFont(ofSize: 100, weight: .bold)
 #else
             if #available(iOS 8.2, *) {
-                fpsLabel?.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+                fpsLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
             }
 #endif
             if let aLabel = fpsLabel {

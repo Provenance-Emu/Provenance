@@ -742,7 +742,7 @@
 						<key>PVControlTitle</key>
 						<string>II</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -750,7 +750,7 @@
 						<key>PVControlTitle</key>
 						<string>I</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>
@@ -835,7 +835,7 @@
 						<key>PVControlTitle</key>
 						<string>II</string>
 						<key>PVControlFrame</key>
-						<string>{{116,60},{60,60}}</string>
+						<string>{{60,116},{60,60}}</string>
 					</dict>
 					<dict>
 						<key>PVControlType</key>
@@ -843,7 +843,7 @@
 						<key>PVControlTitle</key>
 						<string>I</string>
 						<key>PVControlFrame</key>
-						<string>{{60,116},{60,60}}</string>
+						<string>{{116,60},{60,60}}</string>
 					</dict>
 				</array>
 			</dict>

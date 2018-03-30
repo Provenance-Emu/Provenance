@@ -39,10 +39,10 @@ extension VolumeController where Self : UIViewController {
     func startVolumeControl() {
         #if os(iOS)
             let volume = VolumeBar.sharedInstance
-            volume.tintColor = UIColor.lightGray.withAlphaComponent(0.2)
-            volume.backgroundColor = UIColor.black.withAlphaComponent(0.8)
-            volume.segmentCount = 12
-            volume.interitemSpacing = 4
+            volume.tintColor = UIColor.white.withAlphaComponent(0.75)
+            volume.backgroundColor = UIColor.clear
+            volume.segmentCount = 16
+            volume.interitemSpacing = 0
             volume.barHeight = 3
             volume.animationStyle = .fade
             volume.start()
@@ -258,20 +258,42 @@ public final class VolumeBar: NSObject {
 
 // MARK: - Automatic Presentation
 extension VolumeBar {
-	// The safe area top inset. This is a temporary fix until VolumeBar has better support for iPhone X.
+	// Safe area top inset (iPhone X - Portrait) This is a temporary fix until VolumeBar has better support for iPhone X.
 	var safeAreaTopInset: CGFloat {
-		if #available(iOS 11.0, *) {
-			let safeAreaInsets = volumeViewController.view.safeAreaInsets
-			if safeAreaInsets.top > 20 {
-				// iPhone X
-				return safeAreaInsets.top
-			} else {
-				return 0
-			}
-		} else {
-			return 0
-		}
+        if !UIDevice.current.orientation.isLandscape {
+            if #available(iOS 11.0, *) {
+                let safeAreaInsets = volumeViewController.view.safeAreaInsets
+                if safeAreaInsets.top > 20 {
+                    // iPhone X
+                    return safeAreaInsets.top
+                } else {
+                    return 0
+                }
+            } else {
+                return 0
+            }
+        } else {
+            return 0
+        }
 	}
+    // Safe area side insets (iPhone X - Landscape) This is a temporary fix until VolumeBar has better support for iPhone X.
+    var safeAreaSideInset: CGFloat {
+        if UIDevice.current.orientation.isLandscape {
+            if #available(iOS 11.0, *) {
+                let safeAreaInsets = volumeViewController.view.safeAreaInsets
+                if safeAreaInsets.left > 20 || safeAreaInsets.right > 20 {
+                    //iPhone X
+                    return safeAreaInsets.left
+                } else {
+                    return 0
+                }
+            } else {
+                return 0
+            }
+        } else {
+            return 0
+        }
+    }
 
 	/// Start observing changes in volume.
 	///
@@ -317,9 +339,10 @@ extension VolumeBar {
 	/// - seealso: `barHeight`
 	@objc internal func updateHeight() {
 		guard let mainWindow = UIApplication.shared.keyWindow else { return }
-
+        
+        /* Not used…
 		// Default to height of 20
-		var height = CGFloat(20)
+        var height = CGFloat(20)
 
 		// If iPhone in landscape mode, the root view controller of the
 		// primary window is a navigation controller, and the status bar is not
@@ -328,13 +351,18 @@ extension VolumeBar {
 		let phoneLandscape = UI_USER_INTERFACE_IDIOM() == .phone && (orientation == .landscapeLeft || orientation == .landscapeRight)
 
 		if statusBarHidden {
-			height = barHeight + 6
+            height = barHeight + 6
 		} else if let navigationController = mainWindow.rootViewController as? UINavigationController, phoneLandscape {
 			height = navigationController.navigationBar.frame.size.height
 		}
-
-		// Set the window frame, update status bar appearance
-		volumeWindow.frame = CGRect(x: 0, y: safeAreaTopInset, width: mainWindow.bounds.width, height: height)
+        */
+        
+		// Set the window frame, update status bar appearance (and check for iPhone X safe areas)
+        if !UIDevice.current.orientation.isLandscape {
+            volumeWindow.frame = CGRect(x: 0, y: safeAreaTopInset, width: mainWindow.bounds.width, height: barHeight)
+        } else {
+            volumeWindow.frame = CGRect(x: safeAreaSideInset, y: 0, width: mainWindow.bounds.width - safeAreaSideInset, height: barHeight)
+        }
 		volumeViewController.view.setNeedsLayout()
 		volumeViewController.setNeedsStatusBarAppearanceUpdate()
 	}
@@ -531,7 +559,7 @@ private class VolumeBarViewController: UIViewController {
 			segment.frame = CGRect(x: segmentX, y: edgeInsets.top, width: segmentWidth, height: segmentHeight)
 		}
 	}
-
+    
 	/// Returns the `statusBarStyle` property of the `VolumeBar`.
 	fileprivate override var preferredStatusBarStyle: UIStatusBarStyle {
 		guard let bar = volumeBar else { return .default }
