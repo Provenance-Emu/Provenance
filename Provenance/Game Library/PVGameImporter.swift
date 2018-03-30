@@ -8,7 +8,7 @@
 //
 
 import Foundation
-import RealmSwift
+// import RealmSwift
 import CoreSpotlight
 
 extension URLSession {

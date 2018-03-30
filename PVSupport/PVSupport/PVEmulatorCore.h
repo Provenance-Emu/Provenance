@@ -80,9 +80,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 };
 
 typedef NS_ENUM(NSInteger, GLESVersion) {
-	GLESVersion1 = 0,
+	GLESVersion1,
 	GLESVersion2,
-	GLESVersion3,
+	GLESVersion3
 };
 
 @property (nonatomic, assign) GameSpeed gameSpeed;

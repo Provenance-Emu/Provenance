@@ -5,7 +5,7 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
-import RealmSwift
+// import RealmSwift
 
 private let LabelHeight: CGFloat = 44.0
 

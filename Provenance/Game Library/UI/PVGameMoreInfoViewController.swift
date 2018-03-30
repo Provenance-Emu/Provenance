@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import RealmSwift
+// import RealmSwift
 #if os(iOS)
 import SafariServices
 import AssetsLibrary
