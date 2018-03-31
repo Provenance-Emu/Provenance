@@ -294,6 +294,22 @@
             </objects>
             <point key="canvasLocation" x="1244" y="-1380"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="MPv-df-kCi">
+            <objects>
+                <navigationController storyboardIdentifier="PVSaveStatesViewControllerNav" id="ahK-Fu-xig" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="NKL-PB-2EA">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="145"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="i2k-XG-ULw" kind="relationship" relationship="rootViewController" id="C3y-Se-fMX"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="QSH-qc-oXC" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="624" y="799"/>
+        </scene>
         <!--Library-->
         <scene sceneID="Cw2-p7-hai">
             <objects>
@@ -329,6 +345,116 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqU-Pg-HhI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3323" y="-1064"/>
+        </scene>
+        <!--Save States View Controller-->
+        <scene sceneID="7UN-gu-BcD">
+            <objects>
+                <collectionViewController storyboardIdentifier="PVSaveStatesViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="i2k-XG-ULw" customClass="PVSaveStatesViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="ct2-kB-n76">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="30" minimumInteritemSpacing="30" id="e9y-lL-Q4u">
+                            <size key="itemSize" width="400" height="400"/>
+                            <size key="headerReferenceSize" width="50" height="100"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="60" minY="0.0" maxX="60" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateView" id="69W-zo-j9u" customClass="PVSaveStateCollectionViewCell" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="60" y="100" width="400" height="400"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                    <rect key="frame" x="0.0" y="0.0" width="400" height="400"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6Xw-uU-ySW">
+                                            <rect key="frame" x="20" y="20" width="360" height="282"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="29/03/18, 11:34" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0qw-XS-n4i">
+                                            <rect key="frame" x="20" y="322" width="360" height="58"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="6Xw-uU-ySW" firstAttribute="leading" secondItem="69W-zo-j9u" secondAttribute="leading" constant="20" id="6HP-oC-Cxz"/>
+                                    <constraint firstItem="0qw-XS-n4i" firstAttribute="top" secondItem="6Xw-uU-ySW" secondAttribute="bottom" constant="20" id="F9N-wI-BHY"/>
+                                    <constraint firstAttribute="trailing" secondItem="0qw-XS-n4i" secondAttribute="trailing" constant="20" id="cBR-9v-Of1"/>
+                                    <constraint firstItem="0qw-XS-n4i" firstAttribute="leading" secondItem="69W-zo-j9u" secondAttribute="leading" constant="20" id="j0z-yb-940"/>
+                                    <constraint firstAttribute="trailing" secondItem="6Xw-uU-ySW" secondAttribute="trailing" constant="20" id="ppw-Ky-wPD"/>
+                                    <constraint firstAttribute="bottom" secondItem="0qw-XS-n4i" secondAttribute="bottom" constant="20" id="rCW-LG-ZQD"/>
+                                    <constraint firstItem="6Xw-uU-ySW" firstAttribute="top" secondItem="69W-zo-j9u" secondAttribute="top" constant="20" id="w7w-e0-xMM"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="imageView" destination="6Xw-uU-ySW" id="5V6-7J-CWX"/>
+                                    <outlet property="label" destination="0qw-XS-n4i" id="nN0-Jc-RAR"/>
+                                </connections>
+                            </collectionViewCell>
+                        </cells>
+                        <collectionReusableView key="sectionHeaderView" opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateHeader" id="cAl-KV-5M4" customClass="PVSaveStateHeaderView" customModule="Provenance" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yn8-GD-mRA">
+                                    <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="FRL-go-5ek">
+                                        <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <subviews>
+                                            <visualEffectView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dEh-1c-jEi">
+                                                <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" id="gMx-qx-3Ye">
+                                                    <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                </view>
+                                                <vibrancyEffect>
+                                                    <blurEffect style="regular"/>
+                                                </vibrancyEffect>
+                                            </visualEffectView>
+                                        </subviews>
+                                    </view>
+                                    <blurEffect style="regular"/>
+                                </visualEffectView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save States" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ebA-9N-VrK">
+                                    <rect key="frame" x="0.0" y="0.0" width="1920" height="100"/>
+                                    <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                            <constraints>
+                                <constraint firstItem="ebA-9N-VrK" firstAttribute="leading" secondItem="cAl-KV-5M4" secondAttribute="leading" id="GzH-xN-jvv"/>
+                                <constraint firstAttribute="bottom" secondItem="yn8-GD-mRA" secondAttribute="bottom" id="Mkr-xL-LSO"/>
+                                <constraint firstItem="yn8-GD-mRA" firstAttribute="top" secondItem="cAl-KV-5M4" secondAttribute="top" id="bgA-eC-wHd"/>
+                                <constraint firstItem="ebA-9N-VrK" firstAttribute="top" secondItem="cAl-KV-5M4" secondAttribute="top" id="gLq-qw-Tfl"/>
+                                <constraint firstAttribute="trailing" secondItem="ebA-9N-VrK" secondAttribute="trailing" id="rW7-RN-RNW"/>
+                                <constraint firstAttribute="trailing" secondItem="yn8-GD-mRA" secondAttribute="trailing" id="t3P-aD-ljy"/>
+                                <constraint firstItem="yn8-GD-mRA" firstAttribute="leading" secondItem="cAl-KV-5M4" secondAttribute="leading" id="urn-Qe-Rkg"/>
+                                <constraint firstAttribute="bottom" secondItem="ebA-9N-VrK" secondAttribute="bottom" id="zDY-1p-ZlZ"/>
+                            </constraints>
+                            <connections>
+                                <outlet property="label" destination="ebA-9N-VrK" id="lbb-9x-K03"/>
+                            </connections>
+                        </collectionReusableView>
+                        <connections>
+                            <outlet property="dataSource" destination="i2k-XG-ULw" id="pJR-LF-TOj"/>
+                            <outlet property="delegate" destination="i2k-XG-ULw" id="0Jw-Rw-ONY"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="Lrd-5a-Nlm">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="gMQ-Qk-3D3">
+                            <connections>
+                                <action selector="newSaveState:" destination="i2k-XG-ULw" id="ISA-DD-nQ6"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qZG-B7-KjD" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2934" y="799"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="C1c-YW-hQD">

@@ -134,7 +134,6 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)loadSaveFile:(NSString *)path forType:(int)type;
 - (void)writeSaveFile:(NSString *)path forType:(int)type;
 
-- (BOOL)autoSaveState;
 - (BOOL)saveStateToFileAtPath:(NSString *)path;
 - (BOOL)loadStateFromFileAtPath:(NSString *)path;
 
