@@ -3178,7 +3178,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "";
+			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
 		B3FF744F202F7D67008C964A /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
