@@ -586,12 +586,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			return
 		}
 		
+		let image = captureScreenshot()
+		
 		if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
 			saveStatesViewController.saveStates = game.saveStates
 			saveStatesViewController.delegate = self
+			saveStatesViewController.screenshot = image
 		}
 		
-		saveStatesNavController.modalPresentationStyle = .overFullScreen
+		saveStatesNavController.modalPresentationStyle = .overCurrentContext
 		
 #if os(iOS)
 		if traitCollection.userInterfaceIdiom == .pad {
@@ -664,34 +667,25 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	}
 	
 	func autoSaveState() {
-		createNewSaveState(auto: true)
+		let image = captureScreenshot()
+		createNewSaveState(auto: true, screenshot: image)
 	}
 	
-	func createNewSaveState(auto: Bool) {
+	func createNewSaveState(auto: Bool, screenshot: UIImage?) {
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
 		
-		// capture screenshot
-		fpsLabel?.alpha = 0.0
-		let width: CGFloat? = self.glViewController?.view.frame.size.width
-		let height: CGFloat? = self.glViewController?.view.frame.size.height
-		let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
-		UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-		let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-		self.glViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
-		let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
-		UIGraphicsEndImageContext()
-		fpsLabel?.alpha = 1.0
-		//
 		var imageFile: PVImageFile?
-		if let image = image, let pngData = UIImagePNGRepresentation(image) {
-			let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
-			do {
-				try pngData.write(to: imageURL)
-			} catch let error {
-				ELOG("Unable to write image to disk, error: \(error.localizedDescription)")
+		if let screenshot = screenshot {
+			if let pngData = UIImagePNGRepresentation(screenshot) {
+				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
+				do {
+					try pngData.write(to: imageURL)
+				} catch let error {
+					ELOG("Unable to write image to disk, error: \(error.localizedDescription)")
+				}
+				
+				imageFile = PVImageFile(withURL: imageURL)
 			}
-			
-			imageFile = PVImageFile(withURL: imageURL)
 		}
 		
 		let saveState = PVSaveState(withGame: game, file: saveFile, image: imageFile, isAutosave: auto)
@@ -719,7 +713,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	}
 	
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) {
-		createNewSaveState(auto: false)
+		createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 	}
 	
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
@@ -730,30 +724,28 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		self.enableContorllerInput(false)
 	}
 	
+	func captureScreenshot() -> UIImage? {
+		fpsLabel?.alpha = 0.0
+		let width: CGFloat? = self.glViewController?.view.frame.size.width
+		let height: CGFloat? = self.glViewController?.view.frame.size.height
+		let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
+		UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
+		let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
+		self.glViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+		let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		fpsLabel?.alpha = 1.0
+		return image
+	}
 #if os(iOS)
     @objc func takeScreenshot() {
-        UIView.animate(withDuration: 0.4, animations: {() -> Void in
-            self.fpsLabel?.alpha = 0
-        }, completion: {(_ finished: Bool) -> Void in
-            if finished {
-                let width: CGFloat? = self.glViewController?.view.frame.size.width
-                let height: CGFloat? = self.glViewController?.view.frame.size.height
-                let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
-                UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-                let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-                self.glViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
-                let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
-                UIGraphicsEndImageContext()
-                DispatchQueue.global(qos: .default).async(execute: {() -> Void in
-                    UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
-                })
-                self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                UIView.animate(withDuration: 0.4, animations: {() -> Void in
-                    self.fpsLabel?.alpha = 1
-                })
-            }
-        })
+		if let screenshot = captureScreenshot() {
+			DispatchQueue.global(qos: .default).async(execute: {() -> Void in
+				UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
+			})
+		}
+		self.core.setPauseEmulation(false)
+		self.isShowingMenu = false
     }
 
 #endif
