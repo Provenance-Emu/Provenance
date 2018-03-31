@@ -538,6 +538,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             moreInfoViewContrller?.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideModeInfo))
             let newNav = UINavigationController(rootViewController: moreInfoViewContrller ?? UIViewController())
             self.present(newNav, animated: true) {() -> Void in }
+			self.isShowingMenu = false
+			self.enableContorllerInput(false)
         }))
         actionsheet.addAction(UIAlertAction(title: "Return to Game Library", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
             self.quit()
