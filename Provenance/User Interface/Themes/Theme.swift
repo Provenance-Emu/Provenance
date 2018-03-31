@@ -112,7 +112,7 @@ struct DarkTheme: iOSTheme {
     var defaultTintColor: UIColor? { return UIColor(hex: "#848489")! }
     var keyboardAppearance: UIKeyboardAppearance = .dark
 
-    var switchON: UIColor? { return UIColor(hex: "#848489")! }
+    var switchON: UIColor? { return UIColor(hex: "#18A9F7")! }
     var switchThumb: UIColor? { return UIColor(hex: "#eee")! }
 
     var gameLibraryBackground: UIColor { return UIColor.black }
@@ -121,7 +121,7 @@ struct DarkTheme: iOSTheme {
     var gameLibraryHeaderBackground: UIColor {return UIColor.black}
     var gameLibraryHeaderText: UIColor { return UIColor(hex: "#333")! }
 
-    var barButtonItemTint: UIColor? { return UIColor.darkGray }
+	var barButtonItemTint: UIColor? { return UIColor(hex: "#18A9F7") }
     var navigationBarBackgroundColor: UIColor? {return UIColor(hex: "#1C1C1C") }
 
     var alertViewBackground: UIColor { return UIColor.darkGray }
@@ -161,13 +161,14 @@ public class Theme: NSObject {
 
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.barTintColor = theme.navigationBarBackgroundColor
+            $0.tintColor = theme.navigationBarBackgroundColor
             $0.barStyle = theme.navigationBarStyle
+			$0.isTranslucent = true
         }
 
-        UIView.appearance {
-            $0.tintColor = theme.defaultTintColor
-        }
+//        UIView.appearance {
+//            $0.tintColor = theme.defaultTintColor
+//        }
 
         UIBarButtonItem.appearance {
             $0.tintColor = theme.barButtonItemTint

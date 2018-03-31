@@ -263,7 +263,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             NSLayoutConstraint.activate([
                 collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
                 collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-                collectionView.topAnchor.constraint(equalTo: guide.topAnchor),
+                collectionView.topAnchor.constraint(equalTo: view.topAnchor),
                 collectionView.bottomAnchor.constraintEqualToSystemSpacingBelow(guide.bottomAnchor, multiplier: 1.0)
                 ])
             layout.sectionInsetReference = .fromSafeArea
