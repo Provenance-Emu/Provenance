@@ -362,7 +362,6 @@
                     <navigationItem key="navigationItem" id="LoK-Fl-znC">
                         <nil key="title"/>
                         <barButtonItem key="leftBarButtonItem" image="gear" id="daz-L9-06G">
-                            <color key="tintColor" red="0.51793235540000004" green="0.51596093180000002" blue="0.53913700580000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <segue destination="YzD-6V-3zn" kind="modal" identifier="SettingsSegue" modalPresentationStyle="formSheet" id="PHC-9h-QIz"/>
                             </connections>
@@ -379,7 +378,6 @@
                             </connections>
                         </textField>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="6tp-vr-cci">
-                            <color key="tintColor" red="0.51764705882352935" green="0.51764705882352935" blue="0.53725490196078429" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                             </connections>
@@ -1062,7 +1060,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" preservesSuperviewLayoutMargins="YES" text="Appearance" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="tbC-0B-9PY">
-                                                    <rect key="frame" x="15" y="8" width="272" height="27"/>
+                                                    <rect key="frame" x="16" y="8" width="271" height="27"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -1165,7 +1163,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" preservesSuperviewLayoutMargins="YES" text="Cores" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Oaj-HR-Ftm">
-                                                    <rect key="frame" x="15" y="8" width="272" height="27"/>
+                                                    <rect key="frame" x="16" y="8" width="271" height="27"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
