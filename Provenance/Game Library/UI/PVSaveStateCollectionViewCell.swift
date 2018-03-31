@@ -11,6 +11,7 @@ import UIKit
 class PVSaveStateCollectionViewCell: UICollectionViewCell {
     
 	@IBOutlet weak var imageView: UIImageView!
+	@IBOutlet weak var noScreenshotLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
 	
 	override func prepareForReuse() {
@@ -18,6 +19,20 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		
 		imageView.image = nil
 		label.text = nil
+#if os(tvOS)
+		self.label.alpha = 0
+		self.label.transform = .identity
+#endif
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		
+		if imageView.image == nil {
+			noScreenshotLabel.isHidden = false
+		} else {
+			noScreenshotLabel.isHidden = true
+		}
 	}
 	
 #if os(tvOS)
@@ -25,7 +40,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-				transform = transform.translatedBy(x: 0, y: 40)
+				transform = transform.translatedBy(x: 0, y: 0)
 				self.label.alpha = 1
 				self.label.transform = transform
 			} else {

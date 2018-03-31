@@ -235,27 +235,27 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
 #endif
 
+		convertOldSaveStatesToNewIfNeeded()
+		
         core.startEmulation()
         gameAudio = OEGameAudio(core: core)
         gameAudio?.volume = PVSettingsModel.sharedInstance().volume
         gameAudio?.outputDeviceID = 0
         gameAudio?.start()
-        let saveStatePath: String = self.saveStatePath
-        let autoSavePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("auto.svs").absoluteString
-        if FileManager.default.fileExists(atPath: autoSavePath) {
+		if let latestAutoSave = game.saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false).first {
             let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
             let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
             if shouldAutoLoadSaveState {
-                self.core.loadStateFromFile(atPath: autoSavePath)
+                self.core.loadStateFromFile(atPath: latestAutoSave.file.url.path)
             } else if shouldAskToLoadSaveState {
                 core.setPauseEmulation(true)
                 let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
-                    self?.core.loadStateFromFile(atPath: autoSavePath)
+                    self?.core.loadStateFromFile(atPath: latestAutoSave.file.url.path)
                     self?.core.setPauseEmulation(false)
                 }))
                 alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
-                    self?.core.loadStateFromFile(atPath: autoSavePath)
+                    self?.core.loadStateFromFile(atPath: latestAutoSave.file.url.path)
                     PVSettingsModel.sharedInstance().autoSave = true
                     PVSettingsModel.sharedInstance().askToAutoLoad = false
                 }))
@@ -606,6 +606,63 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		present(saveStatesNavController, animated: true)
     }
 
+	func convertOldSaveStatesToNewIfNeeded() {
+		let fileManager = FileManager.default
+		let infoURL =  URL(fileURLWithPath: saveStatePath).appendingPathComponent("info.plist")
+		let autoSaveURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("auto.svs")
+		let saveStateURLs = [
+			URL(fileURLWithPath: saveStatePath).appendingPathComponent("0.svs"),
+			URL(fileURLWithPath: saveStatePath).appendingPathComponent("1.svs"),
+			URL(fileURLWithPath: saveStatePath).appendingPathComponent("2.svs"),
+			URL(fileURLWithPath: saveStatePath).appendingPathComponent("3.svs"),
+			URL(fileURLWithPath: saveStatePath).appendingPathComponent("4.svs")
+		]
+		
+		if fileManager.fileExists(atPath: infoURL.path) {
+			do {
+				try fileManager.removeItem(at: infoURL)
+			} catch let error {
+				ELOG("Unable to remove old save state info.plist: \(error.localizedDescription)")
+			}
+		}
+		
+		guard let realm = try? Realm() else {
+			ELOG("Unable to instantiate realm, abandoning old save state conversion")
+			return
+		}
+		
+		if fileManager.fileExists(atPath: autoSaveURL.path) {
+			do {
+				let newURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate)")
+				try fileManager.moveItem(at: autoSaveURL, to: newURL)
+				let saveFile = PVFile(withURL: newURL)
+				let newState = PVSaveState(withGame: game, file: saveFile, image: nil, isAutosave: true)
+				try realm.write {
+					game.saveStates.append(newState)
+				}
+			} catch let error {
+				ELOG("Unable to convert autosave to new format: \(error.localizedDescription)")
+			}
+		}
+		
+		for url in saveStateURLs {
+			if fileManager.fileExists(atPath: url.path) {
+				do {
+					let newURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate)")
+					try fileManager.moveItem(at: url, to: newURL)
+					let saveFile = PVFile(withURL: newURL)
+					let newState = PVSaveState(withGame: game, file: saveFile, image: nil, isAutosave: false)
+					try realm.write {
+						game.saveStates.append(newState)
+					}
+				} catch let error {
+					ELOG("Unable to convert autosave to new format: \(error.localizedDescription)")
+				}
+			}
+		}
+		
+	}
+	
 	func autoSaveState() {
 		createNewSaveState(auto: true)
 	}

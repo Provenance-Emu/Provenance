@@ -39,7 +39,9 @@ class PVSaveStatesViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
+#if os(iOS)
 		title = "Save States"
+#endif
 		
 		dateFormatter.dateStyle = .short
 		timeFormatter.timeStyle = .short
@@ -212,6 +214,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 			cell.label.text = "\(dateFormatter.string(from: saveState.date)), \(timeFormatter.string(from: saveState.date))"
 		}
 
+		cell.setNeedsLayout()
+		cell.layoutIfNeeded()
 		return cell
 	}
 
