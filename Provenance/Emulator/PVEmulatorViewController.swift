@@ -29,7 +29,14 @@ extension UIViewController {
 		alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
 
 		let presentingVC = self.presentedViewController ?? self
-		presentingVC.present(alert, animated: true, completion: nil)
+
+		if presentingVC.isBeingDismissed || presentingVC.isBeingPresented {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+				presentingVC.present(alert, animated: true, completion: nil)
+			}
+		} else {
+			presentingVC.present(alert, animated: true, completion: nil)
+		}
 	}
 
 	func presentError(_ message : String, completion: (() -> Swift.Void)? = nil) {
