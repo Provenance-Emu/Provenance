@@ -481,6 +481,8 @@
 		B349AF721E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */ = {isa = PBXBuildFile; fileRef = B349AE361E9ABCF900ACD416 /* LzmaSDKObjCWriter.mm */; };
 		B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; };
+		B3592CE62070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; };
 		B35BB7FB202F3F2200FCB513 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7F9202F3F2100FCB513 /* PVGame.swift */; };
 		B35BB7FC202F3F2200FCB513 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7F9202F3F2100FCB513 /* PVGame.swift */; };
 		B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7F9202F3F2100FCB513 /* PVGame.swift */; };
@@ -736,6 +738,8 @@
 		B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5C3202E21B400A11871 /* RomDatabase.swift */; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
+		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
 		B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
@@ -1392,6 +1396,7 @@
 		B35469371DECD8570018B6F3 /* PVAtari5200ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari5200ControllerViewController.swift; sourceTree = "<group>"; };
 		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3584CBE1C730C200031EC77 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVRSPCXD4.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVRSPCXD4.framework"; sourceTree = "<absolute>"; };
+		B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVSaveStateCollectionViewCell.xib; sourceTree = "<group>"; };
 		B35B31CA206CA04A00AEAF88 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		B35BB7F9202F3F2100FCB513 /* PVGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGame.swift; sourceTree = "<group>"; };
 		B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
@@ -1499,6 +1504,7 @@
 		B3E3B5C3202E21B400A11871 /* RomDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RomDatabase.swift; sourceTree = "<group>"; };
 		B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TopShelf-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibraryViewController.swift; sourceTree = "<group>"; };
+		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
 		B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVButtonGroupOverlayView.swift; sourceTree = "<group>"; };
@@ -1666,6 +1672,7 @@
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
 				7556CF7919DC15C1007F8F97 /* Default.xib */,
+				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -2838,6 +2845,7 @@
 				1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */,
 				1A2FB10B206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift */,
 				1A2FB10E206EF29E00A1F942 /* PVSaveStateHeaderView.swift */,
+				B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -3092,6 +3100,7 @@
 				DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */,
 				377152D61B61D77300BAE15B /* openvgdb.sqlite in Resources */,
 				1A34C58617D517760058E7D1 /* Systems.plist in Resources */,
+				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B3BDEC8E1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
 				B349AE3B1E9ABCF900ACD416 /* CHANGELOG in Resources */,
 			);
@@ -3106,6 +3115,7 @@
 				DF0035C6203C97E100F63831 /* GLideN64.custom.ini in Resources */,
 				1AD481D61BA3542D00FDA50A /* GCDWebUploader.bundle in Resources */,
 				1AD482371BA35A3300FDA50A /* Systems.plist in Resources */,
+				B3592CE62070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B3BDEC8F1DED5EDD002BD7A4 /* RiceVideoLinux.ini in Resources */,
 				B349AE3A1E9ABCF900ACD416 /* .travis.yml in Resources */,
 				B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
@@ -3276,6 +3286,7 @@
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
 				E414488E1B3126190056D80A /* PViCadeGamepad.m in Sources */,
 				B349AF051E9ABCF900ACD416 /* Lzma2Encoder.cpp in Sources */,
+				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3E3B5C4202E21B400A11871 /* RomDatabase.swift in Sources */,
 				B349AEE51E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				B349AEE91E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
@@ -3745,6 +3756,7 @@
 				B349AE641E9ABCF900ACD416 /* Delta.c in Sources */,
 				B349AF6E1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
 				B394C97920609D0D0014A65D /* PVAtari2600ControllerViewController.swift in Sources */,
+				B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B349AE781E9ABCF900ACD416 /* MtCoder.c in Sources */,
 				1AD481CB1BA353F600FDA50A /* PVMediaCache.swift in Sources */,
 				B349AF101E9ABCF900ACD416 /* PpmdDecoder.cpp in Sources */,

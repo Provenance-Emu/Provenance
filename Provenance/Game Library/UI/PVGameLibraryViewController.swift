@@ -21,6 +21,8 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
+let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateView"
+
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
 // For Obj-C
@@ -102,6 +104,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         if !favoritesIsHidden {
             sectionsTitles.append("Favorites")
         }
+
+		if !saveStatesIsHidden {
+			sectionsTitles.append("Recently Saved")
+		}
+
         if !recentGamesIsHidden {
             sectionsTitles.append("Recently Played")
         }
@@ -259,6 +266,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
+
+		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 
         // Adjust collection view layout for iPhone X Safe areas
@@ -290,14 +299,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     var systems: Results<PVSystem>?
+	var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?
     var recentGames: Results<PVRecentGame>?
 
     var systemsToken: NotificationToken?
+	var savesStatesToken: NotificationToken?
     var favoritesToken: NotificationToken?
     var recentGamesToken: NotificationToken?
 
     var favoritesIsHidden = true
+	var saveStatesIsEmpty = true
+	var saveStatesIsHidden : Bool {
+		return saveStatesIsEmpty || !PVSettingsModel.shared.showRecentSaveStates
+	}
+
     var recentGamesIsEmpty = true
     var recentGamesIsHidden : Bool {
         return recentGamesIsEmpty || !PVSettingsModel.shared.showRecentGames
@@ -307,17 +323,26 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         return favoritesIsHidden ? -1 : 0
     }
 
+	var saveStateSection: Int {
+		if saveStatesIsHidden {
+			return -1
+		} else {
+			return favoritesIsHidden ? 0 : 1
+		}
+	}
+
     var recentGamesSection: Int {
         if recentGamesIsHidden {
             return -1
         } else {
-            return favoritesIsHidden ? 0 : 1
+            return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
         }
     }
 
     var systemSectionsTokens = [String : NotificationToken]()
     var systemsSectionOffset: Int {
         var section = favoritesIsHidden ? 0 : 1
+		section += saveStatesIsHidden ? 0 : 1
         section += recentGamesIsHidden ? 0 : 1
         return section
     }
@@ -356,12 +381,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func initRealmResultsStorage() {
         systems = PVSystem.all.sorted(byKeyPath: #keyPath(PVSystem.identifier)).filter("games.@count > 0")
+		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
         favoriteGames = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
 
     func deinitRealmResultsStorage() {
         systems = nil
+		saveStates = nil
         recentGames = nil
         favoriteGames = nil
     }
@@ -395,6 +422,49 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 fatalError("\(error)")
             }
         }
+
+		savesStatesToken = saveStates!.observe { [unowned self] (changes: RealmCollectionChange) in
+			switch changes {
+			case .initial(let result):
+				if !result.isEmpty {
+					self.saveStatesIsEmpty = false
+
+					//                    if !self.recentGamesIsHidden {
+					//                        let section = self.recentGamesSection
+					//                        collectionView.insertSections([section])
+					//                    }
+				}
+
+				self.collectionView?.reloadData()
+			case .update(_, let deletions, let insertions, let modifications):
+				let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
+				let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
+
+				if self.saveStatesIsHidden {
+					self.saveStatesIsEmpty = needsDelete
+					return
+				}
+
+				let section = self.saveStateSection > -1 ? self.saveStateSection : 0
+
+				if needsInsert {
+					ILOG("Needs insert, saveStatesIsHidden - false")
+					self.saveStatesIsEmpty = false
+				}
+
+				if needsDelete {
+					ILOG("Needs delete, saveStatesIsHidden - true")
+					self.saveStatesIsEmpty = true
+				}
+
+				// Query results have changed, so apply them to the UICollectionView
+				self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+				self.saveStatesIsEmpty = needsDelete
+			case .error(let error):
+				// An error occurred while opening the Realm file on the background worker thread
+				fatalError("\(error)")
+			}
+		}
 
         recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
             switch changes {
@@ -488,11 +558,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func unregisterForChange() {
         systemsToken?.invalidate()
+		savesStatesToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
         systemSectionsTokens.values.forEach {$0.invalidate()}
 
         systemsToken = nil
+		savesStatesToken = nil
         recentGamesToken = nil
         favoritesToken = nil
         systemSectionsTokens.removeAll()
@@ -1104,16 +1176,43 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 return
             }
 
+
+			let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+			if traitCollection.userInterfaceIdiom == .pad {
+				let cell: UICollectionViewCell? = collectionView?.cellForItem(at: indexPath)
+				actionSheet.popoverPresentationController?.sourceView = cell
+				actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+			}
+
+			if indexPath.section == saveStateSection {
+
+				let saveState = saveStates![indexPath.row]
+				
+				actionSheet.title = "Delete this save state?"
+
+				actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
+					do {
+						try FileManager.default.removeItem(at: saveState.file.url)
+						if let image = saveState.image {
+							try FileManager.default.removeItem(at: image.url)
+						}
+						let realm = try Realm()
+						try realm.write {
+							realm.delete(saveState)
+						}
+					} catch let error {
+						self.presentError("Error deleting save state: \(error.localizedDescription)")
+					}
+				})
+				actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+				present(actionSheet, animated: true)
+
+				return
+			}
+
             guard let game: PVGame = self.game(at: indexPath) else {
                 ELOG("No game at inde path \(indexPath)")
                 return
-            }
-
-            let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            if traitCollection.userInterfaceIdiom == .pad {
-                let cell: UICollectionViewCell? = collectionView?.cellForItem(at: indexPath)
-                actionSheet.popoverPresentationController?.sourceView = cell
-                actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
             }
 
             actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -1280,98 +1379,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     #endif
-    func renameGame(_ game: PVGame, toTitle title: String) {
-        if title.count != 0 {
-            do {
-                try RomDatabase.sharedInstance.writeTransaction {
-                    game.title = title
-                }
+	func renameGame(_ game: PVGame, toTitle title: String) {
+		RomDatabase.sharedInstance.renameGame(game, toTitle: title)
+//		fetchGames()
+//		collectionView?.reloadData()
+	}
 
-                fetchGames()
-                collectionView?.reloadData()
-            } catch {
-                ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")
-            }
-        }
-    }
-
-    func delete(game: PVGame) {
-        let romURL = PVEmulatorConfiguration.path(forGame: game)
-
-        if !game.customArtworkURL.isEmpty {
-            do {
-                try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
-            } catch {
-                ELOG("Failed to delete image \(game.customArtworkURL)")
-            }
-        }
-
-        let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
-        do {
-            try FileManager.default.removeItem(at: savesPath)
-        } catch {
-            WLOG("Unable to delete save states at path: \(savesPath.path) because: \(error.localizedDescription)")
-        }
-
-        let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
-        do {
-            try FileManager.default.removeItem(at: batteryPath)
-        } catch {
-            WLOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
-        }
-
-        do {
-            try FileManager.default.removeItem(at: romURL)
-        } catch {
-            WLOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
-        }
-
-        // Delete from Spotlight search
-        #if os(iOS)
-        if #available(iOS 9.0, *) {
-           deleteFromSpotlight(game: game)
-        }
-        #endif
-
-        game.saveStates.forEach { try! $0.delete() }
-        game.recentPlays.forEach { try! $0.delete() }
-
-        deleteRelatedFilesGame(game)
-        try? game.delete()
-    }
-
-    func deleteRelatedFilesGame(_ game: PVGame) {
-
-        guard let system = game.system else {
-            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
-            return
-        }
-
-        let romDirectory = system.romsDirectory
-        let relatedFileName: String = game.url.deletingPathExtension().lastPathComponent
-
-        let contents: [URL]
-        do {
-            contents = try FileManager.default.contentsOfDirectory(at: romDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-        } catch {
-            ELOG("scanning \(romDirectory) \(error.localizedDescription)")
-            return
-        }
-
-        let matchingFiles = contents.filter {
-            let filename = $0.deletingPathExtension().lastPathComponent
-            return filename.contains(relatedFileName)
-        }
-
-        matchingFiles.forEach {
-            let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory: false)
-            do {
-                try FileManager.default.removeItem(at: file)
-            } catch {
-                ELOG("Failed to remove item \(file.path).\n \(error.localizedDescription)")
-            }
-        }
-    }
+	func delete(game: PVGame) {
+		RomDatabase.sharedInstance.delete(game: game)
+	}
 
     #if os(iOS)
     func chooseCustomArtwork(for game: PVGame) {
@@ -1535,6 +1551,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+
+		let maxForSpecialSection = 6
+
         if let searchResults = searchResults {
             return Int(searchResults.count)
         } else {
@@ -1543,10 +1562,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 return systems?[sectionNumber].games.count ?? 0
             } else if section == favoritesSection {
                 return favoriteGames?.count ?? 0
-            } else if section == recentGamesSection {
-                return recentGames?.count ?? 0
-            } else {
-                fatalError("Shouldn't be here")
+            } else if section == saveStateSection {
+                return min(maxForSpecialSection, saveStates?.count ?? 0)
+			} else if section == recentGamesSection {
+				return min(maxForSpecialSection, recentGames?.count ?? 0)
+			} else {
+				fatalError("Shouldn't be here")
             }
         }
     }
@@ -1564,7 +1585,21 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as? PVGameLibraryCollectionViewCell else {
+
+		if indexPath.section == saveStateSection {
+			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as? PVSaveStateCollectionViewCell else {
+				fatalError("Couldn't create cell of type PVGameLibraryCollectionViewSaveStatesCellIdentifier")
+			}
+
+			if let saveStates = saveStates {
+				let saveState = saveStates[indexPath.row]
+				cell.saveState = saveState
+			}
+
+			return cell
+		}
+
+		guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as? PVGameLibraryCollectionViewCell else {
             fatalError("Couldn't create cell of type PVGameLibraryCollectionViewCellIdentifier")
         }
 
@@ -1837,41 +1872,25 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
     #endif
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let game = self.game(at: indexPath) {
-            load(game)
-        } else {
-            let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true)
-        }
+		if indexPath.section == saveStateSection {
+			let saveState = saveStates![indexPath.row]
+			load(saveState.game)
+
+			DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
+				self.openSaveState(saveState)
+			})
+
+		} else {
+			if let game = self.game(at: indexPath) {
+				load(game)
+			} else {
+				let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
+				alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+				self.present(alert, animated: true)
+			}
+		}
     }
 }
-
-// MARK: - Spotlight
-#if os(iOS)
-@available(iOS 9.0, *)
-extension PVGameLibraryViewController {
-    private func deleteFromSpotlight(game: PVGame) {
-        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
-            if let error = error {
-                print("Error deleting game spotlight item: \(error)")
-            } else {
-                print("Game indexing deleted.")
-            }
-        })
-    }
-
-    private func deleteAllGamesFromSpotlight() {
-        CSSearchableIndex.default().deleteAllSearchableItems { (error) in
-            if let error = error {
-                print("Error deleting all games spotlight index: \(error)")
-            } else {
-                print("Game indexing deleted.")
-            }
-        }
-    }
-}
-#endif
 
 // MARK: UIDocumentMenuDelegate
 #if os(iOS)
@@ -1929,26 +1948,33 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
 
-        let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
-        moreInfoGamePageVC.setViewControllers([viewControllerToCommit], direction: .forward, animated: false, completion: nil)
-        navigationController!.show(moreInfoGamePageVC, sender: self)
-
-//        navigationController?.show(viewControllerToCommit, sender: self)
-//        (viewControllerToCommit as! PVGameMoreInfoViewController).navigationItem.leftBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .done, target: self, action: nil)
-//        let newNav = UINavigationController(rootViewController: viewControllerToCommit)
-//        present(newNav, animated: true, completion: nil)
+		if let moreInfoVC = viewControllerToCommit as? PVGameMoreInfoViewController {
+			let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+			moreInfoGamePageVC.setViewControllers([moreInfoVC], direction: .forward, animated: false, completion: nil)
+			navigationController!.show(moreInfoGamePageVC, sender: self)
+		} else if let saveSaveInfoVC = viewControllerToCommit as? PVSaveStateInfoViewController {
+			navigationController!.show(saveSaveInfoVC, sender: self)
+		}
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
-            //This will show the cell clearly and blur the rest of the screen for our peek.
-            previewingContext.sourceRect = cellAttributes.frame
 
-            let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
-            let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-            moreInfoViewContrller.game = game(at: indexPath)
-            moreInfoViewContrller.showsPlayButton = true
-            return moreInfoViewContrller
+			//This will show the cell clearly and blur the rest of the screen for our peek.
+			previewingContext.sourceRect = cellAttributes.frame
+
+			let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
+
+			if indexPath.section == saveStateSection {
+				let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController
+				saveStateInfoVC.saveState = saveStates![indexPath.row]
+				return saveStateInfoVC
+			} else {
+				let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+				moreInfoViewContrller.game = game(at: indexPath)
+				moreInfoViewContrller.showsPlayButton = true
+				return moreInfoViewContrller
+			}
         }
         return nil
     }

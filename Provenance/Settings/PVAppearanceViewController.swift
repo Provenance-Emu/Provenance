@@ -14,6 +14,7 @@ class PVAppearanceViewController: UITableViewController {
     #if os(iOS)
     var hideTitlesSwitch: UISwitch?
     var recentlyPlayedSwitch: UISwitch?
+	var saveStatesSwitch: UISwitch?
     #endif
 
     override func viewDidLoad() {
@@ -24,9 +25,14 @@ class PVAppearanceViewController: UITableViewController {
         hideTitlesSwitch = UISwitch()
         hideTitlesSwitch?.isOn = settings.showGameTitles
         hideTitlesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+
         recentlyPlayedSwitch = UISwitch()
         recentlyPlayedSwitch?.isOn = settings.showRecentGames
         recentlyPlayedSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
+
+		saveStatesSwitch = UISwitch()
+		saveStatesSwitch?.isOn = settings.showRecentSaveStates
+		saveStatesSwitch?.addTarget(self, action: #selector(PVAppearanceViewController.switchChangedValue(_:)), for: .valueChanged)
 #endif
     }
 
@@ -39,8 +45,10 @@ class PVAppearanceViewController: UITableViewController {
     @objc func switchChangedValue(_ switchItem: UISwitch) {
         if switchItem == hideTitlesSwitch {
             PVSettingsModel.shared.showGameTitles = switchItem.isOn
-        } else if switchItem == recentlyPlayedSwitch {
-            PVSettingsModel.shared.showRecentGames = switchItem.isOn
+		} else if switchItem == recentlyPlayedSwitch {
+			PVSettingsModel.shared.showRecentGames = switchItem.isOn
+		} else if switchItem == saveStatesSwitch {
+            PVSettingsModel.shared.showRecentSaveStates = switchItem.isOn
         }
 
         NotificationCenter.default.post(name: NSNotification.Name("kInterfaceDidChangeNotification"), object: nil)
@@ -54,7 +62,7 @@ class PVAppearanceViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2
+            return 3
         }
         return 0
     }
@@ -81,8 +89,16 @@ class PVAppearanceViewController: UITableViewController {
                 cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
                 cell?.accessoryView = recentlyPlayedSwitch
 #endif
-            }
-        }
+			} else if indexPath.row == 2 {
+				cell?.textLabel?.text = "Show recent save states"
+				#if os(tvOS)
+				cell?.detailTextLabel?.text = PVSettingsModel.shared.showRecentSaveStates ? "On" : "Off"
+				#else
+				cell?.textLabel?.textColor = Theme.currentTheme.settingsCellText
+				cell?.accessoryView = saveStatesSwitch
+				#endif
+			}
+		}
         cell?.selectionStyle = .none
         return cell ?? UITableViewCell()
     }
@@ -98,8 +114,11 @@ class PVAppearanceViewController: UITableViewController {
             } else if indexPath.row == 1 {
                 settings.showRecentGames = !settings.showRecentGames
                 cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
-            }
-        }
+			} else if indexPath.row == 1 {
+				settings.showRecentSaveStates = !settings.showRecentSaveStates
+				cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
+			}
+		}
 #endif
     }
 }
