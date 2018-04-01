@@ -272,9 +272,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		if let latestAutoSave = game.saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false).first {
             let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
             let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
-            if shouldAutoLoadSaveState {
-				loadSaveState(latestAutoSave)
-            } else if shouldAskToLoadSaveState {
+            if shouldAskToLoadSaveState {
                 core.setPauseEmulation(true)
                 let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
@@ -297,7 +295,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
                     self.present(alert, animated: true) {() -> Void in }
                 })
-            }
+			} else if shouldAutoLoadSaveState {
+				loadSaveState(latestAutoSave)
+			}
         }
         // stupid bug in tvOS 9.2
         // the controller paused handler (if implemented) seems to cause a 'back' navigation action
