@@ -16,8 +16,6 @@ protocol PVSaveStatesViewControllerDelegate: class {
 }
 
 class PVSaveStatesViewController: UICollectionViewController {
-	private let dateFormatter = DateFormatter()
-	private let timeFormatter = DateFormatter()
 	
 	private var autoSaveStatesObserverToken: NotificationToken!
 	private var manualSaveStatesObserverToken: NotificationToken!
@@ -42,11 +40,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 		
 #if os(iOS)
 		title = "Save States"
-#endif
-		
-		dateFormatter.dateStyle = .short
-		timeFormatter.timeStyle = .short
-		
+#endif		
 		autoSaves = saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)
 		manualSaves = saveStates.filter("isAutosave == false").sorted(byKeyPath: "date", ascending: false)
 		
@@ -138,7 +132,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 			}
 			
 			let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
-			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { action in
+			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
 				do {
 					try FileManager.default.removeItem(at: saveState.file.url)
 					if let image = saveState.image {
@@ -149,7 +143,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 						realm.delete(saveState)
 					}
 				} catch let error {
-					ELOG("Error deleting save state: \(error.localizedDescription)")
+					self.presentError("Error deleting save state: \(error.localizedDescription)")
 				}
 			})
 			alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -208,15 +202,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 			break
 		}
 
-		if let saveState = saveState {
-			if let image = saveState.image {
-				cell.imageView.image = UIImage(contentsOfFile: image.url.path)
-			}
-			cell.label.text = "\(dateFormatter.string(from: saveState.date)), \(timeFormatter.string(from: saveState.date))"
-		}
+		cell.saveState = saveState
 
-		cell.setNeedsLayout()
-		cell.layoutIfNeeded()
 		return cell
 	}
 

@@ -18,6 +18,7 @@ let kButtonVibrationKey = "kButtonVibrationKey"
 let kImageSmoothingKey = "kImageSmoothingKey"
 let kCRTFilterKey = "kCRTFilterKey"
 let kShowRecentGamesKey = "kShowRecentGamesKey"
+let kShowRecentSavesKey = "kShowRecentSavesKey"
 let kICadeControllerSettingKey = "kiCadeControllerSettingKey"
 let kVolumeSettingKey = "kVolumeSettingKey"
 let kFPSCountKey = "kFPSCountKey"
@@ -84,6 +85,14 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
+
+	@objc
+	var showRecentSaveStates: Bool {
+		didSet {
+			UserDefaults.standard.set(showRecentSaveStates, forKey: kShowRecentSavesKey)
+			UserDefaults.standard.synchronize()
+		}
+	}
 
     @objc
     var showRecentGames: Bool {
@@ -181,6 +190,7 @@ public class PVSettingsModel: NSObject {
                                                   kImageSmoothingKey: false,
                                                   kCRTFilterKey: false,
                                                   kShowRecentGamesKey: true,
+												  kShowRecentSavesKey: true,
                                                   kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
@@ -197,6 +207,7 @@ public class PVSettingsModel: NSObject {
         buttonVibration = UserDefaults.standard.bool(forKey: kButtonVibrationKey)
         imageSmoothing = UserDefaults.standard.bool(forKey: kImageSmoothingKey)
         crtFilterEnabled = UserDefaults.standard.bool(forKey: kCRTFilterKey)
+		showRecentSaveStates = UserDefaults.standard.bool(forKey: kShowRecentSavesKey)
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
         let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
         myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade))!

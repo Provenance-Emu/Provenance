@@ -287,7 +287,127 @@ public extension RomDatabase {
             realm.delete(object)
         }
     }
+
+	func renameGame(_ game: PVGame, toTitle title: String) {
+		if title.count != 0 {
+			do {
+				try RomDatabase.sharedInstance.writeTransaction {
+					game.title = title
+				}
+			} catch {
+				ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")
+			}
+		}
+	}
+
+	func delete(game: PVGame) {
+		let romURL = PVEmulatorConfiguration.path(forGame: game)
+
+		if !game.customArtworkURL.isEmpty {
+			do {
+				try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
+			} catch {
+				ELOG("Failed to delete image \(game.customArtworkURL)")
+			}
+		}
+
+		let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
+		do {
+			try FileManager.default.removeItem(at: savesPath)
+		} catch {
+			WLOG("Unable to delete save states at path: \(savesPath.path) because: \(error.localizedDescription)")
+		}
+
+		let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
+		do {
+			try FileManager.default.removeItem(at: batteryPath)
+		} catch {
+			WLOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
+		}
+
+		do {
+			try FileManager.default.removeItem(at: romURL)
+		} catch {
+			WLOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
+		}
+
+		// Delete from Spotlight search
+		#if os(iOS)
+		if #available(iOS 9.0, *) {
+			deleteFromSpotlight(game: game)
+		}
+		#endif
+
+		game.saveStates.forEach { try! $0.delete() }
+		game.recentPlays.forEach { try! $0.delete() }
+
+		deleteRelatedFilesGame(game)
+		try? game.delete()
+	}
+
+	func deleteRelatedFilesGame(_ game: PVGame) {
+
+		guard let system = game.system else {
+			ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
+			return
+		}
+
+		let romDirectory = system.romsDirectory
+		let relatedFileName: String = game.url.deletingPathExtension().lastPathComponent
+
+		let contents: [URL]
+		do {
+			contents = try FileManager.default.contentsOfDirectory(at: romDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+		} catch {
+			ELOG("scanning \(romDirectory) \(error.localizedDescription)")
+			return
+		}
+
+		let matchingFiles = contents.filter {
+			let filename = $0.deletingPathExtension().lastPathComponent
+			return filename.contains(relatedFileName)
+		}
+
+		matchingFiles.forEach {
+			let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory: false)
+			do {
+				try FileManager.default.removeItem(at: file)
+			} catch {
+				ELOG("Failed to remove item \(file.path).\n \(error.localizedDescription)")
+			}
+		}
+	}
 }
+
+
+// MARK: - Spotlight
+#if os(iOS)
+import CoreSpotlight
+
+@available(iOS 9.0, *)
+extension RomDatabase {
+	private func deleteFromSpotlight(game: PVGame) {
+		CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { (error) in
+			if let error = error {
+				print("Error deleting game spotlight item: \(error)")
+			} else {
+				print("Game indexing deleted.")
+			}
+		})
+	}
+
+	private func deleteAllGamesFromSpotlight() {
+		CSSearchableIndex.default().deleteAllSearchableItems { (error) in
+			if let error = error {
+				print("Error deleting all games spotlight index: \(error)")
+			} else {
+				print("Game indexing deleted.")
+			}
+		}
+	}
+}
+#endif
+
 
 public extension RomDatabase {
     @objc

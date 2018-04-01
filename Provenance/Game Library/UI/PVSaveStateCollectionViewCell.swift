@@ -9,11 +9,37 @@
 import UIKit
 
 class PVSaveStateCollectionViewCell: UICollectionViewCell {
-    
+
+	private static let dateFormatter : DateFormatter = {
+		let df = DateFormatter()
+		df.dateStyle = .short
+		return df
+	}()
+
+	private static let timeFormatter : DateFormatter = {
+		let tf = DateFormatter()
+		tf.timeStyle = .short
+		return tf
+	}()
+
 	@IBOutlet weak var imageView: UIImageView!
 	@IBOutlet weak var noScreenshotLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
-	
+
+	weak var saveState: PVSaveState? {
+		didSet {
+			if let saveState = saveState {
+				if let image = saveState.image {
+					imageView.image = UIImage(contentsOfFile: image.url.path)
+				}
+				label.text = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
+			}
+
+			setNeedsLayout()
+			layoutIfNeeded()
+		}
+	}
+
 	override func prepareForReuse() {
 		super.prepareForReuse()
 		
