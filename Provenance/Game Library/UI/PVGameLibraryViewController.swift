@@ -683,7 +683,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
         let ipFieldText = """
-            WebUI:  \(PVWebServer.shared.urlString)
+            WebUI: \(PVWebServer.shared.urlString)
             WebDav: \(PVWebServer.shared.webDavURLString)
             """
         ipField.text = ipFieldText
