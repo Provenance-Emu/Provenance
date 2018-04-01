@@ -133,8 +133,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func controllerOpacityChanged(_ sender: Any) {
-        opacitySlider.value = floor(opacitySlider.value / 0.05) * 0.05
-        opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
+        opacitySlider.value = floor(opacitySlider.value / Float(0.05)) * Float(0.05)
+        opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * Float(100.0))
         PVSettingsModel.shared.controllerOpacity = CGFloat(opacitySlider.value)
     }
 

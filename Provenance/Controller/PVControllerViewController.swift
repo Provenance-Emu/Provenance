@@ -320,7 +320,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             let alpha = self.alpha
 
             for control in controlLayout {
-                let controlType = control.PVControlType
+				let controlType: String = control.PVControlType
                 let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
                 let compactVertical: Bool = traitCollection.verticalSizeClass == .compact
                 let controlOriginY: CGFloat = compactVertical ? view.bounds.size.height - controlSize.height : view.frame.width + (kDPadTopMargin / 2)
@@ -539,7 +539,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
 
         } else {
-            selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
+			let x: CGFloat = (view.frame.size.width / CGFloat(2.0)) - controlSize.width - (xSpacing / CGFloat(2.0));
+			let y: CGFloat = ((buttonGroup?.frame.origin.y) ?? 0) + (buttonGroup?.frame.height)! + yPadding
+            selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame

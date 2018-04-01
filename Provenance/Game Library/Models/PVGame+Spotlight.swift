@@ -31,9 +31,16 @@ public extension PVGame {
                                            developer,
                                            publishDate != nil ? "(\(publishDate!)" : nil,
                                            regionName != nil ? "(\(regionName!))" : nil]
+
+		#if swift(>=4.1)
+		let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
+			return maybeString
+			}.joined(separator: " ")
+		#else
         let secondLine = optionalEntries.flatMap { (maybeString) -> String? in
             return maybeString
             }.joined(separator: " ")
+		#endif
         if !secondLine.isEmpty {
             description += "\n\(secondLine)"
         }
