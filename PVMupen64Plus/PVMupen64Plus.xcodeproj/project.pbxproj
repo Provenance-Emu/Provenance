@@ -448,8 +448,6 @@
 		B3EA448E206E473400E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
 		B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
 		B3EA4490206E474000E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
-		DF0035BE203C77DA00F63831 /* Revision.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0035BD203C77D900F63831 /* Revision.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DF0035BF203C77DA00F63831 /* Revision.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0035BD203C77D900F63831 /* Revision.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		DF0035C1203C8F6E00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		DF0035C2203C8F6F00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
@@ -4542,7 +4540,6 @@
 				DFB604692038BAD7001E70F1 /* DepthBufferRender.h in Headers */,
 				B35B31C8206C912C00AEAF88 /* Types.h in Headers */,
 				DFB605CD2038BD0F001E70F1 /* freetype.h in Headers */,
-				DF0035BE203C77DA00F63831 /* Revision.h in Headers */,
 				DFB604C92038BBEC001E70F1 /* glsl_Utils.h in Headers */,
 				DFB605482038BCD0001E70F1 /* vidext_sdl2_compat.h in Headers */,
 				DFB605E32038BD0F001E70F1 /* ftautoh.h in Headers */,
@@ -4734,7 +4731,6 @@
 				DFB605C22038BD05001E70F1 /* ftrfork.h in Headers */,
 				DFB6046D2038BAD7001E70F1 /* DepthBufferRender.h in Headers */,
 				DFB605EF2038BD0F001E70F1 /* freetype.h in Headers */,
-				DF0035BF203C77DA00F63831 /* Revision.h in Headers */,
 				DFB604D12038BBEC001E70F1 /* glsl_Utils.h in Headers */,
 				DFB605542038BCD1001E70F1 /* vidext_sdl2_compat.h in Headers */,
 				DFB606052038BD10001E70F1 /* ftautoh.h in Headers */,
@@ -5118,7 +5114,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
+			shellScript = "#./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
 		};
 		B36F9D01206E911300F04D1F /* Generate Revision.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5132,7 +5128,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
+			shellScript = "#./\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/getRevision.sh\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
