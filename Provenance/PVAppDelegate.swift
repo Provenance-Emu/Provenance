@@ -17,6 +17,19 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 
+		do {
+			try RomDatabase.initDefaultDatabase()
+		} catch {
+			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
+			ELOG(error.localizedDescription)
+			alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { alert in
+				fatalError(error.localizedDescription)
+			}))
+			window?.rootViewController?.present(alert, animated: true, completion: nil)
+
+			return true
+		}
+		
 #if os(iOS)
         if #available(iOS 9.0, *) {
             if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut" {

@@ -134,11 +134,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
 
-        // A hack to make sure the main thread instance lives first
-        _ = RomDatabase.sharedInstance
-
-        initSystemPlists()
-        UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
+		do {
+			try RomDatabase.initDefaultDatabase()
+			initSystemPlists()
+			UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
+		} catch {
+			let alert = UIAlertController(title: "Database Error", message: error.localizedDescription, preferredStyle: .alert)
+			ELOG(error.localizedDescription)
+			alert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { alert in
+				fatalError(error.localizedDescription)
+			}))
+			self.present(alert, animated: true, completion: nil)
+		}
     }
 
     func initSystemPlists() {

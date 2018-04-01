@@ -139,11 +139,18 @@ extension Thread {
 
 public final class RomDatabase {
 
+	static var databaseInitilized = false
+
+	public class func initDefaultDatabase() throws {
+		if !databaseInitilized {
+			RealmConfiguration.setDefaultRealmConfig()
+			try _sharedInstance = RomDatabase()
+			databaseInitilized = true
+		}
+	}
+
     // Private shared instance that propery initializes
-    private static var _sharedInstance: RomDatabase = {
-        RealmConfiguration.setDefaultRealmConfig()
-        return RomDatabase()
-    }()
+    private static var _sharedInstance: RomDatabase?
 
     // Public shared instance that makes sure threads are handeled right
     // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
@@ -154,7 +161,7 @@ public final class RomDatabase {
     // and RomDatabase would just exist to provide context instances and init the initial database - jm
     public static var sharedInstance: RomDatabase {
         // Make sure real shared is inited first
-        let shared = RomDatabase._sharedInstance
+        let shared = RomDatabase._sharedInstance!
 
         if Thread.isMainThread {
             return shared
@@ -162,7 +169,7 @@ public final class RomDatabase {
             if let realm = Thread.current.realm {
                 return realm
             } else {
-                let realm = RomDatabase.temporaryDatabaseContext()
+                let realm = try! RomDatabase.temporaryDatabaseContext()
                 Thread.current.realm = realm
                 return realm
             }
@@ -170,18 +177,14 @@ public final class RomDatabase {
     }
 
     // For multi-threading
-    fileprivate static func temporaryDatabaseContext() -> RomDatabase {
-        return RomDatabase()
+    fileprivate static func temporaryDatabaseContext() throws -> RomDatabase {
+        return try RomDatabase()
     }
 
     private(set) public var realm: Realm
 
-    private init() {
-        do {
-            self.realm = try Realm()
-        } catch {
-            fatalError("\(error.localizedDescription)")
-        }
+    private init() throws {
+		self.realm = try Realm()
     }
 }
 
