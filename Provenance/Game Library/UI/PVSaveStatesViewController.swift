@@ -24,7 +24,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 	
 	weak var delegate: PVSaveStatesViewControllerDelegate?
 	
-	var saveStates: List<PVSaveState>!
+	var saveStates: LinkingObjects<PVSaveState>!
 	var screenshot: UIImage?
 	
 	private var autoSaves: Results<PVSaveState>!

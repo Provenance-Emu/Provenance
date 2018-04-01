@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (nonatomic, copy) NSString *systemIdentifier;
+@property (nonatomic, copy) NSString *coreIdentifier;
 @property (nonatomic, strong) NSString* romMD5;
 @property (nonatomic, strong) NSString* romSerial;
 
