@@ -994,8 +994,6 @@
 				OTHER_CFLAGS = (
 					"-fno-strict-overflow",
 					"-ffast-math",
-					"-msse",
-					"-msse2",
 					"-funroll-loops",
 					"-fPIC",
 					"-DLSB_FIRST",
@@ -1054,8 +1052,6 @@
 				OTHER_CFLAGS = (
 					"-fno-strict-overflow",
 					"-ffast-math",
-					"-msse",
-					"-msse2",
 					"-funroll-loops",
 					"-fPIC",
 					"-DLSB_FIRST",
