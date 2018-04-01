@@ -89,7 +89,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
     var collectionView: UICollectionView?
-
+	let maxForSpecialSection = 6
+	
     #if os(iOS)
     var renameToolbar: UIToolbar?
     var assetsLibrary: ALAssetsLibrary?
@@ -458,7 +459,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}
 
 				// Query results have changed, so apply them to the UICollectionView
-				self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+				self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: Array(modifications.prefix(self.maxForSpecialSection)), needsInsert: needsInsert, needsDelete: needsDelete)
 				self.saveStatesIsEmpty = needsDelete
 			case .error(let error):
 				// An error occurred while opening the Realm file on the background worker thread
@@ -1550,10 +1551,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-
-		let maxForSpecialSection = 6
-
+	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if let searchResults = searchResults {
             return Int(searchResults.count)
         } else {
