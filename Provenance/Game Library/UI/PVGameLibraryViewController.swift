@@ -459,7 +459,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}
 
 				// Query results have changed, so apply them to the UICollectionView
-				self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: Array(modifications.prefix(self.maxForSpecialSection)), needsInsert: needsInsert, needsDelete: needsDelete)
+                self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
 				self.saveStatesIsEmpty = needsDelete
 			case .error(let error):
 				// An error occurred while opening the Realm file on the background worker thread
@@ -502,7 +502,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 }
 
                 // Query results have changed, so apply them to the UICollectionView
-                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+                self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
                 self.recentGamesIsEmpty = needsDelete
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
@@ -533,6 +533,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 fatalError("\(error)")
             }
         }
+    }
+    
+    func filterRecents(_ changes: [Int]) -> [Int] {
+        return changes.filter { $0 < self.maxForSpecialSection }
     }
 
     func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
