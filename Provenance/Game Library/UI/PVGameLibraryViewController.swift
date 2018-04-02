@@ -458,6 +458,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					self.saveStatesIsEmpty = true
 				}
 
+				var modifications = modifications
+				var deletions = deletions
+				if (self.saveStates?.count ?? 0) >= self.maxForSpecialSection && deletions.count > 0 {
+					deletions = []
+					for i in 0..<self.maxForSpecialSection {
+						modifications.append(i)
+					}
+				}
+				
 				// Query results have changed, so apply them to the UICollectionView
                 self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
 				self.saveStatesIsEmpty = needsDelete
