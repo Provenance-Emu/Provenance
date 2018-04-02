@@ -71,10 +71,18 @@ import UIKit
             let AlertContentViews: [UIView?] = [FirstSubview?.subviews.first, FirstSubview?.subviews.last]
 
             // Find the titles of UIAlertActions that are .cancel type
+			#if swift(>=4.1)
             let cancelTitles: [String] = self.actions.filter {$0.style == .cancel}.compactMap {return $0.title}
+			#else
+			let cancelTitles: [String] = self.actions.filter {$0.style == .cancel}.flatMap {return $0.title}
+			#endif
 
             // Find the titles of UIAlertActions that are .destructive type
+			#if swift(>=4.1)
             let destructiveTitles: [String] = self.actions.filter {$0.style == .destructive}.compactMap {return $0.title}
+			#else
+			let destructiveTitles: [String] = self.actions.filter {$0.style == .destructive}.flatMap {return $0.title}
+			#endif
 
             // TODO: Could do the same for 'destructive' types
 
@@ -147,7 +155,11 @@ import UIKit
 
         // Assistance function to recursively get all subviews of a type
         func getAllSubviews<T: UIView>(ofType type: T.Type, forView view: UIView?) -> [T]? {
+			#if swift(>=4.1)
             let mapped = view?.subviews.compactMap { subView -> [T]? in
+			#else
+			let mapped = view?.subviews.flatMap { subView -> [T]? in
+			#endif
                 var result = getAllSubviews(ofType: T.self, forView: subView)
                 if let view = subView as? T {
                     result = result ?? [T]()
