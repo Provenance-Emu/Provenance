@@ -106,7 +106,6 @@ open class Object: RLMObjectBase, ThreadConfined, RealmCollectionValue {
         super.init(value: value, schema: .partialPrivateShared())
     }
 
-
     // MARK: Properties
 
     /// The Realm which manages the object, or `nil` if the object is unmanaged.
@@ -139,7 +138,6 @@ open class Object: RLMObjectBase, ThreadConfined, RealmCollectionValue {
     public override final class func objectUtilClass(_ isSwift: Bool) -> AnyClass {
         return ObjectUtil.self
     }
-
 
     // MARK: Object Customization
 

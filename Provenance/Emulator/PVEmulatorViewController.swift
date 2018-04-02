@@ -608,9 +608,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 (info as NSArray).write(toFile: infoPath, atomically: true)
                 let savePath: String = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(i).svs").path
 				if self.core.saveStateToFile(atPath: savePath) {
-					DLOG("Succeeded saving state");
+					DLOG("Succeeded saving state")
 				} else {
-					DLOG("failed to save state");
+					DLOG("failed to save state")
 				}
                 self.core.setPauseEmulation(false)
                 self.isShowingMenu = false
