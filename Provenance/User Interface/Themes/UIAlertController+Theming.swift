@@ -155,11 +155,7 @@ import UIKit
 
         // Assistance function to recursively get all subviews of a type
         func getAllSubviews<T: UIView>(ofType type: T.Type, forView view: UIView?) -> [T]? {
-			#if swift(>=4.1)
-            let mapped = view?.subviews.compactMap { subView -> [T]? in
-			#else
-			let mapped = view?.subviews.flatMap { subView -> [T]? in
-			#endif
+            let mapped = view?.subviews.flatMap { subView -> [T]? in
                 var result = getAllSubviews(ofType: T.self, forView: subView)
                 if let view = subView as? T {
                     result = result ?? [T]()
