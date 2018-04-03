@@ -947,38 +947,6 @@
 		3DCABDC7166C524C002F2066 /* SDL_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl.h; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		942130C61793D30000E57482 /* osal_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osal_opengl.h; sourceTree = "<group>"; };
-		94E6B83E166C2A0A00082F27 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
-		94E6B83F166C2A0A00082F27 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
-		94E6B842166C2A0A00082F27 /* mupen64plus-audio-sdl.vcproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-audio-sdl.vcproj"; sourceTree = "<group>"; };
-		94E6B844166C2A0A00082F27 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		94E6B845166C2A0A00082F27 /* RELEASE */ = {isa = PBXFileReference; lastKnownFileType = text; path = RELEASE; sourceTree = "<group>"; };
-		94E6B847166C2A0A00082F27 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		94E6B848166C2A0A00082F27 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		94E6B849166C2A0A00082F27 /* osal_dynamiclib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_dynamiclib.h; sourceTree = "<group>"; };
-		94E6B84A166C2A0A00082F27 /* osal_dynamiclib_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_unix.c; sourceTree = "<group>"; };
-		94E6B84B166C2A0A00082F27 /* osal_dynamiclib_win32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_win32.c; sourceTree = "<group>"; };
-		94E6B84D166C2A0A00082F27 /* volume.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = volume.c; sourceTree = "<group>"; };
-		94E6B84E166C2A0A00082F27 /* volume.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = volume.h; sourceTree = "<group>"; };
-		94E6B850166C2A0A00082F27 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
-		94E6B851166C2A0A00082F27 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		94E6B853166C2A0A00082F27 /* InputAutoCfg.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = InputAutoCfg.ini; sourceTree = "<group>"; };
-		94E6B854166C2A0A00082F27 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
-		94E6B855166C2A0A00082F27 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
-		94E6B858166C2A0A00082F27 /* mupen64plus-input-sdl.vcproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-input-sdl.vcproj"; sourceTree = "<group>"; };
-		94E6B85A166C2A0A00082F27 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		94E6B85B166C2A0A00082F27 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		94E6B85C166C2A0A00082F27 /* RELEASE */ = {isa = PBXFileReference; lastKnownFileType = text; path = RELEASE; sourceTree = "<group>"; };
-		94E6B85E166C2A0A00082F27 /* autoconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = autoconfig.c; sourceTree = "<group>"; };
-		94E6B85F166C2A0A00082F27 /* autoconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = autoconfig.h; sourceTree = "<group>"; };
-		94E6B860166C2A0A00082F27 /* config.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
-		94E6B861166C2A0A00082F27 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		94E6B862166C2A0A00082F27 /* osal_dynamiclib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_dynamiclib.h; sourceTree = "<group>"; };
-		94E6B863166C2A0A00082F27 /* osal_dynamiclib_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_unix.c; sourceTree = "<group>"; };
-		94E6B864166C2A0A00082F27 /* osal_dynamiclib_win32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_win32.c; sourceTree = "<group>"; };
-		94E6B865166C2A0A00082F27 /* osal_preproc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_preproc.h; sourceTree = "<group>"; };
-		94E6B866166C2A0A00082F27 /* plugin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plugin.c; sourceTree = "<group>"; };
-		94E6B867166C2A0A00082F27 /* plugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = plugin.h; sourceTree = "<group>"; };
-		94E6B868166C2A0A00082F27 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		94E6B87E166C2A0A00082F27 /* RiceVideoLinux.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = RiceVideoLinux.ini; sourceTree = "<group>"; };
 		94E6B87F166C2A0A00082F27 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		94E6B880166C2A0A00082F27 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
@@ -1515,11 +1483,8 @@
 		B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusRspHLE.h; sourceTree = "<group>"; };
 		B3B3B8631DECEA9100602746 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3B3B9081DED130B00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9091DED130C00602746 /* PVMupen64Plus-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64Plus-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64Plus-Info.plist"; sourceTree = "<absolute>"; };
 		B3B3B9401DED137100602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9411DED137200602746 /* PVMupen64PlusVideoRice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64PlusVideoRice-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64PlusVideoRice-Info.plist"; sourceTree = "<absolute>"; };
 		B3B3B9531DED13A200602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3B3B9541DED13A300602746 /* PVMupen64PlusRspHLE-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64PlusRspHLE-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance-jmattiello/PVMupen64Plus/PVMupen64PlusRspHLE-Info.plist"; sourceTree = "<absolute>"; };
 		B3B3B9731DED144100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C103111C72AA2B00DD066C /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B3C103131C72AA3200DD066C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -2087,9 +2052,6 @@
 				B30557702072FEBC001212D2 /* PVMupen64Plus-core */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B3B3B8551DECE9D800602746 /* Frameworks */,
-				B3B3B9091DED130C00602746 /* PVMupen64Plus-Info.plist */,
-				B3B3B9411DED137200602746 /* PVMupen64PlusVideoRice-Info.plist */,
-				B3B3B9541DED13A300602746 /* PVMupen64PlusRspHLE-Info.plist */,
 			);
 			name = Mupen64Plus;
 			sourceTree = "<group>";
@@ -2166,8 +2128,6 @@
 			children = (
 				B3CB4B23206E5B4B0074706B /* Plugins */,
 				3D2090581182D92800BEAA42 /* Compatibility */,
-				94E6B83D166C2A0A00082F27 /* mupen64plus-audio-sdl */,
-				94E6B84F166C2A0A00082F27 /* mupen64plus-input-sdl */,
 				94E6B87C166C2A0A00082F27 /* mupen64plus-video-rice */,
 				32DBCF630370AF2F00C91783 /* Mupen64Plus_Prefix.pch */,
 			);
@@ -2206,124 +2166,6 @@
 				3DC2145E166C6D7F0014251E /* pngconf.h */,
 			);
 			path = png;
-			sourceTree = "<group>";
-		};
-		94E6B83D166C2A0A00082F27 /* mupen64plus-audio-sdl */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B83E166C2A0A00082F27 /* INSTALL */,
-				94E6B83F166C2A0A00082F27 /* LICENSES */,
-				94E6B840166C2A0A00082F27 /* projects */,
-				94E6B845166C2A0A00082F27 /* RELEASE */,
-				94E6B846166C2A0A00082F27 /* src */,
-			);
-			path = "mupen64plus-audio-sdl";
-			sourceTree = "<group>";
-		};
-		94E6B840166C2A0A00082F27 /* projects */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B841166C2A0A00082F27 /* msvc8 */,
-				94E6B843166C2A0A00082F27 /* unix */,
-			);
-			path = projects;
-			sourceTree = "<group>";
-		};
-		94E6B841166C2A0A00082F27 /* msvc8 */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B842166C2A0A00082F27 /* mupen64plus-audio-sdl.vcproj */,
-			);
-			path = msvc8;
-			sourceTree = "<group>";
-		};
-		94E6B843166C2A0A00082F27 /* unix */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B844166C2A0A00082F27 /* Makefile */,
-			);
-			path = unix;
-			sourceTree = "<group>";
-		};
-		94E6B846166C2A0A00082F27 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B847166C2A0A00082F27 /* main.c */,
-				94E6B848166C2A0A00082F27 /* main.h */,
-				94E6B849166C2A0A00082F27 /* osal_dynamiclib.h */,
-				94E6B84A166C2A0A00082F27 /* osal_dynamiclib_unix.c */,
-				94E6B84B166C2A0A00082F27 /* osal_dynamiclib_win32.c */,
-				94E6B84D166C2A0A00082F27 /* volume.c */,
-				94E6B84E166C2A0A00082F27 /* volume.h */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		94E6B84F166C2A0A00082F27 /* mupen64plus-input-sdl */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B850166C2A0A00082F27 /* AUTHORS */,
-				94E6B851166C2A0A00082F27 /* COPYING */,
-				94E6B852166C2A0A00082F27 /* data */,
-				94E6B854166C2A0A00082F27 /* INSTALL */,
-				94E6B855166C2A0A00082F27 /* LICENSES */,
-				94E6B856166C2A0A00082F27 /* projects */,
-				94E6B85B166C2A0A00082F27 /* README */,
-				94E6B85C166C2A0A00082F27 /* RELEASE */,
-				94E6B85D166C2A0A00082F27 /* src */,
-			);
-			path = "mupen64plus-input-sdl";
-			sourceTree = "<group>";
-		};
-		94E6B852166C2A0A00082F27 /* data */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B853166C2A0A00082F27 /* InputAutoCfg.ini */,
-			);
-			path = data;
-			sourceTree = "<group>";
-		};
-		94E6B856166C2A0A00082F27 /* projects */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B857166C2A0A00082F27 /* msvc8 */,
-				94E6B859166C2A0A00082F27 /* unix */,
-			);
-			path = projects;
-			sourceTree = "<group>";
-		};
-		94E6B857166C2A0A00082F27 /* msvc8 */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B858166C2A0A00082F27 /* mupen64plus-input-sdl.vcproj */,
-			);
-			path = msvc8;
-			sourceTree = "<group>";
-		};
-		94E6B859166C2A0A00082F27 /* unix */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B85A166C2A0A00082F27 /* Makefile */,
-			);
-			path = unix;
-			sourceTree = "<group>";
-		};
-		94E6B85D166C2A0A00082F27 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				94E6B85E166C2A0A00082F27 /* autoconfig.c */,
-				94E6B85F166C2A0A00082F27 /* autoconfig.h */,
-				94E6B860166C2A0A00082F27 /* config.c */,
-				94E6B861166C2A0A00082F27 /* config.h */,
-				94E6B862166C2A0A00082F27 /* osal_dynamiclib.h */,
-				94E6B863166C2A0A00082F27 /* osal_dynamiclib_unix.c */,
-				94E6B864166C2A0A00082F27 /* osal_dynamiclib_win32.c */,
-				94E6B865166C2A0A00082F27 /* osal_preproc.h */,
-				94E6B866166C2A0A00082F27 /* plugin.c */,
-				94E6B867166C2A0A00082F27 /* plugin.h */,
-				94E6B868166C2A0A00082F27 /* version.h */,
-			);
-			path = src;
 			sourceTree = "<group>";
 		};
 		94E6B87C166C2A0A00082F27 /* mupen64plus-video-rice */ = {
@@ -3153,7 +2995,8 @@
 				B3303E6A1DED23EE00896D96 /* pngwtran.c */,
 				B3303E6B1DED23EE00896D96 /* pngwutil.c */,
 			);
-			path = libpng;
+			name = libpng;
+			path = png;
 			sourceTree = "<group>";
 		};
 		B331158D1C7309C200E9AD14 /* PVRSPCXD4 */ = {
@@ -7028,7 +6871,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src\"";
 				USE_HEADERMAP = NO;
-				VALID_ARCHS = arm64;
+				VALID_ARCHS = amd64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -7127,7 +6970,7 @@
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = arm64;
+				VALID_ARCHS = amd64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
