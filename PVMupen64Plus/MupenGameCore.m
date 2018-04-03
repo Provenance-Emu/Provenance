@@ -279,8 +279,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
             padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
             
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed || gamepad.buttonB.isPressed;
             padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
             
             padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
