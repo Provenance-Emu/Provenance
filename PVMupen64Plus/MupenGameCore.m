@@ -695,10 +695,6 @@ static void MupenSetAudioSpeed(int percent)
 	{
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 		self.glesVersion = GLESVersion2;
-		if (context == nil) {
-			context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-			self.glesVersion = GLESVersion1;
-		}
 	}
 
 	return context;
