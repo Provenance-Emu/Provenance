@@ -1784,19 +1784,21 @@ extension PVGameLibraryViewController {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        #if os(tvOS)
+		#if os(tvOS)
 		if indexPath.section == saveStateSection {
 			return CGSize(width: CellWidth, height: CellWidth)
 		}
-            let game = self.game(at: indexPath)!
-            let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
-            return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
-        #else
-            if PVSettingsModel.shared.showGameTitles {
-                return CGSize(width: 100, height: 144)
-            }
-            return CGSize(width: 100, height: 100)
-        #endif
+		let game = self.game(at: indexPath)!
+		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
+		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
+		#else
+		let width :CGFloat = (collectionView.bounds.size.width / 3) - 15
+
+		if PVSettingsModel.shared.showGameTitles {
+			return CGSize(width: width, height: 144)
+		}
+		return CGSize(width: width, height: 100)
+		#endif
     }
 
     #if os(tvOS)
