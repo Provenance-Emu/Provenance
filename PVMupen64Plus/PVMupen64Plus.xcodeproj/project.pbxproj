@@ -5976,7 +5976,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -6003,14 +6002,8 @@
 					"-DIN_OPENEMU=1",
 					"-DNO_ASM=1",
 					"-DM64P_CORE_PROTOTYPES=1",
-					"-DNDEBUG=1",
 					"-DPIC=1",
-					"-fvisibility=hidden",
-					"-ffast-math",
-					"-fno-strict-aliasing",
-					"-fomit-frame-pointer",
 					"-DUSE_GLES=1",
-					"-flto",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -6056,7 +6049,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -6085,12 +6078,12 @@
 					"-DM64P_CORE_PROTOTYPES=1",
 					"-DNDEBUG=1",
 					"-DPIC=1",
+					"-flto",
 					"-fvisibility=hidden",
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fomit-frame-pointer",
 					"-DUSE_GLES=1",
-					"-flto",
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -6320,6 +6313,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = NO;
 				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -6896,6 +6890,7 @@
 					OS_IOS,
 					GLESX,
 				);
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
@@ -7099,6 +7094,7 @@
 					GLESX,
 					NO_FREETYPE,
 				);
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
