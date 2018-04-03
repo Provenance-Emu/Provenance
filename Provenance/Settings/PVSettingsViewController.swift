@@ -201,7 +201,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
 		let ipFieldText = """
-        WebUI:  \(PVWebServer.shared.urlString)
+        WebUI: \(PVWebServer.shared.urlString)
         WebDav: \(PVWebServer.shared.webDavURLString)
         """
         ipField.text = ipFieldText
@@ -222,7 +222,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 3 {
+        if indexPath.section == 2 && indexPath.row == 4 {
             let iCadeControllerViewController = PViCadeControllerViewController()
             navigationController?.pushViewController(iCadeControllerViewController, animated: true)
         } else if indexPath.section == 3 && indexPath.row == 0 {

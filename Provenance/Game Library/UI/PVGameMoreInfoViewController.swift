@@ -648,19 +648,13 @@ extension PVGameMoreInfoViewController {
             let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 // Delete from Realm
-//                self.delete(game: self.game!)
+				RomDatabase.sharedInstance.delete(game: self.game!)
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
             self.present(alert, animated: true) {() -> Void in }
         }
-        //        let action2 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
-//            print("I believe I can fly")
-//        }
-//        let action3 = UIPreviewAction(title: "Press Me!", style: .default) { (action, viewController) in
-//            print("I believe I can fly")
-//        }
-//        let actionGroup = UIPreviewActionGroup(title: "Look at me, I can grow!", style: .default, actions: [action1, action2, action3])
-        return [playAction, favoriteToggle, deleteAction]
+
+		return [playAction, favoriteToggle, deleteAction]
     }
 }
 

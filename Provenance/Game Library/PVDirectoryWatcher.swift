@@ -281,8 +281,8 @@ public class PVDirectoryWatcher: NSObject {
 
                 items.append(item)
                 // if needs this item - store to array.
-                if !(item.isDirectory && item.fileName != nil) {
-                    let fullPath = watchedDirectory.appendingPathComponent(item.fileName!)
+                if !item.isDirectory, let fileName = item.fileName {
+                    let fullPath = watchedDirectory.appendingPathComponent(fileName)
                     self.unzippedFiles.append(fullPath)
                 }
 

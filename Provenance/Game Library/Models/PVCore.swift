@@ -18,6 +18,9 @@ import Foundation
     dynamic var projectURL = ""
     dynamic var projectVersion = ""
 
+	// Reverse links
+	var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
+
     public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String) {
         self.init()
         self.identifier = identifier
