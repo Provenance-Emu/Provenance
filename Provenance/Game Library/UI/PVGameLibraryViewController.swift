@@ -267,8 +267,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
-
+	#if os(tvOS)
+		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
+	#else
 		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
+	#endif
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 
         // Adjust collection view layout for iPhone X Safe areas
