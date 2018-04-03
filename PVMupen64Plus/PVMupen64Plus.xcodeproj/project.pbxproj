@@ -91,48 +91,6 @@
 		B35B31CD206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
 		B35B31CE206CA72800AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
 		B35B31CF206CA72A00AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
-		B37EFEF91C72E6CD00857158 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
-		B37EFEFA1C72E6CD00857158 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
-		B37EFEFB1C72E6CD00857158 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
-		B37EFEFC1C72E6CD00857158 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B892166C2A0A00082F27 /* Config.cpp */; };
-		B37EFEFD1C72E6CD00857158 /* ConvertImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B894166C2A0A00082F27 /* ConvertImage.cpp */; };
-		B37EFEFE1C72E6CD00857158 /* ConvertImage16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B896166C2A0A00082F27 /* ConvertImage16.cpp */; };
-		B37EFEFF1C72E6CD00857158 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B899166C2A0A00082F27 /* Debugger.cpp */; };
-		B37EFF001C72E6CD00857158 /* DecodedMux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B89B166C2A0A00082F27 /* DecodedMux.cpp */; };
-		B37EFF011C72E6CD00857158 /* DeviceBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B89D166C2A0A00082F27 /* DeviceBuilder.cpp */; };
-		B37EFF021C72E6CD00857158 /* FrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A2166C2A0A00082F27 /* FrameBuffer.cpp */; };
-		B37EFF031C72E6CD00857158 /* GeneralCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A4166C2A0A00082F27 /* GeneralCombiner.cpp */; };
-		B37EFF041C72E6CD00857158 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8A6166C2A0A00082F27 /* GraphicsContext.cpp */; };
-		B37EFF051C72E6CD00857158 /* BMGImage.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8AB166C2A0A00082F27 /* BMGImage.c */; };
-		B37EFF061C72E6CD00857158 /* BMGUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8AE166C2A0A00082F27 /* BMGUtils.c */; };
-		B37EFF071C72E6CD00857158 /* bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B0166C2A0A00082F27 /* bmp.c */; };
-		B37EFF081C72E6CD00857158 /* pngrw.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B2166C2A0A00082F27 /* pngrw.c */; };
-		B37EFF091C72E6CD00857158 /* OGLCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8B5166C2A0A00082F27 /* OGLCombiner.cpp */; };
-		B37EFF0A1C72E6CD00857158 /* OGLDecodedMux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8BC166C2A0A00082F27 /* OGLDecodedMux.cpp */; };
-		B37EFF0B1C72E6CD00857158 /* OGLExtCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8BE166C2A0A00082F27 /* OGLExtCombiner.cpp */; };
-		B37EFF0C1C72E6CD00857158 /* OGLES2FragmentShaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C103201C72CFBD00DD066C /* OGLES2FragmentShaders.cpp */; };
-		B37EFF0D1C72E6CD00857158 /* OGLExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C0166C2A0A00082F27 /* OGLExtensions.cpp */; };
-		B37EFF0E1C72E6CD00857158 /* OGLExtRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C2166C2A0A00082F27 /* OGLExtRender.cpp */; };
-		B37EFF0F1C72E6CD00857158 /* OGLGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C6166C2A0A00082F27 /* OGLGraphicsContext.cpp */; };
-		B37EFF101C72E6CD00857158 /* OGLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8C8166C2A0A00082F27 /* OGLRender.cpp */; };
-		B37EFF111C72E6CD00857158 /* OGLRenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CA166C2A0A00082F27 /* OGLRenderExt.cpp */; };
-		B37EFF121C72E6CD00857158 /* OGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CB166C2A0A00082F27 /* OGLTexture.cpp */; };
-		B37EFF131C72E6CD00857158 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8CE166C2A0A00082F27 /* osal_dynamiclib_unix.c */; };
-		B37EFF141C72E6CD00857158 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D1166C2A0A00082F27 /* osal_files_unix.c */; };
-		B37EFF151C72E6CD00857158 /* Render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D5166C2A0A00082F27 /* Render.cpp */; };
-		B37EFF161C72E6CD00857158 /* RenderBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D7166C2A0A00082F27 /* RenderBase.cpp */; };
-		B37EFF171C72E6CD00857158 /* RenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8D9166C2A0A00082F27 /* RenderExt.cpp */; };
-		B37EFF181C72E6CD00857158 /* RenderTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8DA166C2A0A00082F27 /* RenderTexture.cpp */; };
-		B37EFF191C72E6CD00857158 /* RSP_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E2166C2A0A00082F27 /* RSP_Parser.cpp */; };
-		B37EFF1A1C72E6CD00857158 /* RSP_S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E4166C2A0A00082F27 /* RSP_S2DEX.cpp */; };
-		B37EFF1B1C72E6CD00857158 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E6166C2A0A00082F27 /* Texture.cpp */; };
-		B37EFF1C1C72E6CD00857158 /* TextureFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8E8166C2A0A00082F27 /* TextureFilters.cpp */; };
-		B37EFF1D1C72E6CD00857158 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8EA166C2A0A00082F27 /* TextureFilters_2xsai.cpp */; };
-		B37EFF1E1C72E6CD00857158 /* TextureFilters_hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8EB166C2A0A00082F27 /* TextureFilters_hq2x.cpp */; };
-		B37EFF1F1C72E6CD00857158 /* TextureFilters_hq4x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8ED166C2A0A00082F27 /* TextureFilters_hq4x.cpp */; };
-		B37EFF201C72E6CD00857158 /* TextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8F0166C2A0A00082F27 /* TextureManager.cpp */; };
-		B37EFF211C72E6CD00857158 /* VectorMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8F6166C2A0A00082F27 /* VectorMath.cpp */; };
-		B37EFF221C72E6CD00857158 /* Video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B8FA166C2A0A00082F27 /* Video.cpp */; };
 		B37EFF231C72E6CD00857158 /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
 		B37EFF241C72E6E800857158 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
 		B37EFF861C72F47000857158 /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
@@ -141,6 +99,42 @@
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B3882C151DED27BC007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
+		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
+		B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */; };
+		B3A302F42073F2F2008C1955 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D32073F2AA008C1955 /* osal_files_unix.c */; };
+		B3A302F52073F2F2008C1955 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302952073F2AA008C1955 /* Blender.cpp */; };
+		B3A302F62073F2F2008C1955 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302DC2073F2AA008C1955 /* Combiner.cpp */; };
+		B3A302F72073F2F2008C1955 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D52073F2AA008C1955 /* Config.cpp */; };
+		B3A302F82073F2F2008C1955 /* ConvertImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A3029F2073F2AA008C1955 /* ConvertImage.cpp */; };
+		B3A302F92073F2F2008C1955 /* ConvertImage16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302EB2073F2AA008C1955 /* ConvertImage16.cpp */; };
+		B3A302FA2073F2F2008C1955 /* Debugger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302DF2073F2AA008C1955 /* Debugger.cpp */; };
+		B3A302FB2073F2F2008C1955 /* DeviceBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302ED2073F2AA008C1955 /* DeviceBuilder.cpp */; };
+		B3A302FC2073F2F2008C1955 /* FrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302B22073F2AA008C1955 /* FrameBuffer.cpp */; };
+		B3A302FD2073F2F2008C1955 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302BE2073F2AA008C1955 /* GraphicsContext.cpp */; };
+		B3A302FE2073F2F2008C1955 /* OGLCombiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302DB2073F2AA008C1955 /* OGLCombiner.cpp */; };
+		B3A302FF2073F2F2008C1955 /* OGLExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302A72073F2AA008C1955 /* OGLExtensions.cpp */; };
+		B3A303002073F2F2008C1955 /* OGLGraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D92073F2AA008C1955 /* OGLGraphicsContext.cpp */; };
+		B3A303012073F2F2008C1955 /* OGLRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302EC2073F2AA008C1955 /* OGLRender.cpp */; };
+		B3A303022073F2F2008C1955 /* OGLRenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D22073F2AA008C1955 /* OGLRenderExt.cpp */; };
+		B3A303032073F2F2008C1955 /* OGLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302B12073F2AA008C1955 /* OGLTexture.cpp */; };
+		B3A303042073F2F2008C1955 /* Render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302962073F2AA008C1955 /* Render.cpp */; };
+		B3A303052073F2F2008C1955 /* RenderBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302A82073F2AA008C1955 /* RenderBase.cpp */; };
+		B3A303062073F2F2008C1955 /* RenderExt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302F12073F2AA008C1955 /* RenderExt.cpp */; };
+		B3A303072073F2F2008C1955 /* RenderTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302AE2073F2AA008C1955 /* RenderTexture.cpp */; };
+		B3A303082073F2F2008C1955 /* RSP_Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D72073F2AA008C1955 /* RSP_Parser.cpp */; };
+		B3A303092073F2F2008C1955 /* RSP_S2DEX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302BF2073F2AA008C1955 /* RSP_S2DEX.cpp */; };
+		B3A3030A2073F2F2008C1955 /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302B82073F2AA008C1955 /* Texture.cpp */; };
+		B3A3030B2073F2F2008C1955 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302E72073F2AA008C1955 /* TextureFilters_2xsai.cpp */; };
+		B3A3030C2073F2F2008C1955 /* TextureFilters_hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302AD2073F2AA008C1955 /* TextureFilters_hq2x.cpp */; };
+		B3A3030D2073F2F2008C1955 /* TextureFilters_hq4x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A3029B2073F2AA008C1955 /* TextureFilters_hq4x.cpp */; };
+		B3A3030E2073F2F2008C1955 /* TextureFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302992073F2AA008C1955 /* TextureFilters.cpp */; };
+		B3A3030F2073F2F2008C1955 /* TextureManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D82073F2AA008C1955 /* TextureManager.cpp */; };
+		B3A303102073F2F2008C1955 /* VectorMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A3029E2073F2AA008C1955 /* VectorMath.cpp */; };
+		B3A303112073F2F2008C1955 /* Video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3A302BD2073F2AA008C1955 /* Video.cpp */; };
+		B3A303122073F303008C1955 /* BMGImage.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302CD2073F2AA008C1955 /* BMGImage.c */; };
+		B3A303132073F303008C1955 /* BMGUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C62073F2AA008C1955 /* BMGUtils.c */; };
+		B3A303142073F303008C1955 /* bmp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302CC2073F2AA008C1955 /* bmp.c */; };
+		B3A303152073F303008C1955 /* pngrw.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C52073F2AA008C1955 /* pngrw.c */; };
 		B3AE1D7D207311E900AD06D4 /* cp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A882072FEE9001212D2 /* cp1.c */; };
 		B3AE1D7E207311E900AD06D4 /* dummy_rsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A132072FEE9001212D2 /* dummy_rsp.c */; };
 		B3AE1D7F207311E900AD06D4 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055ACD2072FEE9001212D2 /* main.c */; };
@@ -1409,6 +1403,109 @@
 		B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64Plus.h; sourceTree = "<group>"; };
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
+		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
+		B3A302892073F2AA008C1955 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3A3028B2073F2AA008C1955 /* mupen64plus-video-rice.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-video-rice.vcxproj"; sourceTree = "<group>"; };
+		B3A3028C2073F2AA008C1955 /* RELEASE */ = {isa = PBXFileReference; lastKnownFileType = text; path = RELEASE; sourceTree = "<group>"; };
+		B3A3028D2073F2AA008C1955 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		B3A3028E2073F2AA008C1955 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		B3A3028F2073F2AA008C1955 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitattributes; sourceTree = "<group>"; };
+		B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = RiceVideoLinux.ini; sourceTree = "<group>"; };
+		B3A302922073F2AA008C1955 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		B3A302942073F2AA008C1955 /* OGLRender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLRender.h; sourceTree = "<group>"; };
+		B3A302952073F2AA008C1955 /* Blender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Blender.cpp; sourceTree = "<group>"; };
+		B3A302962073F2AA008C1955 /* Render.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Render.cpp; sourceTree = "<group>"; };
+		B3A302972073F2AA008C1955 /* Blender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blender.h; sourceTree = "<group>"; };
+		B3A302982073F2AA008C1955 /* RSP_GBI_Sprite2D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI_Sprite2D.h; sourceTree = "<group>"; };
+		B3A302992073F2AA008C1955 /* TextureFilters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFilters.cpp; sourceTree = "<group>"; };
+		B3A3029A2073F2AA008C1955 /* GraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsContext.h; sourceTree = "<group>"; };
+		B3A3029B2073F2AA008C1955 /* TextureFilters_hq4x.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFilters_hq4x.cpp; sourceTree = "<group>"; };
+		B3A3029C2073F2AA008C1955 /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		B3A3029D2073F2AA008C1955 /* CritSect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CritSect.h; sourceTree = "<group>"; };
+		B3A3029E2073F2AA008C1955 /* VectorMath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VectorMath.cpp; sourceTree = "<group>"; };
+		B3A3029F2073F2AA008C1955 /* ConvertImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertImage.cpp; sourceTree = "<group>"; };
+		B3A302A02073F2AA008C1955 /* TextureFilters_hq2x.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureFilters_hq2x.h; sourceTree = "<group>"; };
+		B3A302A12073F2AA008C1955 /* RSP_GBI_Others.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI_Others.h; sourceTree = "<group>"; };
+		B3A302A22073F2AA008C1955 /* ExtendedRender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtendedRender.h; sourceTree = "<group>"; };
+		B3A302A32073F2AA008C1955 /* osal_opengl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_opengl.h; sourceTree = "<group>"; };
+		B3A302A42073F2AA008C1955 /* typedefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = typedefs.h; sourceTree = "<group>"; };
+		B3A302A52073F2AA008C1955 /* RSP_GBI0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI0.h; sourceTree = "<group>"; };
+		B3A302A62073F2AA008C1955 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		B3A302A72073F2AA008C1955 /* OGLExtensions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLExtensions.cpp; sourceTree = "<group>"; };
+		B3A302A82073F2AA008C1955 /* RenderBase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderBase.cpp; sourceTree = "<group>"; };
+		B3A302A92073F2AA008C1955 /* UcodeDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UcodeDefs.h; sourceTree = "<group>"; };
+		B3A302AA2073F2AA008C1955 /* RSP_GBI2_ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI2_ext.h; sourceTree = "<group>"; };
+		B3A302AB2073F2AA008C1955 /* OGLDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLDebug.h; sourceTree = "<group>"; };
+		B3A302AC2073F2AA008C1955 /* ucode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ucode.h; sourceTree = "<group>"; };
+		B3A302AD2073F2AA008C1955 /* TextureFilters_hq2x.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFilters_hq2x.cpp; sourceTree = "<group>"; };
+		B3A302AE2073F2AA008C1955 /* RenderTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTexture.cpp; sourceTree = "<group>"; };
+		B3A302AF2073F2AA008C1955 /* Timing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Timing.h; sourceTree = "<group>"; };
+		B3A302B02073F2AA008C1955 /* ConvertImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConvertImage.h; sourceTree = "<group>"; };
+		B3A302B12073F2AA008C1955 /* OGLTexture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLTexture.cpp; sourceTree = "<group>"; };
+		B3A302B22073F2AA008C1955 /* FrameBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameBuffer.cpp; sourceTree = "<group>"; };
+		B3A302B32073F2AA008C1955 /* TextureFilters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureFilters.h; sourceTree = "<group>"; };
+		B3A302B42073F2AA008C1955 /* RenderBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderBase.h; sourceTree = "<group>"; };
+		B3A302B52073F2AA008C1955 /* RDP_Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RDP_Texture.h; sourceTree = "<group>"; };
+		B3A302B62073F2AA008C1955 /* OGLCombiner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLCombiner.h; sourceTree = "<group>"; };
+		B3A302B72073F2AA008C1955 /* VectorMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VectorMath.h; sourceTree = "<group>"; };
+		B3A302B82073F2AA008C1955 /* Texture.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
+		B3A302B92073F2AA008C1955 /* FrameBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FrameBuffer.h; sourceTree = "<group>"; };
+		B3A302BA2073F2AA008C1955 /* osal_dynamiclib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_dynamiclib.h; sourceTree = "<group>"; };
+		B3A302BB2073F2AA008C1955 /* COLOR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COLOR.h; sourceTree = "<group>"; };
+		B3A302BC2073F2AA008C1955 /* osal_preproc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_preproc.h; sourceTree = "<group>"; };
+		B3A302BD2073F2AA008C1955 /* Video.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Video.cpp; sourceTree = "<group>"; };
+		B3A302BE2073F2AA008C1955 /* GraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext.cpp; sourceTree = "<group>"; };
+		B3A302BF2073F2AA008C1955 /* RSP_S2DEX.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RSP_S2DEX.cpp; sourceTree = "<group>"; };
+		B3A302C02073F2AA008C1955 /* OGLTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLTexture.h; sourceTree = "<group>"; };
+		B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_unix.c; sourceTree = "<group>"; };
+		B3A302C22073F2AA008C1955 /* video_api_export.ver */ = {isa = PBXFileReference; lastKnownFileType = text; path = video_api_export.ver; sourceTree = "<group>"; };
+		B3A302C32073F2AA008C1955 /* osal_files.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_files.h; sourceTree = "<group>"; };
+		B3A302C52073F2AA008C1955 /* pngrw.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrw.c; sourceTree = "<group>"; };
+		B3A302C62073F2AA008C1955 /* BMGUtils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BMGUtils.c; sourceTree = "<group>"; };
+		B3A302C72073F2AA008C1955 /* BMGImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BMGImage.h; sourceTree = "<group>"; };
+		B3A302C82073F2AA008C1955 /* tiffrw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tiffrw.h; sourceTree = "<group>"; };
+		B3A302C92073F2AA008C1955 /* BMGUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BMGUtils.h; sourceTree = "<group>"; };
+		B3A302CA2073F2AA008C1955 /* pngrw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngrw.h; sourceTree = "<group>"; };
+		B3A302CB2073F2AA008C1955 /* jpegrw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jpegrw.h; sourceTree = "<group>"; };
+		B3A302CC2073F2AA008C1955 /* bmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bmp.c; sourceTree = "<group>"; };
+		B3A302CD2073F2AA008C1955 /* BMGImage.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BMGImage.c; sourceTree = "<group>"; };
+		B3A302CE2073F2AA008C1955 /* BMGLibPNG.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BMGLibPNG.h; sourceTree = "<group>"; };
+		B3A302CF2073F2AA008C1955 /* BMGDLL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BMGDLL.h; sourceTree = "<group>"; };
+		B3A302D02073F2AA008C1955 /* DeviceBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceBuilder.h; sourceTree = "<group>"; };
+		B3A302D12073F2AA008C1955 /* RenderTexture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTexture.h; sourceTree = "<group>"; };
+		B3A302D22073F2AA008C1955 /* OGLRenderExt.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLRenderExt.cpp; sourceTree = "<group>"; };
+		B3A302D32073F2AA008C1955 /* osal_files_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_files_unix.c; sourceTree = "<group>"; };
+		B3A302D42073F2AA008C1955 /* Combiner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Combiner.h; sourceTree = "<group>"; };
+		B3A302D52073F2AA008C1955 /* Config.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Config.cpp; sourceTree = "<group>"; };
+		B3A302D62073F2AA008C1955 /* CSortedList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSortedList.h; sourceTree = "<group>"; };
+		B3A302D72073F2AA008C1955 /* RSP_Parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RSP_Parser.cpp; sourceTree = "<group>"; };
+		B3A302D82073F2AA008C1955 /* TextureManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureManager.cpp; sourceTree = "<group>"; };
+		B3A302D92073F2AA008C1955 /* OGLGraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLGraphicsContext.cpp; sourceTree = "<group>"; };
+		B3A302DA2073F2AA008C1955 /* Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Video.h; sourceTree = "<group>"; };
+		B3A302DB2073F2AA008C1955 /* OGLCombiner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLCombiner.cpp; sourceTree = "<group>"; };
+		B3A302DC2073F2AA008C1955 /* Combiner.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Combiner.cpp; sourceTree = "<group>"; };
+		B3A302DD2073F2AA008C1955 /* RSP_Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_Parser.h; sourceTree = "<group>"; };
+		B3A302DE2073F2AA008C1955 /* TextureFilters_lq2x.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureFilters_lq2x.h; sourceTree = "<group>"; };
+		B3A302DF2073F2AA008C1955 /* Debugger.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Debugger.cpp; sourceTree = "<group>"; };
+		B3A302E02073F2AA008C1955 /* RSP_GBI2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI2.h; sourceTree = "<group>"; };
+		B3A302E12073F2AA008C1955 /* Texture.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
+		B3A302E22073F2AA008C1955 /* Debugger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debugger.h; sourceTree = "<group>"; };
+		B3A302E32073F2AA008C1955 /* OGLGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLGraphicsContext.h; sourceTree = "<group>"; };
+		B3A302E42073F2AA008C1955 /* osal_dynamiclib_win32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_win32.c; sourceTree = "<group>"; };
+		B3A302E52073F2AA008C1955 /* RSP_S2DEX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_S2DEX.h; sourceTree = "<group>"; };
+		B3A302E62073F2AA008C1955 /* TextureManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureManager.h; sourceTree = "<group>"; };
+		B3A302E72073F2AA008C1955 /* TextureFilters_2xsai.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureFilters_2xsai.cpp; sourceTree = "<group>"; };
+		B3A302E82073F2AA008C1955 /* osal_files_win32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_files_win32.c; sourceTree = "<group>"; };
+		B3A302E92073F2AA008C1955 /* CombinerDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CombinerDefs.h; sourceTree = "<group>"; };
+		B3A302EA2073F2AA008C1955 /* TextureFilters_hq4x.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextureFilters_hq4x.h; sourceTree = "<group>"; };
+		B3A302EB2073F2AA008C1955 /* ConvertImage16.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertImage16.cpp; sourceTree = "<group>"; };
+		B3A302EC2073F2AA008C1955 /* OGLRender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OGLRender.cpp; sourceTree = "<group>"; };
+		B3A302ED2073F2AA008C1955 /* DeviceBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceBuilder.cpp; sourceTree = "<group>"; };
+		B3A302EE2073F2AA008C1955 /* RSP_GBI1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RSP_GBI1.h; sourceTree = "<group>"; };
+		B3A302EF2073F2AA008C1955 /* OGLExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLExtensions.h; sourceTree = "<group>"; };
+		B3A302F02073F2AA008C1955 /* Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Render.h; sourceTree = "<group>"; };
+		B3A302F12073F2AA008C1955 /* RenderExt.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderExt.cpp; sourceTree = "<group>"; };
 		B3AE1DD320731F2700AD06D4 /* libdl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libdl.tbd; path = usr/lib/libdl.tbd; sourceTree = SDKROOT; };
 		B3AE1EDD20733D3500AD06D4 /* pack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pack.h; sourceTree = "<group>"; };
 		B3AE1EDE20733D3500AD06D4 /* divide.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = divide.h; sourceTree = "<group>"; };
@@ -2218,105 +2315,105 @@
 		94E6B888166C2A0A00082F27 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				94E6B889166C2A0A00082F27 /* Blender.cpp */,
-				94E6B88A166C2A0A00082F27 /* Blender.h */,
-				94E6B88D166C2A0A00082F27 /* COLOR.h */,
-				94E6B88E166C2A0A00082F27 /* Combiner.cpp */,
-				94E6B88F166C2A0A00082F27 /* Combiner.h */,
-				94E6B890166C2A0A00082F27 /* CombinerDefs.h */,
-				94E6B891166C2A0A00082F27 /* CombinerTable.cpp */,
-				94E6B892166C2A0A00082F27 /* Config.cpp */,
-				94E6B893166C2A0A00082F27 /* Config.h */,
-				94E6B894166C2A0A00082F27 /* ConvertImage.cpp */,
-				94E6B895166C2A0A00082F27 /* ConvertImage.h */,
-				94E6B896166C2A0A00082F27 /* ConvertImage16.cpp */,
-				94E6B897166C2A0A00082F27 /* CritSect.h */,
-				94E6B898166C2A0A00082F27 /* CSortedList.h */,
-				94E6B899166C2A0A00082F27 /* Debugger.cpp */,
-				B3C103201C72CFBD00DD066C /* OGLES2FragmentShaders.cpp */,
-				B3C103211C72CFBD00DD066C /* OGLES2FragmentShaders.h */,
-				94E6B89A166C2A0A00082F27 /* Debugger.h */,
-				94E6B89B166C2A0A00082F27 /* DecodedMux.cpp */,
-				94E6B89C166C2A0A00082F27 /* DecodedMux.h */,
-				94E6B89D166C2A0A00082F27 /* DeviceBuilder.cpp */,
-				94E6B89E166C2A0A00082F27 /* DeviceBuilder.h */,
-				94E6B8A1166C2A0A00082F27 /* ExtendedRender.h */,
-				94E6B8A2166C2A0A00082F27 /* FrameBuffer.cpp */,
-				94E6B8A3166C2A0A00082F27 /* FrameBuffer.h */,
-				94E6B8A4166C2A0A00082F27 /* GeneralCombiner.cpp */,
-				94E6B8A5166C2A0A00082F27 /* GeneralCombiner.h */,
-				94E6B8A6166C2A0A00082F27 /* GraphicsContext.cpp */,
-				94E6B8A7166C2A0A00082F27 /* GraphicsContext.h */,
-				94E6B8A8166C2A0A00082F27 /* IColor.h */,
-				94E6B8A9166C2A0A00082F27 /* liblinux */,
-				94E6B8B5166C2A0A00082F27 /* OGLCombiner.cpp */,
-				94E6B8B6166C2A0A00082F27 /* OGLCombiner.h */,
-				94E6B8BB166C2A0A00082F27 /* OGLDebug.h */,
-				94E6B8BC166C2A0A00082F27 /* OGLDecodedMux.cpp */,
-				94E6B8BD166C2A0A00082F27 /* OGLDecodedMux.h */,
-				94E6B8BE166C2A0A00082F27 /* OGLExtCombiner.cpp */,
-				94E6B8BF166C2A0A00082F27 /* OGLExtCombiner.h */,
-				94E6B8C0166C2A0A00082F27 /* OGLExtensions.cpp */,
-				94E6B8C1166C2A0A00082F27 /* OGLExtensions.h */,
-				94E6B8C2166C2A0A00082F27 /* OGLExtRender.cpp */,
-				94E6B8C3166C2A0A00082F27 /* OGLExtRender.h */,
-				94E6B8C4166C2A0A00082F27 /* OGLFragmentShaders.cpp */,
-				94E6B8C5166C2A0A00082F27 /* OGLFragmentShaders.h */,
-				94E6B8C6166C2A0A00082F27 /* OGLGraphicsContext.cpp */,
-				94E6B8C7166C2A0A00082F27 /* OGLGraphicsContext.h */,
-				94E6B8C8166C2A0A00082F27 /* OGLRender.cpp */,
-				94E6B8C9166C2A0A00082F27 /* OGLRender.h */,
-				94E6B8CA166C2A0A00082F27 /* OGLRenderExt.cpp */,
-				94E6B8CB166C2A0A00082F27 /* OGLTexture.cpp */,
-				94E6B8CC166C2A0A00082F27 /* OGLTexture.h */,
-				94E6B8CD166C2A0A00082F27 /* osal_dynamiclib.h */,
 				94E6B8CE166C2A0A00082F27 /* osal_dynamiclib_unix.c */,
 				94E6B8CF166C2A0A00082F27 /* osal_dynamiclib_win32.c */,
-				94E6B8D0166C2A0A00082F27 /* osal_files.h */,
 				94E6B8D1166C2A0A00082F27 /* osal_files_unix.c */,
 				94E6B8D2166C2A0A00082F27 /* osal_files_win32.c */,
+				94E6B889166C2A0A00082F27 /* Blender.cpp */,
+				94E6B88E166C2A0A00082F27 /* Combiner.cpp */,
+				94E6B891166C2A0A00082F27 /* CombinerTable.cpp */,
+				94E6B892166C2A0A00082F27 /* Config.cpp */,
+				94E6B894166C2A0A00082F27 /* ConvertImage.cpp */,
+				94E6B896166C2A0A00082F27 /* ConvertImage16.cpp */,
+				94E6B899166C2A0A00082F27 /* Debugger.cpp */,
+				94E6B89B166C2A0A00082F27 /* DecodedMux.cpp */,
+				94E6B89D166C2A0A00082F27 /* DeviceBuilder.cpp */,
+				94E6B8A2166C2A0A00082F27 /* FrameBuffer.cpp */,
+				94E6B8A4166C2A0A00082F27 /* GeneralCombiner.cpp */,
+				94E6B8A6166C2A0A00082F27 /* GraphicsContext.cpp */,
+				94E6B8B5166C2A0A00082F27 /* OGLCombiner.cpp */,
+				94E6B8BC166C2A0A00082F27 /* OGLDecodedMux.cpp */,
+				B3C103201C72CFBD00DD066C /* OGLES2FragmentShaders.cpp */,
+				94E6B8BE166C2A0A00082F27 /* OGLExtCombiner.cpp */,
+				94E6B8C0166C2A0A00082F27 /* OGLExtensions.cpp */,
+				94E6B8C2166C2A0A00082F27 /* OGLExtRender.cpp */,
+				94E6B8C4166C2A0A00082F27 /* OGLFragmentShaders.cpp */,
+				94E6B8C6166C2A0A00082F27 /* OGLGraphicsContext.cpp */,
+				94E6B8C8166C2A0A00082F27 /* OGLRender.cpp */,
+				94E6B8CA166C2A0A00082F27 /* OGLRenderExt.cpp */,
+				94E6B8CB166C2A0A00082F27 /* OGLTexture.cpp */,
+				94E6B8D5166C2A0A00082F27 /* Render.cpp */,
+				94E6B8D7166C2A0A00082F27 /* RenderBase.cpp */,
+				94E6B8D9166C2A0A00082F27 /* RenderExt.cpp */,
+				94E6B8DA166C2A0A00082F27 /* RenderTexture.cpp */,
+				94E6B8E2166C2A0A00082F27 /* RSP_Parser.cpp */,
+				94E6B8E4166C2A0A00082F27 /* RSP_S2DEX.cpp */,
+				94E6B8E6166C2A0A00082F27 /* Texture.cpp */,
+				94E6B8EA166C2A0A00082F27 /* TextureFilters_2xsai.cpp */,
+				94E6B8EB166C2A0A00082F27 /* TextureFilters_hq2x.cpp */,
+				94E6B8ED166C2A0A00082F27 /* TextureFilters_hq4x.cpp */,
+				94E6B8E8166C2A0A00082F27 /* TextureFilters.cpp */,
+				94E6B8F0166C2A0A00082F27 /* TextureManager.cpp */,
+				94E6B8F6166C2A0A00082F27 /* VectorMath.cpp */,
+				94E6B8FA166C2A0A00082F27 /* Video.cpp */,
+				94E6B88A166C2A0A00082F27 /* Blender.h */,
+				94E6B88D166C2A0A00082F27 /* COLOR.h */,
+				94E6B88F166C2A0A00082F27 /* Combiner.h */,
+				94E6B890166C2A0A00082F27 /* CombinerDefs.h */,
+				94E6B893166C2A0A00082F27 /* Config.h */,
+				94E6B895166C2A0A00082F27 /* ConvertImage.h */,
+				94E6B897166C2A0A00082F27 /* CritSect.h */,
+				94E6B898166C2A0A00082F27 /* CSortedList.h */,
+				94E6B89A166C2A0A00082F27 /* Debugger.h */,
+				94E6B89C166C2A0A00082F27 /* DecodedMux.h */,
+				94E6B89E166C2A0A00082F27 /* DeviceBuilder.h */,
+				94E6B8A1166C2A0A00082F27 /* ExtendedRender.h */,
+				94E6B8A3166C2A0A00082F27 /* FrameBuffer.h */,
+				94E6B8A5166C2A0A00082F27 /* GeneralCombiner.h */,
+				94E6B8A7166C2A0A00082F27 /* GraphicsContext.h */,
+				94E6B8A8166C2A0A00082F27 /* IColor.h */,
+				94E6B8B6166C2A0A00082F27 /* OGLCombiner.h */,
+				94E6B8BB166C2A0A00082F27 /* OGLDebug.h */,
+				94E6B8BD166C2A0A00082F27 /* OGLDecodedMux.h */,
+				B3C103211C72CFBD00DD066C /* OGLES2FragmentShaders.h */,
+				94E6B8BF166C2A0A00082F27 /* OGLExtCombiner.h */,
+				94E6B8C1166C2A0A00082F27 /* OGLExtensions.h */,
+				94E6B8C3166C2A0A00082F27 /* OGLExtRender.h */,
+				94E6B8C5166C2A0A00082F27 /* OGLFragmentShaders.h */,
+				94E6B8C7166C2A0A00082F27 /* OGLGraphicsContext.h */,
+				94E6B8C9166C2A0A00082F27 /* OGLRender.h */,
+				94E6B8CC166C2A0A00082F27 /* OGLTexture.h */,
+				94E6B8CD166C2A0A00082F27 /* osal_dynamiclib.h */,
+				94E6B8D0166C2A0A00082F27 /* osal_files.h */,
 				942130C61793D30000E57482 /* osal_opengl.h */,
 				94E6B8D3166C2A0A00082F27 /* osal_preproc.h */,
 				94E6B8D4166C2A0A00082F27 /* RDP_Texture.h */,
-				94E6B8D5166C2A0A00082F27 /* Render.cpp */,
 				94E6B8D6166C2A0A00082F27 /* Render.h */,
-				94E6B8D7166C2A0A00082F27 /* RenderBase.cpp */,
 				94E6B8D8166C2A0A00082F27 /* RenderBase.h */,
-				94E6B8D9166C2A0A00082F27 /* RenderExt.cpp */,
-				94E6B8DA166C2A0A00082F27 /* RenderTexture.cpp */,
 				94E6B8DB166C2A0A00082F27 /* RenderTexture.h */,
-				94E6B8DC166C2A0A00082F27 /* RSP_GBI0.h */,
-				94E6B8DD166C2A0A00082F27 /* RSP_GBI1.h */,
-				94E6B8DE166C2A0A00082F27 /* RSP_GBI2.h */,
-				94E6B8DF166C2A0A00082F27 /* RSP_GBI2_ext.h */,
 				94E6B8E0166C2A0A00082F27 /* RSP_GBI_Others.h */,
 				94E6B8E1166C2A0A00082F27 /* RSP_GBI_Sprite2D.h */,
-				94E6B8E2166C2A0A00082F27 /* RSP_Parser.cpp */,
+				94E6B8DC166C2A0A00082F27 /* RSP_GBI0.h */,
+				94E6B8DD166C2A0A00082F27 /* RSP_GBI1.h */,
+				94E6B8DF166C2A0A00082F27 /* RSP_GBI2_ext.h */,
+				94E6B8DE166C2A0A00082F27 /* RSP_GBI2.h */,
 				94E6B8E3166C2A0A00082F27 /* RSP_Parser.h */,
-				94E6B8E4166C2A0A00082F27 /* RSP_S2DEX.cpp */,
 				94E6B8E5166C2A0A00082F27 /* RSP_S2DEX.h */,
-				94E6B8E6166C2A0A00082F27 /* Texture.cpp */,
 				94E6B8E7166C2A0A00082F27 /* Texture.h */,
-				94E6B8E8166C2A0A00082F27 /* TextureFilters.cpp */,
-				94E6B8E9166C2A0A00082F27 /* TextureFilters.h */,
-				94E6B8EA166C2A0A00082F27 /* TextureFilters_2xsai.cpp */,
-				94E6B8EB166C2A0A00082F27 /* TextureFilters_hq2x.cpp */,
 				94E6B8EC166C2A0A00082F27 /* TextureFilters_hq2x.h */,
-				94E6B8ED166C2A0A00082F27 /* TextureFilters_hq4x.cpp */,
 				94E6B8EE166C2A0A00082F27 /* TextureFilters_hq4x.h */,
 				94E6B8EF166C2A0A00082F27 /* TextureFilters_lq2x.h */,
-				94E6B8F0166C2A0A00082F27 /* TextureManager.cpp */,
+				94E6B8E9166C2A0A00082F27 /* TextureFilters.h */,
 				94E6B8F1166C2A0A00082F27 /* TextureManager.h */,
 				94E6B8F2166C2A0A00082F27 /* Timing.h */,
 				94E6B8F3166C2A0A00082F27 /* typedefs.h */,
 				94E6B8F4166C2A0A00082F27 /* ucode.h */,
 				94E6B8F5166C2A0A00082F27 /* UcodeDefs.h */,
-				94E6B8F6166C2A0A00082F27 /* VectorMath.cpp */,
 				94E6B8F7166C2A0A00082F27 /* VectorMath.h */,
 				94E6B8F8166C2A0A00082F27 /* version.h */,
-				94E6B8FA166C2A0A00082F27 /* Video.cpp */,
 				94E6B8FB166C2A0A00082F27 /* Video.h */,
 				94E6B8FC166C2A0A00082F27 /* video_api_export.ver */,
+				94E6B8A9166C2A0A00082F27 /* liblinux */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -2324,15 +2421,15 @@
 		94E6B8A9166C2A0A00082F27 /* liblinux */ = {
 			isa = PBXGroup;
 			children = (
-				94E6B8AA166C2A0A00082F27 /* BMGDLL.h */,
 				94E6B8AB166C2A0A00082F27 /* BMGImage.c */,
+				94E6B8AE166C2A0A00082F27 /* BMGUtils.c */,
+				94E6B8B0166C2A0A00082F27 /* bmp.c */,
+				94E6B8B2166C2A0A00082F27 /* pngrw.c */,
+				94E6B8AA166C2A0A00082F27 /* BMGDLL.h */,
 				94E6B8AC166C2A0A00082F27 /* BMGImage.h */,
 				94E6B8AD166C2A0A00082F27 /* BMGLibPNG.h */,
-				94E6B8AE166C2A0A00082F27 /* BMGUtils.c */,
 				94E6B8AF166C2A0A00082F27 /* BMGUtils.h */,
-				94E6B8B0166C2A0A00082F27 /* bmp.c */,
 				94E6B8B1166C2A0A00082F27 /* jpegrw.h */,
-				94E6B8B2166C2A0A00082F27 /* pngrw.c */,
 				94E6B8B3166C2A0A00082F27 /* pngrw.h */,
 				94E6B8B4166C2A0A00082F27 /* tiffrw.h */,
 			);
@@ -3028,6 +3125,164 @@
 			path = PVMupen64PlusDynamic;
 			sourceTree = "<group>";
 		};
+		B3A302842073F2AA008C1955 /* mupen64plus-video-rice */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302852073F2AA008C1955 /* INSTALL */,
+				B3A302862073F2AA008C1955 /* LICENSES */,
+				B3A302872073F2AA008C1955 /* projects */,
+				B3A3028C2073F2AA008C1955 /* RELEASE */,
+				B3A3028D2073F2AA008C1955 /* README */,
+				B3A3028E2073F2AA008C1955 /* .gitignore */,
+				B3A3028F2073F2AA008C1955 /* .gitattributes */,
+				B3A302902073F2AA008C1955 /* data */,
+				B3A302922073F2AA008C1955 /* .travis.yml */,
+				B3A302932073F2AA008C1955 /* src */,
+			);
+			path = "mupen64plus-video-rice";
+			sourceTree = "<group>";
+		};
+		B3A302872073F2AA008C1955 /* projects */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302882073F2AA008C1955 /* unix */,
+				B3A3028A2073F2AA008C1955 /* VisualStudio2013 */,
+			);
+			path = projects;
+			sourceTree = "<group>";
+		};
+		B3A302882073F2AA008C1955 /* unix */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302892073F2AA008C1955 /* Makefile */,
+			);
+			path = unix;
+			sourceTree = "<group>";
+		};
+		B3A3028A2073F2AA008C1955 /* VisualStudio2013 */ = {
+			isa = PBXGroup;
+			children = (
+				B3A3028B2073F2AA008C1955 /* mupen64plus-video-rice.vcxproj */,
+			);
+			path = VisualStudio2013;
+			sourceTree = "<group>";
+		};
+		B3A302902073F2AA008C1955 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		B3A302932073F2AA008C1955 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */,
+				B3A302E42073F2AA008C1955 /* osal_dynamiclib_win32.c */,
+				B3A302D32073F2AA008C1955 /* osal_files_unix.c */,
+				B3A302E82073F2AA008C1955 /* osal_files_win32.c */,
+				B3A302952073F2AA008C1955 /* Blender.cpp */,
+				B3A302DC2073F2AA008C1955 /* Combiner.cpp */,
+				B3A302D52073F2AA008C1955 /* Config.cpp */,
+				B3A3029F2073F2AA008C1955 /* ConvertImage.cpp */,
+				B3A302EB2073F2AA008C1955 /* ConvertImage16.cpp */,
+				B3A302DF2073F2AA008C1955 /* Debugger.cpp */,
+				B3A302ED2073F2AA008C1955 /* DeviceBuilder.cpp */,
+				B3A302B22073F2AA008C1955 /* FrameBuffer.cpp */,
+				B3A302BE2073F2AA008C1955 /* GraphicsContext.cpp */,
+				B3A302DB2073F2AA008C1955 /* OGLCombiner.cpp */,
+				B3A302A72073F2AA008C1955 /* OGLExtensions.cpp */,
+				B3A302D92073F2AA008C1955 /* OGLGraphicsContext.cpp */,
+				B3A302EC2073F2AA008C1955 /* OGLRender.cpp */,
+				B3A302D22073F2AA008C1955 /* OGLRenderExt.cpp */,
+				B3A302B12073F2AA008C1955 /* OGLTexture.cpp */,
+				B3A302962073F2AA008C1955 /* Render.cpp */,
+				B3A302A82073F2AA008C1955 /* RenderBase.cpp */,
+				B3A302F12073F2AA008C1955 /* RenderExt.cpp */,
+				B3A302AE2073F2AA008C1955 /* RenderTexture.cpp */,
+				B3A302D72073F2AA008C1955 /* RSP_Parser.cpp */,
+				B3A302BF2073F2AA008C1955 /* RSP_S2DEX.cpp */,
+				B3A302B82073F2AA008C1955 /* Texture.cpp */,
+				B3A302E72073F2AA008C1955 /* TextureFilters_2xsai.cpp */,
+				B3A302AD2073F2AA008C1955 /* TextureFilters_hq2x.cpp */,
+				B3A3029B2073F2AA008C1955 /* TextureFilters_hq4x.cpp */,
+				B3A302992073F2AA008C1955 /* TextureFilters.cpp */,
+				B3A302D82073F2AA008C1955 /* TextureManager.cpp */,
+				B3A3029E2073F2AA008C1955 /* VectorMath.cpp */,
+				B3A302BD2073F2AA008C1955 /* Video.cpp */,
+				B3A302972073F2AA008C1955 /* Blender.h */,
+				B3A302BB2073F2AA008C1955 /* COLOR.h */,
+				B3A302D42073F2AA008C1955 /* Combiner.h */,
+				B3A302E92073F2AA008C1955 /* CombinerDefs.h */,
+				B3A302A62073F2AA008C1955 /* Config.h */,
+				B3A302B02073F2AA008C1955 /* ConvertImage.h */,
+				B3A3029D2073F2AA008C1955 /* CritSect.h */,
+				B3A302D62073F2AA008C1955 /* CSortedList.h */,
+				B3A302E22073F2AA008C1955 /* Debugger.h */,
+				B3A302D02073F2AA008C1955 /* DeviceBuilder.h */,
+				B3A302A22073F2AA008C1955 /* ExtendedRender.h */,
+				B3A302B92073F2AA008C1955 /* FrameBuffer.h */,
+				B3A3029A2073F2AA008C1955 /* GraphicsContext.h */,
+				B3A302B62073F2AA008C1955 /* OGLCombiner.h */,
+				B3A302AB2073F2AA008C1955 /* OGLDebug.h */,
+				B3A302EF2073F2AA008C1955 /* OGLExtensions.h */,
+				B3A302E32073F2AA008C1955 /* OGLGraphicsContext.h */,
+				B3A302942073F2AA008C1955 /* OGLRender.h */,
+				B3A302C02073F2AA008C1955 /* OGLTexture.h */,
+				B3A302BA2073F2AA008C1955 /* osal_dynamiclib.h */,
+				B3A302C32073F2AA008C1955 /* osal_files.h */,
+				B3A302A32073F2AA008C1955 /* osal_opengl.h */,
+				B3A302BC2073F2AA008C1955 /* osal_preproc.h */,
+				B3A302B52073F2AA008C1955 /* RDP_Texture.h */,
+				B3A302F02073F2AA008C1955 /* Render.h */,
+				B3A302B42073F2AA008C1955 /* RenderBase.h */,
+				B3A302D12073F2AA008C1955 /* RenderTexture.h */,
+				B3A302A12073F2AA008C1955 /* RSP_GBI_Others.h */,
+				B3A302982073F2AA008C1955 /* RSP_GBI_Sprite2D.h */,
+				B3A302A52073F2AA008C1955 /* RSP_GBI0.h */,
+				B3A302EE2073F2AA008C1955 /* RSP_GBI1.h */,
+				B3A302AA2073F2AA008C1955 /* RSP_GBI2_ext.h */,
+				B3A302E02073F2AA008C1955 /* RSP_GBI2.h */,
+				B3A302DD2073F2AA008C1955 /* RSP_Parser.h */,
+				B3A302E52073F2AA008C1955 /* RSP_S2DEX.h */,
+				B3A302E12073F2AA008C1955 /* Texture.h */,
+				B3A302A02073F2AA008C1955 /* TextureFilters_hq2x.h */,
+				B3A302EA2073F2AA008C1955 /* TextureFilters_hq4x.h */,
+				B3A302DE2073F2AA008C1955 /* TextureFilters_lq2x.h */,
+				B3A302B32073F2AA008C1955 /* TextureFilters.h */,
+				B3A302E62073F2AA008C1955 /* TextureManager.h */,
+				B3A302AF2073F2AA008C1955 /* Timing.h */,
+				B3A302A42073F2AA008C1955 /* typedefs.h */,
+				B3A302AC2073F2AA008C1955 /* ucode.h */,
+				B3A302A92073F2AA008C1955 /* UcodeDefs.h */,
+				B3A302B72073F2AA008C1955 /* VectorMath.h */,
+				B3A3029C2073F2AA008C1955 /* version.h */,
+				B3A302DA2073F2AA008C1955 /* Video.h */,
+				B3A302C22073F2AA008C1955 /* video_api_export.ver */,
+				B3A302C42073F2AA008C1955 /* liblinux */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		B3A302C42073F2AA008C1955 /* liblinux */ = {
+			isa = PBXGroup;
+			children = (
+				B3A302CD2073F2AA008C1955 /* BMGImage.c */,
+				B3A302C62073F2AA008C1955 /* BMGUtils.c */,
+				B3A302CC2073F2AA008C1955 /* bmp.c */,
+				B3A302C52073F2AA008C1955 /* pngrw.c */,
+				B3A302CF2073F2AA008C1955 /* BMGDLL.h */,
+				B3A302C72073F2AA008C1955 /* BMGImage.h */,
+				B3A302CE2073F2AA008C1955 /* BMGLibPNG.h */,
+				B3A302C92073F2AA008C1955 /* BMGUtils.h */,
+				B3A302CB2073F2AA008C1955 /* jpegrw.h */,
+				B3A302CA2073F2AA008C1955 /* pngrw.h */,
+				B3A302C82073F2AA008C1955 /* tiffrw.h */,
+			);
+			path = liblinux;
+			sourceTree = "<group>";
+		};
 		B3AE1EDB20733D3500AD06D4 /* mupen64plus-rsp-cxd4 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3212,9 +3467,10 @@
 		B3CB4B23206E5B4B0074706B /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				B3A302842073F2AA008C1955 /* mupen64plus-video-rice */,
+				B30559AA2072FEE8001212D2 /* mupen64plus-core */,
 				B3AE1EDB20733D3500AD06D4 /* mupen64plus-rsp-cxd4 */,
 				B3AE1F0320733D3500AD06D4 /* mupen64plus-rsp-hle */,
-				B30559AA2072FEE8001212D2 /* mupen64plus-core */,
 				DFB6018A2038AE78001E70F1 /* mupen64plus-video-gliden64 */,
 			);
 			path = Plugins;
@@ -4822,6 +5078,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */,
 				B3BDEC8C1DED5E04002BD7A4 /* RiceVideoLinux.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4967,49 +5224,42 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37EFEF91C72E6CD00857158 /* Blender.cpp in Sources */,
-				B37EFEFA1C72E6CD00857158 /* Combiner.cpp in Sources */,
-				B37EFEFB1C72E6CD00857158 /* CombinerTable.cpp in Sources */,
-				B37EFEFC1C72E6CD00857158 /* Config.cpp in Sources */,
-				B37EFEFD1C72E6CD00857158 /* ConvertImage.cpp in Sources */,
-				B37EFEFE1C72E6CD00857158 /* ConvertImage16.cpp in Sources */,
-				B37EFEFF1C72E6CD00857158 /* Debugger.cpp in Sources */,
-				B37EFF001C72E6CD00857158 /* DecodedMux.cpp in Sources */,
-				B37EFF011C72E6CD00857158 /* DeviceBuilder.cpp in Sources */,
-				B37EFF021C72E6CD00857158 /* FrameBuffer.cpp in Sources */,
-				B37EFF031C72E6CD00857158 /* GeneralCombiner.cpp in Sources */,
-				B37EFF041C72E6CD00857158 /* GraphicsContext.cpp in Sources */,
-				B37EFF051C72E6CD00857158 /* BMGImage.c in Sources */,
-				B37EFF061C72E6CD00857158 /* BMGUtils.c in Sources */,
-				B37EFF071C72E6CD00857158 /* bmp.c in Sources */,
-				B37EFF081C72E6CD00857158 /* pngrw.c in Sources */,
-				B37EFF091C72E6CD00857158 /* OGLCombiner.cpp in Sources */,
-				B37EFF0A1C72E6CD00857158 /* OGLDecodedMux.cpp in Sources */,
-				B37EFF0B1C72E6CD00857158 /* OGLExtCombiner.cpp in Sources */,
-				B37EFF0C1C72E6CD00857158 /* OGLES2FragmentShaders.cpp in Sources */,
-				B37EFF0D1C72E6CD00857158 /* OGLExtensions.cpp in Sources */,
-				B37EFF0E1C72E6CD00857158 /* OGLExtRender.cpp in Sources */,
-				B37EFF0F1C72E6CD00857158 /* OGLGraphicsContext.cpp in Sources */,
-				B37EFF101C72E6CD00857158 /* OGLRender.cpp in Sources */,
-				B37EFF111C72E6CD00857158 /* OGLRenderExt.cpp in Sources */,
-				B37EFF121C72E6CD00857158 /* OGLTexture.cpp in Sources */,
-				B37EFF131C72E6CD00857158 /* osal_dynamiclib_unix.c in Sources */,
-				B37EFF141C72E6CD00857158 /* osal_files_unix.c in Sources */,
-				B37EFF151C72E6CD00857158 /* Render.cpp in Sources */,
-				B37EFF161C72E6CD00857158 /* RenderBase.cpp in Sources */,
-				B37EFF171C72E6CD00857158 /* RenderExt.cpp in Sources */,
-				B37EFF181C72E6CD00857158 /* RenderTexture.cpp in Sources */,
-				B37EFF191C72E6CD00857158 /* RSP_Parser.cpp in Sources */,
-				B37EFF1A1C72E6CD00857158 /* RSP_S2DEX.cpp in Sources */,
-				B37EFF1B1C72E6CD00857158 /* Texture.cpp in Sources */,
-				B37EFF1C1C72E6CD00857158 /* TextureFilters.cpp in Sources */,
-				B37EFF1D1C72E6CD00857158 /* TextureFilters_2xsai.cpp in Sources */,
-				B37EFF1E1C72E6CD00857158 /* TextureFilters_hq2x.cpp in Sources */,
-				B37EFF1F1C72E6CD00857158 /* TextureFilters_hq4x.cpp in Sources */,
-				B37EFF201C72E6CD00857158 /* TextureManager.cpp in Sources */,
-				B37EFF211C72E6CD00857158 /* VectorMath.cpp in Sources */,
-				B37EFF221C72E6CD00857158 /* Video.cpp in Sources */,
+				B3A303092073F2F2008C1955 /* RSP_S2DEX.cpp in Sources */,
+				B3A303012073F2F2008C1955 /* OGLRender.cpp in Sources */,
+				B3A303072073F2F2008C1955 /* RenderTexture.cpp in Sources */,
+				B3A303122073F303008C1955 /* BMGImage.c in Sources */,
+				B3A302FE2073F2F2008C1955 /* OGLCombiner.cpp in Sources */,
+				B3A3030C2073F2F2008C1955 /* TextureFilters_hq2x.cpp in Sources */,
+				B3A3030E2073F2F2008C1955 /* TextureFilters.cpp in Sources */,
+				B3A303042073F2F2008C1955 /* Render.cpp in Sources */,
+				B3A302F52073F2F2008C1955 /* Blender.cpp in Sources */,
+				B3A302F42073F2F2008C1955 /* osal_files_unix.c in Sources */,
+				B3A302F82073F2F2008C1955 /* ConvertImage.cpp in Sources */,
+				B3A302FA2073F2F2008C1955 /* Debugger.cpp in Sources */,
+				B3A3030B2073F2F2008C1955 /* TextureFilters_2xsai.cpp in Sources */,
+				B3A302FC2073F2F2008C1955 /* FrameBuffer.cpp in Sources */,
+				B3A302F62073F2F2008C1955 /* Combiner.cpp in Sources */,
+				B3A302FD2073F2F2008C1955 /* GraphicsContext.cpp in Sources */,
+				B3A302FB2073F2F2008C1955 /* DeviceBuilder.cpp in Sources */,
+				B3A303142073F303008C1955 /* bmp.c in Sources */,
+				B3A302F72073F2F2008C1955 /* Config.cpp in Sources */,
+				B3A303112073F2F2008C1955 /* Video.cpp in Sources */,
+				B3A302FF2073F2F2008C1955 /* OGLExtensions.cpp in Sources */,
+				B3A3030A2073F2F2008C1955 /* Texture.cpp in Sources */,
+				B3A3030D2073F2F2008C1955 /* TextureFilters_hq4x.cpp in Sources */,
+				B3A303002073F2F2008C1955 /* OGLGraphicsContext.cpp in Sources */,
+				B3A303102073F2F2008C1955 /* VectorMath.cpp in Sources */,
+				B3A303052073F2F2008C1955 /* RenderBase.cpp in Sources */,
+				B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */,
+				B3A303132073F303008C1955 /* BMGUtils.c in Sources */,
+				B3A303032073F2F2008C1955 /* OGLTexture.cpp in Sources */,
+				B3A303062073F2F2008C1955 /* RenderExt.cpp in Sources */,
+				B3A303152073F303008C1955 /* pngrw.c in Sources */,
+				B3A303022073F2F2008C1955 /* OGLRenderExt.cpp in Sources */,
+				B3A302F92073F2F2008C1955 /* ConvertImage16.cpp in Sources */,
+				B3A303082073F2F2008C1955 /* RSP_Parser.cpp in Sources */,
 				B37EFF231C72E6CD00857158 /* SDLStubs.m in Sources */,
+				B3A3030F2073F2F2008C1955 /* TextureManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5897,6 +6147,9 @@
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fvisibility=hidden",
+					"-fomit-frame-pointer",
+					"-fvisibility-inlines-hidden",
+					"-flto",
 					"-DGCC",
 					"-pthread",
 					"-fPIC",
@@ -5906,6 +6159,8 @@
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
 					"-DNO_ASM",
+					"-DM64P_PLUGIN_PROTOTYPES",
+					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -5967,6 +6222,9 @@
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fvisibility=hidden",
+					"-fomit-frame-pointer",
+					"-fvisibility-inlines-hidden",
+					"-flto",
 					"-DGCC",
 					"-pthread",
 					"-fPIC",
@@ -5976,6 +6234,8 @@
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
 					"-DNO_ASM",
+					"-DM64P_PLUGIN_PROTOTYPES",
+					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
