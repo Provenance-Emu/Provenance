@@ -190,29 +190,31 @@ public class Theme: NSObject {
         }
 
         // Settings
-        appearance(in: SettingsTableView.self) {
-            UITableViewCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-            }
-        }
+		if #available(iOS 9.0, *) {
+			appearance(in: SettingsTableView.self) {
+				UITableViewCell.appearance {
+					$0.backgroundColor = theme.settingsCellBackground
+					$0.textLabel?.backgroundColor = theme.settingsCellBackground
+					$0.textLabel?.textColor = theme.settingsCellText
+					$0.detailTextLabel?.textColor = theme.settingsCellText
+				}
+			}
 
-        appearance(in: UITableViewCell.self) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsCellText
-            }
-        }
+			appearance(in: UITableViewCell.self) {
+				UILabel.appearance {
+					$0.textColor = theme.settingsCellText
+				}
+			}
+
+			appearance(in: UITableViewHeaderFooterView.self) {
+				UILabel.appearance {
+					$0.textColor = theme.settingsHeaderText
+				}
+			}
+		}
 
         UITableViewHeaderFooterView.appearance {
             $0.backgroundColor = theme.settingsHeaderBackground
-        }
-
-        appearance(in: UITableViewHeaderFooterView.self) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsHeaderText
-            }
         }
 
         let selectedView = UIView()
