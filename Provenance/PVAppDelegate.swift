@@ -29,7 +29,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
 			return true
 		}
-		
+
 #if os(iOS)
         if #available(iOS 9.0, *) {
             if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut" {

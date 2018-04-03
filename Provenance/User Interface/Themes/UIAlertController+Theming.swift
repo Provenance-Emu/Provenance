@@ -41,14 +41,14 @@ import UIKit
             setDefaultOverrides()
 			if let popoverPresentationController = popoverPresentationController {
 				popoverPresentationController.backgroundColor = .clear
-				
+
 			}
         }
-		
+
 		open override func viewWillAppear(_ animated: Bool) {
 			super.viewWillAppear(animated)
 			setDefaultOverrides()
-			
+
 		}
 
         // Set how you want your defaults to be for all instances of UIAlertController

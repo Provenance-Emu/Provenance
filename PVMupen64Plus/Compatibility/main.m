@@ -24,25 +24,28 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "MupenGameCore.h"
+#import "../MupenGameCore.h"
 // Ambigous main
-#import "../src/main/main.h"
+#import "../Plugins/mupen64plus-core/src/main/main.h"
 //#import "main.h"
-#import "cheat.h"
-void new_vi()
+#import "main/cheat.h"
+
+void new_vi(void)
 {
     GET_CURRENT_OR_RETURN();
     
-    if(g_gs_vi_counter < 60)
-    {
-        if (g_gs_vi_counter == 0)
-            cheat_apply_cheats(ENTRY_BOOT);
-        g_gs_vi_counter++;
-    }
-    else
-    {
-        cheat_apply_cheats(ENTRY_VI);
-    }
+	struct r4300_core* r4300 = &g_dev.r4300;
+
+	if (g_gs_vi_counter < 60)
+	{
+		if (g_gs_vi_counter == 0)
+			cheat_apply_cheats(&g_cheat_ctx, r4300, ENTRY_BOOT);
+		g_gs_vi_counter++;
+	}
+	else
+	{
+		cheat_apply_cheats(&g_cheat_ctx, r4300, ENTRY_VI);
+	}
 
     [current videoInterrupt];
 }

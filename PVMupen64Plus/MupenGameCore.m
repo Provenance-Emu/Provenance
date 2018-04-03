@@ -38,11 +38,12 @@
 #import "api/m64p_frontend.h"
 #import "api/m64p_vidext.h"
 #import "api/callbacks.h"
-#import "rom.h"
-#import "savestates.h"
 #import "osal/dynamiclib.h"
-#import "mupen64plus-core/src/main/version.h"
-#import "memory.h"
+#import "Plugins/mupen64plus-core/src/main/version.h"
+#import "Plugins/mupen64plus-core/src/plugin/plugin.h"
+//#import "rom.h"
+//#import "savestates.h"
+//#import "memory.h"
 //#import "mupen64plus-core/src/main/main.h"
 #import <dispatch/dispatch.h>
 #import <PVSupport/PVSupport.h>
@@ -50,7 +51,6 @@
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 
-#import "mupen64plus-core/src/plugin/plugin.h"
 
 #import <dlfcn.h>
 
@@ -74,6 +74,14 @@ static void (*ptr_OE_ForceUpdateWindowSize)(int width, int height);
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
     NSLog(@"Mupen (%d): %s", level, message);
+}
+
+static void MupenFrameCallback(unsigned int FrameIndex) {
+	if (_current == nil) {
+		return;
+	}
+
+	[_current videoInterrupt];
 }
 
 static void MupenStateCallback(void *context, m64p_core_param paramType, int newValue)
@@ -105,9 +113,9 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
         
-        videoWidth  = 640;
-        videoHeight = 480;
-        videoBitDepth = 32; // ignored
+        _videoWidth  = 640;
+        _videoHeight = 480;
+        _videoBitDepth = 32; // ignored
         videoDepthBitDepth = 0; // TODO
         
         sampleRate = 33600;
@@ -271,8 +279,8 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
             padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
             padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
             
-            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed;
-            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed;
+            padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed;
+            padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed || gamepad.buttonB.isPressed;
             padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
             
             padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
@@ -556,9 +564,28 @@ static void MupenSetAudioSpeed(int percent)
         
         return NO;
     }
-    
-    core_handle = dlopen_myself();
-    
+
+	core_handle = dlopen_myself();
+
+//	m64p_error callbackStatus = CoreDoCommand(M64CMD_SET_FRAME_CALLBACK, 0, (void *)MupenFrameCallback);
+//	if ( callbackStatus != M64ERR_SUCCESS) {
+//		NSLog(@"Error setting video callback: %@\n Error code was: %i", path, openStatus);
+//
+//		NSDictionary *userInfo = @{
+//								   NSLocalizedDescriptionKey: @"Failed to load game.",
+//								   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus failed to load game.",
+//								   NSLocalizedRecoverySuggestionErrorKey: @"The video system is invalid. Developer error. Kill the developer."
+//								   };
+//
+//		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//												code:PVEmulatorCoreErrorCodeCouldNotStart
+//											userInfo:userInfo];
+//
+//		*error = newError;
+//
+//		return NO;
+//	}
+
     // Assistane block to load frameworks
     BOOL (^LoadPlugin)(m64p_plugin_type, NSString *) = ^(m64p_plugin_type pluginType, NSString *pluginName){
         m64p_dynlib_handle rsp_handle;
@@ -635,7 +662,9 @@ static void MupenSetAudioSpeed(int percent)
     ConfigOpenSection("rsp-cxd4", &configRSP);
     int usingHLE = 1; // Set to 0 if using LLE GPU plugin/software rasterizer such as Angry Lion
     ConfigSetParameter(configRSP, "DisplayListToGraphicsPlugin", M64TYPE_BOOL, &usingHLE);
-    
+	/** End Core Config **/
+	ConfigSaveSection("rsp-cxd4");
+
     success = LoadPlugin(M64PLUGIN_RSP, @"PVRSPCXD4");
 #else
     success = LoadPlugin(M64PLUGIN_RSP, @"PVMupen64PlusRspHLE");
@@ -666,10 +695,6 @@ static void MupenSetAudioSpeed(int percent)
 	{
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 		self.glesVersion = GLESVersion2;
-		if (context == nil) {
-			context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
-			self.glesVersion = GLESVersion1;
-		}
 	}
 
 	return context;
@@ -955,12 +980,12 @@ static void MupenSetAudioSpeed(int percent)
 
 - (CGRect)screenRect
 {
-    return CGRectMake(0, 0, videoWidth, videoHeight);
+    return CGRectMake(0, 0, _videoWidth, _videoHeight);
 }
 
 - (CGSize)aspectSize
 {
-    return CGSizeMake(videoWidth, videoHeight);
+    return CGSizeMake(_videoWidth, _videoHeight);
 }
 
 - (void) tryToResizeVideoTo:(CGSize)size

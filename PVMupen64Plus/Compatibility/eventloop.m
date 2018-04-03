@@ -24,8 +24,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "osd.h"
-#include "screenshot.h"
+#import "osd/osd.h"
+#import "osd/screenshot.h"
 
 int event_set_core_defaults(void)
 {

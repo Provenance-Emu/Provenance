@@ -24,7 +24,7 @@ protocol JSButtonDisplayer {
     var selectButton: JSButton? { get set }
 }
 
-fileprivate typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
+private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 96.0
 
 protocol StartSelectDelegate: class {
@@ -539,7 +539,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
 
         } else {
-			let x: CGFloat = (view.frame.size.width / CGFloat(2.0)) - controlSize.width - (xSpacing / CGFloat(2.0));
+			let x: CGFloat = (view.frame.size.width / CGFloat(2.0)) - controlSize.width - (xSpacing / CGFloat(2.0))
 			let y: CGFloat = ((buttonGroup?.frame.origin.y) ?? 0) + (buttonGroup?.frame.height)! + yPadding
             selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
