@@ -1,3 +1,6 @@
 [submodule "PVMupen64Plus/mupen64plus-video-gliden64"]
 	path = PVMupen64Plus/Plugins/mupen64plus-video-gliden64
 	url = https://github.com/Provenance-Emu/GLideN64.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-core"]
+	path = PVMupen64Plus/Plugins/mupen64plus-core
+	url = https://github.com/mupen64plus/mupen64plus-core.git
