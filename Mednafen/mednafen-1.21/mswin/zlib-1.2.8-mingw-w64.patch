@@ -1,0 +1,48 @@
+diff -rupN zlib-1.2.8.orig/zconf.h zlib-1.2.8/zconf.h
+--- zlib-1.2.8.orig/zconf.h	2013-04-28 15:57:11.000000000 -0700
++++ zlib-1.2.8/zconf.h	2017-04-02 19:48:07.884236996 -0700
+@@ -481,10 +481,10 @@ typedef uLong FAR uLongf;
+ #  define z_off_t long
+ #endif
+ 
+-#if !defined(_WIN32) && defined(Z_LARGE64)
++#if defined(Z_LARGE64)
+ #  define z_off64_t off64_t
+ #else
+-#  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
++#  if defined(_WIN32) && !defined(Z_SOLO)
+ #    define z_off64_t __int64
+ #  else
+ #    define z_off64_t z_off_t
+diff -rupN zlib-1.2.8.orig/zconf.h.cmakein zlib-1.2.8/zconf.h.cmakein
+--- zlib-1.2.8.orig/zconf.h.cmakein	2013-04-28 15:57:11.000000000 -0700
++++ zlib-1.2.8/zconf.h.cmakein	2017-04-02 19:49:53.680235224 -0700
+@@ -483,10 +483,10 @@ typedef uLong FAR uLongf;
+ #  define z_off_t long
+ #endif
+ 
+-#if !defined(_WIN32) && defined(Z_LARGE64)
++#if defined(Z_LARGE64)
+ #  define z_off64_t off64_t
+ #else
+-#  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
++#  if defined(_WIN32) && !defined(Z_SOLO)
+ #    define z_off64_t __int64
+ #  else
+ #    define z_off64_t z_off_t
+diff -rupN zlib-1.2.8.orig/zconf.h.in zlib-1.2.8/zconf.h.in
+--- zlib-1.2.8.orig/zconf.h.in	2013-04-28 15:57:11.000000000 -0700
++++ zlib-1.2.8/zconf.h.in	2017-04-02 19:49:19.052235804 -0700
+@@ -481,10 +481,10 @@ typedef uLong FAR uLongf;
+ #  define z_off_t long
+ #endif
+ 
+-#if !defined(_WIN32) && defined(Z_LARGE64)
++#if defined(Z_LARGE64)
+ #  define z_off64_t off64_t
+ #else
+-#  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
++#  if defined(_WIN32) && !defined(Z_SOLO)
+ #    define z_off64_t __int64
+ #  else
+ #    define z_off64_t z_off_t

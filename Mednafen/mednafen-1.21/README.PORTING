@@ -1,0 +1,39 @@
+--------------------------------------------------------------------------
+Notes for building Mednafen's code outside of Mednafen's own build system:
+    (though you should get most of this if you read configure.ac)
+
+ Last updated November 28, 2014
+--------------------------------------------------------------------------
+
+gcc or LLVM(clang) is generally required, and ICC may work.  Other compilers will
+require signficant changes to the codebase due to widespread usage of GNU extensions.
+
+Compile with -fwrapv
+
+Compile "ngp" module(Neo Geo Pop emulation) with -fno-strict-aliasing
+
+Compile with -fomit-frame-pointer(at least on x86/x86_64).
+
+Compile with -fsigned-char.
+
+Compile with -fno-aggressive-loop-optimizations on newer versions of gcc that support it.
+
+Compile in tests.cpp, and the call to the math test function, at least in your debug builds,
+as it contains important compiler sanity checks.
+
+Compile the PSX module with -mmmx -msse -msse2 on 32-bit x86 for better performance.
+
+Compile with -fno-pic -fno-pie on 32-bit x86.
+
+Define ARCH_X86(to 1) when compiling for 32-bit and 64-bit x86, and ARCH_X86_32 for 32-bit x86 and
+ARCH_X86_64 for 64-bit x86_64.
+
+Define ARCH_POWERPC and ARCH_POWERPC_ALTIVEC when compiling for POWER/PowerPC.
+
+Do NOT compile with LTO, unless you use -fno-strict-aliasing(and that may negate the performance
+benefits LTO provides).
+
+Do NOT compile with -ffast-math, some relatively recent versions of gcc are buggy
+and will produce completely wrong machine code for some common constructs
+when -ffast-math is used.
+

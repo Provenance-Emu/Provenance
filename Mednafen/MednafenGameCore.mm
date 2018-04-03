@@ -25,11 +25,11 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "mednafen.h"
-#include "settings-driver.h"
-#include "state-driver.h"
-#include "mednafen-driver.h"
-#include "MemoryStream.h"
+#include <mednafen/mednafen.h>
+#include <mednafen/settings-driver.h>
+#include <mednafen/state-driver.h>
+#include <mednafen/mednafen-driver.h>
+#include <mednafen/MemoryStream.h>
 
 #import "MednafenGameCore.h"
 #import <OpenGLES/EAGL.h>
@@ -130,8 +130,8 @@ static void mednafen_init(MednafenGameCore* current)
     NSString* batterySavesDirectory = current.batterySavesPath;
     NSString* biosPath = current.BIOSPath;
     
-    std::vector<MDFNGI*> ext;
-    MDFNI_InitializeModules(ext);
+//    std::vector<MDFNGI*> ext;
+    MDFNI_InitializeModules();
 
     std::vector<MDFNSetting> settings;
 
