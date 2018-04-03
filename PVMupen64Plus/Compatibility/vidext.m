@@ -26,7 +26,7 @@
 
 #include "api/m64p_vidext.h"
 #include "api/vidext.h"
-#import "MupenGameCore.h"
+#import "../MupenGameCore.h"
 
 #include <dlfcn.h>
 
@@ -56,9 +56,9 @@ EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPix
 {
     GET_CURRENT_OR_RETURN(M64ERR_SUCCESS);
 
-    current->videoWidth = Width;
-    current->videoHeight = Height;
-    current->videoBitDepth = BitsPerPixel;
+    current.videoWidth = Width;
+    current.videoHeight = Height;
+    current.videoBitDepth = BitsPerPixel;
     
     sActive = 1;
     

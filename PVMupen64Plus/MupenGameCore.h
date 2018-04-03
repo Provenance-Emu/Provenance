@@ -34,19 +34,23 @@
 __attribute__((visibility("default")))
 @interface MupenGameCore : PVEmulatorCore <PVN64SystemResponderClient>
 {
-@private
+//@private
     uint8_t padData[4][PVN64ButtonCount];
     int8_t xAxis[4];
     int8_t yAxis[4];
-    int videoWidth;
-    int videoHeight;
-    int videoBitDepth;
+//    int videoWidth;
+//    int videoHeight;
+//    int videoBitDepth;
     int videoDepthBitDepth; // eh
     
     float sampleRate;
     
     BOOL isNTSC;
 }
+
+@property (nonatomic, assign) int videoWidth;
+@property (nonatomic, assign) int videoHeight;
+@property (nonatomic, assign) int videoBitDepth;
 
 - (void) videoInterrupt;
 - (void) swapBuffers;
