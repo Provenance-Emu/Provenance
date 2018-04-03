@@ -6419,14 +6419,20 @@
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fvisibility=hidden",
+					"-fomit-frame-pointer",
+					"-fvisibility-inlines-hidden",
+					"-flto",
 					"-DGCC",
 					"-pthread",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
+					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
-					"-DNO_ASM=1",
+					"-DNO_ASM",
+					"-DM64P_PLUGIN_PROTOTYPES",
+					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
@@ -6486,14 +6492,20 @@
 					"-ffast-math",
 					"-fno-strict-aliasing",
 					"-fvisibility=hidden",
+					"-fomit-frame-pointer",
+					"-fvisibility-inlines-hidden",
+					"-flto",
 					"-DGCC",
 					"-pthread",
 					"-fPIC",
 					"-D__unix__",
 					"-DUSE_GLES=1",
+					"-DNEON=1",
 					"-DVFP_HARD=1",
 					"-DSDL_VIDEO_OPENGL_ES2=1",
-					"-DNO_ASM=1",
+					"-DNO_ASM",
+					"-DM64P_PLUGIN_PROTOTYPES",
+					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plusRice;
