@@ -412,7 +412,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
-    NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *coreBundle = [NSBundle mainBundle];
     const char *dataPath;
 
     // TODO: Proper path
