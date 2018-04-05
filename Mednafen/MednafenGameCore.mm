@@ -339,7 +339,7 @@ static void emulation_run() {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
                                    NSLocalizedFailureReasonErrorKey: @"Mednafen failed to load game.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednefen ROM format."
+                                   NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednafen ROM format."
                                    };
         
         NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
