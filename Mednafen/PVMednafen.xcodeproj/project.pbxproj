@@ -230,7 +230,6 @@
 		B39578FC1E6D585D00854D7A /* Z80_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D80417F1DE5B0090372A /* Z80_interface.cpp */; };
 		B39578FE1E6D58FF00854D7A /* gfx_scanline_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D7D117F1DE5B0090372A /* gfx_scanline_mono.cpp */; };
 		B39579001E6D591E00854D7A /* z80_ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CB3D64C17F1DE5B0090372A /* z80_ops.cpp */; };
-		B3A74C8E20522B86001D3D2E /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
 		B3AAB3CC20736F170097D86F /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24020736EEB0097D86F /* input.cpp */; };
 		B3AAB3CD20736F170097D86F /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24520736EEB0097D86F /* timer.cpp */; };
 		B3AAB3CE20736F170097D86F /* vb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB24120736EEB0097D86F /* vb.cpp */; };
@@ -340,7 +339,6 @@
 		B3AAB43920737C3B0097D86F /* Net_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABDC20736EE80097D86F /* Net_POSIX.cpp */; };
 		B3AAB43A20737E2D0097D86F /* minilzo.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABC220736EE80097D86F /* minilzo.c */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
-		B3AAB43E2073820C0097D86F /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 		B3AAB45B20738C660097D86F /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -369,6 +367,58 @@
 		B3AAB47220738C760097D86F /* multitap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0C920736EEA0097D86F /* multitap.cpp */; };
 		B3AAB47320738C760097D86F /* negcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0CE20736EEA0097D86F /* negcon.cpp */; };
 		B3AAB47420738C9C0097D86F /* psx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB28B20736EEB0097D86F /* psx.cpp */; };
+		B3B1FC172076D80900799EFE /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03920736EEA0097D86F /* bios.cpp */; };
+		B3B1FC182076D80900799EFE /* biosHLE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03E20736EEA0097D86F /* biosHLE.cpp */; };
+		B3B1FC192076D80900799EFE /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04020736EEA0097D86F /* dma.cpp */; };
+		B3B1FC1A2076D80900799EFE /* flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05C20736EEA0097D86F /* flash.cpp */; };
+		B3B1FC1B2076D80900799EFE /* gfx_scanline_colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */; };
+		B3B1FC1C2076D80900799EFE /* gfx_scanline_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */; };
+		B3B1FC1D2076D80900799EFE /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AD20736EEA0097D86F /* gfx.cpp */; };
+		B3B1FC1E2076D80900799EFE /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04320736EEA0097D86F /* interrupt.cpp */; };
+		B3B1FC1F2076D80900799EFE /* mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07120736EEA0097D86F /* mem.cpp */; };
+		B3B1FC202076D80900799EFE /* neopop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AF20736EEA0097D86F /* neopop.cpp */; };
+		B3B1FC212076D80900799EFE /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05420736EEA0097D86F /* rom.cpp */; };
+		B3B1FC222076D80900799EFE /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05020736EEA0097D86F /* rtc.cpp */; };
+		B3B1FC232076D80900799EFE /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05520736EEA0097D86F /* sound.cpp */; };
+		B3B1FC242076D80900799EFE /* T6W28_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */; };
+		B3B1FC252076D80900799EFE /* Z80_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04620736EEA0097D86F /* Z80_interface.cpp */; };
+		B3B1FC262076D80A00799EFE /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03920736EEA0097D86F /* bios.cpp */; };
+		B3B1FC272076D80A00799EFE /* biosHLE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB03E20736EEA0097D86F /* biosHLE.cpp */; };
+		B3B1FC282076D80A00799EFE /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04020736EEA0097D86F /* dma.cpp */; };
+		B3B1FC292076D80A00799EFE /* flash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05C20736EEA0097D86F /* flash.cpp */; };
+		B3B1FC2A2076D80A00799EFE /* gfx_scanline_colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */; };
+		B3B1FC2B2076D80A00799EFE /* gfx_scanline_mono.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */; };
+		B3B1FC2C2076D80A00799EFE /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AD20736EEA0097D86F /* gfx.cpp */; };
+		B3B1FC2D2076D80A00799EFE /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04320736EEA0097D86F /* interrupt.cpp */; };
+		B3B1FC2E2076D80A00799EFE /* mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07120736EEA0097D86F /* mem.cpp */; };
+		B3B1FC2F2076D80A00799EFE /* neopop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0AF20736EEA0097D86F /* neopop.cpp */; };
+		B3B1FC302076D80A00799EFE /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05420736EEA0097D86F /* rom.cpp */; };
+		B3B1FC312076D80A00799EFE /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05020736EEA0097D86F /* rtc.cpp */; };
+		B3B1FC322076D80A00799EFE /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05520736EEA0097D86F /* sound.cpp */; };
+		B3B1FC332076D80A00799EFE /* T6W28_Apu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */; };
+		B3B1FC342076D80A00799EFE /* Z80_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB04620736EEA0097D86F /* Z80_interface.cpp */; };
+		B3B1FC352076D95B00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09320736EEA0097D86F /* TLCS900h_disassemble_dst.cpp */; };
+		B3B1FC362076D95B00799EFE /* TLCS900h_disassemble_extra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */; };
+		B3B1FC372076D95B00799EFE /* TLCS900h_disassemble_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */; };
+		B3B1FC382076D95B00799EFE /* TLCS900h_disassemble_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07320736EEA0097D86F /* TLCS900h_disassemble_src.cpp */; };
+		B3B1FC392076D95B00799EFE /* TLCS900h_disassemble.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08D20736EEA0097D86F /* TLCS900h_disassemble.cpp */; };
+		B3B1FC3A2076D95B00799EFE /* TLCS900h_interpret_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */; };
+		B3B1FC3B2076D95B00799EFE /* TLCS900h_interpret_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09620736EEA0097D86F /* TLCS900h_interpret_reg.cpp */; };
+		B3B1FC3C2076D95B00799EFE /* TLCS900h_interpret_single.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */; };
+		B3B1FC3D2076D95B00799EFE /* TLCS900h_interpret_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */; };
+		B3B1FC3E2076D95B00799EFE /* TLCS900h_interpret.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */; };
+		B3B1FC3F2076D95B00799EFE /* TLCS900h_registers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */; };
+		B3B1FC402076D95F00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09320736EEA0097D86F /* TLCS900h_disassemble_dst.cpp */; };
+		B3B1FC412076D95F00799EFE /* TLCS900h_disassemble_extra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */; };
+		B3B1FC422076D95F00799EFE /* TLCS900h_disassemble_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */; };
+		B3B1FC432076D95F00799EFE /* TLCS900h_disassemble_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB07320736EEA0097D86F /* TLCS900h_disassemble_src.cpp */; };
+		B3B1FC442076D95F00799EFE /* TLCS900h_disassemble.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08D20736EEA0097D86F /* TLCS900h_disassemble.cpp */; };
+		B3B1FC452076D95F00799EFE /* TLCS900h_interpret_dst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */; };
+		B3B1FC462076D95F00799EFE /* TLCS900h_interpret_reg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB09620736EEA0097D86F /* TLCS900h_interpret_reg.cpp */; };
+		B3B1FC472076D95F00799EFE /* TLCS900h_interpret_single.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */; };
+		B3B1FC482076D95F00799EFE /* TLCS900h_interpret_src.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */; };
+		B3B1FC492076D95F00799EFE /* TLCS900h_interpret.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */; };
+		B3B1FC4A2076D95F00799EFE /* TLCS900h_registers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */; };
 		B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 /* End PBXBuildFile section */
@@ -4733,40 +4783,26 @@
 		B3AAB03A20736EEA0097D86F /* sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
 		B3AAB03B20736EEA0097D86F /* dma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dma.h; sourceTree = "<group>"; };
 		B3AAB03C20736EEA0097D86F /* bios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
-		B3AAB03D20736EEA0097D86F /* libngp_a-flash.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-flash.o"; sourceTree = "<group>"; };
 		B3AAB03E20736EEA0097D86F /* biosHLE.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = biosHLE.cpp; sourceTree = "<group>"; };
-		B3AAB03F20736EEA0097D86F /* libngp_a-bios.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-bios.o"; sourceTree = "<group>"; };
 		B3AAB04020736EEA0097D86F /* dma.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dma.cpp; sourceTree = "<group>"; };
 		B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_scanline_mono.cpp; sourceTree = "<group>"; };
-		B3AAB04220736EEA0097D86F /* libngp_a-dma.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-dma.o"; sourceTree = "<group>"; };
 		B3AAB04320736EEA0097D86F /* interrupt.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = interrupt.cpp; sourceTree = "<group>"; };
-		B3AAB04420736EEA0097D86F /* libngp_a-interrupt.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-interrupt.o"; sourceTree = "<group>"; };
 		B3AAB04520736EEA0097D86F /* Makefile.am.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
 		B3AAB04620736EEA0097D86F /* Z80_interface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Z80_interface.cpp; sourceTree = "<group>"; };
 		B3AAB04720736EEA0097D86F /* T6W28_Oscs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = T6W28_Oscs.h; sourceTree = "<group>"; };
-		B3AAB04820736EEA0097D86F /* libngp_a-gfx_scanline_colour.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-gfx_scanline_colour.o"; sourceTree = "<group>"; };
-		B3AAB04920736EEA0097D86F /* libngp_a-rom.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-rom.o"; sourceTree = "<group>"; };
 		B3AAB04A20736EEA0097D86F /* neopop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neopop.h; sourceTree = "<group>"; };
 		B3AAB04B20736EEA0097D86F /* T6W28_Apu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = T6W28_Apu.h; sourceTree = "<group>"; };
-		B3AAB04C20736EEA0097D86F /* libngp_a-T6W28_Apu.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-T6W28_Apu.o"; sourceTree = "<group>"; };
-		B3AAB04D20736EEA0097D86F /* libngp_a-rtc.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-rtc.o"; sourceTree = "<group>"; };
-		B3AAB04E20736EEA0097D86F /* libngp_a-gfx_scanline_mono.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-gfx_scanline_mono.o"; sourceTree = "<group>"; };
 		B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_scanline_colour.cpp; sourceTree = "<group>"; };
 		B3AAB05020736EEA0097D86F /* rtc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rtc.cpp; sourceTree = "<group>"; };
-		B3AAB05120736EEA0097D86F /* libngp_a-biosHLE.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-biosHLE.o"; sourceTree = "<group>"; };
 		B3AAB05220736EEA0097D86F /* gfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gfx.h; sourceTree = "<group>"; };
-		B3AAB05320736EEA0097D86F /* libngp_a-sound.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-sound.o"; sourceTree = "<group>"; };
 		B3AAB05420736EEA0097D86F /* rom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rom.cpp; sourceTree = "<group>"; };
 		B3AAB05520736EEA0097D86F /* sound.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sound.cpp; sourceTree = "<group>"; };
 		B3AAB05620736EEA0097D86F /* rtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rtc.h; sourceTree = "<group>"; };
-		B3AAB05720736EEA0097D86F /* libngp_a-neopop.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-neopop.o"; sourceTree = "<group>"; };
-		B3AAB05820736EEA0097D86F /* libngp_a-gfx.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-gfx.o"; sourceTree = "<group>"; };
 		B3AAB05920736EEA0097D86F /* interrupt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = interrupt.h; sourceTree = "<group>"; };
 		B3AAB05A20736EEA0097D86F /* flash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flash.h; sourceTree = "<group>"; };
 		B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = T6W28_Apu.cpp; sourceTree = "<group>"; };
 		B3AAB05C20736EEA0097D86F /* flash.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = flash.cpp; sourceTree = "<group>"; };
 		B3AAB05D20736EEA0097D86F /* mem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mem.h; sourceTree = "<group>"; };
-		B3AAB05E20736EEA0097D86F /* libngp_a-Z80_interface.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-Z80_interface.o"; sourceTree = "<group>"; };
 		B3AAB05F20736EEA0097D86F /* Z80_interface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Z80_interface.h; sourceTree = "<group>"; };
 		B3AAB06120736EEA0097D86F /* libngp_a-rtc.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libngp_a-rtc.Po"; sourceTree = "<group>"; };
 		B3AAB06220736EEA0097D86F /* libngp_a-mem.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libngp_a-mem.Po"; sourceTree = "<group>"; };
@@ -4792,22 +4828,16 @@
 		B3AAB07720736EEA0097D86F /* TLCS900h_registers_mapCodeW2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeW2.h; sourceTree = "<group>"; };
 		B3AAB07820736EEA0097D86F /* TLCS900h_registers_mapL.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapL.h; sourceTree = "<group>"; };
 		B3AAB07920736EEA0097D86F /* TLCS900h_interpret_src.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_interpret_src.h; sourceTree = "<group>"; };
-		B3AAB07A20736EEA0097D86F /* libngp_a-TLCS900h_interpret_single.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_interpret_single.o"; sourceTree = "<group>"; };
 		B3AAB07B20736EEA0097D86F /* TLCS900h_registers_mapB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapB.h; sourceTree = "<group>"; };
-		B3AAB07C20736EEA0097D86F /* libngp_a-TLCS900h_interpret_dst.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_interpret_dst.o"; sourceTree = "<group>"; };
 		B3AAB07D20736EEA0097D86F /* TLCS900h_registers_mapCodeL0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeL0.h; sourceTree = "<group>"; };
 		B3AAB07E20736EEA0097D86F /* TLCS900h_interpret.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_interpret.h; sourceTree = "<group>"; };
 		B3AAB07F20736EEA0097D86F /* TLCS900h_interpret_reg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_interpret_reg.h; sourceTree = "<group>"; };
 		B3AAB08020736EEA0097D86F /* TLCS900h_registers_mapW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapW.h; sourceTree = "<group>"; };
 		B3AAB08120736EEA0097D86F /* TLCS900h_registers_mapCodeB3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeB3.h; sourceTree = "<group>"; };
 		B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_disassemble_extra.cpp; sourceTree = "<group>"; };
-		B3AAB08320736EEA0097D86F /* libngp_a-TLCS900h_interpret.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_interpret.o"; sourceTree = "<group>"; };
-		B3AAB08420736EEA0097D86F /* libngp_a-TLCS900h_disassemble.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_disassemble.o"; sourceTree = "<group>"; };
 		B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_interpret_single.cpp; sourceTree = "<group>"; };
 		B3AAB08620736EEA0097D86F /* TLCS900h_registers_mapCodeW1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeW1.h; sourceTree = "<group>"; };
-		B3AAB08720736EEA0097D86F /* libngp_a-TLCS900h_disassemble_dst.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_disassemble_dst.o"; sourceTree = "<group>"; };
 		B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_interpret_src.cpp; sourceTree = "<group>"; };
-		B3AAB08920736EEA0097D86F /* libngp_a-TLCS900h_interpret_reg.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_interpret_reg.o"; sourceTree = "<group>"; };
 		B3AAB08A20736EEA0097D86F /* TLCS900h_registers_mapCodeL1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeL1.h; sourceTree = "<group>"; };
 		B3AAB08B20736EEA0097D86F /* TLCS900h_registers_mapCodeB2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeB2.h; sourceTree = "<group>"; };
 		B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_interpret.cpp; sourceTree = "<group>"; };
@@ -4815,14 +4845,11 @@
 		B3AAB08E20736EEA0097D86F /* TLCS900h_registers_mapCodeW0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeW0.h; sourceTree = "<group>"; };
 		B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_disassemble_reg.cpp; sourceTree = "<group>"; };
 		B3AAB09020736EEA0097D86F /* TLCS900h_interpret_single.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_interpret_single.h; sourceTree = "<group>"; };
-		B3AAB09120736EEA0097D86F /* libngp_a-TLCS900h_disassemble_src.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_disassemble_src.o"; sourceTree = "<group>"; };
 		B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_interpret_dst.cpp; sourceTree = "<group>"; };
 		B3AAB09320736EEA0097D86F /* TLCS900h_disassemble_dst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_disassemble_dst.cpp; sourceTree = "<group>"; };
-		B3AAB09420736EEA0097D86F /* libngp_a-TLCS900h_disassemble_reg.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_disassemble_reg.o"; sourceTree = "<group>"; };
 		B3AAB09520736EEA0097D86F /* TLCS900h_registers_mapCodeL2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeL2.h; sourceTree = "<group>"; };
 		B3AAB09620736EEA0097D86F /* TLCS900h_interpret_reg.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_interpret_reg.cpp; sourceTree = "<group>"; };
 		B3AAB09720736EEA0097D86F /* TLCS900h_registers_mapCodeB1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers_mapCodeB1.h; sourceTree = "<group>"; };
-		B3AAB09820736EEA0097D86F /* libngp_a-TLCS900h_disassemble_extra.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_disassemble_extra.o"; sourceTree = "<group>"; };
 		B3AAB09920736EEA0097D86F /* TLCS900h_registers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_registers.h; sourceTree = "<group>"; };
 		B3AAB09B20736EEA0097D86F /* libngp_a-TLCS900h_interpret_single.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libngp_a-TLCS900h_interpret_single.Po"; sourceTree = "<group>"; };
 		B3AAB09C20736EEA0097D86F /* libngp_a-TLCS900h_interpret_reg.Po */ = {isa = PBXFileReference; lastKnownFileType = text; path = "libngp_a-TLCS900h_interpret_reg.Po"; sourceTree = "<group>"; };
@@ -4840,12 +4867,9 @@
 		B3AAB0A820736EEA0097D86F /* .dirstamp */ = {isa = PBXFileReference; lastKnownFileType = text; path = .dirstamp; sourceTree = "<group>"; };
 		B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TLCS900h_registers.cpp; sourceTree = "<group>"; };
 		B3AAB0AA20736EEA0097D86F /* TLCS900h_interpret_dst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLCS900h_interpret_dst.h; sourceTree = "<group>"; };
-		B3AAB0AB20736EEA0097D86F /* libngp_a-TLCS900h_interpret_src.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_interpret_src.o"; sourceTree = "<group>"; };
-		B3AAB0AC20736EEA0097D86F /* libngp_a-TLCS900h_registers.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-TLCS900h_registers.o"; sourceTree = "<group>"; };
 		B3AAB0AD20736EEA0097D86F /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = "<group>"; };
 		B3AAB0AE20736EEA0097D86F /* .dirstamp */ = {isa = PBXFileReference; lastKnownFileType = text; path = .dirstamp; sourceTree = "<group>"; };
 		B3AAB0AF20736EEA0097D86F /* neopop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = neopop.cpp; sourceTree = "<group>"; };
-		B3AAB0B020736EEA0097D86F /* libngp_a-mem.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = "libngp_a-mem.o"; sourceTree = "<group>"; };
 		B3AAB0B120736EEA0097D86F /* state_rewind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state_rewind.h; sourceTree = "<group>"; };
 		B3AAB0B320736EEA0097D86F /* frontio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = frontio.h; sourceTree = "<group>"; };
 		B3AAB0B420736EEA0097D86F /* dma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dma.h; sourceTree = "<group>"; };
@@ -5650,8 +5674,8 @@
 			children = (
 				8CB3E08917F1DFFF0090372A /* include */,
 				8CB3D51D17F1DE5A0090372A /* mednafen */,
-				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				B3AA9D6920736B030097D86F /* mednafen-1.21 */,
+				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
 				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
 				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
@@ -6687,36 +6711,36 @@
 		8CB3D7C617F1DE5B0090372A /* ngp */ = {
 			isa = PBXGroup;
 			children = (
+				8CB3D7D417F1DE5B0090372A /* Makefile.am */,
 				8CB3D7C717F1DE5B0090372A /* bios.cpp */,
-				8CB3D7C817F1DE5B0090372A /* bios.h */,
 				8CB3D7C917F1DE5B0090372A /* biosHLE.cpp */,
 				8CB3D7CA17F1DE5B0090372A /* dma.cpp */,
-				8CB3D7CB17F1DE5B0090372A /* dma.h */,
 				8CB3D7CC17F1DE5B0090372A /* flash.cpp */,
-				8CB3D7CD17F1DE5B0090372A /* flash.h */,
-				8CB3D7CE17F1DE5B0090372A /* gfx.cpp */,
-				8CB3D7CF17F1DE5B0090372A /* gfx.h */,
 				8CB3D7D017F1DE5B0090372A /* gfx_scanline_colour.cpp */,
 				8CB3D7D117F1DE5B0090372A /* gfx_scanline_mono.cpp */,
+				8CB3D7CE17F1DE5B0090372A /* gfx.cpp */,
 				8CB3D7D217F1DE5B0090372A /* interrupt.cpp */,
-				8CB3D7D317F1DE5B0090372A /* interrupt.h */,
-				8CB3D7D417F1DE5B0090372A /* Makefile.am */,
-				8CB3D7D517F1DE5B0090372A /* Makefile.in */,
 				8CB3D7D617F1DE5B0090372A /* mem.cpp */,
-				8CB3D7D717F1DE5B0090372A /* mem.h */,
 				8CB3D7D817F1DE5B0090372A /* neopop.cpp */,
-				8CB3D7D917F1DE5B0090372A /* neopop.h */,
 				8CB3D7DA17F1DE5B0090372A /* rom.cpp */,
 				8CB3D7DB17F1DE5B0090372A /* rtc.cpp */,
-				8CB3D7DC17F1DE5B0090372A /* rtc.h */,
 				8CB3D7DD17F1DE5B0090372A /* sound.cpp */,
-				8CB3D7DE17F1DE5B0090372A /* sound.h */,
 				8CB3D7DF17F1DE5B0090372A /* T6W28_Apu.cpp */,
+				8CB3D80417F1DE5B0090372A /* Z80_interface.cpp */,
+				8CB3D7C817F1DE5B0090372A /* bios.h */,
+				8CB3D7CB17F1DE5B0090372A /* dma.h */,
+				8CB3D7CD17F1DE5B0090372A /* flash.h */,
+				8CB3D7CF17F1DE5B0090372A /* gfx.h */,
+				8CB3D7D317F1DE5B0090372A /* interrupt.h */,
+				8CB3D7D717F1DE5B0090372A /* mem.h */,
+				8CB3D7D917F1DE5B0090372A /* neopop.h */,
+				8CB3D7DC17F1DE5B0090372A /* rtc.h */,
+				8CB3D7DE17F1DE5B0090372A /* sound.h */,
 				8CB3D7E017F1DE5B0090372A /* T6W28_Apu.h */,
 				8CB3D7E117F1DE5B0090372A /* T6W28_Oscs.h */,
-				8CB3D7E217F1DE5B0090372A /* TLCS-900h */,
-				8CB3D80417F1DE5B0090372A /* Z80_interface.cpp */,
 				8CB3D80517F1DE5B0090372A /* Z80_interface.h */,
+				8CB3D7D517F1DE5B0090372A /* Makefile.in */,
+				8CB3D7E217F1DE5B0090372A /* TLCS-900h */,
 			);
 			path = ngp;
 			sourceTree = "<group>";
@@ -6724,24 +6748,23 @@
 		8CB3D7E217F1DE5B0090372A /* TLCS-900h */ = {
 			isa = PBXGroup;
 			children = (
-				8CB3D7E317F1DE5B0090372A /* TLCS900h_disassemble.cpp */,
-				8CB3D7E417F1DE5B0090372A /* TLCS900h_disassemble.h */,
 				8CB3D7E517F1DE5B0090372A /* TLCS900h_disassemble_dst.cpp */,
 				8CB3D7E617F1DE5B0090372A /* TLCS900h_disassemble_extra.cpp */,
 				8CB3D7E717F1DE5B0090372A /* TLCS900h_disassemble_reg.cpp */,
 				8CB3D7E817F1DE5B0090372A /* TLCS900h_disassemble_src.cpp */,
-				8CB3D7E917F1DE5B0090372A /* TLCS900h_interpret.cpp */,
-				8CB3D7EA17F1DE5B0090372A /* TLCS900h_interpret.h */,
+				8CB3D7E317F1DE5B0090372A /* TLCS900h_disassemble.cpp */,
 				8CB3D7EB17F1DE5B0090372A /* TLCS900h_interpret_dst.cpp */,
-				8CB3D7EC17F1DE5B0090372A /* TLCS900h_interpret_dst.h */,
 				8CB3D7ED17F1DE5B0090372A /* TLCS900h_interpret_reg.cpp */,
-				8CB3D7EE17F1DE5B0090372A /* TLCS900h_interpret_reg.h */,
 				8CB3D7EF17F1DE5B0090372A /* TLCS900h_interpret_single.cpp */,
-				8CB3D7F017F1DE5B0090372A /* TLCS900h_interpret_single.h */,
 				8CB3D7F117F1DE5B0090372A /* TLCS900h_interpret_src.cpp */,
-				8CB3D7F217F1DE5B0090372A /* TLCS900h_interpret_src.h */,
+				8CB3D7E917F1DE5B0090372A /* TLCS900h_interpret.cpp */,
 				8CB3D7F317F1DE5B0090372A /* TLCS900h_registers.cpp */,
-				8CB3D7F417F1DE5B0090372A /* TLCS900h_registers.h */,
+				8CB3D7E417F1DE5B0090372A /* TLCS900h_disassemble.h */,
+				8CB3D7EC17F1DE5B0090372A /* TLCS900h_interpret_dst.h */,
+				8CB3D7EE17F1DE5B0090372A /* TLCS900h_interpret_reg.h */,
+				8CB3D7F017F1DE5B0090372A /* TLCS900h_interpret_single.h */,
+				8CB3D7F217F1DE5B0090372A /* TLCS900h_interpret_src.h */,
+				8CB3D7EA17F1DE5B0090372A /* TLCS900h_interpret.h */,
 				8CB3D7F517F1DE5B0090372A /* TLCS900h_registers_mapB.h */,
 				8CB3D7F617F1DE5B0090372A /* TLCS900h_registers_mapCodeB0.h */,
 				8CB3D7F717F1DE5B0090372A /* TLCS900h_registers_mapCodeB1.h */,
@@ -6757,6 +6780,7 @@
 				8CB3D80117F1DE5B0090372A /* TLCS900h_registers_mapCodeW3.h */,
 				8CB3D80217F1DE5B0090372A /* TLCS900h_registers_mapL.h */,
 				8CB3D80317F1DE5B0090372A /* TLCS900h_registers_mapW.h */,
+				8CB3D7F417F1DE5B0090372A /* TLCS900h_registers.h */,
 			);
 			path = "TLCS-900h";
 			sourceTree = "<group>";
@@ -13561,52 +13585,37 @@
 		B3AAB03820736EEA0097D86F /* ngp */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAB03920736EEA0097D86F /* bios.cpp */,
-				B3AAB03A20736EEA0097D86F /* sound.h */,
-				B3AAB03B20736EEA0097D86F /* dma.h */,
-				B3AAB03C20736EEA0097D86F /* bios.h */,
-				B3AAB03D20736EEA0097D86F /* libngp_a-flash.o */,
-				B3AAB03E20736EEA0097D86F /* biosHLE.cpp */,
-				B3AAB03F20736EEA0097D86F /* libngp_a-bios.o */,
-				B3AAB04020736EEA0097D86F /* dma.cpp */,
-				B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */,
-				B3AAB04220736EEA0097D86F /* libngp_a-dma.o */,
-				B3AAB04320736EEA0097D86F /* interrupt.cpp */,
-				B3AAB04420736EEA0097D86F /* libngp_a-interrupt.o */,
-				B3AAB04520736EEA0097D86F /* Makefile.am.inc */,
-				B3AAB04620736EEA0097D86F /* Z80_interface.cpp */,
-				B3AAB04720736EEA0097D86F /* T6W28_Oscs.h */,
-				B3AAB04820736EEA0097D86F /* libngp_a-gfx_scanline_colour.o */,
-				B3AAB04920736EEA0097D86F /* libngp_a-rom.o */,
-				B3AAB04A20736EEA0097D86F /* neopop.h */,
-				B3AAB04B20736EEA0097D86F /* T6W28_Apu.h */,
-				B3AAB04C20736EEA0097D86F /* libngp_a-T6W28_Apu.o */,
-				B3AAB04D20736EEA0097D86F /* libngp_a-rtc.o */,
-				B3AAB04E20736EEA0097D86F /* libngp_a-gfx_scanline_mono.o */,
-				B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */,
-				B3AAB05020736EEA0097D86F /* rtc.cpp */,
-				B3AAB05120736EEA0097D86F /* libngp_a-biosHLE.o */,
-				B3AAB05220736EEA0097D86F /* gfx.h */,
-				B3AAB05320736EEA0097D86F /* libngp_a-sound.o */,
-				B3AAB05420736EEA0097D86F /* rom.cpp */,
-				B3AAB05520736EEA0097D86F /* sound.cpp */,
-				B3AAB05620736EEA0097D86F /* rtc.h */,
-				B3AAB05720736EEA0097D86F /* libngp_a-neopop.o */,
-				B3AAB05820736EEA0097D86F /* libngp_a-gfx.o */,
-				B3AAB05920736EEA0097D86F /* interrupt.h */,
-				B3AAB05A20736EEA0097D86F /* flash.h */,
-				B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */,
-				B3AAB05C20736EEA0097D86F /* flash.cpp */,
-				B3AAB05D20736EEA0097D86F /* mem.h */,
-				B3AAB05E20736EEA0097D86F /* libngp_a-Z80_interface.o */,
-				B3AAB05F20736EEA0097D86F /* Z80_interface.h */,
-				B3AAB06020736EEA0097D86F /* .deps */,
-				B3AAB07120736EEA0097D86F /* mem.cpp */,
-				B3AAB07220736EEA0097D86F /* TLCS-900h */,
-				B3AAB0AD20736EEA0097D86F /* gfx.cpp */,
 				B3AAB0AE20736EEA0097D86F /* .dirstamp */,
+				B3AAB03920736EEA0097D86F /* bios.cpp */,
+				B3AAB03E20736EEA0097D86F /* biosHLE.cpp */,
+				B3AAB04020736EEA0097D86F /* dma.cpp */,
+				B3AAB05C20736EEA0097D86F /* flash.cpp */,
+				B3AAB04F20736EEA0097D86F /* gfx_scanline_colour.cpp */,
+				B3AAB04120736EEA0097D86F /* gfx_scanline_mono.cpp */,
+				B3AAB0AD20736EEA0097D86F /* gfx.cpp */,
+				B3AAB04320736EEA0097D86F /* interrupt.cpp */,
+				B3AAB07120736EEA0097D86F /* mem.cpp */,
 				B3AAB0AF20736EEA0097D86F /* neopop.cpp */,
-				B3AAB0B020736EEA0097D86F /* libngp_a-mem.o */,
+				B3AAB05420736EEA0097D86F /* rom.cpp */,
+				B3AAB05020736EEA0097D86F /* rtc.cpp */,
+				B3AAB05520736EEA0097D86F /* sound.cpp */,
+				B3AAB05B20736EEA0097D86F /* T6W28_Apu.cpp */,
+				B3AAB04620736EEA0097D86F /* Z80_interface.cpp */,
+				B3AAB03C20736EEA0097D86F /* bios.h */,
+				B3AAB03B20736EEA0097D86F /* dma.h */,
+				B3AAB05A20736EEA0097D86F /* flash.h */,
+				B3AAB05220736EEA0097D86F /* gfx.h */,
+				B3AAB05920736EEA0097D86F /* interrupt.h */,
+				B3AAB05D20736EEA0097D86F /* mem.h */,
+				B3AAB04A20736EEA0097D86F /* neopop.h */,
+				B3AAB05620736EEA0097D86F /* rtc.h */,
+				B3AAB03A20736EEA0097D86F /* sound.h */,
+				B3AAB04B20736EEA0097D86F /* T6W28_Apu.h */,
+				B3AAB04720736EEA0097D86F /* T6W28_Oscs.h */,
+				B3AAB05F20736EEA0097D86F /* Z80_interface.h */,
+				B3AAB04520736EEA0097D86F /* Makefile.am.inc */,
+				B3AAB06020736EEA0097D86F /* .deps */,
+				B3AAB07220736EEA0097D86F /* TLCS-900h */,
 			);
 			path = ngp;
 			sourceTree = "<group>";
@@ -13637,52 +13646,41 @@
 		B3AAB07220736EEA0097D86F /* TLCS-900h */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAB07320736EEA0097D86F /* TLCS900h_disassemble_src.cpp */,
-				B3AAB07420736EEA0097D86F /* TLCS900h_registers_mapCodeL3.h */,
-				B3AAB07520736EEA0097D86F /* TLCS900h_registers_mapCodeB0.h */,
-				B3AAB07620736EEA0097D86F /* TLCS900h_disassemble.h */,
-				B3AAB07720736EEA0097D86F /* TLCS900h_registers_mapCodeW2.h */,
-				B3AAB07820736EEA0097D86F /* TLCS900h_registers_mapL.h */,
-				B3AAB07920736EEA0097D86F /* TLCS900h_interpret_src.h */,
-				B3AAB07A20736EEA0097D86F /* libngp_a-TLCS900h_interpret_single.o */,
-				B3AAB07B20736EEA0097D86F /* TLCS900h_registers_mapB.h */,
-				B3AAB07C20736EEA0097D86F /* libngp_a-TLCS900h_interpret_dst.o */,
-				B3AAB07D20736EEA0097D86F /* TLCS900h_registers_mapCodeL0.h */,
-				B3AAB07E20736EEA0097D86F /* TLCS900h_interpret.h */,
-				B3AAB07F20736EEA0097D86F /* TLCS900h_interpret_reg.h */,
-				B3AAB08020736EEA0097D86F /* TLCS900h_registers_mapW.h */,
-				B3AAB08120736EEA0097D86F /* TLCS900h_registers_mapCodeB3.h */,
-				B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */,
-				B3AAB08320736EEA0097D86F /* libngp_a-TLCS900h_interpret.o */,
-				B3AAB08420736EEA0097D86F /* libngp_a-TLCS900h_disassemble.o */,
-				B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */,
-				B3AAB08620736EEA0097D86F /* TLCS900h_registers_mapCodeW1.h */,
-				B3AAB08720736EEA0097D86F /* libngp_a-TLCS900h_disassemble_dst.o */,
-				B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */,
-				B3AAB08920736EEA0097D86F /* libngp_a-TLCS900h_interpret_reg.o */,
-				B3AAB08A20736EEA0097D86F /* TLCS900h_registers_mapCodeL1.h */,
-				B3AAB08B20736EEA0097D86F /* TLCS900h_registers_mapCodeB2.h */,
-				B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */,
-				B3AAB08D20736EEA0097D86F /* TLCS900h_disassemble.cpp */,
-				B3AAB08E20736EEA0097D86F /* TLCS900h_registers_mapCodeW0.h */,
-				B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */,
-				B3AAB09020736EEA0097D86F /* TLCS900h_interpret_single.h */,
-				B3AAB09120736EEA0097D86F /* libngp_a-TLCS900h_disassemble_src.o */,
-				B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */,
+				B3AAB0A820736EEA0097D86F /* .dirstamp */,
 				B3AAB09320736EEA0097D86F /* TLCS900h_disassemble_dst.cpp */,
-				B3AAB09420736EEA0097D86F /* libngp_a-TLCS900h_disassemble_reg.o */,
-				B3AAB09520736EEA0097D86F /* TLCS900h_registers_mapCodeL2.h */,
+				B3AAB08220736EEA0097D86F /* TLCS900h_disassemble_extra.cpp */,
+				B3AAB08F20736EEA0097D86F /* TLCS900h_disassemble_reg.cpp */,
+				B3AAB07320736EEA0097D86F /* TLCS900h_disassemble_src.cpp */,
+				B3AAB08D20736EEA0097D86F /* TLCS900h_disassemble.cpp */,
+				B3AAB09220736EEA0097D86F /* TLCS900h_interpret_dst.cpp */,
 				B3AAB09620736EEA0097D86F /* TLCS900h_interpret_reg.cpp */,
+				B3AAB08520736EEA0097D86F /* TLCS900h_interpret_single.cpp */,
+				B3AAB08820736EEA0097D86F /* TLCS900h_interpret_src.cpp */,
+				B3AAB08C20736EEA0097D86F /* TLCS900h_interpret.cpp */,
+				B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */,
+				B3AAB07620736EEA0097D86F /* TLCS900h_disassemble.h */,
+				B3AAB0AA20736EEA0097D86F /* TLCS900h_interpret_dst.h */,
+				B3AAB07F20736EEA0097D86F /* TLCS900h_interpret_reg.h */,
+				B3AAB09020736EEA0097D86F /* TLCS900h_interpret_single.h */,
+				B3AAB07920736EEA0097D86F /* TLCS900h_interpret_src.h */,
+				B3AAB07E20736EEA0097D86F /* TLCS900h_interpret.h */,
+				B3AAB07B20736EEA0097D86F /* TLCS900h_registers_mapB.h */,
+				B3AAB07520736EEA0097D86F /* TLCS900h_registers_mapCodeB0.h */,
 				B3AAB09720736EEA0097D86F /* TLCS900h_registers_mapCodeB1.h */,
-				B3AAB09820736EEA0097D86F /* libngp_a-TLCS900h_disassemble_extra.o */,
+				B3AAB08B20736EEA0097D86F /* TLCS900h_registers_mapCodeB2.h */,
+				B3AAB08120736EEA0097D86F /* TLCS900h_registers_mapCodeB3.h */,
+				B3AAB07D20736EEA0097D86F /* TLCS900h_registers_mapCodeL0.h */,
+				B3AAB08A20736EEA0097D86F /* TLCS900h_registers_mapCodeL1.h */,
+				B3AAB09520736EEA0097D86F /* TLCS900h_registers_mapCodeL2.h */,
+				B3AAB07420736EEA0097D86F /* TLCS900h_registers_mapCodeL3.h */,
+				B3AAB08E20736EEA0097D86F /* TLCS900h_registers_mapCodeW0.h */,
+				B3AAB08620736EEA0097D86F /* TLCS900h_registers_mapCodeW1.h */,
+				B3AAB07720736EEA0097D86F /* TLCS900h_registers_mapCodeW2.h */,
+				B3AAB0A720736EEA0097D86F /* TLCS900h_registers_mapCodeW3.h */,
+				B3AAB07820736EEA0097D86F /* TLCS900h_registers_mapL.h */,
+				B3AAB08020736EEA0097D86F /* TLCS900h_registers_mapW.h */,
 				B3AAB09920736EEA0097D86F /* TLCS900h_registers.h */,
 				B3AAB09A20736EEA0097D86F /* .deps */,
-				B3AAB0A720736EEA0097D86F /* TLCS900h_registers_mapCodeW3.h */,
-				B3AAB0A820736EEA0097D86F /* .dirstamp */,
-				B3AAB0A920736EEA0097D86F /* TLCS900h_registers.cpp */,
-				B3AAB0AA20736EEA0097D86F /* TLCS900h_interpret_dst.h */,
-				B3AAB0AB20736EEA0097D86F /* libngp_a-TLCS900h_interpret_src.o */,
-				B3AAB0AC20736EEA0097D86F /* libngp_a-TLCS900h_registers.o */,
 			);
 			path = "TLCS-900h";
 			sourceTree = "<group>";
@@ -15039,11 +15037,13 @@
 			files = (
 				B3AAB404207374F90097D86F /* state.cpp in Sources */,
 				B3AAB46220738C660097D86F /* gpu_sprite.cpp in Sources */,
+				B3B1FC3C2076D95B00799EFE /* TLCS900h_interpret_single.cpp in Sources */,
 				B3AAB42920737B9A0097D86F /* codebook.c in Sources */,
 				B3AAB3F8207374F90097D86F /* git.cpp in Sources */,
 				B3AAB46F20738C760097D86F /* justifier.cpp in Sources */,
 				B3AAB422207377EC0097D86F /* requant.c in Sources */,
 				B3AAB43320737B9A0097D86F /* synthesis.c in Sources */,
+				B3B1FC232076D80900799EFE /* sound.cpp in Sources */,
 				B3AAB3F3207374F90097D86F /* endian.cpp in Sources */,
 				B3AAB3F9207374F90097D86F /* IPSPatcher.cpp in Sources */,
 				B3AAB3E82073730B0097D86F /* cputest.c in Sources */,
@@ -15061,12 +15061,15 @@
 				B3AAB42720737B9A0097D86F /* bitwise.c in Sources */,
 				B3AAB3FB207374F90097D86F /* MemoryStream.cpp in Sources */,
 				B3AAB47020738C760097D86F /* memcard.cpp in Sources */,
+				B3B1FC202076D80900799EFE /* neopop.cpp in Sources */,
 				B3AAB3E7207372EB0097D86F /* ZLInflateFilter.cpp in Sources */,
 				B3AAB3DE207372BF0097D86F /* CDUtility.cpp in Sources */,
 				B3AAB46920738C660097D86F /* spu.cpp in Sources */,
+				B3B1FC1F2076D80900799EFE /* mem.cpp in Sources */,
 				B3AAB46520738C660097D86F /* irq.cpp in Sources */,
 				B3AAB416207377150097D86F /* okiadpcm.cpp in Sources */,
 				B3AAB47120738C760097D86F /* mouse.cpp in Sources */,
+				B3B1FC1A2076D80900799EFE /* flash.cpp in Sources */,
 				B3AAB46A20738C660097D86F /* timer.cpp in Sources */,
 				B3AAB3E9207373180097D86F /* demo.cpp in Sources */,
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
@@ -15080,22 +15083,29 @@
 				B3AAB421207377EC0097D86F /* mpc_demux.c in Sources */,
 				B3AAB408207376710097D86F /* png.cpp in Sources */,
 				B3AAB3E4207372BF0097D86F /* scsicd.cpp in Sources */,
+				B3B1FC1C2076D80900799EFE /* gfx_scanline_mono.cpp in Sources */,
+				B3B1FC1D2076D80900799EFE /* gfx.cpp in Sources */,
 				B3AAB3EF2073745D0097D86F /* v810_fp_ops.cpp in Sources */,
 				B3AAB411207376EB0097D86F /* trio.c in Sources */,
 				B3AAB46C20738C760097D86F /* dualshock.cpp in Sources */,
+				B3B1FC1E2076D80900799EFE /* interrupt.cpp in Sources */,
 				B3AAB3E0207372BF0097D86F /* galois.cpp in Sources */,
+				B3B1FC382076D95B00799EFE /* TLCS900h_disassemble_src.cpp in Sources */,
 				B3AAB46B20738C760097D86F /* dualanalog.cpp in Sources */,
 				B3AAB3E5207372EB0097D86F /* GZFileStream.cpp in Sources */,
 				B3AAB41E207377EC0097D86F /* huffman.c in Sources */,
+				B3B1FC192076D80900799EFE /* dma.cpp in Sources */,
 				B3AAB407207376710097D86F /* font-data.cpp in Sources */,
 				B3AAB3D42073723C0097D86F /* Time.cpp in Sources */,
 				B3AAB46820738C660097D86F /* sio.cpp in Sources */,
+				B3B1FC242076D80900799EFE /* T6W28_Apu.cpp in Sources */,
 				B3AAB3DB207372BF0097D86F /* CDAFReader_Vorbis.cpp in Sources */,
 				B3AAB419207377150097D86F /* WAVRecord.cpp in Sources */,
 				B3AAB3D020736F170097D86F /* vsu.cpp in Sources */,
 				B3AAB42A20737B9A0097D86F /* floor0.c in Sources */,
 				B3AAB45F20738C660097D86F /* frontio.cpp in Sources */,
 				B3AAB3F0207374920097D86F /* z80.cpp in Sources */,
+				B3B1FC212076D80900799EFE /* rom.cpp in Sources */,
 				B3AAB3D9207372BF0097D86F /* CDAccess.cpp in Sources */,
 				B3AAB3F1207374920097D86F /* z80_ops.cpp in Sources */,
 				B3AAB418207377150097D86F /* Stereo_Buffer.cpp in Sources */,
@@ -15109,16 +15119,19 @@
 				B3AAB42820737B9A0097D86F /* block.c in Sources */,
 				B3AAB3D8207372BF0097D86F /* CDAccess_Image.cpp in Sources */,
 				B3AAB40A207376710097D86F /* resize.cpp in Sources */,
+				B3B1FC372076D95B00799EFE /* TLCS900h_disassemble_reg.cpp in Sources */,
 				B3AAB43A20737E2D0097D86F /* minilzo.c in Sources */,
+				B3B1FC3E2076D95B00799EFE /* TLCS900h_interpret.cpp in Sources */,
 				B3AAB3DC207372BF0097D86F /* CDAFReader.cpp in Sources */,
 				B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */,
 				B3AAB47420738C9C0097D86F /* psx.cpp in Sources */,
 				B3AAB3DF207372BF0097D86F /* crc32.cpp in Sources */,
 				B3AAB3F2207374F90097D86F /* debug.cpp in Sources */,
 				B3AAB3F7207374F90097D86F /* general.cpp in Sources */,
-				B3AAB43E2073820C0097D86F /* MednafenGameCore.swift in Sources */,
 				B3AAB41A2073773A0097D86F /* arcade_card.cpp in Sources */,
+				B3B1FC172076D80900799EFE /* bios.cpp in Sources */,
 				B3AAB420207377EC0097D86F /* mpc_decoder.c in Sources */,
+				B3B1FC252076D80900799EFE /* Z80_interface.cpp in Sources */,
 				B3AAB3D7207372BF0097D86F /* CDAccess_CCD.cpp in Sources */,
 				B3AAB403207374F90097D86F /* state_rewind.cpp in Sources */,
 				B3AAB3CF20736F170097D86F /* vip.cpp in Sources */,
@@ -15130,20 +15143,27 @@
 				B3AAB43020737B9A0097D86F /* registry.c in Sources */,
 				B3AAB41D207377EC0097D86F /* crc32.c in Sources */,
 				B3AAB43420737B9A0097D86F /* vorbisfile.c in Sources */,
+				B3B1FC3B2076D95B00799EFE /* TLCS900h_interpret_reg.cpp in Sources */,
+				B3B1FC3D2076D95B00799EFE /* TLCS900h_interpret_src.cpp in Sources */,
 				B3AAB40B207376710097D86F /* surface.cpp in Sources */,
 				B3AAB423207377EC0097D86F /* streaminfo.c in Sources */,
 				B3AAB401207374F90097D86F /* qtrecord.cpp in Sources */,
 				B3AAB46620738C660097D86F /* mdec.cpp in Sources */,
 				B3AAB45D20738C660097D86F /* dis.cpp in Sources */,
+				B3B1FC392076D95B00799EFE /* TLCS900h_disassemble.cpp in Sources */,
+				B3B1FC1B2076D80900799EFE /* gfx_scanline_colour.cpp in Sources */,
 				B3AAB3FE207374F90097D86F /* netplay.cpp in Sources */,
 				B3AAB3CD20736F170097D86F /* timer.cpp in Sources */,
 				B3AAB410207376CA0097D86F /* string.cpp in Sources */,
+				B3B1FC182076D80900799EFE /* biosHLE.cpp in Sources */,
 				B3AAB409207376710097D86F /* primitives.cpp in Sources */,
 				B3AAB45C20738C660097D86F /* cpu.cpp in Sources */,
 				B3AAB3DA207372BF0097D86F /* CDAFReader_MPC.cpp in Sources */,
 				B3AAB3D62073726F0097D86F /* cdplay.cpp in Sources */,
+				B3B1FC222076D80900799EFE /* rtc.cpp in Sources */,
 				B3AAB3F5207374F90097D86F /* file.cpp in Sources */,
 				B3AAB42D20737B9A0097D86F /* info.c in Sources */,
+				B3B1FC352076D95B00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */,
 				B3AAB46720738C660097D86F /* psx.cpp in Sources */,
 				B3AAB43720737C0D0097D86F /* quicklz.c in Sources */,
 				B3AAB3CE20736F170097D86F /* vb.cpp in Sources */,
@@ -15155,6 +15175,7 @@
 				B3AAB43920737C3B0097D86F /* Net_POSIX.cpp in Sources */,
 				B3AAB40F207376CA0097D86F /* escape.cpp in Sources */,
 				B3AAB424207377EC0097D86F /* synth_filter.c in Sources */,
+				B3B1FC3F2076D95B00799EFE /* TLCS900h_registers.cpp in Sources */,
 				B3AAB43120737B9A0097D86F /* res012.c in Sources */,
 				B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */,
 				B3AAB417207377150097D86F /* OwlResampler.cpp in Sources */,
@@ -15166,12 +15187,14 @@
 				B3AAB3FF207374F90097D86F /* player.cpp in Sources */,
 				B3AAB3FC207374F90097D86F /* mempatcher.cpp in Sources */,
 				B3AAB414207377150097D86F /* Blip_Buffer.cpp in Sources */,
+				B3B1FC362076D95B00799EFE /* TLCS900h_disassemble_extra.cpp in Sources */,
 				B3AAB3ED207374340097D86F /* m68k.cpp in Sources */,
 				B3AAB46E20738C760097D86F /* guncon.cpp in Sources */,
 				B3AAB40E207376710097D86F /* video.cpp in Sources */,
 				B3AAB43820737C3B0097D86F /* Net.cpp in Sources */,
 				B3AAB3F6207374F90097D86F /* FileStream.cpp in Sources */,
 				B3AAB41F207377EC0097D86F /* mpc_bits_reader.c in Sources */,
+				B3B1FC3A2076D95B00799EFE /* TLCS900h_interpret_dst.cpp in Sources */,
 				B3AAB47220738C760097D86F /* multitap.cpp in Sources */,
 				B3AAB40D207376710097D86F /* text.cpp in Sources */,
 				B3AAB40C207376710097D86F /* tblur.cpp in Sources */,
@@ -15184,13 +15207,15 @@
 			files = (
 				B340E5311E08893000AD0E8B /* MednafenGameCore.mm in Sources */,
 				B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */,
-				B3A74C8E20522B86001D3D2E /* MednafenGameCore.swift in Sources */,
 				B340E52F1E08893000AD0E8B /* c68k.cpp in Sources */,
 				B340E5301E08893000AD0E8B /* c68kexec.cpp in Sources */,
 				B39578E31E6D582300854D7A /* T6W28_Apu.cpp in Sources */,
 				B340E5321E08893000AD0E8B /* video.cpp in Sources */,
 				B340E5331E08893000AD0E8B /* negcon.cpp in Sources */,
+				B3B1FC322076D80A00799EFE /* sound.cpp in Sources */,
+				B3B1FC2E2076D80A00799EFE /* mem.cpp in Sources */,
 				B340E5341E08893000AD0E8B /* ZLInflateFilter.cpp in Sources */,
+				B3B1FC262076D80A00799EFE /* bios.cpp in Sources */,
 				B340E5351E08893000AD0E8B /* soundbox.cpp in Sources */,
 				B340E5361E08893000AD0E8B /* galois.cpp in Sources */,
 				B39578E01E6D582300854D7A /* rom.cpp in Sources */,
@@ -15214,6 +15239,7 @@
 				B340E5471E08893000AD0E8B /* okiadpcm.cpp in Sources */,
 				B39579001E6D591E00854D7A /* z80_ops.cpp in Sources */,
 				B39578CF1E6D57FA00854D7A /* biosHLE.cpp in Sources */,
+				B3B1FC472076D95F00799EFE /* TLCS900h_interpret_single.cpp in Sources */,
 				B340E5481E08893000AD0E8B /* mpc_demux.c in Sources */,
 				B340E5491E08893000AD0E8B /* mdec.cpp in Sources */,
 				B340E54A1E08893000AD0E8B /* tcache.cpp in Sources */,
@@ -15236,6 +15262,7 @@
 				B340E5581E08893000AD0E8B /* trio.c in Sources */,
 				B340E5591E08893000AD0E8B /* vb.cpp in Sources */,
 				B340E55A1E08893000AD0E8B /* netplay.cpp in Sources */,
+				B3B1FC4A2076D95F00799EFE /* TLCS900h_registers.cpp in Sources */,
 				B340E55B1E08893000AD0E8B /* debug.cpp in Sources */,
 				B340E55C1E08893000AD0E8B /* dualshock.cpp in Sources */,
 				B340E55D1E08893000AD0E8B /* mpc_decoder.c in Sources */,
@@ -15252,6 +15279,7 @@
 				B340E5661E08893000AD0E8B /* thread.cpp in Sources */,
 				B340E5671E08893000AD0E8B /* dis_groups.cpp in Sources */,
 				B340E5681E08893000AD0E8B /* memory.cpp in Sources */,
+				B3B1FC452076D95F00799EFE /* TLCS900h_interpret_dst.cpp in Sources */,
 				B340E5691E08893000AD0E8B /* qtrecord.cpp in Sources */,
 				B340E56A1E08893000AD0E8B /* streaminfo.c in Sources */,
 				B340E56B1E08893000AD0E8B /* mednafen.cpp in Sources */,
@@ -15259,6 +15287,7 @@
 				B340E56D1E08893000AD0E8B /* sharedbook.c in Sources */,
 				B340E56E1E08893000AD0E8B /* Stream.cpp in Sources */,
 				B340E56F1E08893000AD0E8B /* gpu_line.cpp in Sources */,
+				B3B1FC332076D80A00799EFE /* T6W28_Apu.cpp in Sources */,
 				B340E5701E08893000AD0E8B /* crc32.c in Sources */,
 				B340E5711E08893000AD0E8B /* movie.cpp in Sources */,
 				B340E5721E08893000AD0E8B /* CDAccess_Image.cpp in Sources */,
@@ -15291,15 +15320,22 @@
 				B340E58C1E08893000AD0E8B /* pcecd.cpp in Sources */,
 				B340E58D1E08893000AD0E8B /* cpu.cpp in Sources */,
 				B340E58E1E08893000AD0E8B /* mouse.cpp in Sources */,
+				B3B1FC402076D95F00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */,
 				B39578DE1E6D582300854D7A /* interrupt.cpp in Sources */,
+				B3B1FC422076D95F00799EFE /* TLCS900h_disassemble_reg.cpp in Sources */,
+				B3B1FC272076D80A00799EFE /* biosHLE.cpp in Sources */,
 				B39578FE1E6D58FF00854D7A /* gfx_scanline_mono.cpp in Sources */,
+				B3B1FC412076D95F00799EFE /* TLCS900h_disassemble_extra.cpp in Sources */,
 				B39578F31E6D583C00854D7A /* TLCS900h_disassemble_reg.cpp in Sources */,
 				B39578F21E6D583C00854D7A /* TLCS900h_disassemble_extra.cpp in Sources */,
+				B3B1FC492076D95F00799EFE /* TLCS900h_interpret.cpp in Sources */,
 				B340E58F1E08893000AD0E8B /* requant.c in Sources */,
 				B340E5901E08893000AD0E8B /* git.cpp in Sources */,
 				B340E5911E08893000AD0E8B /* surface.cpp in Sources */,
+				B3B1FC302076D80A00799EFE /* rom.cpp in Sources */,
 				B340E5921E08893000AD0E8B /* Deinterlacer.cpp in Sources */,
 				B340E5931E08893000AD0E8B /* gfx.cpp in Sources */,
+				B3B1FC442076D95F00799EFE /* TLCS900h_disassemble.cpp in Sources */,
 				B39578DF1E6D582300854D7A /* mem.cpp in Sources */,
 				B340E5941E08893000AD0E8B /* fxscsi.cpp in Sources */,
 				B340E5951E08893000AD0E8B /* gpu_sprite.cpp in Sources */,
@@ -15312,6 +15348,7 @@
 				B340E59C1E08893000AD0E8B /* ram.cpp in Sources */,
 				B340E59D1E08893000AD0E8B /* mikie.cpp in Sources */,
 				B340E59E1E08893000AD0E8B /* interrupt.cpp in Sources */,
+				B3B1FC432076D95F00799EFE /* TLCS900h_disassemble_src.cpp in Sources */,
 				B340E59F1E08893000AD0E8B /* syntax.cpp in Sources */,
 				B340E5A01E08893000AD0E8B /* mouse.cpp in Sources */,
 				B340E5A11E08893000AD0E8B /* lec.cpp in Sources */,
@@ -15319,22 +15356,29 @@
 				B340E5A31E08893000AD0E8B /* interrupt.cpp in Sources */,
 				B340E5A41E08893000AD0E8B /* dma.cpp in Sources */,
 				B340E5A51E08893000AD0E8B /* tests.cpp in Sources */,
+				B3B1FC292076D80A00799EFE /* flash.cpp in Sources */,
 				B340E5A61E08893000AD0E8B /* cdc.cpp in Sources */,
 				B340E5A71E08893000AD0E8B /* dualanalog.cpp in Sources */,
 				B340E5A81E08893000AD0E8B /* huc.cpp in Sources */,
+				B3B1FC2D2076D80A00799EFE /* interrupt.cpp in Sources */,
 				B340E5A91E08893000AD0E8B /* memory.cpp in Sources */,
+				B3B1FC342076D80A00799EFE /* Z80_interface.cpp in Sources */,
 				B340E5AA1E08893000AD0E8B /* cdplay.cpp in Sources */,
 				B340E5AB1E08893000AD0E8B /* eeprom.cpp in Sources */,
 				B340E5AC1E08893000AD0E8B /* vce.cpp in Sources */,
 				B340E5AD1E08893000AD0E8B /* window.c in Sources */,
 				B340E5AE1E08893000AD0E8B /* quicklz.c in Sources */,
 				B39578F61E6D583C00854D7A /* TLCS900h_interpret_dst.cpp in Sources */,
+				B3B1FC2B2076D80A00799EFE /* gfx_scanline_mono.cpp in Sources */,
 				B39578F41E6D583C00854D7A /* TLCS900h_disassemble_src.cpp in Sources */,
+				B3B1FC2A2076D80A00799EFE /* gfx_scanline_colour.cpp in Sources */,
 				B340E5AF1E08893000AD0E8B /* CDAFReader_MPC.cpp in Sources */,
 				B340E5B01E08893000AD0E8B /* timer.cpp in Sources */,
 				B340E5B11E08893000AD0E8B /* Blip_Buffer.cpp in Sources */,
 				B340E5B21E08893000AD0E8B /* tsushinkb.cpp in Sources */,
 				B340E5B31E08893000AD0E8B /* mcgenjin.cpp in Sources */,
+				B3B1FC482076D95F00799EFE /* TLCS900h_interpret_src.cpp in Sources */,
+				B3B1FC282076D80A00799EFE /* dma.cpp in Sources */,
 				B340E5B41E08893000AD0E8B /* pcfx.cpp in Sources */,
 				B340E5B51E08893000AD0E8B /* gpu_polygon.cpp in Sources */,
 				B340E5B61E08893000AD0E8B /* gamepad.cpp in Sources */,
@@ -15352,6 +15396,7 @@
 				B340E5C01E08893000AD0E8B /* comm.cpp in Sources */,
 				B340E5C11E08893000AD0E8B /* error.cpp in Sources */,
 				B340E5C21E08893000AD0E8B /* pce.cpp in Sources */,
+				B3B1FC462076D95F00799EFE /* TLCS900h_interpret_reg.cpp in Sources */,
 				B340E5C31E08893000AD0E8B /* info.c in Sources */,
 				B340E5C41E08893000AD0E8B /* king.cpp in Sources */,
 				B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */,
@@ -15365,7 +15410,9 @@
 				B340E5CB1E08893000AD0E8B /* pce_psg.cpp in Sources */,
 				B340E5CC1E08893000AD0E8B /* state.cpp in Sources */,
 				B39578CA1E6D57DE00854D7A /* neopop.cpp in Sources */,
+				B3B1FC312076D80A00799EFE /* rtc.cpp in Sources */,
 				B340E5CD1E08893000AD0E8B /* timer.cpp in Sources */,
+				B3B1FC2C2076D80A00799EFE /* gfx.cpp in Sources */,
 				B340E5CE1E08893000AD0E8B /* CDAFReader_Vorbis.cpp in Sources */,
 				B340E5CF1E08893000AD0E8B /* floor0.c in Sources */,
 				B39578F11E6D583C00854D7A /* TLCS900h_disassemble_dst.cpp in Sources */,
@@ -15378,6 +15425,7 @@
 				B340E5D41E08893000AD0E8B /* scsicd.cpp in Sources */,
 				B340E5D51E08893000AD0E8B /* tsushin.cpp in Sources */,
 				B340E5D61E08893000AD0E8B /* font-data.cpp in Sources */,
+				B3B1FC2F2076D80A00799EFE /* neopop.cpp in Sources */,
 				B340E5D71E08893000AD0E8B /* floor1.c in Sources */,
 				B340E5D81E08893000AD0E8B /* main.cpp in Sources */,
 				B340E5D91E08893000AD0E8B /* susie.cpp in Sources */,
@@ -15442,6 +15490,32 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 1;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					WANT_NGP_EMU,
+					WANT_PSX_EMU,
+					WANT_VB_EMU,
+					HAVE_MKDIR,
+					"MEDNAFEN_VERSION=\\\"1.21.1\\\"",
+					"PACKAGE=\\\"mednafen\\\"",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102101",
+					"PSS_STYLE=1",
+					MPC_FIXED_POINT,
+					ARCH_ARM,
+					STDC_HEADERS,
+					"ICONV_CONST=",
+					LSB_FIRST,
+					__STDC_LIMIT_MACROS,
+					"SIZEOF_DOUBLE=8",
+					"SIZEOF_CHAR=1",
+					"SIZEOF_SHORT=2",
+					"SIZEOF_INT=4",
+					"SIZEOF_LONG=8",
+					"SIZEOF_LONG_LONG=8",
+					"SIZEOF_OFF_T=8",
+					"SIZEOF_VOID_P=8",
+					"SIZEOF_SIZE_T=8",
+					"SIZEOF_PTRDIFF_T=8",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -15453,6 +15527,55 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mfpu=neon",
+					"-fwrapv",
+					"-fno-pic",
+					"-fno-pie",
+					"-fno-PIC",
+					"-fno-PIE",
+					"-fprefetch-loop-arrays",
+					"-fjump-tables",
+					"-fomit-frame-pointer",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-DHAVE_MKDIR",
+					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
+					"-DPACKAGE=\\\"mednafen\\\"",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102101",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DARCH_ARM",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_DOUBLE=8",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=8",
+					"-DSIZEOF_LONG_LONG=8",
+					"-DSIZEOF_OFF_T=8",
+					"-DSIZEOF_VOID_P=8",
+					"-DSIZEOF_SIZE_T=8",
+					"-DSIZEOF_PTRDIFF_T=8",
+					"-disable-lsr",
+					"-DWANT_VB_EMU",
+					"-DWANT_PSX_EMU",
+					"-Wall",
+					"-Wshadow",
+					"-Wempty-body",
+					"-Wignored-qualifiers",
+					"-Wvla",
+					"-Wvariadic-macros",
+					"-Wdisabled-optimization",
+					"-mllvm",
+					"-disable-lsr",
+					"-mno-retpoline",
+					"-mcmodel=small",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -15490,6 +15613,32 @@
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					WANT_NGP_EMU,
+					WANT_PSX_EMU,
+					WANT_VB_EMU,
+					HAVE_MKDIR,
+					"MEDNAFEN_VERSION=\\\"1.21.1\\\"",
+					"PACKAGE=\\\"mednafen\\\"",
+					"MEDNAFEN_VERSION_NUMERIC=0x00102101",
+					"PSS_STYLE=1",
+					MPC_FIXED_POINT,
+					ARCH_ARM,
+					STDC_HEADERS,
+					"ICONV_CONST=",
+					LSB_FIRST,
+					__STDC_LIMIT_MACROS,
+					"SIZEOF_DOUBLE=8",
+					"SIZEOF_CHAR=1",
+					"SIZEOF_SHORT=2",
+					"SIZEOF_INT=4",
+					"SIZEOF_LONG=8",
+					"SIZEOF_LONG_LONG=8",
+					"SIZEOF_OFF_T=8",
+					"SIZEOF_VOID_P=8",
+					"SIZEOF_SIZE_T=8",
+					"SIZEOF_PTRDIFF_T=8",
+				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -15500,6 +15649,55 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mfpu=neon",
+					"-fwrapv",
+					"-fno-pic",
+					"-fno-pie",
+					"-fno-PIC",
+					"-fno-PIE",
+					"-fprefetch-loop-arrays",
+					"-fjump-tables",
+					"-fomit-frame-pointer",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-DHAVE_MKDIR",
+					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
+					"-DPACKAGE=\\\"mednafen\\\"",
+					"-DMEDNAFEN_VERSION_NUMERIC=0x00102101",
+					"-DPSS_STYLE=1",
+					"-DMPC_FIXED_POINT",
+					"-DARCH_ARM",
+					"-DSTDC_HEADERS",
+					"-DICONV_CONST=",
+					"-DLSB_FIRST",
+					"-D__STDC_LIMIT_MACROS",
+					"-DSIZEOF_DOUBLE=8",
+					"-DSIZEOF_CHAR=1",
+					"-DSIZEOF_SHORT=2",
+					"-DSIZEOF_INT=4",
+					"-DSIZEOF_LONG=8",
+					"-DSIZEOF_LONG_LONG=8",
+					"-DSIZEOF_OFF_T=8",
+					"-DSIZEOF_VOID_P=8",
+					"-DSIZEOF_SIZE_T=8",
+					"-DSIZEOF_PTRDIFF_T=8",
+					"-disable-lsr",
+					"-DWANT_VB_EMU",
+					"-DWANT_PSX_EMU",
+					"-Wall",
+					"-Wshadow",
+					"-Wempty-body",
+					"-Wignored-qualifiers",
+					"-Wvla",
+					"-Wvariadic-macros",
+					"-Wdisabled-optimization",
+					"-mllvm",
+					"-disable-lsr",
+					"-mno-retpoline",
+					"-mcmodel=small",
+				);
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -15556,54 +15754,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-fwrapv",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
-					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102101",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-mllvm",
-					"-disable-lsr",
-					"-DWANT_VB_EMU",
-					"-DWANT_PSX_EMU",
-					"-fno-fast-math",
-					"-fno-unsafe-math-optimizations",
-					"-fomit-frame-pointer",
-					"-fstrict-aliasing",
-					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-fno-pic",
-					"-fno-pie",
-					"-fno-PIC",
-					"-fno-PIE",
-					"-fwrapv",
-					"-fjump-tables",
-					"-mno-retpoline",
-					"-mcmodel=small",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -15668,54 +15818,6 @@
 					"\"$(SRCROOT)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-fwrapv",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
-					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102101",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-mllvm",
-					"-disable-lsr",
-					"-DWANT_VB_EMU",
-					"-DWANT_PSX_EMU",
-					"-fno-fast-math",
-					"-fno-unsafe-math-optimizations",
-					"-fomit-frame-pointer",
-					"-fstrict-aliasing",
-					"-Wall",
-					"-Wshadow",
-					"-Wempty-body",
-					"-Wignored-qualifiers",
-					"-Wvla",
-					"-Wvariadic-macros",
-					"-Wdisabled-optimization",
-					"-fno-pic",
-					"-fno-pie",
-					"-fno-PIC",
-					"-fno-PIE",
-					"-fwrapv",
-					"-fjump-tables",
-					"-mno-retpoline",
-					"-mcmodel=small",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
