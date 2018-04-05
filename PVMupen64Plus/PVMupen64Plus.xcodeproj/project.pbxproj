@@ -5840,12 +5840,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
-					"-ffast-math",
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-fomit-frame-pointer",
-					"-fvisibility-inlines-hidden",
-					"-flto",
 					"-DGCC",
 					"-pthread",
 					"-fPIC",
