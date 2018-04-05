@@ -1757,8 +1757,6 @@
 		B340E5FC1E088AF700AD0E8B /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-appletvos/PVSupport.framework"; sourceTree = "<group>"; };
 		B3547B5F205858EF00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCore.swift; sourceTree = "<group>"; };
-		B3A74C9220524170001D3D2E /* PVMednafen.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = PVMednafen.modulemap; sourceTree = "<group>"; };
-		B3A74C93205245C4001D3D2E /* Mednafen-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mednafen-Private.h"; sourceTree = "<group>"; };
 		B3AA9D6A20736B030097D86F /* README.PORTING */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.PORTING; sourceTree = "<group>"; };
 		B3AA9D6B20736B030097D86F /* acinclude.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
 		B3AA9D6D20736B030097D86F /* headerbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = headerbg.png; sourceTree = "<group>"; };
@@ -5695,8 +5693,6 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B3A74C93205245C4001D3D2E /* Mednafen-Private.h */,
-				B3A74C9220524170001D3D2E /* PVMednafen.modulemap */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -15558,7 +15554,6 @@
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				MODULEMAP_FILE = PVMednafen.modulemap;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -15672,7 +15667,6 @@
 					"$(PROJECT_DIR)/libsndfile",
 					"\"$(SRCROOT)\"",
 				);
-				MODULEMAP_FILE = PVMednafen.modulemap;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"$(inherited)",
