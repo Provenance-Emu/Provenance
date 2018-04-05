@@ -555,25 +555,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
         guard let collectionView = collectionView else { return }
-		collectionView.reloadSections([section])
-//        collectionView.performBatchUpdates({
-//            if needsInsert {
-//                ILOG("Inserting section \(section)")
-//                collectionView.insertSections([section])
-//            }
-//
-//            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
-//            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
-//            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
-//            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
-//
-//            if needsDelete {
-//                ILOG("Deleting section \(section)")
-//                collectionView.deleteSections([section])
-//            }
-//        }, completion: { (completed) in
-//
-//        })
+        collectionView.performBatchUpdates({
+            if needsInsert {
+                ILOG("Inserting section \(section)")
+                collectionView.insertSections([section])
+            }
+
+            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
+            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
+            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
+            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
+
+            if needsDelete {
+                ILOG("Deleting section \(section)")
+                collectionView.deleteSections([section])
+            }
+        }, completion: { (completed) in
+
+        })
     }
 
     func unregisterForChange() {
