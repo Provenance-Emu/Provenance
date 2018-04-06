@@ -1286,6 +1286,10 @@ bool MDFNI_InitializeModules(void)
   &EmulatedCDPlay,
   &EmulatedDEMO
  };
+
+	// Static, clear it first
+	MDFNSystems.clear();
+
  static_assert(MEDNAFEN_VERSION_NUMERIC >= 0x00102101, "Bad MEDNAFEN_VERSION_NUMERIC");
 
  for(unsigned int i = 0; i < sizeof(InternalSystems) / sizeof(MDFNGI *); i++)
@@ -1314,6 +1318,7 @@ int MDFNI_Initialize(const char *basedir, const std::vector<MDFNSetting> &Driver
 {
 	// FIXME static
 	static std::vector<MDFNSetting> dynamic_settings;
+	dynamic_settings.clear();
 
 	// DO NOT REMOVE/DISABLE THESE MATH AND COMPILER SANITY TESTS.  THEY EXIST FOR A REASON.
 	//uint64 st = Time::MonoUS();
