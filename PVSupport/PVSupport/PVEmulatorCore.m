@@ -10,6 +10,7 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
+#import <AVFoundation/AVFoundation.h>
 
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
@@ -66,6 +67,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     {
 		if (!isRunning)
 		{
+			[self setPreferredSampleRate:[self audioSampleRate]];
 			isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
@@ -239,6 +241,38 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
         NSLog(@"multiplier: %.1f", framerateMultiplier);
     }
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
+}
+
+- (Float64) getSampleRate {
+	Float64 sampleRate;
+	UInt32 srSize = sizeof (sampleRate);
+	OSStatus error =
+	AudioSessionGetProperty(
+							kAudioSessionProperty_CurrentHardwareSampleRate,
+							&srSize,
+							&sampleRate);
+	if (error == noErr) {
+		NSLog (@"CurrentHardwareSampleRate = %f", sampleRate);
+		return sampleRate;
+	} else {
+		return 48.0;
+	}
+}
+
+- (BOOL) setPreferredSampleRate:(double)preferredSampleRate {
+	double preferredSampleRate2 = preferredSampleRate ?: 48000;
+
+	AVAudioSession* session = [AVAudioSession sharedInstance];
+	BOOL success;
+	NSError* error = nil;
+	success  = [session setPreferredSampleRate:preferredSampleRate2 error:&error];
+	if (success) {
+		NSLog (@"session.sampleRate = %f", session.sampleRate);
+	} else {
+		NSLog (@"error setting sample rate %@", error);
+	}
+
+	return success;
 }
 
 - (void)executeFrame
