@@ -16148,40 +16148,6 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-mfpu=neon",
-					"-fwrapv",
-					"-fno-pic",
-					"-fno-pie",
-					"-fno-PIC",
-					"-fno-PIE",
-					"-fprefetch-loop-arrays",
-					"-fjump-tables",
-					"-fomit-frame-pointer",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-DHAVE_MKDIR",
-					"-DMEDNAFEN_VERSION=\\\"1.21.1\\\"",
-					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x00102101",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_DOUBLE=8",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-DSIZEOF_VOID_P=8",
-					"-DSIZEOF_SIZE_T=8",
-					"-DSIZEOF_PTRDIFF_T=8",
-					"-disable-lsr",
-					"-DWANT_VB_EMU",
-					"-DWANT_PSX_EMU",
 					"-Wall",
 					"-Wshadow",
 					"-Wempty-body",
@@ -16189,10 +16155,6 @@
 					"-Wvla",
 					"-Wvariadic-macros",
 					"-Wdisabled-optimization",
-					"-mllvm",
-					"-disable-lsr",
-					"-mno-retpoline",
-					"-mcmodel=small",
 				);
 				SDKROOT = macosx;
 			};
@@ -16354,7 +16316,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
-				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -16421,7 +16383,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen-1.21/src\"";
-				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					LSB_FIRST,
