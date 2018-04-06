@@ -447,6 +447,46 @@
 		B3B1FC642076E15C00799EFE /* dis_groups.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6D20736EE90097D86F /* dis_groups.cpp */; };
 		B3B1FC652076E15C00799EFE /* resolve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6B20736EE90097D86F /* resolve.cpp */; };
 		B3B1FC662076E15C00799EFE /* syntax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE7120736EE90097D86F /* syntax.cpp */; };
+		B3B1FC6720770C5900799EFE /* c65c02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0020736EE80097D86F /* c65c02.cpp */; };
+		B3B1FC6820770C5900799EFE /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0120736EE80097D86F /* cart.cpp */; };
+		B3B1FC6920770C5900799EFE /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEA20736EE80097D86F /* memmap.cpp */; };
+		B3B1FC6A20770C5900799EFE /* mikie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEB20736EE80097D86F /* mikie.cpp */; };
+		B3B1FC6B20770C5900799EFE /* ram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABE920736EE80097D86F /* ram.cpp */; };
+		B3B1FC6C20770C5900799EFE /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEF20736EE80097D86F /* rom.cpp */; };
+		B3B1FC6D20770C5900799EFE /* susie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF620736EE80097D86F /* susie.cpp */; };
+		B3B1FC6E20770C5900799EFE /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF020736EE80097D86F /* system.cpp */; };
+		B3B1FC6F20770C5A00799EFE /* c65c02.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0020736EE80097D86F /* c65c02.cpp */; };
+		B3B1FC7020770C5A00799EFE /* cart.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAC0120736EE80097D86F /* cart.cpp */; };
+		B3B1FC7120770C5A00799EFE /* memmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEA20736EE80097D86F /* memmap.cpp */; };
+		B3B1FC7220770C5A00799EFE /* mikie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEB20736EE80097D86F /* mikie.cpp */; };
+		B3B1FC7320770C5A00799EFE /* ram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABE920736EE80097D86F /* ram.cpp */; };
+		B3B1FC7420770C5A00799EFE /* rom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABEF20736EE80097D86F /* rom.cpp */; };
+		B3B1FC7520770C5A00799EFE /* susie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF620736EE80097D86F /* susie.cpp */; };
+		B3B1FC7620770C5A00799EFE /* system.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABF020736EE80097D86F /* system.cpp */; };
+		B3B1FC7720770CAC00799EFE /* fxscsi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15A20736EEA0097D86F /* fxscsi.cpp */; };
+		B3B1FC7820770CAC00799EFE /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17220736EEA0097D86F /* huc6273.cpp */; };
+		B3B1FC7920770CAC00799EFE /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14320736EEA0097D86F /* input.cpp */; };
+		B3B1FC7A20770CAC00799EFE /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15320736EEA0097D86F /* interrupt.cpp */; };
+		B3B1FC7B20770CAC00799EFE /* jrevdct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16020736EEA0097D86F /* jrevdct.cpp */; };
+		B3B1FC7C20770CAC00799EFE /* king.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16420736EEA0097D86F /* king.cpp */; };
+		B3B1FC7D20770CAC00799EFE /* pcfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17120736EEA0097D86F /* pcfx.cpp */; };
+		B3B1FC7E20770CAC00799EFE /* rainbow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14420736EEA0097D86F /* rainbow.cpp */; };
+		B3B1FC7F20770CAC00799EFE /* soundbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB13C20736EEA0097D86F /* soundbox.cpp */; };
+		B3B1FC8020770CAC00799EFE /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15520736EEA0097D86F /* timer.cpp */; };
+		B3B1FC8120770CAD00799EFE /* fxscsi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15A20736EEA0097D86F /* fxscsi.cpp */; };
+		B3B1FC8220770CAD00799EFE /* huc6273.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17220736EEA0097D86F /* huc6273.cpp */; };
+		B3B1FC8320770CAD00799EFE /* input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14320736EEA0097D86F /* input.cpp */; };
+		B3B1FC8420770CAD00799EFE /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15320736EEA0097D86F /* interrupt.cpp */; };
+		B3B1FC8520770CAD00799EFE /* jrevdct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16020736EEA0097D86F /* jrevdct.cpp */; };
+		B3B1FC8620770CAD00799EFE /* king.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB16420736EEA0097D86F /* king.cpp */; };
+		B3B1FC8720770CAD00799EFE /* pcfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB17120736EEA0097D86F /* pcfx.cpp */; };
+		B3B1FC8820770CAD00799EFE /* rainbow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14420736EEA0097D86F /* rainbow.cpp */; };
+		B3B1FC8920770CAD00799EFE /* soundbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB13C20736EEA0097D86F /* soundbox.cpp */; };
+		B3B1FC8A20770CAD00799EFE /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB15520736EEA0097D86F /* timer.cpp */; };
+		B3B1FC8B20770CCE00799EFE /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14A20736EEA0097D86F /* mouse.cpp */; };
+		B3B1FC8C20770CCE00799EFE /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14B20736EEA0097D86F /* gamepad.cpp */; };
+		B3B1FC8D20770CCF00799EFE /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14A20736EEA0097D86F /* mouse.cpp */; };
+		B3B1FC8E20770CCF00799EFE /* gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB14B20736EEA0097D86F /* gamepad.cpp */; };
 		B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 /* End PBXBuildFile section */
@@ -11660,30 +11700,30 @@
 		B3AAABE320736EE80097D86F /* lynx */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAABE420736EE80097D86F /* ram.h */,
-				B3AAABE520736EE80097D86F /* machine.h */,
-				B3AAABE620736EE80097D86F /* Makefile.am.inc */,
-				B3AAABE720736EE80097D86F /* rom.h */,
-				B3AAABE820736EE80097D86F /* sysbase.h */,
-				B3AAABE920736EE80097D86F /* ram.cpp */,
-				B3AAABEA20736EE80097D86F /* memmap.cpp */,
-				B3AAABEB20736EE80097D86F /* mikie.cpp */,
-				B3AAABEC20736EE80097D86F /* cart.h */,
-				B3AAABED20736EE80097D86F /* memmap.h */,
-				B3AAABEE20736EE80097D86F /* c65c02.h */,
-				B3AAABEF20736EE80097D86F /* rom.cpp */,
-				B3AAABF020736EE80097D86F /* system.cpp */,
-				B3AAABF120736EE80097D86F /* c6502mak.h */,
-				B3AAABF220736EE80097D86F /* lynxdef.h */,
-				B3AAABF320736EE80097D86F /* system.h */,
-				B3AAABF420736EE80097D86F /* mikie.h */,
-				B3AAABF520736EE80097D86F /* license.txt */,
-				B3AAABF620736EE80097D86F /* susie.cpp */,
-				B3AAABF720736EE80097D86F /* .deps */,
 				B3AAAC0020736EE80097D86F /* c65c02.cpp */,
 				B3AAAC0120736EE80097D86F /* cart.cpp */,
+				B3AAABEA20736EE80097D86F /* memmap.cpp */,
+				B3AAABEB20736EE80097D86F /* mikie.cpp */,
+				B3AAABE920736EE80097D86F /* ram.cpp */,
+				B3AAABEF20736EE80097D86F /* rom.cpp */,
+				B3AAABF620736EE80097D86F /* susie.cpp */,
+				B3AAABF020736EE80097D86F /* system.cpp */,
+				B3AAABEE20736EE80097D86F /* c65c02.h */,
+				B3AAABF120736EE80097D86F /* c6502mak.h */,
+				B3AAABEC20736EE80097D86F /* cart.h */,
 				B3AAAC0220736EE80097D86F /* lynxbase.h */,
+				B3AAABF220736EE80097D86F /* lynxdef.h */,
+				B3AAABE520736EE80097D86F /* machine.h */,
+				B3AAABED20736EE80097D86F /* memmap.h */,
+				B3AAABF420736EE80097D86F /* mikie.h */,
+				B3AAABE420736EE80097D86F /* ram.h */,
+				B3AAABE720736EE80097D86F /* rom.h */,
 				B3AAAC0320736EE80097D86F /* susie.h */,
+				B3AAABE820736EE80097D86F /* sysbase.h */,
+				B3AAABF320736EE80097D86F /* system.h */,
+				B3AAABE620736EE80097D86F /* Makefile.am.inc */,
+				B3AAABF520736EE80097D86F /* license.txt */,
+				B3AAABF720736EE80097D86F /* .deps */,
 			);
 			path = lynx;
 			sourceTree = "<group>";
@@ -13945,42 +13985,42 @@
 		B3AAB13B20736EEA0097D86F /* pcfx */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAB13C20736EEA0097D86F /* soundbox.cpp */,
-				B3AAB13D20736EEA0097D86F /* king-bgfast-blit.inc */,
-				B3AAB13E20736EEA0097D86F /* jrevdct.h */,
-				B3AAB13F20736EEA0097D86F /* rainbow_dcy.inc */,
-				B3AAB14020736EEA0097D86F /* mem-handler.inc */,
-				B3AAB14120736EEA0097D86F /* input.h */,
-				B3AAB14220736EEA0097D86F /* debug.h */,
-				B3AAB14320736EEA0097D86F /* input.cpp */,
-				B3AAB14420736EEA0097D86F /* rainbow.cpp */,
-				B3AAB14520736EEA0097D86F /* king.h */,
-				B3AAB14620736EEA0097D86F /* soundbox.h */,
-				B3AAB14720736EEA0097D86F /* rainbow.h */,
-				B3AAB14820736EEA0097D86F /* king-bgfast.inc */,
-				B3AAB14920736EEA0097D86F /* input */,
-				B3AAB15120736EEA0097D86F /* fxscsi.h */,
-				B3AAB15220736EEA0097D86F /* io-handler.inc */,
-				B3AAB15320736EEA0097D86F /* interrupt.cpp */,
-				B3AAB15420736EEA0097D86F /* Makefile.am.inc */,
-				B3AAB15520736EEA0097D86F /* timer.cpp */,
-				B3AAB15620736EEA0097D86F /* rainbow_acuv.inc */,
-				B3AAB15720736EEA0097D86F /* huc6273.h */,
-				B3AAB15820736EEA0097D86F /* rainbow_acy.inc */,
-				B3AAB15920736EEA0097D86F /* timer.h */,
-				B3AAB15A20736EEA0097D86F /* fxscsi.cpp */,
-				B3AAB15B20736EEA0097D86F /* notes */,
-				B3AAB15D20736EEA0097D86F /* rainbow_dcuv.inc */,
-				B3AAB15E20736EEA0097D86F /* king_mix_body.inc */,
 				B3AAB15F20736EEA0097D86F /* debug.cpp */,
-				B3AAB16020736EEA0097D86F /* jrevdct.cpp */,
-				B3AAB16120736EEA0097D86F /* interrupt.h */,
-				B3AAB16220736EEA0097D86F /* gamedb.inc */,
-				B3AAB16320736EEA0097D86F /* pcfx.h */,
-				B3AAB16420736EEA0097D86F /* king.cpp */,
-				B3AAB16520736EEA0097D86F /* .deps */,
-				B3AAB17120736EEA0097D86F /* pcfx.cpp */,
+				B3AAB15A20736EEA0097D86F /* fxscsi.cpp */,
 				B3AAB17220736EEA0097D86F /* huc6273.cpp */,
+				B3AAB14320736EEA0097D86F /* input.cpp */,
+				B3AAB15320736EEA0097D86F /* interrupt.cpp */,
+				B3AAB16020736EEA0097D86F /* jrevdct.cpp */,
+				B3AAB16420736EEA0097D86F /* king.cpp */,
+				B3AAB17120736EEA0097D86F /* pcfx.cpp */,
+				B3AAB14420736EEA0097D86F /* rainbow.cpp */,
+				B3AAB13C20736EEA0097D86F /* soundbox.cpp */,
+				B3AAB15520736EEA0097D86F /* timer.cpp */,
+				B3AAB14220736EEA0097D86F /* debug.h */,
+				B3AAB15120736EEA0097D86F /* fxscsi.h */,
+				B3AAB15720736EEA0097D86F /* huc6273.h */,
+				B3AAB14120736EEA0097D86F /* input.h */,
+				B3AAB16120736EEA0097D86F /* interrupt.h */,
+				B3AAB13E20736EEA0097D86F /* jrevdct.h */,
+				B3AAB14520736EEA0097D86F /* king.h */,
+				B3AAB16320736EEA0097D86F /* pcfx.h */,
+				B3AAB14720736EEA0097D86F /* rainbow.h */,
+				B3AAB14620736EEA0097D86F /* soundbox.h */,
+				B3AAB15920736EEA0097D86F /* timer.h */,
+				B3AAB16220736EEA0097D86F /* gamedb.inc */,
+				B3AAB15220736EEA0097D86F /* io-handler.inc */,
+				B3AAB15E20736EEA0097D86F /* king_mix_body.inc */,
+				B3AAB13D20736EEA0097D86F /* king-bgfast-blit.inc */,
+				B3AAB14820736EEA0097D86F /* king-bgfast.inc */,
+				B3AAB15420736EEA0097D86F /* Makefile.am.inc */,
+				B3AAB14020736EEA0097D86F /* mem-handler.inc */,
+				B3AAB15620736EEA0097D86F /* rainbow_acuv.inc */,
+				B3AAB15820736EEA0097D86F /* rainbow_acy.inc */,
+				B3AAB15D20736EEA0097D86F /* rainbow_dcuv.inc */,
+				B3AAB13F20736EEA0097D86F /* rainbow_dcy.inc */,
+				B3AAB16520736EEA0097D86F /* .deps */,
+				B3AAB14920736EEA0097D86F /* input */,
+				B3AAB15B20736EEA0097D86F /* notes */,
 			);
 			path = pcfx;
 			sourceTree = "<group>";
@@ -15066,6 +15106,8 @@
 				B3B1FC232076D80900799EFE /* sound.cpp in Sources */,
 				B3AAB3F3207374F90097D86F /* endian.cpp in Sources */,
 				B3AAB3F9207374F90097D86F /* IPSPatcher.cpp in Sources */,
+				B3B1FC8020770CAC00799EFE /* timer.cpp in Sources */,
+				B3B1FC7F20770CAC00799EFE /* soundbox.cpp in Sources */,
 				B3AAB3E82073730B0097D86F /* cputest.c in Sources */,
 				B3AAB42B20737B9A0097D86F /* floor1.c in Sources */,
 				B3AAB42C20737B9A0097D86F /* framing.c in Sources */,
@@ -15076,6 +15118,7 @@
 				B3AAB42F20737B9A0097D86F /* mdct.c in Sources */,
 				B3AAB42620737ADF0097D86F /* thread.cpp in Sources */,
 				B3AAB3FA207374F90097D86F /* memory.cpp in Sources */,
+				B3B1FC8B20770CCE00799EFE /* mouse.cpp in Sources */,
 				B3AAB400207374F90097D86F /* PSFLoader.cpp in Sources */,
 				B3AAB3E6207372EB0097D86F /* ZIPReader.cpp in Sources */,
 				B3AAB3E3207372BF0097D86F /* recover-raw.cpp in Sources */,
@@ -15086,6 +15129,7 @@
 				B3AAB3E7207372EB0097D86F /* ZLInflateFilter.cpp in Sources */,
 				B3AAB3DE207372BF0097D86F /* CDUtility.cpp in Sources */,
 				B3AAB46920738C660097D86F /* spu.cpp in Sources */,
+				B3B1FC6820770C5900799EFE /* cart.cpp in Sources */,
 				B3B1FC1F2076D80900799EFE /* mem.cpp in Sources */,
 				B3AAB46520738C660097D86F /* irq.cpp in Sources */,
 				B3AAB416207377150097D86F /* okiadpcm.cpp in Sources */,
@@ -15096,6 +15140,7 @@
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
 				B3AAB42E20737B9A0097D86F /* mapping0.c in Sources */,
 				B3AAB41B207377790097D86F /* pce_psg.cpp in Sources */,
+				B3B1FC6B20770C5900799EFE /* ram.cpp in Sources */,
 				B3AAB46120738C660097D86F /* gpu_polygon.cpp in Sources */,
 				B3AAB3EE2073745D0097D86F /* v810_cpu.cpp in Sources */,
 				B3AAB3DD207372BF0097D86F /* cdromif.cpp in Sources */,
@@ -15103,7 +15148,9 @@
 				B3AAB413207376EB0097D86F /* triostr.c in Sources */,
 				B3AAB421207377EC0097D86F /* mpc_demux.c in Sources */,
 				B3AAB408207376710097D86F /* png.cpp in Sources */,
+				B3B1FC7920770CAC00799EFE /* input.cpp in Sources */,
 				B3AAB3E4207372BF0097D86F /* scsicd.cpp in Sources */,
+				B3B1FC6D20770C5900799EFE /* susie.cpp in Sources */,
 				B3B1FC1C2076D80900799EFE /* gfx_scanline_mono.cpp in Sources */,
 				B3B1FC1D2076D80900799EFE /* gfx.cpp in Sources */,
 				B3AAB3EF2073745D0097D86F /* v810_fp_ops.cpp in Sources */,
@@ -15125,10 +15172,14 @@
 				B3AAB3DB207372BF0097D86F /* CDAFReader_Vorbis.cpp in Sources */,
 				B3AAB419207377150097D86F /* WAVRecord.cpp in Sources */,
 				B3AAB3D020736F170097D86F /* vsu.cpp in Sources */,
+				B3B1FC6C20770C5900799EFE /* rom.cpp in Sources */,
 				B3AAB42A20737B9A0097D86F /* floor0.c in Sources */,
+				B3B1FC7E20770CAC00799EFE /* rainbow.cpp in Sources */,
 				B3AAB45F20738C660097D86F /* frontio.cpp in Sources */,
 				B3AAB3F0207374920097D86F /* z80.cpp in Sources */,
 				B3B1FC212076D80900799EFE /* rom.cpp in Sources */,
+				B3B1FC8C20770CCE00799EFE /* gamepad.cpp in Sources */,
+				B3B1FC6720770C5900799EFE /* c65c02.cpp in Sources */,
 				B3B1FC532076E14900799EFE /* tcache.cpp in Sources */,
 				B3AAB3D9207372BF0097D86F /* CDAccess.cpp in Sources */,
 				B3AAB3F1207374920097D86F /* z80_ops.cpp in Sources */,
@@ -15156,6 +15207,7 @@
 				B3AAB41A2073773A0097D86F /* arcade_card.cpp in Sources */,
 				B3B1FC172076D80900799EFE /* bios.cpp in Sources */,
 				B3AAB420207377EC0097D86F /* mpc_decoder.c in Sources */,
+				B3B1FC7A20770CAC00799EFE /* interrupt.cpp in Sources */,
 				B3B1FC252076D80900799EFE /* Z80_interface.cpp in Sources */,
 				B3AAB3D7207372BF0097D86F /* CDAccess_CCD.cpp in Sources */,
 				B3AAB403207374F90097D86F /* state_rewind.cpp in Sources */,
@@ -15173,6 +15225,7 @@
 				B3B1FC3D2076D95B00799EFE /* TLCS900h_interpret_src.cpp in Sources */,
 				B3AAB40B207376710097D86F /* surface.cpp in Sources */,
 				B3AAB423207377EC0097D86F /* streaminfo.c in Sources */,
+				B3B1FC6920770C5900799EFE /* memmap.cpp in Sources */,
 				B3B1FC4E2076E14900799EFE /* interrupt.cpp in Sources */,
 				B3AAB401207374F90097D86F /* qtrecord.cpp in Sources */,
 				B3AAB46620738C660097D86F /* mdec.cpp in Sources */,
@@ -15191,6 +15244,7 @@
 				B3AAB3D62073726F0097D86F /* cdplay.cpp in Sources */,
 				B3B1FC222076D80900799EFE /* rtc.cpp in Sources */,
 				B3AAB3F5207374F90097D86F /* file.cpp in Sources */,
+				B3B1FC7C20770CAC00799EFE /* king.cpp in Sources */,
 				B3AAB42D20737B9A0097D86F /* info.c in Sources */,
 				B3B1FC352076D95B00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */,
 				B3AAB46720738C660097D86F /* psx.cpp in Sources */,
@@ -15202,6 +15256,7 @@
 				B3AAB41C207377A40097D86F /* vdc.cpp in Sources */,
 				B3AAB3E1207372BF0097D86F /* l-ec.cpp in Sources */,
 				B3AAB43920737C3B0097D86F /* Net_POSIX.cpp in Sources */,
+				B3B1FC7720770CAC00799EFE /* fxscsi.cpp in Sources */,
 				B3AAB40F207376CA0097D86F /* escape.cpp in Sources */,
 				B3AAB424207377EC0097D86F /* synth_filter.c in Sources */,
 				B3B1FC3F2076D95B00799EFE /* TLCS900h_registers.cpp in Sources */,
@@ -15215,8 +15270,10 @@
 				B3AAB3D22073703D0097D86F /* mednafen.cpp in Sources */,
 				B3AAB3EC207373F10097D86F /* sha256.cpp in Sources */,
 				B3AAB3FF207374F90097D86F /* player.cpp in Sources */,
+				B3B1FC7D20770CAC00799EFE /* pcfx.cpp in Sources */,
 				B3AAB3FC207374F90097D86F /* mempatcher.cpp in Sources */,
 				B3AAB414207377150097D86F /* Blip_Buffer.cpp in Sources */,
+				B3B1FC7820770CAC00799EFE /* huc6273.cpp in Sources */,
 				B3B1FC4C2076E14900799EFE /* eeprom.cpp in Sources */,
 				B3B1FC362076D95B00799EFE /* TLCS900h_disassemble_extra.cpp in Sources */,
 				B3B1FC4B2076E14900799EFE /* comm.cpp in Sources */,
@@ -15225,10 +15282,13 @@
 				B3B1FC502076E14900799EFE /* memory.cpp in Sources */,
 				B3AAB46E20738C760097D86F /* guncon.cpp in Sources */,
 				B3AAB40E207376710097D86F /* video.cpp in Sources */,
+				B3B1FC7B20770CAC00799EFE /* jrevdct.cpp in Sources */,
 				B3AAB43820737C3B0097D86F /* Net.cpp in Sources */,
+				B3B1FC6A20770C5900799EFE /* mikie.cpp in Sources */,
 				B3AAB3F6207374F90097D86F /* FileStream.cpp in Sources */,
 				B3AAB41F207377EC0097D86F /* mpc_bits_reader.c in Sources */,
 				B3B1FC3A2076D95B00799EFE /* TLCS900h_interpret_dst.cpp in Sources */,
+				B3B1FC6E20770C5900799EFE /* system.cpp in Sources */,
 				B3AAB47220738C760097D86F /* multitap.cpp in Sources */,
 				B3AAB40D207376710097D86F /* text.cpp in Sources */,
 				B3AAB40C207376710097D86F /* tblur.cpp in Sources */,
@@ -15301,6 +15361,7 @@
 				B340E55B1E08893000AD0E8B /* debug.cpp in Sources */,
 				B340E55C1E08893000AD0E8B /* dualshock.cpp in Sources */,
 				B340E55D1E08893000AD0E8B /* mpc_decoder.c in Sources */,
+				B3B1FC8320770CAD00799EFE /* input.cpp in Sources */,
 				B340E55E1E08893000AD0E8B /* mpc_bits_reader.c in Sources */,
 				B340E55F1E08893000AD0E8B /* v30mz.cpp in Sources */,
 				B340E5601E08893000AD0E8B /* rtc.cpp in Sources */,
@@ -15323,8 +15384,10 @@
 				B3B1FC5A2076E14A00799EFE /* memory.cpp in Sources */,
 				B340E56C1E08893000AD0E8B /* Fir_Resampler.cpp in Sources */,
 				B340E56D1E08893000AD0E8B /* sharedbook.c in Sources */,
+				B3B1FC7120770C5A00799EFE /* memmap.cpp in Sources */,
 				B340E56E1E08893000AD0E8B /* Stream.cpp in Sources */,
 				B340E56F1E08893000AD0E8B /* gpu_line.cpp in Sources */,
+				B3B1FC8120770CAD00799EFE /* fxscsi.cpp in Sources */,
 				B3B1FC332076D80A00799EFE /* T6W28_Apu.cpp in Sources */,
 				B340E5701E08893000AD0E8B /* crc32.c in Sources */,
 				B340E5711E08893000AD0E8B /* movie.cpp in Sources */,
@@ -15338,15 +15401,18 @@
 				B340E5791E08893000AD0E8B /* z80.cpp in Sources */,
 				B340E57A1E08893000AD0E8B /* file.cpp in Sources */,
 				B340E57B1E08893000AD0E8B /* huc6280.cpp in Sources */,
+				B3B1FC8620770CAD00799EFE /* king.cpp in Sources */,
 				B340E57C1E08893000AD0E8B /* CDAccess.cpp in Sources */,
 				B340E57D1E08893000AD0E8B /* justifier.cpp in Sources */,
 				B39578FC1E6D585D00854D7A /* Z80_interface.cpp in Sources */,
 				B3B1FC5C2076E14A00799EFE /* sound.cpp in Sources */,
 				B340E57E1E08893000AD0E8B /* CDAFReader.cpp in Sources */,
+				B3B1FC8420770CAD00799EFE /* interrupt.cpp in Sources */,
 				B340E57F1E08893000AD0E8B /* mouse.cpp in Sources */,
 				B340E5801E08893000AD0E8B /* codebook.c in Sources */,
 				B340E5811E08893000AD0E8B /* stubs.mm in Sources */,
 				B340E5821E08893000AD0E8B /* player.cpp in Sources */,
+				B3B1FC8A20770CAD00799EFE /* timer.cpp in Sources */,
 				B340E5831E08893000AD0E8B /* l-ec.cpp in Sources */,
 				B340E5841E08893000AD0E8B /* settings.cpp in Sources */,
 				B340E5851E08893000AD0E8B /* trionan.c in Sources */,
@@ -15354,6 +15420,7 @@
 				B340E5871E08893000AD0E8B /* bitwise.c in Sources */,
 				B340E5881E08893000AD0E8B /* md5.cpp in Sources */,
 				B340E5891E08893000AD0E8B /* tblur.cpp in Sources */,
+				B3B1FC8E20770CCF00799EFE /* gamepad.cpp in Sources */,
 				B340E58A1E08893000AD0E8B /* vorbisfile.c in Sources */,
 				B340E58B1E08893000AD0E8B /* minilzo.c in Sources */,
 				B340E58C1E08893000AD0E8B /* pcecd.cpp in Sources */,
@@ -15361,6 +15428,7 @@
 				B340E58E1E08893000AD0E8B /* mouse.cpp in Sources */,
 				B3B1FC402076D95F00799EFE /* TLCS900h_disassemble_dst.cpp in Sources */,
 				B39578DE1E6D582300854D7A /* interrupt.cpp in Sources */,
+				B3B1FC7420770C5A00799EFE /* rom.cpp in Sources */,
 				B3B1FC422076D95F00799EFE /* TLCS900h_disassemble_reg.cpp in Sources */,
 				B3B1FC272076D80A00799EFE /* biosHLE.cpp in Sources */,
 				B39578FE1E6D58FF00854D7A /* gfx_scanline_mono.cpp in Sources */,
@@ -15371,6 +15439,7 @@
 				B3B1FC492076D95F00799EFE /* TLCS900h_interpret.cpp in Sources */,
 				B340E58F1E08893000AD0E8B /* requant.c in Sources */,
 				B340E5901E08893000AD0E8B /* git.cpp in Sources */,
+				B3B1FC7620770C5A00799EFE /* system.cpp in Sources */,
 				B340E5911E08893000AD0E8B /* surface.cpp in Sources */,
 				B3B1FC302076D80A00799EFE /* rom.cpp in Sources */,
 				B340E5921E08893000AD0E8B /* Deinterlacer.cpp in Sources */,
@@ -15378,6 +15447,7 @@
 				B3B1FC442076D95F00799EFE /* TLCS900h_disassemble.cpp in Sources */,
 				B39578DF1E6D582300854D7A /* mem.cpp in Sources */,
 				B340E5941E08893000AD0E8B /* fxscsi.cpp in Sources */,
+				B3B1FC7320770C5A00799EFE /* ram.cpp in Sources */,
 				B340E5951E08893000AD0E8B /* gpu_sprite.cpp in Sources */,
 				B340E5961E08893000AD0E8B /* trim.cpp in Sources */,
 				B340E5971E08893000AD0E8B /* input.cpp in Sources */,
@@ -15399,6 +15469,9 @@
 				B340E5A51E08893000AD0E8B /* tests.cpp in Sources */,
 				B3B1FC292076D80A00799EFE /* flash.cpp in Sources */,
 				B340E5A61E08893000AD0E8B /* cdc.cpp in Sources */,
+				B3B1FC7520770C5A00799EFE /* susie.cpp in Sources */,
+				B3B1FC8920770CAD00799EFE /* soundbox.cpp in Sources */,
+				B3B1FC8D20770CCF00799EFE /* mouse.cpp in Sources */,
 				B340E5A71E08893000AD0E8B /* dualanalog.cpp in Sources */,
 				B340E5A81E08893000AD0E8B /* huc.cpp in Sources */,
 				B3B1FC5D2076E14A00799EFE /* tcache.cpp in Sources */,
@@ -15418,11 +15491,13 @@
 				B340E5AF1E08893000AD0E8B /* CDAFReader_MPC.cpp in Sources */,
 				B340E5B01E08893000AD0E8B /* timer.cpp in Sources */,
 				B340E5B11E08893000AD0E8B /* Blip_Buffer.cpp in Sources */,
+				B3B1FC7020770C5A00799EFE /* cart.cpp in Sources */,
 				B340E5B21E08893000AD0E8B /* tsushinkb.cpp in Sources */,
 				B340E5B31E08893000AD0E8B /* mcgenjin.cpp in Sources */,
 				B3B1FC482076D95F00799EFE /* TLCS900h_interpret_src.cpp in Sources */,
 				B3B1FC282076D80A00799EFE /* dma.cpp in Sources */,
 				B340E5B41E08893000AD0E8B /* pcfx.cpp in Sources */,
+				B3B1FC8720770CAD00799EFE /* pcfx.cpp in Sources */,
 				B340E5B51E08893000AD0E8B /* gpu_polygon.cpp in Sources */,
 				B340E5B61E08893000AD0E8B /* gamepad.cpp in Sources */,
 				B340E5B71E08893000AD0E8B /* vdc.cpp in Sources */,
@@ -15432,8 +15507,10 @@
 				B340E5BB1E08893000AD0E8B /* IPSPatcher.cpp in Sources */,
 				B340E5BC1E08893000AD0E8B /* rom.cpp in Sources */,
 				B39578F51E6D583C00854D7A /* TLCS900h_interpret.cpp in Sources */,
+				B3B1FC8520770CAD00799EFE /* jrevdct.cpp in Sources */,
 				B3B1FC632076E15C00799EFE /* dis_decode.cpp in Sources */,
 				B39578F01E6D583C00854D7A /* TLCS900h_disassemble.cpp in Sources */,
+				B3B1FC7220770C5A00799EFE /* mikie.cpp in Sources */,
 				B340E5BD1E08893000AD0E8B /* unzip.c in Sources */,
 				B340E5BE1E08893000AD0E8B /* resample.c in Sources */,
 				B340E5BF1E08893000AD0E8B /* cdromif.cpp in Sources */,
@@ -15464,7 +15541,9 @@
 				B340E5D01E08893000AD0E8B /* ioapi.c in Sources */,
 				B340E5D11E08893000AD0E8B /* mdct.c in Sources */,
 				B3B1FC552076E14A00799EFE /* comm.cpp in Sources */,
+				B3B1FC8220770CAD00799EFE /* huc6273.cpp in Sources */,
 				B39578DB1E6D582300854D7A /* flash.cpp in Sources */,
+				B3B1FC6F20770C5A00799EFE /* c65c02.cpp in Sources */,
 				B340E5D21E08893000AD0E8B /* CDAccess_CCD.cpp in Sources */,
 				B39578DD1E6D582300854D7A /* gfx_scanline_colour.cpp in Sources */,
 				B340E5D31E08893000AD0E8B /* recover-raw.cpp in Sources */,
@@ -15480,6 +15559,7 @@
 				B340E5DA1E08893000AD0E8B /* jrevdct.cpp in Sources */,
 				B340E5DB1E08893000AD0E8B /* gamepad.cpp in Sources */,
 				B340E5DC1E08893000AD0E8B /* escape.cpp in Sources */,
+				B3B1FC8820770CAD00799EFE /* rainbow.cpp in Sources */,
 				B340E5DD1E08893000AD0E8B /* input.cpp in Sources */,
 				B340E5DE1E08893000AD0E8B /* resolve.cpp in Sources */,
 				B340E5DF1E08893000AD0E8B /* Stereo_Buffer.cpp in Sources */,
@@ -15539,7 +15619,9 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					WANT_LYNX_EMU,
 					WANT_NGP_EMU,
+					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
@@ -15663,7 +15745,9 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					WANT_LYNX_EMU,
 					WANT_NGP_EMU,
+					WANT_PCFX_EMU,
 					WANT_PSX_EMU,
 					WANT_VB_EMU,
 					WANT_WSWAN_EMU,
