@@ -466,25 +466,25 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func handleUpdate(forSection section: Int, deletions: [Int], insertions: [Int], modifications: [Int], needsInsert: Bool = false, needsDelete: Bool = false) {
         guard let collectionView = collectionView else { return }
-		collectionView.reloadSections([section])
-//        collectionView.performBatchUpdates({
-//            if needsInsert {
-//                ILOG("Inserting section \(section)")
-//                collectionView.insertSections([section])
-//            }
-//
-//            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
-//            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
-//            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
-//            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
-//
-//            if needsDelete {
-//                ILOG("Deleting section \(section)")
-//                collectionView.deleteSections([section])
-//            }
-//        }, completion: { (completed) in
-//
-//        })
+//		collectionView.reloadSections([section])
+        collectionView.performBatchUpdates({
+            if needsInsert {
+                ILOG("Inserting section \(section)")
+                collectionView.insertSections([section])
+            }
+
+            ILOG("Section \(section) updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
+            collectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: section) }))
+            collectionView.deleteItems(at: deletions.map({  return IndexPath(row: $0, section: section) }))
+            collectionView.reloadItems(at: modifications.map({  return IndexPath(row: $0, section: section) }))
+
+            if needsDelete {
+                ILOG("Deleting section \(section)")
+                collectionView.deleteSections([section])
+            }
+        }, completion: { (completed) in
+
+        })
     }
 
     func unregisterForChange() {
@@ -1116,6 +1116,34 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
             }
+
+			// If game.system has multiple cores, add actions to manage
+			if let system = game.system, system.cores.count > 1 {
+
+				// If user has select a core for this game, actio to reset
+				if let userPreferredCoreID = game.userPreferredCoreID {
+					// Find the core for the current id
+					let userSelectedCore = RomDatabase.sharedInstance.object(ofType: PVCore.self, wherePrimaryKeyEquals: userPreferredCoreID)
+					let coreName = userSelectedCore?.projectName ?? "nil"
+					// Add reset action
+					actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", style: .default, handler: {[unowned self] (alert) in
+
+						let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
+						resetAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+						resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (action) in
+							try! RomDatabase.sharedInstance.writeTransaction {
+								game.userPreferredCoreID = nil
+							}
+						}))
+						self.present(resetAlert, animated: true, completion: nil)
+					}))
+				}
+
+				// Action to Open with...
+				actionSheet.addAction(UIAlertAction(title: "Open with...", style: .default, handler: {[unowned self] (action) in
+					self.presentCoreSelection(forGame: game)
+				}))
+			}
 
             actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.moreInfo(for: game)

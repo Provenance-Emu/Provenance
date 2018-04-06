@@ -39,6 +39,8 @@ public enum ScreenType: String {
     var games = LinkingObjects(fromType: PVGame.self, property: "system")
     var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
+	dynamic var userPreferredCoreID : String?
+
     dynamic var identifier: String = ""
 
     override public static func primaryKey() -> String? {

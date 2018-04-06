@@ -22,6 +22,7 @@ public protocol GameLaunchingViewController: class {
     func load(_ game: PVGame)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
+	func presentCoreSelection(forGame game : PVGame)
 }
 
 public enum GameLaunchingError: Error {
@@ -144,6 +145,48 @@ extension GameLaunchingViewController where Self : UIViewController {
         self.present(alertController, animated: true)
     }
 
+	func presentCoreSelection(forGame game : PVGame) {
+		guard let system = game.system else {
+			ELOG("No sytem for game \(game.title)")
+			return
+		}
+
+		let cores = system.cores
+
+		let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game", preferredStyle: .actionSheet)
+
+		for core in cores {
+			let action = UIAlertAction(title: core.projectName, style: .default) {[unowned self] (action) in
+				let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)...", preferredStyle: .actionSheet)
+
+				let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: {action in self.presentEMU(withCore: core, forGame: game)})
+				let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: {[unowned self] action in
+					try! RomDatabase.sharedInstance.writeTransaction {
+						game.userPreferredCoreID = core.identifier
+					}
+					self.presentEMU(withCore: core, forGame: game)
+
+				})
+				let alwaysThisSytemAction = UIAlertAction(title: "Always for this system", style: .default, handler: {[unowned self] action in
+					try! RomDatabase.sharedInstance.writeTransaction {
+						system.userPreferredCoreID = core.identifier
+					}
+					self.presentEMU(withCore: core, forGame: game)
+				})
+
+				alwaysUseAlert.addAction(thisTimeOnlyAction)
+				alwaysUseAlert.addAction(alwaysThisGameAction)
+				alwaysUseAlert.addAction(alwaysThisSytemAction)
+
+				self.present(alwaysUseAlert, animated: true)
+			}
+
+			coreChoiceAlert.addAction(action)
+		}
+
+		present(coreChoiceAlert, animated: true)
+	}
+
     func load(_ game: PVGame) {
         guard !(presentedViewController is PVEmulatorViewController) else {
             let currentGameVC = presentedViewController as! PVEmulatorViewController
@@ -161,42 +204,32 @@ extension GameLaunchingViewController where Self : UIViewController {
             try self.canLoad(game)
             // Init emulator VC
 
-            // TODO: let the user choose the core here
-            guard let core = game.system.cores.first else {
-                displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
-                return
-            }
+			guard let system = game.system else {
+				displayAndLogError(withTitle: "Cannot open game", message: "No system found matching '\(game.systemIdentifier)'.")
+				return
+			}
 
-            guard let coreInstance = core.createInstance(forSystem: game.system) else {
-                displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
-                ELOG("Failed to init core instance")
-                return
-            }
+			let cores = system.cores
 
-            let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
+			guard !cores.isEmpty else {
+				displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
+				return
+			}
 
-            // Configure emulator VC
-            // NOTE: These technically could be derived in PVEmulatorViewController directly
-            emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
-            emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
-            emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
+			// Check if multiple cores can launch thi rom
+			if cores.count > 1 {
+				let coresString : String = cores.map({return $0.projectName}).joined(separator: ", ")
+				ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
+				if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID, let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
+					ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
+					presentEMU(withCore: chosenCore, forGame: game)
+					return
+				}
 
-            // Present the emulator VC
-            emulatorViewController.modalTransitionStyle = .crossDissolve
-            self.present(emulatorViewController, animated: true) {() -> Void in }
-
-            PVControllerManager.shared.iCadeController?.refreshListener()
-
-            do {
-                try RomDatabase.sharedInstance.writeTransaction {
-                    game.playCount += 1
-                    game.lastPlayed = Date()
-                }
-            } catch {
-                ELOG("\(error.localizedDescription)")
-            }
-
-            self.updateRecentGames(game)
+				presentCoreSelection(forGame: game)
+			} else {
+				presentEMU(withCore: cores.first!, forGame: game)
+			}
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
             PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
@@ -214,6 +247,39 @@ extension GameLaunchingViewController where Self : UIViewController {
             displayAndLogError(withTitle: "Cannot open game", message: "Unknown error: \(error.localizedDescription)")
         }
     }
+
+	private func presentEMU(withCore core : PVCore, forGame game: PVGame) {
+		guard let coreInstance = core.createInstance(forSystem: game.system) else {
+			displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
+			ELOG("Failed to init core instance")
+			return
+		}
+
+		let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
+
+		// Configure emulator VC
+		// NOTE: These technically could be derived in PVEmulatorViewController directly
+		emulatorViewController.batterySavesPath = PVEmulatorConfiguration.batterySavesPath(forGame: game).path
+		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
+		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
+
+		// Present the emulator VC
+		emulatorViewController.modalTransitionStyle = .crossDissolve
+		self.present(emulatorViewController, animated: true) {() -> Void in }
+
+		PVControllerManager.shared.iCadeController?.refreshListener()
+
+		do {
+			try RomDatabase.sharedInstance.writeTransaction {
+				game.playCount += 1
+				game.lastPlayed = Date()
+			}
+		} catch {
+			ELOG("\(error.localizedDescription)")
+		}
+
+		self.updateRecentGames(game)
+	}
 
     func doLoad(_ game: PVGame) throws {
         guard let system = game.system else {

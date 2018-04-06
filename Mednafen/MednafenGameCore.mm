@@ -41,6 +41,8 @@
 #import <PVSupport/PVSupport-Swift.h>
 
 
+#define USE_PCE_FAST 1
+
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
 @interface MednafenGameCore (MultiDisc)
@@ -581,6 +583,11 @@ static void emulation_run(BOOL skipFrame) {
 	emulation_run(skip);
 }
 
+- (void)executeFrame
+{
+	[self executeFrameSkippingFrame:NO];
+}
+
 - (void)resetEmulation
 {
     MDFNI_Reset();
@@ -751,9 +758,10 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
 const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
 const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
-// a=7, b=6, select=4, start=5, d=0, u=1, r=2, l=3
-const int NESMap[] = { 1, 0, 3, 2, 7, 6, 4, 5};
-const int SNESMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9}; // B, Y, Select, Start, U, D, L, R, A, X, L, R
+// u, d, l, r, a, b, start, select
+const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
+// B, Y, Select, Start, U, D, L, R, A, X, L, R
+const int SNESMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 
 // Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };

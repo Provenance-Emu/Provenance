@@ -39,6 +39,8 @@ protocol PVLibraryEntry where Self: Object {}
 
     dynamic var md5Hash: String            = ""
 
+	dynamic var userPreferredCoreID : String?
+
     /* Links to other objects */
     var saveStates = List<PVSaveState>()
     var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
