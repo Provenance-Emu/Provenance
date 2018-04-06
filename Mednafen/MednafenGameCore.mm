@@ -98,7 +98,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVGenesisSystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -154,8 +154,8 @@ static void mednafen_init(MednafenGameCore* current)
 	// Disable to reduce latency, at the cost of potentially increased video "juddering", with the maximum reduction in latency being about 1 video frame's time.
 	// Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.
 	// Default: 1
-	MDFNI_SetSetting("video.blit_timesync", "0");
-	MDFNI_SetSetting("video.fs", "0"); // Enable fullscreen mode. Default: 0
+//	MDFNI_SetSettingB("video.blit_timesync", false);
+	MDFNI_SetSettingB("video.fs", false); // Enable fullscreen mode. Default: 0
 
     // VB defaults. dox http://mednafen.sourceforge.net/documentation/09x/vb.html
 	// VirtualBoy
@@ -166,16 +166,21 @@ static void mednafen_init(MednafenGameCore* current)
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
     //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
 
+	// NES Settings
+
+	MDFNI_SetSetting("nes.clipsides", "1"); // Clip left+right 8 pixel columns. 0 default
+	MDFNI_SetSetting("nes.correct_aspect", "1"); // Correct the aspect ratio. 0 default
+
+
 	// PSX Settings
 	MDFNI_SetSetting("psx.h_overscan", "1"); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
 	// PCE Settings
-	MDFNI_SetSetting("pce.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier.
 	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
-	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
-												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
-												 // Enable this option to reduce whining noise during ADPCM playback.
+//	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
+//												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
+//												 // Enable this option to reduce whining noise during ADPCM playback.
     MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
     MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
 
@@ -183,9 +188,6 @@ static void mednafen_init(MednafenGameCore* current)
 
 	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
 	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
-	MDFNI_SetSetting("pce_fast.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
-													  // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
-													  // Enable this option to reduce whining noise during ADPCM playback.
 	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
 	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
 
@@ -566,6 +568,14 @@ static void emulation_run(BOOL skipFrame) {
     unsigned maxValue = 0;
     const int*map;
     switch (self.systemType) {
+		case MednaSystemGBA:
+			maxValue = PVGBAButtonCount;
+			map = GBAMap;
+			break;
+		case MednaSystemGB:
+			maxValue = PVGBAButtonCount;
+			map = GBMap;
+			break;
         case MednaSystemPSX:
             maxValue = PVPSXButtonCount;
             map = PSXMap;
@@ -840,8 +850,9 @@ const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 // TODO: Test these
-const int GBMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
-const int GBAMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
+const int GBMap[] = { 4, 5, 1, 6, 7, 0,1, 3, 2};
+// , , , , down, , , ,
+const int GBAMap[] = { 6, 0, 5, 4, 1, 2, 3, 7, 1, 8, 9};
 
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
