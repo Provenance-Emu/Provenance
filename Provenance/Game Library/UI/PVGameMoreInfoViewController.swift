@@ -159,7 +159,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     // MARK: Actions
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+            load(game, sender: sender)
         }
     }
 
@@ -429,7 +429,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+			load(game, sender: sender)
         }
     }
 
@@ -629,7 +629,7 @@ extension PVGameMoreInfoViewController {
     override var previewActionItems: [UIPreviewActionItem] {
         let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
-                libVC.load(self.game!)
+				libVC.load(self.game!, sender: self.view)
             }
         }
 

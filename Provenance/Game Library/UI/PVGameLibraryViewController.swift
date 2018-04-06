@@ -1093,7 +1093,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let recentGames = database.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5)
 
         if let mostRecentGame = recentGames.first {
-            load(mostRecentGame)
+			load(mostRecentGame, sender: collectionView)
         } else {
             ELOG("No game found for MD5 \(md5)")
         }
@@ -1121,8 +1121,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
 
             let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            if traitCollection.userInterfaceIdiom == .pad {
-                let cell: UICollectionViewCell? = collectionView?.cellForItem(at: indexPath)
+			var cell: UICollectionViewCell?
+
+			if traitCollection.userInterfaceIdiom == .pad {
+                cell = collectionView?.cellForItem(at: indexPath)
                 actionSheet.popoverPresentationController?.sourceView = cell
                 actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
             }
@@ -1151,7 +1153,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 				// Action to Open with...
 				actionSheet.addAction(UIAlertAction(title: "Open with...", style: .default, handler: {[unowned self] (action) in
-					self.presentCoreSelection(forGame: game)
+					self.presentCoreSelection(forGame: game, sender: cell)
 				}))
 			}
 
@@ -1887,7 +1889,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let game = self.game(at: indexPath) {
-            load(game)
+			let cell = collectionView.cellForItem(at: indexPath)
+
+			load(game, sender: cell)
         } else {
             let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))

@@ -19,10 +19,10 @@ import UIKit
 public protocol GameLaunchingViewController: class {
     var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
-    func load(_ game: PVGame)
+	func load(_ game: PVGame, sender : Any?)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
-	func presentCoreSelection(forGame game : PVGame)
+	func presentCoreSelection(forGame game : PVGame, sender : Any?)
 }
 
 public enum GameLaunchingError: Error {
@@ -145,7 +145,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         self.present(alertController, animated: true)
     }
 
-	func presentCoreSelection(forGame game : PVGame) {
+	func presentCoreSelection(forGame game : PVGame, sender: Any?) {
 		guard let system = game.system else {
 			ELOG("No sytem for game \(game.title)")
 			return
@@ -154,10 +154,18 @@ extension GameLaunchingViewController where Self : UIViewController {
 		let cores = system.cores
 
 		let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game", preferredStyle: .actionSheet)
+		if traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
+			coreChoiceAlert.popoverPresentationController?.sourceView = senderView
+			coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
+		}
 
 		for core in cores {
 			let action = UIAlertAction(title: core.projectName, style: .default) {[unowned self] (action) in
 				let alwaysUseAlert = UIAlertController(title: nil, message: "Open with \(core.projectName)...", preferredStyle: .actionSheet)
+				if self.traitCollection.userInterfaceIdiom == .pad, let senderView = sender as? UIView ?? self.view {
+					alwaysUseAlert.popoverPresentationController?.sourceView = senderView
+					alwaysUseAlert.popoverPresentationController?.sourceRect = senderView.bounds
+				}
 
 				let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: {action in self.presentEMU(withCore: core, forGame: game)})
 				let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: {[unowned self] action in
@@ -187,7 +195,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 		present(coreChoiceAlert, animated: true)
 	}
 
-    func load(_ game: PVGame) {
+	func load(_ game: PVGame, sender : Any?) {
         guard !(presentedViewController is PVEmulatorViewController) else {
             let currentGameVC = presentedViewController as! PVEmulatorViewController
             displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
@@ -220,13 +228,14 @@ extension GameLaunchingViewController where Self : UIViewController {
 			if cores.count > 1 {
 				let coresString : String = cores.map({return $0.projectName}).joined(separator: ", ")
 				ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
-				if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID, let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
+				if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
+					let chosenCore = cores.first(where: { return $0.identifier == userSelecion }) {
 					ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
 					presentEMU(withCore: chosenCore, forGame: game)
 					return
 				}
 
-				presentCoreSelection(forGame: game)
+				presentCoreSelection(forGame: game, sender: sender)
 			} else {
 				presentEMU(withCore: cores.first!, forGame: game)
 			}
