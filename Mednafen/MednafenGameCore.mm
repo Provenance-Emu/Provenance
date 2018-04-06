@@ -473,21 +473,21 @@ static void emulation_run(BOOL skipFrame) {
         
         // PSX: Set multitap configuration if detected
         NSString *serial = [self romSerial];
-        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
-        
-        if (multitapCount != nil)
-        {
-            multiTapPlayerCount = [multitapCount intValue];
-            
-            if([[MednafenGameCore multiTap5PlayerPort2] containsObject:serial]) {
-                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-            } else {
-                MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-                if(multiTapPlayerCount > 5) {
-                    MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-                }
-            }
-        }
+//        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
+//        
+//        if (multitapCount != nil)
+//        {
+//            multiTapPlayerCount = [multitapCount intValue];
+//            
+//            if([[MednafenGameCore multiTap5PlayerPort2] containsObject:serial]) {
+//                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+//            } else {
+//                MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
+//                if(multiTapPlayerCount > 5) {
+//                    MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+//                }
+//            }
+//        }
         
         if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
             NSString *m3uPath = [path.stringByDeletingPathExtension stringByAppendingPathExtension:@"m3u"];
