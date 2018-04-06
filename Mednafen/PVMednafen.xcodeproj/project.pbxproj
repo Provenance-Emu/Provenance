@@ -11936,7 +11936,7 @@
 		1DEB913F08733D840010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -12031,7 +12031,7 @@
 		1DEB914008733D840010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -12107,14 +12107,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-mfpu=neon",
 					"-fwrapv",
-					"-fno-pic",
-					"-fno-pie",
-					"-fno-PIC",
-					"-fno-PIE",
 					"-fprefetch-loop-arrays",
 					"-fjump-tables",
 					"-fomit-frame-pointer",
@@ -12213,7 +12210,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -12277,7 +12274,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -12374,7 +12371,7 @@
 					"-mllvm",
 					"-disable-lsr",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = PVMednafen;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -12465,7 +12462,7 @@
 					"-mllvm",
 					"-disable-lsr",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = PVMednafen;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
