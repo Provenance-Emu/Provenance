@@ -274,22 +274,31 @@ public class PVEmulatorConfiguration: NSObject {
 
 public struct ClassInfo: CustomStringConvertible, Equatable {
     let classObject: AnyClass
-    let className: String
+	let className: String
     let bundle: Bundle
 
-    init?(_ classObject: AnyClass?) {
+	init?(_ classObject: AnyClass?, withSuperclass superclass: String? = nil) {
         guard let classObject = classObject else { return nil }
 
         self.classObject = classObject
 
         let cName = class_getName(classObject)
-        self.className = String(cString: cName)
-        self.bundle = Bundle(for: classObject)
+        let classString = String(cString: cName)
+		self.className = classString
+
+		if let superclass = superclass, ClassInfo.superClassName(forClass: classObject) != superclass {
+			return nil
+		}
+
+		self.bundle = Bundle(for: classObject)
     }
 
     var superclassInfo: ClassInfo? {
-        let superclassObject: AnyClass? = class_getSuperclass(self.classObject)
-        return ClassInfo(superclassObject)
+		if let superclassObject: AnyClass = class_getSuperclass(self.classObject) {
+			return ClassInfo(superclassObject)
+		} else {
+			return nil
+		}
     }
 
     public var description: String {
@@ -299,6 +308,15 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
     public static func == (lhs: ClassInfo, rhs: ClassInfo) -> Bool {
         return lhs.className == rhs.className
     }
+
+	static func superClassName(forClass c: AnyClass) -> String? {
+		guard let superClass = class_getSuperclass(c) else {
+			return nil
+		}
+		let cName = class_getName(superClass)
+		let classString = String(cString: cName)
+		return classString
+	}
 }
 
 // MARK: - System queries
