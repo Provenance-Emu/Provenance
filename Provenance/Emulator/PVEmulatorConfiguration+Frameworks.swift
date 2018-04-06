@@ -27,7 +27,7 @@ public extension PVEmulatorConfiguration {
             }
         }
 
-		return subclassList.filter{return $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore"} 
+		return subclassList.filter {return $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore"}
     }
 
     class func updateCores(fromPlists plists: [URL]) {
