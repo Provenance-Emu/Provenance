@@ -258,6 +258,7 @@ static void emulation_run(BOOL skipFrame) {
     current->spec.SoundBuf = sound_buf;
     current->spec.LineWidths = rects;
     current->spec.SoundBufMaxSize = sizeof(sound_buf) / 2;
+	current->spec.SoundBufSize = 0;
     current->spec.SoundVolume = 1.0;
     current->spec.soundmultiplier = 1.0;
 	current->spec.skip = skipFrame;
@@ -331,7 +332,7 @@ static void emulation_run(BOOL skipFrame) {
 		mednafenCoreModule = @"gba";
 		mednafenCoreAspect = OEIntSizeMake(3, 2);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-		sampleRate         = 48000;
+		sampleRate         = 44100;
 	}
 	else if([[self systemIdentifier] isEqualToString:@"com.provenance.genesis"]) // Genesis aka Megaddrive
 	{
