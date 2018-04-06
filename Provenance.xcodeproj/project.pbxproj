@@ -55,7 +55,7 @@
 		1AACCAEA1BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAE81BB615FE00DC21AE /* PVSynchronousURLSession.m */; };
 		1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; };
 		1AADCDB817BD998A00F53CFE /* UIActionSheet+BlockAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */; };
-		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
+		1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */; };
 		1AB95FFD17C563C200D3E392 /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
 		1AB9600017C5640A00D3E392 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */; };
@@ -95,7 +95,7 @@
 		1AD481EC1BA3548200FDA50A /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2D1AD9FFBF004EA30B /* unzip.c */; };
 		1AD481ED1BA3548400FDA50A /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A26EE2F1AD9FFBF004EA30B /* zip.c */; };
 		1AD481EE1BA3548800FDA50A /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
-		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */; };
+		1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
 		1AD481F21BA3549400FDA50A /* NSString+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A48698017C8C1170019F6D2 /* NSString+Hashing.m */; };
 		1AD481F31BA3549700FDA50A /* NSFileManager+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */; };
 		1AD481F41BA3549A00FDA50A /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
@@ -971,8 +971,7 @@
 		1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVTVSplitViewController.swift; sourceTree = "<group>"; };
 		1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+BlockAdditions.h"; sourceTree = "<group>"; };
 		1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+BlockAdditions.m"; sourceTree = "<group>"; };
-		1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FrameAdditions.h"; sourceTree = "<group>"; };
-		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FrameAdditions.m"; sourceTree = "<group>"; };
+		1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+FrameAdditions.swift"; sourceTree = "<group>"; };
 		1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+Hashing.h"; sourceTree = "<group>"; };
 		1AB183611AD9BF8000E094F6 /* NSFileManager+Hashing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+Hashing.m"; sourceTree = "<group>"; };
 		1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsViewController.swift; sourceTree = "<group>"; };
@@ -1977,8 +1976,7 @@
 				1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */,
 				1AADCDB217BD998A00F53CFE /* UIActionSheet+BlockAdditions.h */,
 				1AADCDB317BD998A00F53CFE /* UIActionSheet+BlockAdditions.m */,
-				1AADCDB417BD998A00F53CFE /* UIView+FrameAdditions.h */,
-				1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.m */,
+				1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */,
 				1A48697F17C8C1170019F6D2 /* NSString+Hashing.h */,
 				1A48698017C8C1170019F6D2 /* NSString+Hashing.m */,
 				1AB183601AD9BF8000E094F6 /* NSFileManager+Hashing.h */,
@@ -3382,7 +3380,7 @@
 				B349AECD1E9ABCF900ACD416 /* FilterCoder.cpp in Sources */,
 				B349AEC71E9ABCF900ACD416 /* CWrappers.cpp in Sources */,
 				B35BB7FE202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
-				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.m in Sources */,
+				1AADCDB917BD998A00F53CFE /* UIView+FrameAdditions.swift in Sources */,
 				B349AE5B1E9ABCF900ACD416 /* Bra.c in Sources */,
 				B349AF691E9ABCFA00ACD416 /* LzmaSDKObjCOpenCallback.cpp in Sources */,
 				B349AE691E9ABCF900ACD416 /* Lzma2Dec.c in Sources */,
@@ -3593,7 +3591,7 @@
 				B349AE5C1E9ABCF900ACD416 /* Bra.c in Sources */,
 				B349AF661E9ABCFA00ACD416 /* LzmaSDKObjCItem.mm in Sources */,
 				B3BE967B2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
-				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.m in Sources */,
+				1AD481F01BA3548E00FDA50A /* UIView+FrameAdditions.swift in Sources */,
 				B349AECC1E9ABCF900ACD416 /* FileStreams.cpp in Sources */,
 				B349AF6C1E9ABCFA00ACD416 /* LzmaSDKObjCOutFile.cpp in Sources */,
 				B349AF701E9ABCFA00ACD416 /* LzmaSDKObjCUpdateCallback.mm in Sources */,

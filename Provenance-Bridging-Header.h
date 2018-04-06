@@ -35,7 +35,6 @@
 #import "PVGLViewController.h"
 #import "PViCade8BitdoController.h"
 #import "UIActionSheet+BlockAdditions.h"
-#import "UIView+FrameAdditions.h"
 #import "kICadeControllerSetting.h"
 #import "MBProgressHUD.h"
 #import "NSData+Hashing.h"

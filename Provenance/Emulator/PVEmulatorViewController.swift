@@ -23,6 +23,10 @@ typealias PVEmulatorViewControllerRootClass = GCEventViewController
 typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
+class MenuButton : UIButton, HitAreaEnlarger {
+	var hitAreaInset: UIEdgeInsets = UIEdgeInsets(top: -5, left: -5, bottom: -5, right: -5)
+}
+
 extension UIViewController {
 	func presentMessage(_ message : String, title: String, completion: (() -> Swift.Void)? = nil) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -58,7 +62,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var batterySavesPath = ""
     var saveStatePath = ""
     var BIOSPath = ""
-    var menuButton: UIButton?
+    var menuButton: MenuButton?
 
     var glViewController: PVGLViewController!
     var gameAudio: OEGameAudio!
@@ -201,7 +205,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         controllerViewController?.didMove(toParentViewController: self)
 #endif
         let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
-        menuButton = UIButton(type: .system)
+        menuButton = MenuButton(type: .system)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
         menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
