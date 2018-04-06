@@ -13,28 +13,28 @@ import PVSupport
 // MARK: - System Scanner
 public extension PVEmulatorConfiguration {
     static var coreClasses: [ClassInfo] {
-        let motherClassInfo = ClassInfo(PVEmulatorCore.self)!
+        let motherClassInfo = ClassInfo(PVEmulatorCore.self)
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
         let classList = objc_copyClassList(&count)!
 
         for i in 0..<Int(count) {
-            if let classInfo = ClassInfo(classList[i]),
+			if let classInfo = ClassInfo(classList[i], withSuperclass: "PVEmulatorCore"),
                 let superclassInfo = classInfo.superclassInfo,
                 superclassInfo == motherClassInfo {
                 subclassList.append(classInfo)
             }
         }
 
-        return subclassList
+		return subclassList.filter{return $0.className != "PVEmulatorCore" && $0.superclassInfo?.className == "PVEmulatorCore"} 
     }
 
     class func updateCores(fromPlists plists: [URL]) {
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
-        plists .forEach { (plist) in
+        plists.forEach { (plist) in
             do {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
