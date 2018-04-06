@@ -249,6 +249,29 @@ import UIKit
     func didRelease(_ button: PVGenesisButton, forPlayer player: Int)
 }
 
+// MARK: - Deamcast
+@objc public enum PVDreamcastButton: Int {
+	case up
+	case down
+	case left
+	case right
+	case a
+	case b
+	case x
+	case y
+	case l
+	case r
+	case start
+	case count
+}
+
+@objc public protocol PVDreamcastSystemResponderClient: ResponderClient, ButtonResponder, JoystickResponder {
+	@objc(didPushDreamcastButton:forPlayer:)
+	func didPush(_ button: PVDreamcastButton, forPlayer player: Int)
+	@objc(didReleaseDreamcastButton:forPlayer:)
+	func didRelease(_ button: PVDreamcastButton, forPlayer player: Int)
+}
+
 // MARK: - Game Boy Advanced
 @objc public enum PVGBAButton: Int {
     case up

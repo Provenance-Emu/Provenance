@@ -49,6 +49,12 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't impliment PVGenesisSystemResponderClient")
             }
+		case .Dreamcast:
+			if let core = core as? PVDreamcastSystemResponderClient {
+				return PVDreamcastControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+			} else {
+				fatalError("Core doesn't impliment PVDreamcastSystemResponderClient")
+			}
         case .SNES:
             if let core = core as? PVSNESSystemResponderClient {
                 return PVSNESControllerViewController(controlLayout: controllerLayout, system: system, responder: core)

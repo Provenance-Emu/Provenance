@@ -175,6 +175,8 @@
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; };
 		B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B339411C207837F1008DBAB4 /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B339411B207837F1008DBAB4 /* PVDreamcastControllerViewController.swift */; };
+		B339411D207837F1008DBAB4 /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B339411B207837F1008DBAB4 /* PVDreamcastControllerViewController.swift */; };
 		B349AE371E9ABCF900ACD416 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B349ACED1E9ABCF800ACD416 /* .gitignore */; };
 		B349AE381E9ABCF900ACD416 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B349ACED1E9ABCF800ACD416 /* .gitignore */; };
 		B349AE391E9ABCF900ACD416 /* .travis.yml in Resources */ = {isa = PBXBuildFile; fileRef = B349ACEE1E9ABCF800ACD416 /* .travis.yml */; };
@@ -1071,6 +1073,7 @@
 		B32F46331D6A8BD70085BA9F /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33115811C72FC7700E9AD14 /* mupen64plusRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = mupen64plusRice.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/mupen64plusRice.framework"; sourceTree = "<absolute>"; };
 		B33115841C72FC7700E9AD14 /* PVMupen64PlusDynamic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = PVMupen64PlusDynamic.framework; path = "/Users/jmattiello/Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVMupen64PlusDynamic.framework"; sourceTree = "<absolute>"; };
+		B339411B207837F1008DBAB4 /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../Library/Developer/Xcode/DerivedData/Provenance-epgbyuhwmldnwnabzgpptirwwuer/Build/Products/Debug-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B349ACED1E9ABCF800ACD416 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1818,6 +1821,7 @@
 		1A47C94A17BC310700C27644 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B3A5507B2078379D00F9364E /* Dreamcast */,
 				E41448871B3125D90056D80A /* iCade */,
 				B3D2E3941D6E8B460058544D /* 32X */,
 				B3DF87681D6A5A6200D216D4 /* Atari2600 */,
@@ -2686,6 +2690,14 @@
 			name = "Neo Geo";
 			sourceTree = "<group>";
 		};
+		B3A5507B2078379D00F9364E /* Dreamcast */ = {
+			isa = PBXGroup;
+			children = (
+				B339411B207837F1008DBAB4 /* PVDreamcastControllerViewController.swift */,
+			);
+			name = Dreamcast;
+			sourceTree = "<group>";
+		};
 		B3B3B89A1DECF9A700602746 /* N64 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3273,6 +3285,7 @@
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */,
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
+				B339411C207837F1008DBAB4 /* PVDreamcastControllerViewController.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				B3D8DD0C206EAA9E008FAC42 /* Migration.swift in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
@@ -3558,6 +3571,7 @@
 				B349AE4E1E9ABCF900ACD416 /* 7zFile.c in Sources */,
 				1AD481E51BA3546600FDA50A /* PVGLViewController.m in Sources */,
 				B349AF641E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
+				B339411D207837F1008DBAB4 /* PVDreamcastControllerViewController.swift in Sources */,
 				B349AE8C1E9ABCF900ACD416 /* XzDec.c in Sources */,
 				B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B349AEAC1E9ABCF900ACD416 /* 7zUpdate.cpp in Sources */,

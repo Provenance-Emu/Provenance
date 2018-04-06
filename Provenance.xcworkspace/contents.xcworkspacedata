@@ -43,4 +43,7 @@
    <FileRef
       location = "group:PVFCEU/PVFCEU.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:PVReicast/PVReicast.xcodeproj">
+   </FileRef>
 </Workspace>

@@ -10,3 +10,6 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4"]
 	path = PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4
 	url = https://JoeMatt@github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+[submodule "PVReicast/reicast-emulator"]
+	path = PVReicast/reicast-emulator
+	url = https://github.com/JoeMatt/reicast-emulator.git
