@@ -542,6 +542,16 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
 
+	var transitioningToSize: CGSize?
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		transitioningToSize = size
+		collectionView?.collectionViewLayout.invalidateLayout()
+		coordinator.notifyWhenInteractionEnds {[weak self] (context) in
+			self?.transitioningToSize = nil
+		}
+		super.viewWillTransition(to: size, with: coordinator)
+	}
+
     #if os(iOS)
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
@@ -1811,6 +1821,15 @@ extension PVGameLibraryViewController {
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
+
+	var minimumInteritemSpacing : CGFloat {
+		#if os(tvOS)
+		return 50
+		#else
+		return 5.0
+		#endif
+	}
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		#if os(tvOS)
 		if indexPath.section == saveStateSection {
@@ -1820,12 +1839,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
 		#else
-		let width :CGFloat = (collectionView.bounds.size.width / 3) - 15
+		let height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
+		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
+		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
+		let width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow)
 
-		if PVSettingsModel.shared.showGameTitles {
-			return CGSize(width: width, height: 144)
-		}
-		return CGSize(width: width, height: 100)
+		return CGSize(width: width, height: height)
 		#endif
     }
 
@@ -1836,11 +1855,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #endif
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        #if os(tvOS)
-            return 50
-        #else
-            return 5.0
-        #endif
+		return minimumInteritemSpacing
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
