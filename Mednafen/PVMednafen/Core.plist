@@ -21,6 +21,7 @@
 		<string>com.provenance.vb</string>
 		<string>com.provenance.ws</string>
 		<string>com.provenance.wsc</string>
+		<string>com.provenance.nes</string>
 	</array>
 	<key>PVProjectURL</key>
 	<string>https://mednafen.github.io</string>

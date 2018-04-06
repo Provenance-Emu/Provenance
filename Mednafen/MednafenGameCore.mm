@@ -96,7 +96,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -272,6 +272,15 @@ static void emulation_run(BOOL skipFrame) {
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
     }
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.nes"])
+	{
+		self.systemType = MednaSystemNES;
+
+		mednafenCoreModule = @"nes";
+		mednafenCoreAspect = OEIntSizeMake(80, 51);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
     {
         self.systemType = MednaSystemNeoGeo;
@@ -285,10 +294,11 @@ static void emulation_run(BOOL skipFrame) {
     {
         self.systemType = MednaSystemPCE;
 
-		// For PCE_FAST module over PCE
-		MDFNI_SetSetting("pce.enable", "0");
-
+#if USE_PCE_FAST
+		mednafenCoreModule = @"pce_fast";
+#else
 		mednafenCoreModule = @"pce";
+#endif
         mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
@@ -465,6 +475,7 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemPCE:
             maxPlayers = 5;
             break;
+		case MednaSystemNES:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
@@ -495,6 +506,10 @@ static void emulation_run(BOOL skipFrame) {
             maxValue = PVLynxButtonCount;
             map = LynxMap;
             break;
+		case MednaSystemNES:
+			maxValue = PVNESButtonCount;
+			map = NESMap;
+			break;
         case MednaSystemPCE:
             maxValue = PVPCEButtonCount;
             map = PCEMap;
@@ -729,12 +744,18 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     }
 }
 
-# pragma mark - Input
+# pragma mark - Input -
 
 // Map OE button order to Mednafen button order
-const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
+
+const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
 const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
 const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
+// a=7, b=6, select=4, start=5, d=0, u=1, r=2, l=3
+const int NESMap[] = { 1, 0, 3, 2, 7, 6, 4, 5};
+const int SNESMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9}; // B, Y, Select, Start, U, D, L, R, A, X, L, R
+
+// Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
@@ -826,6 +847,16 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     }
 #endif
     return 0;
+}
+
+#pragma mark NES
+- (void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	int mappedButton = NESMap[button];
+	inputBuffer[player][0] |= 1 << mappedButton;
+}
+
+-(void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	inputBuffer[player][0] &= ~(1 << NESMap[button]);
 }
 
 #pragma mark Neo Geo

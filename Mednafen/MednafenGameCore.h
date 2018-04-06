@@ -32,6 +32,7 @@
 
 typedef NS_ENUM(NSInteger, MednaSystem) {
     MednaSystemLynx,
+	MednaSystemNES,
     MednaSystemNeoGeo,
     MednaSystemPCE,
     MednaSystemPCFX,
