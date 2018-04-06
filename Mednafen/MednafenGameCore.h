@@ -31,11 +31,16 @@
 @class OERingBuffer;
 
 typedef NS_ENUM(NSInteger, MednaSystem) {
+	MednaSystemGB,
+	MednaSystemGBA,
+	MednaSystemGG,
     MednaSystemLynx,
+	MednaSystemMD,
 	MednaSystemNES,
     MednaSystemNeoGeo,
     MednaSystemPCE,
     MednaSystemPCFX,
+	MednaSystemSMS,
     MednaSystemPSX,
     MednaSystemVirtualBoy,
     MednaSystemWonderSwan

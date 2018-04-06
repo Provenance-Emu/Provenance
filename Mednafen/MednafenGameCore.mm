@@ -98,7 +98,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVGenesisSystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -128,32 +128,37 @@ static __weak MednafenGameCore *_current;
 
 static void mednafen_init(MednafenGameCore* current)
 {
-    //passing by parameter
-    //GET_CURRENT_OR_RETURN();
-
     NSString* batterySavesDirectory = current.batterySavesPath;
     NSString* biosPath = current.BIOSPath;
-    
-//    std::vector<MDFNGI*> ext;
-    MDFNI_InitializeModules();
+
+	MDFNI_InitializeModules();
 
     std::vector<MDFNSetting> settings;
-
-    //passing by parameter
-    //NSString *batterySavesDirectory = [self batterySavesPath];
-    //NSString *biosPath = current.biosDirectoryPath;
 
     MDFNI_Initialize([biosPath UTF8String], settings);
 
     // Set bios/system file and memcard save paths
     MDFNI_SetSetting("pce.cdbios", [[[biosPath stringByAppendingPathComponent:@"syscard3"] stringByAppendingPathExtension:@"pce"] UTF8String]); // PCE CD BIOS
+	MDFNI_SetSetting("pce_fast.cdbios", [[[biosPath stringByAppendingPathComponent:@"syscard3"] stringByAppendingPathExtension:@"pce"] UTF8String]); // PCE CD BIOS
     MDFNI_SetSetting("pcfx.bios", [[[biosPath stringByAppendingPathComponent:@"pcfx"] stringByAppendingPathExtension:@"rom"] UTF8String]); // PCFX BIOS
+
     MDFNI_SetSetting("psx.bios_jp", [[[biosPath stringByAppendingPathComponent:@"scph5500"] stringByAppendingPathExtension:@"bin"] UTF8String]); // JP SCPH-5500 BIOS
     MDFNI_SetSetting("psx.bios_na", [[[biosPath stringByAppendingPathComponent:@"scph5501"] stringByAppendingPathExtension:@"bin"] UTF8String]); // NA SCPH-5501 BIOS
     MDFNI_SetSetting("psx.bios_eu", [[[biosPath stringByAppendingPathComponent:@"scph5502"] stringByAppendingPathExtension:@"bin"] UTF8String]); // EU SCPH-5502 BIOS
+
     MDFNI_SetSetting("filesys.path_sav", [batterySavesDirectory UTF8String]); // Memcards
 
+	// Global settings
+
+	// Enable time synchronization(waiting) for frame blitting.
+	// Disable to reduce latency, at the cost of potentially increased video "juddering", with the maximum reduction in latency being about 1 video frame's time.
+	// Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.
+	// Default: 1
+	MDFNI_SetSetting("video.blit_timesync", "0");
+	MDFNI_SetSetting("video.fs", "0"); // Enable fullscreen mode. Default: 0
+
     // VB defaults. dox http://mednafen.sourceforge.net/documentation/09x/vb.html
+	// VirtualBoy
     MDFNI_SetSetting("vb.disable_parallax", "1");       // Disable parallax for BG and OBJ rendering
     MDFNI_SetSetting("vb.anaglyph.preset", "disabled"); // Disable anaglyph preset
     MDFNI_SetSetting("vb.anaglyph.lcolor", "0xFF0000"); // Anaglyph l color
@@ -161,10 +166,35 @@ static void mednafen_init(MednafenGameCore* current)
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
     //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
 
-    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline
-    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline
+	// PSX Settings
+	MDFNI_SetSetting("psx.h_overscan", "1"); // Show horizontal overscan area. 1 default
+	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
-    MDFNI_SetSetting("psx.h_overscan", "0"); // Remove PSX overscan
+	// PCE Settings
+	MDFNI_SetSetting("pce.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier.
+	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
+	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
+												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
+												 // Enable this option to reduce whining noise during ADPCM playback.
+    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
+    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
+
+	// PCE_Fast settings
+
+	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
+	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
+	MDFNI_SetSetting("pce_fast.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
+													  // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
+													  // Enable this option to reduce whining noise during ADPCM playback.
+	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
+	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
+
+	// PC-FX Settings
+	MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
+	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
+	MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
+	MDFNI_SetSetting("pcfx.slstart", "0"); // PCFX: First rendered scanline 4 default
+	MDFNI_SetSetting("pcfx.slend", "239"); // PCFX: Last rendered scanline 235 default, 239max
 
 #pragma message "forget about multitap for now :)"
     // Set multitap configuration if detected
@@ -279,8 +309,44 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemNES;
 
 		mednafenCoreModule = @"nes";
-		mednafenCoreAspect = OEIntSizeMake(80, 51);
+		mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.gb"] || [[self systemIdentifier] isEqualToString:@"com.provenance.gbc"])
+	{
+		self.systemType = MednaSystemGB;
+
+		mednafenCoreModule = @"gb";
+		mednafenCoreAspect = OEIntSizeMake(10, 9);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.gba"])
+	{
+		self.systemType = MednaSystemGBA;
+
+		mednafenCoreModule = @"gba";
+		mednafenCoreAspect = OEIntSizeMake(3, 2);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.genesis"]) // Genesis aka Megaddrive
+	{
+		self.systemType = MednaSystemMD;
+
+		mednafenCoreModule = @"md";
+		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"])
+	{
+		self.systemType = MednaSystemSMS;
+
+		mednafenCoreModule = @"sms";
+		mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
+//		mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
 	}
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
@@ -477,10 +543,14 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemPCE:
             maxPlayers = 5;
             break;
+		case MednaSystemMD:
+		case MednaSystemSMS:
 		case MednaSystemNES:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
+		case MednaSystemGB:
+		case MednaSystemGBA:
         case MednaSystemNeoGeo:
         case MednaSystemLynx:
         case MednaSystemVirtualBoy:
@@ -769,6 +839,14 @@ const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
+// TODO: Test these
+const int GBMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
+const int GBAMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
+
+// SMS, GG and MD unused as of now. Mednafen support is not maintained
+const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
+
+
 #pragma mark Atari Lynx
 - (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSUInteger)player {
     inputBuffer[player][0] |= 1 << LynxMap[button];
@@ -865,6 +943,36 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 -(void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
 	inputBuffer[player][0] &= ~(1 << NESMap[button]);
+}
+
+#pragma mark GB / GBC
+- (void)didPushGBButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	int mappedButton = GBMap[button];
+	inputBuffer[player][0] |= 1 << mappedButton;
+}
+
+-(void)didReleaseGBButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	inputBuffer[player][0] &= ~(1 << GBMap[button]);
+}
+
+#pragma mark GBA
+- (void)didPushGBAButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	int mappedButton = GBAMap[button];
+	inputBuffer[player][0] |= 1 << mappedButton;
+}
+
+-(void)didReleaseGBAButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	inputBuffer[player][0] &= ~(1 << GBAMap[button]);
+}
+
+#pragma mark Sega
+- (void)didPushSegaButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	int mappedButton = GenesisMap[button];
+	inputBuffer[player][0] |= 1 << mappedButton;
+}
+
+-(void)didReleaseSegaButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+	inputBuffer[player][0] &= ~(1 << GenesisMap[button]);
 }
 
 #pragma mark Neo Geo
@@ -993,11 +1101,24 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
         controller = self.controller4;
     }
         
-    switch (self.systemType) {
+	switch (self.systemType) {
+		case MednaSystemSMS:
+		case MednaSystemMD:
+			// TODO: Unused since Mednafen sega support is 'low priority'
+			return 0;
+			break;
+		case MednaSystemGB:
+			return [self GBValueForButtonID:buttonID forController:controller];
+			break;
+		case MednaSystemGBA:
+			return [self GBAValueForButtonID:buttonID forController:controller];
+			break;
+		case MednaSystemNES:
+			return [self NESValueForButtonID:buttonID forController:controller];
+			break;
         case MednaSystemNeoGeo:
             return [self NeoGeoValueForButtonID:buttonID forController:controller];
             break;
-
         case MednaSystemLynx:
             return [self LynxControllerValueForButtonID:buttonID forController:controller];
             break;
@@ -1024,6 +1145,254 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
     }
 
     return 0;
+}
+
+- (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+	if ([controller extendedGamepad]) {
+		GCExtendedGamepad *pad = [controller extendedGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBButtonUp:
+				return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+			case PVGBButtonDown:
+				return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+			case PVGBButtonLeft:
+				return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+			case PVGBButtonRight:
+				return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+			case PVGBButtonB:
+				return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+			case PVGBButtonA:
+				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+			case PVGBButtonSelect:
+				return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad leftTrigger] isPressed];
+			case PVGBButtonStart:
+				return [[pad rightShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad rightTrigger] isPressed];
+			default:
+				break;
+		}
+	} else if ([controller gamepad]) {
+		GCGamepad *pad = [controller gamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBButtonUp:
+				return [[dpad up] isPressed];
+			case PVGBButtonDown:
+				return [[dpad down] isPressed];
+			case PVGBButtonLeft:
+				return [[dpad left] isPressed];
+			case PVGBButtonRight:
+				return [[dpad right] isPressed];
+			case PVGBButtonB:
+				return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+			case PVGBButtonA:
+				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+			case PVGBButtonSelect:
+				return [[pad leftShoulder] isPressed];
+			case PVGBButtonStart:
+				return [[pad rightShoulder] isPressed];
+			default:
+				break;
+		}
+	}
+#if TARGET_OS_TV
+	else if ([controller microGamepad])
+	{
+		GCMicroGamepad *pad = [controller microGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBButtonUp:
+				return [[dpad up] value] > 0.5;
+				break;
+			case PVGBButtonDown:
+				return [[dpad down] value] > 0.5;
+				break;
+			case PVGBButtonLeft:
+				return [[dpad left] value] > 0.5;
+				break;
+			case PVGBButtonRight:
+				return [[dpad right] value] > 0.5;
+				break;
+			case PVGBButtonA:
+				return [[pad buttonX] isPressed];
+				break;
+			case PVGBButtonB:
+				return [[pad buttonA] isPressed];
+				break;
+			default:
+				break;
+		}
+	}
+#endif
+	return 0;
+}
+
+- (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+	if ([controller extendedGamepad]) {
+		GCExtendedGamepad *pad = [controller extendedGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBAButtonUp:
+				return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+			case PVGBAButtonDown:
+				return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+			case PVGBAButtonLeft:
+				return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+			case PVGBAButtonRight:
+				return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+			case PVGBAButtonB:
+				return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+			case PVGBAButtonA:
+				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+			case PVGBAButtonL:
+				return [[pad leftShoulder] isPressed];
+			case PVGBAButtonR:
+				return [[pad rightShoulder] isPressed];
+			case PVGBAButtonSelect:
+				return [[pad leftTrigger] isPressed];
+			case PVGBAButtonStart:
+				return [[pad rightTrigger] isPressed];
+			default:
+				break;
+		}
+	} else if ([controller gamepad]) {
+		GCGamepad *pad = [controller gamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBAButtonUp:
+				return [[dpad up] isPressed];
+			case PVGBAButtonDown:
+				return [[dpad down] isPressed];
+			case PVGBAButtonLeft:
+				return [[dpad left] isPressed];
+			case PVGBAButtonRight:
+				return [[dpad right] isPressed];
+			case PVGBAButtonB:
+				return [[pad buttonA] isPressed];
+			case PVGBAButtonA:
+				return [[pad buttonB] isPressed];
+			case PVGBAButtonL:
+				return [[pad leftShoulder] isPressed];
+			case PVGBAButtonR:
+				return [[pad rightShoulder] isPressed];
+			case PVGBAButtonSelect:
+				return [[pad buttonX] isPressed];
+			case PVGBAButtonStart:
+				return [[pad buttonY] isPressed];
+			default:
+				break;
+		}
+	}
+#if TARGET_OS_TV
+	else if ([controller microGamepad])
+	{
+		GCMicroGamepad *pad = [controller microGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVGBAAButtonUp:
+				return [[dpad up] value] > 0.5;
+				break;
+			case PVGBAButtonDown:
+				return [[dpad down] value] > 0.5;
+				break;
+			case PVGBAButtonLeft:
+				return [[dpad left] value] > 0.5;
+				break;
+			case PVGBAButtonRight:
+				return [[dpad right] value] > 0.5;
+				break;
+			case PVGBAButtonA:
+				return [[pad buttonX] isPressed];
+				break;
+			case PVGBAButtonB:
+				return [[pad buttonA] isPressed];
+				break;
+			default:
+				break;
+		}
+	}
+#endif
+	return 0;
+}
+
+- (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+	if ([controller extendedGamepad]) {
+		GCExtendedGamepad *pad = [controller extendedGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVNESButtonUp:
+				return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+			case PVNESButtonDown:
+				return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+			case PVNESButtonLeft:
+				return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+			case PVNESButtonRight:
+				return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+			case PVNESButtonB:
+				return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+			case PVNESButtonA:
+				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+			case PVNESButtonSelect:
+				return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad leftTrigger] isPressed];
+			case PVNESButtonStart:
+				return [[pad rightShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad rightTrigger] isPressed];
+			default:
+				break;
+		}
+	} else if ([controller gamepad]) {
+		GCGamepad *pad = [controller gamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVNESButtonUp:
+				return [[dpad up] isPressed];
+			case PVNESButtonDown:
+				return [[dpad down] isPressed];
+			case PVNESButtonLeft:
+				return [[dpad left] isPressed];
+			case PVNESButtonRight:
+				return [[dpad right] isPressed];
+			case PVNESButtonB:
+				return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+			case PVNESButtonA:
+				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+			case PVNESButtonSelect:
+				return [[pad leftShoulder] isPressed];
+			case PVNESButtonStart:
+				return [[pad rightShoulder] isPressed];
+			default:
+				break;
+		}
+	}
+#if TARGET_OS_TV
+	else if ([controller microGamepad])
+	{
+		GCMicroGamepad *pad = [controller microGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVNESButtonUp:
+				return [[dpad up] value] > 0.5;
+				break;
+			case PVNESButtonDown:
+				return [[dpad down] value] > 0.5;
+				break;
+			case PVNESButtonLeft:
+				return [[dpad left] value] > 0.5;
+				break;
+			case PVNESButtonRight:
+				return [[dpad right] value] > 0.5;
+				break;
+			case PVNESButtonA:
+				return [[pad buttonX] isPressed];
+				break;
+			case PVNESButtonB:
+				return [[pad buttonA] isPressed];
+				break;
+			default:
+				break;
+		}
+	}
+#endif
+	return 0;
 }
 
 - (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
