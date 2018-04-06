@@ -109,6 +109,8 @@ namespace MDFN_IEN_VB
     NSString *mednafenCoreModule;
     NSTimeInterval mednafenCoreTiming;
     OEIntSize mednafenCoreAspect;
+
+	EmulateSpecStruct spec;
 }
 
 @end
@@ -209,25 +211,26 @@ static void mednafen_init(MednafenGameCore* current)
 
 # pragma mark - Execution
 
-static void emulation_run() {
+static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
     int32 rects[game->fb_height];
     rects[0] = ~0;
 
-    EmulateSpecStruct spec = {0};
-    spec.surface = backBufferSurf;
-    spec.SoundRate = current->sampleRate;
-    spec.SoundBuf = sound_buf;
-    spec.LineWidths = rects;
-    spec.SoundBufMaxSize = sizeof(sound_buf) / 2;
-    spec.SoundVolume = 1.0;
-    spec.soundmultiplier = 1.0;
+	current->spec = {0};
+    current->spec.surface = backBufferSurf;
+    current->spec.SoundRate = current->sampleRate;
+    current->spec.SoundBuf = sound_buf;
+    current->spec.LineWidths = rects;
+    current->spec.SoundBufMaxSize = sizeof(sound_buf) / 2;
+    current->spec.SoundVolume = 1.0;
+    current->spec.soundmultiplier = 1.0;
+	current->spec.skip = skipFrame;
 
-    MDFNI_Emulate(&spec);
+    MDFNI_Emulate(&current->spec);
 
-    current->mednafenCoreTiming = current->masterClock / spec.MasterCycles;
+    current->mednafenCoreTiming = current->masterClock / current->spec.MasterCycles;
     
     // Fix for game stutter. mednafenCoreTiming flutters on init before settling so
     // now we reset the game speed each frame to make sure current->gameInterval
@@ -236,24 +239,24 @@ static void emulation_run() {
 
     if(current->_systemType == MednaSystemPSX)
     {
-        current->videoWidth = rects[spec.DisplayRect.y];
-        current->videoOffsetX = spec.DisplayRect.x;
+        current->videoWidth = rects[current->spec.DisplayRect.y];
+        current->videoOffsetX = current->spec.DisplayRect.x;
     }
     else if(game->multires)
     {
-        current->videoWidth = rects[spec.DisplayRect.y];
-        current->videoOffsetX = spec.DisplayRect.x;
+        current->videoWidth = rects[current->spec.DisplayRect.y];
+        current->videoOffsetX = current->spec.DisplayRect.x;
     }
     else
     {
-        current->videoWidth = spec.DisplayRect.w;
-        current->videoOffsetX = spec.DisplayRect.x;
+        current->videoWidth = current->spec.DisplayRect.w;
+        current->videoOffsetX = current->spec.DisplayRect.x;
     }
 
-    current->videoHeight = spec.DisplayRect.h;
-    current->videoOffsetY = spec.DisplayRect.y;
+    current->videoHeight = current->spec.DisplayRect.h;
+    current->videoOffsetY = current->spec.DisplayRect.y;
 
-    update_audio_batch(spec.SoundBuf, spec.SoundBufSize);
+    update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
@@ -281,8 +284,11 @@ static void emulation_run() {
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pce"] || [[self systemIdentifier] isEqualToString:@"com.provenance.pcecd"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sgfx"])
     {
         self.systemType = MednaSystemPCE;
-        
-        mednafenCoreModule = @"pce";
+
+		// For PCE_FAST module over PCE
+		MDFNI_SetSetting("pce.enable", "0");
+
+		mednafenCoreModule = @"pce";
         mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 48000;
@@ -441,7 +447,7 @@ static void emulation_run() {
 
     MDFNI_SetMedia(0, 2, 0, 0); // Disc selection API
 
-    emulation_run();
+    emulation_run(NO);
 
     return YES;
 }
@@ -550,14 +556,14 @@ static void emulation_run() {
     }
 }
 
-- (void)executeFrame
+- (void)executeFrameSkippingFrame: (BOOL) skip
 {
-    // Should we be using controller callbacks instead?
-    if (self.controller1 || self.controller2 || self.controller3 || self.controller4) {
-        [self pollControllers];
-    }
-    
-    emulation_run();
+	// Should we be using controller callbacks instead?
+	if (!skip && (self.controller1 || self.controller2 || self.controller3 || self.controller4)) {
+		[self pollControllers];
+	}
+
+	emulation_run(skip);
 }
 
 - (void)resetEmulation
