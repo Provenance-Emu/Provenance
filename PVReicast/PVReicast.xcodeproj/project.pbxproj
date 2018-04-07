@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B333502720786BD90036A448 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438820783CC0008DBAB4 /* Shader.vsh */; };
+		B333502820786BEB0036A448 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438720783CC0008DBAB4 /* Shader.fsh */; };
 		B33945D120783D55008DBAB4 /* sb_dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339413720783CBB008DBAB4 /* sb_dma.cpp */; };
 		B33945D320783D55008DBAB4 /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B33945D420783D55008DBAB4 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = B33941EF20783CBC008DBAB4 /* pngwtran.c */; };
@@ -3666,6 +3668,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B333502820786BEB0036A448 /* Shader.fsh in Resources */,
+				B333502720786BD90036A448 /* Shader.vsh in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3910,7 +3914,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
 					"DEBUG=1",
 					"GLES=1",
 					"TARGET_IPHONE=1",
@@ -3918,7 +3921,6 @@
 					"TARGET_NO_REC=1",
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*]" = (
-					"$(inherited)",
 					"DEBUG=1",
 					"GLES=1",
 					"TARGET_IPHONE=1",
@@ -3926,10 +3928,9 @@
 					"TARGET_NO_REC=1",
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
 					"DEBUG=1",
 					"GLES=1",
-					"TARGET_IPHONE=1",
+					"TARGET_IPHONE_SIMULATOR=1",
 					"TARGET_NO_WEBUI=1",
 					"TARGET_NO_REC=1",
 				);
@@ -3950,21 +3951,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-				);
+				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4014,7 +4001,6 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(inherited)",
 					"GLES=1",
 					"TARGET_IPHONE=1",
 					"TARGET_NO_WEBUI=1",
@@ -4029,9 +4015,8 @@
 					RELEASE,
 				);
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
-					"$(inherited)",
 					"GLES=1",
-					"TARGET_IPHONE=1",
+					"TARGET_IPHONE_SIMULATOR=1",
 					"TARGET_NO_WEBUI=1",
 					"TARGET_NO_EXCEPTIONS=1",
 				);
@@ -4053,7 +4038,18 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"$(inherited)",
-					"-fomit-frame-pointer",
+					"-mno-thumb",
+					"-mfpu=neon",
+					"-fno-operator-names",
+					"-fno-rtti",
+					"-ffast-math",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-frename-registers",
+					"-fno-rtti",
+					"-fpermissive",
+					"-fno-operator-names",
+					"-fsingle-precision-constant",
 				);
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -4075,7 +4071,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -4096,7 +4091,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVReicast";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
