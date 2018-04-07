@@ -262,6 +262,11 @@ import UIKit
 	case l
 	case r
 	case start
+	// Joystick
+	case analogUp
+	case analogDown
+	case analogLeft
+	case analogRight
 	case count
 }
 
@@ -270,6 +275,9 @@ import UIKit
 	func didPush(_ button: PVDreamcastButton, forPlayer player: Int)
 	@objc(didReleaseDreamcastButton:forPlayer:)
 	func didRelease(_ button: PVDreamcastButton, forPlayer player: Int)
+
+	@objc(didMoveDreamcastJoystickDirection:withValue:forPlayer:)
+	func didMoveJoystick(_ button: PVDreamcastButton, withValue value: CGFloat, forPlayer player: Int)
 }
 
 // MARK: - Game Boy Advanced

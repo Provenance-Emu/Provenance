@@ -15,5 +15,5 @@ FOUNDATION_EXPORT double PVReicastVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVReicastVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVReicast/PublicHeader.h>
-
+#import <PVReicast/PVReicastCore.h>
 
