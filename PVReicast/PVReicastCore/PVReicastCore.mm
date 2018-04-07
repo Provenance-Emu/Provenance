@@ -34,6 +34,9 @@ int dc_init(int argc,wchar* argv[]);
 void dc_run();
 void dc_term();
 
+bool inside_loop     = true;
+static bool first_run = true;;
+
 #pragma mark - Reicast C++ interface
 #include <mach/mach.h>
 #include <mach/mach_time.h>
@@ -111,7 +114,17 @@ int darw_printf(const wchar* text,...) {
 
 #pragma mark C Lifecycle calls
 void os_DoEvents() {
-
+//	GET_CURRENT_OR_RETURN();
+//	[current videoInterrupt];
+////
+////	is_dupe = false;
+//	[current updateControllers];
+//
+//	if (settings.UpdateMode || settings.UpdateModeForced)
+//	{
+//		inside_loop = false;
+//		rend_end_render();
+//	}
 }
 
 u32  os_Push(void*, u32, bool) {
@@ -127,7 +140,8 @@ void os_CreateWindow() {
 }
 
 void UpdateInputState(u32 port) {
-
+	GET_CURRENT_OR_RETURN();
+	[current updateControllers];
 }
 
 void UpdateVibration(u32 port, u32 value) {
@@ -156,7 +170,8 @@ void gl_term() {
 }
 
 void gl_swap() {
-
+	GET_CURRENT_OR_RETURN();
+	[current swapBuffers];
 }
 
 #pragma mark Audio Callbacks
@@ -298,6 +313,8 @@ __weak PVReicastCore *_current = 0;
 
 	self.diskPath = path;
 
+	// 	while(!rend_single_frame()) ; // Where should this go?
+
 //	// Reicast part
 //	common_linux_setup();
 //
@@ -329,6 +346,7 @@ __weak PVReicastCore *_current = 0;
 		}
 	}
 }
+volatile bool has_init = false;
 
 #pragma mark - Running
 - (void)startEmulation
@@ -339,7 +357,12 @@ __weak PVReicastCore *_current = 0;
 
 		[super startEmulation];
  		[NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
+
+		while (!has_init) {;}
+		while (rend_single_frame() == 0) {}
+
 	}
+
 }
 
 - (void)runReicastEmuThread
@@ -397,6 +420,7 @@ __weak PVReicastCore *_current = 0;
 int reicast_main(int argc, wchar* argv[]) {
 	int status = dc_init(argc, argv);
 	NSLog(@"Reicast init status: %i", status);
+	has_init = true;
 
 	dc_run();
 	return 0;
