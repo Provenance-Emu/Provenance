@@ -353,7 +353,6 @@ volatile bool has_init = false;
 {
 	if(!isRunning)
 	{
-		BOOL success = gles_init();
 
 		[super startEmulation];
  		[NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
@@ -370,6 +369,8 @@ volatile bool has_init = false;
 	@autoreleasepool
 	{
 		[self.renderDelegate startRenderingOnAlternateThread];
+		BOOL success = gles_init();
+
 		[self reicastMain];
 
 		// Core returns
