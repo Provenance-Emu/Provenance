@@ -42,6 +42,7 @@ public extension PVEmulatorConfiguration {
 
                 let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion)
                 try newCore.add(update: true)
+				ILOG("Added new core with id \(core.PVCoreIdentifier) named \(core.PVProjectName)")
             } catch {
                 // Handle error
                 ELOG("Failed to parse plist \(plist.path) : \(error)")

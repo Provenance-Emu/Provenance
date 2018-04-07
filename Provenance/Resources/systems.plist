@@ -1500,26 +1500,32 @@
 			<dict>
 				<key>Description</key>
 				<string>Dreamcast BIOS</string>
-				<key>MD5</key>
-				<string>dc_bios.bin</string>
+				<key>Optional</key>
+				<false/>
 				<key>Name</key>
+				<string>dc_bios.bin</string>
+				<key>MD5</key>
 				<string>e10c53c2f8b90bab96ead2d368858623</string>
 				<key>Size</key>
-				<integer>2097152</integer>
+				<real>2097152</real>
 			</dict>
 			<dict>
 				<key>Description</key>
 				<string>Dreamcast Flash USA</string>
+				<key>Optional</key>
+				<false/>
 				<key>MD5</key>
 				<string>0a93f7940c455905bea6e392dfde92a4</string>
 				<key>Name</key>
-				<string>dc_flashU.bin</string>
+				<string>dc_flash.bin</string>
 				<key>Size</key>
 				<real>131072</real>
 			</dict>
 			<dict>
 				<key>Description</key>
 				<string>Dreamcast Flash Europe</string>
+				<key>Optional</key>
+				<true/>
 				<key>MD5</key>
 				<string>23df18aa53c8b30784cd9a84e061d008</string>
 				<key>Name</key>
@@ -1530,6 +1536,8 @@
 			<dict>
 				<key>Description</key>
 				<string>Dreamcast Flash Japan</string>
+				<key>Optional</key>
+				<true/>
 				<key>MD5</key>
 				<string>69c036adfca4ebea0b0c6fa4acfc8538</string>
 				<key>Name</key>

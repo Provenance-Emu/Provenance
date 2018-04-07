@@ -1150,6 +1150,7 @@ extension PVGameImporter {
             return nil
         }
 
+		ILOG("\(systemsForExtension.count) systems found to match extension \(filePath.pathExtension)")
         if systemsForExtension.count > 1, let fileMD5 = canidateFile.md5?.uppercased() {
             // Multiple hits - Check by MD5
             var foundSystemIDMaybe: String?
@@ -1186,7 +1187,7 @@ extension PVGameImporter {
                 ILOG("Empty results")
                 return nil
             }
-
+			ILOG("Only 1 system matched extension afer failed to make MD5 match: \(onlySystem)")
             // Only 1 result
             systemID = String(onlySystem)
 

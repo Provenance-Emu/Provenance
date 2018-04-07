@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PVCoreIdentifier</key>
-	<string>com.provenance.core.reicst</string>
+	<string>com.provenance.core.reicast</string>
 	<key>PVPrincipleClass</key>
 	<string>PVReicastCore</string>
 	<key>PVSupportedSystems</key>
