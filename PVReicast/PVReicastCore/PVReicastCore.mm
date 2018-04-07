@@ -269,6 +269,8 @@ __weak PVReicastCore *_current = 0;
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	const char *dataPath;
 
+	[self copyShadersIfMissing];
+
 	// TODO: Proper path
 	NSString *configPath = self.saveStatesPath;
 	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
@@ -278,24 +280,24 @@ __weak PVReicastCore *_current = 0;
 	NSString *batterySavesDirectory = self.batterySavesPath;
 	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 
-	BOOL success = gles_init();
 
-	if (!success) {
-		NSDictionary *userInfo = @{
-								   NSLocalizedDescriptionKey: @"Failed to load game.",
-								   NSLocalizedFailureReasonErrorKey: @"Reicast failed to load GLES graphics.",
-								   NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
-								   };
-
-		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-											userInfo:userInfo];
-
-		*error = newError;
-		return NO;
-	}
+//	if (!success) {
+//		NSDictionary *userInfo = @{
+//								   NSLocalizedDescriptionKey: @"Failed to load game.",
+//								   NSLocalizedFailureReasonErrorKey: @"Reicast failed to load GLES graphics.",
+//								   NSLocalizedRecoverySuggestionErrorKey: @"Provenance may not be compiled correctly."
+//								   };
+//
+//		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+//												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+//											userInfo:userInfo];
+//
+//		*error = newError;
+//		return NO;
+//	}
 
 	self.diskPath = path;
+
 //	// Reicast part
 //	common_linux_setup();
 //
@@ -308,13 +310,35 @@ __weak PVReicastCore *_current = 0;
 	return YES;
 }
 
+
+- (void)copyShadersIfMissing {
+
+	NSArray *shaders = @[@"Shader.vsh",@"Shader.fsh"];
+	NSString *destinationFolder = self.BIOSPath;
+	NSFileManager *fm = [NSFileManager defaultManager];
+
+	for (NSString* shader in shaders) {
+		NSString *destinationPath = [destinationFolder stringByAppendingPathComponent:shader];
+		ILOG(@"Checking for shader %@", destinationPath);
+		if( ![fm fileExistsAtPath:destinationPath]  ) {
+			NSString *source = [[NSBundle bundleForClass:[self class]] pathForResource:[shader stringByDeletingPathExtension] ofType:[shader pathExtension]];
+			[fm copyItemAtPath:source
+						toPath:destinationPath
+						 error:nil];
+			ILOG(@"Copied %@ from %@ to %@", shader, source, destinationPath);
+		}
+	}
+}
+
 #pragma mark - Running
 - (void)startEmulation
 {
 	if(!isRunning)
 	{
+		BOOL success = gles_init();
+
 		[super startEmulation];
-		[NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
+ 		[NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
 	}
 }
 
@@ -322,7 +346,6 @@ __weak PVReicastCore *_current = 0;
 {
 	@autoreleasepool
 	{
-
 		[self.renderDelegate startRenderingOnAlternateThread];
 		[self reicastMain];
 
@@ -367,13 +390,16 @@ __weak PVReicastCore *_current = 0;
 	common_linux_setup();
 
 	settings.profile.run_counts=0;
-	wchar* argv;
-	argv = *Args;
 
-	int status = dc_init(argc, &argv);
+	reicast_main(argc, Args);
+}
+
+int reicast_main(int argc, wchar* argv[]) {
+	int status = dc_init(argc, argv);
 	NSLog(@"Reicast init status: %i", status);
 
 	dc_run();
+	return 0;
 }
 
 - (void)videoInterrupt
@@ -462,7 +488,7 @@ __weak PVReicastCore *_current = 0;
 
 - (GLenum)pixelFormat
 {
-	return GL_BGRA;
+	return GL_RGBA;
 }
 
 - (GLenum)pixelType
@@ -479,7 +505,7 @@ __weak PVReicastCore *_current = 0;
 
 - (NSTimeInterval)frameInterval
 {
-	return isNTSC ? 59.97 : 50;
+	return isNTSC ? 60 : 50;
 }
 
 - (NSUInteger)channelCount
