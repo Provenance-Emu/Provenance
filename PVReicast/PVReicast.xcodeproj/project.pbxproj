@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B33945D120783D55008DBAB4 /* sb_dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339413720783CBB008DBAB4 /* sb_dma.cpp */; };
 		B33945D320783D55008DBAB4 /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B33945D420783D55008DBAB4 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = B33941EF20783CBC008DBAB4 /* pngwtran.c */; };
@@ -3665,6 +3666,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
