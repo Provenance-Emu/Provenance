@@ -201,7 +201,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         controllerViewController?.didMove(toParentViewController: self)
 #endif
         let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
-        menuButton = UIButton(type: .system)
+        menuButton = UIButton(type: .custom)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
         menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
@@ -397,8 +397,16 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         if #available(iOS 11.0, tvOS 11.0, *) {
             safeArea = view.safeAreaInsets
         }
-        let frame = CGRect(x: (view.bounds.size.width - 62) / 2, y: safeArea.top + 10, width: 62, height: 22)
-        menuButton?.frame = frame
+        if let menuButton = self.menuButton {
+            let height: CGFloat = 22
+            let width: CGFloat = 62
+            let hitHeight: CGFloat = height + 60
+            let hitWidth: CGFloat = width + 20
+            menuButton.imageView?.contentMode = .center
+            let frame = CGRect(x: (view.bounds.size.width - hitWidth) / 2, y: safeArea.top - (hitHeight / 2) + 20, width: hitWidth, height: hitHeight)
+            menuButton.frame = frame
+        }
+
     }
 
     func documentsPath() -> String? {
