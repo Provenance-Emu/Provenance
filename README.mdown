@@ -11,9 +11,9 @@ An iOS & tvOS Frontend for Multiple Emulators
 
 ## Installation
 
-To get started, please follow the [Installation](https://github.com/jasarien/Provenance/wiki) instructions on the wiki.
+To get started, please follow the [Installation](https://github.com/Provenance-Emu/Provenance/wiki) instructions on the wiki.
 
-<sup>If you run into trouble, please read up on our [Issues Usage](https://github.com/jasarien/Provenance/wiki/Issues-Usage) first, before posting any new issues.</sup>
+<sup>If you run into trouble, please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting any new issues.</sup>
 
 
 ### Why 'Provenance'?
@@ -40,7 +40,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - PC-FX
 - Nintendo 
   - Nintendo Entertainment System / Famicom (NES/FC)
-  - Famicom Disk System ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-Famicom-Disk-System))
+  - Famicom Disk System ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Instructions:-Famicom-Disk-System))
   - Super Nintendo Entertainment System / Super Famicom (SNES/SFC)
   - Game Boy / Game Boy Color 
   - Game Boy Advance (GBA)
@@ -50,13 +50,13 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - SG-1000
   - Master System
   - Genesis / Mega Drive
-  - CD / MegaCD ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-Sega-CD-MegaCD))
+  - CD / MegaCD ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Instructions:-Sega-CD-MegaCD))
   - Game Gear
   - 32X
 - SNK
   - Neo Geo Pocket / Neo Geo Pocket Color
 - Sony
-  - PlayStation (PSX/PS1) ([Instructions](https://github.com/jasarien/Provenance/wiki/Instructions:-PlayStation))
+  - PlayStation (PSX/PS1) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Instructions:-PlayStation))
   
 
 ## Features
@@ -72,11 +72,11 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Local Multiplayer via External Controllers
 - Portrait and Landscape Orientation
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
-- ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/jasarien/Provenance/wiki/Customizing-ROMs))
+- ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
-  - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/jasarien/Provenance/wiki/Exporting-Files):
+  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/Provenance-Emu/Provenance/wiki/Exporting-Files):
     - Uploading _(via built-in web server)_
-  - [Import](https://github.com/jasarien/Provenance/wiki/Importing-ROMs):
+  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs):
     - Downloading _(from mobile browsers)_
     - Copying _(from other mobile apps)_
     - Injecting _(with desktop apps)_
@@ -86,14 +86,14 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
   - Taptic Engine Button Feedback (iPhone 7 and later)
   - Spotlight Searching
 - tvOS 9+ (Apple TV 4+)
-    - TopShelf Support ([Instructions](https://github.com/jasarien/Provenance/wiki/Setup-TopShelf-&-Spotlight))
+    - TopShelf Support ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Setup-TopShelf-&-Spotlight))
 
-<sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/jasarien/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
+<sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
 
 ----
 
 ### Importing ROMs
-Visit our wiki on [Importing ROMs](https://github.com/jasarien/Provenance/wiki/Importing-ROMs) to learn how to load ROMs into Provenance.
+Visit our wiki on [Importing ROMs](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) to learn how to load ROMs into Provenance.
 
 
 ### Release Roadmap
@@ -102,7 +102,7 @@ Visit our wiki on [Importing ROMs](https://github.com/jasarien/Provenance/wiki/I
 ![Github commits (since latest release)](https://img.shields.io/github/commits-since/provenance-emu/provenance/latest.svg?style=flat-square) 
 [![Travis](https://img.shields.io/travis/provenance-emu/provenance.svg?style=flat-square)](https://travis-ci.org/Provenance-Emu/Provenance)
 
-We track upcoming releases in our GitHub [Milestones](https://github.com/jasarien/Provenance/milestones?direction=asc&sort=title&state=open). Keep in mind they are subject to change.
+We track upcoming releases in our GitHub [Milestones](https://github.com/Provenance-Emu/Provenance/milestones?direction=asc&sort=title&state=open). Keep in mind they are subject to change.
 
 
 ### <a id="contributions-footnote"></a>Contributions
@@ -114,9 +114,9 @@ We track upcoming releases in our GitHub [Milestones](https://github.com/jasarie
 ![GitHub last commit](https://img.shields.io/github/last-commit/provenance-emu/provenance.svg?style=flat-square)
 ![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/provenance-emu/provenance.svg?style=flat-square)
 
-To contribute to the Provenance project please take look at the [open issues](https://github.com/jasarien/Provenance/issues). If you see something you can help with: bugfixing, testing, implementation or relevant suggestions, discussion and research.[°](#contributions-footnote)
+To contribute to the Provenance project please take look at the [open issues](https://github.com/Provenance-Emu/Provenance/issues). If you see something you can help with: bugfixing, testing, implementation or relevant suggestions, discussion and research.[°](#contributions-footnote)
 
-Before posting new issues, we ask you to please read up on [Issues Usage](https://github.com/jasarien/Provenance/wiki/Issues-Usage). If you just want to give us a a shout out,  twitter: [@provenanceapp](https://twitter.com/provenanceapp), and of course, new GitHub contributors are always welcome. _Thank you._
+Before posting new issues, we ask you to please read up on [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage). If you just want to give us a a shout out,  twitter: [@provenanceapp](https://twitter.com/provenanceapp), and of course, new GitHub contributors are always welcome. _Thank you._
 
 <sup>° Please note that Issues _is not_ a discussion board _nor_ a help desk. Please help us keep it focused on improving Provenance. </sup><br> 
 
