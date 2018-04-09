@@ -7,7 +7,7 @@
 //  Copyright (c) 2016 James Addyman. All rights reserved.
 //
 
-import PVMednafen
+import PVSupport
 
 fileprivate extension JSButton {
     var buttonTag: PVN64Button {
