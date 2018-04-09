@@ -1684,7 +1684,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 game = favoriteGames?[row]
             } else if section == recentGamesSection {
                 game = recentGames?[row].game
-            } else if let system = systems?[section - systemsSectionOffset] {
+			}
+			else if section == saveStateSection {
+				game = saveStates?[row].game
+			} else if let system = systems?[section - systemsSectionOffset] {
                 game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
             }
         }
@@ -1885,9 +1888,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		#if os(tvOS)
-//		if indexPath.section == saveStateSection {
-//			return CGSize(width: CellWidth, height: CellWidth)
-//		}
+		if indexPath.section == saveStateSection {
+			return CGSize(width: CellWidth, height: CellWidth)
+		}
 		let game = self.game(at: indexPath)!
 		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
