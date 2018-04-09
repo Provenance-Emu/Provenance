@@ -91,6 +91,9 @@ static MDFNGI *game;
 static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
+int GBAMap[PVGBAButtonCount];
+
+
 namespace MDFN_IEN_VB
 {
     extern void VIP_SetParallaxDisable(bool disabled);
@@ -225,6 +228,18 @@ static void mednafen_init(MednafenGameCore* current)
         for(unsigned i = 0; i < 8; i++) {
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
         }
+
+		GBAMap[PVGBAButtonUp] 		= 6;
+		GBAMap[PVGBAButtonDown] 	= 7;
+		GBAMap[PVGBAButtonLeft] 	= 5;
+		GBAMap[PVGBAButtonRight] 	= 4;
+		GBAMap[PVGBAButtonB] 		= 0;
+		GBAMap[PVGBAButtonA]		= 1;
+		GBAMap[PVGBAButtonSelect]	= 2;
+		GBAMap[PVGBAButtonStart] 	= 3;
+		GBAMap[PVGBAButtonL] 		= 8;
+		GBAMap[PVGBAButtonR] 		= 9;
+
     }
 
     return self;
@@ -852,8 +867,6 @@ const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
 
 // TODO: Test these
 const int GBMap[] = { 4, 5, 1, 6, 7, 0,1, 3, 2};
-// , , , , down, , , ,
-const int GBAMap[] = { 6, 0, 5, 4, 1, 2, 3, 7, 1, 8, 9};
 
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
@@ -958,32 +971,33 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 }
 
 #pragma mark GB / GBC
-- (void)didPushGBButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+- (void)didPushGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player {
 	int mappedButton = GBMap[button];
 	inputBuffer[player][0] |= 1 << mappedButton;
 }
 
--(void)didReleaseGBButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+-(void)didReleaseGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player {
 	inputBuffer[player][0] &= ~(1 << GBMap[button]);
 }
 
 #pragma mark GBA
-- (void)didPushGBAButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+- (void)didPushGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player {
 	int mappedButton = GBAMap[button];
 	inputBuffer[player][0] |= 1 << mappedButton;
 }
 
--(void)didReleaseGBAButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
-	inputBuffer[player][0] &= ~(1 << GBAMap[button]);
+-(void)didReleaseGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player {
+	int mappedButton = GBAMap[button];
+	inputBuffer[player][0] &= ~(1 << mappedButton);
 }
 
 #pragma mark Sega
-- (void)didPushSegaButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+- (void)didPushSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player {
 	int mappedButton = GenesisMap[button];
 	inputBuffer[player][0] |= 1 << mappedButton;
 }
 
--(void)didReleaseSegaButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
+-(void)didReleaseSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player {
 	inputBuffer[player][0] &= ~(1 << GenesisMap[button]);
 }
 
