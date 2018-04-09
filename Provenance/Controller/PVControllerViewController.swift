@@ -309,6 +309,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             startButton?.isHidden = false
             selectButton?.isHidden = false
         }
+        setupTouchControls()
     }
 
     var safeAreaInsets: UIEdgeInsets {
@@ -542,9 +543,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             if (dPad != nil) && !(dPad?.isHidden)! {
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else if (dPad != nil) && (dPad?.isHidden)! {
-                selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else {
-                selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
 
         } else {
