@@ -92,7 +92,7 @@ static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
 int GBAMap[PVGBAButtonCount];
-
+int GBMap[PVGBButtonCount];
 
 namespace MDFN_IEN_VB
 {
@@ -240,6 +240,15 @@ static void mednafen_init(MednafenGameCore* current)
 		GBAMap[PVGBAButtonL] 		= 8;
 		GBAMap[PVGBAButtonR] 		= 9;
 
+		// TODO: Test these
+		GBMap[PVGBButtonUp] 	= 6;
+		GBMap[PVGBButtonDown] 	= 7;
+		GBMap[PVGBButtonLeft] 	= 5;
+		GBMap[PVGBButtonRight] 	= 4;
+		GBMap[PVGBButtonB] 		= 0;
+		GBMap[PVGBButtonA]		= 1;
+		GBMap[PVGBButtonSelect]	= 2;
+		GBMap[PVGBButtonStart] 	= 3;
     }
 
     return self;
@@ -864,9 +873,6 @@ const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16
 const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
-
-// TODO: Test these
-const int GBMap[] = { 4, 5, 1, 6, 7, 0,1, 3, 2};
 
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
