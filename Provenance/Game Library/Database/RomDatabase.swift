@@ -253,40 +253,44 @@ public extension RomDatabase {
 public extension RomDatabase {
     @objc
     public func writeTransaction(_ block: () -> Void) throws {
-        try realm.write {
-            block()
-        }
+		if realm.isInWriteTransaction {
+			block()
+		} else {
+			try realm.write {
+				block()
+			}
+		}
     }
 
     @objc
     public func add(_ object: Object, update: Bool = false) throws {
-        try realm.write {
+		try writeTransaction {
             realm.add(object, update: update)
         }
     }
 
     public func add<T: Object>(objects: [T], update: Bool = false) throws {
-        try realm.write {
+		try writeTransaction {
             realm.add(objects, update: update)
         }
     }
 
     @objc
     public func deleteAll() throws {
-        try realm.write {
+		try writeTransaction {
             realm.deleteAll()
         }
     }
 
     public func deleteAll<T: Object>(_ type: T.Type) throws {
-        try realm.write {
-            realm.delete(realm.objects(type))
-        }
+		try writeTransaction {
+			realm.delete(realm.objects(type))
+		}
     }
 
     @objc
     public func delete(_ object: Object) throws {
-        try realm.write {
+		try writeTransaction {
             realm.delete(object)
         }
     }
