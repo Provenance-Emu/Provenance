@@ -223,6 +223,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
             }
+        setupTouchControls()
         #endif
     }
 
@@ -245,6 +246,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 startButton?.isHidden = false
                 selectButton?.isHidden = false
             }
+        setupTouchControls()
         #endif
     }
 
@@ -300,9 +302,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         //Game Boy, Game Color, and Game Boy Advance can map Start and Select on a Standard Gamepad, so it's safe to hide them
         let useStandardGamepad: [SystemIdentifier] = [.GB, .GBC, .GBA]
 
-        if (controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue) {
+        if ((controller.extendedGamepad != nil) || (controller.gamepad != nil) || useStandardGamepad.contains(system.enumValue)) && !PVSettingsModel.shared.startSelectAlwaysOn {
             startButton?.isHidden = true
             selectButton?.isHidden = true
+        } else if PVSettingsModel.shared.startSelectAlwaysOn {
+            startButton?.isHidden = false
+            selectButton?.isHidden = false
         }
     }
 
@@ -496,10 +501,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let xSpacing: CGFloat = 20
         var startFrame: CGRect
         if UIDevice.current.orientation.isLandscape {
-            if (buttonGroup != nil) {
+            if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+            } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {
+                startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else {
-                startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
 
         } else {
@@ -532,10 +539,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let xSpacing: CGFloat = 20
         var selectFrame: CGRect
         if UIDevice.current.orientation.isLandscape {
-            if (dPad != nil) {
+            if (dPad != nil) && !(dPad?.isHidden)! {
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+            } else if (dPad != nil) && (dPad?.isHidden)! {
+                selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else {
-                selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+                selectFrame = CGRect(x: safeAreaInsets.left + xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
 
         } else {

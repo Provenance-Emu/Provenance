@@ -31,6 +31,7 @@ extension PVCore {
         DLOG("Created core : <\(emuCore.debugDescription)>")
 
         emuCore.systemIdentifier = system.identifier
+		emuCore.coreIdentifier = self.identifier
         return emuCore
     }
 }

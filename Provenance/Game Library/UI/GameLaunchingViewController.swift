@@ -19,7 +19,8 @@ import UIKit
 public protocol GameLaunchingViewController: class {
     var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
-	func load(_ game: PVGame, sender : Any?)
+    func load(_ game: PVGame, sender : Any?)
+	func openSaveState(_ saveState: PVSaveState)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
 	func presentCoreSelection(forGame game : PVGame, sender : Any?)
@@ -347,6 +348,16 @@ extension GameLaunchingViewController where Self : UIViewController {
 
         register3DTouchShortcuts()
     }
+
+	func openSaveState(_ saveState: PVSaveState) {
+		if let gameVC = presentedViewController as? PVEmulatorViewController {
+			gameVC.core.setPauseEmulation(true)
+			gameVC.core.loadStateFromFile(atPath: saveState.file.url.path)
+			gameVC.core.setPauseEmulation(false)
+		} else {
+			presentWarning("No core loaded")
+		}
+	}
 
     func register3DTouchShortcuts() {
         if #available(iOS 9.0, *) {

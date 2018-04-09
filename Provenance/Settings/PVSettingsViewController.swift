@@ -41,6 +41,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var fpsCountSwitch: UISwitch!
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
+    @IBOutlet weak var startSelectSwitch: UISwitch!
+    
 
     @IBOutlet weak var themeValueLabel: UILabel!
 
@@ -67,6 +69,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         crtFilterSwitch.isOn = settings.crtFilterEnabled
         fpsCountSwitch.isOn = settings.showFPSCount
         tintSwitch.isOn = settings.buttonTints
+        startSelectSwitch.isOn = settings.startSelectAlwaysOn
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
@@ -163,6 +166,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         PVSettingsModel.sharedInstance().buttonTints = tintSwitch.isOn
     }
 
+    @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
+              PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+    }
+    
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -201,7 +208,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         ipField.font = UIFont.systemFont(ofSize: 13)
         ipField.textColor = UIColor.gray
 		let ipFieldText = """
-        WebUI:  \(PVWebServer.shared.urlString)
+        WebUI: \(PVWebServer.shared.urlString)
         WebDav: \(PVWebServer.shared.webDavURLString)
         """
         ipField.text = ipFieldText
@@ -222,7 +229,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 3 {
+        if indexPath.section == 2 && indexPath.row == 5 {
             let iCadeControllerViewController = PViCadeControllerViewController()
             navigationController?.pushViewController(iCadeControllerViewController, animated: true)
         } else if indexPath.section == 3 && indexPath.row == 0 {

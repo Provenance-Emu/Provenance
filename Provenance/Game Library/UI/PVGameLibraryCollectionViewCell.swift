@@ -244,20 +244,4 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 #endif
     }
-
-#if os(tvOS)
-    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        coordinator.addCoordinatedAnimations({() -> Void in
-            if self.isFocused {
-                var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-                transform = transform.translatedBy(x: 0, y: 40)
-                self.titleLabel.alpha = 1
-                self.titleLabel.transform = transform
-            } else {
-                self.titleLabel.alpha = 0
-                self.titleLabel.transform = .identity
-            }
-        }) {() -> Void in }
-    }
-#endif
 }
