@@ -114,7 +114,7 @@ class PVAppearanceViewController: UITableViewController {
             } else if indexPath.row == 1 {
                 settings.showRecentGames = !settings.showRecentGames
                 cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
-			} else if indexPath.row == 1 {
+			} else if indexPath.row == 2 {
 				settings.showRecentSaveStates = !settings.showRecentSaveStates
 				cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
 			}
