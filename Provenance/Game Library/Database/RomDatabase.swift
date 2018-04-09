@@ -386,7 +386,6 @@ public extension RomDatabase {
 	}
 }
 
-
 // MARK: - Spotlight
 #if os(iOS)
 import CoreSpotlight
@@ -414,7 +413,6 @@ extension RomDatabase {
 	}
 }
 #endif
-
 
 public extension RomDatabase {
     @objc
