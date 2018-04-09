@@ -491,8 +491,14 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
         let controllerManager = PVControllerManager.shared
         let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(game.system.identifier)
+        var hideP1MenuActions = false
         if let player1 = controllerManager.player1 {
-            if (player1.extendedGamepad != nil || wantsStartSelectInMenu) {
+#if os(iOS)
+            if PVSettingsModel.shared.startSelectAlwaysOn {
+                hideP1MenuActions = true
+            }
+#endif
+            if (player1.extendedGamepad != nil || wantsStartSelectInMenu) && !hideP1MenuActions {
                 // left trigger bound to Start
                 // right trigger bound to Select
                 actionsheet.addAction(UIAlertAction(title: "P1 Start", style: .default, handler: {(_ action: UIAlertAction) -> Void in
