@@ -174,8 +174,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             view.addSubview(aView)
         }
         controllerViewController?.didMove(toParentViewController: self)
-#endif
-        let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
+
+		let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
         menuButton = UIButton(type: .system)
         menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
         menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
@@ -191,7 +191,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         menuButton?.tintColor = UIColor.white
         menuButton?.alpha = alpha
         menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
-        view.addSubview(menuButton!)
+		view.addSubview(menuButton!)
+		#endif
+
         if PVSettingsModel.sharedInstance().showFPSCount {
             fpsLabel = UILabel()
             fpsLabel?.textColor = UIColor.yellow
