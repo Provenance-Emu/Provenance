@@ -442,6 +442,8 @@
 		B33355EE207B27B60036A448 /* trionan.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD020736EE80097D86F /* trionan.c */; };
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
+		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
+		B33355F2207B2A670036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5311E08893000AD0E8B /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B340E5811E08893000AD0E8B /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
@@ -8838,6 +8840,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */,
 				B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */,
 				B3AAB425207379230097D86F /* stubs.mm in Sources */,
 				B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */,
@@ -8852,6 +8855,7 @@
 			files = (
 				B340E5311E08893000AD0E8B /* MednafenGameCore.mm in Sources */,
 				B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */,
+				B33355F2207B2A670036A448 /* MednafenGameCore.swift in Sources */,
 				B340E5811E08893000AD0E8B /* stubs.mm in Sources */,
 				B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */,
 			);
