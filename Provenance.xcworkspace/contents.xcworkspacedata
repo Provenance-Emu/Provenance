@@ -29,6 +29,9 @@
       location = "group:PVPicoDrive/PVPicoDrive.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:PVBeetlePSX/PVBeetlePSX.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Mednafen/PVMednafen.xcodeproj">
    </FileRef>
    <FileRef

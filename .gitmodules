@@ -19,3 +19,6 @@
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
+[submodule "PVBeetlePSX/beetle-psx-libretro"]
+	path = PVBeetlePSX/beetle-psx-libretro
+	url = https://github.com/libretro/beetle-psx-libretro.git

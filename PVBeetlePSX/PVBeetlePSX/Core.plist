@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenane.core.beetle-psx</string>
+	<key>PVPrincipleClass</key>
+	<string>BeetlePSXGameCore</string>
+	<key>PVProjectName</key>
+	<string>Beetle-PSX</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.psx</string>
+	</array>
+	<key>PVProjectURL</key>
+	<string>https://github.com/libretro/beetle-psx-libretro</string>
+	<key>PVProjectVersion</key>
+	<string>1.21.1</string>
+</dict>
+</plist>
