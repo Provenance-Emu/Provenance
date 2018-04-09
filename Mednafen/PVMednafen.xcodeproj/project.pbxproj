@@ -443,10 +443,38 @@
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
 		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
-		B33355F2207B2A670036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
+		B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
+		B33355F4207B3BAD0036A448 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
+		B33355F5207B3BAD0036A448 /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
+		B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
+		B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
+		B33355F8207B3BAD0036A448 /* thread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3617852E44006C057B /* thread.cpp */; };
+		B33355FA207B3BBA0036A448 /* libgb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335190207B00F70036A448 /* libgb.a */; };
+		B33355FB207B3BBA0036A448 /* libgba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351A4207B01460036A448 /* libgba.a */; };
+		B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
+		B33355FD207B3BBA0036A448 /* libhwcpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352C1207B06730036A448 /* libhwcpu.a */; };
+		B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
+		B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
+		B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
+		B3335601207B3BBA0036A448 /* libmednafen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354CB207B1D850036A448 /* libmednafen.a */; };
+		B3335602207B3BBA0036A448 /* libmegadrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335245207B02770036A448 /* libmegadrive.a */; };
+		B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355A2207B1E930036A448 /* libmpcdec.a */; };
+		B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
+		B3335605207B3BBA0036A448 /* libnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33350A5207AFFE80036A448 /* libnes.a */; };
+		B3335606207B3BBA0036A448 /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
+		B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
+		B3335608207B3BBA0036A448 /* libpcfx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351FC207B020C0036A448 /* libpcfx.a */; };
+		B3335609207B3BBA0036A448 /* libpsx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B333502D207AFBA30036A448 /* libpsx.a */; };
+		B333560A207B3BBA0036A448 /* libquicklz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355B8207B20420036A448 /* libquicklz.a */; };
+		B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351E5207B01C60036A448 /* libsegamastersystem.a */; };
+		B333560C207B3BBA0036A448 /* libsound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335493207B1BF30036A448 /* libsound.a */; };
+		B333560D207B3BBA0036A448 /* libtremor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355C7207B20BE0036A448 /* libtremor.a */; };
+		B333560E207B3BBA0036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
+		B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354B4207B1C520036A448 /* libvideo.a */; };
+		B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy.a */; };
+		B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335062207AFD3D0036A448 /* libwonderswan.a */; };
+		B3335874207B43640036A448 /* libcdrom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B333546F207B1B500036A448 /* libcdrom.a */; };
 		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B340E5311E08893000AD0E8B /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
-		B340E5811E08893000AD0E8B /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5E91E088A0100AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E81E088A0100AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
@@ -464,8 +492,6 @@
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
-		B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
-		B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -3249,6 +3275,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
+				B33355FA207B3BBA0036A448 /* libgb.a in Frameworks */,
+				B33355FB207B3BBA0036A448 /* libgba.a in Frameworks */,
+				B33355FC207B3BBA0036A448 /* libhwaudio.a in Frameworks */,
+				B33355FD207B3BBA0036A448 /* libhwcpu.a in Frameworks */,
+				B33355FE207B3BBA0036A448 /* libhwmisc.a in Frameworks */,
+				B33355FF207B3BBA0036A448 /* libhwvideo.a in Frameworks */,
+				B3335600207B3BBA0036A448 /* liblynx.a in Frameworks */,
+				B3335601207B3BBA0036A448 /* libmednafen.a in Frameworks */,
+				B3335602207B3BBA0036A448 /* libmegadrive.a in Frameworks */,
+				B3335603207B3BBA0036A448 /* libmpcdec.a in Frameworks */,
+				B3335604207B3BBA0036A448 /* libneogeopocket.a in Frameworks */,
+				B3335605207B3BBA0036A448 /* libnes.a in Frameworks */,
+				B3335606207B3BBA0036A448 /* libpce.a in Frameworks */,
+				B3335607207B3BBA0036A448 /* libpcefast.a in Frameworks */,
+				B3335608207B3BBA0036A448 /* libpcfx.a in Frameworks */,
+				B3335609207B3BBA0036A448 /* libpsx.a in Frameworks */,
+				B333560A207B3BBA0036A448 /* libquicklz.a in Frameworks */,
+				B333560B207B3BBA0036A448 /* libsegamastersystem.a in Frameworks */,
+				B333560C207B3BBA0036A448 /* libsound.a in Frameworks */,
+				B333560D207B3BBA0036A448 /* libtremor.a in Frameworks */,
+				B333560E207B3BBA0036A448 /* libtrio.a in Frameworks */,
+				B333560F207B3BBA0036A448 /* libvideo.a in Frameworks */,
+				B3335610207B3BBA0036A448 /* libvirtualboy.a in Frameworks */,
+				B3335611207B3BBA0036A448 /* libwonderswan.a in Frameworks */,
 				B340E5FD1E088AF700AD0E8B /* PVSupport.framework in Frameworks */,
 				B340E5F51E088A4500AD0E8B /* Foundation.framework in Frameworks */,
 				B340E5EF1E088A3500AD0E8B /* UIKit.framework in Frameworks */,
@@ -8853,11 +8904,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B340E5311E08893000AD0E8B /* MednafenGameCore.mm in Sources */,
-				B3CF44BC2039B6D0005BEB14 /* MednafenMultiTap.m in Sources */,
-				B33355F2207B2A670036A448 /* MednafenGameCore.swift in Sources */,
-				B340E5811E08893000AD0E8B /* stubs.mm in Sources */,
-				B3CF44B92039B64A005BEB14 /* MednafenMultiDisc.m in Sources */,
+				B33355F4207B3BAD0036A448 /* MednafenMultiDisc.m in Sources */,
+				B33355F8207B3BAD0036A448 /* thread.cpp in Sources */,
+				B33355F7207B3BAD0036A448 /* MednafenGameCore.mm in Sources */,
+				B33355F5207B3BAD0036A448 /* stubs.mm in Sources */,
+				B33355F3207B3BAD0036A448 /* MednafenGameCore.swift in Sources */,
+				B33355F6207B3BAD0036A448 /* MednafenMultiTap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9154,6 +9206,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9180,6 +9233,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9213,6 +9267,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9239,6 +9294,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9272,6 +9328,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9298,6 +9355,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9331,6 +9389,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9357,6 +9416,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9391,6 +9451,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9419,6 +9480,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9453,6 +9515,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9481,6 +9544,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9514,6 +9578,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9540,6 +9605,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9574,6 +9640,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9601,6 +9668,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9634,6 +9702,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9660,6 +9729,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9693,6 +9763,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9719,6 +9790,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9752,6 +9824,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9778,6 +9851,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9811,6 +9885,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9837,6 +9912,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9870,6 +9946,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9896,6 +9973,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9929,6 +10007,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -9955,6 +10034,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -9988,6 +10068,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10014,6 +10095,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10045,8 +10127,8 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10071,8 +10153,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10104,8 +10186,8 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10130,8 +10212,8 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10164,6 +10246,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10189,6 +10272,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10221,6 +10305,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10246,6 +10331,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10278,6 +10364,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10303,6 +10390,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10335,6 +10423,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10360,6 +10449,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10393,6 +10483,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10422,6 +10513,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10455,6 +10547,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10481,6 +10574,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10513,6 +10607,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10542,6 +10637,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10574,6 +10670,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -10599,6 +10696,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvsimulator appletvos";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -10627,7 +10725,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -10682,7 +10779,6 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					LSB_FIRST,
@@ -10733,14 +10829,8 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
 				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LSB_FIRST,
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -10763,37 +10853,6 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-fwrapv",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DMEDNAFEN_VERSION=\\\"0.9.38.7\\\"",
-					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x000938",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DWANT_LYNX_EMU",
-					"-DWANT_NGP_EMU",
-					"-DWANT_PCE_EMU",
-					"-DWANT_PCFX_EMU",
-					"-DWANT_PSX_EMU",
-					"-DWANT_VB_EMU",
-					"-DWANT_WSWAN_EMU",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-mllvm",
-					"-disable-lsr",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = PVMednafen;
 				SDKROOT = appletvos;
@@ -10829,10 +10888,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					LSB_FIRST,
-					"$(inherited)",
-				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -10854,37 +10909,6 @@
 					"$(PROJECT_DIR)/libsndfile",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-fwrapv",
-					"-DHAVE_MKDIR",
-					"-DSIZEOF_DOUBLE=8",
-					"-DMEDNAFEN_VERSION=\\\"0.9.38.7\\\"",
-					"-DPACKAGE=\\\"mednafen\\\"",
-					"-DMEDNAFEN_VERSION_NUMERIC=0x000938",
-					"-DPSS_STYLE=1",
-					"-DMPC_FIXED_POINT",
-					"-DARCH_ARM",
-					"-DWANT_LYNX_EMU",
-					"-DWANT_NGP_EMU",
-					"-DWANT_PCE_EMU",
-					"-DWANT_PCFX_EMU",
-					"-DWANT_PSX_EMU",
-					"-DWANT_VB_EMU",
-					"-DWANT_WSWAN_EMU",
-					"-DSTDC_HEADERS",
-					"-DICONV_CONST=",
-					"-DLSB_FIRST",
-					"-D__STDC_LIMIT_MACROS",
-					"-DSIZEOF_CHAR=1",
-					"-DSIZEOF_SHORT=2",
-					"-DSIZEOF_INT=4",
-					"-DSIZEOF_LONG=8",
-					"-DSIZEOF_LONG_LONG=8",
-					"-DSIZEOF_OFF_T=8",
-					"-mllvm",
-					"-disable-lsr",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMednafen;
 				PRODUCT_NAME = PVMednafen;
 				SDKROOT = appletvos;

@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3335614207B3DA30036A448"
+               BuildableName = "libcdrom-tvOS.a"
+               BlueprintName = "cdrom-tvOS"
+               ReferencedContainer = "container:PVMednafen.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
                BuildableName = "PVMednafen.framework"
                BlueprintName = "PVMednafen tvOS"
@@ -29,6 +43,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "B340E46E1E08888700AD0E8B"
+            BuildableName = "PVMednafen.framework"
+            BlueprintName = "PVMednafen tvOS"
+            ReferencedContainer = "container:PVMednafen.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

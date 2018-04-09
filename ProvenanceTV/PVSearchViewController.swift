@@ -43,7 +43,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let game = searchResults?[indexPath.item] {
-            load(game)
+			load(game, sender:collectionView)
         }
     }
 

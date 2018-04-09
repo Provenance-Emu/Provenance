@@ -67,7 +67,9 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     {
 		if (!isRunning)
 		{
+#if !TARGET_OS_TV
 			[self setPreferredSampleRate:[self audioSampleRate]];
+#endif
 			isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
@@ -243,6 +245,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
 }
 
+#if !TARGET_OS_TV
 - (Float64) getSampleRate {
 	Float64 sampleRate;
 	UInt32 srSize = sizeof (sampleRate);
@@ -274,6 +277,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.jamsoftonline.EmulatorCore.Err
 
 	return success;
 }
+#endif
 
 - (void)executeFrame
 {

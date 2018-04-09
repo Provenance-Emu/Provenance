@@ -1834,9 +1834,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		#if os(tvOS)
-		if indexPath.section == saveStateSection {
-			return CGSize(width: CellWidth, height: CellWidth)
-		}
+//		if indexPath.section == saveStateSection {
+//			return CGSize(width: CellWidth, height: CellWidth)
+//		}
 		let game = self.game(at: indexPath)!
 		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)

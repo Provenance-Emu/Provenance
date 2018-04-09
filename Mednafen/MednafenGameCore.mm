@@ -1321,7 +1321,7 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 		GCMicroGamepad *pad = [controller microGamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
 		switch (buttonID) {
-			case PVGBAAButtonUp:
+			case PVGBAButtonUp:
 				return [[dpad up] value] > 0.5;
 				break;
 			case PVGBAButtonDown:
