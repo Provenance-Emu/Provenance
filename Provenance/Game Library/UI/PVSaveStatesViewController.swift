@@ -154,14 +154,14 @@ class PVSaveStatesViewController: UICollectionViewController {
 	}
     
     func showSaveStateOptions(saveState: PVSaveState) {
-        let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Load State", style: .default, handler: { (action: UIAlertAction) in
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (action: UIAlertAction) in
             self.delegate?.saveStatesViewController(self, load: saveState)
         }))
-        alert.addAction(UIAlertAction(title: "Overwrite State", style: .default, handler: { (action: UIAlertAction) in
+        alert.addAction(UIAlertAction(title: "Save & Overwrite", style: .default, handler: { (action: UIAlertAction) in
             self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
         }))
-        alert.addAction(UIAlertAction(title: "Delete State", style: .destructive, handler: { (action: UIAlertAction) in
+        alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
             PVSaveState.delete(saveState) { (error: Error) -> (Void) in
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
