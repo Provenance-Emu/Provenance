@@ -114,8 +114,8 @@ int darw_printf(const wchar* text,...) {
 
 #pragma mark C Lifecycle calls
 void os_DoEvents() {
-//	GET_CURRENT_OR_RETURN();
-//	[current videoInterrupt];
+    GET_CURRENT_OR_RETURN();
+    [current videoInterrupt];
 ////
 ////	is_dupe = false;
 //	[current updateControllers];
@@ -355,11 +355,7 @@ volatile bool has_init = false;
 	{
 
 		[super startEmulation];
- 		[NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
-
-		while (!has_init) {;}
-		while (rend_single_frame() == 0) {}
-
+        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
 	}
 
 }
@@ -368,9 +364,6 @@ volatile bool has_init = false;
 {
 	@autoreleasepool
 	{
-		[self.renderDelegate startRenderingOnAlternateThread];
-		BOOL success = gles_init();
-
 		[self reicastMain];
 
 		// Core returns
@@ -380,6 +373,24 @@ volatile bool has_init = false;
 
 		[super stopEmulation];
 	}
+}
+
+- (void)runReicastRenderThread
+{
+    @autoreleasepool
+    {
+        [self.renderDelegate startRenderingOnAlternateThread];
+        BOOL success = gles_init();
+        assert(success);
+        [NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
+        
+        while (!has_init) {}
+        while ( true )
+        {
+            while ( !rend_single_frame() ) {}
+            [self swapBuffers];
+        }
+    }
 }
 
 - (void)reicastMain {
