@@ -721,46 +721,45 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	func autoSaveState() {
 		let image = captureScreenshot()
 		createNewSaveState(auto: true, screenshot: image)
-    }
-
+	}
+	
 	func createNewSaveState(auto: Bool, screenshot: UIImage?) {
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
-        var imageFile: PVImageFile?
-        if let screenshot = screenshot {
-            if let pngData = UIImagePNGRepresentation(screenshot) {
-                let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
-                do {
-                    try pngData.write(to: imageURL)
-                } catch let error {
-                    presentError("Unable to write image to disk, error: \(error.localizedDescription)")
-                }
-                imageFile = PVImageFile(withURL: imageURL)
-            }
-        }
-        if let realm = try? Realm() {
-            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
-                presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
-                return
-            }
-            let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-            if self.core.saveStateToFile(atPath: saveState.file.url.path) {
-                DLOG("Succeeded saving state, auto: \(auto)")
-                if let realm = try? Realm() {
-                    do {
-                        try realm.write {
-                            realm.add(saveState)
-                        }
-                    } catch let error {
-                        presentError("Unable to write save state to realm: \(error.localizedDescription)")
-                    }
-                }
-            } else {
-                presentError("failed to save state, auto: \(auto)")
-            }
-        } else {
-            presentError("Unable to instantiate realm, cannot create new save state")
-            return
-        }
+		
+		var imageFile: PVImageFile?
+		if let screenshot = screenshot {
+			if let pngData = UIImagePNGRepresentation(screenshot) {
+				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
+				do {
+					try pngData.write(to: imageURL)
+				} catch let error {
+					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
+				}
+				
+				imageFile = PVImageFile(withURL: imageURL)
+			}
+		}
+
+		if self.core.saveStateToFile(atPath: saveFile.url.path) {
+			DLOG("Succeeded saving state, auto: \(auto)")
+			if let realm = try? Realm() {
+				guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
+					presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
+					return
+				}
+
+				let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+				do {
+					try realm.write {
+						realm.add(saveState)
+					}
+				} catch let error {
+					presentError("Unable to write save state to realm: \(error.localizedDescription)")
+				}
+			}
+		} else {
+			presentError("failed to save state, auto: \(auto)")
+		}
 	}
 
 	func loadSaveState(_ state: PVSaveState) {
@@ -802,7 +801,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) {
 		createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 	}
-
+    
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) {
         createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
         PVSaveState.delete(state) { (error: Error) -> (Void) in
