@@ -30,4 +30,20 @@ import Foundation
 		self.core = core
 		createdWithCoreVersion = core.projectVersion
     }
+    
+    class func delete(_ state: PVSaveState, onError: ((Error) -> (Void))? = nil ) {
+        do {
+            try FileManager.default.removeItem(at: state.file.url)
+            if let image = state.image {
+                try FileManager.default.removeItem(at: image.url)
+            }
+            let realm = try Realm()
+            try realm.write {
+                realm.delete(state)
+            }
+        } catch let error {
+            onError?(error)
+//            self.presentError("Error deleting save state: \(error.localizedDescription)")
+        }
+    }
 }
