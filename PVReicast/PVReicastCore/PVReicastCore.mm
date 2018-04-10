@@ -248,8 +248,8 @@ __weak PVReicastCore *_current = 0;
 		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
 		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
 
-		_videoWidth  = 640;
-		_videoHeight = 480;
+		_videoWidth  = screen_width = 640;
+		_videoHeight = screen_height = 480;
 		_videoBitDepth = 32; // ignored
 		videoDepthBitDepth = 0; // TODO
 
