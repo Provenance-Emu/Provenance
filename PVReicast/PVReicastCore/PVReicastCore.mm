@@ -681,16 +681,40 @@ int reicast_main(int argc, wchar* argv[]) {
 	}
 }
 
--(void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player {
+const int DreamcastMap[]  = { DC_DPAD_UP, DC_DPAD_DOWN, DC_DPAD_LEFT, DC_DPAD_RIGHT, DC_BTN_A, DC_BTN_B, DC_BTN_X, DC_BTN_Y, DC_AXIS_LT, DC_AXIS_RT, DC_BTN_START};
 
+-(void)didPushDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player {
+	if (button == PVDreamcastButtonL) {
+		lt[player] |= 0xff * true;
+	} else if (button == PVDreamcastButtonR) {
+		rt[player] |= 0xff * true;
+	} else {
+		int mapped = DreamcastMap[button];
+		kcode[player] &= ~(mapped);
+	}
 }
 
 -(void)didReleaseDreamcastButton:(enum PVDreamcastButton)button forPlayer:(NSInteger)player {
-
+	if (button == PVDreamcastButtonL) {
+		lt[player] |= 0xff * false;
+	} else if (button == PVDreamcastButtonR) {
+		rt[player] |= 0xff * false;
+	} else {
+		int mapped = DreamcastMap[button];
+		kcode[player] |= (mapped);
+	}
 }
 
 - (void)didMoveDreamcastJoystickDirection:(enum PVDreamcastButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+	/*
+	float xvalue = gamepad.leftThumbstick.xAxis.value;
+	s8 x=(s8)(xvalue*127);
+	joyx[0] = x;
 
+	float yvalue = gamepad.leftThumbstick.yAxis.value;
+	s8 y=(s8)(yvalue*127 * - 1); //-127 ... + 127 range
+	joyy[0] = y;
+	*/
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
