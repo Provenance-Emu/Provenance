@@ -12,6 +12,7 @@ import Realm
 protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController)
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState)
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState);
 }
 
@@ -133,18 +134,9 @@ class PVSaveStatesViewController: UICollectionViewController {
 			
 			let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
-				do {
-					try FileManager.default.removeItem(at: saveState.file.url)
-					if let image = saveState.image {
-						try FileManager.default.removeItem(at: image.url)
-					}
-					let realm = try Realm()
-					try realm.write {
-						realm.delete(saveState)
-					}
-				} catch let error {
-					self.presentError("Error deleting save state: \(error.localizedDescription)")
-				}
+                PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+                    self.presentError("Error deleting save state: \(error.localizedDescription)")
+                }
 			})
 			alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
 			present(alert, animated: true)
@@ -160,6 +152,23 @@ class PVSaveStatesViewController: UICollectionViewController {
 	@IBAction func newSaveState(_ sender: Any) {
 		delegate?.saveStatesViewControllerCreateNewState(self)
 	}
+    
+    func showSaveStateOptions(saveState: PVSaveState) {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Load State", style: .default, handler: { (action: UIAlertAction) in
+            self.delegate?.saveStatesViewController(self, load: saveState)
+        }))
+        alert.addAction(UIAlertAction(title: "Overwrite State", style: .default, handler: { (action: UIAlertAction) in
+            self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
+        }))
+        alert.addAction(UIAlertAction(title: "Delete State", style: .destructive, handler: { (action: UIAlertAction) in
+            PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+                self.presentError("Error deleting save state: \(error.localizedDescription)")
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
 	
 	override func numberOfSections(in collectionView: UICollectionView) -> Int {
 		return 2;
@@ -213,8 +222,13 @@ class PVSaveStatesViewController: UICollectionViewController {
 			let saveState = autoSaves[indexPath.item]
 			delegate?.saveStatesViewController(self, load: saveState)
 		case 1:
-			let saveState = manualSaves[indexPath.item]
-			delegate?.saveStatesViewController(self, load: saveState)
+            var saveState: PVSaveState?
+			saveState = manualSaves[indexPath.item]
+            guard let state = saveState else {
+                ELOG("No save state at indexPath: \(indexPath)")
+                return
+            }
+            showSaveStateOptions(saveState: state)
 		default:
 			break
 		}
