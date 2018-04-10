@@ -24,6 +24,13 @@
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
 
+__weak PVReicastCore *_current = 0;
+
+@interface PVReicastCore()
+- (void)pollControllers;
+@property(nonatomic, strong, nullable) NSString *diskPath;
+@end
+
 // Reicast function declerations
 extern int screen_width,screen_height;
 bool rend_single_frame();
@@ -141,7 +148,7 @@ void os_CreateWindow() {
 
 void UpdateInputState(u32 port) {
 	GET_CURRENT_OR_RETURN();
-	[current updateControllers];
+	[current pollControllers];
 }
 
 void UpdateVibration(u32 port, u32 value) {
@@ -226,12 +233,6 @@ u8 rt[4];
 u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
-
-__weak PVReicastCore *_current = 0;
-
-@interface PVReicastCore()
-@property(nonatomic, strong, nullable) NSString *diskPath;
-@end
 
 @implementation PVReicastCore
 {
