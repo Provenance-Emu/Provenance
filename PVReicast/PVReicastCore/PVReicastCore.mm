@@ -391,6 +391,10 @@ volatile bool has_init = false;
         while (!has_init) {}
         while ( !shouldStop )
         {
+            [self.frontBufferCondition lock];
+            while (self.isFrontBufferReady) [self.frontBufferCondition wait];
+            [self.frontBufferCondition unlock];
+            
             while ( !rend_single_frame() ) {}
             [self swapBuffers];
         }
@@ -446,9 +450,9 @@ int reicast_main(int argc, wchar* argv[]) {
 
 - (void)videoInterrupt
 {
-	dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+	//dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
 
-	dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, DISPATCH_TIME_FOREVER);
+	//dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, DISPATCH_TIME_FOREVER);
 }
 
 - (void)swapBuffers
@@ -458,9 +462,9 @@ int reicast_main(int argc, wchar* argv[]) {
 
 - (void)executeFrameSkippingFrame:(BOOL)skip
 {
-	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+	//dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
 
-	dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
+	//dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, DISPATCH_TIME_FOREVER);
 }
 
 - (void)executeFrame
