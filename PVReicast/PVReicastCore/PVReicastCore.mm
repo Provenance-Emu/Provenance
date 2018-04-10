@@ -237,6 +237,7 @@ __weak PVReicastCore *_current = 0;
 {
 	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
+    dispatch_semaphore_t coreWaitForExitSemaphore;
 
 	dispatch_queue_t _callbackQueue;
 	NSMutableDictionary *_callbackHandlers;
@@ -247,6 +248,7 @@ __weak PVReicastCore *_current = 0;
 	if (self = [super init]) {
 		mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
 		coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
+        coreWaitForExitSemaphore       = dispatch_semaphore_create(0);
 
 		_videoWidth  = screen_width = 640;
 		_videoHeight = screen_height = 480;
@@ -273,6 +275,7 @@ __weak PVReicastCore *_current = 0;
 #if !__has_feature(objc_arc)
 	dispatch_release(mupenWaitToBeginFrameSemaphore);
 	dispatch_release(coreWaitToEndFrameSemaphore);
+    dispatch_release(coreWaitForExitSemaphore);
 #endif
 
 	_current = nil;
@@ -385,7 +388,7 @@ volatile bool has_init = false;
         [NSThread detachNewThreadSelector:@selector(runReicastEmuThread) toTarget:self withObject:nil];
         
         while (!has_init) {}
-        while ( true )
+        while ( !shouldStop )
         {
             while ( !rend_single_frame() ) {}
             [self swapBuffers];
@@ -427,6 +430,8 @@ volatile bool has_init = false;
 	settings.profile.run_counts=0;
 
 	reicast_main(argc, Args);
+    
+    dispatch_semaphore_signal(coreWaitForExitSemaphore);
 }
 
 int reicast_main(int argc, wchar* argv[]) {
@@ -479,6 +484,7 @@ int reicast_main(int argc, wchar* argv[]) {
 	// TODO: Call reicast stop command here
 	dc_term();
 	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    dispatch_semaphore_wait(coreWaitForExitSemaphore, DISPATCH_TIME_FOREVER);
 	[self.frontBufferCondition lock];
 	[self.frontBufferCondition signal];
 	[self.frontBufferCondition unlock];
