@@ -272,7 +272,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         gameAudio = OEGameAudio(core: core)
         gameAudio?.volume = PVSettingsModel.sharedInstance().volume
         gameAudio?.outputDeviceID = 0
-        gameAudio?.start()
+		gameAudio?.start()
 		if let latestAutoSave = game.saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false).first {
             let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
             let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves

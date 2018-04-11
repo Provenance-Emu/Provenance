@@ -13,6 +13,8 @@
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
 
 
 // Reicast imports
@@ -26,7 +28,10 @@
 
 __weak PVReicastCore *_current = 0;
 
-@interface PVReicastCore()
+@interface PVReicastCore() {
+	@public
+	dispatch_queue_t _callbackQueue;
+}
 - (void)pollControllers;
 @property(nonatomic, strong, nullable) NSString *diskPath;
 @end
@@ -184,21 +189,737 @@ void gl_swap() {
 #pragma mark Audio Callbacks
 
 #include "oslib/audiobackend_coreaudio.h"
+#import "CARingBuffer.h"
 
+volatile Float64 write_ptr = 0;
+volatile Float64 read_ptr = 0;
+
+
+typedef struct MyAUGraphPlayer {
+	AudioStreamBasicDescription streamFormat;
+	AUGraph graph;
+	AudioUnit inputUnit;
+	AudioUnit outputUnit;
+	AudioUnit converterUnit;
+
+	AudioBufferList *inputBuffer;
+	CARingBuffer *ringBuffer;
+	Float64 firstInputSampleTime;
+	Float64 firstOutputSampleTime;
+	Float64 inToOutSampleTimeOffset;
+} MyAUGraphPlayer;
+
+
+OSStatus InputRenderProc(void *inRefCon,
+						 AudioUnitRenderActionFlags *ioActionFlags,
+						 const AudioTimeStamp *inTimeStamp,
+						 UInt32 inBusNumber,
+						 UInt32 inNumberFrames,
+						 AudioBufferList * ioData);
+OSStatus GraphRenderProc(void *inRefCon,
+						 AudioUnitRenderActionFlags *ioActionFlags,
+						 const AudioTimeStamp *inTimeStamp,
+						 UInt32 inBusNumber,
+						 UInt32 inNumberFrames,
+						 AudioBufferList * ioData);
+void CreateInputUnit (MyAUGraphPlayer *player);
+void CreateMyAUGraph(MyAUGraphPlayer *player);
+static void CheckError(OSStatus error, const char *operation);
+
+static MyAUGraphPlayer player;
+#import <AVFoundation/AVFoundation.h>
 static void coreaudio_init()
 {
+//	GET_CURRENT_OR_RETURN();
+//	[current ringBufferAtIndex:0];
+//
+//	if (settings.aica.GlobalFocus) {
+//		// TODO: Allow background audio?
+//	}
+	NSError *error;
+	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
+	if(error) {
+		NSLog(@"Couldn't set av session %@", error.localizedDescription);
+	} else {
+		NSLog(@"Successfully set audio session to ambient");
+	}
+	player = {0};
+
+	// build a graph with output unit and set stream format
+	CreateMyAUGraph(&player);
+
+	/* allocate some buffers to hold samples between input and output callbacks
+	 (this part largely copied from CAPlayThrough) */
+	//Get the size of the IO buffer(s)
+	Float64 sampleRate;
+	UInt32 propSize = sizeof(Float64);
+	AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate,
+							&propSize,
+							&sampleRate);
+
+	Float32 bufferDuration;
+	propSize = sizeof(Float32);
+	AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareIOBufferDuration,
+							&propSize,
+							&bufferDuration);
+
+	UInt32 bufferLengthInFrames = sampleRate * bufferDuration;
+	UInt32 bufferSizeBytes = bufferLengthInFrames * sizeof(Float32);
+
+	if (player.streamFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved) {
+		printf ("format is non-interleaved\n");
+		// allocate an AudioBufferList plus enough space for array of AudioBuffers
+		UInt32 propsize = offsetof(AudioBufferList, mBuffers[0]) + (sizeof(AudioBuffer) * player.streamFormat.mChannelsPerFrame);
+
+		//malloc buffer lists
+		player.inputBuffer = (AudioBufferList *)malloc(propsize);
+		player.inputBuffer->mNumberBuffers = player.streamFormat.mChannelsPerFrame;
+
+		//pre-malloc buffers for AudioBufferLists
+		for(UInt32 i =0; i< player.inputBuffer->mNumberBuffers ; i++) {
+			player.inputBuffer->mBuffers[i].mNumberChannels = 1;
+			player.inputBuffer->mBuffers[i].mDataByteSize = bufferSizeBytes;
+			player.inputBuffer->mBuffers[i].mData = malloc(bufferSizeBytes);
+		}
+	} else {
+		printf ("format is interleaved\n");
+		// allocate an AudioBufferList plus enough space for array of AudioBuffers
+		UInt32 propsize = offsetof(AudioBufferList, mBuffers[0]) + (sizeof(AudioBuffer) * 1);
+
+		//malloc buffer lists
+		player.inputBuffer = (AudioBufferList *)malloc(propsize);
+		player.inputBuffer->mNumberBuffers = 1;
+
+		//pre-malloc buffers for AudioBufferLists
+		player.inputBuffer->mBuffers[0].mNumberChannels = player.streamFormat.mChannelsPerFrame;
+		player.inputBuffer->mBuffers[0].mDataByteSize = bufferSizeBytes;
+		player.inputBuffer->mBuffers[0].mData = malloc(bufferSizeBytes);
+	}
+
+	//Alloc ring buffer that will hold data between the two audio devices
+	player.ringBuffer = new CARingBuffer();
+	player.ringBuffer->Allocate(player.streamFormat.mChannelsPerFrame,
+								 player.streamFormat.mBytesPerFrame,
+								 bufferLengthInFrames * 4000);
+
+
+	player.firstInputSampleTime = -1;
+	player.firstOutputSampleTime = -1;
+	player.inToOutSampleTimeOffset = -1;
+
+	CheckError(AUGraphStart(player.graph), "AUGraphStart failed");
+
+
+	settings.aica.BufferSize = bufferLengthInFrames;
+
+//	settings.aica.LimitFPS = 1;
+}
+
+
+static void CheckError(OSStatus error, const char *operation)
+{
+	if (error == noErr) return;
+
+	char str[20];
+	// see if it appears to be a 4-char-code
+	*(UInt32 *)(str + 1) = CFSwapInt32HostToBig(error);
+	if (isprint(str[1]) && isprint(str[2]) && isprint(str[3]) && isprint(str[4])) {
+		str[0] = str[5] = '\'';
+		str[6] = '\0';
+	} else
+		// no, format it as an integer
+		sprintf(str, "%d", (int)error);
+
+	fprintf(stderr, "Error: %s (%s)\n", operation, str);
+
+	exit(1);
+}
+
+#pragma mark - render proc -
+
+OSStatus GraphRenderProc(void *inRefCon,
+						 AudioUnitRenderActionFlags *ioActionFlags,
+						 const AudioTimeStamp *inTimeStamp,
+						 UInt32 inBusNumber,
+						 UInt32 inNumberFrames,
+						 AudioBufferList * ioData)
+{
+
+	read_ptr += inNumberFrames;
+//		printf ("GraphRenderProc! need %d frames for time %f \n", inNumberFrames, inTimeStamp->mSampleTime);
+
+//	MyAUGraphPlayer *player = (MyAUGraphPlayer*) inRefCon;
+
+	// have we ever logged output timing? (for offset calculation)
+	if (player.firstOutputSampleTime < 0.0) {
+		player.firstOutputSampleTime = inTimeStamp->mSampleTime;
+		if ((player.firstInputSampleTime > -1.0) &&
+			(player.inToOutSampleTimeOffset < 0.0)) {
+			player.inToOutSampleTimeOffset =
+			player.firstInputSampleTime - player.firstOutputSampleTime;
+		}
+	}
+
+	// copy samples out of ring buffer
+	OSStatus outputProcErr = noErr;
+
+//	Float64 time = inTimeStamp->mSampleTime + player.inToOutSampleTimeOffset;
+	Float64 time = read_ptr + player.inToOutSampleTimeOffset;
+
+	// new CARingBuffer doesn't take bool 4th arg
+	outputProcErr = player.ringBuffer->Fetch(ioData,
+											  inNumberFrames,
+											  time);
+//	float freq = 440.f;
+//	int seconds = 4;
+//	unsigned sample_rate = 44100;
+//	size_t buf_size = seconds * sample_rate;
+//
+//	short *samples;
+//	samples = new short[buf_size];
+//	for(int i=0; i<buf_size; ++i) {
+//		samples[i] = 32760 * sin( (2.f*float(M_PI)*freq)/sample_rate * i );
+//	}
+//
+//	memcpy(ioData->mBuffers[0].mData, samples, inNumberFrames);
+
+//	memcpy(ioData->mBuffers[0].mData, player.inputBuffer->mBuffers[0].mData, inNumberFrames);
+
+
+	printf ("fetched %d frames at time %f error: %i\n", inNumberFrames, time, outputProcErr);
+	return outputProcErr;
 
 }
 
+void CreateMyAUGraph(MyAUGraphPlayer *player)
+{
+	GET_CURRENT_OR_RETURN();
+
+	AUGraphStop(player->graph);
+	AUGraphClose(player->graph);
+	AUGraphUninitialize(player->graph);
+
+	// create a new AUGraph
+	CheckError(NewAUGraph(&player->graph),
+			   "NewAUGraph failed");
+
+	//Open the graph
+	CheckError(AUGraphOpen(player->graph),
+		"couldn't open graph");
+
+	AudioComponentDescription desc = {0};
+
+	desc.componentType         = kAudioUnitType_Output;
+	desc.componentSubType      = kAudioUnitSubType_RemoteIO;
+	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+	desc.componentFlagsMask    = 0;
+	desc.componentFlags        = 0;
+
+
+	// adds a node with above description to the graph
+	AUNode outputNode;
+	CheckError(AUGraphAddNode(player->graph,  (const AudioComponentDescription *)&desc, &outputNode),
+			   "AUGraphAddNode[kAudioUnitSubType_DefaultOutput] failed");
+
+	CheckError(AUGraphNodeInfo(player->graph, outputNode, NULL, &player->outputUnit),
+			   "couldn't get output from node");
+
+	desc.componentType = kAudioUnitType_Mixer;
+	desc.componentSubType = kAudioUnitSubType_MultiChannelMixer;
+	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+
+	//Create the mixer node
+	AUNode mixerNode;
+
+	CheckError(AUGraphAddNode(player->graph, (const AudioComponentDescription *)&desc, &mixerNode),
+			   "couldn't create node for file player");
+
+	AudioUnit mixerUnit;
+
+	CheckError(AUGraphNodeInfo(player->graph, mixerNode, NULL, &mixerUnit),
+			   "couldn't get player unit from node");
+
+	desc.componentType = kAudioUnitType_FormatConverter;
+	desc.componentSubType = kAudioUnitSubType_AUConverter;
+	desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+
+	NSUInteger bufferCount = [current audioBufferCount];
+
+	//Create the converter node
+	AUNode mConverterNode;
+	CheckError(AUGraphAddNode(player->graph, (const AudioComponentDescription *)&desc, &mConverterNode),
+		"couldn't create node for converter");
+
+	CheckError(AUGraphNodeInfo(player->graph, mConverterNode, NULL, &player->converterUnit),
+			   "couldn't get player unit from converter");
+
+
+	AURenderCallbackStruct renderStruct;
+	renderStruct.inputProc = GraphRenderProc;
+	renderStruct.inputProcRefCon = (void*)&player;
+
+	CheckError(AudioUnitSetProperty(player->converterUnit, kAudioUnitProperty_SetRenderCallback,
+									kAudioUnitScope_Input, 0, &renderStruct, sizeof(AURenderCallbackStruct)),
+			   "Couldn't set the render callback");
+
+//	CheckError(AudioUnitSetProperty(player->outputUnit,
+//									kAudioUnitProperty_SetRenderCallback,
+//									kAudioUnitScope_Global,
+//									0,
+//									&renderStruct,
+//									sizeof(renderStruct)),
+//			   "Couldn't set render callback on output unit");
+
+
+
+
+
+	AudioStreamBasicDescription mDataFormat;
+	NSUInteger channelCount =  [current channelCount];
+	NSUInteger bytesPerSample = [current audioBitDepth] / 8;
+
+//	int formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
+//	mDataFormat.mSampleRate       = [current audioSampleRateForBuffer:0];
+//	mDataFormat.mFormatID         = kAudioFormatLinearPCM;
+//	mDataFormat.mFormatFlags      = formatFlag | kAudioFormatFlagsNativeEndian;
+//	mDataFormat.mBytesPerPacket   = bytesPerSample * channelCount;
+//	mDataFormat.mFramesPerPacket  = 1; // this means each packet in the AQ has two samples, one for each channel -> 4 bytes/frame/packet
+//	mDataFormat.mBytesPerFrame    = bytesPerSample * channelCount;
+//	mDataFormat.mChannelsPerFrame = channelCount;
+//	mDataFormat.mBitsPerChannel   = 8 * bytesPerSample;
+
+	//        int formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
+	mDataFormat.mSampleRate       = 44100;
+	mDataFormat.mFormatID         = kAudioFormatLinearPCM;
+	mDataFormat.mFormatFlags      = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked; ////formatFlag | kAudioFormatFlagsNativeEndian;
+	mDataFormat.mBytesPerPacket   =  2*16/8; //bytesPerSample * channelCount;
+	mDataFormat.mFramesPerPacket  = 1; // this means each packet in the AQ has two samples, one for each channel -> 4 bytes/frame/packet
+	mDataFormat.mBytesPerFrame    = 2*16/8; //bytesPerSample * channelCount;
+	mDataFormat.mChannelsPerFrame =  2; //channelCount;
+	mDataFormat.mBitsPerChannel   = 16; //8 * bytesPerSample;
+
+	player->streamFormat = mDataFormat;
+
+	CheckError(AudioUnitSetProperty(player->converterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, sizeof(AudioStreamBasicDescription)),
+			   "couldn't set player's input stream format");
+
+	CheckError(AUGraphConnectNodeInput(player->graph, mConverterNode, 0, mixerNode, 0),
+		"Couldn't connect the converter to the mixer");
+
+	CheckError(AUGraphConnectNodeInput(player->graph, mixerNode, 0, outputNode, 0),
+			   "Could not connect the input of the output");
+
+	AudioUnitSetParameter(player->outputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, 1.0 ,0);
+
+//	AudioDeviceID outputDeviceID = 0;
+//	//    if(outputDeviceID != 0)
+//	CheckError(AudioUnitSetProperty(player->outputUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, sizeof(AudioDeviceID)),
+//		"couldn't set device properties");
+
+	CheckError(AUGraphInitialize(player->graph),
+			   "couldn't initialize graph");
+
+	DLOG(@"Initialized the graph");
+
+//	CheckError(AUGraphStart(player->graph),
+//		"couldn't start graph");
+//
+//	DLOG(@"Started the graph");
+
+//	 CFShow(player->graph);
+	float volume = 1.0;
+	AudioUnitSetParameter( mixerUnit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Input, 0, volume, 0 ) ;
+//
+//#define PART_II 0
+//#ifdef PART_II
+//	AudioStreamBasicDescription mDataFormat;
+//	NSUInteger channelCount =  [current channelCount];
+//	NSUInteger bytesPerSample = [current audioBitDepth] / 8;
+//
+//	//        int formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
+//	mDataFormat.mSampleRate       = 44100;
+//	mDataFormat.mFormatID         = kAudioFormatLinearPCM;
+//	mDataFormat.mFormatFlags      = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked; ////formatFlag | kAudioFormatFlagsNativeEndian;
+//	mDataFormat.mBytesPerPacket   =  2*16/8; //bytesPerSample * channelCount;
+//	mDataFormat.mFramesPerPacket  = 1; // this means each packet in the AQ has two samples, one for each channel -> 4 bytes/frame/packet
+//	mDataFormat.mBytesPerFrame    = 2*16/8; //bytesPerSample * channelCount;
+//	mDataFormat.mChannelsPerFrame =  2; //channelCount;
+//	mDataFormat.mBitsPerChannel   = 16; //8 * bytesPerSample;
+//
+//	player->streamFormat = mDataFormat;
+//
+//	// add a mixer to the graph,
+//	AudioComponentDescription mixercd = {0};
+//	mixercd.componentType = kAudioUnitType_Mixer;
+//	mixercd.componentSubType = kAudioUnitSubType_MultiChannelMixer; // doesn't work: kAudioUnitSubType_MatrixMixer
+//	mixercd.componentManufacturer = kAudioUnitManufacturer_Apple;
+//	AUNode mixerNode;
+//	CheckError(AUGraphAddNode(player->graph, &mixercd, &mixerNode),
+//			   "AUGraphAddNode[kAudioUnitSubType_StereoMixer] failed");
+//
+//	// adds a node with above description to the graph
+////	AudioComponentDescription speechcd = {0};
+////	speechcd.componentType = kAudioUnitType_Generator;
+////	speechcd.componentSubType = kAudioUnitSubType_SpeechSynthesis;
+////	speechcd.componentManufacturer = kAudioUnitManufacturer_Apple;
+////	AUNode speechNode;
+////	CheckError(AUGraphAddNode(player->graph, &speechcd, &speechNode),
+////			   "AUGraphAddNode[kAudioUnitSubType_AudioFilePlayer] failed");
+//
+//	// opening the graph opens all contained audio units but does not allocate any resources yet
+//	CheckError(AUGraphOpen(player->graph),
+//			   "AUGraphOpen failed");
+//
+//	// get the reference to the AudioUnit objects for the various nodes
+////	CheckError(AUGraphNodeInfo(player->graph, outputNode, NULL, &player->outputUnit),
+////			   "AUGraphNodeInfo failed");
+////	CheckError(AUGraphNodeInfo(player->graph, speechNode, NULL, &player->speechUnit),
+////			   "AUGraphNodeInfo failed");
+//	AudioUnit mixerUnit;
+//	CheckError(AUGraphNodeInfo(player->graph, mixerNode, NULL, &mixerUnit),
+//			   "AUGraphNodeInfo failed");
+//
+//	// set ASBDs here
+//	UInt32 propertySize = sizeof (AudioStreamBasicDescription);
+//	CheckError(AudioUnitSetProperty(player->outputUnit,
+//									kAudioUnitProperty_StreamFormat,
+//									kAudioUnitScope_Input,
+//									0,
+//									&player->streamFormat,
+//									propertySize),
+//			   "Couldn't set stream format on output unit");
+//
+//	// problem: badComponentInstance (-2147450879)
+//	CheckError(AudioUnitSetProperty(mixerUnit,
+//									kAudioUnitProperty_StreamFormat,
+//									kAudioUnitScope_Input,
+//									0,
+//									&player->streamFormat,
+//									propertySize),
+//			   "Couldn't set stream format on mixer unit bus 0");
+//	CheckError(AudioUnitSetProperty(mixerUnit,
+//									kAudioUnitProperty_StreamFormat,
+//									kAudioUnitScope_Input,
+//									1,
+//									&player->streamFormat,
+//									propertySize),
+//			   "Couldn't set stream format on mixer unit bus 1");
+//
+//
+//	// connections
+//	// mixer output scope / bus 0 to outputUnit input scope / bus 0
+//	// mixer input scope / bus 0 to render callback (from ringbuffer, which in turn is from inputUnit)
+//	// mixer input scope / bus 1 to speech unit output scope / bus 0
+//
+//	CheckError(AUGraphConnectNodeInput(player->graph, mixerNode, 0, outputNode, 0),
+//			   "Couldn't connect mixer output(0) to outputNode (0)");
+////	CheckError(AUGraphConnectNodeInput(player->graph, speechNode, 0, mixerNode, 1),
+////			   "Couldn't connect speech synth unit output (0) to mixer input (1)");
+//	AURenderCallbackStruct callbackStruct;
+//	callbackStruct.inputProc = GraphRenderProc;
+//	callbackStruct.inputProcRefCon = player;
+//	CheckError(AudioUnitSetProperty(mixerUnit,
+//									kAudioUnitProperty_SetRenderCallback,
+//									kAudioUnitScope_Global,
+//									0,
+//									&callbackStruct,
+//									sizeof(callbackStruct)),
+//			   "Couldn't set render callback on mixer unit");
+//
+//
+//#else
+//
+//	// opening the graph opens all contained audio units but does not allocate any resources yet
+//	CheckError(AUGraphOpen(player->graph),
+//			   "AUGraphOpen failed");
+//
+//	// get the reference to the AudioUnit object for the output graph node
+//	CheckError(AUGraphNodeInfo(player->graph, outputNode, NULL, &player->outputUnit),
+//			   "AUGraphNodeInfo failed");
+//
+//	AudioStreamBasicDescription mDataFormat;
+//	NSUInteger channelCount =  [current channelCount];
+//	NSUInteger bytesPerSample = [current audioBitDepth] / 8;
+//
+//	//        int formatFlag = (bytesPerSample == 4) ? kLinearPCMFormatFlagIsFloat : kLinearPCMFormatFlagIsSignedInteger;
+//	mDataFormat.mSampleRate       = 44100;
+//	mDataFormat.mFormatID         = kAudioFormatLinearPCM;
+//	mDataFormat.mFormatFlags      = kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked; ////formatFlag | kAudioFormatFlagsNativeEndian;
+//	mDataFormat.mBytesPerPacket   =  2*16/8; //bytesPerSample * channelCount;
+//	mDataFormat.mFramesPerPacket  = 1; // this means each packet in the AQ has two samples, one for each channel -> 4 bytes/frame/packet
+//	mDataFormat.mBytesPerFrame    = 2*16/8; //bytesPerSample * channelCount;
+//	mDataFormat.mChannelsPerFrame =  2; //channelCount;
+//	mDataFormat.mBitsPerChannel   = 16; //8 * bytesPerSample;
+//
+//	player->streamFormat = mDataFormat;
+////	OSStatus inputProcErr = noErr;
+////	err = AudioUnitSetProperty(mConverterUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, sizeof(AudioStreamBasicDescription));
+//
+//	// set the stream format on the output unit's input scope
+//	UInt32 propertySize = sizeof (AudioStreamBasicDescription);
+//	CheckError(AudioUnitSetProperty(player->outputUnit,
+//									kAudioUnitProperty_StreamFormat,
+//									kAudioUnitScope_Input,
+//									0,
+//									&player->streamFormat,
+//									propertySize),
+//			   "Couldn't set stream format on output unit");
+//
+//	AURenderCallbackStruct callbackStruct;
+//	callbackStruct.inputProc = GraphRenderProc;
+//	callbackStruct.inputProcRefCon = player;
+//
+//	CheckError(AudioUnitSetProperty(player->outputUnit,
+//									kAudioUnitProperty_SetRenderCallback,
+//									kAudioUnitScope_Global,
+//									0,
+//									&callbackStruct,
+//									sizeof(callbackStruct)),
+//			   "Couldn't set render callback on output unit");
+//
+//#endif
+//
+//
+//	// now initialize the graph (causes resources to be allocated)
+//	CheckError(AUGraphInitialize(player->graph),
+//			   "AUGraphInitialize failed");
+
+	player->firstOutputSampleTime = -1;
+
+	printf ("Bottom of CreateSimpleAUGraph()\n");
+}
+
+AudioBufferList *
+AllocateABL(UInt32 channelsPerFrame, UInt32 bytesPerFrame, bool interleaved, UInt32 capacityFrames)
+{
+	AudioBufferList *bufferList = NULL;
+
+	UInt32 numBuffers = interleaved ? 1 : channelsPerFrame;
+	UInt32 channelsPerBuffer = interleaved ? channelsPerFrame : 1;
+
+	bufferList = static_cast<AudioBufferList *>(calloc(1, offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * numBuffers)));
+
+	bufferList->mNumberBuffers = numBuffers;
+
+	for(UInt32 bufferIndex = 0; bufferIndex < bufferList->mNumberBuffers; ++bufferIndex) {
+		bufferList->mBuffers[bufferIndex].mData = static_cast<void *>(calloc(capacityFrames, bytesPerFrame));
+		bufferList->mBuffers[bufferIndex].mDataByteSize = capacityFrames * bytesPerFrame;
+		bufferList->mBuffers[bufferIndex].mNumberChannels = channelsPerBuffer;
+	}
+
+	return bufferList;
+}
+
+uint clearedCounter = 0;
 static u32 coreaudio_push(void* frame, u32 samples, bool wait)
 {
-	GET_CURRENT_OR_RETURN(0);
-	//	while (samples_ptr != 0 && wait)
-	//		;
-	//
-	//	if (samples_ptr == 0) {\
+	GET_CURRENT_OR_RETURN(1);
 
-	[[current ringBufferAtIndex:0] write:(const unsigned char *)frame maxLength:samples * 4];
+	OERingBuffer *rb = [current ringBufferAtIndex:0];
+
+	if (rb == nil) {
+		ELOG("Ring buffer was nil!");
+		return 1;
+	}
+
+//	if (current.isEmulationPaused) {
+//		TPCircularBufferClear(&rb->buffer);
+//		return 1;
+//	}
+
+#define CALLBACK_VERSION 7
+#define USE_DIRECTSOUND_THING 1
+
+#if USE_DIRECTSOUND_THING
+	u16* f=(u16*)frame;
+
+	bool w=false;
+
+	for (u32 i = 0; i < samples*2; i++)
+	{
+		if (f[i])
+		{
+			w = true;
+			break;
+		}
+	}
+
+	wait &= w;
+
+	int ffs=1;
+#endif
+
+	// Fill the buffer and wait for it to empty
+#if CALLBACK_VERSION == 0
+	// Results: Too slow
+	while (rb.availableBytes == 0 && wait) { }
+	[rb write:(const unsigned char *)frame maxLength:samples * 4];
+#elif CALLBACK_VERSION == 1
+	// Results: Too slow
+
+	// Same as 1, but do the buffer copy first so we don't stall on the memcpy
+	[rb write:(const unsigned char *)frame maxLength:samples * 4];
+	while (rb.availableBytes == 0 && wait) { }
+#elif CALLBACK_VERSION == 2
+	// Faster, stutters
+//	NSLog(@"%lu %lu diff: %lu", samples_ptr, rb.bytesWritten, samples_ptr-rb.bytesWritten);
+	// Use a sample counter instead of filling the buffer
+	while (samples_ptr > rb.bytesWritten && wait) { }
+	if(samples_ptr <= rb.bytesWritten) {
+		[rb write:(const unsigned char *)frame maxLength:samples * 4];
+		samples_ptr += samples * 4;
+	}
+#elif CALLBACK_VERSION == 3
+	// Faster, stutters
+
+	NSLog(@"%lu %lu diff: %lu", (unsigned long)samples_ptr, (unsigned long)rb.bytesWritten, (unsigned long)samples_ptr-rb.bytesWritten);
+
+	// Use a sample counter instead of filling the buffer
+	while (samples_ptr != 0 && samples_ptr != rb.bytesRead && rb.bytesRead != 0 && wait) { }
+	[rb write:(const unsigned char *)frame maxLength:samples * 4];
+	samples_ptr += samples * 4;
+#elif CALLBACK_VERSION == 4
+	// Use a sample counter instead of filling the buffer
+	while (samples_ptr >= rb.bytesWritten && wait) { }
+	if (samples_ptr >= rb.bytesWritten)
+		[rb write:(const unsigned char *)frame maxLength:samples * 4];
+		samples_ptr += samples * 4;
+	}
+#elif CALLBACK_VERSION == 5
+	// Use a sample counter instead of filling the buffer
+	if (samples_ptr <= rb.bytesWritten)
+		[[current ringBufferAtIndex:0] write:(const unsigned char *)frame maxLength:samples * 4];
+		samples_ptr += samples * 4;
+	}
+
+	while (samples_ptr >= rb.bytesWritten > 0 && wait) { }
+#elif CALLBACK_VERSION == 6
+
+	TPCircularBuffer buffer = rb->buffer;
+	NSUInteger maxFillSize = clearedCounter > 4 ? samples * 8 : -1;
+//	NSLog(@"used bytes: %lu", (unsigned long)buffer.fillCount);
+#define notfull [rb write:(const unsigned char *)frame maxLength:samples * 4]
+
+	while ([rb availableBytes] > maxFillSize && wait) {	}
+
+	[rb write:(const unsigned char *)frame maxLength:samples * 4];
+
+//	dispatch_async(current->_callbackQueue, ^{
+//		[rb write:(const unsigned char *)frame maxLength:samples * 4];
+//	});
+	if (buffer.fillCount == 0) {
+		clearedCounter++;
+	}
+
+#elif CALLBACK_VERSION == 7
+	// render into our buffer
+	OSStatus inputProcErr = noErr;
+	UInt32 inNumberFrames = samples;
+	UInt32 inNumberBytes = samples * 4;
+
+AudioTimeStamp timeStamp = {0};
+FillOutAudioTimeStampWithSampleTime(timeStamp, settings.dreamcast.RTC);
+
+//write_ptr += inNumberFrames;
+
+// have we ever logged input timing? (for offset calculation)
+if (player.firstInputSampleTime < 0.0) {
+	player.firstInputSampleTime = write_ptr;
+	if ((player.firstOutputSampleTime > -1.0) &&
+			(player.inToOutSampleTimeOffset < 0.0)) {
+			player.inToOutSampleTimeOffset =
+			player.firstInputSampleTime - player.firstOutputSampleTime;
+	}
+}
+
+// In order to render continuously, the effect audio unit needs a new time stamp for each buffer
+// Use the number of frames for each unit of time continuously incrementing
+//player.firstInputSampleTime += (double)samples * 4;
+//AudioBufferList ioData = {0};
+//ioData.mNumberBuffers = 1;
+//ioData.mBuffers[0] =
+//ioData.mBuffers[0].mNumberChannels = 2;
+//ioData.mBuffers[0].mDataByteSize = (UInt32)(inNumberBytes);
+//ioData.mBuffers[0].mData = frame;
+
+//AudioBufferList *bufferList = NULL;
+//UInt32 numBuffers = 1;
+//UInt32 channelsPerBuffer = 2;
+//bufferList = static_cast<AudioBufferList *>(calloc(1, offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * numBuffers)));
+//bufferList->mNumberBuffers = numBuffers;
+//
+//for(UInt32 bufferIndex = 0; bufferIndex < bufferList->mNumberBuffers; ++bufferIndex) {
+//	bufferList->mBuffers[bufferIndex].mData = frame; //static_cast<void *>(calloc(capacityFrames, bytesPerFrame));
+//	bufferList->mBuffers[bufferIndex].mDataByteSize = inNumberBytes;
+//	bufferList->mBuffers[bufferIndex].mNumberChannels = 2;
+//}
+
+
+
+printf ("set %d frames at time %f\n", inNumberFrames, timeStamp.mSampleTime);
+
+/*
+ #define kNumChannels 2
+ AudioBufferList *bufferList = (AudioBufferList*)malloc(sizeof(AudioBufferList) * kNumChannels);
+ bufferList->mNumberBuffers = kNumChannels; // 2 for stereo, 1 for mono
+ for(int i = 0; i < 2; i++) {
+ int numSamples = 123456; // Number of sample frames in the buffer
+ bufferList->mBuffers[i].mNumberChannels = 1;
+ bufferList->mBuffers[i].mDataByteSize = numSamples * sizeof(Float32);
+ bufferList->mBuffers[i].mData = (Float32*)malloc(sizeof(Float32) * numSamples);
+ }
+
+ // Do stuff...
+
+ for(int i = 0; i < 2; i++) {
+ free(bufferList->mBuffers[i].mData);
+ }
+ free(bufferList);
+ */
+//AudioUnitGetProperty(player.graph,
+//					 kAudioUnitProperty_CurrentPlayTime,
+//					 kAudioUnitScope_Global,
+//					 0,
+//					 &ts,
+//					 &size);
+//
+//AudioUnitGetProperty(player.graph,
+//					 kAudioUnitProperty_CurrentPlayTime,
+//					 kAudioUnitScope_Global,
+//					 0,
+//					 (void*)&ts,
+//					 &size);
+
+//	float freq = 440.f;
+//	int seconds = 4;
+//	unsigned sample_rate = 44100;
+//	size_t buf_size = seconds * sample_rate;
+//
+//	short *staticsamples;
+//	staticsamples = new short[buf_size];
+//	for(int i=0; i<buf_size; ++i) {
+//		staticsamples[i] = 32760 * sin( (2.f*float(M_PI)*freq)/sample_rate * i );
+//	}
+
+//	memcpy(player.inputBuffer->mBuffers[0].mData, frame, inNumberBytes);
+
+
+//	player.inputBuffer->mBuffers[0].mDataByteSize = inNumberBytes;
+
+//	memcpy(player.inputBuffer->mBuffers[0].mData, frame, inNumberBytes);
+	player.inputBuffer->mBuffers[0].mData = frame;
+	player.inputBuffer->mBuffers[0].mDataByteSize = inNumberBytes;
+	player.inputBuffer->mBuffers[0].mNumberChannels = 2;
+
+	// copy from our buffer to ring buffer
+	if (! inputProcErr) {
+		inputProcErr = player.ringBuffer->Store(player.inputBuffer,
+												 inNumberFrames,
+												 timeStamp.mSampleTime);
+		printf("Stored: %i", inputProcErr);
+	}
+#endif
+
 	//	});
 	/* Yeah, right */
 	//    while (samples_ptr != 0 && wait) ;
@@ -240,7 +961,6 @@ s8 joyx[4], joyy[4];
 	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
 
-	dispatch_queue_t _callbackQueue;
 	NSMutableDictionary *_callbackHandlers;
 }
 
@@ -264,7 +984,9 @@ s8 joyx[4], joyy[4];
 		bzero(&rt, sizeof(rt));
 		bzero(&lt, sizeof(lt));
 
-		_callbackQueue = dispatch_queue_create("org.openemu.Reicast.CallbackHandlerQueue", DISPATCH_QUEUE_SERIAL);
+		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
+
+		_callbackQueue = dispatch_queue_create("org.openemu.Reicast.CallbackHandlerQueue", queueAttributes);
 		_callbackHandlers = [[NSMutableDictionary alloc] init];
 	}
 	_current = self;

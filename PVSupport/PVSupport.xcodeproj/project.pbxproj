@@ -9,6 +9,20 @@
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		B35E6BE1207CC71B0040709A /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDA207CC71A0040709A /* CAAtomic.h */; };
+		B35E6BE2207CC71B0040709A /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDA207CC71A0040709A /* CAAtomic.h */; };
+		B35E6BE3207CC71B0040709A /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDB207CC71A0040709A /* CABitOperations.h */; };
+		B35E6BE4207CC71B0040709A /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDB207CC71A0040709A /* CABitOperations.h */; };
+		B35E6BE5207CC71B0040709A /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDC207CC71A0040709A /* CAAutoDisposer.h */; };
+		B35E6BE6207CC71B0040709A /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDC207CC71A0040709A /* CAAutoDisposer.h */; };
+		B35E6BE7207CC71B0040709A /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35E6BDD207CC71A0040709A /* CAAudioTimeStamp.cpp */; };
+		B35E6BE8207CC71B0040709A /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35E6BDD207CC71A0040709A /* CAAudioTimeStamp.cpp */; };
+		B35E6BE9207CC71B0040709A /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDE207CC71A0040709A /* CAAudioTimeStamp.h */; };
+		B35E6BEA207CC71B0040709A /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDE207CC71A0040709A /* CAAudioTimeStamp.h */; };
+		B35E6BEB207CC71B0040709A /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDF207CC71B0040709A /* CARingBuffer.h */; };
+		B35E6BEC207CC71B0040709A /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B35E6BDF207CC71B0040709A /* CARingBuffer.h */; };
+		B35E6BED207CC71B0040709A /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35E6BE0207CC71B0040709A /* CARingBuffer.cpp */; };
+		B35E6BEE207CC71B0040709A /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35E6BE0207CC71B0040709A /* CARingBuffer.cpp */; };
 		B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
@@ -74,6 +88,13 @@
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B35E6BDA207CC71A0040709A /* CAAtomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAAtomic.h; path = ../../../PVReicast/PVReicastCore/CAAtomic.h; sourceTree = "<group>"; };
+		B35E6BDB207CC71A0040709A /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CABitOperations.h; path = ../../../PVReicast/PVReicastCore/CABitOperations.h; sourceTree = "<group>"; };
+		B35E6BDC207CC71A0040709A /* CAAutoDisposer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAAutoDisposer.h; path = ../../../PVReicast/PVReicastCore/CAAutoDisposer.h; sourceTree = "<group>"; };
+		B35E6BDD207CC71A0040709A /* CAAudioTimeStamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CAAudioTimeStamp.cpp; path = ../../../PVReicast/PVReicastCore/CAAudioTimeStamp.cpp; sourceTree = "<group>"; };
+		B35E6BDE207CC71A0040709A /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CAAudioTimeStamp.h; path = ../../../PVReicast/PVReicastCore/CAAudioTimeStamp.h; sourceTree = "<group>"; };
+		B35E6BDF207CC71B0040709A /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CARingBuffer.h; path = ../../../PVReicast/PVReicastCore/CARingBuffer.h; sourceTree = "<group>"; };
+		B35E6BE0207CC71B0040709A /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CARingBuffer.cpp; path = ../../../PVReicast/PVReicastCore/CARingBuffer.cpp; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
@@ -210,6 +231,13 @@
 				B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */,
 				1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */,
 				1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */,
+				B35E6BDA207CC71A0040709A /* CAAtomic.h */,
+				B35E6BDD207CC71A0040709A /* CAAudioTimeStamp.cpp */,
+				B35E6BDE207CC71A0040709A /* CAAudioTimeStamp.h */,
+				B35E6BDC207CC71A0040709A /* CAAutoDisposer.h */,
+				B35E6BDB207CC71A0040709A /* CABitOperations.h */,
+				B35E6BE0207CC71B0040709A /* CARingBuffer.cpp */,
+				B35E6BDF207CC71B0040709A /* CARingBuffer.h */,
 			);
 			name = Audio;
 			path = PVSupport/Audio;
@@ -223,14 +251,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */,
+				B35E6BE6207CC71B0040709A /* CAAutoDisposer.h in Headers */,
 				B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */,
 				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
+				B35E6BEC207CC71B0040709A /* CARingBuffer.h in Headers */,
+				B35E6BE2207CC71B0040709A /* CAAtomic.h in Headers */,
 				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
+				B35E6BEA207CC71B0040709A /* CAAudioTimeStamp.h in Headers */,
 				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
+				B35E6BE4207CC71B0040709A /* CABitOperations.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,14 +273,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */,
+				B35E6BE5207CC71B0040709A /* CAAutoDisposer.h in Headers */,
 				B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */,
 				B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */,
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
+				B35E6BEB207CC71B0040709A /* CARingBuffer.h in Headers */,
+				B35E6BE1207CC71B0040709A /* CAAtomic.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
+				B35E6BE9207CC71B0040709A /* CAAudioTimeStamp.h in Headers */,
 				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
+				B35E6BE3207CC71B0040709A /* CABitOperations.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -352,9 +390,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B35E6BE8207CC71B0040709A /* CAAudioTimeStamp.cpp in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
+				B35E6BEE207CC71B0040709A /* CARingBuffer.cpp in Sources */,
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
@@ -368,9 +408,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5D1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B35E6BE7207CC71B0040709A /* CAAudioTimeStamp.cpp in Sources */,
 				B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D691D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */,
+				B35E6BED207CC71B0040709A /* CARingBuffer.cpp in Sources */,
 				B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D651D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D3F1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
