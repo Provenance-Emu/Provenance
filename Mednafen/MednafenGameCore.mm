@@ -94,6 +94,7 @@ static MDFN_Surface *frontBufferSurf;
 
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
+int SNESMap[PVSNESButtonCount];
 
 namespace MDFN_IEN_VB
 {
@@ -250,6 +251,21 @@ static void mednafen_init(MednafenGameCore* current)
 		GBMap[PVGBButtonA]		= 1;
 		GBMap[PVGBButtonSelect]	= 2;
 		GBMap[PVGBButtonStart] 	= 3;
+
+		// SNES Map
+		SNESMap[PVSNESButtonUp]		= 4;
+		SNESMap[PVSNESButtonDown] 	= 5;
+		SNESMap[PVSNESButtonLeft] 	= 6;
+		SNESMap[PVSNESButtonRight] 	= 7;
+		SNESMap[PVSNESButtonA]		= 8;
+		SNESMap[PVSNESButtonB] 		= 0;
+		SNESMap[PVSNESButtonX]		= 9;
+		SNESMap[PVSNESButtonY]		= 1;
+		SNESMap[PVSNESButtonTriggerLeft] 		= 10;
+		SNESMap[PVSNESButtonTriggerRight] 		= 11;
+		SNESMap[PVSNESButtonStart] 	= 3;
+		SNESMap[PVSNESButtonSelect]	= 2;
+
     }
 
     return self;
@@ -879,8 +895,6 @@ const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
 const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 // u, d, l, r, a, b, start, select
 const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
-// B, Y, Select, Start, U, D, L, R, A, X, L, R
-const int SNESMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 
 // Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
 const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
