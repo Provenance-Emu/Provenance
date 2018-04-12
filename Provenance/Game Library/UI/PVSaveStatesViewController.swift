@@ -13,7 +13,7 @@ protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController)
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState)
-	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState);
+	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
 class PVSaveStatesViewController: UICollectionViewController {
@@ -134,7 +134,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 
 			let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
-                PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+                PVSaveState.delete(saveState) { (error: Error) -> Void in
                     self.presentError("Error deleting save state: \(error.localizedDescription)")
                 }
 			})
@@ -152,7 +152,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 	@IBAction func newSaveState(_ sender: Any) {
 		delegate?.saveStatesViewControllerCreateNewState(self)
 	}
-    
+
     func showSaveStateOptions(saveState: PVSaveState) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (action: UIAlertAction) in
@@ -162,14 +162,14 @@ class PVSaveStatesViewController: UICollectionViewController {
             self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
         }))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-            PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+            PVSaveState.delete(saveState) { (error: Error) -> Void in
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
-	
+
 	override func numberOfSections(in collectionView: UICollectionView) -> Int {
 		return 2
 	}

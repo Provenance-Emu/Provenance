@@ -762,7 +762,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         reachability.startNotifier()
         let status: NetworkStatus = reachability.currentReachabilityStatus()
 
-
 		#if os(iOS)
 		// connected via wifi, let's continue
 
