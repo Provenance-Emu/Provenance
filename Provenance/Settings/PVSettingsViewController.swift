@@ -333,10 +333,10 @@ class ThemeSelectorViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            Theme.setTheme(LightTheme())
+            Theme.currentTheme = Theme.lightTheme
             PVSettingsModel.shared.theme = .light
         } else if indexPath.row == 1 {
-            Theme.setTheme(DarkTheme())
+            Theme.currentTheme = Theme.darkTheme
             PVSettingsModel.shared.theme = .dark
         }
 

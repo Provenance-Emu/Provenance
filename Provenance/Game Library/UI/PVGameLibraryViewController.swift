@@ -200,6 +200,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
 
         #if os(iOS)
+		navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
+		navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+
         NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
             DispatchQueue.main.async {
                 self.collectionView?.collectionViewLayout.invalidateLayout()

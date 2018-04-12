@@ -492,6 +492,24 @@
 		B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B35D26FD2033977600F17D58 /* VolumeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FC2033977500F17D58 /* VolumeBar.swift */; };
 		B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
+		B35E6C21207ED7050040709A /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
+		B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
+		B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
+		B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
+		B35E6C25207ED7050040709A /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */; };
+		B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */; };
+		B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1B207ED7040040709A /* AppearanceStyleable.swift */; };
+		B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1B207ED7040040709A /* AppearanceStyleable.swift */; };
+		B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
+		B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
+		B35E6C2B207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1D207ED7040040709A /* UITraitCollectionExtensions.swift */; };
+		B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1D207ED7040040709A /* UITraitCollectionExtensions.swift */; };
+		B35E6C2D207ED7050040709A /* UIWindowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */; };
+		B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */; };
+		B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1F207ED7040040709A /* AppearanceStyle.swift */; };
+		B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1F207ED7040040709A /* AppearanceStyle.swift */; };
+		B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
+		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48697317C8C0DE0019F6D2 /* PVMediaCache.swift */; };
 		B366171F206EC4D100A4F306 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; };
 		B3661720206EC4D100A4F306 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -565,12 +583,6 @@
 		B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B9781DED14A100602746 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3B3B97F1DED169100602746 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */; };
-		B3B923AB202D2EAE00580FFC /* UITraitCollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */; };
-		B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */; };
-		B3B923AD202D2EAE00580FFC /* UIWindowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */; };
-		B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */; };
-		B3B923AF202D2EAE00580FFC /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3B923B3202D417700580FFC /* Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923B2202D417700580FFC /* Spotlight.swift */; };
 		B3BCDA1D205F59B400EFBEDA /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B89C1DECF9D700602746 /* PVN64ControllerViewController.swift */; };
@@ -1403,6 +1415,15 @@
 		B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
 		B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLaunchingViewController.swift; sourceTree = "<group>"; };
 		B35D26FC2033977500F17D58 /* VolumeBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeBar.swift; sourceTree = "<group>"; };
+		B35E6C18207ED7030040709A /* AppearanceScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceScope.swift; sourceTree = "<group>"; };
+		B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppearanceExtensions.swift; sourceTree = "<group>"; };
+		B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
+		B35E6C1B207ED7040040709A /* AppearanceStyleable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleable.swift; sourceTree = "<group>"; };
+		B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleExtensions.swift; sourceTree = "<group>"; };
+		B35E6C1D207ED7040040709A /* UITraitCollectionExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITraitCollectionExtensions.swift; sourceTree = "<group>"; };
+		B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
+		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
+		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
 		B36CBFEA20397D9100728482 /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36D9DF420351C9600D583C4 /* PVEmulatorConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorConfiguration.swift; sourceTree = "<group>"; };
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
@@ -1431,12 +1452,6 @@
 		B3B3B97E1DED169100602746 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
-		B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppearanceExtensions.swift; sourceTree = "<group>"; };
-		B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITraitCollectionExtensions.swift; sourceTree = "<group>"; };
-		B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleable.swift; sourceTree = "<group>"; };
-		B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
-		B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
-		B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceScope.swift; sourceTree = "<group>"; };
 		B3B923A9202D2EAE00580FFC /* Theme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B3B923B2202D417700580FFC /* Spotlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spotlight.swift; sourceTree = "<group>"; };
 		B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = RiceVideoLinux.ini; path = "PVMupen64Plus/mupen64plus-video-rice/data/RiceVideoLinux.ini"; sourceTree = "<group>"; };
@@ -2710,12 +2725,15 @@
 		B3B923A2202D2EAE00580FFC /* SwiftyAppearance */ = {
 			isa = PBXGroup;
 			children = (
-				B3B923A3202D2EAE00580FFC /* UIAppearanceExtensions.swift */,
-				B3B923A4202D2EAE00580FFC /* UITraitCollectionExtensions.swift */,
-				B3B923A5202D2EAE00580FFC /* AppearanceStyleable.swift */,
-				B3B923A6202D2EAE00580FFC /* UIWindowExtensions.swift */,
-				B3B923A7202D2EAE00580FFC /* UIApplicationExtensions.swift */,
-				B3B923A8202D2EAE00580FFC /* AppearanceScope.swift */,
+				B35E6C18207ED7030040709A /* AppearanceScope.swift */,
+				B35E6C1F207ED7040040709A /* AppearanceStyle.swift */,
+				B35E6C1B207ED7040040709A /* AppearanceStyleable.swift */,
+				B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */,
+				B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */,
+				B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */,
+				B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */,
+				B35E6C1D207ED7040040709A /* UITraitCollectionExtensions.swift */,
+				B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */,
 			);
 			path = SwiftyAppearance;
 			sourceTree = "<group>";
@@ -3257,7 +3275,6 @@
 				1A26EE371AD9FFBF004EA30B /* SSZipArchive.m in Sources */,
 				B349AEA31E9ABCF900ACD416 /* 7zOut.cpp in Sources */,
 				B349AEF51E9ABCF900ACD416 /* BranchMisc.cpp in Sources */,
-				B3B923AB202D2EAE00580FFC /* UITraitCollectionExtensions.swift in Sources */,
 				B349AEFF1E9ABCF900ACD416 /* CopyRegister.cpp in Sources */,
 				E41448971B34C4080056D80A /* PViCadeGamepadButtonInput.m in Sources */,
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
@@ -3316,6 +3333,7 @@
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
 				B349AE3F1E9ABCF900ACD416 /* 7zAlloc.c in Sources */,
 				1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */,
+				B35E6C2D207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				1AACCAE91BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
 				B349AEF11E9ABCF900ACD416 /* BcjCoder.cpp in Sources */,
 				B349AEB71E9ABCF900ACD416 /* ItemNameUtils.cpp in Sources */,
@@ -3370,11 +3388,14 @@
 				B349AE9D1E9ABCF900ACD416 /* 7zHandlerOut.cpp in Sources */,
 				B349AF2B1E9ABCF900ACD416 /* MyString.cpp in Sources */,
 				B3FF441C205F9C3F00E5A84B /* PVPCEControllerViewController.swift in Sources */,
+				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
+				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B349AE971E9ABCF900ACD416 /* 7zExtract.cpp in Sources */,
 				B349AECF1E9ABCF900ACD416 /* InBuffer.cpp in Sources */,
 				B3D8DD3C206EAA9E008FAC42 /* List.swift in Sources */,
 				B349AE531E9ABCF900ACD416 /* AesOpt.c in Sources */,
 				B349AF6F1E9ABCFA00ACD416 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
+				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B349AEF71E9ABCF900ACD416 /* BranchRegister.cpp in Sources */,
 				1AB183621AD9BF8000E094F6 /* NSFileManager+Hashing.m in Sources */,
 				B349AE471E9ABCF900ACD416 /* 7zCrc.c in Sources */,
@@ -3390,9 +3411,11 @@
 				B349AEA11E9ABCF900ACD416 /* 7zIn.cpp in Sources */,
 				B349AF6B1E9ABCFA00ACD416 /* LzmaSDKObjCOutFile.cpp in Sources */,
 				B349AE991E9ABCF900ACD416 /* 7zFolderInStream.cpp in Sources */,
+				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B349AE6F1E9ABCF900ACD416 /* Lzma86Enc.c in Sources */,
 				B3D8DCFC206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3BE96872055F40000281880 /* PVFile.swift in Sources */,
+				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B349AED51E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3D8DD28206EAA9E008FAC42 /* Error.swift in Sources */,
@@ -3407,7 +3430,6 @@
 				378F4A061B63D7CD0065FA39 /* GCDWebServerFileRequest.m in Sources */,
 				B349AE9B1E9ABCF900ACD416 /* 7zHandler.cpp in Sources */,
 				378F4A0B1B63D7CD0065FA39 /* GCDWebServerFileResponse.m in Sources */,
-				B3B923AD202D2EAE00580FFC /* UIWindowExtensions.swift in Sources */,
 				1A26EE351AD9FFBF004EA30B /* unzip.c in Sources */,
 				B349AEEF1E9ABCF900ACD416 /* Bcj2Register.cpp in Sources */,
 				1A65D1C619917D55004E1777 /* UIImage+ImageEffects.m in Sources */,
@@ -3428,23 +3450,23 @@
 				B3FF4421205F9C3F00E5A84B /* PVWonderSwanControllerViewController.swift in Sources */,
 				B349AF531E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
 				378F4A041B63D7CD0065FA39 /* GCDWebServerResponse.m in Sources */,
+				B35E6C21207ED7050040709A /* AppearanceScope.swift in Sources */,
 				B3BE967A2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
 				B349AF2D1E9ABCF900ACD416 /* MyVector.cpp in Sources */,
 				B349AE8F1E9ABCF900ACD416 /* XzIn.c in Sources */,
+				B35E6C2B207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B349AF471E9ABCF900ACD416 /* PropVariant.cpp in Sources */,
 				E414489A1B34C48D0056D80A /* PViCadeGamepadDirectionPad.m in Sources */,
 				B349AEED1E9ABCF900ACD416 /* Bcj2Coder.cpp in Sources */,
 				B349AED91E9ABCF900ACD416 /* MethodProps.cpp in Sources */,
 				B3BE96902056025B00281880 /* PVSaveState.swift in Sources */,
 				B349AE711E9ABCF900ACD416 /* LzmaDec.c in Sources */,
-				B3B923AC202D2EAE00580FFC /* AppearanceStyleable.swift in Sources */,
 				B3FF4422205F9C3F00E5A84B /* PVVBControllerViewController.swift in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AEE31E9ABCF900ACD416 /* StreamBinder.cpp in Sources */,
 				B349AE7D1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
 				B3D8DD14206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
-				B3B923AF202D2EAE00580FFC /* AppearanceScope.swift in Sources */,
 				B349AE751E9ABCF900ACD416 /* LzmaLib.c in Sources */,
 				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
 				1A9442571AD9A7AA008B32D4 /* NSDate+NSDate_SignificantDates.m in Sources */,
@@ -3476,14 +3498,13 @@
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.swift in Sources */,
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
 				B3F64ED8205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
-				B3B923AA202D2EAE00580FFC /* UIAppearanceExtensions.swift in Sources */,
 				B3FF4417205F9C3F00E5A84B /* PVLynxControllerViewController.swift in Sources */,
 				B349AF6D1E9ABCFA00ACD416 /* LzmaSDKObjCReader.mm in Sources */,
-				B3B923AE202D2EAE00580FFC /* UIApplicationExtensions.swift in Sources */,
 				B3FF441E205F9C3F00E5A84B /* PVNESControllerViewController.swift in Sources */,
 				B349AE571E9ABCF900ACD416 /* Bcj2.c in Sources */,
 				B349AE5F1E9ABCF900ACD416 /* BraIA64.c in Sources */,
 				1A48698317C8C1170019F6D2 /* NSString+Hashing.m in Sources */,
+				B35E6C25207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B349AE731E9ABCF900ACD416 /* LzmaEnc.c in Sources */,
 				B349AEC31E9ABCF900ACD416 /* SplitHandler.cpp in Sources */,
 				B3FF4418205F9C3F00E5A84B /* PVGBControllerViewController.swift in Sources */,
@@ -3545,8 +3566,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
+				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				1AD481FF1BA354B100FDA50A /* PViCadeGamepadDirectionPad.m in Sources */,
 				B349AEFA1E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
+				B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B3F64ED9205CD22000C273C7 /* PVControllerSelectionViewController.swift in Sources */,
 				1AD481CF1BA3540000FDA50A /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AF241E9ABCF900ACD416 /* CRC.cpp in Sources */,
@@ -3569,6 +3592,7 @@
 				B349AE481E9ABCF900ACD416 /* 7zCrc.c in Sources */,
 				B35BB7FC202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B349AECE1E9ABCF900ACD416 /* FilterCoder.cpp in Sources */,
+				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B394C98520609D0D0014A65D /* PVPokeMiniControllerViewController.swift in Sources */,
 				1A2B13CD1D0DFF5100D0B863 /* PVSearchViewController.swift in Sources */,
 				1AD481EB1BA3547E00FDA50A /* mztools.c in Sources */,
@@ -3611,6 +3635,7 @@
 				B349AE701E9ABCF900ACD416 /* Lzma86Enc.c in Sources */,
 				1AD481FE1BA354B100FDA50A /* PViCadeGamepadButtonInput.m in Sources */,
 				1AD481C91BA3530B00FDA50A /* PVAppDelegate.swift in Sources */,
+				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B349AEA81E9ABCF900ACD416 /* 7zRegister.cpp in Sources */,
 				1AACCAEA1BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
 				B3D8DD29206EAA9E008FAC42 /* Error.swift in Sources */,
@@ -3653,7 +3678,9 @@
 				B349AF441E9ABCF900ACD416 /* XzCrc64Reg.cpp in Sources */,
 				B349AF721E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */,
 				B3D8DCFD206EAA9E008FAC42 /* Schema.swift in Sources */,
+				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B349AE7E1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
+				B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */,
 				B349AF5E1E9ABCFA00ACD416 /* LzmaSDKObjCExtractCallback.mm in Sources */,
 				B394C97E20609D0D0014A65D /* PVGBAControllerViewController.swift in Sources */,
 				B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */,
@@ -3670,6 +3697,7 @@
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
 				B3D8DD0D206EAA9E008FAC42 /* Migration.swift in Sources */,
 				B349AF121E9ABCF900ACD416 /* PpmdEncoder.cpp in Sources */,
+				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B349AE8A1E9ABCF900ACD416 /* XzCrc64Opt.c in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				B349AEBA1E9ABCF900ACD416 /* MultiStream.cpp in Sources */,
@@ -3734,6 +3762,7 @@
 				B349AEFC1E9ABCF900ACD416 /* CodecExports.cpp in Sources */,
 				1A2FB110206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				B349AEF61E9ABCF900ACD416 /* BranchMisc.cpp in Sources */,
+				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B349AE5A1E9ABCF900ACD416 /* Bcj2Enc.c in Sources */,
 				B349AE6A1E9ABCF900ACD416 /* Lzma2Dec.c in Sources */,
 				B394C98020609D0D0014A65D /* PVNeoGeoPocketControllerViewController.swift in Sources */,
@@ -3774,6 +3803,7 @@
 				B349AE7A1E9ABCF900ACD416 /* Ppmd7.c in Sources */,
 				B349AF081E9ABCF900ACD416 /* Lzma2Register.cpp in Sources */,
 				1AD481FA1BA354B100FDA50A /* PViCadeGamepad.m in Sources */,
+				B35E6C24207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B349AF621E9ABCFA00ACD416 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				B3BE96852055F3D900281880 /* PVCore.swift in Sources */,
 				B349AED41E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
