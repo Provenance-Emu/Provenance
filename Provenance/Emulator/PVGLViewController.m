@@ -157,6 +157,7 @@ struct RenderSettings {
         return;
     }
 
+    ILOG("Initiated GLES version %lu", (unsigned long)self.glContext.API);
 
 	[EAGLContext setCurrentContext:self.glContext];
 
