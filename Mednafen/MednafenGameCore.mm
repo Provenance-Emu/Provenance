@@ -171,6 +171,17 @@ static void mednafen_init(MednafenGameCore* current)
     //MDFNI_SetSetting("vb.allow_draw_skip", "1");      // Allow draw skipping
     //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
 
+	// SNES Faust settings
+	MDFNI_SetSettingB("snes_faust.spex", true);
+	// Enable 1-frame speculative execution for video output.
+	// Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage,
+	// and may cause video glitches(such as "jerkiness") in some oddball games, but most commercially-released games should be fine.
+	// Default 0
+
+//	MDFNI_SetSetting("snes_faust.special", "nn2x");
+
+
+
 	// NES Settings
 
 	MDFNI_SetSetting("nes.clipsides", "1"); // Clip left+right 8 pixel columns. 0 default
