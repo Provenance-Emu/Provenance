@@ -67,25 +67,8 @@ class PVConflictViewController: UITableViewController {
         conflictedFiles = tempConflictedFiles
     }
 
-    func documentsPath() -> String {
-#if TARGET_OS_TV
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-        let documentsDirectoryPath: String = paths[0]
-        return documentsDirectoryPath
-    }
-
-    func conflictsPath() -> String {
-#if TARGET_OS_TV
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-        let documentsDirectoryPath: String = paths[0]
-        return URL(fileURLWithPath: documentsDirectoryPath).appendingPathComponent("conflicts").absoluteString
-    }
+	lazy var documentsPath : URL = PVEmulatorConfiguration.documentsPath
+	lazy var conflictsPath : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflicts", isDirectory: true)
 
 #if TARGET_OS_TV
     override func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
@@ -111,28 +94,29 @@ class PVConflictViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if conflictedFiles.isEmpty {
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "EmptyCell") ??  UITableViewCell(style: .default, reuseIdentifier: "EmptyCell")
+		let cell : UITableViewCell
 
+        if conflictedFiles.isEmpty {
+            cell = self.tableView.dequeueReusableCell(withIdentifier: "EmptyCell") ??  UITableViewCell(style: .default, reuseIdentifier: "EmptyCell")
             cell.textLabel?.textAlignment = .center
             if indexPath.row == 0 || indexPath.row == 1 {
                 cell.textLabel?.text = ""
             } else {
                 cell.textLabel?.text = "No Conflicts..."
-                #if os(iOS)
-                cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-                #endif
-            }
-            return cell
+			}
         } else {
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ??  UITableViewCell(style: .default, reuseIdentifier: "Cell")
+        	cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ??  UITableViewCell(style: .default, reuseIdentifier: "Cell")
 
             let file = conflictedFiles[indexPath.row]
             let name: String = file.deletingPathExtension().lastPathComponent
             cell.textLabel?.text = name
             cell.accessoryType = .disclosureIndicator
-            return cell
         }
+
+		#if os(iOS)
+		cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+		#endif
+		return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
