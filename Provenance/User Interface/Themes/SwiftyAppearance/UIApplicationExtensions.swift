@@ -9,14 +9,14 @@
 import UIKit
 
 public extension NSNotification.Name {
-    
+
     public static let SwiftyAppearanceWillRefreshApplication = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshApplicationNotification")
-    
+
     public static let SwiftyAppearanceDidRefreshApplication = NSNotification.Name(rawValue: "SwiftyAppearanceDidRefreshApplicationNotification")
 }
 
 public extension UIApplication {
-    
+
     @nonobjc private func _refreshAppearance(animated: Bool) {
         for window in windows {
             window.refreshAppearance(animated: animated)

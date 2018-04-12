@@ -42,7 +42,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
     @IBOutlet weak var startSelectSwitch: UISwitch!
-    
 
     @IBOutlet weak var themeValueLabel: UILabel!
 
@@ -180,7 +179,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
               PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
     }
-    
+
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {

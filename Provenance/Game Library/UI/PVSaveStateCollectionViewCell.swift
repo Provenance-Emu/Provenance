@@ -42,7 +42,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 	override func prepareForReuse() {
 		super.prepareForReuse()
-		
+
 		imageView.image = nil
 		label.text = nil
 #if os(tvOS)
@@ -50,17 +50,17 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		self.label.transform = .identity
 #endif
 	}
-	
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
-		
+
 		if imageView.image == nil {
 			noScreenshotLabel.isHidden = false
 		} else {
 			noScreenshotLabel.isHidden = true
 		}
 	}
-	
+
 #if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		coordinator.addCoordinatedAnimations({() -> Void in

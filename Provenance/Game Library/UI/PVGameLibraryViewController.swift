@@ -90,7 +90,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var gameImporter: PVGameImporter!
     var collectionView: UICollectionView?
 	let maxForSpecialSection = 6
-	
+
     #if os(iOS)
     var renameToolbar: UIToolbar?
     var assetsLibrary: ALAssetsLibrary?
@@ -474,7 +474,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 						modifications.append(i)
 					}
 				}
-				
+
 				// Query results have changed, so apply them to the UICollectionView
                 self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
 				self.saveStatesIsEmpty = needsDelete
@@ -551,7 +551,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
     }
-    
+
     func filterRecents(_ changes: [Int]) -> [Int] {
         return changes.filter { $0 < self.maxForSpecialSection }
     }
@@ -751,7 +751,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
         let status: NetworkStatus = reachability.currentReachabilityStatus()
-
 
 		#if os(iOS)
 		// connected via wifi, let's continue
@@ -1201,7 +1200,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 return
             }
 
-
 			let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 			if traitCollection.userInterfaceIdiom == .pad {
 				let cell: UICollectionViewCell? = collectionView?.cellForItem(at: indexPath)
@@ -1212,7 +1210,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			if indexPath.section == saveStateSection {
 
 				let saveState = saveStates![indexPath.row]
-				
+
 				actionSheet.title = "Delete this save state?"
 
 				actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in

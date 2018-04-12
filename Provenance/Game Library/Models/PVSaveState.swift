@@ -30,8 +30,8 @@ import Foundation
 		self.core = core
 		createdWithCoreVersion = core.projectVersion
     }
-    
-    class func delete(_ state: PVSaveState, onError: ((Error) -> (Void))? = nil ) {
+
+    class func delete(_ state: PVSaveState, onError: ((Error) -> Void)? = nil ) {
         do {
             try FileManager.default.removeItem(at: state.file.url)
             if let image = state.image {

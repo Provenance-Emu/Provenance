@@ -13,19 +13,19 @@ protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController)
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState)
-	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState);
+	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
 class PVSaveStatesViewController: UICollectionViewController {
-	
+
 	private var autoSaveStatesObserverToken: NotificationToken!
 	private var manualSaveStatesObserverToken: NotificationToken!
-	
+
 	weak var delegate: PVSaveStatesViewControllerDelegate?
-	
+
 	var saveStates: LinkingObjects<PVSaveState>!
 	var screenshot: UIImage?
-	
+
 	private var autoSaves: Results<PVSaveState>!
 	private var manualSaves: Results<PVSaveState>!
 
@@ -35,25 +35,25 @@ class PVSaveStatesViewController: UICollectionViewController {
 		manualSaveStatesObserverToken.invalidate()
 		manualSaveStatesObserverToken = nil
 	}
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 #if os(iOS)
 		title = "Save States"
-#endif		
+#endif
 		autoSaves = saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)
 		manualSaves = saveStates.filter("isAutosave == false").sorted(byKeyPath: "date", ascending: false)
-		
+
 		autoSaveStatesObserverToken = autoSaves.observe { [unowned self] (changes: RealmCollectionChange) in
 			switch changes {
-			case .initial(_):
+			case .initial:
 				self.collectionView?.reloadData()
 			case .update(_, let deletions, _, _):
 				guard deletions.count > 0 else {
 					return
 				}
-				
+
 				let fromItem = { (item: Int) -> IndexPath in
 					let section = 0
 					return IndexPath(item: item, section: section)
@@ -65,10 +65,10 @@ class PVSaveStatesViewController: UICollectionViewController {
 				ELOG("Error updating save states: \(error.localizedDescription)")
 			}
 		}
-		
+
 		manualSaveStatesObserverToken = manualSaves.observe { [unowned self] (changes: RealmCollectionChange) in
 			switch changes {
-			case .initial(_):
+			case .initial:
 				self.collectionView?.reloadData()
 			case .update(_, let deletions, let insertions, _):
 				guard deletions.count > 0 || insertions.count > 0 else {
@@ -86,27 +86,27 @@ class PVSaveStatesViewController: UICollectionViewController {
 				ELOG("Error updating save states: \(error.localizedDescription)")
 			}
 		}
-		
+
 		let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressRecognized(_:)))
 		collectionView?.addGestureRecognizer(longPressRecognizer)
     }
-	
+
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
-		
+
 		if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
 			emulatorViewController.core.setPauseEmulation(false)
 			emulatorViewController.isShowingMenu = false
 			emulatorViewController.enableContorllerInput(false)
 		}
 	}
-	
+
 	@objc func longPressRecognized(_ recognizer: UILongPressGestureRecognizer) {
 		switch recognizer.state {
 		case .began:
 			let point: CGPoint = recognizer.location(in: collectionView)
 			var maybeIndexPath: IndexPath? = collectionView?.indexPathForItem(at: point)
-			
+
 #if os(tvOS)
 			if maybeIndexPath == nil, let focusedView = UIScreen.main.focusedView as? UICollectionViewCell {
 				maybeIndexPath = collectionView?.indexPath(for: focusedView)
@@ -116,7 +116,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 				ELOG("No index path at touch point")
 				return
 			}
-			
+
 			var state: PVSaveState?
 			switch indexPath.section {
 			case 0:
@@ -126,15 +126,15 @@ class PVSaveStatesViewController: UICollectionViewController {
 			default:
 				break
 			}
-			
+
 			guard let saveState = state else {
 				ELOG("No save state at indexPath: \(indexPath)")
 				return
 			}
-			
+
 			let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
-                PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+                PVSaveState.delete(saveState) { (error: Error) -> Void in
                     self.presentError("Error deleting save state: \(error.localizedDescription)")
                 }
 			})
@@ -144,15 +144,15 @@ class PVSaveStatesViewController: UICollectionViewController {
 			break
 		}
 	}
-	
+
 	@IBAction func done(_ sender: Any) {
 		delegate?.saveStatesViewControllerDone(self)
 	}
-	
+
 	@IBAction func newSaveState(_ sender: Any) {
 		delegate?.saveStatesViewControllerCreateNewState(self)
 	}
-    
+
     func showSaveStateOptions(saveState: PVSaveState) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (action: UIAlertAction) in
@@ -162,16 +162,16 @@ class PVSaveStatesViewController: UICollectionViewController {
             self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
         }))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-            PVSaveState.delete(saveState) { (error: Error) -> (Void) in
+            PVSaveState.delete(saveState) { (error: Error) -> Void in
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
-	
+
 	override func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return 2;
+		return 2
 	}
 
 	override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

@@ -11,7 +11,6 @@ import UIKit
 class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewController {
 	var mustRefreshDataSource: Bool = false
 
-
 	@IBOutlet weak var imageView: UIImageView!
 	@IBOutlet weak var nameLabel: UILabel!
 	@IBOutlet weak var systemLabel: UILabel!

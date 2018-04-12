@@ -81,7 +81,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         super.init(nibName: nil, bundle: nil)
 
 		staticSelf = self
-		
+
         if PVSettingsModel.sharedInstance().autoSave {
             NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
         } else {
@@ -263,7 +263,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
 
 		convertOldSaveStatesToNewIfNeeded()
-		
+
         core.startEmulation()
         gameAudio = OEGameAudio(core: core)
         gameAudio?.volume = PVSettingsModel.sharedInstance().volume
@@ -628,17 +628,17 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		guard let saveStatesNavController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
 			return
 		}
-		
+
 		let image = captureScreenshot()
-		
+
 		if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
 			saveStatesViewController.saveStates = game.saveStates
 			saveStatesViewController.delegate = self
 			saveStatesViewController.screenshot = image
 		}
-		
+
 		saveStatesNavController.modalPresentationStyle = .overCurrentContext
-		
+
 #if os(iOS)
 		if traitCollection.userInterfaceIdiom == .pad {
 			saveStatesNavController.modalPresentationStyle = .formSheet
@@ -663,7 +663,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			URL(fileURLWithPath: saveStatePath).appendingPathComponent("3.svs"),
 			URL(fileURLWithPath: saveStatePath).appendingPathComponent("4.svs")
 		]
-		
+
 		if fileManager.fileExists(atPath: infoURL.path) {
 			do {
 				try fileManager.removeItem(at: infoURL)
@@ -671,12 +671,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				presentError("Unable to remove old save state info.plist: \(error.localizedDescription)")
 			}
 		}
-		
+
 		guard let realm = try? Realm() else {
 			presentError("Unable to instantiate realm, abandoning old save state conversion")
 			return
 		}
-		
+
 		if fileManager.fileExists(atPath: autoSaveURL.path) {
 			do {
 				guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
@@ -687,7 +687,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				let newURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate)")
 				try fileManager.moveItem(at: autoSaveURL, to: newURL)
 				let saveFile = PVFile(withURL: newURL)
-				let newState = PVSaveState(withGame: game, core: core,file: saveFile, image: nil, isAutosave: true)
+				let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: true)
 				try realm.write {
 					realm.add(newState)
 				}
@@ -695,7 +695,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				presentError("Unable to convert autosave to new format: \(error.localizedDescription)")
 			}
 		}
-		
+
 		for url in saveStateURLs {
 			if fileManager.fileExists(atPath: url.path) {
 				do {
@@ -717,15 +717,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			}
 		}
 	}
-	
+
 	func autoSaveState() {
 		let image = captureScreenshot()
 		createNewSaveState(auto: true, screenshot: image)
 	}
-	
+
 	func createNewSaveState(auto: Bool, screenshot: UIImage?) {
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
-		
+
 		var imageFile: PVImageFile?
 		if let screenshot = screenshot {
 			if let pngData = UIImagePNGRepresentation(screenshot) {
@@ -735,7 +735,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				} catch let error {
 					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
 				}
-				
+
 				imageFile = PVImageFile(withURL: imageURL)
 			}
 		}
@@ -797,14 +797,14 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		self.isShowingMenu = false
 		self.enableContorllerInput(false)
 	}
-	
+
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) {
 		createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 	}
-    
+
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) {
         createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-        PVSaveState.delete(state) { (error: Error) -> (Void) in
+        PVSaveState.delete(state) { (error: Error) -> Void in
             self.presentError("Error deleting save state: \(error.localizedDescription)")
         }
     }
@@ -813,7 +813,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		dismiss(animated: true, completion: nil)
 		loadSaveState(state)
 	}
-	
+
 	func captureScreenshot() -> UIImage? {
 		fpsLabel?.alpha = 0.0
 		let width: CGFloat? = self.glViewController?.view.frame.size.width

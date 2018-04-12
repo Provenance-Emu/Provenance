@@ -150,7 +150,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var startSelectAlwaysOn: Bool {
         didSet {
