@@ -48,7 +48,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs"))!)
+		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs")!)
+		navigationController?.pushViewController(webVC, animated: true)
     }
 
     @IBAction func done(_ sender: Any) {
@@ -130,7 +131,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func help(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/Provenance-Emu/Provenance/wiki"))!)
+		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
+		navigationController?.pushViewController(webVC, animated: true)
     }
 
     @IBAction func toggleFPSCount(_ sender: Any) {
