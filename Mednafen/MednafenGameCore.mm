@@ -160,7 +160,7 @@ static void mednafen_init(MednafenGameCore* current)
 	// Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.
 	// Default: 1
 //	MDFNI_SetSettingB("video.blit_timesync", false);
-	MDFNI_SetSettingB("video.fs", false); // Enable fullscreen mode. Default: 0
+//	MDFNI_SetSettingB("video.fs", false); // Enable fullscreen mode. Default: 0
 
     // VB defaults. dox http://mednafen.sourceforge.net/documentation/09x/vb.html
 	// VirtualBoy
@@ -184,12 +184,12 @@ static void mednafen_init(MednafenGameCore* current)
 
 	// NES Settings
 
-	MDFNI_SetSetting("nes.clipsides", "1"); // Clip left+right 8 pixel columns. 0 default
-	MDFNI_SetSetting("nes.correct_aspect", "1"); // Correct the aspect ratio. 0 default
+	MDFNI_SetSettingUI("nes.clipsides", 1); // Clip left+right 8 pixel columns. 0 default
+	MDFNI_SetSettingB("nes.correct_aspect", true); // Correct the aspect ratio. 0 default
 
 
 	// PSX Settings
-	MDFNI_SetSetting("psx.h_overscan", "1"); // Show horizontal overscan area. 1 default
+	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
 	// PCE Settings
@@ -229,6 +229,10 @@ static void mednafen_init(MednafenGameCore* current)
 //                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
 //        }
 //    }
+
+
+//	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
+//	MDFN_SaveSettings(cfgPath.UTF8String);
 }
 
 - (id)init {
