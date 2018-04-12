@@ -34,3 +34,9 @@
 - (void)didReleaseGBButton:(PVGBButton)button forPlayer:(NSInteger)player;
 
 @end
+
+// For swift
+@interface PVGBEmulatorCore()
+- (void)changeDisplayMode:(NSInteger)displayMode;
+@end
+

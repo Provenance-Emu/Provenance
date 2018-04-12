@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
+		B35E6C37207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
+		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
@@ -74,6 +76,7 @@
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
@@ -176,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				B3C96EBB1D62C54D003F1E93 /* PVSupport.h */,
+				B35E6C36207EE15D0040709A /* CoreOptions.swift */,
 				1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */,
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
 				B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */,
@@ -352,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5E1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */,
 				B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D6A1D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EAC1D62C3C3003F1E93 /* TPCircularBuffer.c in Sources */,
@@ -368,6 +373,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3FA5D5D1D6B908300060D71 /* OERingBuffer.m in Sources */,
+				B35E6C37207EE15D0040709A /* CoreOptions.swift in Sources */,
 				B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */,
 				B3FA5D691D6B90BD00060D71 /* PVGameControllerUtilities.m in Sources */,
 				B3C96EC01D62C5E7003F1E93 /* TPCircularBuffer.c in Sources */,

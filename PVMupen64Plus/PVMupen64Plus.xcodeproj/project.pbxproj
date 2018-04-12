@@ -91,6 +91,8 @@
 		B35B31CD206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
 		B35B31CE206CA72800AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
 		B35B31CF206CA72A00AEAF88 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = DFB6032F2038AE7B001E70F1 /* xxhash.c */; };
+		B35E6C3C207EE3750040709A /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
+		B35E6C3D207EE3750040709A /* MupenOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C3B207EE3750040709A /* MupenOptions.swift */; };
 		B37EFEF91C72E6CD00857158 /* Blender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B889166C2A0A00082F27 /* Blender.cpp */; };
 		B37EFEFA1C72E6CD00857158 /* Combiner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B88E166C2A0A00082F27 /* Combiner.cpp */; };
 		B37EFEFB1C72E6CD00857158 /* CombinerTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94E6B891166C2A0A00082F27 /* CombinerTable.cpp */; };
@@ -1402,6 +1404,7 @@
 		B35B3194206C8E1C00AEAF88 /* F3DSWRS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DSWRS.h; sourceTree = "<group>"; };
 		B35B3195206C8E1C00AEAF88 /* F3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3D.cpp; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
+		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusVideoRice.h; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2080,6 +2083,7 @@
 			children = (
 				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
 				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
+				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -4770,10 +4774,14 @@
 					};
 					B37EFF371C72F43300857158 = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0930;
 					};
 					B3B3B85F1DECEA9100602746 = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
+					};
+					B3B3B8A11DED130B00602746 = {
+						LastSwiftMigration = 0930;
 					};
 					DFB6017F2038AD13001E70F1 = {
 						CreatedOnToolsVersion = 9.3;
@@ -5050,6 +5058,7 @@
 				B3AE1D98207311E900AD06D4 /* rom.c in Sources */,
 				B3AE1DD620732E5200AD06D4 /* zip.c in Sources */,
 				B3AE1DCA2073153A00AD06D4 /* frontend.c in Sources */,
+				B35E6C3C207EE3750040709A /* MupenOptions.swift in Sources */,
 				B3AE1DBB207311E900AD06D4 /* dummy_audio.c in Sources */,
 				B3AE1DA5207311E900AD06D4 /* config.c in Sources */,
 				B3AE1DBC207311E900AD06D4 /* rsp_core.c in Sources */,
@@ -5150,6 +5159,7 @@
 				B3AE1DEF2073378600AD06D4 /* rdp_core.c in Sources */,
 				B3AE1DF32073378600AD06D4 /* si_controller.c in Sources */,
 				B3AE1E002073378600AD06D4 /* dynamiclib_unix.c in Sources */,
+				B35E6C3D207EE3750040709A /* MupenOptions.swift in Sources */,
 				B3AE1DFC2073378600AD06D4 /* eeprom.c in Sources */,
 				B3AE1E0F2073378600AD06D4 /* workqueue.c in Sources */,
 				B3AE1E012073378600AD06D4 /* sram.c in Sources */,
@@ -6064,6 +6074,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\" \"$(SRCROOT)/Compatibility/SDL\"";
 				USE_HEADERMAP = NO;
@@ -6144,6 +6156,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.provenance.PVMupen64plus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\" \"$(SRCROOT)/Compatibility/SDL\"";
 				USE_HEADERMAP = NO;
@@ -6326,6 +6339,8 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\" \"$(SRCROOT)/Compatibility/SDL\"";
@@ -6403,6 +6418,7 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/mupen64plus-core/src\" \"$(SRCROOT)/Compatibility/SDL\"";
