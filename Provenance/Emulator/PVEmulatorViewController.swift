@@ -541,7 +541,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 }))
             }
         }
-        if core is DiscSwappable {
+        if let swappableCore = core as? DiscSwappable, swappableCore.currentGameSupportsMultipleDiscs {
             actionsheet.addAction(UIAlertAction(title: "Swap Disc", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                     self.showSwapDiscsMenu()
