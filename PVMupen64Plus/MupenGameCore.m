@@ -31,7 +31,7 @@
 // Some games will run much slower or not at all. Others may run better if you have faster hardware.
 #define USE_RSP_CXD4 0
 
-#define FORCE_RICE_VIDEO 1
+#define FORCE_RICE_VIDEO 0
 
 #import "MupenGameCore.h"
 #import "api/config.h"
