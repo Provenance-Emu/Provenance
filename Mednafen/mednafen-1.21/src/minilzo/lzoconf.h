@@ -2,7 +2,7 @@
 
    This file is part of the LZO real-time data compression library.
 
-   Copyright (C) 1996-2015 Markus Franz Xaver Johannes Oberhumer
+   Copyright (C) 1996-2017 Markus Franz Xaver Johannes Oberhumer
    All Rights Reserved.
 
    The LZO library is free software; you can redistribute it and/or
@@ -29,9 +29,9 @@
 #ifndef __LZOCONF_H_INCLUDED
 #define __LZOCONF_H_INCLUDED 1
 
-#define LZO_VERSION             0x2090
-#define LZO_VERSION_STRING      "2.09"
-#define LZO_VERSION_DATE        "Feb 04 2015"
+#define LZO_VERSION             0x20a0  /* 2.10 */
+#define LZO_VERSION_STRING      "2.10"
+#define LZO_VERSION_DATE        "Mar 01 2017"
 
 /* internal Autoconf configuration file - only used when building LZO */
 #if defined(LZO_HAVE_CONFIG_H)

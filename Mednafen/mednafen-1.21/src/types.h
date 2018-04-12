@@ -13,6 +13,18 @@
  #include <config.h>
 #endif
 
+#ifndef __LP64__
+#undef SIZEOF_LONG
+#undef SIZEOF_PTRDIFF_T
+#undef SIZEOF_SIZE_T
+#undef SIZEOF_VOID_P
+// SIZEOF_PTRDIFF_T SIZEOF_SIZE_T SIZEOF_VOID_P
+#define SIZEOF_LONG 4
+#define SIZEOF_PTRDIFF_T 4
+#define SIZEOF_SIZE_T 4
+#define SIZEOF_VOID_P 4
+#endif
+
 //
 //
 //

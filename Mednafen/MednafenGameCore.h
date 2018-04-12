@@ -41,6 +41,7 @@ typedef NS_ENUM(NSInteger, MednaSystem) {
     MednaSystemPCE,
     MednaSystemPCFX,
 	MednaSystemSMS,
+	MednaSystemSNES,
     MednaSystemPSX,
     MednaSystemVirtualBoy,
     MednaSystemWonderSwan

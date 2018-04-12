@@ -42,6 +42,7 @@
 
 
 #define USE_PCE_FAST 1
+#define USE_SNES_FAUST 1
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
@@ -101,7 +102,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -336,6 +337,19 @@ static void emulation_run(BOOL skipFrame) {
 		self.systemType = MednaSystemNES;
 
 		mednafenCoreModule = @"nes";
+		mednafenCoreAspect = OEIntSizeMake(4, 3);
+		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+		sampleRate         = 48000;
+	}
+	else if([[self systemIdentifier] isEqualToString:@"com.provenance.snes"])
+	{
+		self.systemType = MednaSystemSNES;
+
+#if USE_SNES_FAUST
+		mednafenCoreModule = @"snes_faust";
+#else
+		mednafenCoreModule = @"snes";
+#endif
 		mednafenCoreAspect = OEIntSizeMake(4, 3);
 		//mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
 		sampleRate         = 48000;
@@ -966,6 +980,16 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
     return 0;
 }
 
+#pragma mark SNES
+- (void)didPushSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player {
+	int mappedButton = SNESMap[button];
+	inputBuffer[player][0] |= 1 << mappedButton;
+}
+
+-(void)didReleaseSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player {
+	inputBuffer[player][0] &= ~(1 << SNESMap[button]);
+}
+
 #pragma mark NES
 - (void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player {
 	int mappedButton = NESMap[button];
@@ -1144,6 +1168,9 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 			break;
 		case MednaSystemGBA:
 			return [self GBAValueForButtonID:buttonID forController:controller];
+			break;
+		case MednaSystemSNES:
+			return [self SNESValueForButtonID:buttonID forController:controller];
 			break;
 		case MednaSystemNES:
 			return [self NESValueForButtonID:buttonID forController:controller];
@@ -1337,6 +1364,98 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 				return [[pad buttonX] isPressed];
 				break;
 			case PVGBAButtonB:
+				return [[pad buttonA] isPressed];
+				break;
+			default:
+				break;
+		}
+	}
+#endif
+	return 0;
+}
+
+- (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller {
+	if ([controller extendedGamepad]) {
+		GCExtendedGamepad *pad = [controller extendedGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVSNESButtonUp:
+				return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+			case PVSNESButtonDown:
+				return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+			case PVSNESButtonLeft:
+				return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+			case PVSNESButtonRight:
+				return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+			case PVSNESButtonB:
+				return [[pad buttonA] isPressed];
+			case PVSNESButtonA:
+				return [[pad buttonB] isPressed];
+			case PVSNESButtonX:
+				return [[pad buttonX] isPressed];
+			case PVSNESButtonY:
+				return [[pad buttonY] isPressed];
+			case PVSNESButtonTriggerLeft:
+				return [[pad leftShoulder] isPressed];
+			case PVSNESButtonTriggerRight:
+				return [[pad rightShoulder] isPressed];
+			case PVSNESButtonSelect:
+				return [[pad leftTrigger] isPressed];
+			case PVSNESButtonStart:
+				return [[pad rightTrigger] isPressed];
+			default:
+				break;
+		}
+	} else if ([controller gamepad]) {
+		GCGamepad *pad = [controller gamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVSNESButtonUp:
+				return [[dpad up] isPressed];
+			case PVSNESButtonDown:
+				return [[dpad down] isPressed];
+			case PVSNESButtonLeft:
+				return [[dpad left] isPressed];
+			case PVSNESButtonRight:
+				return [[dpad right] isPressed];
+			case PVSNESButtonB:
+				return [[pad buttonA] isPressed];
+			case PVSNESButtonA:
+				return [[pad buttonB] isPressed];
+			case PVSNESButtonX:
+				return [[pad buttonX] isPressed];
+			case PVSNESButtonY:
+				return [[pad buttonY] isPressed];
+			case PVSNESButtonTriggerLeft:
+				return [[pad leftShoulder] isPressed];
+			case PVSNESButtonTriggerRight:
+				return [[pad rightShoulder] isPressed];
+			default:
+				break;
+		}
+	}
+#if TARGET_OS_TV
+	else if ([controller microGamepad])
+	{
+		GCMicroGamepad *pad = [controller microGamepad];
+		GCControllerDirectionPad *dpad = [pad dpad];
+		switch (buttonID) {
+			case PVSNESButtonUp:
+				return [[dpad up] value] > 0.5;
+				break;
+			case PVSNESButtonDown:
+				return [[dpad down] value] > 0.5;
+				break;
+			case PVSNESButtonLeft:
+				return [[dpad left] value] > 0.5;
+				break;
+			case PVSNESButtonRight:
+				return [[dpad right] value] > 0.5;
+				break;
+			case PVSNESButtonA:
+				return [[pad buttonX] isPressed];
+				break;
+			case PVSNESButtonB:
 				return [[pad buttonA] isPressed];
 				break;
 			default:
@@ -2016,3 +2135,49 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 }
 
 @end
+
+// -- Sanity checks
+static_assert(sizeof(uint8) == 1, "unexpected size");
+static_assert(sizeof(int8) == 1, "unexpected size");
+
+static_assert(sizeof(uint16) == 2, "unexpected size");
+static_assert(sizeof(int16) == 2, "unexpected size");
+
+static_assert(sizeof(uint32) == 4, "unexpected size");
+static_assert(sizeof(int32) == 4, "unexpected size");
+
+static_assert(sizeof(uint64) == 8, "unexpected size");
+static_assert(sizeof(int64) == 8, "unexpected size");
+
+static_assert(sizeof(char) == 1, "unexpected size");
+static_assert(sizeof(int) == 4, "unexpected size");
+
+static_assert(sizeof(short) >= 2, "unexpected size");
+static_assert(sizeof(long) >= 4, "unexpected size");
+static_assert(sizeof(long long) >= 8, "unexpected size");
+static_assert(sizeof(size_t) >= 4, "unexpected size");
+
+static_assert(sizeof(float) >= 4, "unexpected size");
+static_assert(sizeof(double) >= 8, "unexpected size");
+static_assert(sizeof(long double) >= 8, "unexpected size");
+
+static_assert(sizeof(void*) >= 4, "unexpected size");
+//static_assert(sizeof(void*) >= sizeof(void (*)(void)), "unexpected size");
+static_assert(sizeof(uintptr_t) >= sizeof(void*), "unexpected size");
+
+static_assert(sizeof(char) == SIZEOF_CHAR, "unexpected size");
+static_assert(sizeof(short) == SIZEOF_SHORT, "unexpected size");
+static_assert(sizeof(int) == SIZEOF_INT, "unexpected size");
+static_assert(sizeof(long) == SIZEOF_LONG, "unexpected size");
+static_assert(sizeof(long long) == SIZEOF_LONG_LONG, "unexpected size");
+
+static_assert(sizeof(off_t) == SIZEOF_OFF_T, "unexpected size");
+static_assert(sizeof(ptrdiff_t) == SIZEOF_PTRDIFF_T, "unexpected size");
+static_assert(sizeof(size_t) == SIZEOF_SIZE_T, "unexpected size");
+static_assert(sizeof(void*) == SIZEOF_VOID_P, "unexpected size");
+
+static_assert(sizeof(double) == SIZEOF_DOUBLE, "unexpected size");
+
+// Make sure the "char" type is signed(pass -fsigned-char to gcc).  New code in Mednafen shouldn't be written with the
+// assumption that "char" is signed, but there likely is at least some code that does.
+static_assert((char)255 == -1, "char type is not signed 8-bit");

@@ -36,7 +36,7 @@
 #include	"sound/WAVRecord.h"
 #include	"cdrom/cdromif.h"
 #include	"mempatcher.h"
-#include	<minilzo/minilzo.h>
+//#include	<minilzo/minilzo.h>
 #include	"tests.h"
 #include	"video/tblur.h"
 #include	"qtrecord.h"
@@ -59,14 +59,14 @@ static const char *CSD_tblur_accum_amount = gettext_noop("Blur amount in accumul
 
 static const MDFNSetting_EnumList VCodec_List[] =
 {
- { "raw", (int)QTRecord::VCODEC_RAW, "Raw",
-	gettext_noop("A fast codec, computationally, but will cause enormous file size and may exceed your storage medium's sustained write rate.") },
-
- { "cscd", (int)QTRecord::VCODEC_CSCD, "CamStudio Screen Codec",
-	gettext_noop("A good balance between performance and compression ratio.") },
-
- { "png", (int)QTRecord::VCODEC_PNG, "PNG",
-	gettext_noop("Has a better compression ratio than \"cscd\", but is much more CPU intensive.  Use for compatibility with official QuickTime in cases where you have insufficient disk space for \"raw\".") },
+// { "raw", (int)QTRecord::VCODEC_RAW, "Raw",
+//	gettext_noop("A fast codec, computationally, but will cause enormous file size and may exceed your storage medium's sustained write rate.") },
+//
+// { "cscd", (int)QTRecord::VCODEC_CSCD, "CamStudio Screen Codec",
+//	gettext_noop("A good balance between performance and compression ratio.") },
+//
+// { "png", (int)QTRecord::VCODEC_PNG, "PNG",
+//	gettext_noop("Has a better compression ratio than \"cscd\", but is much more CPU intensive.  Use for compatibility with official QuickTime in cases where you have insufficient disk space for \"raw\".") },
 
  { NULL, 0 },
 };
@@ -201,7 +201,7 @@ static uint32 PortDataLen[16];
 
 MDFNGI *MDFNGameInfo = NULL;
 
-static QTRecord *qtrecorder = NULL;
+//static QTRecord *qtrecorder = NULL;
 static WAVRecord *wavrecorder = NULL;
 static Fir_Resampler<16> ff_resampler;
 static double LastSoundMultiplier;
@@ -246,64 +246,64 @@ bool MDFNI_StartWAVRecord(const char *path, double SoundRate)
 
 bool MDFNI_StartAVRecord(const char *path, double SoundRate)
 {
- try
- {
-  QTRecord::VideoSpec spec;
-
-  memset(&spec, 0, sizeof(spec));
-
-  spec.SoundRate = SoundRate;
-  spec.SoundChan = MDFNGameInfo->soundchan;
-  spec.VideoWidth = MDFNGameInfo->lcm_width;
-  spec.VideoHeight = MDFNGameInfo->lcm_height;
-  spec.VideoCodec = MDFN_GetSettingI("qtrecord.vcodec");
-  spec.MasterClock = MDFNGameInfo->MasterClock;
-
-  if(spec.VideoWidth < MDFN_GetSettingUI("qtrecord.w_double_threshold"))
-   spec.VideoWidth *= 2;
-
-  if(spec.VideoHeight < MDFN_GetSettingUI("qtrecord.h_double_threshold"))
-   spec.VideoHeight *= 2;
-
-
-  spec.AspectXAdjust = ((double)MDFNGameInfo->nominal_width * 2) / spec.VideoWidth;
-  spec.AspectYAdjust = ((double)MDFNGameInfo->nominal_height * 2) / spec.VideoHeight;
-
-  MDFN_printf("\n");
-  MDFN_printf(_("Starting QuickTime recording to file \"%s\":\n"), path);
-  MDFN_indent(1);
-  MDFN_printf(_("Video width: %u\n"), spec.VideoWidth);
-  MDFN_printf(_("Video height: %u\n"), spec.VideoHeight);
-  MDFN_printf(_("Video codec: %s\n"), MDFN_GetSettingS("qtrecord.vcodec").c_str());
-
-  if(spec.SoundRate && spec.SoundChan)
-  {
-   MDFN_printf(_("Sound rate: %u\n"), std::min<uint32>(spec.SoundRate, 64000));
-   MDFN_printf(_("Sound channels: %u\n"), spec.SoundChan);
-  }
-  else
-   MDFN_printf(_("Sound: Disabled\n"));
-
-  MDFN_indent(-1);
-  MDFN_printf("\n");
-
-  qtrecorder = new QTRecord(path, spec);
- }
- catch(std::exception &e)
- {
-  MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
-  return(false);
- }
+// try
+// {
+//  QTRecord::VideoSpec spec;
+//
+//  memset(&spec, 0, sizeof(spec));
+//
+//  spec.SoundRate = SoundRate;
+//  spec.SoundChan = MDFNGameInfo->soundchan;
+//  spec.VideoWidth = MDFNGameInfo->lcm_width;
+//  spec.VideoHeight = MDFNGameInfo->lcm_height;
+//  spec.VideoCodec = MDFN_GetSettingI("qtrecord.vcodec");
+//  spec.MasterClock = MDFNGameInfo->MasterClock;
+//
+//  if(spec.VideoWidth < MDFN_GetSettingUI("qtrecord.w_double_threshold"))
+//   spec.VideoWidth *= 2;
+//
+//  if(spec.VideoHeight < MDFN_GetSettingUI("qtrecord.h_double_threshold"))
+//   spec.VideoHeight *= 2;
+//
+//
+//  spec.AspectXAdjust = ((double)MDFNGameInfo->nominal_width * 2) / spec.VideoWidth;
+//  spec.AspectYAdjust = ((double)MDFNGameInfo->nominal_height * 2) / spec.VideoHeight;
+//
+//  MDFN_printf("\n");
+//  MDFN_printf(_("Starting QuickTime recording to file \"%s\":\n"), path);
+//  MDFN_indent(1);
+//  MDFN_printf(_("Video width: %u\n"), spec.VideoWidth);
+//  MDFN_printf(_("Video height: %u\n"), spec.VideoHeight);
+//  MDFN_printf(_("Video codec: %s\n"), MDFN_GetSettingS("qtrecord.vcodec").c_str());
+//
+//  if(spec.SoundRate && spec.SoundChan)
+//  {
+//   MDFN_printf(_("Sound rate: %u\n"), std::min<uint32>(spec.SoundRate, 64000));
+//   MDFN_printf(_("Sound channels: %u\n"), spec.SoundChan);
+//  }
+//  else
+//   MDFN_printf(_("Sound: Disabled\n"));
+//
+//  MDFN_indent(-1);
+//  MDFN_printf("\n");
+//
+//  qtrecorder = new QTRecord(path, spec);
+// }
+// catch(std::exception &e)
+// {
+//  MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
+//  return(false);
+// }
  return(true);
 }
 
 void MDFNI_StopAVRecord(void)
 {
- if(qtrecorder)
- {
-  delete qtrecorder;
-  qtrecorder = NULL;
- }
+// if(qtrecorder)
+// {
+//  delete qtrecorder;
+//  qtrecorder = NULL;
+// }
 }
 
 void MDFNI_StopWAVRecord(void)
@@ -1335,7 +1335,7 @@ int MDFNI_Initialize(const char *basedir, const std::vector<MDFNSetting> &Driver
 	 PortDataLen[x] = 0;
 	}
 
-	lzo_init();
+//	lzo_init();
 
 	MDFN_SetBaseDirectory(basedir);
 
@@ -1477,14 +1477,14 @@ static void ProcessAudio(EmulateSpecStruct *espec)
   }
 
 
-  if(qtrecorder && (volume_save != 1 || multiplier_save != 1))
-  {
-   int32 orig_size = SoundBufPristine.size();
-
-   SoundBufPristine.resize(orig_size + SoundBufSize * MDFNGameInfo->soundchan);
-   for(int i = 0; i < SoundBufSize * MDFNGameInfo->soundchan; i++)
-    SoundBufPristine[orig_size + i] = SoundBuf[i];
-  }
+//  if(qtrecorder && (volume_save != 1 || multiplier_save != 1))
+//  {
+//   int32 orig_size = SoundBufPristine.size();
+//
+//   SoundBufPristine.resize(orig_size + SoundBufSize * MDFNGameInfo->soundchan);
+//   for(int i = 0; i < SoundBufSize * MDFNGameInfo->soundchan; i++)
+//    SoundBufPristine[orig_size + i] = SoundBuf[i];
+//  }
 
   try
   {
@@ -1653,14 +1653,14 @@ void MDFNI_Emulate(EmulateSpecStruct *espec)
 
  // We want to record movies without any dropped video frames and without fast-forwarding sound distortion and without custom volume.
  // The same goes for WAV recording(sans the dropped video frames bit :b).
- if(qtrecorder || wavrecorder)
- {
-  multiplier_save = espec->soundmultiplier;
-  espec->soundmultiplier = 1;
-
-  volume_save = espec->SoundVolume;
-  espec->SoundVolume = 1;
- }
+// if(qtrecorder || wavrecorder)
+// {
+//  multiplier_save = espec->soundmultiplier;
+//  espec->soundmultiplier = 1;
+//
+//  volume_save = espec->SoundVolume;
+//  espec->SoundVolume = 1;
+// }
 
  if(MDFNGameInfo->TransformInput)
   MDFNGameInfo->TransformInput();
@@ -1669,8 +1669,8 @@ void MDFNI_Emulate(EmulateSpecStruct *espec)
 
  MDFNMOV_ProcessInput(PortData, PortDataLen, MDFNGameInfo->PortInfo.size());
 
- if(qtrecorder)
-  espec->skip = 0;
+// if(qtrecorder)
+//  espec->skip = 0;
 
  if(TBlur_IsOn())
   espec->skip = 0;
@@ -1735,33 +1735,33 @@ void MDFNI_Emulate(EmulateSpecStruct *espec)
 
  ProcessAudio(espec);
 
- if(qtrecorder)
- {
-  int16 *sb_backup = espec->SoundBuf;
-  int32 sbs_backup = espec->SoundBufSize;
-
-  if(SoundBufPristine.size())
-  {
-   espec->SoundBuf = &SoundBufPristine[0];
-   espec->SoundBufSize = SoundBufPristine.size() / MDFNGameInfo->soundchan;
-  }
-
-  try
-  {
-   qtrecorder->WriteFrame(espec->surface, espec->DisplayRect, espec->LineWidths, espec->SoundBuf, espec->SoundBufSize, espec->MasterCycles);
-  }
-  catch(std::exception &e)
-  {
-   MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
-   delete qtrecorder;
-   qtrecorder = NULL;
-  }
-
-  SoundBufPristine.clear();
-
-  espec->SoundBuf = sb_backup;
-  espec->SoundBufSize = sbs_backup;
- }
+// if(qtrecorder)
+// {
+//  int16 *sb_backup = espec->SoundBuf;
+//  int32 sbs_backup = espec->SoundBufSize;
+//
+//  if(SoundBufPristine.size())
+//  {
+//   espec->SoundBuf = &SoundBufPristine[0];
+//   espec->SoundBufSize = SoundBufPristine.size() / MDFNGameInfo->soundchan;
+//  }
+//
+//  try
+//  {
+//   qtrecorder->WriteFrame(espec->surface, espec->DisplayRect, espec->LineWidths, espec->SoundBuf, espec->SoundBufSize, espec->MasterCycles);
+//  }
+//  catch(std::exception &e)
+//  {
+//   MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
+//   delete qtrecorder;
+//   qtrecorder = NULL;
+//  }
+//
+//  SoundBufPristine.clear();
+//
+//  espec->SoundBuf = sb_backup;
+//  espec->SoundBufSize = sbs_backup;
+// }
 
  if(TBlur_IsOn())
   TBlur_Run(espec);
