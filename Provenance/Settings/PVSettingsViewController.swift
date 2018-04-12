@@ -55,6 +55,14 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         presentingViewController?.dismiss(animated: true) {() -> Void in }
     }
 
+	// Check to see if we are connected to WiFi. Cannot continue otherwise.
+	lazy var reachability : Reachability = Reachability.forLocalWiFi()
+
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		reachability.stopNotifier()
+	}
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Settings"
@@ -106,6 +114,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+		reachability.startNotifier()
+
         let settings = PVSettingsModel.shared
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
 
@@ -234,11 +245,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         } else if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
-                // Check to see if we are connected to WiFi. Cannot continue otherwise.
-            let reachability = Reachability.forLocalWiFi()
-            reachability.startNotifier()
-            let status: NetworkStatus = reachability.currentReachabilityStatus()
-            if status != ReachableViaWiFi {
+
+			let status: NetworkStatus = reachability.currentReachabilityStatus()
+
+			if status != .reachableViaWiFi {
                 let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 }))
@@ -322,10 +332,10 @@ class ThemeSelectorViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            Theme.setTheme(LightTheme())
+            Theme.currentTheme = Theme.lightTheme
             PVSettingsModel.shared.theme = .light
         } else if indexPath.row == 1 {
-            Theme.setTheme(DarkTheme())
+            Theme.currentTheme = Theme.darkTheme
             PVSettingsModel.shared.theme = .dark
         }
 

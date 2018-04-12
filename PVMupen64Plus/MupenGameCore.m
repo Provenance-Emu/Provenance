@@ -31,6 +31,8 @@
 // Some games will run much slower or not at all. Others may run better if you have faster hardware.
 #define USE_RSP_CXD4 0
 
+#define FORCE_RICE_VIDEO 0
+
 #import "MupenGameCore.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -69,7 +71,7 @@ NSString *MupenControlNames[] = {
 
 __weak MupenGameCore *_current = 0;
 
-static void (*ptr_OE_ForceUpdateWindowSize)(int width, int height);
+static void (*ptr_PV_ForceUpdateWindowSize)(int width, int height);
 
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
@@ -410,7 +412,7 @@ static void MupenSetAudioSpeed(int percent)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
 {
-    NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *coreBundle = [NSBundle mainBundle];
     const char *dataPath;
 
     // TODO: Proper path
@@ -618,14 +620,20 @@ static void MupenSetAudioSpeed(int percent)
 
 	EAGLContext* context = [self bestContext];
 
+#if FORCE_RICE_VIDEO
+	success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+	ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
+#else
 	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
 		ILOG("No 64bit or GLES3. Using RICE GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
+		ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
 	} else {
 		ILOG("64bit and GLES3. Using GLiden64 GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
 	}
-
+#endif
+	
     if (!success) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -641,8 +649,7 @@ static void MupenSetAudioSpeed(int percent)
         return NO;
     }
     
-    ptr_OE_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_OE_ForceUpdateWindowSize");
-    
+
     // Load Audio
     audio.aiDacrateChanged = MupenAudioSampleRateChanged;
     audio.aiLenChanged = MupenAudioLenChanged;
@@ -991,7 +998,7 @@ static void MupenSetAudioSpeed(int percent)
 - (void) tryToResizeVideoTo:(CGSize)size
 {
     VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_WINDOWED, 0);
-    ptr_OE_ForceUpdateWindowSize(size.width, size.height);
+    ptr_PV_ForceUpdateWindowSize(size.width, size.height);
 }
 
 - (BOOL)rendersToOpenGL

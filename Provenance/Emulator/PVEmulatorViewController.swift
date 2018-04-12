@@ -543,7 +543,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 }))
             }
         }
-        if let disSwappableCore = core as? DiscSwappable, disSwappableCore.currentGameSupportsMultipleDiscs {
+        if let swappableCore = core as? DiscSwappable, swappableCore.currentGameSupportsMultipleDiscs {
             actionsheet.addAction(UIAlertAction(title: "Swap Disc", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                     self.showSwapDiscsMenu()
@@ -803,6 +803,13 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) {
 		createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 	}
+    
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) {
+        createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
+        PVSaveState.delete(state) { (error: Error) -> (Void) in
+            self.presentError("Error deleting save state: \(error.localizedDescription)")
+        }
+    }
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
 		dismiss(animated: true, completion: nil)

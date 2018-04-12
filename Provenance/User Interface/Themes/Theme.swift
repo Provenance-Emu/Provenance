@@ -152,16 +152,23 @@ struct LightTheme: iOSTheme {
 }
 
 //@available(iOS 9.0, *)
-public class Theme: NSObject {
+public class Theme {
 
-    public static var currentTheme: iOSTheme = LightTheme()
+	public static var currentTheme: iOSTheme = LightTheme() {
+		didSet {
+			setTheme(currentTheme)
+			UIApplication.shared.refreshAppearance(animated: true)
+		}
+	}
 
-    class func setTheme(_ theme: iOSTheme) {
-        currentTheme = theme
+//	class func test() {
+//		let light = AppearanceStyle("light")
+//	}
 
+    private class func setTheme(_ theme: iOSTheme) {
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
-            $0.tintColor = theme.navigationBarBackgroundColor
+            $0.tintColor = theme.barButtonItemTint
             $0.barStyle = theme.navigationBarStyle
 			$0.isTranslucent = true
         }
@@ -191,7 +198,7 @@ public class Theme: NSObject {
 
         // Settings
 		if #available(iOS 9.0, *) {
-			appearance(in: SettingsTableView.self) {
+			appearance(in: [SettingsTableView.self]) {
 				UITableViewCell.appearance {
 					$0.backgroundColor = theme.settingsCellBackground
 					$0.textLabel?.backgroundColor = theme.settingsCellBackground
@@ -200,13 +207,13 @@ public class Theme: NSObject {
 				}
 			}
 
-			appearance(in: UITableViewCell.self) {
+			appearance(in: [UITableViewCell.self]) {
 				UILabel.appearance {
 					$0.textColor = theme.settingsCellText
 				}
 			}
 
-			appearance(in: UITableViewHeaderFooterView.self) {
+			appearance(in: [UITableViewHeaderFooterView.self]) {
 				UILabel.appearance {
 					$0.textColor = theme.settingsHeaderText
 				}
@@ -235,7 +242,7 @@ public class Theme: NSObject {
 
         // Appearacne in is only in 9+
         if #available(iOS 9.0, *) {
-            appearance(in: PVGameLibrarySectionHeaderView.self) {
+            appearance(in: [PVGameLibrarySectionHeaderView.self]) {
                 UILabel.appearance {
                     $0.backgroundColor = theme.gameLibraryHeaderBackground
                     $0.textColor = theme.gameLibraryHeaderText
@@ -282,6 +289,10 @@ public class Theme: NSObject {
                 }
             }
         }
-
     }
+}
+
+extension Theme {
+	static let lightTheme = LightTheme()
+	static let darkTheme = DarkTheme()
 }

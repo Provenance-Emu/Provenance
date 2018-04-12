@@ -54,7 +54,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 #else
         let currentTheme = PVSettingsModel.shared.theme
-        Theme.setTheme(currentTheme.theme)
+        Theme.currentTheme = currentTheme.theme
 #endif
 
         startOptionalWebDavServer()

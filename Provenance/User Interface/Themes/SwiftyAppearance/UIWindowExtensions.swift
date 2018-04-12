@@ -9,14 +9,14 @@
 import UIKit
 
 public extension NSNotification.Name {
-
+    
     public static let SwiftyAppearanceWillRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshWindowNotification")
-
+ 
     public static let SwiftyAppearanceDidRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceDidRefreshWindowNotification")
 }
 
 public extension UIWindow {
-
+    
     @nonobjc private func _refreshAppearance() {
         let constraints = self.constraints
         removeConstraints(constraints)
@@ -27,9 +27,9 @@ public extension UIWindow {
         addConstraints(constraints)
     }
 
-    /// <#Description#>
+    /// Refreshes appearance for the window
     ///
-    /// - Parameter animated: <#animated description#>
+    /// - Parameter animated: if the refresh should be animated
     public func refreshAppearance(animated: Bool) {
         NotificationCenter.default.post(name: .SwiftyAppearanceWillRefreshWindow, object: self)
         UIView.animate(withDuration: animated ? 0.25 : 0, animations: {

@@ -200,6 +200,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
 
         #if os(iOS)
+		navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
+		navigationItem.leftBarButtonItem?.tintColor = Theme.currentTheme.barButtonItemTint
+
         NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: {(_ note: Notification) -> Void in
             DispatchQueue.main.async {
                 self.collectionView?.collectionViewLayout.invalidateLayout()
@@ -758,47 +761,50 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let reachability = Reachability.forLocalWiFi()
         reachability.startNotifier()
         let status: NetworkStatus = reachability.currentReachabilityStatus()
-        if status != ReachableViaWiFi {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a network to continue!", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            }))
-            present(alert, animated: true) {() -> Void in }
-        } else {
 
-            #if os(iOS)
-            // connected via wifi, let's continue
 
-            let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
+		#if os(iOS)
+		// connected via wifi, let's continue
 
-            actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
-                let extensions = ["com.provenance.rom", "com.pkware.zip-archive"]
+		let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
-                //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
-                //        documentMenu.delegate = self
-                //        present(documentMenu, animated: true, completion: nil)
+		actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
+			let extensions = ["com.provenance.rom", "com.pkware.zip-archive"]
 
-                let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
-                if #available(iOS 11.0, *) {
-                    documentPicker.allowsMultipleSelection = true
-                }
-                documentPicker.delegate = self
-                self.present(documentPicker, animated: true, completion: nil)
-            }))
+			//        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
+			//        documentMenu.delegate = self
+			//        present(documentMenu, animated: true, completion: nil)
 
-            actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
-                self.startWebServer()
-            }))
-
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-			if let barButtonItem = sender as? UIBarButtonItem {
-				actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
+			let documentPicker = PVDocumentPickerViewController(documentTypes: extensions, in: .import)
+			if #available(iOS 11.0, *) {
+				documentPicker.allowsMultipleSelection = true
 			}
-            present(actionSheet, animated: true, completion: nil)
-            #else
-                startWebServer()
-            #endif
-        }
+			documentPicker.delegate = self
+			self.present(documentPicker, animated: true, completion: nil)
+		}))
+
+		if status == .reachableViaWiFi {
+			actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
+				self.startWebServer()
+			}))
+		}
+
+		actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+		if let barButtonItem = sender as? UIBarButtonItem {
+			actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
+		}
+		present(actionSheet, animated: true, completion: nil)
+		#else // tvOS
+		if status != ReachableViaWiFi {
+			let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a network to continue!", preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+			}))
+			present(alert, animated: true) {() -> Void in }
+		} else {
+			startWebServer()
+		}
+		#endif
     }
 
     func startWebServer() {
