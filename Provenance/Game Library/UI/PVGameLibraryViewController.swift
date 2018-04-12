@@ -773,7 +773,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			self.present(documentPicker, animated: true, completion: nil)
 		}))
 
-		if status != .reachableViaWiFi {
+		if status == .reachableViaWiFi {
 			actionSheet.addAction(UIAlertAction(title: "Web Server", style: .default, handler: { (alert) in
 				self.startWebServer()
 			}))
