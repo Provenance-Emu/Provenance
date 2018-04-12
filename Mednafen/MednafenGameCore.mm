@@ -752,7 +752,7 @@ static void emulation_run(BOOL skipFrame) {
 
 - (NSTimeInterval)frameInterval
 {
-    return mednafenCoreTiming ?: 60;
+    return mednafenCoreTiming ?: 59.92;
 }
 
 # pragma mark - Video
