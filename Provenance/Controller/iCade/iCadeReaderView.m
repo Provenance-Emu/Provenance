@@ -23,8 +23,8 @@
 #import "iCadeReaderView.h"
 #import <UIKit/UIKit.h>
 
-static const char *ON_STATES_EN  = "wdxayhujikol";
-static const char *OFF_STATES_EN = "eczqtrfnmpgv";
+static const char *ON_STATES_EN  = "wdxayhujikol[1";
+static const char *OFF_STATES_EN = "eczqtrfnmpgv]2";
 
 #if TARGET_OS_TV
 static const char *ON_STATES_FR  = "zdxqyhujikol";

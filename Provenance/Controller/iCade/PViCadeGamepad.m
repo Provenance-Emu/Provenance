@@ -24,7 +24,10 @@
         
         _leftTrigger = [[PViCadeGamepadButtonInput alloc] init];
         _rightTrigger = [[PViCadeGamepadButtonInput alloc] init];
-        
+
+		_start = [[PViCadeGamepadButtonInput alloc] init];
+		_select = [[PViCadeGamepadButtonInput alloc] init];
+
         _dummyThumbstick = [[PViCadeGamepadDirectionPad alloc] init];
     }
     return self;
