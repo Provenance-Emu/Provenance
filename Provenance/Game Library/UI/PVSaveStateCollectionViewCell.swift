@@ -32,7 +32,12 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 				if let image = saveState.image {
 					imageView.image = UIImage(contentsOfFile: image.url.path)
 				}
-				label.text = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
+				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
+				if label.numberOfLines > 1 {
+					label.text = "\(saveState.game.title)\n\(timeText)"
+				} else {
+					label.text = timeText
+				}
 			}
 
 			setNeedsLayout()
