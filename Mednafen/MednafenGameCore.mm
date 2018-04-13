@@ -658,6 +658,10 @@ static void emulation_run(BOOL skipFrame) {
             maxValue = PVLynxButtonCount;
             map = LynxMap;
             break;
+		case MednaSystemSNES:
+			maxValue = PVSNESButtonCount;
+			map = SNESMap;
+			break;
 		case MednaSystemNES:
 			maxValue = PVNESButtonCount;
 			map = NESMap;
@@ -1421,9 +1425,9 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 			case PVSNESButtonA:
 				return [[pad buttonB] isPressed];
 			case PVSNESButtonX:
-				return [[pad buttonX] isPressed];
-			case PVSNESButtonY:
 				return [[pad buttonY] isPressed];
+			case PVSNESButtonY:
+				return [[pad buttonX] isPressed];
 			case PVSNESButtonTriggerLeft:
 				return [[pad leftShoulder] isPressed];
 			case PVSNESButtonTriggerRight:
@@ -1452,9 +1456,9 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 			case PVSNESButtonA:
 				return [[pad buttonB] isPressed];
 			case PVSNESButtonX:
-				return [[pad buttonX] isPressed];
-			case PVSNESButtonY:
 				return [[pad buttonY] isPressed];
+			case PVSNESButtonY:
+				return [[pad buttonX] isPressed];
 			case PVSNESButtonTriggerLeft:
 				return [[pad leftShoulder] isPressed];
 			case PVSNESButtonTriggerRight:
