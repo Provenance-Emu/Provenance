@@ -9528,7 +9528,6 @@
 					"-Wdisabled-optimization",
 					"-mllvm",
 					"-disable-lsr",
-					"-mno-retpoline",
 					"-mcmodel=small",
 				);
 				SDKROOT = iphoneos;
