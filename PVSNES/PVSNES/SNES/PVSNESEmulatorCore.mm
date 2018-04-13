@@ -431,8 +431,8 @@ static void FinalizeSamplesAudioCallback(void *)
             S9xReportButton(playerMask | PVSNESButtonTriggerLeft, pad.leftShoulder.pressed);
             S9xReportButton(playerMask | PVSNESButtonTriggerRight, pad.rightShoulder.pressed);
 
-            S9xReportButton(playerMask | PVSNESButtonStart, pad.leftTrigger.pressed);
-            S9xReportButton(playerMask | PVSNESButtonSelect, pad.rightTrigger.pressed);
+            S9xReportButton(playerMask | PVSNESButtonStart, pad.rightTrigger.pressed);
+            S9xReportButton(playerMask | PVSNESButtonSelect, pad.leftTrigger.pressed);
 
         }
         else if ([controller gamepad])
