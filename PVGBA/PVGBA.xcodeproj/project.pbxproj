@@ -780,7 +780,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -819,7 +819,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -858,7 +858,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -895,7 +895,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -934,7 +934,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -973,7 +973,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

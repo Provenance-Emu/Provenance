@@ -1008,7 +1008,7 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.Stella";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Stella";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1066,7 +1066,7 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.Stella";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Stella";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1132,7 +1132,7 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.Stella";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1195,7 +1195,7 @@
 					"-DHAVE_INTTYPES",
 					"-DKeyboard=StellaKeyboard",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.Stella";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

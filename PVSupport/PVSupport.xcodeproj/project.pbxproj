@@ -543,7 +543,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -579,7 +579,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -614,7 +614,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -648,7 +648,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -683,7 +683,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -717,7 +717,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;

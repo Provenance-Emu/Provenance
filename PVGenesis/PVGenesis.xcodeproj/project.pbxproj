@@ -1012,7 +1012,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1060,7 +1060,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1108,7 +1108,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -1153,7 +1153,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1201,7 +1201,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1249,7 +1249,7 @@
 					"-D__LIBRETRO__",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGenesis";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVGenesis";
 				PRODUCT_NAME = PVGenesis;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

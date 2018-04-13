@@ -1902,7 +1902,7 @@
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1962,7 +1962,7 @@
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2031,7 +2031,7 @@
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -2092,7 +2092,7 @@
 					"-D_SVP_DRC",
 					"-DHAVE_GLES",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PicoDrive";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PicoDrive";
 				PRODUCT_NAME = PicoDrive;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

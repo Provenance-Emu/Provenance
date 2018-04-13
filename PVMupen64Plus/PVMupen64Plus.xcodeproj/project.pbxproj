@@ -5728,7 +5728,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5782,7 +5782,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6142,7 +6142,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6190,7 +6190,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -6426,7 +6426,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6499,7 +6499,7 @@
 					"-DPROVENANCE",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRice";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRice";
 				PRODUCT_NAME = PVMupen64PlusVideoRice;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6554,7 +6554,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6604,7 +6604,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64plusRspHLE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plusRspHLE";
 				PRODUCT_NAME = PVMupen64PlusRspHLE;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6665,7 +6665,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6721,7 +6721,7 @@
 					"-D__unix__",
 					"-DM64P_PLUGIN_API",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVRSPCXD4";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVRSPCXD4";
 				PRODUCT_NAME = PVRSPCXD4;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -6823,7 +6823,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
@@ -6922,7 +6922,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64PlusGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusGlideN64";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SKIP_INSTALL = YES;
@@ -7026,7 +7026,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64PlusVideoGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusVideoGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -7126,7 +7126,7 @@
 					"-D__VEC4_OPT",
 					"-D__NEON_OPT",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVMupen64PlusVideoGlideN64";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64PlusVideoGlideN64";
 				PRODUCT_NAME = PVMupen64PlusVideoGlideN64;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

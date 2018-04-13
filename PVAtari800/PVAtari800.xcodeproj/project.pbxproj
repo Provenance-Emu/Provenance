@@ -838,7 +838,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -873,7 +873,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -911,7 +911,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -948,7 +948,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVAtari800";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVAtari800";
 				PRODUCT_NAME = PVAtari800;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

@@ -935,7 +935,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -979,7 +979,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1023,7 +1023,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1064,7 +1064,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1108,7 +1108,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1152,7 +1152,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
