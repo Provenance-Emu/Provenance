@@ -1536,7 +1536,7 @@
                                         <color key="textColor" white="0.65681144930000002" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Played" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="aqF-fy-FNA" customClass="RegionLabel" customModule="Provenance" customModuleProvider="target">
+                                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Played" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" id="aqF-fy-FNA">
                                         <rect key="frame" x="112" y="154" width="223" height="21"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.060845269059999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -368,6 +368,11 @@ extension GameLaunchingViewController where Self : UIViewController {
 
 	func openSaveState(_ saveState: PVSaveState) {
 		if let gameVC = presentedViewController as? PVEmulatorViewController {
+
+			try? RomDatabase.sharedInstance.writeTransaction {
+				saveState.lastOpened = Date()
+			}
+
 			gameVC.core.setPauseEmulation(true)
 			gameVC.core.loadStateFromFile(atPath: saveState.file.url.path)
 			gameVC.core.setPauseEmulation(false)

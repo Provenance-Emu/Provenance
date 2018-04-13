@@ -17,7 +17,7 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 	@IBOutlet weak var coreLabel: UILabel!
 	@IBOutlet weak var coreVersionLabel: UILabel!
 	@IBOutlet weak var createdLabel: UILabel!
-	@IBOutlet weak var lastPlayedLabel: RegionLabel!
+	@IBOutlet weak var lastPlayedLabel: UILabel!
 	@IBOutlet weak var autosaveLabel: UILabel!
 
 	@IBOutlet weak var playBarButtonItem: UIBarButtonItem!
@@ -48,6 +48,11 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 		updateLabels()
     }
 
+	override func viewWillAppear(_ animated: Bool) {
+		super.viewWillAppear(animated)
+		updateLabels()
+	}
+
 	private static let dateFormatter : DateFormatter = {
 		let df = DateFormatter()
 		df.dateStyle = .short
@@ -75,6 +80,8 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 
 		if let image = saveState.image {
 			imageView.image = UIImage(contentsOfFile: image.url.path)
+		} else {
+			imageView.image = nil
 		}
 
 		nameLabel.text = saveState.game.title
@@ -88,7 +95,9 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 		title = "\(saveState.game.title) : \(createdText)"
 
 		if let lastOpened = saveState.lastOpened {
-			lastPlayedLabel.text = "\(PVSaveStateInfoViewController.dateFormatter.string(from: lastOpened)), \(PVSaveStateInfoViewController.timeFormatter.string(from: lastOpened))"
+			let lastOpenedText = "\(PVSaveStateInfoViewController.dateFormatter.string(from: lastOpened)), \(PVSaveStateInfoViewController.timeFormatter.string(from: lastOpened))"
+			print("Last opened \(lastOpenedText)")
+			lastPlayedLabel.text = lastOpenedText
 		} else {
 			lastPlayedLabel.text = "Never"
 		}
