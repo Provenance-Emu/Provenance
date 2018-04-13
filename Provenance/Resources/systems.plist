@@ -781,6 +781,82 @@
 	<dict>
 		<key>PVManufacturer</key>
 		<string>NEC</string>
+		<key>PVSystemName</key>
+		<string>SuperGrafx</string>
+		<key>PVSystemNames</key>
+		<string>PC Engine SG/SuperGrafx</string>
+		<key>PVSystemShortName</key>
+		<string>SGFX</string>
+		<key>PVSystemsShortNames</key>
+		<string>PCE/SGFX</string>
+		<key>PVReleaseYear</key>
+		<string>1989</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.sgfx</string>
+		<key>PVDatabaseID</key>
+		<string>17</string>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>pce</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>II</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>I</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Run</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{62,22}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVManufacturer</key>
+		<string>NEC</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
