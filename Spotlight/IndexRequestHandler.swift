@@ -98,6 +98,15 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
     }
 
     private func indexResults(_ results: Results<PVGame>) {
+		#if swift(>=4.1)
+		let items: [CSSearchableItem] = results.compactMap({ (game) -> CSSearchableItem? in
+			if !game.md5Hash.isEmpty {
+				return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
+			} else {
+				return nil
+			}
+		})
+		#else
         let items: [CSSearchableItem] = results.flatMap({ (game) -> CSSearchableItem? in
             if !game.md5Hash.isEmpty {
                 return CSSearchableItem(uniqueIdentifier: "com.provenance-emu.game.\(game.md5Hash)", domainIdentifier: "com.provenance-emu.game", attributeSet: game.spotlightContentSet)
@@ -105,7 +114,7 @@ public class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 return nil
             }
         })
-
+		#endif
         CSSearchableIndex.default().indexSearchableItems(items) { error in
             if let error = error {
                 ELOG("indexing error: \(error)")

@@ -168,6 +168,15 @@ public class PVEmulatorConfiguration: NSObject {
     }()
 
     static let supportedCDFileExtensions: Set<String> = {
+		#if swift(>=4.1)
+		return Set(systems.compactMap({ (system) -> [String]? in
+			guard system.usesCDs else {
+				return nil
+			}
+
+			return Array(system.supportedExtensions)
+		}).joined())
+		#else
         return Set(systems.flatMap({ (system) -> [String]? in
             guard system.usesCDs else {
                 return nil
@@ -175,15 +184,25 @@ public class PVEmulatorConfiguration: NSObject {
 
             return Array(system.supportedExtensions)
         }).joined())
+		#endif
     }()
 
     static let cdBasedSystems: [PVSystem] = {
+		#if swift(>=4.1)
+		return systems.compactMap({ (system) -> PVSystem? in
+			guard system.usesCDs else {
+				return nil
+			}
+			return system
+		})
+		#else
         return systems.flatMap({ (system) -> PVSystem? in
             guard system.usesCDs else {
                 return nil
             }
             return system
         })
+		#endif
     }()
 
     // MARK: BIOS
@@ -246,9 +265,15 @@ public class PVEmulatorConfiguration: NSObject {
 
     @objc
     class func systemIdentifiers(forFileExtension fileExtension: String) -> [String]? {
+		#if swift(>=4.1)
+		return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> String? in
+			return system.identifier
+		})
+		#else
         return systems(forFileExtension: fileExtension)?.flatMap({ (system) -> String? in
             return system.identifier
-        })
+		})
+		#endif
     }
 
     class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
