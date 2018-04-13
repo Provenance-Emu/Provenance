@@ -376,6 +376,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //                }
                 break
             case .update(_, let deletions, let insertions, let modifications):
+				if self.searchResults != nil {
+					return
+				}
+				
                 // Query results have changed, so apply them to the UICollectionView
                 guard let indexOfSystem = self.systems?.index(of: system) else {
                     return
@@ -417,6 +421,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
             case .update(_, let deletions, let insertions, _):
+				if self.searchResults != nil {
+					return
+				}
+				
                 guard let collectionView = self.collectionView else {return}
                 collectionView.performBatchUpdates({
                     let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
@@ -450,6 +458,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 				self.collectionView?.reloadData()
 			case .update(_, let deletions, let insertions, let modifications):
+				if self.searchResults != nil {
+					return
+				}
+				
 				let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
 				let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
 
@@ -504,6 +516,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
+				if self.searchResults != nil {
+					return
+				}
+
                 let needsInsert = self.recentGamesIsHidden && !insertions.isEmpty
                 let needsDelete = (self.recentGames?.isEmpty ?? true) && !deletions.isEmpty
 
@@ -545,6 +561,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
+				if self.searchResults != nil {
+					return
+				}
+
                 let needsInsert = self.favoritesIsHidden
                 let needsDelete = self.favoriteGames?.isEmpty ?? false
                 self.favoritesIsHidden = needsDelete
@@ -1218,7 +1238,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 			let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-			if indexPath.section == saveStateSection {
+			if searchResults == nil, indexPath.section == saveStateSection {
 
 				let saveState = saveStates![indexPath.row]
 
@@ -1653,6 +1673,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
+		if let searchResults = searchResults {
+			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as? PVGameLibraryCollectionViewCell else {
+				fatalError("Couldn't create cell of type PVGameLibraryCollectionViewCellIdentifier")
+			}
+			let game = searchResults[indexPath.item]
+			cell.game = game
+			return cell
+		}
+
 		if indexPath.section == saveStateSection {
 			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as? PVSaveStateCollectionViewCell else {
 				fatalError("Couldn't create cell of type PVGameLibraryCollectionViewSaveStatesCellIdentifier")
@@ -1670,13 +1699,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             fatalError("Couldn't create cell of type PVGameLibraryCollectionViewCellIdentifier")
         }
 
-        var game: PVGame? = nil
-        if let searchResults = searchResults {
-            game = searchResults[indexPath.item]
-        } else {
-            game = self.game(at: indexPath)
-        }
-
+		let game = self.game(at: indexPath)
         cell.game = game
 
         return cell
@@ -1897,7 +1920,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		#if os(tvOS)
-		if indexPath.section == saveStateSection {
+		if searchResults != nil, indexPath.section == saveStateSection {
 			return CGSize(width: CellWidth, height: CellWidth)
 		}
 		let game = self.game(at: indexPath)!
@@ -1951,7 +1974,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
     #endif
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if indexPath.section == saveStateSection {
+		if searchResults == nil, indexPath.section == saveStateSection {
 			let cell = collectionView.cellForItem(at: indexPath)
 			let saveState = saveStates![indexPath.row]
 			load(saveState.game, sender: cell, core: saveState.core)
@@ -2072,7 +2095,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 
 			let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
 
-			if indexPath.section == saveStateSection {
+			if searchResults == nil, indexPath.section == saveStateSection {
 				let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController
 				saveStateInfoVC.saveState = saveStates![indexPath.row]
 				return saveStateInfoVC
