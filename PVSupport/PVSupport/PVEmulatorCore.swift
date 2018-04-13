@@ -465,10 +465,10 @@ import UIKit
     case count
 }
 
-@objc public protocol PVPCEFXSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(didPushPCEFXButton:forPlayer:)
+@objc public protocol PVPCFXSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushPCFXButton:forPlayer:)
     func didPush(_ button: PVPCFXButton, forPlayer player: Int)
-    @objc(didReleasePCEFXButton:forPlayer:)
+    @objc(didReleasePCFXButton:forPlayer:)
     func didRelease(_ button: PVPCFXButton, forPlayer player: Int)
 }
 

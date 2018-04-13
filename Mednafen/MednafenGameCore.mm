@@ -103,7 +103,7 @@ namespace MDFN_IEN_VB
     int mednafenCurrentDisplayMode = 1;
 }
 
-@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCEFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
+@interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient>
 {
     uint32_t *inputBuffer[8];
     int videoWidth, videoHeight;
@@ -926,11 +926,11 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 
 
 #pragma mark Atari Lynx
-- (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSUInteger)player {
+- (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
     inputBuffer[player][0] |= 1 << LynxMap[button];
 }
 
-- (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSUInteger)player {
+- (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
     inputBuffer[player][0] &= ~(1 << LynxMap[button]);
 }
 
