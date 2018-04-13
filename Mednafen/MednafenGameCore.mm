@@ -25,11 +25,15 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+#pragma clang diagnostic ignored "-Wextra"
 #include <mednafen/mednafen.h>
 #include <mednafen/settings-driver.h>
 #include <mednafen/state-driver.h>
 #include <mednafen/mednafen-driver.h>
 #include <mednafen/MemoryStream.h>
+#pragma clang diagnostic pop
 
 #import "MednafenGameCore.h"
 #import <OpenGLES/EAGL.h>
@@ -215,7 +219,7 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSetting("pcfx.slstart", "0"); // PCFX: First rendered scanline 4 default
 	MDFNI_SetSetting("pcfx.slend", "239"); // PCFX: Last rendered scanline 235 default, 239max
 
-#pragma message "forget about multitap for now :)"
+	// FIXME:  "forget about multitap for now :)"
     // Set multitap configuration if detected
 //    if (multiTapGames[[current ROMSerial]])
 //    {
@@ -322,7 +326,7 @@ static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
-    int32 rects[game->fb_height];
+	int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
     rects[0] = ~0;
 
 	current->spec = {0};
@@ -365,6 +369,8 @@ static void emulation_run(BOOL skipFrame) {
     current->videoOffsetY = current->spec.DisplayRect.y;
 
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
+
+	delete[] rects;
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
@@ -558,7 +564,7 @@ static void emulation_run(BOOL skipFrame) {
         }
         
         // PSX: Set multitap configuration if detected
-        NSString *serial = [self romSerial];
+//        NSString *serial = [self romSerial];
 //        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
 //        
 //        if (multitapCount != nil)
@@ -620,7 +626,7 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc {
-    MDFNI_SetMedia(0, open ? 0 : 2, disc, 0);
+    MDFNI_SetMedia(0, open ? 0 : 2, (uint32) disc, 0);
 }
 
 -(NSUInteger)maxNumberPlayers {
@@ -635,6 +641,7 @@ static void emulation_run(BOOL skipFrame) {
 		case MednaSystemMD:
 		case MednaSystemSMS:
 		case MednaSystemNES:
+		case MednaSystemSNES:
         case MednaSystemPCFX:
             maxPlayers = 2;
             break;
@@ -643,17 +650,18 @@ static void emulation_run(BOOL skipFrame) {
         case MednaSystemNeoGeo:
         case MednaSystemLynx:
         case MednaSystemVirtualBoy:
+		case MednaSystemGG:
         case MednaSystemWonderSwan:
             maxPlayers = 1;
             break;
-    }
+	}
     
     return maxPlayers;
 }
 
 - (void)pollControllers {
     unsigned maxValue = 0;
-    const int*map;
+	const int*map = nullptr;
     switch (self.systemType) {
 		case MednaSystemGBA:
 			maxValue = PVGBAButtonCount;
@@ -699,7 +707,16 @@ static void emulation_run(BOOL skipFrame) {
             maxValue = PVWSButtonCount;
             map = WSMap;
             break;
-    }
+		case MednaSystemGG:
+			return;
+			break;
+		case MednaSystemMD:
+			return;
+			break;
+		case MednaSystemSMS:
+			return;
+			break;
+	}
     
     NSUInteger maxNumberPlayers = MIN([self maxNumberPlayers], 4);
 
@@ -881,7 +898,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
     
     if(outError) {
         assert(false);
-#pragma message "fix error log"
+		// TODO: "fix error log"
 //        *outError = [NSError errorWithDomain:OEGameCoreErrorDomain code:OEGameCoreCouldNotSaveStateError  userInfo:@{
 //            NSLocalizedDescriptionKey : @"Save state data could not be written",
 //            NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
@@ -903,7 +920,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
     if(serialSize != length)
     {
-        #pragma message "fix error log"
+		// TODO: "fix error log"
 //        error = [NSError errorWithDomain:OEGameCoreErrorDomain
 //                                    code:OEGameCoreStateHasWrongSizeError
 //                                userInfo:@{
@@ -2204,6 +2221,18 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
         }
     }
 }
+
+//- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
+//
+//}
+//
+//- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player {
+//
+//}
+//
+//- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+//
+//}
 
 @end
 
