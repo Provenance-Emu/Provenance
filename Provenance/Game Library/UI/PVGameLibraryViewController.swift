@@ -1259,6 +1259,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					}
 				})
 				actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+				var cell: UICollectionViewCell?
+
+			if traitCollection.userInterfaceIdiom == .pad {
+                cell = collectionView?.cellForItem(at: indexPath)
+                actionSheet.popoverPresentationController?.sourceView = cell
+                actionSheet.popoverPresentationController?.sourceRect = (collectionView?.layoutAttributesForItem(at: indexPath)?.bounds ?? CGRect.zero)
+            }
 				present(actionSheet, animated: true)
 
 				return
