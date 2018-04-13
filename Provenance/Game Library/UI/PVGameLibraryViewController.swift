@@ -161,9 +161,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         // Scane all subclasses of  PVEmulator core, and get their metadata
         // like their subclass name and the bundle the belong to
         let coreClasses = PVEmulatorConfiguration.coreClasses
+		#if swift(>=4.1)
+		let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
+			return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
+		}
+		#else
         let corePlists = coreClasses.flatMap { (classInfo) -> URL? in
             return classInfo.bundle.url(forResource: "Core", withExtension: "plist")
         }
+		#endif
 
         PVEmulatorConfiguration.updateSystems(fromPlists: [Bundle.main.url(forResource: "Systems", withExtension: "plist")!])
         PVEmulatorConfiguration.updateCores(fromPlists: corePlists)

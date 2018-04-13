@@ -291,25 +291,27 @@ static void _ExecuteMainThreadRunLoopSources() {
 }
 
 - (void)didEndConnection:(GCDWebServerConnection*)connection {
+	MAKEWEAK(self);
   dispatch_sync(_syncQueue, ^{
-    GWS_DCHECK(_activeConnections > 0);
-    _activeConnections -= 1;
-    if (_activeConnections == 0) {
+	  MAKESTRONG(self);
+    GWS_DCHECK(strongself->_activeConnections > 0);
+    strongself->_activeConnections -= 1;
+    if (strongself->_activeConnections == 0) {
       dispatch_async(dispatch_get_main_queue(), ^{
-        if ((_disconnectDelay > 0.0) && (_source4 != NULL)) {
-          if (_disconnectTimer) {
-            CFRunLoopTimerInvalidate(_disconnectTimer);
-            CFRelease(_disconnectTimer);
+        if ((strongself->_disconnectDelay > 0.0) && (strongself->_source4 != NULL)) {
+          if (strongself->_disconnectTimer) {
+            CFRunLoopTimerInvalidate(strongself->_disconnectTimer);
+            CFRelease(strongself->_disconnectTimer);
           }
-          _disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
+          strongself->_disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
             GWS_DCHECK([NSThread isMainThread]);
-            [self _didDisconnect];
-            CFRelease(_disconnectTimer);
-            _disconnectTimer = NULL;
+            [strongself _didDisconnect];
+            CFRelease(strongself->_disconnectTimer);
+            strongself->_disconnectTimer = NULL;
           });
-          CFRunLoopAddTimer(CFRunLoopGetMain(), _disconnectTimer, kCFRunLoopCommonModes);
+          CFRunLoopAddTimer(CFRunLoopGetMain(), strongself->_disconnectTimer, kCFRunLoopCommonModes);
         } else {
-          [self _didDisconnect];
+          [strongself _didDisconnect];
         }
       });
     }
@@ -468,8 +470,9 @@ static inline NSString* _EncodeBase64(NSString* string) {
 - (dispatch_source_t)_createDispatchSourceWithListeningSocket:(int)listeningSocket isIPv6:(BOOL)isIPv6 {
   dispatch_group_enter(_sourceGroup);
   dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, listeningSocket, 0, dispatch_get_global_queue(_dispatchQueuePriority, 0));
+	MAKEWEAK(self);
   dispatch_source_set_cancel_handler(source, ^{
-
+	  MAKESTRONG(self);
     @autoreleasepool {
       int result = close(listeningSocket);
       if (result != 0) {
@@ -478,11 +481,11 @@ static inline NSString* _EncodeBase64(NSString* string) {
         GWS_LOG_DEBUG(@"Did close %s listening socket %i", isIPv6 ? "IPv6" : "IPv4", listeningSocket);
       }
     }
-    dispatch_group_leave(_sourceGroup);
+    dispatch_group_leave(strongself->_sourceGroup);
 
   });
   dispatch_source_set_event_handler(source, ^{
-
+	  MAKESTRONG(self);
     @autoreleasepool {
       struct sockaddr_storage remoteSockAddr;
       socklen_t remoteAddrLen = sizeof(remoteSockAddr);
@@ -503,7 +506,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
         int noSigPipe = 1;
         setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &noSigPipe, sizeof(noSigPipe));  // Make sure this socket cannot generate SIG_PIPE
 
-        GCDWebServerConnection* connection = [[_connectionClass alloc] initWithServer:self localAddress:localAddress remoteAddress:remoteAddress socket:socket];  // Connection will automatically retain itself while opened
+        GCDWebServerConnection* connection = [[strongself->_connectionClass alloc] initWithServer:self localAddress:localAddress remoteAddress:remoteAddress socket:socket];  // Connection will automatically retain itself while opened
         [connection self];  // Prevent compiler from complaining about unused variable / useless statement
       } else {
         GWS_LOG_ERROR(@"Failed accepting %s socket: %s (%i)", isIPv6 ? "IPv6" : "IPv4", strerror(errno), errno);

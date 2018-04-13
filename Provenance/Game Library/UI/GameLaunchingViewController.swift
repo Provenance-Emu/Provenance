@@ -49,7 +49,11 @@ extension GameLaunchingViewController where Self : UIViewController {
 
         let biosPathContents: [String]
         do {
+			#if swift(>=4.1)
+			biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).compactMap { $0.isFileURL ? $0.lastPathComponent : nil }
+			#else
             biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).flatMap { $0.isFileURL ? $0.lastPathComponent : nil }
+			#endif
         } catch {
             try? FileManager.default.createDirectory(at: system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
             let biosFiles = biosEntries.map { return $0.expectedFilename }.joined(separator: ", ")

@@ -168,6 +168,34 @@ public class PVGameImporter {
 
         // do CDs first to avoid the case where an item related to CDs is mistaken as another rom and moved
         // before processing its CD cue sheet or something
+		#if swift(>=4.1)
+		let updatedCanidateFiles = canidateFiles.compactMap { canidate -> ImportCanidateFile? in
+			if FileManager.default.fileExists(atPath: canidate.filePath.path) {
+				if isCDROM(canidate), let movedToPaths = moveCDROM(toAppropriateSubfolder: canidate) {
+
+					// Found a CD, can add moved files now to newPaths
+					let pathsString = {return movedToPaths.map { $0.path }.joined(separator: ", ") }
+					VLOG("Found a CD. Moved files to the following paths \(pathsString())")
+
+					// Return nil since we don't need the ImportCanidateFile anymore
+					// Files are already moved and imported to database (in theory),
+					// or moved to conflicts dir and already set the conflists flag - jm
+					return nil
+				} else if PVEmulatorConfiguration.artworkExtensions.contains(canidate.filePath.pathExtension.lowercased()), let game = PVGameImporter.importArtwork(fromPath: canidate.filePath) {
+					// Is artwork, import that
+					ILOG("Found artwork \(canidate.filePath.lastPathComponent) for game <\(game.title)>")
+					return nil
+				} else {
+					return canidate
+				}
+			} else {
+				if canidate.filePath.pathExtension != "bin" {
+					WLOG("File should have existed at \(canidate.filePath) but it might have been moved")
+				}
+				return nil
+			}
+		}
+		#else
         let updatedCanidateFiles = canidateFiles.flatMap { canidate -> ImportCanidateFile? in
             if FileManager.default.fileExists(atPath: canidate.filePath.path) {
                 if isCDROM(canidate), let movedToPaths = moveCDROM(toAppropriateSubfolder: canidate) {
@@ -194,9 +222,19 @@ public class PVGameImporter {
                 return nil
             }
         }
-
+		#endif
         // Add new paths from remaining canidate files
         // CD files that matched a system will be remove already at this point
+		#if swift(>=4.1)
+		let newPaths = updatedCanidateFiles.compactMap { canidate -> URL? in
+			if FileManager.default.fileExists(atPath: canidate.filePath.path) {
+				if let newPath = moveROM(toAppropriateSubfolder: canidate) {
+					return newPath
+				}
+			}
+			return nil
+		}
+		#else
         let newPaths = updatedCanidateFiles.flatMap { canidate -> URL? in
             if FileManager.default.fileExists(atPath: canidate.filePath.path) {
                 if let newPath = moveROM(toAppropriateSubfolder: canidate) {
@@ -205,7 +243,7 @@ public class PVGameImporter {
             }
             return nil
         }
-
+		#endif
         return newPaths
     }
 
