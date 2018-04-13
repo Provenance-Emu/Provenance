@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -582,8 +582,9 @@
 		1ACEA8DC17F75F350031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = "James Addyman";
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3C9D5311DEA83DE0068D057 = {
 						CreatedOnToolsVersion = 8.1;
@@ -596,7 +597,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA8DF17F75F350031B1C9 /* Build configuration list for PBXProject "PVSNES" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -934,7 +935,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -978,7 +979,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1022,7 +1023,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1063,7 +1064,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1107,7 +1108,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1151,7 +1152,7 @@
 					"-DNDEBUG",
 					"-D__LIBRETRO__",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSNES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSNES";
 				PRODUCT_NAME = PVSNES;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

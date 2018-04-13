@@ -26,7 +26,7 @@ public class PVDirectoryWatcher: NSObject {
     private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     var dispatch_source: DispatchSourceFileSystemObject?
-    let serialQueue: DispatchQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialExtractorQueue")
+    let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
 
     var previousContents: [URL]?
     private var reader: LzmaSDKObjCReader?

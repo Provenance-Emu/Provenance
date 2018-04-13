@@ -76,7 +76,7 @@ public class PVGameImporter {
     public var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
     public private(set) var encounteredConflicts = false
 
-    public private(set) var serialImportQueue: DispatchQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialImportQueue")
+    public private(set) var serialImportQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialImportQueue")
     public private(set) var systemToPathMap = [String: URL]()
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -431,8 +431,9 @@
 		081A45841B955FA800565444 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = "Chloe Stars";
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3CB85481E9BECBF009155A6 = {
 						CreatedOnToolsVersion = 8.3;
@@ -447,7 +448,7 @@
 				};
 			};
 			buildConfigurationList = 081A45871B955FA800565444 /* Build configuration list for PBXProject "PVPokeMini" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -297,8 +297,9 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = "James Addyman";
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -312,7 +313,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVSupport" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -542,7 +543,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -578,7 +579,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -613,7 +614,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -647,7 +648,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -682,7 +683,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -716,7 +717,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;

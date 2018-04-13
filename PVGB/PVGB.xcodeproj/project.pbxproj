@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -656,8 +656,9 @@
 		1AABDFD41ABE366000FF6AEF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = JamSoft;
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3C9D4391DEA6AFB0068D057 = {
 						CreatedOnToolsVersion = 8.1;
@@ -670,7 +671,7 @@
 				};
 			};
 			buildConfigurationList = 1AABDFD71ABE366000FF6AEF /* Build configuration list for PBXProject "PVGB" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -972,7 +973,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1005,7 +1006,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1038,7 +1039,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1069,7 +1070,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1102,7 +1103,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -1135,7 +1136,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_CFLAGS = "-DHAVE_STDINT_H";
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGB;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGB";
 				PRODUCT_NAME = PVGB;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;

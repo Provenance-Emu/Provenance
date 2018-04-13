@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1427,8 +1427,9 @@
 		1A3A74E01ABF11AC002274A3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = JamSoft;
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3A9F4351DE877B4008450F5 = {
 						CreatedOnToolsVersion = 8.1;
@@ -1443,7 +1444,7 @@
 				};
 			};
 			buildConfigurationList = 1A3A74E31ABF11AC002274A3 /* Build configuration list for PBXProject "PVFCEU" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (

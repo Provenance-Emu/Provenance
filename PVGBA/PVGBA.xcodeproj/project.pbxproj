@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -468,8 +468,9 @@
 		1A9FBC121ABD0DA7004E778B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = JamSoft;
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3C9D4B71DEA77DF0068D057 = {
 						CreatedOnToolsVersion = 8.1;
@@ -482,7 +483,7 @@
 				};
 			};
 			buildConfigurationList = 1A9FBC151ABD0DA7004E778B /* Build configuration list for PBXProject "PVGBA" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -779,7 +780,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -818,7 +819,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -857,7 +858,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -894,7 +895,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -933,7 +934,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -972,7 +973,7 @@
 					"-DNO_PNG",
 					"-DTILED_RENDERING",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVGBA;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenanve-emu.PVGBA";
 				PRODUCT_NAME = PVGBA;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
