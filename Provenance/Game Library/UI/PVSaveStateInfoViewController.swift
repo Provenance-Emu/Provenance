@@ -24,11 +24,22 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 
 	var saveState : PVSaveState? {
 		didSet {
-			if isViewLoaded {
-				updateLabels()
+			assert(saveState != nil, "Set a nil game")
+
+			if saveState != oldValue {
+				registerForChange()
+
+				if isViewLoaded {
+					updateLabels()
+				}
 			}
 		}
 	}
+
+	deinit {
+		token?.invalidate()
+	}
+
 	override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -110,6 +121,25 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 				libVC.openSaveState(saveState)
 			})
 		}
+	}
+
+	var token: NotificationToken?
+	func registerForChange() {
+		token?.invalidate()
+		token = saveState?.observe({ (change) in
+			switch change {
+			case .change(let properties):
+				if !properties.isEmpty, isViewLoaded {
+					DispatchQueue.main.async {
+						self.updateLabels()
+					}
+				}
+			case .error(let error):
+				ELOG("An error occurred: \(error)")
+			case .deleted:
+				print("The object was deleted.")
+			}
+		})
 	}
 }
 
