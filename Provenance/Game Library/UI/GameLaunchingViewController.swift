@@ -19,7 +19,7 @@ import UIKit
 public protocol GameLaunchingViewController: class {
     var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
-    func load(_ game: PVGame, sender : Any?)
+	func load(_ game: PVGame, sender : Any?, core: PVCore?)
 	func openSaveState(_ saveState: PVSaveState)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
@@ -193,10 +193,12 @@ extension GameLaunchingViewController where Self : UIViewController {
 			coreChoiceAlert.addAction(action)
 		}
 
+		coreChoiceAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+
 		present(coreChoiceAlert, animated: true)
 	}
 
-	func load(_ game: PVGame, sender : Any?) {
+	func load(_ game: PVGame, sender : Any?, core: PVCore?) {
         guard !(presentedViewController is PVEmulatorViewController) else {
             let currentGameVC = presentedViewController as! PVEmulatorViewController
             displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
@@ -225,10 +227,20 @@ extension GameLaunchingViewController where Self : UIViewController {
 				return
 			}
 
+			var selectedCore : PVCore?
+
+			// If a core is passed in and it's valid for this system, use it.
+			if let core = core, cores.contains(core) {
+				selectedCore = core
+			}
+
 			// Check if multiple cores can launch thi rom
-			if cores.count > 1 {
+			if selectedCore == nil, cores.count > 1 {
+
 				let coresString : String = cores.map({return $0.projectName}).joined(separator: ", ")
 				ILOG("Multiple cores found for system \(system.name). Cores: \(coresString)")
+
+				// See if the system or game has a default selection already set
 				if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
 					let chosenCore = cores.first(where: { return $0.identifier == userSelecion }) {
 					ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
@@ -236,9 +248,10 @@ extension GameLaunchingViewController where Self : UIViewController {
 					return
 				}
 
+				// User has no core preference, present dialogue to pick
 				presentCoreSelection(forGame: game, sender: sender)
 			} else {
-				presentEMU(withCore: cores.first!, forGame: game)
+				presentEMU(withCore: selectedCore ?? cores.first!, forGame: game)
 			}
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out

@@ -1188,7 +1188,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         let recentGames = database.all(PVGame.self, where: #keyPath(PVGame.md5Hash), value: md5)
 
         if let mostRecentGame = recentGames.first {
-			load(mostRecentGame, sender: collectionView)
+			load(mostRecentGame, sender: collectionView, core:nil)
         } else {
             ELOG("No game found for MD5 \(md5)")
         }
@@ -1948,7 +1948,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 		if indexPath.section == saveStateSection {
 			let cell = collectionView.cellForItem(at: indexPath)
 			let saveState = saveStates![indexPath.row]
-			load(saveState.game, sender: cell)
+			load(saveState.game, sender: cell, core: saveState.core)
 
 			DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
 				self.openSaveState(saveState)
@@ -1957,7 +1957,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 		} else {
 			if let game = self.game(at: indexPath) {
 				let cell = collectionView.cellForItem(at: indexPath)
-                load(game, sender: cell)
+				load(game, sender: cell, core: nil)
 			} else {
 				let alert = UIAlertController(title: "Failed to find game", message: "No game found for selected cell", preferredStyle: .alert)
 				alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
