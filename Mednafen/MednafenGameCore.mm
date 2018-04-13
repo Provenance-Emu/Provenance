@@ -95,6 +95,7 @@ static MDFN_Surface *frontBufferSurf;
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
 int SNESMap[PVSNESButtonCount];
+int PCEMap[PVPCEButtonCount];
 
 namespace MDFN_IEN_VB
 {
@@ -281,6 +282,22 @@ static void mednafen_init(MednafenGameCore* current)
 		SNESMap[PVSNESButtonStart] 	= 3;
 		SNESMap[PVSNESButtonSelect]	= 2;
 
+		// PCE Map
+		PCEMap[PVPCEButtonUp]		= 4;
+		PCEMap[PVPCEButtonDown] 	= 6;
+		PCEMap[PVPCEButtonLeft] 	= 7;
+		PCEMap[PVPCEButtonRight] 	= 5;
+
+		PCEMap[PVPCEButtonButton1] 	= 0;
+		PCEMap[PVPCEButtonButton2] 	= 1;
+		PCEMap[PVPCEButtonButton3] 	= 8;
+		PCEMap[PVPCEButtonButton4] 	= 9;
+		PCEMap[PVPCEButtonButton5] 	= 10;
+		PCEMap[PVPCEButtonButton6] 	= 11;
+
+		PCEMap[PVPCEButtonRun]		= 3;
+		PCEMap[PVPCEButtonSelect] 	= 2;
+		PCEMap[PVPCEButtonMode] 	= 12;
     }
 
     return self;
@@ -910,7 +927,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 // Map OE button order to Mednafen button order
 
 const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
-const int PCEMap[]  = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12 };
 const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
 // u, d, l, r, a, b, start, select
 const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
@@ -1661,30 +1677,40 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
         GCExtendedGamepad *gamePad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamePad dpad];
         switch (buttonID) {
-            case PVPCEButtonUp:
-                return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] isPressed];
+				// D-PAD
+			case PVPCEButtonUp:
+                return [[dpad up] isPressed]?:[[[gamePad leftThumbstick] up] value] > 0.1;
             case PVPCEButtonDown:
-                return [[dpad down] isPressed]?:[[[gamePad leftThumbstick] down] isPressed];
+                return [[dpad down] isPressed]?:[[[gamePad leftThumbstick] down] value] > 0.1;
             case PVPCEButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamePad leftThumbstick] left] isPressed];
+                return [[dpad left] isPressed]?:[[[gamePad leftThumbstick] left] value] > 0.1;
             case PVPCEButtonRight:
-                return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] isPressed];
-            case PVPCEButtonButton3:
-                return [[gamePad buttonX] isPressed];
-            case PVPCEButtonButton2:
-                return [[gamePad buttonA] isPressed];
-            case PVPCEButtonButton1:
-                return [[gamePad buttonB] isPressed];
-            case PVPCEButtonButton4:
+                return [[dpad right] isPressed]?:[[[gamePad leftThumbstick] right] value] > 0.1;
+
+				// Standard buttons
+			case PVPCEButtonButton1:
+				return [[gamePad buttonB] isPressed];
+			case PVPCEButtonButton2:
+				return [[gamePad buttonA] isPressed];
+
+			case PVPCEButtonSelect:
+				return [[gamePad leftTrigger] isPressed];
+			case PVPCEButtonRun:
+				return [[gamePad rightTrigger] isPressed];
+
+				// Extened buttons
+			case PVPCEButtonButton3:
                 return [[gamePad leftShoulder] isPressed];
-            case PVPCEButtonButton5:
-                return [[gamePad buttonY] isPressed];
-            case PVPCEButtonButton6:
+            case PVPCEButtonButton4:
                 return [[gamePad rightShoulder] isPressed];
+            case PVPCEButtonButton5:
+                return [[gamePad buttonX] isPressed];
+            case PVPCEButtonButton6:
+                return [[gamePad buttonY] isPressed];
+
+				// Toggle the mode special buttons are pressed
             case PVPCEButtonMode:
-                return [[gamePad leftTrigger] isPressed];
-            case PVPCEButtonRun:
-                return [[gamePad leftTrigger] isPressed];
+                return [[gamePad buttonX] isPressed] || [[gamePad leftShoulder] isPressed] || [[gamePad buttonY] isPressed] || [[gamePad rightShoulder] isPressed];
             default:
                 break;
         }
@@ -1702,18 +1728,30 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
                 return [[dpad left] isPressed];
             case PVPCEButtonRight:
                 return [[dpad right] isPressed];
+				// Standard Buttons
+			case PVPCEButtonButton1:
+				return [[gamePad buttonB] isPressed];
+			case PVPCEButtonButton2:
+				return [[gamePad buttonA] isPressed];
+
+			case PVPCEButtonSelect:
+				return [[gamePad leftShoulder] isPressed];
+			case PVPCEButtonRun:
+				return [[gamePad rightShoulder] isPressed];
+
+				// Extended Buttons
             case PVPCEButtonButton3:
                 return [[gamePad buttonX] isPressed];
-            case PVPCEButtonButton2:
-                return [[gamePad buttonA] isPressed];
-            case PVPCEButtonButton1:
-                return [[gamePad buttonB] isPressed];
             case PVPCEButtonButton4:
-                return [[gamePad leftShoulder] isPressed];
-            case PVPCEButtonButton5:
                 return [[gamePad buttonY] isPressed];
-            case PVPCEButtonButton6:
-                return [[gamePad rightShoulder] isPressed];
+//            case PVPCEButtonButton5:
+//                return [[gamePad leftShoulder] isPressed];
+//            case PVPCEButtonButton6:
+//                return [[gamePad rightShoulder] isPressed];
+
+				// Toggle the mode special buttons are pressed
+			case PVPCEButtonMode:
+				return [[gamePad buttonX] isPressed] || [[gamePad buttonY] isPressed];
             default:
                 break;
         }
