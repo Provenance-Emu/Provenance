@@ -104,13 +104,13 @@ class PVControllerSelectionViewController: UITableViewController {
 
             actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 if indexPath.row == 0 {
-                    PVControllerManager.shared.player1 = controller
+					PVControllerManager.shared.setController(controller, toPlayer: 1)
                 } else if indexPath.row == 1 {
-                    PVControllerManager.shared.player2 = controller
+					PVControllerManager.shared.setController(controller, toPlayer: 2)
                 } else if indexPath.row == 2 {
-                    PVControllerManager.shared.player3 = controller
+					PVControllerManager.shared.setController(controller, toPlayer: 3)
                 } else if indexPath.row == 3 {
-                    PVControllerManager.shared.player4 = controller
+					PVControllerManager.shared.setController(controller, toPlayer: 4)
                 }
                 self.tableView.reloadData()
                 PVControllerManager.shared.stopListeningForICadeControllers()
@@ -118,15 +118,15 @@ class PVControllerSelectionViewController: UITableViewController {
         }
 
         actionSheet.addAction(UIAlertAction(title: "Not Playing", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            if indexPath.row == 0 {
-                PVControllerManager.shared.player1 = nil
-            } else if indexPath.row == 1 {
-                PVControllerManager.shared.player2 = nil
-            } else if indexPath.row == 2 {
-                PVControllerManager.shared.player3 = nil
-            } else if indexPath.row == 3 {
-                PVControllerManager.shared.player4 = nil
-            }
+			if indexPath.row == 0 {
+				PVControllerManager.shared.setController(nil, toPlayer: 1)
+			} else if indexPath.row == 1 {
+				PVControllerManager.shared.setController(nil, toPlayer: 2)
+			} else if indexPath.row == 2 {
+				PVControllerManager.shared.setController(nil, toPlayer: 3)
+			} else if indexPath.row == 3 {
+				PVControllerManager.shared.setController(nil, toPlayer: 4)
+			}
             self.tableView.reloadData()
             PVControllerManager.shared.stopListeningForICadeControllers()
         }))
@@ -134,7 +134,7 @@ class PVControllerSelectionViewController: UITableViewController {
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: {[unowned self] () -> Void in
-            PVControllerManager.shared.listenForICadeControllers(forPlayer: player, window: actionSheet.view.window, completion: {() -> Void in
+			PVControllerManager.shared.listenForICadeControllers(window: actionSheet.view.window, preferredPlayer: indexPath.row + 1, completion: {() -> Void in
                 self.tableView.reloadData()
                 actionSheet.dismiss(animated: true) {() -> Void in }
             })
