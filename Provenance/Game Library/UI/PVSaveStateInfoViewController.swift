@@ -129,7 +129,7 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 		token = saveState?.observe({ (change) in
 			switch change {
 			case .change(let properties):
-				if !properties.isEmpty, isViewLoaded {
+				if !properties.isEmpty, self.isViewLoaded {
 					DispatchQueue.main.async {
 						self.updateLabels()
 					}

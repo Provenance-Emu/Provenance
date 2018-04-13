@@ -266,6 +266,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
     }
 
+	deinit {
+		token?.invalidate()
+	}
+
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
 //    }
@@ -605,10 +609,11 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     var token: NotificationToken?
     func registerForChange() {
+		token?.invalidate()
         token = game?.observe({ (change) in
             switch change {
             case .change(let properties):
-                if !properties.isEmpty {
+                if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async {
                         self.updateContent()
                     }
