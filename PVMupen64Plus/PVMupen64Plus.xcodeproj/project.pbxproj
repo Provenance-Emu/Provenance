@@ -31,6 +31,8 @@
 		B331158F1C7309C200E9AD14 /* PVRSPCXD4.h in Headers */ = {isa = PBXBuildFile; fileRef = B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3335613207B3C8D0036A448 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335612207B3C8D0036A448 /* PVSupport.framework */; };
 		B334D0071DFBA640008E8B1F /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B334D0061DFBA640008E8B1F /* PVSupport.framework */; };
+		B34601D62081333D008C049C /* gliden_osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34601D320813330008C049C /* gliden_osd.cpp */; };
+		B34601D72081333E008C049C /* gliden_osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34601D320813330008C049C /* gliden_osd.cpp */; };
 		B3547B462058531200CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
 		B35B3149206C7C9300AEAF88 /* gSPNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603262038AE7B001E70F1 /* gSPNeon.cpp */; };
 		B35B314A206C7C9300AEAF88 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
@@ -381,8 +383,6 @@
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
 		B3EA4482206E309500E608F6 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA4481206E309500E608F6 /* libbz2.tbd */; };
 		B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
-		B3EA4489206E372500E608F6 /* TextDrawerStub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */; };
-		B3EA448A206E372500E608F6 /* TextDrawerStub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */; };
 		B3EA448B206E471200E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
 		B3EA448C206E471300E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
 		B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
@@ -1226,6 +1226,7 @@
 		B33115901C7309C200E9AD14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3335612207B3C8D0036A448 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B334D0061DFBA640008E8B1F /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
+		B34601D320813330008C049C /* gliden_osd.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gliden_osd.cpp; sourceTree = "<group>"; };
 		B35B3166206C8E0F00AEAF88 /* L3D.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = L3D.h; sourceTree = "<group>"; };
 		B35B3167206C8E0F00AEAF88 /* F3DPD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DPD.h; sourceTree = "<group>"; };
 		B35B3168206C8E0F00AEAF88 /* F3DDKR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DDKR.h; sourceTree = "<group>"; };
@@ -2128,6 +2129,7 @@
 				3D00F06C1183E4AA002995A1 /* screenshot.m */,
 				3D00F0BF1183E6FA002995A1 /* vidext.m */,
 				3D8B35D712260F9D00C4C844 /* main.m */,
+				B34601D320813330008C049C /* gliden_osd.cpp */,
 			);
 			path = Compatibility;
 			sourceTree = "<group>";
@@ -5288,13 +5290,13 @@
 				DFB604DC2038BC0B001E70F1 /* glsl_Utils.cpp in Sources */,
 				DFB6043C2038BA86001E70F1 /* TexrectDrawer.cpp in Sources */,
 				DFB604B02038BBD5001E70F1 /* opengl_ColorBufferReaderWithBufferStorage.cpp in Sources */,
+				B34601D62081333D008C049C /* gliden_osd.cpp in Sources */,
 				DFB604662038BAD7001E70F1 /* DepthBufferRender.cpp in Sources */,
 				DFB603EC2038B9DD001E70F1 /* DisplayWindow.cpp in Sources */,
 				B35B3197206C8E2700AEAF88 /* F3DAM.cpp in Sources */,
 				DFB604D72038BC0B001E70F1 /* glsl_CombinerProgramBuilder.cpp in Sources */,
 				B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */,
 				DFB604D92038BC0B001E70F1 /* glsl_CombinerProgramUniformFactory.cpp in Sources */,
-				B3EA4489206E372500E608F6 /* TextDrawerStub.cpp in Sources */,
 				B35B31A3206C8E2700AEAF88 /* F3DTEXA.cpp in Sources */,
 				B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */,
 				DFB6046E2038BAE1001E70F1 /* CommonAPIImpl_common.cpp in Sources */,
@@ -5398,6 +5400,7 @@
 				DFB604462038BA87001E70F1 /* TexrectDrawer.cpp in Sources */,
 				DFB604BD2038BBD6001E70F1 /* opengl_ColorBufferReaderWithBufferStorage.cpp in Sources */,
 				DFB6046A2038BAD7001E70F1 /* DepthBufferRender.cpp in Sources */,
+				B34601D72081333E008C049C /* gliden_osd.cpp in Sources */,
 				DFB603F02038B9DE001E70F1 /* DisplayWindow.cpp in Sources */,
 				B35B31AF206C8E2700AEAF88 /* F3DAM.cpp in Sources */,
 				DFB604DE2038BC0C001E70F1 /* glsl_CombinerProgramBuilder.cpp in Sources */,
@@ -5429,7 +5432,6 @@
 				B35B31B7206C8E2700AEAF88 /* F3DGOLDEN.cpp in Sources */,
 				DFB604222038BA3D001E70F1 /* PaletteTexture.cpp in Sources */,
 				DFB6045E2038BAB8001E70F1 /* DepthBufferToRDRAM.cpp in Sources */,
-				B3EA448A206E372500E608F6 /* TextDrawerStub.cpp in Sources */,
 				B35B31CD206CA65A00AEAF88 /* CRC_OPT_NEON.cpp in Sources */,
 				DFB604082038BA09001E70F1 /* GLideN64.cpp in Sources */,
 				DFB6061B2038BD73001E70F1 /* mupen64plus_DisplayWindow.cpp in Sources */,

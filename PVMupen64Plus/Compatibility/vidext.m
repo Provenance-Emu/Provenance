@@ -48,12 +48,17 @@ EXPORT m64p_error CALL VidExt_Quit(void)
 
 EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *NumSizes)
 {
-    *NumSizes = 0;
+	m64p_2d_size size[1];
+	size[0].uiWidth = 640;
+	size[0].uiHeight = 480;
+	SizeArray = &size;
+    *NumSizes = 1;
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPixel, m64p_video_mode ScreenMode, m64p_video_flags Flags)
 {
+	DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, ScreenMode == 1 ? @"None" : ScreenMode == 2 ? @"Windowed" : @"Fullscreen");
     GET_CURRENT_OR_RETURN(M64ERR_SUCCESS);
 
     current.videoWidth = Width;
@@ -67,12 +72,13 @@ EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPix
 
 EXPORT m64p_error CALL VidExt_SetCaption(const char *Title)
 {
-    DLog(@"Mupen caption: %s", Title);
+    DLOG(@"Mupen caption: %s", Title);
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_ToggleFullScreen(void)
 {
+	DLOG(@"VidExt_ToggleFullScreen - Unimplimented");
     return M64ERR_UNSUPPORTED;
 }
 
@@ -83,6 +89,7 @@ EXPORT void * CALL VidExt_GL_GetProcAddress(const char* Proc)
 
 EXPORT m64p_error CALL VidExt_GL_SetAttribute(m64p_GLattr Attr, int Value)
 {
+	DLOG(@"Set: %i, Value: %i -- Unimplimented.", Attr, Value);
     // TODO configure MSAA here, whatever else is possible
     return M64ERR_UNSUPPORTED;
 }
@@ -113,7 +120,7 @@ EXPORT m64p_error CALL VidExt_ResizeWindow(int width, int height)
 
 int VidExt_InFullscreenMode(void)
 {
-    return 0;
+    return 1;
 }
 
 int VidExt_VideoRunning(void)

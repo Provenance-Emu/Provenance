@@ -72,6 +72,12 @@ NSString *MupenControlNames[] = {
 __weak MupenGameCore *_current = 0;
 
 static void (*ptr_PV_ForceUpdateWindowSize)(int width, int height);
+static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, float _x, float _y));
+
+EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
+{
+//	DLOG("%s", _pText);
+}
 
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
@@ -440,17 +446,17 @@ static void MupenSetAudioSpeed(int percent)
     int emulator = 1;
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
-    // Draw on-screen display if True, otherwise don't draw OSD
-    int osd = 0;
-    ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
-
+	ConfigSaveSection("Core");
     /** End Core Config **/
-    ConfigSaveSection("Core");
-    
-    /** Begin Video Config **/
+
+    /** Begin General Video Config **/
     m64p_handle general;
     ConfigOpenSection("Video-General", &general);
-    
+
+	// Use fullscreen mode
+	int useFullscreen = 1;
+	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
+
     // Screen width
     int screenWidth = 640;
     ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
@@ -458,21 +464,36 @@ static void MupenSetAudioSpeed(int percent)
     // Screen height
     int screenHeight = 480;
     ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
-    
-    /** End Video Config **/
+
+	ConfigSaveSection("Video-General");
+    /** End General Video Config **/
     
     /** Begin GLideN64 Config **/
     m64p_handle gliden64;
     ConfigOpenSection("Video-GLideN64", &gliden64);
     
     // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-    int aspectRatio = 1;
+    int aspectRatio = 3;
     ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
     
     // Per-pixel lighting
-    int enableHWLighting = 0;
+    int enableHWLighting = 1;
     ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
-    
+
+	// HiRez textures
+	int txHiresEnable = 1;
+	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &enableHWLighting);
+
+	// Draw on-screen display if True, otherwise don't draw OSD
+	int osd = 1;
+	ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+	ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);			// Show FPS counter.
+	ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);			// Show VI/S counter.
+	ConfigSetParameter(gliden64, "ShowPercent", M64TYPE_BOOL, &osd);		// Show percent counter.
+	ConfigSetParameter(gliden64, "ShowInternalResolution", M64TYPE_BOOL, &osd);	// Show internal resolution.
+	ConfigSetParameter(gliden64, "ShowRenderingResolution", M64TYPE_BOOL, &osd);	// Show rendering resolution.
+
+	ConfigSaveSection("Video-GLideN64");
     /** End GLideN64 Config **/
     
     /** RICE CONFIG **/
@@ -631,6 +652,10 @@ static void MupenSetAudioSpeed(int percent)
 	} else {
 		ILOG("64bit and GLES3. Using GLiden64 GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
+
+		ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");
+		ptr_SetOSDCallback(PV_DrawOSD);
+
 	}
 #endif
 	
@@ -746,17 +771,17 @@ static void MupenSetAudioSpeed(int percent)
         } else {
             NSLog(@"ROM closed");
         }
-        
-        if(CoreShutdown() != M64ERR_SUCCESS) {
-            NSLog(@"Core shutdown failed");
-        }else {
-            NSLog(@"Core shutdown successfully");
-        }
-        
+
         // Unlock rendering thread
         dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
 
         [super stopEmulation];
+
+		if(CoreShutdown() != M64ERR_SUCCESS) {
+			NSLog(@"Core shutdown failed");
+		}else {
+			NSLog(@"Core shutdown successfully");
+		}
     }
 }
 
