@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
+		B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDEF8207FF0E300E661D1 /* libsnes.a */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3223CDE1E09E0CB007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
@@ -3425,6 +3427,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B302BFA220824FD60029CEDB /* libsnes.a in Frameworks */,
+				B302BFA0208244380029CEDB /* libsnes_faust.a in Frameworks */,
 				B3335874207B43640036A448 /* libcdrom.a in Frameworks */,
 				B33355FA207B3BBA0036A448 /* libgb.a in Frameworks */,
 				B33355FB207B3BBA0036A448 /* libgba.a in Frameworks */,
@@ -11194,6 +11198,11 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					LSB_FIRST,
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -11238,6 +11247,10 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					LSB_FIRST,
+					"$(inherited)",
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;

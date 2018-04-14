@@ -32,13 +32,13 @@ public extension UITraitCollection {
 
         case forceTouchCapability(UIForceTouchCapability)
 
-        @available(iOS 10.0, *)
+        @available(iOS 10.0, tvOS 10.0, *)
         case layoutDirection(UITraitEnvironmentLayoutDirection)
 
         @available(iOSApplicationExtension 10.0, *)
         case preferredContentSizeCategory(UIContentSizeCategory)
 
-        @available(iOS 10.0, *)
+		@available(iOS 10.0, tvOS 10.0, *)
         case displayGamut(UIDisplayGamut)
     }
 
@@ -62,19 +62,19 @@ public extension UITraitCollection {
                 preconditionFailure("SwiftyAppearance: forceTouchCapability trait not available on this platform")
             }
         case let .layoutDirection(value):
-            if #available(iOS 10.0, *) {
+            if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(layoutDirection: value)
             } else {
                 preconditionFailure("SwiftyAppearance: layoutDirection trait not available on this platform")
             }
         case let .preferredContentSizeCategory(value):
-            if #available(iOS 10.0, *) {
+			if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(preferredContentSizeCategory: value)
             } else {
                 preconditionFailure("SwiftyAppearance: preferredContentSizeCategory trait not available on this platform")
             }
         case let .displayGamut(value):
-            if #available(iOS 10.0, *) {
+			if #available(iOS 10.0, tvOS 10.0, *) {
                 self.init(displayGamut: value)
             } else {
                 preconditionFailure("SwiftyAppearance: displayGamut trait not available on this platform")

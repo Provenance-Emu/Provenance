@@ -149,7 +149,7 @@ class PVTVSettingsViewController: UITableViewController {
                         let reachability = Reachability.forLocalWiFi()
                         reachability.startNotifier()
                         let status: NetworkStatus = reachability.currentReachabilityStatus()
-                        if status != ReachableViaWiFi {
+                        if status != .reachableViaWiFi {
                             let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                             }))
