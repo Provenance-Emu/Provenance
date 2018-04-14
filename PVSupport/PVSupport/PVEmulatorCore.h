@@ -30,8 +30,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeMissingM3U               = -7,
 };
 
-#define GetSecondsSince(x) (-[x timeIntervalSinceNow])
-
 @protocol PVAudioDelegate
 @required
 - (void)audioSampleRateDidChange;
