@@ -87,14 +87,11 @@ class PVControllerManager: NSObject {
 				#if os(tvOS)
 				if self.player1 == nil || self.player1?.microGamepad != nil {
 					player = 1
-				}
-				else if self.player2 == nil || self.player2?.microGamepad != nil {
+				} else if self.player2 == nil || self.player2?.microGamepad != nil {
 					player = 2
-				}
-				else if self.player3 == nil || self.player3?.microGamepad != nil {
+				} else if self.player3 == nil || self.player3?.microGamepad != nil {
 					player = 3
-				}
-				else if self.player4 == nil || self.player4?.microGamepad != nil {
+				} else if self.player4 == nil || self.player4?.microGamepad != nil {
 					player = 1
 				} else {
 					completion?()
@@ -103,14 +100,11 @@ class PVControllerManager: NSObject {
 				#else
 				if self.player1 == nil {
 					player = 1
-				}
-				else if self.player2 == nil {
+				} else if self.player2 == nil {
 					player = 2
-				}
-				else if self.player3 == nil {
+				} else if self.player3 == nil {
 					player = 3
-				}
-				else if self.player4 == nil {
+				} else if self.player4 == nil {
 					player = 1
 				} else {
 					completion?()
@@ -312,7 +306,7 @@ class PVControllerManager: NSObject {
 			return false
 		}
 
-		ILOG("Assign controller \(controller.vendorName)")
+		ILOG("Assign controller \(controller.vendorName ?? "nil")")
         // Assign the controller to the first player without a controller assigned, or
         // if this is an extended controller, replace the first controller which is not extended (the Siri remote on tvOS).
         for i in 1...4 {
@@ -330,7 +324,7 @@ class PVControllerManager: NSObject {
                 setController(controller, toPlayer: i)
                 // Move the previously assigned controller to another player
                 if let previouslyAssignedController = previouslyAssignedController {
-					ILOG("Controller #\(i) \(previouslyAssignedController.vendorName) being reassigned")
+					ILOG("Controller #\(i) \(previouslyAssignedController.vendorName ?? "nil") being reassigned")
                     assign(previouslyAssignedController)
                 }
                 NotificationCenter.default.post(name: NSNotification.Name.PVControllerManagerControllerReassigned, object: self)

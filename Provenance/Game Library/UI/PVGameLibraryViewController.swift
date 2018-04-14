@@ -379,7 +379,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				if self.searchResults != nil {
 					return
 				}
-				
+
                 // Query results have changed, so apply them to the UICollectionView
                 guard let indexOfSystem = self.systems?.index(of: system) else {
                     return
@@ -424,7 +424,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				if self.searchResults != nil {
 					return
 				}
-				
+
                 guard let collectionView = self.collectionView else {return}
                 collectionView.performBatchUpdates({
                     let insertIndexes = insertions.map { $0 + self.systemsSectionOffset }
@@ -461,7 +461,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				if self.searchResults != nil {
 					return
 				}
-				
+
 				let needsInsert = self.saveStatesIsHidden && !insertions.isEmpty
 				let needsDelete = (self.saveStates?.isEmpty ?? true) && !deletions.isEmpty
 

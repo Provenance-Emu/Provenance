@@ -49,7 +49,7 @@
                     [[weakSelf.iCadeGamepad dpad] padChanged];
                     break;
                 default:
-					WLOG(@"Unknown iCade key %s", (char)button);
+					WLOG(@"Unknown iCade key %0x", button);
                     break;
             }
             if (weakSelf.controllerPressedAnyKey) {

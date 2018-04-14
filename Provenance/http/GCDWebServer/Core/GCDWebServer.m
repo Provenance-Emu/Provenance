@@ -239,20 +239,20 @@ static void _ExecuteMainThreadRunLoopSources() {
 - (void)willStartConnection:(GCDWebServerConnection*)connection {
   dispatch_sync(_syncQueue, ^{
 
-    GWS_DCHECK(_activeConnections >= 0);
-    if (_activeConnections == 0) {
+	  GWS_DCHECK(self->_activeConnections >= 0);
+	  if (self->_activeConnections == 0) {
       dispatch_async(dispatch_get_main_queue(), ^{
-        if (_disconnectTimer) {
-          CFRunLoopTimerInvalidate(_disconnectTimer);
-          CFRelease(_disconnectTimer);
-          _disconnectTimer = NULL;
+		  if (self->_disconnectTimer) {
+			CFRunLoopTimerInvalidate(self->_disconnectTimer);
+			CFRelease(self->_disconnectTimer);
+			  self->_disconnectTimer = NULL;
         }
-        if (_connected == NO) {
+		  if (self->_connected == NO) {
           [self _didConnect];
         }
       });
     }
-    _activeConnections += 1;
+	  self->_activeConnections += 1;
 
   });
 }
@@ -303,7 +303,7 @@ static void _ExecuteMainThreadRunLoopSources() {
             CFRunLoopTimerInvalidate(strongself->_disconnectTimer);
             CFRelease(strongself->_disconnectTimer);
           }
-          strongself->_disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + _disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
+			strongself->_disconnectTimer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + self->_disconnectDelay, 0.0, 0, 0, ^(CFRunLoopTimerRef timer) {
             GWS_DCHECK([NSThread isMainThread]);
             [strongself _didDisconnect];
             CFRelease(strongself->_disconnectTimer);
@@ -563,14 +563,14 @@ static inline NSString* _EncodeBase64(NSString* string) {
     _authenticationBasicAccounts = [[NSMutableDictionary alloc] init];
     NSDictionary* accounts = _GetOption(_options, GCDWebServerOption_AuthenticationAccounts, @{});
     [accounts enumerateKeysAndObjectsUsingBlock:^(NSString* username, NSString* password, BOOL* stop) {
-      [_authenticationBasicAccounts setObject:_EncodeBase64([NSString stringWithFormat:@"%@:%@", username, password]) forKey:username];
+		[self->_authenticationBasicAccounts setObject:_EncodeBase64([NSString stringWithFormat:@"%@:%@", username, password]) forKey:username];
     }];
   } else if ([authenticationMethod isEqualToString:GCDWebServerAuthenticationMethod_DigestAccess]) {
     _authenticationRealm = [_GetOption(_options, GCDWebServerOption_AuthenticationRealm, _serverName) copy];
     _authenticationDigestAccounts = [[NSMutableDictionary alloc] init];
     NSDictionary* accounts = _GetOption(_options, GCDWebServerOption_AuthenticationAccounts, @{});
     [accounts enumerateKeysAndObjectsUsingBlock:^(NSString* username, NSString* password, BOOL* stop) {
-      [_authenticationDigestAccounts setObject:GCDWebServerComputeMD5Digest(@"%@:%@:%@", username, _authenticationRealm, password) forKey:username];
+		[self->_authenticationDigestAccounts setObject:GCDWebServerComputeMD5Digest(@"%@:%@:%@", username, self->_authenticationRealm, password) forKey:username];
     }];
   }
   _connectionClass = _GetOption(_options, GCDWebServerOption_ConnectionClass, [GCDWebServerConnection class]);
@@ -635,7 +635,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   GWS_LOG_INFO(@"%@ started on port %i and reachable at %@", [self class], (int)_port, self.serverURL);
   if ([_delegate respondsToSelector:@selector(webServerDidStart:)]) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      [_delegate webServerDidStart:self];
+		[self->_delegate webServerDidStart:self];
     });
   }
 
@@ -696,10 +696,10 @@ static inline NSString* _EncodeBase64(NSString* string) {
   _authenticationDigestAccounts = nil;
 
   dispatch_async(dispatch_get_main_queue(), ^{
-    if (_disconnectTimer) {
-      CFRunLoopTimerInvalidate(_disconnectTimer);
-      CFRelease(_disconnectTimer);
-      _disconnectTimer = NULL;
+	  if (self->_disconnectTimer) {
+		CFRunLoopTimerInvalidate(self->_disconnectTimer);
+		CFRelease(self->_disconnectTimer);
+		self->_disconnectTimer = NULL;
       [self _didDisconnect];
     }
   });
@@ -707,7 +707,7 @@ static inline NSString* _EncodeBase64(NSString* string) {
   GWS_LOG_INFO(@"%@ stopped", [self class]);
   if ([_delegate respondsToSelector:@selector(webServerDidStop:)]) {
     dispatch_async(dispatch_get_main_queue(), ^{
-      [_delegate webServerDidStop:self];
+		[self->_delegate webServerDidStop:self];
     });
   }
 }

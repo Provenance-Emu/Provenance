@@ -704,9 +704,9 @@ extension PVGameMoreInfoViewController {
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        coordinator.addCoordinatedAnimations({ [unowned self] in
-
-            }, completion: nil)
+//        coordinator.addCoordinatedAnimations({ [unowned self] in
+//
+//            }, completion: nil)
     }
 
 //    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
