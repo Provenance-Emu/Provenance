@@ -2047,7 +2047,7 @@ extension PVGameLibraryViewController: UIDocumentMenuDelegate {
 // MARK: UIDocumentPickerDelegate
 extension PVGameLibraryViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let sortedUrls = PVEmulatorConfiguration.sortImportUURLs(urls: urls)
+        let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
 
         let importPath = PVEmulatorConfiguration.romsImportPath
 
