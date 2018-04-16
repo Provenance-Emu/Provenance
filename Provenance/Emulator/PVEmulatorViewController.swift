@@ -14,7 +14,15 @@ import UIKit
 private weak var staticSelf: PVEmulatorViewController?
 
 func uncaughtExceptionHandler(exception: NSException?) {
-    staticSelf?.autoSaveState()
+	do {
+		try staticSelf?.autoSaveState()
+	} catch {
+		ELOG("\(error.localizedDescription)")
+	}
+}
+
+public enum SaveStateError: Error {
+	case failedToSave(isAutosave: Bool)
 }
 
 #if os(tvOS)
@@ -112,6 +120,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         updatePlayedDuration()
     }
 
+	// TODO: This smethid is way too big, break it up
     override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
@@ -445,7 +454,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     @objc func appWillResignActive(_ note: Notification?) {
 		if PVSettingsModel.sharedInstance().autoSave {
-			autoSaveState()
+			do {
+				try autoSaveState()
+			} catch {
+				ELOG("Auto-save failed \(error.localizedDescription)")
+			}
 		}
         gameAudio?.pause()
         showMenu(self)
@@ -563,7 +576,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }))
         actionsheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             if PVSettingsModel.sharedInstance().autoSave {
-                self.autoSaveState()
+                try? self.autoSaveState()
             }
             self.core.setPauseEmulation(false)
             self.core.resetEmulation()
@@ -720,12 +733,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		}
 	}
 
-	func autoSaveState() {
+	func autoSaveState() throws {
 		let image = captureScreenshot()
-		createNewSaveState(auto: true, screenshot: image)
+		try createNewSaveState(auto: true, screenshot: image)
 	}
 
-	func createNewSaveState(auto: Bool, screenshot: UIImage?) {
+	func createNewSaveState(auto: Bool, screenshot: UIImage?) throws {
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
 
 		var imageFile: PVImageFile?
@@ -750,6 +763,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 					return
 				}
 
+
 				let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
 				do {
 					try realm.write {
@@ -758,9 +772,17 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				} catch let error {
 					presentError("Unable to write save state to realm: \(error.localizedDescription)")
 				}
+
+				// Delete the oldest auto-saves over 5 count
+				try? realm.write {
+					game.saveStates.filter({ $0.isAutosave == true  }).sorted(by: {$0.date > $1.date} ).suffix(from: 5).forEach{
+						DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
+						realm.delete($0)
+					}
+				}
 			}
 		} else {
-			presentError("failed to save state, auto: \(auto)")
+			throw SaveStateError.failedToSave(isAutosave: auto)
 		}
 	}
 
@@ -800,12 +822,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		self.enableContorllerInput(false)
 	}
 
-	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) {
-		createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
+	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
+		try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 	}
 
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) {
-        createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
+        try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
         PVSaveState.delete(state) { (error: Error) -> Void in
             self.presentError("Error deleting save state: \(error.localizedDescription)")
         }
@@ -865,7 +887,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     func quit(_ completion: QuitCompletion? = nil) {
         if PVSettingsModel.sharedInstance().autoSave {
-            autoSaveState()
+			do {
+				try autoSaveState()
+			} catch {
+				ELOG("Auto-save failed \(error.localizedDescription)")
+			}
         }
         core.stopEmulation()
         //Leave emulation loop first

@@ -11,8 +11,8 @@ import Realm
 
 protocol PVSaveStatesViewControllerDelegate: class {
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController)
-	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController)
-    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState)
+	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws
+    func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState)
 }
 
