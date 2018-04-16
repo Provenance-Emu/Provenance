@@ -827,9 +827,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
         try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
-        PVSaveState.delete(state) { (error: Error) -> Void in
-            self.presentError("Error deleting save state: \(error.localizedDescription)")
-        }
+		try PVSaveState.delete(state)
     }
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {

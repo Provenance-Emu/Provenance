@@ -134,9 +134,11 @@ class PVSaveStatesViewController: UICollectionViewController {
 
 			let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
-                PVSaveState.delete(saveState) { (error: Error) -> Void in
-                    self.presentError("Error deleting save state: \(error.localizedDescription)")
-                }
+				do {
+					try PVSaveState.delete(saveState)
+				} catch {
+					self.presentError("Error deleting save state: \(error.localizedDescription)")
+				}
 			})
 			alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
 			present(alert, animated: true)
@@ -150,7 +152,11 @@ class PVSaveStatesViewController: UICollectionViewController {
 	}
 
 	@IBAction func newSaveState(_ sender: Any) {
-		delegate?.saveStatesViewControllerCreateNewState(self)
+		do {
+			try delegate?.saveStatesViewControllerCreateNewState(self)
+		} catch {
+			self.presentError("Error creating save state: \(error.localizedDescription)")
+		}
 	}
 
     func showSaveStateOptions(saveState: PVSaveState) {
@@ -159,10 +165,16 @@ class PVSaveStatesViewController: UICollectionViewController {
             self.delegate?.saveStatesViewController(self, load: saveState)
         }))
         alert.addAction(UIAlertAction(title: "Save & Overwrite", style: .default, handler: { (action: UIAlertAction) in
-            self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
+			do {
+				try self.delegate?.saveStatesViewControllerOverwriteState(self, state: saveState)
+			} catch {
+				self.presentError("Error overwriting save state: \(error.localizedDescription)")
+			}
         }))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action: UIAlertAction) in
-            PVSaveState.delete(saveState) { (error: Error) -> Void in
+			do {
+				try PVSaveState.delete(saveState)
+			} catch {
                 self.presentError("Error deleting save state: \(error.localizedDescription)")
             }
         }))

@@ -31,19 +31,17 @@ import Foundation
 		createdWithCoreVersion = core.projectVersion
     }
 
-    class func delete(_ state: PVSaveState, onError: ((Error) -> Void)? = nil ) {
+    class func delete(_ state: PVSaveState) throws {
         do {
             try FileManager.default.removeItem(at: state.file.url)
             if let image = state.image {
                 try FileManager.default.removeItem(at: image.url)
             }
-            let realm = try Realm()
-            try realm.write {
-                realm.delete(state)
-            }
-        } catch let error {
-            onError?(error)
-//            self.presentError("Error deleting save state: \(error.localizedDescription)")
-        }
+
+			let database = RomDatabase.sharedInstance
+			try database.delete(state)
+        } catch {
+			throw error
+		}
     }
 }
