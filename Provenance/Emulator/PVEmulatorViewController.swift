@@ -763,7 +763,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 					return
 				}
 
-
 				let saveState = PVSaveState(withGame: game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
 				do {
 					try realm.write {
@@ -775,7 +774,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
 				// Delete the oldest auto-saves over 5 count
 				try? realm.write {
-					game.saveStates.filter({ $0.isAutosave == true  }).sorted(by: {$0.date > $1.date} ).suffix(from: 5).forEach{
+					game.saveStates.filter({ $0.isAutosave == true  }).sorted(by: {$0.date > $1.date}).suffix(from: 5).forEach {
 						DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
 						realm.delete($0)
 					}
