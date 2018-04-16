@@ -857,10 +857,6 @@
 	<dict>
 		<key>PVManufacturer</key>
 		<string>NEC</string>
-		<key>PVSupportedExtensions</key>
-		<array>
-			<string>cue</string>
-		</array>
 		<key>PVSystemShortName</key>
 		<string>TG16CD</string>
 		<key>PVSystemShortNames</key>
@@ -883,6 +879,11 @@
 		<true/>
 		<key>PVRequiresBIOS</key>
 		<true/>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>cue</string>
+			<string>ccd</string>
+		</array>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>

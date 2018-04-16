@@ -108,7 +108,7 @@ public enum SystemIdentifier: String {
 //        return PVEmulatorConfiguration.fileExtensions(forSystemIdentifier: self)!
 //    }
 
-    // TODO: Eventaully wouldl make sense to add batterSavesPath, savesStatePath that
+    // TODO: Eventaully wouldl make sense to add batterySavesPath, savesStatePath that
     // are a sub-directory of the current paths. Right now those are just a folder
     // for all games by the game filename - extensions. Even then would be better
     // to use the ROM md5 not the name, since names might have collisions - jm
@@ -518,7 +518,7 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    class func sortImportUURLs(urls: [URL]) -> [URL] {
+    class func sortImportURLs(urls: [URL]) -> [URL] {
         let sortedPaths = urls.sorted { (obj1, obj2) -> Bool in
 
             let obj1Filename = obj1.lastPathComponent
@@ -528,27 +528,25 @@ public extension PVEmulatorConfiguration {
             let obj2Extension = obj2.pathExtension.lowercased()
 
             // Check m3u, put last
-            if obj1Extension == "m3u" && obj2Extension == "m3u" {
-                return obj1Filename < obj2Filename
+            if obj1Extension == "m3u" && obj2Extension != "m3u" {
+                return obj1Filename > obj2Filename
             } else if obj1Extension == "m3u" {
                 return false
             } else if obj2Extension == "m3u" {
                 return true
-            }
-                // Check cue
-            else if obj1Extension == "cue" && obj2Extension == "cue" {
+            } // Check cue/ccd
+            else if (obj1Extension == "cue" && obj2Extension != "cue") || (obj1Extension == "ccd" && obj2Extension != "ccd") {
                 return obj1Filename < obj2Filename
-            } else if obj1Extension == "cue" {
+            } else if obj1Extension == "cue" || obj1Extension == "ccd" {
                 return true
-            } else if obj2Extension == "cue" {
+            } else if obj2Extension == "cue" || obj1Extension == "ccd" {
                 return false
             } // Check if image, put last
             else if artworkExtensions.contains(obj1Extension) {
                 return false
             } else if artworkExtensions.contains(obj2Extension) {
                 return true
-            }
-                // Standard sort
+            } // Standard sort
             else {
                 return obj1Filename > obj2Filename
             }
