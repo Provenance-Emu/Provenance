@@ -160,7 +160,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             try core.loadFile(atPath: romPath?.path)
         } catch {
             let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.dismiss(animated: true, completion: nil)
+			}))
             let code = (error as NSError).code
             if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
                 alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
