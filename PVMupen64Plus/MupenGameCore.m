@@ -416,8 +416,165 @@ static void MupenSetAudioSpeed(int percent)
     // do we need this?
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error
-{
+static void ConfigureCore() {
+	GET_CURRENT_AND_RETURN();
+
+	// TODO: Proper path
+	NSBundle *coreBundle = [NSBundle mainBundle];
+	const char *dataPath;
+	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
+
+	/** Core Config **/
+	m64p_handle config;
+	ConfigOpenSection("Core", &config);
+
+	// set SRAM path
+	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [current.batterySavesPath UTF8String]);
+	// set data path
+	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
+
+	// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
+	int emulator = 1;
+	ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
+
+	ConfigSaveSection("Core");
+	/** End Core Config **/
+}
+
+static void ConfigureVideoGeneral() {
+	/** Begin General Video Config **/
+	m64p_handle general;
+	ConfigOpenSection("Video-General", &general);
+
+	// Use fullscreen mode
+	int useFullscreen = 1;
+	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
+
+	// Screen width
+	int screenWidth = 640;
+	ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
+
+	// Screen height
+	int screenHeight = 480;
+	ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
+
+	ConfigSaveSection("Video-General");
+	/** End General Video Config **/
+}
+
+static void ConfigureGLideN64(NSString *romFolder) {
+	/** Begin GLideN64 Config **/
+	m64p_handle gliden64;
+	ConfigOpenSection("Video-GLideN64", &gliden64);
+
+	// 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
+	int aspectRatio = 1;
+	ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
+
+	// Per-pixel lighting
+	int enableHWLighting = 0;
+	ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
+
+	// HiRez & texture options
+	int txHiresEnable = 1;
+	//  txHiresEnable, "Use high-resolution texture packs if available."
+	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
+
+	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder UTF8String]);
+	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING,[romFolder UTF8String]);
+	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING,[romFolder UTF8String]);
+
+	/*
+	 "txFilterMode", "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
+	 "txEnhancementMode", config.textureFilter.txEnhancementMode, "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
+	 "txDeposterize", config.textureFilter.txDeposterize, "Deposterize texture before enhancement."
+	 "txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG, "Don't filter background textures."
+	 "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
+	 "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
+	 "txDump", config.textureFilter.txDump, "Enable dump of loaded N64 textures."
+	 "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
+	 "txForce16bpp", config.textureFilter.txForce16bpp, "Force use 16bit texture formats for HD textures."
+	 "txSaveCache", config.textureFilter.txSaveCache, "Save texture cache to hard disk."
+	*/
+
+	// "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
+	int txHiresFullAlphaChannel = 1;
+	ConfigSetParameter(gliden64, "txHiresFullAlphaChannel", M64TYPE_BOOL, &txHiresFullAlphaChannel);
+
+	// Draw on-screen display if True, otherwise don't draw OSD
+	int osd = 0;
+	ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
+	ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);			// Show FPS counter.
+	ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);			// Show VI/S counter.
+	ConfigSetParameter(gliden64, "ShowPercent", M64TYPE_BOOL, &osd);		// Show percent counter.
+	ConfigSetParameter(gliden64, "ShowInternalResolution", M64TYPE_BOOL, &osd);	// Show internal resolution.
+	ConfigSetParameter(gliden64, "ShowRenderingResolution", M64TYPE_BOOL, &osd);	// Show rendering resolution.
+
+	ConfigSaveSection("Video-GLideN64");
+	/** End GLideN64 Config **/
+}
+
+static void ConfigureRICE() {
+	/** RICE CONFIG **/
+	m64p_handle rice;
+	ConfigOpenSection("Video-Rice", &rice);
+
+	// Use a faster algorithm to speed up texture loading and CRC computation
+	int fastTextureLoading = 0;
+	ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
+
+	// Enable this option to have better render-to-texture quality
+	int doubleSizeForSmallTextureBuffer = 0;
+	ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
+
+	// N64 Texture Memory Full Emulation (may fix some games, may break others)
+	int fullTEMEmulation = 0;
+	ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
+
+	// Use fullscreen mode if True, or windowed mode if False
+	int fullscreen = 1;
+	ConfigSetParameter(rice, "Fullscreen", M64TYPE_BOOL, &fullscreen);
+
+	// If this option is enabled, the plugin will skip every other frame
+	// Breaks some games in my testing -jm
+	int skipFrame = 0;
+	ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
+
+	// Enable hi-resolution texture file loading
+	int hiResTextures = 1;
+	ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
+
+	// Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
+	int mipmapping = 0;
+	ConfigSetParameter(rice, "Mipmapping", M64TYPE_INT, &mipmapping);
+
+	// Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality).
+	// This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering
+	int anisotropicFiltering = 16;
+	ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
+
+	// Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
+	int fogMethod = 0;
+	ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
+
+	// Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
+	// 16 bit breaks some games like GoldenEye
+	int textureQuality = 1;
+	ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
+
+	// Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
+	int multiSampling = 0;
+	ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
+
+	// Color bit depth for rendering window (0=32 bits, 1=16 bits)
+	int colorQuality = 0;
+	ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
+
+	/** End RICE CONFIG **/
+	ConfigSaveSection("Video-Rice");
+}
+
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     NSBundle *coreBundle = [NSBundle mainBundle];
     const char *dataPath;
 
@@ -432,143 +589,55 @@ static void MupenSetAudioSpeed(int percent)
     
     // open core here
     CoreStartup(FRONTEND_API_VERSION, [configPath fileSystemRepresentation], dataPath, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
-    
-    /** Core Config **/
-    m64p_handle config;
-    ConfigOpenSection("Core", &config);
-    
-    // set SRAM path
-    ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [batterySavesDirectory UTF8String]);
-    // set data path
-    ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
 
-    // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
-    int emulator = 1;
-    ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
+	NSString *romFolder = [path stringByDeletingLastPathComponent];
 
-	ConfigSaveSection("Core");
-    /** End Core Config **/
+	ConfigureCore();
+	ConfigureVideoGeneral();
+	ConfigureGLideN64(romFolder);
+	ConfigureRICE();
 
-    /** Begin General Video Config **/
-    m64p_handle general;
-    ConfigOpenSection("Video-General", &general);
+	// Create the directory if this option is enabled to make it easier for users to upload packs
+	BOOL hiResTextures = YES;
+	if (hiResTextures) {
+		// Create the directory for hires_texture, this is a constant in mupen source
+		NSArray<NSString*>* subPaths = @[@"/hires_texture/", @"/cache/", @"/texture_dump/"];
+		for(NSString *subPath in subPaths) {
+			NSString *highResPath = [romFolder stringByAppendingPathComponent:subPath];
+			NSError *error;
+			BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath
+													 withIntermediateDirectories:YES
+																	  attributes:nil
+																		   error:&error];
+			if (!success) {
+				NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
+			}
+		}
+	}
 
-	// Use fullscreen mode
-	int useFullscreen = 1;
-	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
-
-    // Screen width
-    int screenWidth = 640;
-    ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
-    
-    // Screen height
-    int screenHeight = 480;
-    ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
-
-	ConfigSaveSection("Video-General");
-    /** End General Video Config **/
-    
-    /** Begin GLideN64 Config **/
-    m64p_handle gliden64;
-    ConfigOpenSection("Video-GLideN64", &gliden64);
-    
-    // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-    int aspectRatio = 3;
-    ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
-    
-    // Per-pixel lighting
-    int enableHWLighting = 1;
-    ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
-
-	// HiRez textures
-	int txHiresEnable = 1;
-	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &enableHWLighting);
-
-	// Draw on-screen display if True, otherwise don't draw OSD
-	int osd = 1;
-	ConfigSetParameter(gliden64, "OnScreenDisplay", M64TYPE_BOOL, &osd);
-	ConfigSetParameter(gliden64, "ShowFPS", M64TYPE_BOOL, &osd);			// Show FPS counter.
-	ConfigSetParameter(gliden64, "ShowVIS", M64TYPE_BOOL, &osd);			// Show VI/S counter.
-	ConfigSetParameter(gliden64, "ShowPercent", M64TYPE_BOOL, &osd);		// Show percent counter.
-	ConfigSetParameter(gliden64, "ShowInternalResolution", M64TYPE_BOOL, &osd);	// Show internal resolution.
-	ConfigSetParameter(gliden64, "ShowRenderingResolution", M64TYPE_BOOL, &osd);	// Show rendering resolution.
-
-	ConfigSaveSection("Video-GLideN64");
-    /** End GLideN64 Config **/
-    
-    /** RICE CONFIG **/
-    m64p_handle rice;
-    ConfigOpenSection("Video-Rice", &rice);
-    
-    // Use a faster algorithm to speed up texture loading and CRC computation
-    int fastTextureLoading = 0;
-    ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
-
-    // Enable this option to have better render-to-texture quality
-    int doubleSizeForSmallTextureBuffer = 0;
-    ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
-
-    // N64 Texture Memory Full Emulation (may fix some games, may break others)
-    int fullTEMEmulation = 0;
-    ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
-
-    // Use fullscreen mode if True, or windowed mode if False
-    int fullscreen = 0;
-    ConfigSetParameter(rice, "Fullscreen", M64TYPE_BOOL, &fullscreen);
-
-    // If this option is enabled, the plugin will skip every other frame
-    // Breaks some games in my testing -jm
-    int skipFrame = 0;
-    ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
-
-    // Enable hi-resolution texture file loading
-    int hiResTextures = 1;
-    ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
-    // Create the directory if this option is enabled to make it easier for users to upload packs
-    if (hiResTextures == 1) {
-        // Find where we're storing roms
-        NSString *romPath = path;
-        // Create the directory for hires_texture, this is a constant in mupen source
-        NSString *highResPath = [[romPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"/hires_texture/"];
-        NSError *error;
-        BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:highResPath withIntermediateDirectories:YES attributes:nil error:&error];
-        if (!success) {
-            NSLog(@"Error creating hi res texture path: %@", error.localizedDescription);
-        }
-    }
-    
-    // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
-    int mipmapping = 0;
-    ConfigSetParameter(rice, "Mipmapping", M64TYPE_INT, &mipmapping);
-
-    // Enable/Disable Anisotropic Filtering for Mipmapping (0=no filtering, 2-16=quality).
-    // This is uneffective if Mipmapping is 0. If the given value is to high to be supported by your graphic card, the value will be the highest value your graphic card can support. Better result with Trilinear filtering
-    int anisotropicFiltering = 16;
-    ConfigSetParameter(rice, "AnisotropicFiltering", M64TYPE_INT, &anisotropicFiltering);
-    
-    // Enable, Disable or Force fog generation (0=Disable, 1=Enable n64 choose, 2=Force Fog)
-    int fogMethod = 0;
-    ConfigSetParameter(rice, "FogMethod", M64TYPE_INT, &fogMethod);
-    
-    // Color bit depth to use for textures (0=default, 1=32 bits, 2=16 bits)
-    // 16 bit breaks some games like GoldenEye
-    int textureQuality = 1;
-    ConfigSetParameter(rice, "TextureQuality", M64TYPE_INT, &textureQuality);
-
-    // Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)
-    int multiSampling = 0;
-    ConfigSetParameter(rice, "MultiSampling", M64TYPE_INT, &multiSampling);
-
-    // Color bit depth for rendering window (0=32 bits, 1=16 bits)
-    int colorQuality = 0;
-    ConfigSetParameter(rice, "ColorQuality", M64TYPE_INT, &colorQuality);
-
-    /** End RICE CONFIG **/
-    ConfigSaveSection("Video-Rice");
+	// Disable the built in speed limiter
+	CoreDoCommand(M64CMD_CORE_STATE_SET, M64CORE_SPEED_LIMITER, 0);
 
     // Load ROM
     romData = [NSData dataWithContentsOfMappedFile:path];
-    
+	if (romData == nil || romData.length == 0) {
+		NSLog(@"Error loading ROM at path: %@\n File does not exist.", path);
+
+		NSDictionary *userInfo = @{
+								   NSLocalizedDescriptionKey: @"Failed to load game.",
+								   NSLocalizedFailureReasonErrorKey: @"Mupen64Plus find the game file.",
+								   NSLocalizedRecoverySuggestionErrorKey: @"Check the file hasn't been moved or deleted."
+								   };
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+											userInfo:userInfo];
+
+		*error = newError;
+
+		return NO;
+	}
+
     m64p_error openStatus = CoreDoCommand(M64CMD_ROM_OPEN, [romData length], (void *)[romData bytes]);
     if ( openStatus != M64ERR_SUCCESS) {
         NSLog(@"Error loading ROM at path: %@\n Error code was: %i", path, openStatus);

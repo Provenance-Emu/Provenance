@@ -99,6 +99,27 @@
 		B37EFF861C72F47000857158 /* MupenGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D208F811182B00300BEAA42 /* MupenGameCore.m */; };
 		B37EFF981C72F48700857158 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103151C72AA3800DD066C /* Foundation.framework */; };
 		B37EFF991C72F48C00857158 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C103111C72AA2B00DD066C /* OpenGLES.framework */; };
+		B3800FFE2085232500FA03B8 /* TextureFilters_2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031D2038AE7B001E70F1 /* TextureFilters_2xsai.cpp */; };
+		B3800FFF2085232500FA03B8 /* TextureFilters_hq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603002038AE7B001E70F1 /* TextureFilters_hq2x.cpp */; };
+		B38010002085232500FA03B8 /* TextureFilters_hq4x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F32038AE7B001E70F1 /* TextureFilters_hq4x.cpp */; };
+		B38010012085232500FA03B8 /* TextureFilters_xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F42038AE7B001E70F1 /* TextureFilters_xbrz.cpp */; };
+		B38010022085232500FA03B8 /* TextureFilters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602EA2038AE7B001E70F1 /* TextureFilters.cpp */; };
+		B38010032085232500FA03B8 /* TxCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603102038AE7B001E70F1 /* TxCache.cpp */; };
+		B38010042085234000FA03B8 /* TxFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6030A2038AE7B001E70F1 /* TxFilter.cpp */; };
+		B38010052085234000FA03B8 /* TxFilterExport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031F2038AE7B001E70F1 /* TxFilterExport.cpp */; };
+		B38010062085234000FA03B8 /* TxHiResCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6030E2038AE7B001E70F1 /* TxHiResCache.cpp */; };
+		B38010072085234000FA03B8 /* TxImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602E92038AE7B001E70F1 /* TxImage.cpp */; };
+		B38010082085234000FA03B8 /* TxQuantize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603032038AE7B001E70F1 /* TxQuantize.cpp */; };
+		B38010092085234000FA03B8 /* TxReSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6031C2038AE7B001E70F1 /* TxReSample.cpp */; };
+		B380100A2085234000FA03B8 /* TxTexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */; };
+		B380100B2085234000FA03B8 /* TxUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603112038AE7B001E70F1 /* TxUtil.cpp */; };
+		B380100C2085234000FA03B8 /* txWidestringWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603022038AE7B001E70F1 /* txWidestringWrapper.cpp */; };
+		B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
+		B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380100F2085252F00FA03B8 /* OpenGLES.framework */; };
+		B3801011208545D900FA03B8 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
+		B38010122085462000FA03B8 /* TxDbg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602FE2038AE7B001E70F1 /* TxDbg.cpp */; };
+		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
+		B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B3882C151DED27BC007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
@@ -892,14 +913,21 @@
 		DFB606192038BD4F001E70F1 /* CommonAPIImpl_mupenplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602A92038AE7A001E70F1 /* CommonAPIImpl_mupenplus.cpp */; };
 		DFB6061A2038BD73001E70F1 /* mupen64plus_DisplayWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6034B2038AE7C001E70F1 /* mupen64plus_DisplayWindow.cpp */; };
 		DFB6061B2038BD73001E70F1 /* mupen64plus_DisplayWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB6034B2038AE7C001E70F1 /* mupen64plus_DisplayWindow.cpp */; };
-		DFB6061F203A733D001E70F1 /* TxFilterStub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603892038AE7C001E70F1 /* TxFilterStub.cpp */; };
-		DFB60620203A733D001E70F1 /* TxFilterStub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603892038AE7C001E70F1 /* TxFilterStub.cpp */; };
 		DFB60622203A7428001E70F1 /* osal_files_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFB60621203A7428001E70F1 /* osal_files_ios.mm */; };
 		DFB60623203A7429001E70F1 /* osal_files_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFB60621203A7428001E70F1 /* osal_files_ios.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		B3303E4A1DED23C600896D96 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3800FF3208522DC00FA03B8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -1282,6 +1310,9 @@
 		B37EFF381C72F43300857158 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64Plus.h; sourceTree = "<group>"; };
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3800FF5208522DC00FA03B8 /* libglidenhq.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglidenhq.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B380100F2085252F00FA03B8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
+		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
@@ -1949,6 +1980,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3800FF2208522DC00FA03B8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3801011208545D900FA03B8 /* libpng.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3B3B85C1DECEA9100602746 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1995,6 +2034,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */,
 				B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */,
 				B3EA4482206E309500E608F6 /* libbz2.tbd in Frameworks */,
 				B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */,
@@ -2005,6 +2045,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */,
+				B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2094,6 +2136,7 @@
 				B3303E4C1DED23C600896D96 /* libpng.a */,
 				DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				DFB603B82038B582001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
+				B3800FF5208522DC00FA03B8 /* libglidenhq.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3147,6 +3190,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B380100F2085252F00FA03B8 /* OpenGLES.framework */,
 				B3335612207B3C8D0036A448 /* PVSupport.framework */,
 				B3AE1DD320731F2700AD06D4 /* libdl.tbd */,
 				B3055BEE20730B60001212D2 /* PVSupport.framework */,
@@ -3411,113 +3455,113 @@
 		DFB601D52038AE78001E70F1 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				DFB602092038AE79001E70F1 /* getRevision.bat */,
 				DFB603292038AE7B001E70F1 /* 3DMath.cpp */,
-				DFB6032B2038AE7B001E70F1 /* 3DMath.h */,
-				DFB602892038AE7A001E70F1 /* BufferCopy */,
-				DFB6027F2038AE7A001E70F1 /* CMakeLists.txt */,
 				DFB603242038AE7B001E70F1 /* Combiner.cpp */,
-				DFB602E12038AE7B001E70F1 /* Combiner.h */,
 				DFB602C02038AE7A001E70F1 /* CombinerKey.cpp */,
-				DFB602992038AE7A001E70F1 /* CombinerKey.h */,
-				DFB602BB2038AE7A001E70F1 /* common */,
 				DFB602E52038AE7B001E70F1 /* CommonPluginAPI.cpp */,
 				DFB602E22038AE7B001E70F1 /* Config.cpp */,
-				DFB602832038AE7A001E70F1 /* Config.h */,
 				DFB602882038AE7A001E70F1 /* convert.cpp */,
-				DFB6033C2038AE7C001E70F1 /* convert.h */,
 				DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */,
-				DFB6029A2038AE7A001E70F1 /* CRC.h */,
 				DFB6032C2038AE7B001E70F1 /* CRC32_ARMV8.cpp */,
 				DFB602A32038AE7A001E70F1 /* CRC32.cpp */,
 				DFB602E32038AE7B001E70F1 /* DebugDump.cpp */,
-				DFB602E42038AE7B001E70F1 /* DebugDump.h */,
 				DFB6032A2038AE7B001E70F1 /* Debugger.cpp */,
-				DFB603322038AE7B001E70F1 /* Debugger.h */,
 				DFB602B92038AE7A001E70F1 /* DepthBuffer.cpp */,
-				DFB601D62038AE78001E70F1 /* DepthBuffer.h */,
-				DFB602B02038AE7A001E70F1 /* DepthBufferRender */,
 				DFB602B82038AE7A001E70F1 /* DisplayLoadProgress.cpp */,
-				DFB603962038AE7D001E70F1 /* DisplayLoadProgress.h */,
 				DFB602BE2038AE7A001E70F1 /* DisplayWindow.cpp */,
-				DFB602852038AE7A001E70F1 /* DisplayWindow.h */,
 				DFB602AB2038AE7A001E70F1 /* FrameBuffer.cpp */,
-				DFB602AE2038AE7A001E70F1 /* FrameBuffer.h */,
-				DFB6029C2038AE7A001E70F1 /* FrameBufferEmulationIssues.txt */,
 				DFB602982038AE7A001E70F1 /* FrameBufferInfo.cpp */,
-				DFB6020C2038AE79001E70F1 /* FrameBufferInfo.h */,
-				DFB6038B2038AE7C001E70F1 /* FrameBufferInfoAPI.h */,
 				DFB602A42038AE7A001E70F1 /* GBI.cpp */,
-				DFB603902038AE7D001E70F1 /* GBI.h */,
 				DFB6038F2038AE7D001E70F1 /* gDP.cpp */,
-				DFB603302038AE7B001E70F1 /* gDP.h */,
-				DFB602092038AE79001E70F1 /* getRevision.bat */,
-				DFB602C12038AE7A001E70F1 /* getRevision.sh */,
 				DFB602842038AE7A001E70F1 /* GLideN64.cpp */,
-				DFB602B52038AE7A001E70F1 /* GLideN64.h */,
-				DFB602E62038AE7B001E70F1 /* GLideNHQ */,
-				DFB602C32038AE7A001E70F1 /* GLideNUI */,
-				DFB6033D2038AE7C001E70F1 /* Graphics */,
 				DFB603312038AE7B001E70F1 /* GraphicsDrawer.cpp */,
-				DFB603942038AE7D001E70F1 /* GraphicsDrawer.h */,
 				DFB602802038AE7A001E70F1 /* gSP.cpp */,
-				DFB603222038AE7B001E70F1 /* gSP.h */,
-				DFB6020F2038AE79001E70F1 /* inc */,
 				DFB602952038AE7A001E70F1 /* iob.cpp */,
 				DFB603922038AE7D001E70F1 /* Keys.cpp */,
-				DFB601D72038AE78001E70F1 /* Keys.h */,
 				DFB6038C2038AE7C001E70F1 /* Log_android.cpp */,
-				B3CB4B20206E54D10074706B /* Log_ios.mm */,
 				DFB6020B2038AE79001E70F1 /* Log.cpp */,
-				DFB602DF2038AE7A001E70F1 /* Log.h */,
-				DFB602AC2038AE7A001E70F1 /* mupen64plus-video-gliden64.mk */,
-				DFB602A52038AE7A001E70F1 /* mupenplus */,
 				DFB6038D2038AE7C001E70F1 /* MupenPlusPluginAPI.cpp */,
 				DFB603932038AE7D001E70F1 /* N64.cpp */,
-				DFB603212038AE7B001E70F1 /* N64.h */,
-				DFB603252038AE7B001E70F1 /* Neon */,
 				DFB602932038AE7A001E70F1 /* NoiseTexture.cpp */,
-				DFB602BA2038AE7A001E70F1 /* NoiseTexture.h */,
-				DFB6029D2038AE7A001E70F1 /* osal */,
 				DFB602C22038AE7A001E70F1 /* PaletteTexture.cpp */,
-				DFB6020E2038AE79001E70F1 /* PaletteTexture.h */,
 				DFB6020A2038AE79001E70F1 /* Performance.cpp */,
-				DFB602862038AE7A001E70F1 /* Performance.h */,
-				DFB6038E2038AE7C001E70F1 /* Platform.h */,
-				DFB601D92038AE78001E70F1 /* PluginAPI.h */,
 				DFB602922038AE7A001E70F1 /* PostProcessor.cpp */,
-				DFB602B72038AE7A001E70F1 /* PostProcessor.h */,
 				DFB601D82038AE78001E70F1 /* RDP.cpp */,
-				DFB603862038AE7C001E70F1 /* RDP.h */,
-				DF0035BD203C77D900F63831 /* Revision.h */,
 				DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */,
 				DFB602942038AE7A001E70F1 /* RSP_LoadMatrixX86.cpp */,
 				DFB603332038AE7B001E70F1 /* RSP.cpp */,
-				DFB603232038AE7B001E70F1 /* RSP.h */,
-				DFB602AD2038AE7A001E70F1 /* sdl2_compat.h */,
 				DFB602972038AE7A001E70F1 /* SoftwareRender.cpp */,
-				DFB603352038AE7B001E70F1 /* SoftwareRender.h */,
 				DFB603872038AE7C001E70F1 /* TexrectDrawer.cpp */,
-				DFB6029B2038AE7A001E70F1 /* TexrectDrawer.h */,
 				DFB602812038AE7A001E70F1 /* TextDrawer.cpp */,
 				B3EA4488206E372400E608F6 /* TextDrawerStub.cpp */,
-				DFB602822038AE7A001E70F1 /* TextDrawer.h */,
 				DFB602BF2038AE7A001E70F1 /* TextureFilterHandler.cpp */,
-				DFB602962038AE7A001E70F1 /* TextureFilterHandler.h */,
 				DFB6027E2038AE7A001E70F1 /* Textures.cpp */,
-				DFB603882038AE7C001E70F1 /* Textures.h */,
 				DFB603892038AE7C001E70F1 /* TxFilterStub.cpp */,
-				DFB602872038AE7A001E70F1 /* Types.h */,
-				DFB601DA2038AE78001E70F1 /* uCodes */,
 				DFB603952038AE7D001E70F1 /* VI.cpp */,
-				DFB603342038AE7B001E70F1 /* VI.h */,
-				DFB603362038AE7C001E70F1 /* windows */,
-				DFB6038A2038AE7C001E70F1 /* winlnxdefs.h */,
-				DFB602E02038AE7A001E70F1 /* wst.h */,
-				DFB6032D2038AE7B001E70F1 /* xxHash */,
-				DFB6020D2038AE79001E70F1 /* ZilmarGFX_1_3.h */,
 				DFB602BD2038AE7A001E70F1 /* ZilmarPluginAPI.cpp */,
 				DFB603852038AE7C001E70F1 /* ZlutTexture.cpp */,
+				DFB6032B2038AE7B001E70F1 /* 3DMath.h */,
+				DFB602E12038AE7B001E70F1 /* Combiner.h */,
+				DFB602992038AE7A001E70F1 /* CombinerKey.h */,
+				DFB602832038AE7A001E70F1 /* Config.h */,
+				DFB6033C2038AE7C001E70F1 /* convert.h */,
+				DFB6029A2038AE7A001E70F1 /* CRC.h */,
+				DFB602E42038AE7B001E70F1 /* DebugDump.h */,
+				DFB603322038AE7B001E70F1 /* Debugger.h */,
+				DFB601D62038AE78001E70F1 /* DepthBuffer.h */,
+				DFB603962038AE7D001E70F1 /* DisplayLoadProgress.h */,
+				DFB602852038AE7A001E70F1 /* DisplayWindow.h */,
+				DFB602AE2038AE7A001E70F1 /* FrameBuffer.h */,
+				DFB6020C2038AE79001E70F1 /* FrameBufferInfo.h */,
+				DFB6038B2038AE7C001E70F1 /* FrameBufferInfoAPI.h */,
+				DFB603902038AE7D001E70F1 /* GBI.h */,
+				DFB603302038AE7B001E70F1 /* gDP.h */,
+				DFB602B52038AE7A001E70F1 /* GLideN64.h */,
+				DFB603942038AE7D001E70F1 /* GraphicsDrawer.h */,
+				DFB603222038AE7B001E70F1 /* gSP.h */,
+				DFB601D72038AE78001E70F1 /* Keys.h */,
+				DFB602DF2038AE7A001E70F1 /* Log.h */,
+				DFB603212038AE7B001E70F1 /* N64.h */,
+				DFB602BA2038AE7A001E70F1 /* NoiseTexture.h */,
+				DFB6020E2038AE79001E70F1 /* PaletteTexture.h */,
+				DFB602862038AE7A001E70F1 /* Performance.h */,
+				DFB6038E2038AE7C001E70F1 /* Platform.h */,
+				DFB601D92038AE78001E70F1 /* PluginAPI.h */,
+				DFB602B72038AE7A001E70F1 /* PostProcessor.h */,
+				DFB603862038AE7C001E70F1 /* RDP.h */,
+				DF0035BD203C77D900F63831 /* Revision.h */,
+				DFB603232038AE7B001E70F1 /* RSP.h */,
+				DFB602AD2038AE7A001E70F1 /* sdl2_compat.h */,
+				DFB603352038AE7B001E70F1 /* SoftwareRender.h */,
+				DFB6029B2038AE7A001E70F1 /* TexrectDrawer.h */,
+				DFB602822038AE7A001E70F1 /* TextDrawer.h */,
+				DFB602962038AE7A001E70F1 /* TextureFilterHandler.h */,
+				DFB603882038AE7C001E70F1 /* Textures.h */,
+				DFB602872038AE7A001E70F1 /* Types.h */,
+				DFB603342038AE7B001E70F1 /* VI.h */,
+				DFB6038A2038AE7C001E70F1 /* winlnxdefs.h */,
+				DFB602E02038AE7A001E70F1 /* wst.h */,
+				DFB6020D2038AE79001E70F1 /* ZilmarGFX_1_3.h */,
 				DFB602B62038AE7A001E70F1 /* ZlutTexture.h */,
+				DFB602AC2038AE7A001E70F1 /* mupen64plus-video-gliden64.mk */,
+				B3CB4B20206E54D10074706B /* Log_ios.mm */,
+				DFB602C12038AE7A001E70F1 /* getRevision.sh */,
+				DFB6027F2038AE7A001E70F1 /* CMakeLists.txt */,
+				DFB6029C2038AE7A001E70F1 /* FrameBufferEmulationIssues.txt */,
+				DFB602892038AE7A001E70F1 /* BufferCopy */,
+				DFB602BB2038AE7A001E70F1 /* common */,
+				DFB602B02038AE7A001E70F1 /* DepthBufferRender */,
+				DFB602E62038AE7B001E70F1 /* GLideNHQ */,
+				DFB602C32038AE7A001E70F1 /* GLideNUI */,
+				DFB6033D2038AE7C001E70F1 /* Graphics */,
+				DFB6020F2038AE79001E70F1 /* inc */,
+				DFB602A52038AE7A001E70F1 /* mupenplus */,
+				DFB603252038AE7B001E70F1 /* Neon */,
+				DFB6029D2038AE7A001E70F1 /* osal */,
+				DFB601DA2038AE78001E70F1 /* uCodes */,
+				DFB603362038AE7C001E70F1 /* windows */,
+				DFB6032D2038AE7B001E70F1 /* xxHash */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -3832,51 +3876,52 @@
 		DFB602E62038AE7B001E70F1 /* GLideNHQ */ = {
 			isa = PBXGroup;
 			children = (
-				DFB602E72038AE7B001E70F1 /* TxReSample.h */,
-				DFB602E82038AE7B001E70F1 /* TxQuantize.h */,
-				DFB602E92038AE7B001E70F1 /* TxImage.cpp */,
-				DFB602EA2038AE7B001E70F1 /* TextureFilters.cpp */,
-				DFB602EB2038AE7B001E70F1 /* TxInternal.h */,
-				DFB602EC2038AE7B001E70F1 /* inc */,
+				DFB6031A2038AE7B001E70F1 /* bldno.cpp */,
+				DFB603042038AE7B001E70F1 /* Ext_TxFilter.cpp */,
+				DFB6031D2038AE7B001E70F1 /* TextureFilters_2xsai.cpp */,
+				DFB603002038AE7B001E70F1 /* TextureFilters_hq2x.cpp */,
 				DFB602F32038AE7B001E70F1 /* TextureFilters_hq4x.cpp */,
 				DFB602F42038AE7B001E70F1 /* TextureFilters_xbrz.cpp */,
-				DFB602F52038AE7B001E70F1 /* gpl-2.0.txt */,
-				DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */,
-				DFB602F72038AE7B001E70F1 /* CMakeLists.txt */,
-				DFB602F82038AE7B001E70F1 /* TextureFilters_hq2x.h */,
-				DFB602F92038AE7B001E70F1 /* test */,
+				DFB602EA2038AE7B001E70F1 /* TextureFilters.cpp */,
+				DFB603102038AE7B001E70F1 /* TxCache.cpp */,
 				DFB602FE2038AE7B001E70F1 /* TxDbg.cpp */,
-				DFB602FF2038AE7B001E70F1 /* TxFilter.h */,
-				DFB603002038AE7B001E70F1 /* TextureFilters_hq2x.cpp */,
-				DFB603012038AE7B001E70F1 /* TxUtil.h */,
-				DFB603022038AE7B001E70F1 /* txWidestringWrapper.cpp */,
+				B380101320854EAA00FA03B8 /* TxDbg_ios.mm */,
+				DFB6030A2038AE7B001E70F1 /* TxFilter.cpp */,
+				DFB6031F2038AE7B001E70F1 /* TxFilterExport.cpp */,
+				DFB6030E2038AE7B001E70F1 /* TxHiResCache.cpp */,
+				DFB602E92038AE7B001E70F1 /* TxImage.cpp */,
 				DFB603032038AE7B001E70F1 /* TxQuantize.cpp */,
-				DFB603042038AE7B001E70F1 /* Ext_TxFilter.cpp */,
-				DFB603052038AE7B001E70F1 /* TxImage.h */,
+				DFB6031C2038AE7B001E70F1 /* TxReSample.cpp */,
+				DFB602F62038AE7B001E70F1 /* TxTexCache.cpp */,
+				DFB603112038AE7B001E70F1 /* TxUtil.cpp */,
+				DFB603022038AE7B001E70F1 /* txWidestringWrapper.cpp */,
+				DFB603192038AE7B001E70F1 /* bldno.h */,
+				DFB603182038AE7B001E70F1 /* Ext_TxFilter.h */,
+				DFB6030F2038AE7B001E70F1 /* TextureFilters_2xsai.h */,
+				DFB602F82038AE7B001E70F1 /* TextureFilters_hq2x.h */,
+				DFB603202038AE7B001E70F1 /* TextureFilters_hq4x.h */,
+				DFB603162038AE7B001E70F1 /* TextureFilters_lq2x.h */,
 				DFB603062038AE7B001E70F1 /* TextureFilters_xbrz.h */,
 				DFB603072038AE7B001E70F1 /* TextureFilters.h */,
-				DFB603082038AE7B001E70F1 /* TxDbg.h */,
-				DFB603092038AE7B001E70F1 /* TxHiResCache.h */,
-				DFB6030A2038AE7B001E70F1 /* TxFilter.cpp */,
-				DFB6030B2038AE7B001E70F1 /* txWidestringWrapper.h */,
-				DFB6030C2038AE7B001E70F1 /* TxTexCache.h */,
-				DFB6030D2038AE7B001E70F1 /* GlideHQ.rc */,
-				DFB6030E2038AE7B001E70F1 /* TxHiResCache.cpp */,
-				DFB6030F2038AE7B001E70F1 /* TextureFilters_2xsai.h */,
-				DFB603102038AE7B001E70F1 /* TxCache.cpp */,
-				DFB603112038AE7B001E70F1 /* TxUtil.cpp */,
-				DFB603122038AE7B001E70F1 /* lib */,
-				DFB603162038AE7B001E70F1 /* TextureFilters_lq2x.h */,
-				DFB603172038AE7B001E70F1 /* README.txt */,
-				DFB603182038AE7B001E70F1 /* Ext_TxFilter.h */,
-				DFB603192038AE7B001E70F1 /* bldno.h */,
-				DFB6031A2038AE7B001E70F1 /* bldno.cpp */,
-				DFB6031B2038AE7B001E70F1 /* mupen64plus-video-glidenhq.mk */,
-				DFB6031C2038AE7B001E70F1 /* TxReSample.cpp */,
-				DFB6031D2038AE7B001E70F1 /* TextureFilters_2xsai.cpp */,
 				DFB6031E2038AE7B001E70F1 /* TxCache.h */,
-				DFB6031F2038AE7B001E70F1 /* TxFilterExport.cpp */,
-				DFB603202038AE7B001E70F1 /* TextureFilters_hq4x.h */,
+				DFB603082038AE7B001E70F1 /* TxDbg.h */,
+				DFB602FF2038AE7B001E70F1 /* TxFilter.h */,
+				DFB603092038AE7B001E70F1 /* TxHiResCache.h */,
+				DFB603052038AE7B001E70F1 /* TxImage.h */,
+				DFB602EB2038AE7B001E70F1 /* TxInternal.h */,
+				DFB602E82038AE7B001E70F1 /* TxQuantize.h */,
+				DFB602E72038AE7B001E70F1 /* TxReSample.h */,
+				DFB6030C2038AE7B001E70F1 /* TxTexCache.h */,
+				DFB603012038AE7B001E70F1 /* TxUtil.h */,
+				DFB6030B2038AE7B001E70F1 /* txWidestringWrapper.h */,
+				DFB6031B2038AE7B001E70F1 /* mupen64plus-video-glidenhq.mk */,
+				DFB6030D2038AE7B001E70F1 /* GlideHQ.rc */,
+				DFB602F72038AE7B001E70F1 /* CMakeLists.txt */,
+				DFB602F52038AE7B001E70F1 /* gpl-2.0.txt */,
+				DFB603172038AE7B001E70F1 /* README.txt */,
+				DFB602EC2038AE7B001E70F1 /* inc */,
+				DFB603122038AE7B001E70F1 /* lib */,
+				DFB602F92038AE7B001E70F1 /* test */,
 			);
 			path = GLideNHQ;
 			sourceTree = "<group>";
@@ -4584,6 +4629,23 @@
 			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B3800FF4208522DC00FA03B8 /* glidenhq */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3800FFD208522DD00FA03B8 /* Build configuration list for PBXNativeTarget "glidenhq" */;
+			buildPhases = (
+				B3800FF1208522DC00FA03B8 /* Sources */,
+				B3800FF2208522DC00FA03B8 /* Frameworks */,
+				B3800FF3208522DC00FA03B8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = glidenhq;
+			productName = glidenhq;
+			productReference = B3800FF5208522DC00FA03B8 /* libglidenhq.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3B3B8651DECEA9100602746 /* Build configuration list for PBXNativeTarget "PVMupen64PlusRspHLE" */;
@@ -4736,6 +4798,10 @@
 					B37EFF371C72F43300857158 = {
 						CreatedOnToolsVersion = 7.3;
 					};
+					B3800FF4208522DC00FA03B8 = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+					};
 					B3B3B85F1DECEA9100602746 = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
@@ -4771,6 +4837,7 @@
 				DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */,
 				DFB603AF2038B582001E70F1 /* PVMupen64PlusVideoGlideN64 tvOS */,
 				B3303E4B1DED23C600896D96 /* png */,
+				B3800FF4208522DC00FA03B8 /* glidenhq */,
 			);
 		};
 /* End PBXProject section */
@@ -5050,6 +5117,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3800FF1208522DC00FA03B8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B38010082085234000FA03B8 /* TxQuantize.cpp in Sources */,
+				B3800FFF2085232500FA03B8 /* TextureFilters_hq2x.cpp in Sources */,
+				B380100B2085234000FA03B8 /* TxUtil.cpp in Sources */,
+				B38010052085234000FA03B8 /* TxFilterExport.cpp in Sources */,
+				B380100C2085234000FA03B8 /* txWidestringWrapper.cpp in Sources */,
+				B38010002085232500FA03B8 /* TextureFilters_hq4x.cpp in Sources */,
+				B38010122085462000FA03B8 /* TxDbg.cpp in Sources */,
+				B38010022085232500FA03B8 /* TextureFilters.cpp in Sources */,
+				B3800FFE2085232500FA03B8 /* TextureFilters_2xsai.cpp in Sources */,
+				B38010092085234000FA03B8 /* TxReSample.cpp in Sources */,
+				B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */,
+				B38010062085234000FA03B8 /* TxHiResCache.cpp in Sources */,
+				B38010012085232500FA03B8 /* TextureFilters_xbrz.cpp in Sources */,
+				B38010072085234000FA03B8 /* TxImage.cpp in Sources */,
+				B38010032085232500FA03B8 /* TxCache.cpp in Sources */,
+				B380100A2085234000FA03B8 /* TxTexCache.cpp in Sources */,
+				B38010042085234000FA03B8 /* TxFilter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3B3B85B1DECEA9100602746 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5249,7 +5340,6 @@
 				DFB6041A2038BA3C001E70F1 /* NoiseTexture.cpp in Sources */,
 				B35B31C6206C8EC700AEAF88 /* S2DEX.cpp in Sources */,
 				DFB6044E2038BA94001E70F1 /* VI.cpp in Sources */,
-				DFB6061F203A733D001E70F1 /* TxFilterStub.cpp in Sources */,
 				B35B31A4206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */,
 				DFB604B22038BBD5001E70F1 /* opengl_ColorBufferReaderWithReadPixels.cpp in Sources */,
 				B35B31A9206C8E2700AEAF88 /* S2DEX2.cpp in Sources */,
@@ -5359,7 +5449,6 @@
 				DFB604202038BA3D001E70F1 /* NoiseTexture.cpp in Sources */,
 				B35B31B8206C8E2700AEAF88 /* F3DPD.cpp in Sources */,
 				DFB604502038BA95001E70F1 /* VI.cpp in Sources */,
-				DFB60620203A733D001E70F1 /* TxFilterStub.cpp in Sources */,
 				DFB604BF2038BBD6001E70F1 /* opengl_ColorBufferReaderWithReadPixels.cpp in Sources */,
 				B35B31BC206C8E2700AEAF88 /* F3DZEX2.cpp in Sources */,
 				DFB604C02038BBD6001E70F1 /* opengl_ContextImpl.cpp in Sources */,
@@ -5598,7 +5687,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/png\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
 					"-ffast-math",
@@ -5651,7 +5739,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/png\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
 					"-ffast-math",
@@ -6098,6 +6185,117 @@
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3800FFB208522DD00FA03B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					TXFILTER_LIB,
+					OS_IOS,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/common\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/osal\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/windows\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/xxHash\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		B3800FFC208522DD00FA03B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					TXFILTER_LIB,
+					OS_IOS,
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/common\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/inc\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/osal\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/windows\"",
+					"\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src/xxHash\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos appletvos appletvsimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -7184,6 +7382,15 @@
 			buildConfigurations = (
 				B37EFF3E1C72F43400857158 /* Debug */,
 				B37EFF3F1C72F43400857158 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3800FFD208522DD00FA03B8 /* Build configuration list for PBXNativeTarget "glidenhq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3800FFB208522DD00FA03B8 /* Debug */,
+				B3800FFC208522DD00FA03B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
