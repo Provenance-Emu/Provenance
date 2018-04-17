@@ -117,7 +117,6 @@
 		B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380100F2085252F00FA03B8 /* OpenGLES.framework */; };
 		B3801011208545D900FA03B8 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
-		B38010122085462000FA03B8 /* TxDbg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602FE2038AE7B001E70F1 /* TxDbg.cpp */; };
 		B380101420854EAA00FA03B8 /* TxDbg_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B380101320854EAA00FA03B8 /* TxDbg_ios.mm */; };
 		B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libglidenhq.a */; };
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
@@ -5131,7 +5130,6 @@
 				B38010052085234000FA03B8 /* TxFilterExport.cpp in Sources */,
 				B380100C2085234000FA03B8 /* txWidestringWrapper.cpp in Sources */,
 				B38010002085232500FA03B8 /* TextureFilters_hq4x.cpp in Sources */,
-				B38010122085462000FA03B8 /* TxDbg.cpp in Sources */,
 				B38010022085232500FA03B8 /* TextureFilters.cpp in Sources */,
 				B3800FFE2085232500FA03B8 /* TextureFilters_2xsai.cpp in Sources */,
 				B38010092085234000FA03B8 /* TxReSample.cpp in Sources */,
