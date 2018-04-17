@@ -35,7 +35,7 @@
 
 #if defined(__PIC__) || defined(__pic__) || defined(__PIE__) || defined(__pie__)
  #if defined(__386__) || defined(__i386__) || defined(__i386) || defined(_M_IX86) || defined(_M_I386) //|| (SIZEOF_VOID_P <= 4)
-  #error "Compiling with position-independent code generation enabled is not recommended, for performance reasons."
+  #warning "Compiling with position-independent code generation enabled is not recommended, for performance reasons."
  #else
   #warning "Compiling with position-independent code generation enabled is not recommended, for performance reasons."
  #endif
