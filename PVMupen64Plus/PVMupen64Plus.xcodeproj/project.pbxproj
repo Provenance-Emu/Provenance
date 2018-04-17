@@ -123,6 +123,7 @@
 		B3882C141DED279C007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B3882C151DED27BC007183B6 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libpng.a */; };
 		B39E8CB62053B53100380DCD /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
+		B39F010A20866B3E0076D183 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B39F010920866B3E0076D183 /* libz.tbd */; };
 		B3A302F22073F2D4008C1955 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B3A302F32073F2F2008C1955 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302C12073F2AA008C1955 /* osal_dynamiclib_unix.c */; };
 		B3A302F42073F2F2008C1955 /* osal_files_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3A302D32073F2AA008C1955 /* osal_files_unix.c */; };
@@ -1314,6 +1315,7 @@
 		B380100F2085252F00FA03B8 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B39F010920866B3E0076D183 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS11.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3A302852073F2AA008C1955 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3A302862073F2AA008C1955 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
 		B3A302892073F2AA008C1955 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
@@ -2045,6 +2047,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39F010A20866B3E0076D183 /* libz.tbd in Frameworks */,
 				B38010102085253000FA03B8 /* OpenGLES.framework in Frameworks */,
 				B380100E2085252500FA03B8 /* libglidenhq.a in Frameworks */,
 			);
@@ -3190,6 +3193,7 @@
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39F010920866B3E0076D183 /* libz.tbd */,
 				B380100F2085252F00FA03B8 /* OpenGLES.framework */,
 				B3335612207B3C8D0036A448 /* PVSupport.framework */,
 				B3AE1DD320731F2700AD06D4 /* libdl.tbd */,
