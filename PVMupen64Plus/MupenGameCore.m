@@ -34,6 +34,7 @@
 #define FORCE_RICE_VIDEO 0
 
 #define RESIZE_TO_FULLSCREEN 0
+// Experimental, set to 1 for fullscreen fill
 
 #import "MupenGameCore.h"
 #import "api/config.h"
@@ -126,9 +127,14 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
     if (self = [super init]) {
         mupenWaitToBeginFrameSemaphore = dispatch_semaphore_create(0);
         coreWaitToEndFrameSemaphore    = dispatch_semaphore_create(0);
-        
+#if RESIZE_TO_FULLSCREEN
+		CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
+		_videoWidth = size.width;
+		_videoHeight = size.height;
+#else
         _videoWidth  = 640;
         _videoHeight = 480;
+#endif
         _videoBitDepth = 32; // ignored
         videoDepthBitDepth = 0; // TODO
         
@@ -463,12 +469,24 @@ static void ConfigureVideoGeneral() {
 	int useFullscreen = 1;
 	ConfigSetParameter(general, "Fullscreen", M64TYPE_BOOL, &useFullscreen);
 
-	// Screen width
+#if RESIZE_TO_FULLSCREEN
+	CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
+#if TARGET_OS_TV
+	int screenWidth = size.width/2.0;
+	int screenHeight = size.height/2.0;
+#else
+	int screenWidth = MAX(size.width, size.height);
+	int screenHeight = MIN(size.width, size.height);
+#endif
+#else
 	int screenWidth = 640;
+	int screenHeight = 480;
+#endif
+
+	// Screen width
 	ConfigSetParameter(general, "ScreenWidth", M64TYPE_INT, &screenWidth);
 
 	// Screen height
-	int screenHeight = 480;
 	ConfigSetParameter(general, "ScreenHeight", M64TYPE_INT, &screenHeight);
 
 	ConfigSaveSection("Video-General");
@@ -482,7 +500,11 @@ static void ConfigureGLideN64(NSString *romFolder) {
 
 	// 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
 #if RESIZE_TO_FULLSCREEN
-	int aspectRatio = 3;
+	#if TARGET_OS_TV
+		int aspectRatio = 2;
+	#else
+		int aspectRatio = 3;
+	#endif
 #else
 	int aspectRatio = 1;
 #endif
