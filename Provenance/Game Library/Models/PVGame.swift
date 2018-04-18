@@ -45,6 +45,8 @@ protocol PVLibraryEntry where Self: Object {}
     var saveStates = LinkingObjects<PVSaveState>(fromType: PVSaveState.self, property: "game")
     var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
     var screenShots = List<PVImageFile>()
+	var relatedFiles = List<PVFile>()
+
 
     /* Tracking data */
     dynamic var lastPlayed: Date?

@@ -695,7 +695,8 @@ public extension PVGameImporter {
                     finishUpdateOrImport(ofGame: existingGame)
                 } else {
                     // New game
-                    importToDatabaseROM(atPath: path, system: system)
+					// TODO: Look for new related files?
+                    importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
                 }
             } // autorelease pool
         } // for each
@@ -955,29 +956,31 @@ extension PVGameImporter {
             return nil
         }
 
-        // Move the cue sheet
-        if !encounteredConflicts, let systemID = matchedSystemID, let system = PVSystem.with(primaryKey: systemID) {
-            // Import to DataBase
-            importToDatabaseROM(atPath: newCDFilePath, system: system)
-        } // else there was a conflict, nothing to import
-
+		var relatedFiles : [URL]?
         // moved the .cue, now move .bins .imgs etc to the destination dir (conflicts or system dir, decided above)
         if var paths = moveFiles(similiarToFile: candidateFile.filePath, toDirectory: newDirectory, cuesheet: newCDFilePath) {
             paths.append(newCDFilePath)
-            return paths
-        } else {
-            return nil
+            relatedFiles = paths
         }
+
+		// Move the cue sheet
+		if !encounteredConflicts, let systemID = matchedSystemID, let system = PVSystem.with(primaryKey: systemID) {
+			// Import to DataBase
+			importToDatabaseROM(atPath: newCDFilePath, system: system, relatedFiles: relatedFiles)
+		} // else there was a conflict, nothing to import
+
+		return relatedFiles
     }
 
     // TODO: Mabye this should throw
     @discardableResult
-    private func importToDatabaseROM(atPath path: URL, system: PVSystem) -> PVGame? {
+	private func importToDatabaseROM(atPath path: URL, system: PVSystem, relatedFiles: [URL]?) -> PVGame? {
         let database = RomDatabase.sharedInstance
 
         let filename = path.lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: path.deletingPathExtension().lastPathComponent)
-        let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
+		let destinationDir = (system.identifier as NSString)
+        let partialPath: String = destinationDir.appendingPathComponent(filename)
 
         let file = PVFile(withURL: path)
 
@@ -986,10 +989,22 @@ extension PVGameImporter {
         game.title = title
         game.requiresSync = true
 
+		var relatedPVFiles = [PVFile]()
+		if let relatedFiles = relatedFiles {
+			for relatedFile in relatedFiles {
+				let fileName = relatedFile.lastPathComponent
+				let partialRelatedPath = destinationDir.appendingPathComponent(fileName)
+				let newRelatedPVFile = PVFile(withPartialPath: partialRelatedPath)
+				relatedPVFiles.append(newRelatedPVFile)
+			}
+		}
+
         guard let md5 = calculateMD5(forGame: game) else {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
             return nil
         }
+
+		game.relatedFiles.append(objectsIn: relatedPVFiles)
 
         game.md5Hash = md5
 

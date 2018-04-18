@@ -345,6 +345,10 @@ public extension RomDatabase {
 		}
 		#endif
 
+		game.relatedFiles.forEach {
+			try? FileManager.default.removeItem(at: $0.url )
+		}
+
 		game.saveStates.forEach { try? $0.delete() }
 		game.recentPlays.forEach { try? $0.delete() }
 		game.screenShots.forEach { try? $0.delete() }
