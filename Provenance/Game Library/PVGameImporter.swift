@@ -189,7 +189,7 @@ public class PVGameImporter {
 					return candidate
 				}
 			} else {
-				if !["bin", "img", "sub"].contains(candidate.filePath.pathExtension) {
+				if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
 					WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
 				}
 				return nil
@@ -216,7 +216,7 @@ public class PVGameImporter {
                     return candidate
                 }
             } else {
-                if !["bin", "img", "sub"].contains(candidate.filePath.pathExtension) {
+                if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
                     WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
                 }
                 return nil
