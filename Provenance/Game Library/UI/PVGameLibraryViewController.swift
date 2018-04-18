@@ -776,6 +776,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         avc.modalPresentationStyle = .popover
 //        avc.popoverPresentationController?.delegate = self
         avc.popoverPresentationController?.barButtonItem = sortButtonItem
+		avc.popoverPresentationController?.sourceView = collectionView
         #endif
         avc.preferredContentSize = CGSize(width: 200, height: 200)
 
@@ -818,6 +819,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		if let barButtonItem = sender as? UIBarButtonItem {
 			actionSheet.popoverPresentationController?.barButtonItem = barButtonItem
+			actionSheet.popoverPresentationController?.sourceView = collectionView
 		}
 		present(actionSheet, animated: true, completion: nil)
 		#else // tvOS
