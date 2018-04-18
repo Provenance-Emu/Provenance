@@ -656,7 +656,7 @@ extension PVGameMoreInfoViewController {
 				RomDatabase.sharedInstance.delete(game: self.game!)
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            self.present(alert, animated: true) {() -> Void in }
+			(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
         }
 
 		return [playAction, favoriteToggle, deleteAction]
