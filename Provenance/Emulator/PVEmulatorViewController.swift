@@ -120,34 +120,113 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         updatePlayedDuration()
     }
 
+	private func initNotifcationObservers() {
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
+	}
+
+	private func initCore() {
+		core.audioDelegate = self
+		core.saveStatesPath = self.saveStatePath
+		core.batterySavesPath = batterySavesPath
+		core.biosPath = BIOSPath
+		core.controller1 = PVControllerManager.shared.player1
+		core.controller2 = PVControllerManager.shared.player2
+		core.controller3 = PVControllerManager.shared.player3
+		core.controller4 = PVControllerManager.shared.player4
+
+		let md5Hash: String = game.md5Hash
+		core.romMD5 = md5Hash
+		core.romSerial = game.romSerial
+	}
+
+	private func initMenuButton() {
+		//        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
+		if let aController = controllerViewController {
+			addChildViewController(aController)
+		}
+		if let aView = controllerViewController?.view {
+			view.addSubview(aView)
+		}
+		controllerViewController?.didMove(toParentViewController: self)
+
+		let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
+		menuButton = UIButton(type: .custom)
+		menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
+		menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
+		menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
+		// Commenting out title label for now (menu has changed to graphic only)
+		//[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
+		//menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+		//menuButton?.setTitleColor(UIColor.white, for: .normal)
+		menuButton?.layer.shadowOffset = CGSize(width: 0, height: 1)
+		menuButton?.layer.shadowRadius = 3.0
+		menuButton?.layer.shadowColor = UIColor.black.cgColor
+		menuButton?.layer.shadowOpacity = 0.75
+		menuButton?.tintColor = UIColor.white
+		menuButton?.alpha = alpha
+		menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
+		view.addSubview(menuButton!)
+	}
+
+	private func initFPSLabel() {
+		fpsLabel = UILabel()
+		fpsLabel?.textColor = UIColor.yellow
+		fpsLabel?.text = "\(glViewController.framesPerSecond)"
+		fpsLabel?.translatesAutoresizingMaskIntoConstraints = false
+		fpsLabel?.textAlignment = .right
+		#if os(tvOS)
+		fpsLabel?.font = UIFont.systemFont(ofSize: 100, weight: .bold)
+		#else
+		if #available(iOS 8.2, *) {
+			fpsLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+		}
+		#endif
+		if let aLabel = fpsLabel {
+			glViewController?.view.addSubview(aLabel)
+		}
+		if let aLabel = fpsLabel {
+			view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .top, relatedBy: .equal, toItem: glViewController?.view, attribute: .top, multiplier: 1.0, constant: 30))
+		}
+		if let aLabel = fpsLabel {
+			view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .right, relatedBy: .equal, toItem: glViewController?.view, attribute: .right, multiplier: 1.0, constant: -40))
+		}
+
+		if #available(iOS 10.0, tvOS 10.0, *) {
+			// Block-based NSTimer method is only available on iOS 10 and later
+			fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {(_ timer: Timer) -> Void in
+				if self.core.renderFPS == self.core.emulationFPS {
+					self.fpsLabel?.text = String(format: "%2.02f", self.core.renderFPS)
+				} else {
+					self.fpsLabel?.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
+				}
+			})
+		} else {
+
+			// Use traditional scheduledTimerWithTimeInterval method on older version of iOS
+			fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateFPSLabel), userInfo: nil, repeats: true)
+			fpsTimer?.fire()
+		}
+	}
+
 	// TODO: This smethid is way too big, break it up
     override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
 
-        core.audioDelegate = self
-        core.saveStatesPath = self.saveStatePath
-        core.batterySavesPath = batterySavesPath
-        core.biosPath = BIOSPath
-        core.controller1 = PVControllerManager.shared.player1
-        core.controller2 = PVControllerManager.shared.player2
-        core.controller3 = PVControllerManager.shared.player3
-        core.controller4 = PVControllerManager.shared.player4
+		initNotifcationObservers()
+		initCore()
 
-        var romPath: URL? = game.file.url
-        let md5Hash: String = game.md5Hash
-        core.romMD5 = md5Hash
-        core.romSerial = game.romSerial
+		var romPath: URL? = game.file.url
+
         glViewController = PVGLViewController(emulatorCore: core)
             // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
             // to provide the correct data for creating views.
@@ -201,75 +280,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             }
             glViewController?.didMove(toParentViewController: self)
         }
-#if os(iOS)
-//        controllerViewController = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
-        if let aController = controllerViewController {
-            addChildViewController(aController)
-        }
-    if let aView = controllerViewController?.view {
-            view.addSubview(aView)
-        }
-        controllerViewController?.didMove(toParentViewController: self)
-
-		let alpha: CGFloat = PVSettingsModel.sharedInstance().controllerOpacity
-        menuButton = UIButton(type: .custom)
-        menuButton?.autoresizingMask = [.flexibleLeftMargin, .flexibleRightMargin, .flexibleBottomMargin]
-        menuButton?.setImage(UIImage(named: "button-menu"), for: .normal)
-        menuButton?.setImage(UIImage(named: "button-menu-pressed"), for: .highlighted)
-        // Commenting out title label for now (menu has changed to graphic only)
-        //[self.menuButton setTitle:@"Menu" forState:UIControlStateNormal];
-        //menuButton?.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        //menuButton?.setTitleColor(UIColor.white, for: .normal)
-        menuButton?.layer.shadowOffset = CGSize(width: 0, height: 1)
-        menuButton?.layer.shadowRadius = 3.0
-        menuButton?.layer.shadowColor = UIColor.black.cgColor
-        menuButton?.layer.shadowOpacity = 0.75
-        menuButton?.tintColor = UIColor.white
-        menuButton?.alpha = alpha
-        menuButton?.addTarget(self, action: #selector(PVEmulatorViewController.showMenu(_:)), for: .touchUpInside)
-		view.addSubview(menuButton!)
+		#if os(iOS)
+		initMenuButton()
 		#endif
 
         if PVSettingsModel.sharedInstance().showFPSCount {
-            fpsLabel = UILabel()
-            fpsLabel?.textColor = UIColor.yellow
-            fpsLabel?.text = "\(glViewController.framesPerSecond)"
-            fpsLabel?.translatesAutoresizingMaskIntoConstraints = false
-            fpsLabel?.textAlignment = .right
-#if os(tvOS)
-            fpsLabel?.font = UIFont.systemFont(ofSize: 100, weight: .bold)
-#else
-            if #available(iOS 8.2, *) {
-                fpsLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-            }
-#endif
-            if let aLabel = fpsLabel {
-                glViewController?.view.addSubview(aLabel)
-            }
-            if let aLabel = fpsLabel {
-                view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .top, relatedBy: .equal, toItem: glViewController?.view, attribute: .top, multiplier: 1.0, constant: 30))
-            }
-            if let aLabel = fpsLabel {
-                view.addConstraint(NSLayoutConstraint(item: aLabel, attribute: .right, relatedBy: .equal, toItem: glViewController?.view, attribute: .right, multiplier: 1.0, constant: -40))
-            }
-
-            if #available(iOS 10.0, tvOS 10.0, *) {
-                // Block-based NSTimer method is only available on iOS 10 and later
-                fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: {(_ timer: Timer) -> Void in
-                    if self.core.renderFPS == self.core.emulationFPS {
-                        self.fpsLabel?.text = String(format: "%2.02f", self.core.renderFPS)
-                    } else {
-                        self.fpsLabel?.text = String(format: "%2.02f (%2.02f)", self.core.renderFPS, self.core.emulationFPS)
-                    }
-                })
-            } else {
-
-                // Use traditional scheduledTimerWithTimeInterval method on older version of iOS
-                fpsTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.updateFPSLabel), userInfo: nil, repeats: true)
-                fpsTimer?.fire()
-            }
+			initFPSLabel()
         }
-#if !(arch(i386) || arch(x86_64))
+
+#if !targetEnvironment(simulator)
         if GCController.controllers().count != 0 {
             menuButton?.isHidden = true
         }
@@ -278,6 +297,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		convertOldSaveStatesToNewIfNeeded()
 
         core.startEmulation()
+		
         gameAudio = OEGameAudio(core: core)
         gameAudio?.volume = PVSettingsModel.sharedInstance().volume
         gameAudio?.outputDeviceID = 0
