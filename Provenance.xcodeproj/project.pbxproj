@@ -1753,11 +1753,6 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
-				B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */,
-				DF0035C7203C97FA00F63831 /* GLideN64.ini */,
-				DF0035C4203C97D800F63831 /* GLideN64.custom.ini */,
-				B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */,
-				B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -1769,6 +1764,10 @@
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
 				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
+				DF0035C7203C97FA00F63831 /* GLideN64.ini */,
+				DF0035C4203C97D800F63831 /* GLideN64.custom.ini */,
+				B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */,
+				B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */,
 				B366171E206EBF6900A4F306 /* Recovered References */,
 			);
 			sourceTree = "<group>";
@@ -2639,6 +2638,7 @@
 		B3684578206EBF1A0078FEC2 /* Linked */ = {
 			isa = PBXGroup;
 			children = (
+				B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */,
 				B340E5FE1E088CA700AD0E8B /* PVMednafen.framework */,
 				B340E6091E088CF900AD0E8B /* PVMednafen.framework */,
 				B3D8DC5A206EA681008FAC42 /* PVFCEU.framework */,
