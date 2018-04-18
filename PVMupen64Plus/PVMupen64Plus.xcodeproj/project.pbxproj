@@ -7032,7 +7032,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src\"";
 				USE_HEADERMAP = NO;
-				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -7132,7 +7131,6 @@
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/mupen64plus-video-gliden64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = arm64;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
