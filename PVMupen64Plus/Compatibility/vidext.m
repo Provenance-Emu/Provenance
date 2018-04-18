@@ -48,18 +48,42 @@ EXPORT m64p_error CALL VidExt_Quit(void)
 
 EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *NumSizes)
 {
-	m64p_2d_size size[1];
+	m64p_2d_size size[2];
+
+	// Default size
 	size[0].uiWidth = 640;
 	size[0].uiHeight = 480;
+
+	// Full device size
+	CGSize fullWindow = UIApplication.sharedApplication.keyWindow.bounds.size;
+	size[1].uiWidth = fullWindow.width;
+	size[1].uiHeight = fullWindow.height;
+
 	SizeArray = &size;
-    *NumSizes = 1;
+    *NumSizes = 2;
+
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPixel, m64p_video_mode ScreenMode, m64p_video_flags Flags)
 {
-	DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, ScreenMode == 1 ? @"None" : ScreenMode == 2 ? @"Windowed" : @"Fullscreen");
-    GET_CURRENT_OR_RETURN(M64ERR_SUCCESS);
+	NSString *windowMode;
+	switch (ScreenMode) {
+		case 1:
+			windowMode = @"None";
+			break;
+		case 2:
+			windowMode = @"Window";
+			break;
+		case 3:
+			windowMode = @"Fullscreen";
+			break;
+		default:
+			windowMode = @"Unknown";
+			break;
+	}
+	DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, windowMode);
+    GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
 
     current.videoWidth = Width;
     current.videoHeight = Height;
