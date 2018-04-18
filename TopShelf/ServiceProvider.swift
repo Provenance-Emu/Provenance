@@ -22,8 +22,11 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
         super.init()
 
         if RealmConfiguration.supportsAppGroups {
-            RealmConfiguration.setDefaultRealmConfig()
-        }
+			let database = RomDatabase.sharedInstance
+			database.refresh()
+		} else {
+			ELOG("App doesn't support groups. Check \(PVAppGroupId) is a valid group id")
+		}
     }
 
     // MARK: - TVTopShelfProvider protocol
@@ -35,12 +38,16 @@ public class ServiceProvider: NSObject, TVTopShelfProvider {
     public var topShelfItems: [TVContentItem] {
         var topShelfItems = [TVContentItem]()
         if RealmConfiguration.supportsAppGroups {
-            let identifier = TVContentIdentifier(identifier: "id", container: nil)!
+			guard let identifier = TVContentIdentifier(identifier: "id", container: nil) else {
+				ELOG("Failed to init.")
+				return topShelfItems
+			}
 
             guard let recentItems = TVContentItem(contentIdentifier: identifier) else {
                 ELOG("Couldnt get TVContentItem for idenitifer \(identifier)")
                 return topShelfItems
             }
+
             recentItems.title = "Recently Played"
 
             let database = RomDatabase.sharedInstance
