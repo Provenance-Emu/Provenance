@@ -345,8 +345,9 @@ public extension RomDatabase {
 		}
 		#endif
 
-		game.saveStates.forEach { try! $0.delete() }
-		game.recentPlays.forEach { try! $0.delete() }
+		game.saveStates.forEach { try? $0.delete() }
+		game.recentPlays.forEach { try? $0.delete() }
+		game.screenShots.forEach { try? $0.delete() }
 
 		deleteRelatedFilesGame(game)
 		try? game.delete()
