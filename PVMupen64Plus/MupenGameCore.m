@@ -33,6 +33,8 @@
 
 #define FORCE_RICE_VIDEO 0
 
+#define RESIZE_TO_FULLSCREEN 1
+
 #import "MupenGameCore.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
@@ -472,7 +474,11 @@ static void ConfigureGLideN64(NSString *romFolder) {
 	ConfigOpenSection("Video-GLideN64", &gliden64);
 
 	// 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
+#if RESIZE_TO_FULLSCREEN
+	int aspectRatio = 3;
+#else
 	int aspectRatio = 1;
+#endif
 	ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
 
 	// Per-pixel lighting
@@ -789,7 +795,14 @@ static void ConfigureRICE() {
         
         return NO;
     }
-    
+
+#if RESIZE_TO_FULLSCREEN
+	UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+	if(keyWindow != nil) {
+		CGSize fullScreenSize = keyWindow.bounds.size;
+		[self tryToResizeVideoTo:fullScreenSize];
+	}
+#endif
     return YES;
 }
 
@@ -1095,8 +1108,10 @@ static void ConfigureRICE() {
 
 - (void) tryToResizeVideoTo:(CGSize)size
 {
-    VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_WINDOWED, 0);
-    ptr_PV_ForceUpdateWindowSize(size.width, size.height);
+    VidExt_SetVideoMode(size.width, size.height, 32, M64VIDEO_FULLSCREEN, 0);
+	if (ptr_PV_ForceUpdateWindowSize != nil) {
+		ptr_PV_ForceUpdateWindowSize(size.width, size.height);
+	}
 }
 
 - (BOOL)rendersToOpenGL
