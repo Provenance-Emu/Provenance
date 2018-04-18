@@ -632,12 +632,12 @@
 		<string>1999</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ws</string>
 		<key>PVDatabaseID</key>
 		<string>9</string>
-		<key>PVPortable</key>
-		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ws</string>
@@ -788,7 +788,7 @@
 		<key>PVSystemShortName</key>
 		<string>SGFX</string>
 		<key>PVSystemsShortNames</key>
-		<string>PCE/SGFX</string>
+		<string>PCESG/SGFX</string>
 		<key>PVReleaseYear</key>
 		<string>1989</string>
 		<key>PVBit</key>
@@ -879,11 +879,6 @@
 		<true/>
 		<key>PVRequiresBIOS</key>
 		<true/>
-		<key>PVSupportedExtensions</key>
-		<array>
-			<string>cue</string>
-			<string>ccd</string>
-		</array>
 		<key>PVBIOSNames</key>
 		<array>
 			<dict>
@@ -896,6 +891,11 @@
 				<key>Size</key>
 				<integer>262656</integer>
 			</dict>
+		</array>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>cue</string>
+			<string>ccd</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -1023,7 +1023,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>iV</string>
+						<string>IV</string>
 						<key>PVControlFrame</key>
 						<string>{{8,24},{60,60}}</string>
 					</dict>
@@ -1217,16 +1217,16 @@
 		<string>SG</string>
 		<key>PVSystemShortNames</key>
 		<string>SG/SMD</string>
-		<key>PVSystemIdentifier</key>
-		<string>com.provenance.genesis</string>
 		<key>PVReleaseYear</key>
 		<string>1988</string>
 		<key>PVBit</key>
 		<string>16</string>
-		<key>PVDatabaseID</key>
-		<string>33</string>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.genesis</string>
+		<key>PVDatabaseID</key>
+		<string>33</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smd</string>
@@ -1449,6 +1449,8 @@
 		<string>1990</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.snes</string>
 		<key>PVDatabaseID</key>
@@ -2081,7 +2083,7 @@
 		<key>PVSystemName</key>
 		<string>Atari 7800</string>
 		<key>PVSystemShortName</key>
-		<string>7800</string>
+		<string>A7800</string>
 		<key>PVReleaseYear</key>
 		<string>1986</string>
 		<key>PVBit</key>
