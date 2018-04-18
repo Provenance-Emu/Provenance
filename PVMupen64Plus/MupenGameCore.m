@@ -422,7 +422,7 @@ static void MupenSetAudioSpeed(int percent)
     // do we need this?
 }
 
-static void ConfigureCore() {
+static void ConfigureCore(NSString *romFolder) {
 	GET_CURRENT_AND_RETURN();
 
 	// TODO: Proper path
@@ -435,9 +435,9 @@ static void ConfigureCore() {
 	ConfigOpenSection("Core", &config);
 
 	// set SRAM path
-	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [current.batterySavesPath UTF8String]);
+	ConfigSetParameter(config, "SaveSRAMPath", M64TYPE_STRING, [current.batterySavesPath fileSystemRepresentation]);
 	// set data path
-	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, dataPath);
+	ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, romFolder.fileSystemRepresentation);
 
 	// Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
 	int emulator = 1;
@@ -490,9 +490,9 @@ static void ConfigureGLideN64(NSString *romFolder) {
 	//  txHiresEnable, "Use high-resolution texture packs if available."
 	ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
 
-	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder UTF8String]);
-	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING,[romFolder UTF8String]);
-	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING,[romFolder UTF8String]);
+	ConfigSetParameter(gliden64, "txPath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
+	ConfigSetParameter(gliden64, "txCachePath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
+	ConfigSetParameter(gliden64, "txDumpPath", M64TYPE_STRING, [romFolder fileSystemRepresentation]);
 
 	/*
 	 "txFilterMode", "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
@@ -584,28 +584,72 @@ static void ConfigureRICE() {
 	ConfigSaveSection("Video-Rice");
 }
 
+- (void)copyIniFiles:(NSString*)romFolder {
+	NSBundle *coreBundle = [NSBundle mainBundle];
+
+	// Copy default config files if they don't exist
+	NSArray<NSString*>* iniFiles = @[@"GLideN64.ini", @"GLideN64.custom.ini", @"RiceVideoLinux.ini", @"mupen64plus.ini"];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	for (NSString *iniFile in iniFiles) {
+		NSString *destinationPath = [romFolder stringByAppendingPathComponent:iniFile];
+
+		if (![fm fileExistsAtPath:destinationPath]) {
+			NSString *fileName = [iniFile stringByDeletingPathExtension];
+			NSString *extension = [iniFile pathExtension];
+			NSString *source = [coreBundle pathForResource:fileName
+													ofType:extension];
+			if (source == nil) {
+				ELOG(@"No resource path found for file %@", iniFile);
+				continue;
+			}
+			NSError *error;
+			BOOL success = [fm copyItemAtPath:source
+									   toPath:destinationPath
+										error:&error];
+			if (!success) {
+				ELOG(@"Failed to copy app bundle file %@\n%@", iniFile, error.localizedDescription);
+			} else {
+				ILOG(@"Copied %@ from app bundle to %@", iniFile, destinationPath);
+			}
+		}
+	}
+}
+
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     NSBundle *coreBundle = [NSBundle mainBundle];
-    const char *dataPath;
 
-    // TODO: Proper path
-    NSString *configPath = self.saveStatesPath;
-    dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
-    
-    [[NSFileManager defaultManager] createDirectoryAtPath:configPath withIntermediateDirectories:YES attributes:nil error:nil];
-    
     NSString *batterySavesDirectory = self.batterySavesPath;
     [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
-    
-    // open core here
-    CoreStartup(FRONTEND_API_VERSION, [configPath fileSystemRepresentation], dataPath, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
 
 	NSString *romFolder = [path stringByDeletingLastPathComponent];
+	NSString *configPath = [romFolder stringByAppendingPathComponent:@"/config/"];
+	NSString *dataPath = [romFolder stringByAppendingPathComponent:@"/data/"];
 
-	ConfigureCore();
+	// Create config and data paths
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	for (NSString *path in @[configPath, dataPath]) {
+		if (![fileManager fileExistsAtPath:configPath]) {
+			NSError *error;
+			if(![fileManager createDirectoryAtPath:configPath
+					   withIntermediateDirectories:true
+										attributes:nil
+											 error:&error]) {
+				ELOG(@"Filed to create path. %@", error.localizedDescription);
+			}
+		}
+	}
+
+	// Copy default ini files to the config path
+	[self copyIniFiles:configPath];
+
+	// Setup configs
+	ConfigureCore(romFolder);
 	ConfigureVideoGeneral();
 	ConfigureGLideN64(romFolder);
 	ConfigureRICE();
+
+	// open core here
+	CoreStartup(FRONTEND_API_VERSION, configPath.fileSystemRepresentation, dataPath.fileSystemRepresentation, (__bridge void *)self, MupenDebugCallback, (__bridge void *)self, MupenStateCallback);
 
 	// Create the directory if this option is enabled to make it easier for users to upload packs
 	BOOL hiResTextures = YES;
