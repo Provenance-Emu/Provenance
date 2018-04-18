@@ -76,12 +76,16 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
+#if DEBUG
 //	DLOG("%s", _pText);
+#endif
 }
 
 static void MupenDebugCallback(void *context, int level, const char *message)
 {
+#if DEBUG
     NSLog(@"Mupen (%d): %s", level, message);
+#endif
 }
 
 static void MupenFrameCallback(unsigned int FrameIndex) {
