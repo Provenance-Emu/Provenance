@@ -45,7 +45,7 @@
 #import <PVSupport/PVSupport-Swift.h>
 
 
-#define USE_PCE_FAST 1
+#define USE_PCE_FAST 0
 #define USE_SNES_FAUST 1
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
