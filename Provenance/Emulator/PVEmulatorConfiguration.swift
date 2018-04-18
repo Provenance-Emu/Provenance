@@ -244,7 +244,7 @@ public class PVEmulatorConfiguration: NSObject {
         return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
     }()
 
-    static let archiveExtensions: [String] = ["zip", "7z"]
+    static let archiveExtensions: [String] = ["zip", "7z", "rar"]
     static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
 
     @objc

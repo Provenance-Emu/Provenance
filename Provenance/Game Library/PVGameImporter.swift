@@ -1322,6 +1322,11 @@ extension PVGameImporter {
                 return
             }
 
+			// Skip the actual .7z, zip etc
+			if PVEmulatorConfiguration.archiveExtensions.contains(file.pathExtension.lowercased()) {
+				return
+			}
+
             var filenameWithoutExtension = file.deletingPathExtension().lastPathComponent
 
             // Some cue's have multiple bins, like, Game.cue Game (Track 1).bin, Game (Track 2).bin ....
