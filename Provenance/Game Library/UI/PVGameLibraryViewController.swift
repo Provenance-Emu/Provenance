@@ -1638,10 +1638,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			switch changes {
 			case .initial:
 				self.collectionView?.reloadData()
-			case .update(_, let deletions, let insertions, let modifications):
+			case .update:
 				self.collectionView?.reloadData()
 			case .error(let error):
-				self.collectionView?.reloadData()
+				// An error occurred while opening the Realm file on the background worker thread
+				fatalError("\(error)")
 			}
 		}
     }
