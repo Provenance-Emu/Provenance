@@ -539,7 +539,7 @@ public extension PVEmulatorConfiguration {
                 return obj1Filename < obj2Filename
             } else if obj1Extension == "cue" || obj1Extension == "ccd" {
                 return true
-            } else if obj2Extension == "cue" || obj1Extension == "ccd" {
+            } else if obj2Extension == "cue" || obj2Extension == "ccd" {
                 return false
             } // Check if image, put last
             else if artworkExtensions.contains(obj1Extension) {

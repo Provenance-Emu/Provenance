@@ -206,7 +206,7 @@ public class PVSettingsModel: NSObject {
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
                                                   kButtonTintsKey: true,
-                                                  kStartSelectAlwaysOnKey: true,
+                                                  kStartSelectAlwaysOnKey: false,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
