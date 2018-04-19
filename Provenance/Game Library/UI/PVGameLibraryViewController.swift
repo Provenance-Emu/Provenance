@@ -321,6 +321,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var favoritesToken: NotificationToken?
     var recentGamesToken: NotificationToken?
 
+	var searchResultsToken: NotificationToken?
+
     var favoritesIsHidden = true
 	var saveStatesIsEmpty = true
 	var saveStatesIsHidden : Bool {
@@ -609,12 +611,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		savesStatesToken?.invalidate()
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
+		searchResultsToken?.invalidate()
         systemSectionsTokens.values.forEach {$0.invalidate()}
 
         systemsToken = nil
 		savesStatesToken = nil
         recentGamesToken = nil
         favoritesToken = nil
+		searchResultsToken = nil
         systemSectionsTokens.removeAll()
     }
 
@@ -1629,12 +1633,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             self.searchResults = RomDatabase.sharedInstance.all(PVGame.self, filter: predicate).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
         }
 
-        collectionView?.reloadData()
+		searchResultsToken?.invalidate()
+		searchResultsToken = searchResults!.observe { [unowned self] (changes: RealmCollectionChange) in
+			switch changes {
+			case .initial:
+				self.collectionView?.reloadData()
+			case .update(_, let deletions, let insertions, let modifications):
+				self.collectionView?.reloadData()
+			case .error(let error):
+				self.collectionView?.reloadData()
+			}
+		}
     }
 
     func clearSearch() {
         searchField?.text = nil
         searchResults = nil
+		searchResultsToken?.invalidate()
+		searchResultsToken = nil
         collectionView?.reloadData()
     }
 
