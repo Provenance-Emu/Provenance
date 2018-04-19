@@ -48,7 +48,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
-		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs")!)
+		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Formatting-ROMs")!)
 		navigationController?.pushViewController(webVC, animated: true)
     }
 
