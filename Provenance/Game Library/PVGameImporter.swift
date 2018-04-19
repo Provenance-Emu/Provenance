@@ -685,7 +685,8 @@ public extension PVGameImporter {
 
                 if let existingGame = maybeGame ?? // found a match above?
                     database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
-                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarName])).first // More generic match
+                    database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarName])).first, // More generic match
+					system == existingGame.system// Check it's a same system too
                 {
                     // TODO: Check the MD5 mash. If it doesn't match, delete the imported game and re-import
                     // Can't update existig game since MD5 is the primary DB key and you can't update it.
