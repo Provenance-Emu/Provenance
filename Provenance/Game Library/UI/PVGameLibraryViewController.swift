@@ -1345,7 +1345,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.pasteCustomArtwork(for: game)
             }))
 
-            if !game.originalArtworkURL.isEmpty && game.originalArtworkURL != game.customArtworkURL {
+			// conditinally show Restore Original Artwork
+            if !game.originalArtworkURL.isEmpty, !game.customArtworkURL.isEmpty, game.originalArtworkURL != game.customArtworkURL {
                 actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
