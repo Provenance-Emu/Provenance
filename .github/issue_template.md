@@ -9,7 +9,7 @@ Please tell us as much information as possible and fill out ALL of the sections 
 ------------------------------------->
 
 
-replaceWithSummaryHere
+replaceWithSummary
 
 ### Expected:  <!--- What did you expect to happen? -->
 replaceWithExpectedResults
