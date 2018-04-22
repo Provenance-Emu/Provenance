@@ -87,7 +87,7 @@ import UIKit
             // TODO: Could do the same for 'destructive' types
 
             AlertContentViews.forEach {
-                print("AlertContentSubview \(String(describing: $0))")
+//                print("AlertContentSubview \(String(describing: $0))")
 
                 $0?.subviews.forEach({ (subview) in
                     if let backgroundColor = settings.backgroundColor {
