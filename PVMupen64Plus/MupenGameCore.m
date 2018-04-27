@@ -290,23 +290,33 @@ static void MupenInitiateControllers (CONTROL_INFO ControlInfo)
         {
             GCExtendedGamepad *gamepad     = [controller extendedGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
-            
+
+			// Left Joystick -> Joystick
             xAxis[playerIndex] = gamepad.leftThumbstick.xAxis.value * N64_ANALOG_MAX;
             yAxis[playerIndex] = gamepad.leftThumbstick.yAxis.value * N64_ANALOG_MAX;
-            
+
+			// DPad -> DPad
             padData[playerIndex][PVN64ButtonDPadUp] = dpad.up.isPressed;
             padData[playerIndex][PVN64ButtonDPadDown] = dpad.down.isPressed;
             padData[playerIndex][PVN64ButtonDPadLeft] = dpad.left.isPressed;
             padData[playerIndex][PVN64ButtonDPadRight] = dpad.right.isPressed;
-            
+
+			// A,Y -> A
+			// X,B -> B
             padData[playerIndex][PVN64ButtonA] = gamepad.buttonA.isPressed || gamepad.buttonY.isPressed;
             padData[playerIndex][PVN64ButtonB] = gamepad.buttonX.isPressed || gamepad.buttonB.isPressed;
+
+			// Right Trigger -> Start
             padData[playerIndex][PVN64ButtonStart] = gamepad.rightTrigger.isPressed;
-            
+
+			// L / R Shoulder -> L / R
             padData[playerIndex][PVN64ButtonL] = gamepad.leftShoulder.isPressed;
             padData[playerIndex][PVN64ButtonR] = gamepad.rightShoulder.isPressed;
+
+			// Left Trigger -> Z
             padData[playerIndex][PVN64ButtonZ] = gamepad.leftTrigger.isPressed;
-            
+
+			// Right Joystick -> C Buttons
             float rightJoystickDeadZone = 0.45;
             
             padData[playerIndex][PVN64ButtonCUp] = gamepad.rightThumbstick.up.value > rightJoystickDeadZone;
