@@ -314,7 +314,7 @@ public extension RomDatabase {
 			do {
 				try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 			} catch {
-				ELOG("Failed to delete image \(game.customArtworkURL)")
+				ELOG("Failed to delete image " + game.customArtworkURL)
 			}
 		}
 
@@ -322,7 +322,7 @@ public extension RomDatabase {
 		do {
 			try FileManager.default.removeItem(at: savesPath)
 		} catch {
-			WLOG("Unable to delete save states at path: \(savesPath.path) because: \(error.localizedDescription)")
+			WLOG("Unable to delete save states at path: " + savesPath.path + "because: " + error.localizedDescription)
 		}
 
 		let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
