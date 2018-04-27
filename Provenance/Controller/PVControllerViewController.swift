@@ -500,8 +500,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let xSpacing: CGFloat = 20
-        var startFrame: CGRect
-        if UIDevice.current.orientation.isLandscape {
+        var startFrame: CGRect!
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad  {
             if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {
@@ -509,10 +509,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             } else {
                 startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
-
-        } else {
+        } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
             startFrame = CGRect(x: (view.frame.size.width / 2) + (xSpacing / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! + yPadding, width: controlSize.width, height: controlSize.height)
+        } else {
+            startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
         }
+
         if let startButton = self.startButton {
             startButton.frame = startFrame
         } else {
@@ -538,8 +540,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.left + 10
         let xSpacing: CGFloat = 20
-        var selectFrame: CGRect
-        if UIDevice.current.orientation.isLandscape {
+        var selectFrame: CGRect!
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (dPad != nil) && !(dPad?.isHidden)! {
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 2), y: (buttonGroup?.frame.origin.y)! + (buttonGroup?.frame.height)! - controlSize.height, width: controlSize.width, height: controlSize.height)
             } else if (dPad != nil) && (dPad?.isHidden)! {
@@ -548,11 +550,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
             }
 
-        } else {
+        } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
 			let x: CGFloat = (view.frame.size.width / CGFloat(2.0)) - controlSize.width - (xSpacing / CGFloat(2.0))
 			let y: CGFloat = ((buttonGroup?.frame.origin.y) ?? 0) + (buttonGroup?.frame.height)! + yPadding
             selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
+        } else {
+                selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
         }
+        
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame
         } else {
