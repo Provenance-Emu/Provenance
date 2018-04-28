@@ -275,8 +275,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         pad.buttonA.isPressed ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
         pad.buttonB.isPressed ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
 
-        (pad.buttonX.isPressed || pad.leftShoulder.isPressed || pad.leftTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
-        (pad.buttonY.isPressed || pad.rightShoulder.isPressed || pad.rightTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+        (pad.buttonX.isPressed || pad.leftShoulder.isPressed || pad.leftTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+        (pad.buttonY.isPressed || pad.rightShoulder.isPressed || pad.rightTrigger.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
     }
     else if ([self.controller1 gamepad])
     {
@@ -291,8 +291,8 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
         pad.buttonA.isPressed ? gb_pad[0] |= GBMap[PVGBButtonB] : gb_pad[0] &= ~GBMap[PVGBButtonB];
         pad.buttonB.isPressed ? gb_pad[0] |= GBMap[PVGBButtonA] : gb_pad[0] &= ~GBMap[PVGBButtonA];
 
-        (pad.buttonX.isPressed || pad.leftShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
-        (pad.buttonY.isPressed || pad.rightShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+        (pad.buttonX.isPressed || pad.leftShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonSelect] : gb_pad[0] &= ~GBMap[PVGBButtonSelect];
+        (pad.buttonY.isPressed || pad.rightShoulder.isPressed) ? gb_pad[0] |= GBMap[PVGBButtonStart] : gb_pad[0] &= ~GBMap[PVGBButtonStart];
     }
 #if TARGET_OS_TV
     else if ([self.controller1 microGamepad])
