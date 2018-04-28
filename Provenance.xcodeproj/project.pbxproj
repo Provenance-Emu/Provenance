@@ -737,6 +737,10 @@
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
 		B3DB11AE205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
+		B3DBF13C2094669A005935A8 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DBF13B2094669A005935A8 /* UTI.swift */; };
+		B3DBF13D2094669A005935A8 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DBF13B2094669A005935A8 /* UTI.swift */; };
+		B3DBF13E2094669A005935A8 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DBF13B2094669A005935A8 /* UTI.swift */; };
+		B3DBF13F2094669A005935A8 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DBF13B2094669A005935A8 /* UTI.swift */; };
 		B3DDB0A820291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */; };
@@ -1514,6 +1518,7 @@
 		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
 		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
+		B3DBF13B2094669A005935A8 /* UTI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UTI.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEE8E81E9E9C880004D25E /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DF87641D6A5A5300D216D4 /* PVAtari2600ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVAtari2600ControllerViewController.swift; sourceTree = "<group>"; };
@@ -1801,22 +1806,21 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
-				378F4A121B63F2240065FA39 /* Reachability */,
-				378F49DB1B63D7CD0065FA39 /* http */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
-				1F8D523E1D9190E900C29F90 /* PVAvailability.h */,
-				1A48696917C8C0C60019F6D2 /* Game Library */,
-				1A1237F417CA27B700CEC788 /* Emulator */,
-				1A1237F317CA27AD00CEC788 /* Settings */,
-				1A1237F217CA279900CEC788 /* User Interface */,
-				B349ACEC1E9ABCF800ACD416 /* LzmaSDKObjC */,
-				1A26EE261AD9FFBF004EA30B /* SSZipArchive */,
 				1AADCDB117BD997500F53CFE /* Categories */,
 				1A47C94A17BC310700C27644 /* Controller */,
+				1A1237F417CA27B700CEC788 /* Emulator */,
+				1A48696917C8C0C60019F6D2 /* Game Library */,
+				378F49DB1B63D7CD0065FA39 /* http */,
+				B349ACEC1E9ABCF800ACD416 /* LzmaSDKObjC */,
+				378F4A121B63F2240065FA39 /* Reachability */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
-				DFCD6EBE203762AE00719289 /* shaders */,
+				1A1237F317CA27AD00CEC788 /* Settings */,
+				1A26EE261AD9FFBF004EA30B /* SSZipArchive */,
 				1A3D409E17B2DCE4004DFFFC /* Supporting Files */,
-				B3E21D602032074F009939D3 /* Logging.swift */,
+				1A1237F217CA279900CEC788 /* User Interface */,
+				B3DBF13A2094669A005935A8 /* Utilities */,
+				DFCD6EBE203762AE00719289 /* shaders */,
 			);
 			path = Provenance;
 			sourceTree = "<group>";
@@ -2816,6 +2820,16 @@
 			path = Frameworks/RealmSwift;
 			sourceTree = "<group>";
 		};
+		B3DBF13A2094669A005935A8 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				1F8D523E1D9190E900C29F90 /* PVAvailability.h */,
+				B3E21D602032074F009939D3 /* Logging.swift */,
+				B3DBF13B2094669A005935A8 /* UTI.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		B3DF87681D6A5A6200D216D4 /* Atari2600 */ = {
 			isa = PBXGroup;
 			children = (
@@ -3346,6 +3360,7 @@
 				B349AEB71E9ABCF900ACD416 /* ItemNameUtils.cpp in Sources */,
 				1A2FB10F206EF29E00A1F942 /* PVSaveStateHeaderView.swift in Sources */,
 				378F4A0E1B63D7CD0065FA39 /* GCDWebUploader.m in Sources */,
+				B3DBF13C2094669A005935A8 /* UTI.swift in Sources */,
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B349AE491E9ABCF900ACD416 /* 7zCrcOpt.c in Sources */,
 				E4F9369D1B50BF3B009403C5 /* PViCadeControllerViewController.swift in Sources */,
@@ -3777,6 +3792,7 @@
 				B349AEB41E9ABCF900ACD416 /* HandlerOut.cpp in Sources */,
 				B349AEDE1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
 				B349AEE01E9ABCF900ACD416 /* ProgressUtils.cpp in Sources */,
+				B3DBF13D2094669A005935A8 /* UTI.swift in Sources */,
 				B3D8DD05206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */,
 				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
@@ -3877,6 +3893,7 @@
 				B3D8DD13206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
 				B3D8DD2F206EAA9E008FAC42 /* Aliases.swift in Sources */,
 				B3D8DD03206EAA9E008FAC42 /* Util.swift in Sources */,
+				B3DBF13F2094669A005935A8 /* UTI.swift in Sources */,
 				B3D8DD23206EAA9E008FAC42 /* Optional.swift in Sources */,
 				B3D8DD1F206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */,
@@ -3948,6 +3965,7 @@
 				B3D8DD06206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				B3D8DD3A206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
+				B3DBF13E2094669A005935A8 /* UTI.swift in Sources */,
 				B3BE96892055F40000281880 /* PVFile.swift in Sources */,
 				B3D8DD1A206EAA9E008FAC42 /* Object.swift in Sources */,
 				B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */,

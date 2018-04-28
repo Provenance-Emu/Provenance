@@ -799,7 +799,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
 
 		actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { (alert) in
-			let extensions = ["com.provenance.rom", "com.pkware.zip-archive"]
+			let extensions = [UTI.rom, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.jpeg, UTI.png, UTI.bios, UTI.data].map { $0.rawValue }
 
 			//        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
 			//        documentMenu.delegate = self
