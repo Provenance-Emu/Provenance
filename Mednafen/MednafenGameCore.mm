@@ -1213,13 +1213,13 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
     if (player == 0) {
         controller = self.controller1;
     }
-    else if (player == 2) {
+    else if (player == 1) {
         controller = self.controller2;
     }
-    else if (player == 3) {
+    else if (player == 2) {
         controller = self.controller3;
     }
-    else if (player == 4) {
+    else if (player == 3) {
         controller = self.controller4;
     }
         
