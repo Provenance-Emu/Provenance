@@ -19,7 +19,7 @@ import UIKit
 public protocol GameLaunchingViewController: class {
     var mustRefreshDataSource: Bool {get set}
     func canLoad(_ game: PVGame) throws
-	func load(_ game: PVGame, sender : Any?, core: PVCore?)
+	func load(_ game: PVGame, sender : Any?, core: PVCore?, saveState: PVSaveState?)
 	func openSaveState(_ saveState: PVSaveState)
     func updateRecentGames(_ game: PVGame)
     func register3DTouchShortcuts()
@@ -202,7 +202,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 		present(coreChoiceAlert, animated: true)
 	}
 
-	func load(_ game: PVGame, sender : Any?, core: PVCore?) {
+	func load(_ game: PVGame, sender : Any?, core: PVCore?, saveState : PVSaveState? = nil) {
         guard !(presentedViewController is PVEmulatorViewController) else {
             let currentGameVC = presentedViewController as! PVEmulatorViewController
             displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
@@ -234,11 +234,20 @@ extension GameLaunchingViewController where Self : UIViewController {
 			var selectedCore : PVCore?
 
 			// If a core is passed in and it's valid for this system, use it.
-			if let core = core, cores.contains(core) {
+			if let saveState = saveState {
+				if cores.contains(saveState.core) {
+					selectedCore = saveState.core
+				} else {
+					// TODO: Present Error
+				}
+			}
+
+			// See if the user chose a core
+			if selectedCore == nil, let core = core, cores.contains(core) {
 				selectedCore = core
 			}
 
-			// Check if multiple cores can launch thi rom
+			// Check if multiple cores can launch this rom
 			if selectedCore == nil, cores.count > 1 {
 
 				let coresString : String = cores.map({return $0.projectName}).joined(separator: ", ")
@@ -255,7 +264,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				// User has no core preference, present dialogue to pick
 				presentCoreSelection(forGame: game, sender: sender)
 			} else {
-				presentEMU(withCore: selectedCore ?? cores.first!, forGame: game)
+				presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState)
 			}
         } catch GameLaunchingError.missingBIOSes(let missingBIOSes) {
             // Create missing BIOS directory to help user out
@@ -275,7 +284,7 @@ extension GameLaunchingViewController where Self : UIViewController {
         }
     }
 
-	private func presentEMU(withCore core : PVCore, forGame game: PVGame) {
+	private func presentEMU(withCore core : PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil) {
 		guard let coreInstance = core.createInstance(forSystem: game.system) else {
 			displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
 			ELOG("Failed to init core instance")
@@ -290,22 +299,80 @@ extension GameLaunchingViewController where Self : UIViewController {
 		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
 		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
 
-		// Present the emulator VC
-		emulatorViewController.modalTransitionStyle = .crossDissolve
-		self.present(emulatorViewController, animated: true) {() -> Void in }
-
-		PVControllerManager.shared.iCadeController?.refreshListener()
-
-		do {
-			try RomDatabase.sharedInstance.writeTransaction {
-				game.playCount += 1
-				game.lastPlayed = Date()
+		let presentEMUVC : (PVSaveState?)->Void = { saveSate in
+			// Present the emulator VC
+			emulatorViewController.modalTransitionStyle = .crossDissolve
+			self.present(emulatorViewController, animated: true) {() -> Void in
+				// Open the save state after a bootup delay if the user selected one
+				if let saveState = saveState {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
+						self.openSaveState(saveState)
+					})
+				}
 			}
-		} catch {
-			ELOG("\(error.localizedDescription)")
+
+			PVControllerManager.shared.iCadeController?.refreshListener()
+
+			do {
+				try RomDatabase.sharedInstance.writeTransaction {
+					game.playCount += 1
+					game.lastPlayed = Date()
+				}
+			} catch {
+				ELOG("\(error.localizedDescription)")
+			}
+
+			self.updateRecentGames(game)
 		}
 
-		self.updateRecentGames(game)
+		// Check if autosave exists
+		if saveState == nil {
+			checkForAutosaveThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
+				presentEMUVC(optionallyChosenSaveState)
+			}
+		} else {
+			presentEMUVC(saveState)
+		}
+	}
+
+	private func runEmu(withCore core: PVCore, game: PVGame) {
+
+	}
+
+	private func checkForAutosaveThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
+		// TODO: This should be moved to when the user goes to open the game, and should check if the game was loaded from an autosave already and not ask
+		// WARN: Finish me
+		if let latestAutoSave = game.saveStates.filter("isAutosave == true && core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
+			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
+			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
+			if shouldAskToLoadSaveState {
+				let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
+				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+					completion(latestAutoSave)
+				}))
+				alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
+					completion(latestAutoSave)
+					PVSettingsModel.sharedInstance().autoSave = true
+					PVSettingsModel.sharedInstance().askToAutoLoad = false
+				}))
+				alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+					completion(nil)
+				}))
+				alert.addAction(UIAlertAction(title: "No, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+					completion(nil)
+					PVSettingsModel.sharedInstance().askToAutoLoad = false
+					PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+				}))
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
+					self.present(alert, animated: true) {() -> Void in }
+				})
+				completion(nil)
+			} else if shouldAutoLoadSaveState {
+				completion(latestAutoSave)
+			}
+		} else {
+			completion(nil)
+		}
 	}
 
     func doLoad(_ game: PVGame) throws {

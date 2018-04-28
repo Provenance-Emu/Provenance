@@ -2004,12 +2004,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 		if searchResults == nil, indexPath.section == saveStateSection {
 			let cell = collectionView.cellForItem(at: indexPath)
 			let saveState = saveStates![indexPath.row]
-			load(saveState.game, sender: cell, core: saveState.core)
-
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
-				self.openSaveState(saveState)
-			})
-
+			load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
 		} else {
 			if let game = self.game(at: indexPath) {
 				let cell = collectionView.cellForItem(at: indexPath)

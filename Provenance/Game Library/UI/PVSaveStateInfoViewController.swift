@@ -125,10 +125,7 @@ class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewControll
 		}
 
 		if let libVC = (self.presentingViewController ?? self) as? GameLaunchingViewController {
-			libVC.load(self.saveState!.game, sender: sender, core: nil)
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-				libVC.openSaveState(saveState)
-			})
+			libVC.load(self.saveState!.game, sender: sender, core: nil, saveState: saveState)
 		}
 	}
 
