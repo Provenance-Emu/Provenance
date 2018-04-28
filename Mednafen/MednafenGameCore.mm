@@ -1290,9 +1290,9 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 			case PVGBButtonA:
 				return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
 			case PVGBButtonSelect:
-				return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad leftTrigger] isPressed];
+				return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
 			case PVGBButtonStart:
-				return [[pad rightShoulder] isPressed]?:[[pad leftTrigger] isPressed] ?: [[pad rightTrigger] isPressed];
+				return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
 			default:
 				break;
 		}
