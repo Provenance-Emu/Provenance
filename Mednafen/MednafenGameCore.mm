@@ -255,20 +255,20 @@ static void mednafen_init(MednafenGameCore* current)
 		GBAMap[PVGBAButtonDown] 	= 7;
 		GBAMap[PVGBAButtonLeft] 	= 5;
 		GBAMap[PVGBAButtonRight] 	= 4;
-		GBAMap[PVGBAButtonB] 		= 0;
-		GBAMap[PVGBAButtonA]		= 1;
+		GBAMap[PVGBAButtonB] 		= 1;
+		GBAMap[PVGBAButtonA]		= 0;
 		GBAMap[PVGBAButtonSelect]	= 2;
 		GBAMap[PVGBAButtonStart] 	= 3;
-		GBAMap[PVGBAButtonL] 		= 8;
-		GBAMap[PVGBAButtonR] 		= 9;
+		GBAMap[PVGBAButtonL] 		= 9;
+		GBAMap[PVGBAButtonR] 		= 8;
 
 		// TODO: Test these
 		GBMap[PVGBButtonUp] 	= 6;
 		GBMap[PVGBButtonDown] 	= 7;
 		GBMap[PVGBButtonLeft] 	= 5;
 		GBMap[PVGBButtonRight] 	= 4;
-		GBMap[PVGBButtonB] 		= 0;
-		GBMap[PVGBButtonA]		= 1;
+		GBMap[PVGBButtonB] 		= 1;
+		GBMap[PVGBButtonA]		= 0;
 		GBMap[PVGBButtonSelect]	= 2;
 		GBMap[PVGBButtonStart] 	= 3;
 
@@ -668,7 +668,7 @@ static void emulation_run(BOOL skipFrame) {
 			map = GBAMap;
 			break;
 		case MednaSystemGB:
-			maxValue = PVGBAButtonCount;
+			maxValue = PVGBButtonCount;
 			map = GBMap;
 			break;
         case MednaSystemPSX:
@@ -741,8 +741,8 @@ static void emulation_run(BOOL skipFrame) {
         
         if (controller) {
             for (unsigned i=0; i<maxValue; i++) {
-                
-                if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
+
+				if (self.systemType != MednaSystemPSX || i < PVPSXButtonLeftAnalogUp) {
                     uint32_t value = (uint32_t)[self controllerValueForButtonID:i forPlayer:playerIndex];
                     
                     if(value > 0) {
@@ -1294,8 +1294,34 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 			case PVGBButtonStart:
 				return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
 			default:
+				NSLog(@"Unknown button %i", buttonID);
 				break;
 		}
+
+//		if (buttonID == GBMap[PVGBButtonUp]) {
+//			return [[dpad up] isPressed]?:[[[pad leftThumbstick] up] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonDown]) {
+//			return [[dpad down] isPressed]?:[[[pad leftThumbstick] down] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonLeft]) {
+//			return [[dpad left] isPressed]?:[[[pad leftThumbstick] left] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonRight]) {
+//			return [[dpad right] isPressed]?:[[[pad leftThumbstick] right] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonA]) {
+//			return [[pad buttonB] isPressed]?:[[pad buttonX] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonB]) {
+//			return [[pad buttonA] isPressed]?:[[pad buttonY] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonSelect]) {
+//			return [[pad leftShoulder] isPressed]?:[[pad leftTrigger] isPressed];
+//		}
+//		else if (buttonID == GBMap[PVGBButtonStart]) {
+//			return [[pad rightShoulder] isPressed]?:[[pad rightTrigger] isPressed];
+//		}
 	} else if ([controller gamepad]) {
 		GCGamepad *pad = [controller gamepad];
 		GCControllerDirectionPad *dpad = [pad dpad];
