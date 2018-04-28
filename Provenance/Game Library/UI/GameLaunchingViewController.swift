@@ -350,7 +350,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
 					completion(latestAutoSave)
 				}))
-				alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {[weak self] (_ action: UIAlertAction) -> Void in
+				alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 					completion(latestAutoSave)
 					PVSettingsModel.sharedInstance().autoSave = true
 					PVSettingsModel.sharedInstance().askToAutoLoad = false
