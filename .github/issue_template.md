@@ -61,4 +61,4 @@ replaceWithActualResults
 - [ ] 8.x 
 
 --------------------------------------
-<sup> 🚫 We **DO NOT** support unofficial builds installed from 3rd-party sites. ([Official Install](https://git.io/vxABg)) </sup><br><sup> ❓ **Need help or have a suggestion?** Join our [Offiical Discord](https://discord.gg/4TK7PU5) </sup><br>
+<sup> 🚫 We **DO NOT** support unofficial builds installed from 3rd-party sites. ([Official Install](https://git.io/vxABg)) </sup><br><sup> ❓ **Need help or have a suggestion?** Join our [Official Discord](https://discord.gg/4TK7PU5) </sup><br>
