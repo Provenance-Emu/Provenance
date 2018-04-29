@@ -100,6 +100,7 @@ int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
 int SNESMap[PVSNESButtonCount];
 int PCEMap[PVPCEButtonCount];
+int PCFXMap[PVPCFXButtonCount];
 
 namespace MDFN_IEN_VB
 {
@@ -241,8 +242,7 @@ static void mednafen_init(MednafenGameCore* current)
 }
 
 - (id)init {
-    if((self = [super init]))
-    {
+    if((self = [super init])) {
         _current = self;
 
         multiTapPlayerCount = 2;
@@ -262,7 +262,7 @@ static void mednafen_init(MednafenGameCore* current)
 		GBAMap[PVGBAButtonL] 		= 9;
 		GBAMap[PVGBAButtonR] 		= 8;
 
-		// TODO: Test these
+		// Gameboy + Color Map
 		GBMap[PVGBButtonUp] 	= 6;
 		GBMap[PVGBButtonDown] 	= 7;
 		GBMap[PVGBButtonLeft] 	= 5;
@@ -273,18 +273,18 @@ static void mednafen_init(MednafenGameCore* current)
 		GBMap[PVGBButtonStart] 	= 3;
 
 		// SNES Map
-		SNESMap[PVSNESButtonUp]		= 4;
-		SNESMap[PVSNESButtonDown] 	= 5;
-		SNESMap[PVSNESButtonLeft] 	= 6;
-		SNESMap[PVSNESButtonRight] 	= 7;
-		SNESMap[PVSNESButtonA]		= 8;
-		SNESMap[PVSNESButtonB] 		= 0;
-		SNESMap[PVSNESButtonX]		= 9;
-		SNESMap[PVSNESButtonY]		= 1;
-		SNESMap[PVSNESButtonTriggerLeft] 		= 10;
-		SNESMap[PVSNESButtonTriggerRight] 		= 11;
-		SNESMap[PVSNESButtonStart] 	= 3;
-		SNESMap[PVSNESButtonSelect]	= 2;
+        SNESMap[PVSNESButtonUp]           = 4;
+        SNESMap[PVSNESButtonDown]         = 5;
+        SNESMap[PVSNESButtonLeft]         = 6;
+        SNESMap[PVSNESButtonRight]        = 7;
+        SNESMap[PVSNESButtonA]            = 8;
+        SNESMap[PVSNESButtonB]            = 0;
+        SNESMap[PVSNESButtonX]            = 9;
+        SNESMap[PVSNESButtonY]            = 1;
+        SNESMap[PVSNESButtonTriggerLeft]  = 10;
+        SNESMap[PVSNESButtonTriggerRight] = 11;
+        SNESMap[PVSNESButtonStart]        = 3;
+        SNESMap[PVSNESButtonSelect]       = 2;
 
 		// PCE Map
 		PCEMap[PVPCEButtonUp]		= 4;
@@ -301,7 +301,24 @@ static void mednafen_init(MednafenGameCore* current)
 
 		PCEMap[PVPCEButtonRun]		= 3;
 		PCEMap[PVPCEButtonSelect] 	= 2;
-		PCEMap[PVPCEButtonMode] 	= 12;
+        PCEMap[PVPCEButtonMode]     = 12;
+
+		// PCFX Map
+        PCFXMap[PVPCEButtonUp]      = 4;
+        PCFXMap[PVPCEButtonDown]    = 6;
+        PCFXMap[PVPCEButtonLeft]    = 7;
+        PCFXMap[PVPCEButtonRight]   = 5;
+
+        PCFXMap[PVPCEButtonButton1] = 0;
+        PCFXMap[PVPCEButtonButton2] = 1;
+        PCFXMap[PVPCEButtonButton3] = 8;
+        PCFXMap[PVPCEButtonButton4] = 9;
+        PCFXMap[PVPCEButtonButton5] = 10;
+        PCFXMap[PVPCEButtonButton6] = 11;
+
+        PCFXMap[PVPCEButtonRun]     = 3;
+        PCFXMap[PVPCEButtonSelect]  = 2;
+		PCFXMap[PVPCEButtonMode] 	= 12;
     }
 
     return self;
@@ -952,7 +969,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 // Map OE button order to Mednafen button order
 
 const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
-const int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6 };
+
 // u, d, l, r, a, b, start, select
 const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
 
@@ -1150,14 +1167,21 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
     }
 }
 
+#pragma mark PCFX
 - (void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
 {
-    inputBuffer[player][0] |= 1 << PCFXMap[button];
+	if (button != PVPCFXButtonMode) { // Check for six button mode toggle
+		inputBuffer[player][0] |= 1 << PCFXMap[button];
+	} else {
+		inputBuffer[player][0] ^= 1 << PCFXMap[button];
+	}
 }
 
 - (void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
 {
-    inputBuffer[player][0] &= ~(1 << PCFXMap[button]);
+	if (button != PVPCFXButtonMode) {
+    	inputBuffer[player][0] &= ~(1 << PCFXMap[button]);
+	}
 }
 
 #pragma mark PSX
