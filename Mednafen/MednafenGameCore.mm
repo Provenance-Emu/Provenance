@@ -878,11 +878,19 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 # pragma mark - Save States
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-    return MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
+	if (game != nil ) {
+		return MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
+	} else {
+		return NO;
+	}
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-    return MDFNI_LoadState(fileName.fileSystemRepresentation, "");
+	if (game != nil ) {
+    	return MDFNI_LoadState(fileName.fileSystemRepresentation, "");
+	} else {
+		return NO;
+	}
 }
 
 - (NSData *)serializeStateWithError:(NSError **)outError
@@ -1109,6 +1117,7 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 }
 
 #pragma mark PC-*
+#pragma mark PCE aka TurboGFX-16 & SuperGFX
 - (void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSInteger)player
 {
     if (button != PVPCEButtonMode) { // Check for six button mode toggle
@@ -1124,6 +1133,7 @@ const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
         inputBuffer[player][0] &= ~(1 << PCEMap[button]);
 }
 
+#pragma mark PCE-CD
 - (void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player
 {
     if (button != PVPCECDButtonMode) { // Check for six button mode toggle
