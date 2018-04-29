@@ -364,7 +364,6 @@ public class UTI: RawRepresentable, Equatable {
 
 
 // MARK: System defined UTIs
-
 public extension UTI {
 
 	static       let  item                        =    UTI(rawValue:  kUTTypeItem                        as  String)
@@ -440,10 +439,10 @@ public extension UTI {
 	static       let  ico                         =    UTI(rawValue:  kUTTypeICO                         as  String)
 	static       let  rawImage                    =    UTI(rawValue:  kUTTypeRawImage                    as  String)
 	static       let  scalableVectorGraphics      =    UTI(rawValue:  kUTTypeScalableVectorGraphics      as  String)
-	@available(OSX 10.12, iOS 9.1, watchOS 2.1, *)
-	static       let  livePhoto					  =    UTI(rawValue:  kUTTypeLivePhoto					 as  String)
+	@available(OSX 10.12, iOS 9.1, watchOS 2.1, tvOS 9.1, *)
+    static       let  livePhoto					  =    UTI(rawValue:  kUTTypeLivePhoto					 as  String)
 	@available(OSX 10.12, iOS 9.1, *)
-	static       let  audiovisualContent          =    UTI(rawValue:  kUTTypeAudiovisualContent          as  String)
+    static       let  audiovisualContent          =    UTI(rawValue:  kUTTypeAudiovisualContent          as  String)
 	static       let  movie                       =    UTI(rawValue:  kUTTypeMovie                       as  String)
 	static       let  video                       =    UTI(rawValue:  kUTTypeVideo                       as  String)
 	static       let  audio                       =    UTI(rawValue:  kUTTypeAudio                       as  String)
