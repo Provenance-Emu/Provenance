@@ -161,7 +161,16 @@ extension PVSaveStateInfoViewController {
 		let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { [unowned self] (action, viewController) in
 			let alert = UIAlertController(title: "Delete save state", message: "Are you sure?", preferredStyle: .alert)
 			alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
-				try! self.saveState?.delete()
+				if let saveState = self.saveState {
+					do {
+						try PVSaveState.delete(saveState)
+					} catch {
+						let alert = UIAlertController(title: "Error deleting save state", message: error.localizedDescription, preferredStyle: .alert)
+						alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+						(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
+					}
+				}
 			}))
 			alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
 			self.present(alert, animated: true) {() -> Void in }
