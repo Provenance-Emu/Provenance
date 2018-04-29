@@ -497,7 +497,6 @@
 		B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */; };
 		B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
-		B35D26FD2033977600F17D58 /* VolumeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26FC2033977500F17D58 /* VolumeBar.swift */; };
 		B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B35E6C21207ED7050040709A /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
 		B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
@@ -798,6 +797,7 @@
 		BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE9FDCB81C210B9E0046DF0E /* TVServices.framework */; };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
+		C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */; };
 		DF0035C5203C97D900F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C6203C97E100F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C4203C97D800F63831 /* GLideN64.custom.ini */; };
 		DF0035C8203C97FA00F63831 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DF0035C7203C97FA00F63831 /* GLideN64.ini */; };
@@ -1422,7 +1422,6 @@
 		B35BB7F9202F3F2100FCB513 /* PVGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGame.swift; sourceTree = "<group>"; };
 		B35BB7FA202F3F2100FCB513 /* PVRecentGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRecentGame.swift; sourceTree = "<group>"; };
 		B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLaunchingViewController.swift; sourceTree = "<group>"; };
-		B35D26FC2033977500F17D58 /* VolumeBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumeBar.swift; sourceTree = "<group>"; };
 		B35E6C18207ED7030040709A /* AppearanceScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceScope.swift; sourceTree = "<group>"; };
 		B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppearanceExtensions.swift; sourceTree = "<group>"; };
 		B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIApplicationExtensions.swift; sourceTree = "<group>"; };
@@ -1545,6 +1544,7 @@
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
 		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
+		C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtleVolume.swift; sourceTree = "<group>"; };
 		DF0035C4203C97D800F63831 /* GLideN64.custom.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.custom.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.custom.ini"; sourceTree = "<group>"; };
 		DF0035C7203C97FA00F63831 /* GLideN64.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = GLideN64.ini; path = "PVMupen64Plus/Plugins/mupen64plus-video-gliden64/ini/GLideN64.ini"; sourceTree = "<group>"; };
 		DFB603BA2038B6AF001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2878,7 +2878,7 @@
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */,
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */,
 				B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */,
-				B35D26FC2033977500F17D58 /* VolumeBar.swift */,
+				C6E8F64C2095CAE4003CC2D9 /* SubtleVolume.swift */,
 				B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */,
 				B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */,
 				1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */,
@@ -3536,6 +3536,7 @@
 				B3D8DD34206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				B3995E52205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
+				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
 				B349AE791E9ABCF900ACD416 /* Ppmd7.c in Sources */,
 				B349AE4F1E9ABCF900ACD416 /* 7zStream.c in Sources */,
 				B349AF091E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
@@ -3545,7 +3546,6 @@
 				B3E21D6620320E6F009939D3 /* Logging.swift in Sources */,
 				B349AE591E9ABCF900ACD416 /* Bcj2Enc.c in Sources */,
 				1FB125961D93E57F00D045D0 /* PVAppearanceViewController.swift in Sources */,
-				B35D26FD2033977600F17D58 /* VolumeBar.swift in Sources */,
 				B349AE4D1E9ABCF900ACD416 /* 7zFile.c in Sources */,
 				B349AE7F1E9ABCF900ACD416 /* Sha256.c in Sources */,
 				B349AE931E9ABCF900ACD416 /* 7zDecode.cpp in Sources */,
