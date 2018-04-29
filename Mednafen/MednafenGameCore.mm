@@ -198,19 +198,19 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
 	// PCE Settings
-	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
+//	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
 //												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
 //												 // Enable this option to reduce whining noise during ADPCM playback.
-    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
-    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
+//    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
+//    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
 
 	// PCE_Fast settings
 
 	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
 	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
-	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
-	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
+//	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
+//	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
 
 	// PC-FX Settings
 	MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
