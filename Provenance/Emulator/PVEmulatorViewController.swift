@@ -216,12 +216,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		}
 	}
 
-	// TODO: This smethid is way too big, break it up
+	// TODO: This method is way too big, break it up
     override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
-
+        
 		initNotifcationObservers()
 		initCore()
 
@@ -326,7 +326,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
 #endif
     }
-
+    
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         //Notifies UIKit that your view controller updated its preference regarding the visual indicator
@@ -346,17 +346,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        #if os(iOS)
-        stopVolumeControl()
-        #endif
     }
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        #if os(iOS)
-            startVolumeControl()
-            UIApplication.shared.setStatusBarHidden(true, with: .fade)
-        #endif
     }
 
     @objc
@@ -396,24 +389,35 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
 #endif
+    
+#if os(iOS)
+    var safeAreaInsets: UIEdgeInsets {
+        if #available(iOS 11.0, tvOS 11.0, *) {
+            return view.safeAreaInsets
+        } else {
+            return UIEdgeInsets.zero
+        }
+    }
+#endif
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        var safeArea = UIEdgeInsets.zero
-        if #available(iOS 11.0, tvOS 11.0, *) {
-            safeArea = view.safeAreaInsets
-        }
+#if os(iOS)
+        layoutMenuButton()
+#endif
+    }
+    
+#if os(iOS)
+    func layoutMenuButton() {
         if let menuButton = self.menuButton {
-            let height: CGFloat = 22
-            let width: CGFloat = 62
-            let hitHeight: CGFloat = height + 60
-            let hitWidth: CGFloat = width + 20
+            let height: CGFloat = 42
+            let width: CGFloat = 42
             menuButton.imageView?.contentMode = .center
-            let frame = CGRect(x: (view.bounds.size.width - hitWidth) / 2, y: safeArea.top - (hitHeight / 2) + 20, width: hitWidth, height: hitHeight)
+            let frame = CGRect(x: safeAreaInsets.left + 10, y: safeAreaInsets.top + 5, width: width, height: height)
             menuButton.frame = frame
         }
-
     }
-
+#endif
     func documentsPath() -> String? {
 #if os(tvOS)
         let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
@@ -1059,12 +1063,6 @@ extension PVEmulatorViewController {
     }
 }
 
-// Inherits the default behaviour
-#if os(iOS)
-extension PVEmulatorViewController: VolumeController {
-
-}
-#endif
 
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
 @available(iOS 9.0, *)

@@ -54,6 +54,11 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
     func vibrate()
 }
 
+#if os(iOS)
+let volume = SubtleVolume(style: .roundedLine)
+let volumeHeight: CGFloat = 3
+#endif
+
 // Dummy implmentations
 //extension ControllerVC {
 //extension PVControllerViewController {
@@ -153,7 +158,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     let alpha: CGFloat = PVSettingsModel.shared.controllerOpacity
 
     #if os(iOS)
-    // Yuck
     private var _feedbackGenerator: AnyObject?
     @available(iOS 10.0, *)
     var feedbackGenerator: UISelectionFeedbackGenerator? {
@@ -202,6 +206,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 feedbackGenerator?.prepare()
             }
             updateHideTouchControls()
+        
+        volume.barTintColor = .white
+        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+        volume.animation = .slideDown
+        view.addSubview(volume)
+        
+        NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
+        
         #endif
     }
 
@@ -287,8 +299,19 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         super.viewDidLayoutSubviews()
         setupTouchControls()
         layoutViews()
+        layoutVolume()
         updateHideTouchControls()
     }
+    
+    #if os(iOS)
+    func layoutVolume() {
+        let volumeYPadding: CGFloat = 10
+        let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
+        
+        volume.superview?.bringSubview(toFront: volume)
+        volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
+    }
+    #endif
 
     @objc
     func hideTouchControls(for controller: GCController) {
@@ -469,7 +492,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
-        //let padding: CGFloat = 10
         var rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2)  - yPadding, width: controlSize.width, height: controlSize.height)
         
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
