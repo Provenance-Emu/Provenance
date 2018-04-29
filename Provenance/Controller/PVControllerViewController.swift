@@ -309,6 +309,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
         
         volume.superview?.bringSubview(toFront: volume)
+        volume.layer.cornerRadius = volumeHeight / 2
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
     }
     #endif

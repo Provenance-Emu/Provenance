@@ -160,7 +160,7 @@ public enum SubtleVolumeError: Error {
    - parameter animated: Indicating whether the change should be animated
    */
   @objc public func setVolumeLevel(_ volumeLevel: Double, animated: Bool = false) throws {
-    guard let slider = volume.subviews.flatMap({ $0 as? UISlider }).first else {
+    guard let slider = volume.subviews.compactMap({ $0 as? UISlider }).first else {
       throw SubtleVolumeError.unableToChangeVolumeLevel
     }
     
@@ -222,6 +222,7 @@ public enum SubtleVolumeError: Error {
     super.layoutSubviews()
 
     overlay.frame = frame
+    overlay.layer.cornerRadius = overlay.frame.height / 2
     overlay.frame = CGRect(x: 0, y: 0, width: frame.size.width * CGFloat(volumeLevel), height: frame.size.height)
   }
 
