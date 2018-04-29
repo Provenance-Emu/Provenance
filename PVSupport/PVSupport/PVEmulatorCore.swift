@@ -462,6 +462,7 @@ import UIKit
     case button6
     case run
     case select
+	case mode
     case count
 }
 
