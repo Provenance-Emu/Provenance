@@ -27,6 +27,7 @@ let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
 let kThemeKey = "kThemeKey"
 let kButtonTintsKey = "kButtonsTintsKey"
 let kStartSelectAlwaysOnKey = "kStartSelectAlwaysOnKey"
+let kVolumeHUDKey = "kVolumeHUDKey"
 
 public class PVSettingsModel: NSObject {
 
@@ -166,6 +167,14 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
+    
+    @objc
+    var volumeHUD: Bool {
+        didSet {
+            UserDefaults.standard.set(volumeHUD, forKey: kVolumeHUDKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
 
     #if os(iOS)
     var theme: Themes {
@@ -207,6 +216,7 @@ public class PVSettingsModel: NSObject {
                                                   kWebDayAlwwaysOnKey: false,
                                                   kButtonTintsKey: true,
                                                   kStartSelectAlwaysOnKey: false,
+                                                  kVolumeHUDKey: false,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
@@ -228,6 +238,7 @@ public class PVSettingsModel: NSObject {
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
         buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
         startSelectAlwaysOn = UserDefaults.standard.bool(forKey: kStartSelectAlwaysOnKey)
+        volumeHUD = UserDefaults.standard.bool(forKey: kVolumeHUDKey)
 
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue

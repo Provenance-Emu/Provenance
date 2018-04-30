@@ -299,7 +299,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         super.viewDidLayoutSubviews()
         setupTouchControls()
         layoutViews()
-        layoutVolume()
+        if PVSettingsModel.shared.volumeHUD {
+            layoutVolume()
+        }
         updateHideTouchControls()
     }
     

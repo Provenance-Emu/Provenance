@@ -42,7 +42,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
     @IBOutlet weak var startSelectSwitch: UISwitch!
-
+    @IBOutlet weak var volumeHUDSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
 
     var gameImporter: PVGameImporter?
@@ -78,6 +78,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         fpsCountSwitch.isOn = settings.showFPSCount
         tintSwitch.isOn = settings.buttonTints
         startSelectSwitch.isOn = settings.startSelectAlwaysOn
+        volumeHUDSwitch.isOn = settings.volumeHUD
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
@@ -179,7 +180,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
-              PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+        PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+    }
+    
+    @IBAction func toggleVolumeHUD(_ sender: Any) {
+        PVSettingsModel.sharedInstance().volumeHUD = volumeHUDSwitch.isOn
     }
 
     // Show web server (stays on)
