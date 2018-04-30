@@ -207,10 +207,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
             updateHideTouchControls()
         
-        volume.barTintColor = .white
-        volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
-        volume.animation = .slideDown
-        view.addSubview(volume)
+        if PVSettingsModel.shared.volumeHUD {
+            volume.barTintColor = .white
+            volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
+            volume.animation = .slideDown
+            view.addSubview(volume)
+        }
         
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
         
