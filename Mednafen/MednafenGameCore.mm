@@ -178,7 +178,7 @@ static void mednafen_init(MednafenGameCore* current)
     //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
 
 	// SNES Faust settings
-	MDFNI_SetSettingB("snes_faust.spex", true);
+	MDFNI_SetSettingB("snes_faust.spex", false);
 	// Enable 1-frame speculative execution for video output.
 	// Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage,
 	// and may cause video glitches(such as "jerkiness") in some oddball games, but most commercially-released games should be fine.
