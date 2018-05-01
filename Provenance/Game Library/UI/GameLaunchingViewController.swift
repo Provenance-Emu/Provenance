@@ -32,6 +32,59 @@ public enum GameLaunchingError: Error {
     case missingBIOSes([String])
 }
 
+class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
+	var didSetConstraints = false
+
+	var switchControl : UISwitch? {
+		didSet {
+			didSetConstraints = false
+		}
+	}
+
+	// Prevent selection
+	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+		// Get rid of border
+		textField.superview?.backgroundColor = textField.backgroundColor
+
+		// Fix the switches frame from being below center
+		if #available(iOS 9.0, *) {
+			if !didSetConstraints, let switchControl = switchControl {
+				switchControl.constraints.forEach {
+					if $0.firstAttribute == .height {
+						switchControl.removeConstraint($0)
+					}
+				}
+
+				switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
+				let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
+				centerAnchor.priority = .defaultHigh + 1
+				centerAnchor.isActive = true
+
+				textField.constraints.forEach {
+					if $0.firstAttribute == .height {
+						$0.constant += 20
+					}
+				}
+
+				didSetConstraints = true
+			}
+		}
+
+		return false
+	}
+
+	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+		return false
+	}
+
+	func textFieldDidBeginEditing(_ textField: UITextField) {
+		textField.resignFirstResponder()
+	}
+}
+
+// Need a strong reference, so making static
+let textEditBlocker = TextFieldEditBlocker()
+
 extension GameLaunchingViewController where Self : UIViewController {
 
     private func biosCheck(system: PVSystem) throws {
@@ -346,27 +399,63 @@ extension GameLaunchingViewController where Self : UIViewController {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
 			if shouldAskToLoadSaveState {
+
+				// Alert to ask about loading an autosave
 				let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
-					completion(latestAutoSave)
-				}))
-				alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					completion(latestAutoSave)
-					PVSettingsModel.sharedInstance().autoSave = true
-					PVSettingsModel.sharedInstance().askToAutoLoad = false
-				}))
+
+				let switchControl = UISwitch()
+				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
+				textEditBlocker.switchControl = switchControl
+
+				// 1) No
 				alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+					if switchControl.isOn {
+                        PVSettingsModel.sharedInstance().askToAutoLoad     = false
+                        PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+					}
 					completion(nil)
 				}))
-				alert.addAction(UIAlertAction(title: "No, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					completion(nil)
-					PVSettingsModel.sharedInstance().askToAutoLoad = false
-					PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+
+				// 2) Yes
+				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+					if switchControl.isOn {
+						PVSettingsModel.sharedInstance().askToAutoLoad     = false
+						PVSettingsModel.sharedInstance().autoLoadAutoSaves = true
+					}
+					completion(latestAutoSave)
 				}))
+
+				// 3) Add a save this setting toggle
+				alert.addTextField { (textField) in
+					textField.text = "Remember my selection"
+					textField.backgroundColor = Theme.currentTheme.settingsCellBackground
+					textField.textColor = Theme.currentTheme.settingsCellText
+					textField.tintColor = Theme.currentTheme.settingsCellBackground
+					textField.rightViewMode = .always
+					textField.rightView = switchControl
+					textField.borderStyle = .none
+
+					textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
+					textField.delegate = textEditBlocker // Weak ref
+
+					switchControl.translatesAutoresizingMaskIntoConstraints = false
+
+//					switchControl.bounds.size.height = textField.bounds.height
+					switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+				}
+
+				// 4) Never
+//				alert.addAction(UIAlertAction(title: "No, never and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//					completion(nil)
+//					PVSettingsModel.sharedInstance().askToAutoLoad = false
+//					PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+//				}))
+
+				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
 					self.present(alert, animated: true) {() -> Void in }
 				})
-				completion(nil)
+
 			} else if shouldAutoLoadSaveState {
 				completion(latestAutoSave)
 			}
