@@ -214,9 +214,9 @@ public class PVSettingsModel: NSObject {
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
-                                                  kButtonTintsKey: true,
+                                                  kButtonTintsKey: false,
                                                   kStartSelectAlwaysOnKey: false,
-                                                  kVolumeHUDKey: false,
+                                                  kVolumeHUDKey: true,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
