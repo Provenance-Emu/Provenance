@@ -456,8 +456,9 @@ extension GameLaunchingViewController where Self : UIViewController {
 					self.present(alert, animated: true) {() -> Void in }
 				})
 
-			} else if shouldAutoLoadSaveState {
-				completion(latestAutoSave)
+			} else {
+				// Asking is turned off, either load the autosave or don't based on the 'autoLoadAutoSaves' settings
+				completion(shouldAutoLoadSaveState ? latestAutoSave : nil)
 			}
 		} else {
 			completion(nil)
