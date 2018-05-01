@@ -401,7 +401,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     let bottomPadding: CGFloat = 16
                     let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
-
+                    
                     if let buttonGroup = self.buttonGroup {
                         buttonGroup.frame = buttonsFrame
                     } else {
@@ -454,10 +454,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
-        var rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
+        var rightShoulderFrame: CGRect!
         
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
+        } else {
+            rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
         }
         
         if rightShoulderButton == nil {
@@ -502,11 +504,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
-        var zTriggerFrame = CGRect(x: view.frame.size.width - (controlSize.width * 2) - xPadding, y: view.frame.size.height - (controlSize.height * 2)
-            - yPadding, width: controlSize.width, height: controlSize.height)
+        var zTriggerFrame: CGRect!
         
         if rightShoulderButton != nil {
-        zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
+            zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
+        } else {
+            zTriggerFrame = CGRect(x: view.frame.size.width - (controlSize.width * 2) - xPadding, y: view.frame.size.height - (controlSize.height * 2)
+                - yPadding, width: controlSize.width, height: controlSize.height)
         }
 
         if let zTriggerButton = self.zTriggerButton {
@@ -533,10 +537,19 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.left + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
-        var leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
-
+        var leftShoulderFrame: CGRect!
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
-            leftShoulderFrame = CGRect(x: xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2), width: controlSize.width, height: controlSize.height)
+            leftShoulderFrame = CGRect(x: xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
+        } else {
+            leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
+        }
+        
+        if PVSettingsModel.shared.allRightShoulders {
+            if zTriggerButton != nil {
+                leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
+            } else if zTriggerButton == nil && rightShoulderButton != nil {
+                leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
+            }
         }
         
         if leftShoulderButton == nil {
