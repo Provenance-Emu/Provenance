@@ -115,14 +115,6 @@
 			</dict>
 			<dict>
 				<key>PVControlType</key>
-				<string>PVSelectButton</string>
-				<key>PVControlTitle</key>
-				<string>Z</string>
-				<key>PVControlSize</key>
-				<string>{60,42}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 				<key>PVControlTitle</key>
 				<string>L</string>
@@ -134,6 +126,14 @@
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
 				<string>R</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVZTriggerButton</string>
+				<key>PVControlTitle</key>
+				<string>Z</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>

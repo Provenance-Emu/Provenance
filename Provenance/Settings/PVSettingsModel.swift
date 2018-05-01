@@ -27,6 +27,7 @@ let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
 let kThemeKey = "kThemeKey"
 let kButtonTintsKey = "kButtonsTintsKey"
 let kStartSelectAlwaysOnKey = "kStartSelectAlwaysOnKey"
+let kAllRightShouldersKey = "kAllRightShouldersKey"
 let kVolumeHUDKey = "kVolumeHUDKey"
 
 public class PVSettingsModel: NSObject {
@@ -161,6 +162,14 @@ public class PVSettingsModel: NSObject {
     }
 
     @objc
+    var allRightShoulders: Bool {
+        didSet {
+            UserDefaults.standard.set(allRightShoulders, forKey: kAllRightShouldersKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    @objc
     var volume: Float {
         didSet {
             UserDefaults.standard.set(volume, forKey: kVolumeSettingKey)
@@ -214,9 +223,10 @@ public class PVSettingsModel: NSObject {
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
-                                                  kButtonTintsKey: true,
+                                                  kButtonTintsKey: false,
                                                   kStartSelectAlwaysOnKey: false,
-                                                  kVolumeHUDKey: false,
+                                                  kAllRightShouldersKey: false,
+                                                  kVolumeHUDKey: true,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
@@ -238,6 +248,7 @@ public class PVSettingsModel: NSObject {
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
         buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
         startSelectAlwaysOn = UserDefaults.standard.bool(forKey: kStartSelectAlwaysOnKey)
+        allRightShoulders = UserDefaults.standard.bool(forKey: kAllRightShouldersKey)
         volumeHUD = UserDefaults.standard.bool(forKey: kVolumeHUDKey)
 
         #if os(iOS)
