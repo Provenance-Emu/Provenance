@@ -1252,14 +1252,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 				actionSheet.addAction(UIAlertAction(title: "Yes", style: .destructive) {[unowned self] action in
 					do {
-						try FileManager.default.removeItem(at: saveState.file.url)
-						if let image = saveState.image {
-							try FileManager.default.removeItem(at: image.url)
-						}
-						let realm = try Realm()
-						try realm.write {
-							realm.delete(saveState)
-						}
+						try PVSaveState.delete(saveState)
 					} catch let error {
 						self.presentError("Error deleting save state: \(error.localizedDescription)")
 					}
