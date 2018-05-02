@@ -440,6 +440,7 @@ public extension UTI {
 	static       let  ico                         =    UTI(rawValue:  kUTTypeICO                         as  String)
 	static       let  rawImage                    =    UTI(rawValue:  kUTTypeRawImage                    as  String)
 	static       let  scalableVectorGraphics      =    UTI(rawValue:  kUTTypeScalableVectorGraphics      as  String)
+	@available(tvOSApplicationExtension 9.1, *)
 	@available(OSX 10.12, iOS 9.1, watchOS 2.1, *)
 	static       let  livePhoto					  =    UTI(rawValue:  kUTTypeLivePhoto					 as  String)
 	@available(OSX 10.12, iOS 9.1, *)
