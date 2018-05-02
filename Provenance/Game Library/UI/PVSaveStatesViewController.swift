@@ -26,6 +26,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 	var saveStates: LinkingObjects<PVSaveState>!
 	var screenshot: UIImage?
 
+	var coreID : String?
+
 	private var autoSaves: Results<PVSaveState>!
 	private var manualSaves: Results<PVSaveState>!
 
@@ -42,8 +44,16 @@ class PVSaveStatesViewController: UICollectionViewController {
 #if os(iOS)
 		title = "Save States"
 #endif
-		autoSaves = saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)
-		manualSaves = saveStates.filter("isAutosave == false").sorted(byKeyPath: "date", ascending: false)
+
+		let allSaves : Results<PVSaveState>
+		if let coreID = coreID {
+			allSaves = saveStates.filter("core.identifier == \"\(coreID)\"").sorted(byKeyPath: "date", ascending: false)
+		} else {
+			allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
+		}
+
+		autoSaves = allSaves.filter("isAutosave == true")
+		manualSaves = allSaves.filter("isAutosave == false")
 
 		autoSaveStatesObserverToken = autoSaves.observe { [unowned self] (changes: RealmCollectionChange) in
 			switch changes {

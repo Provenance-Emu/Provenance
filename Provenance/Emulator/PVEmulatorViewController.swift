@@ -648,6 +648,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			saveStatesViewController.saveStates = game.saveStates
 			saveStatesViewController.delegate = self
 			saveStatesViewController.screenshot = image
+			saveStatesViewController.coreID = core.coreIdentifier
 		}
 
 		saveStatesNavController.modalPresentationStyle = .overCurrentContext
