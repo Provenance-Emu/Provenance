@@ -1260,7 +1260,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 			if searchResults == nil, indexPath.section == saveStateSection {
 
-				let saveState = saveStates![indexPath.row]
+				let saveStatesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: saveStateSection)) as! SaveStatesCollectionCell
+				let location2 = saveStatesCell.saveStatesCollectionView.convert(point, from: collectionView)
+				let indexPath2 = saveStatesCell.saveStatesCollectionView.indexPathForItem(at: location2)!
+
+				let saveState = saveStates![indexPath2.row]
 
 				actionSheet.title = "Delete this save state?"
 
