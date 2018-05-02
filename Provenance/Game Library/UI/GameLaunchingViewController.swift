@@ -392,17 +392,17 @@ extension GameLaunchingViewController where Self : UIViewController {
 	private func runEmu(withCore core: PVCore, game: PVGame) {
 
 	}
-
+    // …need to make this check for ANY Save State, not just autosaves
 	private func checkForAutosaveThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
 		// TODO: This should be moved to when the user goes to open the game, and should check if the game was loaded from an autosave already and not ask
 		// WARN: Finish me
 		if let latestAutoSave = game.saveStates.filter("isAutosave == true && core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
-			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
+			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
 			if shouldAskToLoadSaveState {
 
-				// Alert to ask about loading an autosave
-				let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
+				// Alert to ask about loading an autosave (shouldn't ask about any save state it finds?)
+				let alert = UIAlertController(title: "Save State Detected", message: "Would you like to load it?", preferredStyle: .alert)
 
 				let switchControl = UISwitch()
 				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
@@ -411,8 +411,8 @@ extension GameLaunchingViewController where Self : UIViewController {
 				// 1) No
 				alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_ action: UIAlertAction) -> Void in
 					if switchControl.isOn {
-                        PVSettingsModel.sharedInstance().askToAutoLoad     = false
-                        PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+                        PVSettingsModel.sharedInstance().askToAutoLoad = false
+                        PVSettingsModel.sharedInstance().autoLoadSaves = false
 					}
 					completion(nil)
 				}))
@@ -420,15 +420,15 @@ extension GameLaunchingViewController where Self : UIViewController {
 				// 2) Yes
 				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
 					if switchControl.isOn {
-						PVSettingsModel.sharedInstance().askToAutoLoad     = false
-						PVSettingsModel.sharedInstance().autoLoadAutoSaves = true
+						PVSettingsModel.sharedInstance().askToAutoLoad = false
+						PVSettingsModel.sharedInstance().autoLoadSaves = true
 					}
 					completion(latestAutoSave)
 				}))
 
 				// 3) Add a save this setting toggle
 				alert.addTextField { (textField) in
-					textField.text = "Remember my selection"
+					textField.text = "Always Load Saves"
 					textField.backgroundColor = Theme.currentTheme.settingsCellBackground
 					textField.textColor = Theme.currentTheme.settingsCellText
 					textField.tintColor = Theme.currentTheme.settingsCellBackground
@@ -449,7 +449,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 //				alert.addAction(UIAlertAction(title: "No, never and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 //					completion(nil)
 //					PVSettingsModel.sharedInstance().askToAutoLoad = false
-//					PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+//					PVSettingsModel.sharedInstance().autoLoadSaves = false
 //				}))
 
 				// Present the alert
@@ -458,7 +458,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				})
 
 			} else {
-				// Asking is turned off, either load the autosave or don't based on the 'autoLoadAutoSaves' settings
+				// Asking is turned off, either load the autosave or don't based on the 'autoLoadSaves' settings
 				completion(shouldAutoLoadSaveState ? latestAutoSave : nil)
 			}
 		} else {

@@ -10,7 +10,7 @@
 import Foundation
 
 let kAutoSaveKey = "kAutoSaveKey"
-let kAutoLoadAutoSavesKey = "kAutoLoadAutoSavesKey"
+let kAutoLoadSavesKey = "kAutoLoadSavesKey"
 let kControllerOpacityKey = "kControllerOpacityKey"
 let kAskToAutoLoadKey = "kAskToAutoLoadKey"
 let kDisableAutoLockKey = "kDisableAutoLockKey"
@@ -49,9 +49,9 @@ public class PVSettingsModel: NSObject {
     }
 
     @objc
-    var autoLoadAutoSaves: Bool {
+    var autoLoadSaves: Bool {
        didSet {
-            UserDefaults.standard.set(autoLoadAutoSaves, forKey: kAutoLoadAutoSavesKey)
+            UserDefaults.standard.set(autoLoadSaves, forKey: kAutoLoadSavesKey)
             UserDefaults.standard.synchronize()
         }
     }
@@ -210,7 +210,7 @@ public class PVSettingsModel: NSObject {
 
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
-                                                  kAutoLoadAutoSavesKey: false,
+                                                  kAutoLoadSavesKey: false,
                                                   kControllerOpacityKey: 0.8,
                                                   kDisableAutoLockKey: false,
                                                   kButtonVibrationKey: true,
@@ -231,7 +231,7 @@ public class PVSettingsModel: NSObject {
         UserDefaults.standard.synchronize()
 
         autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
-        autoLoadAutoSaves = UserDefaults.standard.bool(forKey: kAutoLoadAutoSavesKey)
+        autoLoadSaves = UserDefaults.standard.bool(forKey: kAutoLoadSavesKey)
         controllerOpacity = CGFloat(UserDefaults.standard.float(forKey: kControllerOpacityKey))
         disableAutoLock = UserDefaults.standard.bool(forKey: kDisableAutoLockKey)
         buttonVibration = UserDefaults.standard.bool(forKey: kButtonVibrationKey)

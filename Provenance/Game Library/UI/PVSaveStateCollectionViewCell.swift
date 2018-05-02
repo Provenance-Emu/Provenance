@@ -53,7 +53,7 @@ class SaveStatesCollectionCell: UICollectionViewCell, UICollectionViewDataSource
 		layout.minimumInteritemSpacing = 10
 
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-		collectionView.showsHorizontalScrollIndicator = true
+		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
 		collectionView.isPagingEnabled = true
 		collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(2, 2, 0, 2)
@@ -92,7 +92,7 @@ class SaveStatesCollectionCell: UICollectionViewCell, UICollectionViewDataSource
 
 		saveStatesCollectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
 
-		saveStatesCollectionView
+		//saveStatesCollectionView
 	}
 	// MARK: - UICollectionViewDelegate
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
