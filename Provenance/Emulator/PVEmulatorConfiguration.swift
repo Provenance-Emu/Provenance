@@ -163,9 +163,9 @@ public class PVEmulatorConfiguration: NSObject {
 
     // MARK: ROM IOS etc
     static let supportedROMFileExtensions: [String] = {
-        return Array(systems.map({ (system) -> [String] in
-            return Array(system.supportedExtensions)
-        }).joined())
+        return systems.map({ (system) -> List<String> in
+            return system.supportedExtensions
+		}).joined().map { return $0 }
     }()
 
     static let supportedCDFileExtensions: Set<String> = {
