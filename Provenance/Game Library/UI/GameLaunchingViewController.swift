@@ -402,14 +402,14 @@ extension GameLaunchingViewController where Self : UIViewController {
 			if shouldAskToLoadSaveState {
 
 				// Alert to ask about loading an autosave (shouldn't ask about any save state it finds?)
-				let alert = UIAlertController(title: "Save State Detected", message: "Would you like to load it?", preferredStyle: .alert)
+				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
 
 				let switchControl = UISwitch()
 				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
 				textEditBlocker.switchControl = switchControl
 
 				// 1) No
-				alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+				alert.addAction(UIAlertAction(title: "Restart", style: .default, handler: { (_ action: UIAlertAction) -> Void in
 					if switchControl.isOn {
                         PVSettingsModel.sharedInstance().askToAutoLoad = false
                         PVSettingsModel.sharedInstance().autoLoadSaves = false
@@ -418,7 +418,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				}))
 
 				// 2) Yes
-				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+				alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_ action: UIAlertAction) -> Void in
 					if switchControl.isOn {
 						PVSettingsModel.sharedInstance().askToAutoLoad = false
 						PVSettingsModel.sharedInstance().autoLoadSaves = true
@@ -428,7 +428,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
 				// 3) Add a save this setting toggle
 				alert.addTextField { (textField) in
-					textField.text = "Always Load Saves"
+					textField.text = "Auto Load Saves"
 					textField.backgroundColor = Theme.currentTheme.settingsCellBackground
 					textField.textColor = Theme.currentTheme.settingsCellText
 					textField.tintColor = Theme.currentTheme.settingsCellBackground
