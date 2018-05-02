@@ -47,7 +47,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 
 		let allSaves : Results<PVSaveState>
 		if let coreID = coreID {
-			allSaves = saveStates.filter("core.identifier == \"\(coreID)\"").sorted(byKeyPath: "date", ascending: false)
+			let filter : String = "core.identifier == \"" + coreID + "\""
+			allSaves = saveStates.filter(filter).sorted(byKeyPath: "date", ascending: false)
 		} else {
 			allSaves = saveStates.sorted(byKeyPath: "date", ascending: false)
 		}
@@ -72,7 +73,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 					self.collectionView?.deleteItems(at: deletions.map(fromItem))
 				}, completion: nil)
 			case .error(let error):
-				ELOG("Error updating save states: \(error.localizedDescription)")
+				ELOG("Error updating save states: " + error.localizedDescription)
 			}
 		}
 
@@ -93,7 +94,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 					self.collectionView?.insertItems(at: insertions.map(fromItem))
 				}, completion: nil)
 			case .error(let error):
-				ELOG("Error updating save states: \(error.localizedDescription)")
+				ELOG("Error updating save states: " + error.localizedDescription)
 			}
 		}
 
