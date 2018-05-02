@@ -33,14 +33,19 @@ import Foundation
 
     class func delete(_ state: PVSaveState) throws {
         do {
-            try FileManager.default.removeItem(at: state.file.url)
-            if let image = state.image {
-                try FileManager.default.removeItem(at: image.url)
-            }
+			// Temp store these URLs
+			let fileURL = state.file.url
+			let imageURl = state.image?.url
 
 			let database = RomDatabase.sharedInstance
 			try database.delete(state)
+
+			try FileManager.default.removeItem(at: fileURL)
+			if let imageURl = imageURl {
+				try FileManager.default.removeItem(at: imageURl)
+			}
         } catch {
+			ELOG("Failed to delete PVState")
 			throw error
 		}
     }
