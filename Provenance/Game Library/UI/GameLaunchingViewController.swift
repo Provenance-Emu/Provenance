@@ -352,40 +352,41 @@ extension GameLaunchingViewController where Self : UIViewController {
 		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
 		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
 
-		let presentEMUVC : (PVSaveState?)->Void = { saveSate in
-			// Present the emulator VC
-			emulatorViewController.modalTransitionStyle = .crossDissolve
-			self.present(emulatorViewController, animated: true) {() -> Void in
-				// Open the save state after a bootup delay if the user selected one
-				if let saveState = saveState {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
-						self.openSaveState(saveState)
-					})
-				}
-			}
-
-			PVControllerManager.shared.iCadeController?.refreshListener()
-
-			do {
-				try RomDatabase.sharedInstance.writeTransaction {
-					game.playCount += 1
-					game.lastPlayed = Date()
-				}
-			} catch {
-				ELOG("\(error.localizedDescription)")
-			}
-
-			self.updateRecentGames(game)
-		}
-
 		// Check if autosave exists
 		if saveState == nil {
 			checkForAutosaveThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
-				presentEMUVC(optionallyChosenSaveState)
+				self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
 			}
 		} else {
-			presentEMUVC(saveState)
+			presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: saveState)
 		}
+	}
+
+	// Used to just show and then optionally quickly load any passed in PVSaveStates
+	private func presentEMUVC(_ emulatorViewController : PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
+		// Present the emulator VC
+		emulatorViewController.modalTransitionStyle = .crossDissolve
+		self.present(emulatorViewController, animated: true) {() -> Void in
+			// Open the save state after a bootup delay if the user selected one
+			if let saveState = saveState {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
+					self.openSaveState(saveState)
+				})
+			}
+		}
+
+		PVControllerManager.shared.iCadeController?.refreshListener()
+
+		do {
+			try RomDatabase.sharedInstance.writeTransaction {
+				game.playCount += 1
+				game.lastPlayed = Date()
+			}
+		} catch {
+			ELOG("\(error.localizedDescription)")
+		}
+
+		self.updateRecentGames(game)
 	}
 
 	private func runEmu(withCore core: PVCore, game: PVGame) {
