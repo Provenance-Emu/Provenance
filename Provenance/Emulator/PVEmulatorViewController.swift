@@ -68,7 +68,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var BIOSPath = ""
     var menuButton: UIButton?
 
-    var glViewController: PVGLViewController!
+    var glViewController: PVGLViewController?
     var gameAudio: OEGameAudio!
     let controllerViewController: (UIViewController & StartSelectDelegate)?
     var fpsTimer: Timer?
@@ -179,7 +179,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	private func initFPSLabel() {
 		fpsLabel = UILabel()
 		fpsLabel?.textColor = UIColor.yellow
-		fpsLabel?.text = "\(glViewController.framesPerSecond)"
+		fpsLabel?.text = "\(glViewController?.framesPerSecond ?? 0)"
 		fpsLabel?.translatesAutoresizingMaskIntoConstraints = false
 		fpsLabel?.textAlignment = .right
 		#if os(tvOS)
@@ -864,9 +864,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
     @objc func showSpeedMenu() {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
-        if traitCollection.userInterfaceIdiom == .pad {
+        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
-            actionSheet.popoverPresentationController?.sourceRect = menuButton!.bounds
+            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
         let speeds = ["Slow", "Normal", "Fast"]
         speeds.enumerated().forEach { (idx, title) in
