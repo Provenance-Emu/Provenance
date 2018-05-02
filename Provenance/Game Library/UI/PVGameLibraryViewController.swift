@@ -276,11 +276,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
-	#if os(tvOS)
-		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
-	#else
-		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
-	#endif
+
+		collectionView.register(SaveStatesCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
+
+//	#if os(tvOS)
+//		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
+//	#else
+//		collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
+//	#endif
         collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 
         // Adjust collection view layout for iPhone X Safe areas
@@ -451,11 +454,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			case .initial(let result):
 				if !result.isEmpty {
 					self.saveStatesIsEmpty = false
-
-					//                    if !self.recentGamesIsHidden {
-					//                        let section = self.recentGamesSection
-					//                        collectionView.insertSections([section])
-					//                    }
 				}
 
 				self.collectionView?.reloadData()
@@ -484,20 +482,36 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					self.saveStatesIsEmpty = true
 				}
 
-				// If there are more than 6 save states in total, and we are deleting some, if any of the 6 slots in the recent states secion
-				// will be backfilled, then we just transform the deletions into modifications, so they are reloaded.
-				var modifications = modifications
-				var deletions = deletions
-				if (self.saveStates?.count ?? 0) >= self.maxForSpecialSection && deletions.count > 0 {
-					deletions = []
-					for i in 0..<self.maxForSpecialSection {
-						modifications.append(i)
-					}
+				if needsInsert {
+					ILOG("Inserting section \(section)")
+					self.collectionView?.insertSections([section])
 				}
 
-				// Query results have changed, so apply them to the UICollectionView
-                self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
+				if needsDelete {
+					ILOG("Deleting section \(section)")
+					self.collectionView?.deleteSections([section])
+				}
+
 				self.saveStatesIsEmpty = needsDelete
+
+
+				// If there are more than 6 save states in total, and we are deleting some, if any of the 6 slots in the recent states secion
+				// will be backfilled, then we just transform the deletions into modifications, so they are reloaded.
+//				var modifications = modifications
+//				var deletions = deletions
+//				if (self.saveStates?.count ?? 0) >= self.maxForSpecialSection && deletions.count > 0 {
+//					deletions = []
+//					for i in 0..<self.maxForSpecialSection {
+//						modifications.append(i)
+//					}
+//				}
+//
+				// Query results have changed, so apply them to the UICollectionView
+//				let filteredDeletions = self.filterRecents(deletions)
+//				let filteredInsertions = self.filterRecents(insertions)
+//				let filteredModifications = self.filterRecents(modifications)
+//
+//                self.handleUpdate(forSection: section, deletions: filteredDeletions, insertions: filteredInsertions, modifications: filteredModifications, needsInsert: needsInsert, needsDelete: needsDelete)
 			case .error(let error):
 				// An error occurred while opening the Realm file on the background worker thread
 				fatalError("\(error)")
@@ -1670,7 +1684,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             } else if section == favoritesSection {
                 return favoriteGames?.count ?? 0
             } else if section == saveStateSection {
-                return min(maxForSpecialSection, saveStates?.count ?? 0)
+				return 1
+//                return min(maxForSpecialSection, saveStates?.count ?? 0)
 			} else if section == recentGamesSection {
 				return min(maxForSpecialSection, recentGames?.count ?? 0)
 			} else {
@@ -1703,14 +1718,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		}
 
 		if indexPath.section == saveStateSection {
-			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as? PVSaveStateCollectionViewCell else {
+			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as? SaveStatesCollectionCell else {
 				fatalError("Couldn't create cell of type PVGameLibraryCollectionViewSaveStatesCellIdentifier")
 			}
 
-			if let saveStates = saveStates {
-				let saveState = saveStates[indexPath.row]
-				cell.saveState = saveState
-			}
+			cell.selectionDelegate = self
 
 			return cell
 		}
@@ -1927,6 +1939,13 @@ extension PVGameLibraryViewController {
     }
 }
 
+extension PVGameLibraryViewController : SaveStateCollectionDelegate {
+	func didSelectSaveState(_ saveState: PVSaveState) {
+		let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: saveStateSection))
+		load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
+	}
+}
+
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
@@ -1938,23 +1957,39 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 		#endif
 	}
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		#if os(tvOS)
+	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+	#if os(tvOS)
+		return tvos_collectionView(collectionView, layout : collectionViewLayout, sizeForItemAt : indexPath)
+	#else
+		return ios_collectionView(collectionView, layout : collectionViewLayout, sizeForItemAt : indexPath)
+	#endif
+	}
+
+	#if os(iOS)
+	private func ios_collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+		let height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
+		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
+		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
+		var width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow)
+
+		if indexPath.section == saveStateSection {
+			width = collectionView.bounds.width
+		}
+
+		return CGSize(width: width, height: height)
+	}
+	#endif
+
+	#if os(tvOS)
+	private func tvos_collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		if searchResults != nil, indexPath.section == saveStateSection {
 			return CGSize(width: CellWidth, height: CellWidth)
 		}
 		let game = self.game(at: indexPath)!
 		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
-		#else
-		let height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
-		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
-		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-		let width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow)
-
-		return CGSize(width: width, height: height)
-		#endif
-    }
+	}
+	#endif
 
     #if os(tvOS)
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -1994,11 +2029,11 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
     #endif
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		if searchResults == nil, indexPath.section == saveStateSection {
-			let cell = collectionView.cellForItem(at: indexPath)
-			let saveState = saveStates![indexPath.row]
-			load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
-		} else {
+//		if searchResults == nil, indexPath.section == saveStateSection {
+//			let cell = collectionView.cellForItem(at: indexPath)
+//			let saveState = saveStates![indexPath.row]
+//			load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
+//		} else {
 			if let game = self.game(at: indexPath) {
 				let cell = collectionView.cellForItem(at: indexPath)
 				load(game, sender: cell, core: nil)
@@ -2007,7 +2042,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 				alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
 				self.present(alert, animated: true)
 			}
-		}
+//		}
     }
 }
 
