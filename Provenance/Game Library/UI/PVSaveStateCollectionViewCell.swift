@@ -34,7 +34,13 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 				}
 				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
 				if label.numberOfLines > 1 {
-					label.text = "\(saveState.game.title)\n\(timeText)"
+					let multipleCores = saveState.game.system.cores.count > 1
+					let system = saveState.game.system
+					var coreOrSystem : String = (multipleCores ? saveState.core.projectName : system?.shortNameAlt ?? system?.shortName ?? "")
+					if coreOrSystem.count > 0 {
+						coreOrSystem = " " + coreOrSystem
+					}
+					label.text = "\(saveState.game.title)\n\(timeText)" + coreOrSystem
 				} else {
 					label.text = timeText
 				}
