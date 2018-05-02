@@ -137,6 +137,7 @@ extension Thread {
     }
 }
 
+public typealias RomDB = RomDatabase
 public final class RomDatabase {
 
 	static var databaseInitilized = false
@@ -146,11 +147,53 @@ public final class RomDatabase {
 			RealmConfiguration.setDefaultRealmConfig()
 			try _sharedInstance = RomDatabase()
 			databaseInitilized = true
+
+			let existingLocalLibraries = _sharedInstance.realm.objects(PVLibrary.self).filter("isLocal == YES")
+
+			if !existingLocalLibraries.isEmpty, let first = existingLocalLibraries.first {
+				VLOG("Existing PVLibrary(s) found.")
+				_sharedInstance.libraryRef = ThreadSafeReference(to: first)
+			} else {
+				VLOG("No local library, need to create")
+				createInitialLocalLibrary()
+			}
 		}
 	}
 
+	private static func createInitialLocalLibrary() {
+		// This is all pretty much place holder as I scope out the idea of
+		// local and remote libraries
+		let newLibrary = PVLibrary()
+		newLibrary.bonjourName = ""
+		newLibrary.domainname = "localhost"
+		newLibrary.name = "Default Library"
+		newLibrary.ipaddress = "127.0.0.1"
+		if let existingGames = _sharedInstance?.realm.objects(PVGame.self).filter("libraries.@count == 0") {
+			newLibrary.games.append(objectsIn: existingGames)
+		}
+		try! _sharedInstance?.add(newLibrary)
+		_sharedInstance.libraryRef = ThreadSafeReference(to: newLibrary)
+	}
+
+	// Primary local library
+
+	private var libraryRef : ThreadSafeReference<PVLibrary>!
+	public var library : PVLibrary {
+		let realm = try! Realm()
+		return realm.resolve(libraryRef)!
+	}
+
+//	public static var localLibraries : Results<PVLibrary> {
+//		return sharedInstance.realm.objects(PVLibrary.self).filter { $0.isLocal }
+//	}
+//
+//	public static var remoteLibraries : Results<PVLibrary> {
+//		return sharedInstance.realm.objects(PVLibrary.self).filter { !$0.isLocal }
+//	}
+
+
     // Private shared instance that propery initializes
-    private static var _sharedInstance: RomDatabase?
+    private static var _sharedInstance: RomDatabase!
 
     // Public shared instance that makes sure threads are handeled right
     // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
