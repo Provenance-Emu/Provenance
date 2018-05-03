@@ -458,6 +458,11 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
+            
+            if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
+                rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
+            }
+            
         } else {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
         }
@@ -549,9 +554,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
             } else if zTriggerButton == nil && rightShoulderButton != nil {
                 leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
+                
+                if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
+                    leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
+                }
+                
             }
         }
-        
+            
         if leftShoulderButton == nil {
             let leftShoulderButton = JSButton(frame: leftShoulderFrame)
             self.leftShoulderButton = leftShoulderButton
