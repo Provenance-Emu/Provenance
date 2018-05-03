@@ -497,8 +497,8 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemPSX;
         
         mednafenCoreModule = @"psx";
-        // Note: OpenEMU sets this to 4, 3.
-        mednafenCoreAspect = OEIntSizeMake(3, 2);
+        // Note: OpenEMU sets this to 4:3, but it's demonstrably wrong. Tested andlooked into it myself… the other emulators got this wrong, 3:2 was close, but it's actually 10:7 - Sev
+        mednafenCoreAspect = OEIntSizeMake(10, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }
