@@ -352,9 +352,9 @@ extension GameLaunchingViewController where Self : UIViewController {
 		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
 		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
 
-		// Check if autosave exists
+		// Check if Save State exists
 		if saveState == nil {
-			checkForAutosaveThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
+			checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
 				self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
 			}
 		} else {
