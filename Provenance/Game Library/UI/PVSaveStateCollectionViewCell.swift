@@ -55,14 +55,18 @@ class SaveStatesCollectionCell: UICollectionViewCell, UICollectionViewDataSource
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
+    #if os(iOS)
 		collectionView.isPagingEnabled = true
+    #endif
 		collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(2, 2, 0, 2)
 		collectionView.indicatorStyle = .white
 		return collectionView
 	}()
 
 	func setupViews() {
+    #if os(iOS)
 		backgroundColor = Theme.currentTheme.gameLibraryBackground
+    #endif
 
 		addSubview(saveStatesCollectionView)
 
@@ -89,9 +93,9 @@ class SaveStatesCollectionCell: UICollectionViewCell, UICollectionViewDataSource
 			NSLayoutConstraint(item: saveStatesCollectionView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
 			NSLayoutConstraint(item: saveStatesCollectionView, attribute: .height, relatedBy: .equal, toItem: self, attribute: .height, multiplier: 1.0, constant:0.0).isActive = true
 		}
-
+    #if os(iOS)
 		saveStatesCollectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-
+    #endif
 		//saveStatesCollectionView
 	}
 	// MARK: - UICollectionViewDelegate

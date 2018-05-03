@@ -304,12 +304,14 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
     override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+    #if os(iOS)
         setupTouchControls()
         layoutViews()
         if PVSettingsModel.shared.volumeHUD {
             layoutVolume()
         }
         updateHideTouchControls()
+    #endif
     }
     
     #if os(iOS)

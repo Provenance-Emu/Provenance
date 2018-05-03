@@ -32,6 +32,7 @@ public enum GameLaunchingError: Error {
     case missingBIOSes([String])
 }
 
+#if os(iOS)
 class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
 	var didSetConstraints = false
 
@@ -40,6 +41,7 @@ class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
 			didSetConstraints = false
 		}
 	}
+
 
 	// Prevent selection
 	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
@@ -84,7 +86,7 @@ class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
 
 // Need a strong reference, so making static
 let textEditBlocker = TextFieldEditBlocker()
-
+#endif
 extension GameLaunchingViewController where Self : UIViewController {
 
     private func biosCheck(system: PVSystem) throws {
@@ -398,47 +400,70 @@ extension GameLaunchingViewController where Self : UIViewController {
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
 			if shouldAskToLoadSaveState {
 
-				// Alert to ask about loading latest save state
+				// 1) Alert to ask about loading latest save state
 				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
-
+            #if os(iOS)
 				let switchControl = UISwitch()
 				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
 				textEditBlocker.switchControl = switchControl
-
-				// 1) No
+                
+                // Add a save this setting toggle
+                alert.addTextField { (textField) in
+                    textField.text = "Auto Load Saves"
+                    textField.backgroundColor = Theme.currentTheme.settingsCellBackground
+                    textField.textColor = Theme.currentTheme.settingsCellText
+                    textField.tintColor = Theme.currentTheme.settingsCellBackground
+                    textField.rightViewMode = .always
+                    textField.rightView = switchControl
+                    textField.borderStyle = .none
+                    textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
+                    textField.delegate = textEditBlocker // Weak ref
+                    
+                    switchControl.translatesAutoresizingMaskIntoConstraints = false
+                    switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+                }
+            #endif
+                
+				// Restart
 				alert.addAction(UIAlertAction(title: "Restart", style: .default, handler: { (_ action: UIAlertAction) -> Void in
-					if switchControl.isOn {
+            #if os(iOS)
+                    if switchControl.isOn {
                         PVSettingsModel.sharedInstance().askToAutoLoad = false
                         PVSettingsModel.sharedInstance().autoLoadSaves = false
 					}
+            #endif
 					completion(nil)
 				}))
-
-				// 2) Yes
+                
+            #if os(tvOS)
+                // Restart Always…
+                alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    PVSettingsModel.sharedInstance().askToAutoLoad = false
+                    PVSettingsModel.sharedInstance().autoLoadSaves = false
+                    completion(nil)
+                }))
+            #endif
+            
+				// Continue…
 				alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_ action: UIAlertAction) -> Void in
-					if switchControl.isOn {
-						PVSettingsModel.sharedInstance().askToAutoLoad = false
-						PVSettingsModel.sharedInstance().autoLoadSaves = true
-					}
+            #if os(iOS)
+                    if switchControl.isOn {
+                        PVSettingsModel.sharedInstance().askToAutoLoad = false
+                        PVSettingsModel.sharedInstance().autoLoadSaves = true
+                    }
+            #endif
 					completion(latestSaveState)
 				}))
-
-				// 3) Add a save this setting toggle
-				alert.addTextField { (textField) in
-					textField.text = "Auto Load Saves"
-					textField.backgroundColor = Theme.currentTheme.settingsCellBackground
-					textField.textColor = Theme.currentTheme.settingsCellText
-					textField.tintColor = Theme.currentTheme.settingsCellBackground
-					textField.rightViewMode = .always
-					textField.rightView = switchControl
-					textField.borderStyle = .none
-					textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
-					textField.delegate = textEditBlocker // Weak ref
-
-					switchControl.translatesAutoresizingMaskIntoConstraints = false
-					switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
-				}
-
+                
+            #if os(tvOS)
+                // Continue Always…
+                alert.addAction(UIAlertAction(title: "Continue… (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    PVSettingsModel.sharedInstance().askToAutoLoad = false
+                    PVSettingsModel.sharedInstance().autoLoadSaves = true
+                    completion(latestSaveState)
+                }))
+            #endif
+                
 				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
 					self.present(alert, animated: true) {() -> Void in }
