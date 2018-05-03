@@ -555,13 +555,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             } else if zTriggerButton == nil && rightShoulderButton != nil {
                 leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
                 
-                if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
+                if system.shortName == "GBA" {
                     leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
                 }
-                
             }
         }
-            
+        
         if leftShoulderButton == nil {
             let leftShoulderButton = JSButton(frame: leftShoulderFrame)
             self.leftShoulderButton = leftShoulderButton

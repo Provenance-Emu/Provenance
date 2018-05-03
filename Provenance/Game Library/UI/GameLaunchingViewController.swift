@@ -396,7 +396,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 	private func checkForAutosaveThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
 		// TODO: This should be moved to when the user goes to open the game, and should check if the game was loaded from an autosave already and not ask
 		// WARN: Finish me
-		if let latestAutoSave = game.saveStates.filter("isAutosave == true && core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
+		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
 			if shouldAskToLoadSaveState {
@@ -423,7 +423,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 						PVSettingsModel.sharedInstance().askToAutoLoad = false
 						PVSettingsModel.sharedInstance().autoLoadSaves = true
 					}
-					completion(latestAutoSave)
+					completion(latestSaveState)
 				}))
 
 				// 3) Add a save this setting toggle
@@ -459,7 +459,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 
 			} else {
 				// Asking is turned off, either load the autosave or don't based on the 'autoLoadSaves' settings
-				completion(shouldAutoLoadSaveState ? latestAutoSave : nil)
+				completion(shouldAutoLoadSaveState ? latestSaveState : nil)
 			}
 		} else {
 			completion(nil)
