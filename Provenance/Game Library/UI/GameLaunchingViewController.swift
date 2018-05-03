@@ -392,16 +392,13 @@ extension GameLaunchingViewController where Self : UIViewController {
 	private func runEmu(withCore core: PVCore, game: PVGame) {
 
 	}
-    // …need to make this check for ANY Save State, not just autosaves
-	private func checkForAutosaveThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
-		// TODO: This should be moved to when the user goes to open the game, and should check if the game was loaded from an autosave already and not ask
-		// WARN: Finish me
+	private func checkForSaveStateThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
 		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
 			if shouldAskToLoadSaveState {
 
-				// Alert to ask about loading an autosave (shouldn't ask about any save state it finds?)
+				// Alert to ask about loading latest save state
 				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
 
 				let switchControl = UISwitch()
@@ -435,22 +432,12 @@ extension GameLaunchingViewController where Self : UIViewController {
 					textField.rightViewMode = .always
 					textField.rightView = switchControl
 					textField.borderStyle = .none
-
 					textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
 					textField.delegate = textEditBlocker // Weak ref
 
 					switchControl.translatesAutoresizingMaskIntoConstraints = false
-
-//					switchControl.bounds.size.height = textField.bounds.height
 					switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
 				}
-
-				// 4) Never
-//				alert.addAction(UIAlertAction(title: "No, never and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-//					completion(nil)
-//					PVSettingsModel.sharedInstance().askToAutoLoad = false
-//					PVSettingsModel.sharedInstance().autoLoadSaves = false
-//				}))
 
 				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
@@ -458,7 +445,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				})
 
 			} else {
-				// Asking is turned off, either load the autosave or don't based on the 'autoLoadSaves' settings
+				// Asking is turned off, either load the save state or don't based on the 'autoLoadSaves' setting
 				completion(shouldAutoLoadSaveState ? latestSaveState : nil)
 			}
 		} else {
