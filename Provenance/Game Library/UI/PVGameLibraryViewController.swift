@@ -1385,7 +1385,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                     // Delete from Realm
-                    self.delete(game: game)
+					do {
+						try self.delete(game: game)
+					} catch {
+						self.presentError(error.localizedDescription)
+					}
                 }))
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
                 self.present(alert, animated: true) {() -> Void in }
@@ -1500,8 +1504,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //		collectionView?.reloadData()
 	}
 
-	func delete(game: PVGame) {
-		RomDatabase.sharedInstance.delete(game: game)
+	func delete(game: PVGame) throws {
+		try RomDatabase.sharedInstance.delete(game: game)
 	}
 
     #if os(iOS)
