@@ -212,39 +212,20 @@ static void mednafen_init(MednafenGameCore* current)
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
 //												 // rather than only outputting 10-bits of precision(as an actual MSM5205 does).
 //												 // Enable this option to reduce whining noise during ADPCM playback.
-//    MDFNI_SetSetting("pce.slstart", "0"); // PCE: First rendered scanline 4 default
-//    MDFNI_SetSetting("pce.slend", "239"); // PCE: Last rendered scanline 235 default, 239max
+//    MDFNI_SetSetting("pce.slstart", "4"); // PCE: First rendered scanline 4 default
+//    MDFNI_SetSetting("pce.slend", "235"); // PCE: Last rendered scanline 235 default, 239max
 
 	// PCE_Fast settings
 
 	MDFNI_SetSetting("pce_fast.cdspeed", "4"); // PCE: CD-ROM data transfer speed multiplier. Default is 1
 	MDFNI_SetSetting("pce_fast.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time
-//	MDFNI_SetSetting("pce_fast.slstart", "0"); // PCE: First rendered scanline
-//	MDFNI_SetSetting("pce_fast.slend", "239"); // PCE: Last rendered scanline
+//	MDFNI_SetSetting("pce_fast.slstart", "4"); // PCE: First rendered scanline
+//	MDFNI_SetSetting("pce_fast.slend", "235"); // PCE: Last rendered scanline
 
 	// PC-FX Settings
 	MDFNI_SetSetting("pcfx.cdspeed", "8"); // PCFX: Emulated CD-ROM speed. Setting the value higher than 2, the default, will decrease loading times in most games by some degree.
-	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
+//	MDFNI_SetSetting("pcfx.input.port1.multitap", "1"); // PCFX: EXPERIMENTAL emulation of the unreleased multitap. Enables ports 3 4 5.
 	MDFNI_SetSetting("pcfx.nospritelimit", "1"); // PCFX: Remove 16-sprites-per-scanline hardware limit.
-	MDFNI_SetSetting("pcfx.slstart", "0"); // PCFX: First rendered scanline 4 default
-	MDFNI_SetSetting("pcfx.slend", "239"); // PCFX: Last rendered scanline 235 default, 239max
-
-	// FIXME:  "forget about multitap for now :)"
-    // Set multitap configuration if detected
-//    if (multiTapGames[[current ROMSerial]])
-//    {
-//        current->multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
-//
-//        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
-//            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-//        else
-//        {
-//            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-//            if(current->multiTapPlayerCount > 5)
-//                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
-//        }
-//    }
-
 	MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
 	MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
 
@@ -594,7 +575,24 @@ static void emulation_run(BOOL skipFrame) {
         // PSX: Set multitap configuration if detected
 //        NSString *serial = [self romSerial];
 //        NSNumber* multitapCount = [MednafenGameCore multiDiscPSXGames][serial];
-//        
+//
+// FIXME:  "forget about multitap for now :)"
+		// Set multitap configuration if detected
+		//    if (multiTapGames[[current ROMSerial]])
+		//    {
+		//        current->multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
+		//
+		//        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
+		//            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+		//        else
+		//        {
+		//            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
+		//            if(current->multiTapPlayerCount > 5)
+		//                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
+		//        }
+		//    }
+
+
 //        if (multitapCount != nil)
 //        {
 //            multiTapPlayerCount = [multitapCount intValue];
