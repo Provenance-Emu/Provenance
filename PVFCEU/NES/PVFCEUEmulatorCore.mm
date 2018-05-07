@@ -140,7 +140,14 @@ static __weak PVFCEUEmulatorCore *_current;
 
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
-    
+
+	// 4 Player
+	if (FCEUGameInfo->inputfc == SIFC_4PLAYER) {
+		FCEUI_SetInputFourscore(true);
+		// This needed?
+		//	FCEUI_SetInput(2, SI_GAMEPAD, &pad[2], 0);
+		//	FCEUI_SetInput(3, SI_GAMEPAD, &pad[3], 0);
+	}
 
     FCEU_ResetPalette();
 
@@ -422,11 +429,11 @@ FCEUFILE *FCEUD_OpenArchive(ArchiveScanRecord &asr, std::string &fname, std::str
 ArchiveScanRecord FCEUD_ScanArchive(std::string fname) { return ArchiveScanRecord(); }
 void FCEUD_PrintError(const char *s)
 {
-    DLog(@"FCEUX error: %s", s);
+    ELOG(@"FCEUX: %s", s);
 }
 void FCEUD_Message(const char *s)
 {
-    DLog(@"FCEUX message: %s", s);
+    ILOG(@"FCEUX: %s", s);
 }
 
 @end
