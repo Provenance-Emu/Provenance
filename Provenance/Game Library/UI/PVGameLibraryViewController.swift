@@ -365,6 +365,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         return section
     }
 
+	var isInSearch : Bool {
+		return self.searchResults != nil
+	}
+
     func addSectionToken(forSystem system: PVSystem) {
         let newToken = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true).observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
             switch changes {
@@ -381,7 +385,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //                }
                 break
             case .update(_, let deletions, let insertions, let modifications):
-				if self.searchResults != nil {
+				if self.isInSearch {
 					return
 				}
 
@@ -426,7 +430,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
             case .update(_, let deletions, let insertions, _):
-				if self.searchResults != nil {
+				if self.isInSearch {
 					return
 				}
 
@@ -458,7 +462,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 				self.collectionView?.reloadData()
 			case .update(_, let deletions, let insertions, let modifications):
-				if self.searchResults != nil {
+				ILOG("Save states update: \(deletions.count) \(insertions.count) \(modifications.count)")
+				if self.isInSearch {
 					return
 				}
 
@@ -532,7 +537,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
-				if self.searchResults != nil {
+				if self.isInSearch {
 					return
 				}
 
@@ -577,7 +582,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 self.collectionView?.reloadData()
             case .update(_, let deletions, let insertions, let modifications):
-				if self.searchResults != nil {
+				if self.isInSearch {
 					return
 				}
 
