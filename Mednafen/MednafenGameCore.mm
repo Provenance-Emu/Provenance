@@ -96,11 +96,28 @@ static MDFNGI *game;
 static MDFN_Surface *backBufferSurf;
 static MDFN_Surface *frontBufferSurf;
 
+#pragma mark - Input maps
 int GBAMap[PVGBAButtonCount];
 int GBMap[PVGBButtonCount];
 int SNESMap[PVSNESButtonCount];
 int PCEMap[PVPCEButtonCount];
 int PCFXMap[PVPCFXButtonCount];
+
+// Map OE button order to Mednafen button order
+
+const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
+
+// u, d, l, r, a, b, start, select
+const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
+
+// Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
+const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
+const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
+const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
+const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
+
+// SMS, GG and MD unused as of now. Mednafen support is not maintained
+const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 
 namespace MDFN_IEN_VB
 {
@@ -978,23 +995,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 }
 
 # pragma mark - Input -
-
-// Map OE button order to Mednafen button order
-
-const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 }; // pause, b, 01, 02, d, u, l, r
-
-// u, d, l, r, a, b, start, select
-const int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2};
-
-// Select, Triangle, X, Start, R1, R2, left stick u, left stick left,
-const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
-const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
-const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
-const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
-
-// SMS, GG and MD unused as of now. Mednafen support is not maintained
-const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
-
 
 #pragma mark Atari Lynx
 - (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player {
