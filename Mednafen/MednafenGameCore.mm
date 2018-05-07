@@ -924,18 +924,70 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
 	if (game != nil ) {
-		return MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
+		BOOL success = MDFNI_SaveState(fileName.fileSystemRepresentation, "", NULL, NULL, NULL);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
 	} else {
+		NSDictionary *userInfo = @{
+								   NSLocalizedDescriptionKey: @"Failed to save state.",
+								   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state because no game is loaded.",
+								   NSLocalizedRecoverySuggestionErrorKey: @""
+								   };
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotSaveState
+											userInfo:userInfo];
+
+		*error = newError;
+
 		return NO;
 	}
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
 	if (game != nil ) {
-    	return MDFNI_LoadState(fileName.fileSystemRepresentation, "");
+    	BOOL success = MDFNI_LoadState(fileName.fileSystemRepresentation, "");
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
 	} else {
+		NSDictionary *userInfo = @{
+								   NSLocalizedDescriptionKey: @"Failed to save state.",
+								   NSLocalizedFailureReasonErrorKey: @"No game loaded.",
+								   NSLocalizedRecoverySuggestionErrorKey: @""
+								   };
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadState
+											userInfo:userInfo];
+
+		*error = newError;
+
 		return NO;
 	}
 }

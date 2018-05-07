@@ -246,17 +246,45 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return vba.emuWriteState([fileName UTF8String]);
+        BOOL success = vba.emuWriteState([fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return vba.emuReadState([fileName UTF8String]);
+        BOOL success = vba.emuReadState([fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 

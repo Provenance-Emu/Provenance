@@ -497,7 +497,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - State Saving
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     @synchronized(self) {
         int serial_size = retro_serialize_size();
@@ -521,18 +521,38 @@ static bool environment_callback(unsigned cmd, void *data)
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     @synchronized(self) {
         NSData *saveStateData = [NSData dataWithContentsOfFile:path];
         if (!saveStateData)
         {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to load save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+			*error = newError;
             DLog(@"Unable to load save state from path: %@", path);
             return NO;
         }
         
         if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
         {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to load save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+			*error = newError;
             DLog(@"Unable to load save state");
             return NO;
         }

@@ -166,7 +166,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 		do {
 			try delegate?.saveStatesViewControllerCreateNewState(self)
 		} catch {
-			self.presentError("Error creating save state: \(error.localizedDescription)")
+			let reason = (error as NSError).localizedFailureReason
+			self.presentError("Error creating save state: \(error.localizedDescription) \(reason ?? "")")
 		}
 	}
 

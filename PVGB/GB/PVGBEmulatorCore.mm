@@ -233,17 +233,45 @@ public:
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
     @synchronized(self) {
-        return gb.saveState(0, 0, [fileName UTF8String]);
+        BOOL success = gb.saveState(0, 0, [fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return gb.loadState([fileName UTF8String]);
+        BOOL success = gb.loadState([fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 

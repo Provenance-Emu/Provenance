@@ -339,12 +339,36 @@ static void writeSaveFile(const char* path, int type)
 	}
 }
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-	return [self writeSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
+	NSDictionary *userInfo = @{
+							   NSLocalizedDescriptionKey: @"Failed to save state.",
+							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
+							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
+							   };
+
+	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+											code:PVEmulatorCoreErrorCodeCouldNotSaveState
+										userInfo:userInfo];
+
+	*error = newError;
+	return NO;
+//	return [self writeSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
-	return [self loadSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
+	NSDictionary *userInfo = @{
+							   NSLocalizedDescriptionKey: @"Failed to load state.",
+							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
+							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
+							   };
+
+	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+											code:PVEmulatorCoreErrorCodeCouldNotLoadState
+										userInfo:userInfo];
+
+	*error = newError;
+	return NO;
+//	return [self loadSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
 }
 
 

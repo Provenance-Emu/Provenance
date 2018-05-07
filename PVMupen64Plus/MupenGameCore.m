@@ -1075,7 +1075,7 @@ static void ConfigureRICE() {
     [self.frontBufferCondition unlock];
 }
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_enter(group);
     __block BOOL savedSuccessfully = NO;
@@ -1140,7 +1140,7 @@ static void ConfigureRICE() {
 }
 
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
     dispatch_group_t group = dispatch_group_create();
     dispatch_group_enter(group);
     __block BOOL loadedSuccessfully = NO;

@@ -246,7 +246,7 @@ static __weak PVFCEUEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
     @synchronized(self) {
         FCEUSS_Save([fileName UTF8String], false);
@@ -254,10 +254,24 @@ static __weak PVFCEUEmulatorCore *_current;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return FCEUSS_Load([fileName UTF8String], false);
+        BOOL success = FCEUSS_Load([fileName UTF8String], false);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
