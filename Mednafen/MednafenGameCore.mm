@@ -523,6 +523,10 @@ static void emulation_run(BOOL skipFrame) {
 
     game = MDFNI_LoadGame([mednafenCoreModule UTF8String], [path UTF8String]);
 
+	// Uncomment this to set the aspect ratio by the game's render size according to mednafen
+	// is this correct for EU, JP, US? Still testing.
+//	mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
+
     if(!game) {
         NSDictionary *userInfo = @{
                                    NSLocalizedDescriptionKey: @"Failed to load game.",
