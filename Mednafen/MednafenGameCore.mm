@@ -198,6 +198,15 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSettingB("psx.h_overscan", true); // Show horizontal overscan area. 1 default
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
+	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
+
+	// The buttons to press to toggle analog / digital mode
+	uint64 amct = ((1 << PSXMap[PVPSXButtonStart]) |
+				   (1 << PSXMap[PVPSXButtonSelect]) |
+				   (1 << PSXMap[PVPSXButtonL1]) |
+				   (1 << PSXMap[PVPSXButtonR1]));
+	MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
+
 	// PCE Settings
 //	MDFNI_SetSetting("pce.disable_softreset", "1"); // PCE: To prevent soft resets due to accidentally hitting RUN and SEL at the same time.
 //	MDFNI_SetSetting("pce.adpcmextraprec", "1"); // PCE: Enabling this option causes the MSM5205 ADPCM predictor to be outputted with full precision of 12-bits,
