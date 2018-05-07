@@ -236,6 +236,8 @@ static void mednafen_init(MednafenGameCore* current)
 //        }
 //    }
 
+	MDFNI_SetSetting("pcfx.slstart", "4"); // PCFX: First rendered scanline 4 default
+	MDFNI_SetSetting("pcfx.slend", "235"); // PCFX: Last rendered scanline 235 default, 239max
 
 //	NSString *cfgPath = [[current BIOSPath] stringByAppendingPathComponent:@"mednafen-export.cfg"];
 //	MDFN_SaveSettings(cfgPath.UTF8String);
