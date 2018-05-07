@@ -468,14 +468,16 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return NO;
 }
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type
+- (BOOL)loadSaveFile:(NSString *)path forType:(int)type
 {
 	[self doesNotImplementSelector:_cmd];
+	return NO;
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
 	[self doesNotImplementSelector:_cmd];
+	return NO;
 }
 
 @end

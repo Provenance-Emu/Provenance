@@ -287,7 +287,7 @@ static bool environment_callback(unsigned cmd, void *data)
     [data getBytes:ramData length:size];
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
@@ -301,7 +301,10 @@ static bool environment_callback(unsigned cmd, void *data)
         {
             DLog(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		return NO;
+	}
 }
 
 #pragma mark - Video

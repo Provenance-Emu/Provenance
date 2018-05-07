@@ -556,7 +556,7 @@ static void writeSaveFile(const char* path, int type)
     [data getBytes:ramData length:size];
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
@@ -570,7 +570,10 @@ static void writeSaveFile(const char* path, int type)
         {
             NSLog(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		return NO;
+	}
 }
 
 #pragma mark Video

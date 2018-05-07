@@ -299,32 +299,32 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type
+- (BOOL)loadSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = stella_retro_get_memory_size(type);
     void *ramData = stella_retro_get_memory_data(type);
     
     if (size == 0 || !ramData)
     {
-        return;
+        return NO;
     }
     
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
         DLog(@"Couldn't load save file.");
+		return NO;
     }
     
     [data getBytes:ramData length:size];
+	return YES;
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
-{
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     size_t size = stella_retro_get_memory_size(type);
     void *ramData = stella_retro_get_memory_data(type);
-    
-    if (ramData && (size > 0))
-    {
+
+    if (ramData && (size > 0)) {
         stella_retro_serialize(ramData, size);
         NSData *data = [NSData dataWithBytes:ramData length:size];
         BOOL success = [data writeToFile:path atomically:YES];
@@ -332,8 +332,21 @@ static void writeSaveFile(const char* path, int type)
         {
             DLog(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		ELOG("Stella ramdata is invalid");
+		return NO;
+	}
 }
+
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName {
+	return [self writeSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
+	return [self loadSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+}
+
 
 #pragma mark Input
 - (void)pollControllers {
@@ -536,16 +549,6 @@ static void writeSaveFile(const char* path, int type)
 - (NSUInteger)channelCount
 {
     return 2;
-}
-
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
-{
-    return NO;
-}
-
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
-{
-    return NO;
 }
 
 @end

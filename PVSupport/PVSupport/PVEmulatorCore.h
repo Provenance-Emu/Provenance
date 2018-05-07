@@ -130,8 +130,8 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type;
-- (void)writeSaveFile:(NSString *)path forType:(int)type;
+- (BOOL)loadSaveFile:(NSString *)path forType:(int)type;
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)path;
 - (BOOL)loadStateFromFileAtPath:(NSString *)path;
