@@ -800,19 +800,28 @@ public extension PVGameImporter {
             return
         }
 
-        var chosenResultMaybse: [AnyHashable: Any]? = nil
-        for result: [AnyHashable: Any] in results {
-            if let region = result["region"] as? String, region == "USA" {
-                chosenResultMaybse = result
-                break
-            }
+		var chosenResultMaybe: [String: Any]? =
+			// Search by region id
+			results.first { (dict) -> Bool in
+				print("region id: \(dict["regionID"] as? Int ?? 0)")
+				// Region ids USA = 21, Japan = 13
+				return (dict["regionID"] as? Int) == 21
+				}
+				?? // If nothing, search by region string, could be a comma sepearted list
+				results.first { (dict) -> Bool in
+					print("region: \(dict["region"] ?? "nil")")
+					// Region ids USA = 21, Japan = 13
+					return (dict["region"] as? String)?.uppercased().contains("USA") ?? false
+		}
+
+        if chosenResultMaybe == nil {
+			if results.count > 1 {
+				WLOG("Query returned \(results.count) possible matches. Failed to matcha USA version by string or release ID int. Going to choose the first that exists in the DB.")
+			}
+            chosenResultMaybe = results.first
         }
 
-        if chosenResultMaybse == nil {
-            chosenResultMaybse = results.first
-        }
-
-        guard let chosenResult = chosenResultMaybse else {
+        guard let chosenResult = chosenResultMaybe else {
             DLOG("Unable to find ROM \(game.romPath) in DB")
             return
         }
@@ -833,6 +842,7 @@ public extension PVGameImporter {
                      genres [comma array string]
                      referenceURL
                      releaseID
+					 regionID
                      systemShortName
                      serial
                  */
@@ -851,6 +861,10 @@ public extension PVGameImporter {
                 if let regionName = chosenResult["region"] as? String, !regionName.isEmpty {
                     game.regionName = regionName
                 }
+
+				if let regionID = chosenResult["regionID"] as? Int {
+					game.regionID = regionID
+				}
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty {
                     game.gameDescription = gameDescription
@@ -900,7 +914,7 @@ public extension PVGameImporter {
     public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
         var results: [Any]? = nil
 
-		let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language'"
+		let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
 
         let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
 

@@ -78,6 +78,7 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var referenceURL: String?
     dynamic var releaseID: String?
     dynamic var regionName: String?
+	dynamic var regionID: Int?
     dynamic var systemShortName: String?
 	dynamic var language: String?
 
