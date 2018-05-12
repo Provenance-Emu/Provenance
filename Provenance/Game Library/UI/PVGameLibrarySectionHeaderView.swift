@@ -12,8 +12,8 @@ class PVGameLibrarySectionFooterView: UICollectionReusableView {
         super.init(frame: frame)
 
         #if os(iOS)
-            let separator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 0.75))
-            separator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
+            let separator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
+            separator.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
             separator.autoresizingMask = .flexibleWidth
             addSubview(separator)
         #endif
@@ -36,7 +36,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         titleLabel.textColor = colorForText
 #else
     let labelHeight: CGFloat = 20.0
-    let labelBottomMargin: CGFloat = 3.0
+    let labelBottomMargin: CGFloat = 5.0
 
     titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
     titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
@@ -47,8 +47,8 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //
 //        addSubview(topSeparator)
 
-        let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 0.5))
-        bottomSeparator.backgroundColor = UIColor(white: 0.7, alpha: 0.6)
+        let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height, width: bounds.size.width, height: 1.0))
+        bottomSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         bottomSeparator.autoresizingMask = .flexibleWidth
 
         addSubview(bottomSeparator)
