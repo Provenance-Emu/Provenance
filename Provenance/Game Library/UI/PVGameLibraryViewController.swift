@@ -1947,6 +1947,7 @@ extension PVGameLibraryViewController : SaveStateCollectionDelegate {
 	func didSelectSaveState(_ saveState: PVSaveState) {
 		let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: saveStateSection))
 		load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
+        PVBannerUtils.showSaveStateBanner(message: "State loaded.")
 	}
 }
 
