@@ -1751,10 +1751,10 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
             if section == favoritesSection {
                 game = favoriteGames?[row]
-            } else if section == recentGamesSection {
-                game = recentGames?[row].game
-			} else if section == saveStateSection {
-				game = saveStates?[row].game
+            } else if section == recentGamesSection, let recentGames = recentGames, row < recentGames.count {
+                game = recentGames[row].game
+			} else if section == saveStateSection, let saveStates = saveStates, row < saveStates.count {
+				game = saveStates[row].game
 			} else if let system = systems?[section - systemsSectionOffset] {
                 game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
             }
