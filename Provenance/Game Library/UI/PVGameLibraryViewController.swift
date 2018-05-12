@@ -1078,19 +1078,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
             let systemRef = ThreadSafeReference(to: system)
 
-            gameImporter.serialImportQueue.async {
-                let realm = try! Realm()
-                guard let system = realm.resolve(systemRef) else {
-                    return // person was deleted
-                }
+			gameImporter.serialImportQueue.addOperation {
+				let realm = try! Realm()
+				guard let system = realm.resolve(systemRef) else {
+					return // person was deleted
+				}
 
-                self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
-                if let completionHandler = self.gameImporter.completionHandler {
-                    DispatchQueue.main.async {
-                        completionHandler(self.gameImporter.encounteredConflicts)
-                    }
-                }
-            }
+				self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
+				if let completionHandler = self.gameImporter.completionHandler {
+					DispatchQueue.main.async {
+						completionHandler(self.gameImporter.encounteredConflicts)
+					}
+				}
+			}
         }
     }
 

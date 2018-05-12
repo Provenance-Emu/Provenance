@@ -96,7 +96,13 @@ public class PVGameImporter {
 		return q
 	}()
 
-    public private(set) var serialImportQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialImportQueue")
+	public private(set) var serialImportQueue: OperationQueue = {
+		let queue = OperationQueue()
+		queue.name = "com.provenance-emu.provenance.serialImportQueue"
+		queue.maxConcurrentOperationCount = 1
+		return queue
+	}()
+
     public private(set) var systemToPathMap = [String: URL]()
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
 
@@ -268,15 +274,15 @@ public class PVGameImporter {
     }
 
     func startImport(forPaths paths: [URL]) {
-        serialImportQueue.async(execute: {() -> Void in
-            let newPaths = self.importFiles(atPaths: paths)
-            self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
-            if self.completionHandler != nil {
-                DispatchQueue.main.sync(execute: {() -> Void in
-                    self.completionHandler?(self.encounteredConflicts)
-                })
-            }
-        })
+		serialImportQueue.addOperation {
+			let newPaths = self.importFiles(atPaths: paths)
+			self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+			if self.completionHandler != nil {
+				DispatchQueue.main.sync(execute: {() -> Void in
+					self.completionHandler?(self.encounteredConflicts)
+				})
+			}
+		}
     }
 
     func resolveConflicts(withSolutions solutions: [URL: PVSystem]) {
@@ -351,20 +357,20 @@ public class PVGameImporter {
 
             let systemRef = ThreadSafeReference(to: system)
 
-            serialImportQueue.async(execute: {[unowned self] () -> Void in
-                let realm = try! Realm()
-                guard let system = realm.resolve(systemRef) else {
-                    return // person was deleted
-                }
-                self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
+			serialImportQueue.addOperation {
+				let realm = try! Realm()
+				guard let system = realm.resolve(systemRef) else {
+					return // person was deleted
+				}
+				self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
 
-                // TODO: Shouldn't this only be colled after all conflicts have been resolved?
-                if self.completionHandler != nil {
-                    DispatchQueue.main.async(execute: {() -> Void in
-                        self.completionHandler?(false)
-                    })
-                }
-            })
+				// TODO: Shouldn't this only be colled after all conflicts have been resolved?
+				if self.completionHandler != nil {
+					DispatchQueue.main.async(execute: {() -> Void in
+						self.completionHandler?(false)
+					})
+				}
+			}
         } // End forEach
     }
 }
