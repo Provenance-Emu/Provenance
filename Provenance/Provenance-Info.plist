@@ -172,6 +172,8 @@
 					<string>32X</string>
 					<string>min</string>
 					<string>7z</string>
+					<string>cdi</string>
+					<string>gdi</string>
 				</array>
 			</dict>
 		</dict>
@@ -219,6 +221,8 @@
 					<string>32X</string>
 					<string>min</string>
 					<string>7z</string>
+					<string>cdi</string>
+					<string>gdi</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -227,6 +231,8 @@
 			</array>
 			<key>UTTypeDescription</key>
 			<string>ROM</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 		</dict>
