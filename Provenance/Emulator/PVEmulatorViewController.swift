@@ -854,6 +854,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			self.core.setPauseEmulation(false)
 			self.isShowingMenu = false
 			self.enableContorllerInput(false)
+            PVBannerUtils.showSaveStateBanner(message: "Save state loaded.")
 		}
 
 		if core.projectVersion != state.createdWithCoreVersion {
@@ -877,11 +878,17 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
 		try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
+        dismiss(animated: true) {
+            PVBannerUtils.showSaveStateBanner(message: "State saved.")
+        }
 	}
 
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
         try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 		try PVSaveState.delete(state)
+        dismiss(animated: true) {
+            PVBannerUtils.showSaveStateBanner(message: "Save state overwritten.")
+        }
     }
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
