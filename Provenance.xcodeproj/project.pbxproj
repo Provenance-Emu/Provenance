@@ -170,6 +170,10 @@
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		42E63F0617DE78AB005802B0 /* UIImage+Scaling.m in Sources */ = {isa = PBXBuildFile; fileRef = 42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */; };
 		7556CF7A19DC15C1007F8F97 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7556CF7919DC15C1007F8F97 /* Default.xib */; };
+		9257B03A20A6E3FC008C03F2 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9257B03920A6E3FC008C03F2 /* Banner.swift */; };
+		9257B03B20A6E3FC008C03F2 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9257B03920A6E3FC008C03F2 /* Banner.swift */; };
+		9257B03E20A6EDF4008C03F2 /* PVBannerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9257B03D20A6EDF4008C03F2 /* PVBannerUtils.swift */; };
+		9257B03F20A6EDF4008C03F2 /* PVBannerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9257B03D20A6EDF4008C03F2 /* PVBannerUtils.swift */; };
 		B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; };
 		B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
@@ -1083,6 +1087,8 @@
 		42E63F0417DE78AB005802B0 /* UIImage+Scaling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Scaling.h"; sourceTree = "<group>"; };
 		42E63F0517DE78AB005802B0 /* UIImage+Scaling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Scaling.m"; sourceTree = "<group>"; };
 		7556CF7919DC15C1007F8F97 /* Default.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Default.xib; sourceTree = "<group>"; };
+		9257B03920A6E3FC008C03F2 /* Banner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
+		9257B03D20A6EDF4008C03F2 /* PVBannerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVBannerUtils.swift; sourceTree = "<group>"; };
 		AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPSXControllerViewController.swift; sourceTree = "<group>"; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3081C072080693000C5E77B /* PViCadeMocuteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeMocuteController.m; sourceTree = "<group>"; };
@@ -1699,6 +1705,7 @@
 		1A1237F217CA279900CEC788 /* User Interface */ = {
 			isa = PBXGroup;
 			children = (
+				9257B03C20A6ED6C008C03F2 /* Notification Banner */,
 				B3B923A1202D2EAE00580FFC /* Themes */,
 				1AB95FFF17C5640A00D3E392 /* Provenance.storyboard */,
 				7556CF7919DC15C1007F8F97 /* Default.xib */,
@@ -2160,6 +2167,15 @@
 				378F4A141B63F2240065FA39 /* Reachability.m */,
 			);
 			path = Reachability;
+			sourceTree = "<group>";
+		};
+		9257B03C20A6ED6C008C03F2 /* Notification Banner */ = {
+			isa = PBXGroup;
+			children = (
+				9257B03920A6E3FC008C03F2 /* Banner.swift */,
+				9257B03D20A6EDF4008C03F2 /* PVBannerUtils.swift */,
+			);
+			path = "Notification Banner";
 			sourceTree = "<group>";
 		};
 		AA9B6EDB1D7097C400422E5F /* PSX */ = {
@@ -3067,7 +3083,6 @@
 				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
-						DevelopmentTeam = 63497P68S6;
 						LastSwiftMigration = 0920;
 					};
 					1AD481B31BA350A400FDA50A = {
@@ -3087,7 +3102,6 @@
 					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
-						DevelopmentTeam = 63497P68S6;
 						ProvisioningStyle = Automatic;
 					};
 					BE9FDCB61C210B9E0046DF0E = {
@@ -3381,6 +3395,7 @@
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B349AF0F1E9ABCF900ACD416 /* PpmdDecoder.cpp in Sources */,
 				B349AF591E9ABCFA00ACD416 /* LzmaSDKObjCError.mm in Sources */,
+				9257B03E20A6EDF4008C03F2 /* PVBannerUtils.swift in Sources */,
 				B349AF331E9ABCF900ACD416 /* Sha256Reg.cpp in Sources */,
 				B349AEFD1E9ABCF900ACD416 /* CopyCoder.cpp in Sources */,
 				B349AEA71E9ABCF900ACD416 /* 7zRegister.cpp in Sources */,
@@ -3445,6 +3460,7 @@
 				B3D8DCFC206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3BE96872055F40000281880 /* PVFile.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
+				9257B03A20A6E3FC008C03F2 /* Banner.swift in Sources */,
 				B349AED51E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3D8DD28206EAA9E008FAC42 /* Error.swift in Sources */,
@@ -3605,6 +3621,7 @@
 				B349AF681E9ABCFA00ACD416 /* LzmaSDKObjCMutableItem.mm in Sources */,
 				1AD481F31BA3549700FDA50A /* NSFileManager+Hashing.m in Sources */,
 				B349AF5C1E9ABCFA00ACD416 /* LzmaSDKObjCExtern.mm in Sources */,
+				9257B03F20A6EDF4008C03F2 /* PVBannerUtils.swift in Sources */,
 				B349AE721E9ABCF900ACD416 /* LzmaDec.c in Sources */,
 				B3D8DD31206EAA9E008FAC42 /* SwiftVersion.swift in Sources */,
 				B349AF161E9ABCF900ACD416 /* 7zAes.cpp in Sources */,
@@ -3701,6 +3718,7 @@
 				B349AF261E9ABCF900ACD416 /* CrcReg.cpp in Sources */,
 				B349AEA01E9ABCF900ACD416 /* 7zHeader.cpp in Sources */,
 				B36954E12094391B009D958D /* PVLibrary.swift in Sources */,
+				9257B03B20A6E3FC008C03F2 /* Banner.swift in Sources */,
 				B3D8DD01206EAA9E008FAC42 /* Util.swift in Sources */,
 				B3BE96912056025B00281880 /* PVSaveState.swift in Sources */,
 				B349AEF21E9ABCF900ACD416 /* BcjCoder.cpp in Sources */,
@@ -4127,8 +4145,8 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 63497P68S6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4173,7 +4191,7 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4591,8 +4609,8 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = 63497P68S6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -4643,7 +4661,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
@@ -4684,7 +4702,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4725,7 +4743,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 63497P68S6;
+				DEVELOPMENT_TEAM = R72X3BF4KE;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
