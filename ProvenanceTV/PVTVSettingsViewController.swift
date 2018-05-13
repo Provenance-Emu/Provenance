@@ -29,7 +29,7 @@ class PVTVSettingsViewController: UITableViewController {
 
         let settings = PVSettingsModel.shared
         autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
-        autoLoadValueLabel.text = settings.autoLoadAutoSaves ? "On" : "Off"
+        autoLoadValueLabel.text = settings.autoLoadSaves ? "On" : "Off"
         showFPSCountValueLabel.text = settings.showFPSCount ? "On" : "Off"
         crtFilterLabel.text = settings.crtFilterEnabled ? "On" : "Off"
         imageSmoothingLabel.text = settings.imageSmoothing.onOffString
@@ -110,7 +110,7 @@ class PVTVSettingsViewController: UITableViewController {
                         TOGGLE_SETTING(\PVSettingsModel.autoSave, autoSaveValueLabel)
                     case 1:
                         // auto load
-                        TOGGLE_SETTING(\PVSettingsModel.autoLoadAutoSaves, autoLoadValueLabel)
+                        TOGGLE_SETTING(\PVSettingsModel.autoLoadSaves, autoLoadValueLabel)
                     case 2:
                         // CRT Filter
                         TOGGLE_SETTING(\PVSettingsModel.crtFilterEnabled, crtFilterLabel)

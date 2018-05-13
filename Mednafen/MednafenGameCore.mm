@@ -178,7 +178,7 @@ static void mednafen_init(MednafenGameCore* current)
     //MDFNI_SetSetting("vb.instant_display_hack", "1"); // Display latency reduction hack
 
 	// SNES Faust settings
-	MDFNI_SetSettingB("snes_faust.spex", true);
+	MDFNI_SetSettingB("snes_faust.spex", false);
 	// Enable 1-frame speculative execution for video output.
 	// Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage,
 	// and may cause video glitches(such as "jerkiness") in some oddball games, but most commercially-released games should be fine.
@@ -329,11 +329,11 @@ static void mednafen_init(MednafenGameCore* current)
         free(inputBuffer[i]);
     }
 
-    delete backBufferSurf;
-    delete frontBufferSurf;
-    
+
     if (_current == self) {
         _current = nil;
+		delete backBufferSurf;
+		delete frontBufferSurf;
     }
 }
 
@@ -497,8 +497,8 @@ static void emulation_run(BOOL skipFrame) {
         self.systemType = MednaSystemPSX;
         
         mednafenCoreModule = @"psx";
-        // Note: OpenEMU sets this to 4, 3.
-        mednafenCoreAspect = OEIntSizeMake(3, 2);
+        // Note: OpenEMU sets this to 4:3, but it's demonstrably wrong. Tested andlooked into it myself… the other emulators got this wrong, 3:2 was close, but it's actually 10:7 - Sev
+        mednafenCoreAspect = OEIntSizeMake(10, 7);
         //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
         sampleRate         = 44100;
     }

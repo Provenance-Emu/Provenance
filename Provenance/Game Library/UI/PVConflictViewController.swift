@@ -133,20 +133,47 @@ class PVConflictViewController: UITableViewController {
         alertController.popoverPresentationController?.sourceView = view
         alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
 
-        PVSystem.all.forEach { system in
-            if system.supportedExtensions.contains(path.pathExtension) {
-                let name: String = system.name
-                alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.gameImporter?.resolveConflicts(withSolutions: [path: system])
-                    // This update crashes since we remove for me on aTV.
-                    //                [self.tableView beginUpdates];
-                    //                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-                    self.updateConflictedFiles()
-                    self.tableView.reloadData()
-                    //                [self.tableView endUpdates];
-                }))
-            }
-        }
+		// This should be a better query, testing - jm
+//		PVSystem.all.filter("supportedExtensions CONTAINS[cd] %@",  path.pathExtension ).forEach { system in
+//			let name: String = system.name
+//			alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//				self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+//				// This update crashes since we remove for me on aTV.
+//				//                [self.tableView beginUpdates];
+//				//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+//				self.updateConflictedFiles()
+//				self.tableView.reloadData()
+//				//                [self.tableView endUpdates];
+//			}))
+//		}
+
+		PVSystem.all.filter({ $0.supportedExtensions.contains(path.pathExtension) }).forEach { system in
+			let name: String = system.name
+			alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+				// This update crashes since we remove for me on aTV.
+				//                [self.tableView beginUpdates];
+				//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+				self.updateConflictedFiles()
+				self.tableView.reloadData()
+				//                [self.tableView endUpdates];
+			}))
+		}
+
+//        PVSystem.all.forEach { system in
+//            if system.supportedExtensions.contains(path.pathExtension) {
+//                let name: String = system.name
+//                alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//                    self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+//                    // This update crashes since we remove for me on aTV.
+//                    //                [self.tableView beginUpdates];
+//                    //                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+//                    self.updateConflictedFiles()
+//                    self.tableView.reloadData()
+//                    //                [self.tableView endUpdates];
+//                }))
+//            }
+//        }
 
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alertController, animated: true) {() -> Void in }

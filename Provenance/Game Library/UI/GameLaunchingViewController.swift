@@ -32,6 +32,61 @@ public enum GameLaunchingError: Error {
     case missingBIOSes([String])
 }
 
+#if os(iOS)
+class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
+	var didSetConstraints = false
+
+	var switchControl : UISwitch? {
+		didSet {
+			didSetConstraints = false
+		}
+	}
+
+
+	// Prevent selection
+	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+		// Get rid of border
+		textField.superview?.backgroundColor = textField.backgroundColor
+
+		// Fix the switches frame from being below center
+		if #available(iOS 9.0, *) {
+			if !didSetConstraints, let switchControl = switchControl {
+				switchControl.constraints.forEach {
+					if $0.firstAttribute == .height {
+						switchControl.removeConstraint($0)
+					}
+				}
+
+				switchControl.heightAnchor.constraint(equalTo: textField.heightAnchor, constant: -4).isActive = true
+				let centerAnchor = switchControl.centerYAnchor.constraint(equalTo: textField.centerYAnchor, constant: 0)
+				centerAnchor.priority = .defaultHigh + 1
+				centerAnchor.isActive = true
+
+				textField.constraints.forEach {
+					if $0.firstAttribute == .height {
+						$0.constant += 20
+					}
+				}
+
+				didSetConstraints = true
+			}
+		}
+
+		return false
+	}
+
+	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+		return false
+	}
+
+	func textFieldDidBeginEditing(_ textField: UITextField) {
+		textField.resignFirstResponder()
+	}
+}
+
+// Need a strong reference, so making static
+let textEditBlocker = TextFieldEditBlocker()
+#endif
 extension GameLaunchingViewController where Self : UIViewController {
 
     private func biosCheck(system: PVSystem) throws {
@@ -299,76 +354,128 @@ extension GameLaunchingViewController where Self : UIViewController {
 		emulatorViewController.saveStatePath = PVEmulatorConfiguration.saveStatePath(forGame: game).path
 		emulatorViewController.BIOSPath = PVEmulatorConfiguration.biosPath(forGame: game).path
 
-		let presentEMUVC : (PVSaveState?)->Void = { saveSate in
-			// Present the emulator VC
-			emulatorViewController.modalTransitionStyle = .crossDissolve
-			self.present(emulatorViewController, animated: true) {() -> Void in
-				// Open the save state after a bootup delay if the user selected one
-				if let saveState = saveState {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
-						self.openSaveState(saveState)
-					})
-				}
-			}
-
-			PVControllerManager.shared.iCadeController?.refreshListener()
-
-			do {
-				try RomDatabase.sharedInstance.writeTransaction {
-					game.playCount += 1
-					game.lastPlayed = Date()
-				}
-			} catch {
-				ELOG("\(error.localizedDescription)")
-			}
-
-			self.updateRecentGames(game)
-		}
-
-		// Check if autosave exists
+		// Check if Save State exists
 		if saveState == nil {
-			checkForAutosaveThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
-				presentEMUVC(optionallyChosenSaveState)
+			checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
+				self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
 			}
 		} else {
-			presentEMUVC(saveState)
+			presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: saveState)
 		}
+	}
+
+	// Used to just show and then optionally quickly load any passed in PVSaveStates
+	private func presentEMUVC(_ emulatorViewController : PVEmulatorViewController, withGame game: PVGame, loadingSaveState saveState: PVSaveState? = nil) {
+		// Present the emulator VC
+		emulatorViewController.modalTransitionStyle = .crossDissolve
+		self.present(emulatorViewController, animated: true) {() -> Void in
+			// Open the save state after a bootup delay if the user selected one
+			if let saveState = saveState {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [unowned self] in
+					self.openSaveState(saveState)
+				})
+			}
+		}
+
+		PVControllerManager.shared.iCadeController?.refreshListener()
+
+		do {
+			try RomDatabase.sharedInstance.writeTransaction {
+				game.playCount += 1
+				game.lastPlayed = Date()
+			}
+		} catch {
+			ELOG("\(error.localizedDescription)")
+		}
+
+		self.updateRecentGames(game)
 	}
 
 	private func runEmu(withCore core: PVCore, game: PVGame) {
 
 	}
-
-	private func checkForAutosaveThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
-		// TODO: This should be moved to when the user goes to open the game, and should check if the game was loaded from an autosave already and not ask
-		// WARN: Finish me
-		if let latestAutoSave = game.saveStates.filter("isAutosave == true && core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
+	private func checkForSaveStateThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
+		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
-			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadAutoSaves
-			if shouldAskToLoadSaveState {
-				let alert = UIAlertController(title: "Autosave file detected", message: "Would you like to load it?", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { (_ action: UIAlertAction) -> Void in
-					completion(latestAutoSave)
-				}))
-				alert.addAction(UIAlertAction(title: "Yes, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					completion(latestAutoSave)
-					PVSettingsModel.sharedInstance().autoSave = true
-					PVSettingsModel.sharedInstance().askToAutoLoad = false
-				}))
-				alert.addAction(UIAlertAction(title: "No", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
+
+			if shouldAutoLoadSaveState {
+				completion(latestSaveState)
+			}
+			else if shouldAskToLoadSaveState {
+
+				// 1) Alert to ask about loading latest save state
+				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
+            #if os(iOS)
+				let switchControl = UISwitch()
+				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
+				textEditBlocker.switchControl = switchControl
+                
+                // Add a save this setting toggle
+                alert.addTextField { (textField) in
+                    textField.text = "Auto Load Saves"
+                    textField.backgroundColor = Theme.currentTheme.settingsCellBackground
+                    textField.textColor = Theme.currentTheme.settingsCellText
+                    textField.tintColor = Theme.currentTheme.settingsCellBackground
+                    textField.rightViewMode = .always
+                    textField.rightView = switchControl
+                    textField.borderStyle = .none
+                    textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
+                    textField.delegate = textEditBlocker // Weak ref
+                    
+                    switchControl.translatesAutoresizingMaskIntoConstraints = false
+                    switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
+                }
+            #endif
+                
+				// Restart
+				alert.addAction(UIAlertAction(title: "Restart", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+            #if os(iOS)
+                    if switchControl.isOn {
+                        PVSettingsModel.sharedInstance().askToAutoLoad = false
+                        PVSettingsModel.sharedInstance().autoLoadSaves = false
+					}
+            #endif
 					completion(nil)
 				}))
-				alert.addAction(UIAlertAction(title: "No, and stop asking", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-					completion(nil)
-					PVSettingsModel.sharedInstance().askToAutoLoad = false
-					PVSettingsModel.sharedInstance().autoLoadAutoSaves = false
+                
+            #if os(tvOS)
+                // Restart Always…
+                alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    PVSettingsModel.sharedInstance().askToAutoLoad = false
+                    PVSettingsModel.sharedInstance().autoLoadSaves = false
+                    completion(nil)
+                }))
+            #endif
+            
+				// Continue…
+				alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_ action: UIAlertAction) -> Void in
+            #if os(iOS)
+                    if switchControl.isOn {
+                        PVSettingsModel.sharedInstance().askToAutoLoad = false
+                        PVSettingsModel.sharedInstance().autoLoadSaves = true
+                    }
+            #endif
+					completion(latestSaveState)
 				}))
+                
+            #if os(tvOS)
+                // Continue Always…
+                alert.addAction(UIAlertAction(title: "Continue… (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                    PVSettingsModel.sharedInstance().askToAutoLoad = false
+                    PVSettingsModel.sharedInstance().autoLoadSaves = true
+                    completion(latestSaveState)
+                }))
+            #endif
+                
+				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
 					self.present(alert, animated: true) {() -> Void in }
 				})
-				completion(nil)
-			} else if shouldAutoLoadSaveState {
-				completion(latestAutoSave)
+
+			} else {
+				// Asking is turned off, either load the save state or don't based on the 'autoLoadSaves' setting
+				completion(shouldAutoLoadSaveState ? latestSaveState : nil)
 			}
 		} else {
 			completion(nil)

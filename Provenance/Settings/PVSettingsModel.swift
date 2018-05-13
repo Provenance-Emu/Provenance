@@ -10,7 +10,7 @@
 import Foundation
 
 let kAutoSaveKey = "kAutoSaveKey"
-let kAutoLoadAutoSavesKey = "kAutoLoadAutoSavesKey"
+let kAutoLoadSavesKey = "kAutoLoadSavesKey"
 let kControllerOpacityKey = "kControllerOpacityKey"
 let kAskToAutoLoadKey = "kAskToAutoLoadKey"
 let kDisableAutoLockKey = "kDisableAutoLockKey"
@@ -27,6 +27,8 @@ let kWebDayAlwwaysOnKey = "kWebDavAlwaysOnKey"
 let kThemeKey = "kThemeKey"
 let kButtonTintsKey = "kButtonsTintsKey"
 let kStartSelectAlwaysOnKey = "kStartSelectAlwaysOnKey"
+let kAllRightShouldersKey = "kAllRightShouldersKey"
+let kVolumeHUDKey = "kVolumeHUDKey"
 
 public class PVSettingsModel: NSObject {
 
@@ -47,9 +49,9 @@ public class PVSettingsModel: NSObject {
     }
 
     @objc
-    var autoLoadAutoSaves: Bool {
+    var autoLoadSaves: Bool {
        didSet {
-            UserDefaults.standard.set(autoLoadAutoSaves, forKey: kAutoLoadAutoSavesKey)
+            UserDefaults.standard.set(autoLoadSaves, forKey: kAutoLoadSavesKey)
             UserDefaults.standard.synchronize()
         }
     }
@@ -160,9 +162,25 @@ public class PVSettingsModel: NSObject {
     }
 
     @objc
+    var allRightShoulders: Bool {
+        didSet {
+            UserDefaults.standard.set(allRightShoulders, forKey: kAllRightShouldersKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    @objc
     var volume: Float {
         didSet {
             UserDefaults.standard.set(volume, forKey: kVolumeSettingKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    @objc
+    var volumeHUD: Bool {
+        didSet {
+            UserDefaults.standard.set(volumeHUD, forKey: kVolumeHUDKey)
             UserDefaults.standard.synchronize()
         }
     }
@@ -192,7 +210,7 @@ public class PVSettingsModel: NSObject {
 
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
                                                   kAskToAutoLoadKey: true,
-                                                  kAutoLoadAutoSavesKey: false,
+                                                  kAutoLoadSavesKey: false,
                                                   kControllerOpacityKey: 0.8,
                                                   kDisableAutoLockKey: false,
                                                   kButtonVibrationKey: true,
@@ -205,13 +223,15 @@ public class PVSettingsModel: NSObject {
                                                   kFPSCountKey: false,
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
-                                                  kButtonTintsKey: true,
+                                                  kButtonTintsKey: false,
                                                   kStartSelectAlwaysOnKey: false,
+                                                  kAllRightShouldersKey: false,
+                                                  kVolumeHUDKey: true,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
         autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
-        autoLoadAutoSaves = UserDefaults.standard.bool(forKey: kAutoLoadAutoSavesKey)
+        autoLoadSaves = UserDefaults.standard.bool(forKey: kAutoLoadSavesKey)
         controllerOpacity = CGFloat(UserDefaults.standard.float(forKey: kControllerOpacityKey))
         disableAutoLock = UserDefaults.standard.bool(forKey: kDisableAutoLockKey)
         buttonVibration = UserDefaults.standard.bool(forKey: kButtonVibrationKey)
@@ -228,6 +248,8 @@ public class PVSettingsModel: NSObject {
         askToAutoLoad = UserDefaults.standard.bool(forKey: kAskToAutoLoadKey)
         buttonTints = UserDefaults.standard.bool(forKey: kButtonTintsKey)
         startSelectAlwaysOn = UserDefaults.standard.bool(forKey: kStartSelectAlwaysOnKey)
+        allRightShoulders = UserDefaults.standard.bool(forKey: kAllRightShouldersKey)
+        volumeHUD = UserDefaults.standard.bool(forKey: kVolumeHUDKey)
 
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue

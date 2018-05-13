@@ -26,6 +26,8 @@ import UIKit
 class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
+    @IBOutlet weak var askToLoadSwitch: UISwitch!
+    @IBOutlet weak var askToLoadSavesCell: UITableViewCell!
     @IBOutlet weak var autoLockSwitch: UISwitch!
     @IBOutlet weak var vibrateSwitch: UISwitch!
     @IBOutlet weak var imageSmoothing: UISwitch!
@@ -42,9 +44,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
     @IBOutlet weak var startSelectSwitch: UISwitch!
-
+    @IBOutlet weak var volumeHUDSwitch: UISwitch!
+    @IBOutlet weak var allRightShouldersSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
 
+    
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
@@ -69,7 +73,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         title = "Settings"
         let settings = PVSettingsModel.shared
         autoSaveSwitch.isOn = settings.autoSave
-        autoLoadSwitch.isOn = settings.autoLoadAutoSaves
+        autoLoadSwitch.isOn = settings.autoLoadSaves
+        askToLoadSwitch.isOn = settings.askToAutoLoad
         opacitySlider.value = Float(settings.controllerOpacity)
         autoLockSwitch.isOn = settings.disableAutoLock
         vibrateSwitch.isOn = settings.buttonVibration
@@ -78,10 +83,12 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         fpsCountSwitch.isOn = settings.showFPSCount
         tintSwitch.isOn = settings.buttonTints
         startSelectSwitch.isOn = settings.startSelectAlwaysOn
+        allRightShouldersSwitch.isOn = settings.allRightShoulders
+        volumeHUDSwitch.isOn = settings.volumeHUD
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-
+        
         let masterBranch = kGITBranch.lowercased() == "master"
 
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -112,7 +119,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -129,6 +136,15 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func viewDidAppear(_ animated: Bool) {
         // placed for animation use later…
     }
+    
+    override func viewDidLayoutSubviews() {
+        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+            disableAskToLoadSavesCell()
+            disableAutoLoadSaves()
+        } else {
+            enableAskToLoadSavesCell()
+        }
+    }
 
     @IBAction func help(_ sender: Any) {
 		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
@@ -143,8 +159,22 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         PVSettingsModel.shared.autoSave = autoSaveSwitch.isOn
     }
 
-    @IBAction func toggleAutoLoadAutoSaves(_ sender: Any) {
-        PVSettingsModel.shared.autoLoadAutoSaves = autoLoadSwitch.isOn
+    @IBAction func toggleAutoLoadSaves(_ sender: Any) {
+        PVSettingsModel.shared.autoLoadSaves = autoLoadSwitch.isOn
+        if autoLoadSwitch.isOn {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.disableAskToLoadSavesCell()
+            }, completion: nil)
+            disableAutoLoadSaves()
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.enableAskToLoadSavesCell()
+            }, completion: nil)
+        }
+    }
+
+    @IBAction func toggleAskToLoadSaves(_ sender: Any) {
+        PVSettingsModel.shared.askToAutoLoad = askToLoadSwitch.isOn
     }
 
     @IBAction func controllerOpacityChanged(_ sender: Any) {
@@ -179,9 +209,32 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
-              PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+        PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
     }
-
+    
+    @IBAction func toggleVolumeHUD(_ sender: Any) {
+        PVSettingsModel.sharedInstance().volumeHUD = volumeHUDSwitch.isOn
+    }
+    
+    @IBAction func toggleAllRightShoulders(_ sender: Any) {
+        PVSettingsModel.sharedInstance().allRightShoulders = allRightShouldersSwitch.isOn
+    }
+    
+    func disableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 0.5
+        askToLoadSwitch.isEnabled = false
+    }
+    
+    func disableAutoLoadSaves() {
+        askToLoadSwitch.setOn(false, animated: true)
+        PVSettingsModel.sharedInstance().askToAutoLoad = false
+    }
+    
+    func enableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 1.0
+        askToLoadSwitch.isEnabled = true
+    }
+    
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -241,7 +294,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 && indexPath.row == 5 {
+        if indexPath.section == 2 && indexPath.row == 6 {
             let iCadeControllerViewController = PViCadeControllerViewController()
             navigationController?.pushViewController(iCadeControllerViewController, animated: true)
         } else if indexPath.section == 3 && indexPath.row == 0 {

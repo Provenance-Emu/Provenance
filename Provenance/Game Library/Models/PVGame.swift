@@ -13,7 +13,8 @@ import Foundation
 protocol PVLibraryEntry where Self: Object {}
 
 @objcMembers public class PVGame: Object, PVLibraryEntry {
-    dynamic var title: String              = ""
+    dynamic var title: String				= ""
+	dynamic var id							= NSUUID().uuidString
 
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying
@@ -23,6 +24,8 @@ protocol PVLibraryEntry where Self: Object {}
     // fully qualified path, but if we add network / cloud storage that may or may not change that.
     dynamic var romPath: String            = ""
     dynamic var file: PVFile!
+	var relatedFiles = List<PVFile>()
+
     dynamic var customArtworkURL: String   = ""
     dynamic var originalArtworkURL: String = ""
     dynamic var originalArtworkFile: PVImageFile?
@@ -30,8 +33,8 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var requiresSync: Bool         = true
     dynamic var isFavorite: Bool           = false
 
-    dynamic var romSerial: String          = ""
-
+    dynamic var romSerial: String?
+	dynamic var romHeader: String?
     dynamic var importDate: Date           = Date()
 
     dynamic var systemIdentifier: String   = ""
@@ -39,14 +42,16 @@ protocol PVLibraryEntry where Self: Object {}
 
     dynamic var md5Hash: String            = ""
 
+	// If the user has set 'always use' for a specfic core
+	// We don't use PVCore incase cores are removed / deleted
 	dynamic var userPreferredCoreID : String?
 
     /* Links to other objects */
     var saveStates = LinkingObjects<PVSaveState>(fromType: PVSaveState.self, property: "game")
     var recentPlays = LinkingObjects(fromType: PVRecentGame.self, property: "game")
     var screenShots = List<PVImageFile>()
-	var relatedFiles = List<PVFile>()
 
+	var libraries = LinkingObjects<PVLibrary>(fromType: PVLibrary.self, property: "games")
 
     /* Tracking data */
     dynamic var lastPlayed: Date?
@@ -73,7 +78,9 @@ protocol PVLibraryEntry where Self: Object {}
     dynamic var referenceURL: String?
     dynamic var releaseID: String?
     dynamic var regionName: String?
+	dynamic var regionID: Int?
     dynamic var systemShortName: String?
+	dynamic var language: String?
 
     convenience init(withFile file: PVFile, system: PVSystem) {
         self.init()

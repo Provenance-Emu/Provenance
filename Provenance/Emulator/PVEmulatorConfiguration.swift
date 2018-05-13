@@ -38,6 +38,7 @@ public struct SystemDictionaryKeys {
         static let GroupedButtons      = "PVGroupedButtons"
         static let LeftShoulderButton  = "PVLeftShoulderButton"
         static let RightShoulderButton = "PVRightShoulderButton"
+        static let ZTriggerButton      = "PVZTriggerButton"
         static let SelectButton        = "PVSelectButton"
         static let StartButton         = "PVStartButton"
     }
@@ -162,9 +163,9 @@ public class PVEmulatorConfiguration: NSObject {
 
     // MARK: ROM IOS etc
     static let supportedROMFileExtensions: [String] = {
-        return Array(systems.map({ (system) -> [String] in
-            return Array(system.supportedExtensions)
-        }).joined())
+        return systems.map({ (system) -> List<String> in
+            return system.supportedExtensions
+		}).joined().map { return $0 }
     }()
 
     static let supportedCDFileExtensions: Set<String> = {

@@ -52,7 +52,7 @@ class PVN64ControllerViewController: PVControllerViewController<PVN64SystemRespo
 
         leftShoulderButton?.buttonTag = .l
         rightShoulderButton?.buttonTag = .r
-        selectButton?.buttonTag = .z
+        zTriggerButton?.buttonTag = .z
         startButton?.buttonTag = .start
     }
 
@@ -111,14 +111,5 @@ class PVN64ControllerViewController: PVControllerViewController<PVN64SystemRespo
 
     override func releaseStart(forPlayer player: Int) {
         emulatorCore.didRelease(.start, forPlayer: player)
-    }
-
-    override func pressSelect(forPlayer player: Int) {
-        emulatorCore.didPush(.z, forPlayer: player)
-        vibrate()
-    }
-
-    override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease(.z, forPlayer: player)
     }
 }

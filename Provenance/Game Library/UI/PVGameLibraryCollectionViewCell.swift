@@ -140,10 +140,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        #if os(iOS)
+#if os(iOS)
 		//Ignore Smart Invert
 		imageView.ignoresInvertColors = true
-        #endif
+#endif
 
         let titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
         self.titleLabel = titleLabel
@@ -169,10 +169,11 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
         titleLabel.backgroundColor = UIColor.clear
         titleLabel.textColor = UIColor.white
+        titleLabel.alpha = 0.6
         titleLabel.textAlignment = .center
         titleLabel.contentMode = .center
-        titleLabel.numberOfLines = 3
-        titleLabel.lineBreakMode = .byWordWrapping
+        titleLabel.numberOfLines = 2
+        titleLabel.lineBreakMode = .byTruncatingTail
 #endif
         if #available(iOS 9.0, *) {
             titleLabel.allowsDefaultTighteningForTruncation = true
