@@ -14,14 +14,17 @@ import UIKit
 private weak var staticSelf: PVEmulatorViewController?
 
 func uncaughtExceptionHandler(exception: NSException?) {
-	do {
-		try staticSelf?.autoSaveState()
-	} catch {
-		ELOG("\(error.localizedDescription)")
-	}
+    if let staticSelf =  staticSelf, staticSelf.core.supportsSaveStates {
+        do {
+            try staticSelf.autoSaveState()
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
+    }
 }
 
 public enum SaveStateError: Error {
+	case saveStatesUnsupportedByCore
 	case failedToSave(isAutosave: Bool)
 }
 
@@ -225,18 +228,48 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		initNotifcationObservers()
 		initCore()
 
-		var romPath: URL? = game.file.url
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: .UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: .UIApplicationDidEnterBackground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: .UIApplicationWillResignActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidBecomeActive(_:)), name: .UIApplicationDidBecomeActive, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.controllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: .UIScreenDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: .UIScreenDidDisconnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
 
+        core.audioDelegate = self
+        core.saveStatesPath = self.saveStatePath
+        core.batterySavesPath = batterySavesPath
+        core.biosPath = BIOSPath
+        core.controller1 = PVControllerManager.shared.player1
+        core.controller2 = PVControllerManager.shared.player2
+        core.controller3 = PVControllerManager.shared.player3
+        core.controller4 = PVControllerManager.shared.player4
+
+        let md5Hash: String = game.md5Hash
+        core.romMD5 = md5Hash
+        core.romSerial = game.romSerial
         glViewController = PVGLViewController(emulatorCore: core)
+
             // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
             // to provide the correct data for creating views.
-        let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
-        if m3uFile != nil {
-            romPath = m3uFile
-        }
+		let m3uFile: URL? = PVEmulatorConfiguration.m3uFile(forGame: game)
+		let romPathMaybe: URL? = m3uFile ?? game.file.url
+
+		guard let romPath = romPathMaybe else {
+			presentingViewController?.presentError("Game has a nil rom path.")
+			return
+		}
+
+//		guard FileManager.default.fileExists(atPath: romPath.absoluteString) else {
+//			ELOG("File doesn't exist at path \(romPath.absoluteString)")
+//			presentingViewController?.presentError("File doesn't exist at path \(romPath.absoluteString)")
+//			return
+//		}
 
         do {
-            try core.loadFile(atPath: romPath?.path)
+            try core.loadFile(atPath: romPath.path)
         } catch {
             let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -451,7 +484,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appWillResignActive(_ note: Notification?) {
-		if PVSettingsModel.sharedInstance().autoSave {
+		if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates  {
 			do {
 				try autoSaveState()
 			} catch {
@@ -566,14 +599,16 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
         }))
 #endif
-        actionsheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
-        }))
+		if core.supportsSaveStates {
+			actionsheet.addAction(UIAlertAction(title: "Save States", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.perform(#selector(self.showSaveStateMenu), with: nil, afterDelay: 0.1)
+			}))
+		}
         actionsheet.addAction(UIAlertAction(title: "Game Speed", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             self.perform(#selector(self.showSpeedMenu), with: nil, afterDelay: 0.1)
         }))
         actionsheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-            if PVSettingsModel.sharedInstance().autoSave {
+            if PVSettingsModel.sharedInstance().autoSave, self.core.supportsSaveStates {
                 try? self.autoSaveState()
             }
             self.core.setPauseEmulation(false)
@@ -731,13 +766,25 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			}
 		}
 	}
-
+	
 	func autoSaveState() throws {
-		let image = captureScreenshot()
-		try createNewSaveState(auto: true, screenshot: image)
-	}
+		guard core.supportsSaveStates else {
+			WLOG("Core \(core.description) doesn't support save states.")
+			throw SaveStateError.saveStatesUnsupportedByCore
+			return
+		}
+
+        let image = captureScreenshot()
+        try createNewSaveState(auto: true, screenshot: image)
+    }
 
 	func createNewSaveState(auto: Bool, screenshot: UIImage?) throws {
+		guard core.supportsSaveStates else {
+			WLOG("Core \(core.description) doesn't support save states.")
+			throw SaveStateError.saveStatesUnsupportedByCore
+			return
+		}
+
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
 
 		var imageFile: PVImageFile?
@@ -791,6 +838,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	}
 
 	func loadSaveState(_ state: PVSaveState) {
+		guard core.supportsSaveStates else {
+			WLOG("Core \(core.description) doesn't support save states.")
+			return
+		}
+
 		let realm = try! Realm()
 		guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
 			presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
@@ -893,7 +945,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     typealias QuitCompletion = () -> Void
 
     func quit(_ completion: QuitCompletion? = nil) {
-        if PVSettingsModel.sharedInstance().autoSave {
+        if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
 			do {
 				try autoSaveState()
 			} catch {

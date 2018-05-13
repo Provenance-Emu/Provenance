@@ -11,6 +11,16 @@ import Foundation
 // import RealmSwift
 import CoreSpotlight
 
+func + <K, V>(lhs: [K : V], rhs: [K : V]) -> [K : V] {
+	var combined = lhs
+
+	for (k, v) in rhs {
+		combined[k] = v
+	}
+
+	return combined
+}
+
 extension URLSession {
     func synchronousDataTask(urlrequest: URLRequest) throws -> (data: Data?, response: HTTPURLResponse?) {
         var data: Data?
@@ -86,7 +96,13 @@ public class PVGameImporter {
 		return q
 	}()
 
-    public private(set) var serialImportQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialImportQueue")
+	public private(set) var serialImportQueue: OperationQueue = {
+		let queue = OperationQueue()
+		queue.name = "com.provenance-emu.provenance.serialImportQueue"
+		queue.maxConcurrentOperationCount = 1
+		return queue
+	}()
+
     public private(set) var systemToPathMap = [String: URL]()
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
 
@@ -258,15 +274,15 @@ public class PVGameImporter {
     }
 
     func startImport(forPaths paths: [URL]) {
-        serialImportQueue.async(execute: {() -> Void in
-            let newPaths = self.importFiles(atPaths: paths)
-            self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
-            if self.completionHandler != nil {
-                DispatchQueue.main.sync(execute: {() -> Void in
-                    self.completionHandler?(self.encounteredConflicts)
-                })
-            }
-        })
+		serialImportQueue.addOperation {
+			let newPaths = self.importFiles(atPaths: paths)
+			self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
+			if self.completionHandler != nil {
+				DispatchQueue.main.sync(execute: {() -> Void in
+					self.completionHandler?(self.encounteredConflicts)
+				})
+			}
+		}
     }
 
     func resolveConflicts(withSolutions solutions: [URL: PVSystem]) {
@@ -341,20 +357,20 @@ public class PVGameImporter {
 
             let systemRef = ThreadSafeReference(to: system)
 
-            serialImportQueue.async(execute: {[unowned self] () -> Void in
-                let realm = try! Realm()
-                guard let system = realm.resolve(systemRef) else {
-                    return // person was deleted
-                }
-                self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
+			serialImportQueue.addOperation {
+				let realm = try! Realm()
+				guard let system = realm.resolve(systemRef) else {
+					return // person was deleted
+				}
+				self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
 
-                // TODO: Shouldn't this only be colled after all conflicts have been resolved?
-                if self.completionHandler != nil {
-                    DispatchQueue.main.async(execute: {() -> Void in
-                        self.completionHandler?(false)
-                    })
-                }
-            })
+				// TODO: Shouldn't this only be colled after all conflicts have been resolved?
+				if self.completionHandler != nil {
+					DispatchQueue.main.async(execute: {() -> Void in
+						self.completionHandler?(false)
+					})
+				}
+			}
         } // End forEach
     }
 }
@@ -911,19 +927,19 @@ public extension PVGameImporter {
         }
      }
 
-    public func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
+    public func searchDatabase(usingKey key: String, value: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
         var results: [Any]? = nil
 
 		let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publiser', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
 
-        let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
+        let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
 
         let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
 
-        let dbSystemID: String = String(PVEmulatorConfiguration.databaseID(forSystemID: systemID)!)
 
         let queryString: String
-        if key == "romFileName" {
+        if key == "romFileName", let systemID = systemID {
+			let dbSystemID: String = String(PVEmulatorConfiguration.databaseID(forSystemID: systemID)!)
             queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
         } else {
             queryString = String(format: exactQuery, key, value)
@@ -1253,6 +1269,17 @@ extension PVGameImporter {
             }
         }
 
+		// check by md5
+		let fileMD5 = candidateFile.md5?.uppercased()
+
+		if let gotit = try! self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? "")?.first,
+			let sid : Int = gotit["systemID"] as? Int,
+			let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
+			let subfolderPath = self.path(forSystemID: system.identifier),
+			let subPath = _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath) {
+			return subPath
+		}
+
         // Done dealing with BIOS file matches
         guard let systemsForExtension = systemIDsForRom(at: filePath), !systemsForExtension.isEmpty else {
             ELOG("No system found to match \(filePath.lastPathComponent)")
@@ -1311,46 +1338,53 @@ extension PVGameImporter {
             return nil
         }
 
-        // Try to create the directory where this ROM  goes,
-        // withIntermediateDirectories == true means it won't error if exists
-        do {
-            try fm.createDirectory(at: subfolderPath, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            DLOG("Unable to create \(subfolderPath.path) - \(error.localizedDescription)")
-            return nil
-        }
-
-        let destination = subfolderPath.appendingPathComponent(filePath.lastPathComponent)
-
-        // Try to move the file to it's home
-        do {
-            try fm.moveItem(at: filePath, to: destination)
-            ILOG("Moved file \(filePath.path) to directory \(destination.path)")
-        } catch {
-
-            ELOG("Unable to move file from \(filePath) to \(subfolderPath) - \(error.localizedDescription)")
-
-            switch error {
-            case CocoaError.fileWriteFileExists:
-                ILOG("File already exists, Deleing from import folder to prevent recursive attempts to move")
-                do {
-                    try fm.removeItem(at: filePath)
-                } catch {
-                    ELOG("Unable to delete \(filePath.path) (after trying to move and getting 'file exists error', because \(error.localizedDescription)")
-                }
-            default:
-                break
-            }
-
-            return nil
-        }
-
-        // We moved sucessfully
-        if !self.encounteredConflicts {
-            newPath = destination
-        }
-        return newPath
+		return _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath)
     }
+
+	func _moveRomFoundSubpath(subfolderPath : URL, filePath : URL) -> URL? {
+		let fm = FileManager.default
+		var newPath: URL? = nil
+
+		// Try to create the directory where this ROM  goes,
+		// withIntermediateDirectories == true means it won't error if exists
+		do {
+			try fm.createDirectory(at: subfolderPath, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			DLOG("Unable to create \(subfolderPath.path) - \(error.localizedDescription)")
+			return nil
+		}
+
+		let destination = subfolderPath.appendingPathComponent(filePath.lastPathComponent)
+
+		// Try to move the file to it's home
+		do {
+			try fm.moveItem(at: filePath, to: destination)
+			ILOG("Moved file \(filePath.path) to directory \(destination.path)")
+		} catch {
+
+			ELOG("Unable to move file from \(filePath) to \(subfolderPath) - \(error.localizedDescription)")
+
+			switch error {
+			case CocoaError.fileWriteFileExists:
+				ILOG("File already exists, Deleing from import folder to prevent recursive attempts to move")
+				do {
+					try fm.removeItem(at: filePath)
+				} catch {
+					ELOG("Unable to delete \(filePath.path) (after trying to move and getting 'file exists error', because \(error.localizedDescription)")
+				}
+			default:
+				break
+			}
+
+			return nil
+		}
+
+		// We moved sucessfully
+		if !self.encounteredConflicts {
+			newPath = destination
+		}
+		return newPath
+	}
 
     func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
         ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")

@@ -69,6 +69,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, copy) NSString *coreIdentifier;
 @property (nonatomic, strong) NSString* romMD5;
 @property (nonatomic, strong) NSString* romSerial;
+@property (nonatomic, assign) BOOL supportsSaveStates;
 
 @property (atomic, assign) BOOL shouldResyncTime;
 

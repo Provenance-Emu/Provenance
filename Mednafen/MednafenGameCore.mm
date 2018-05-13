@@ -338,11 +338,11 @@ static void mednafen_init(MednafenGameCore* current)
         free(inputBuffer[i]);
     }
 
-    delete backBufferSurf;
-    delete frontBufferSurf;
-    
+
     if (_current == self) {
         _current = nil;
+		delete backBufferSurf;
+		delete frontBufferSurf;
     }
 }
 

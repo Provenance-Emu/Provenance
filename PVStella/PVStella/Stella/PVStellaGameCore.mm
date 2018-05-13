@@ -575,4 +575,8 @@ static void writeSaveFile(const char* path, int type)
     return 2;
 }
 
+-(BOOL)supportsSaveStates {
+	return NO;
+}
+
 @end

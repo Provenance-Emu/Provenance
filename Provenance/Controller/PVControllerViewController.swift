@@ -646,12 +646,16 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let spacing: CGFloat = 20
         var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-        
+ 
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad  {
+            if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
                 if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" {
                     startFrame.origin.x -= (controlSize.width / 2)
                 }
+            } else if (buttonGroup != nil) && (buttonGroup?.isHidden)! {
+                startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
+            }
         } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
             startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
             if selectButton == nil {

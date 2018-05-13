@@ -398,7 +398,11 @@ extension GameLaunchingViewController where Self : UIViewController {
 		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
-			if shouldAskToLoadSaveState {
+
+			if shouldAutoLoadSaveState {
+				completion(latestSaveState)
+			}
+			else if shouldAskToLoadSaveState {
 
 				// 1) Alert to ask about loading latest save state
 				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
