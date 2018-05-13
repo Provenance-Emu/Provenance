@@ -32,12 +32,10 @@ class PVTVSettingsViewController: UITableViewController {
         tableView.backgroundColor = UIColor.clear
 
         let settings = PVSettingsModel.shared
-        autoSaveValueLabel.text = settings.autoSave ? "ON" : "OFF"
-        timedAutoSavesValueLabel.text = settings.timedAutoSaves ? "ON" : "OFF"
-        autoLoadValueLabel.text = settings.autoLoadSaves ? "ON" : "OFF"
-        askToLoadSavesValueLabel.text = settings.askToAutoLoad ? "ON" : "OFF"
-        showFPSCountValueLabel.text = settings.showFPSCount ? "ON" : "OFF"
-        crtFilterLabel.text = settings.crtFilterEnabled ? "ON" : "OFF"
+        autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
+        autoLoadValueLabel.text = settings.autoLoadSaves ? "On" : "Off"
+        showFPSCountValueLabel.text = settings.showFPSCount ? "On" : "Off"
+        crtFilterLabel.text = settings.crtFilterEnabled ? "On" : "Off"
         imageSmoothingLabel.text = settings.imageSmoothing.onOffString
 
         let masterBranch = kGITBranch.lowercased() == "master"
@@ -127,17 +125,25 @@ class PVTVSettingsViewController: UITableViewController {
             // Settings
             switch indexPath.row {
             case 0:
-                // Auto Save
-                TOGGLE_SETTING(\PVSettingsModel.autoSave, autoSaveValueLabel)
-                if autoSaveValueLabel.text == "ON" {
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.enableTimedAutoSavesCell()
-                    }, completion: nil)
-                } else {
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.disableTimedAutoSaveCell()
-                    }, completion: nil)
-                    disableTimedAutoSaves()
+                // Emu Settings
+                switch indexPath.row {
+                    case 0:
+                        // Auto save
+                        TOGGLE_SETTING(\PVSettingsModel.autoSave, autoSaveValueLabel)
+                    case 1:
+                        // auto load
+                        TOGGLE_SETTING(\PVSettingsModel.autoLoadSaves, autoLoadValueLabel)
+                    case 2:
+                        // CRT Filter
+                        TOGGLE_SETTING(\PVSettingsModel.crtFilterEnabled, crtFilterLabel)
+                    case 3:
+                    // Image Smoother
+                    TOGGLE_SETTING(\PVSettingsModel.imageSmoothing, imageSmoothingLabel)
+                    case 4:
+                        // FPS Counter
+                        TOGGLE_SETTING(\PVSettingsModel.showFPSCount, showFPSCountValueLabel)
+                    default:
+                        break
                 }
             case 1:
                 // Timed Auto Saves

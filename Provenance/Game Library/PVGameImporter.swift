@@ -88,20 +88,20 @@ public class PVGameImporter {
     public var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
     public private(set) var encounteredConflicts = false
 
-    let workQueue : OperationQueue = {
-      let q = OperationQueue()
-      q.name = "romImporterWorkQueue"
-      q.maxConcurrentOperationCount = 3
+	let workQueue : OperationQueue = {
+		let q = OperationQueue()
+		q.name = "romImporterWorkQueue"
+		q.maxConcurrentOperationCount = 3
 
-      return q
-    }()
+		return q
+	}()
 
-    public private(set) var serialImportQueue: OperationQueue = {
-      let queue = OperationQueue()
-      queue.name = "com.provenance-emu.provenance.serialImportQueue"
-      queue.maxConcurrentOperationCount = 1
-      return queue
-    }()
+	public private(set) var serialImportQueue: OperationQueue = {
+		let queue = OperationQueue()
+		queue.name = "com.provenance-emu.provenance.serialImportQueue"
+		queue.maxConcurrentOperationCount = 1
+		return queue
+	}()
 
     public private(set) var systemToPathMap = [String: URL]()
     public private(set) var romExtensionToSystemsMap = [String: [String]]()
@@ -407,9 +407,9 @@ public extension PVGameImporter {
 
     /**
      Import a specifically named image file to the matching game.
-     
+
      To update “Kart Fighter.nes”, use an image named “Kart Fighter.nes.png”.
-     
+
      @param imageFullPath The artwork image path
      @return The game that was updated
      */
@@ -967,9 +967,9 @@ extension PVGameImporter {
     /**
         Looks at a candidate file (should be a cue). Tries to find .bin files that match the filename by pattern
         matching the filename up to the .cue to other files in the same directory.
-     
+
      - paramater candidateFile: ImportCandidateFile of the .cue file for the CD based rom
-     
+
      - returns: Returns the paths of the .bins and .cue in the new directory they were moved to. Should be a system diretory. Returns nil if a match wasn't found or an error in the process
      */
     func moveCDROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> [URL]? {
