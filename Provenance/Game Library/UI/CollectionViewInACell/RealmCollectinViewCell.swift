@@ -58,6 +58,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	lazy var internalCollectionView: UICollectionView = {
 		let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.layout)
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
 		#if os(iOS)
@@ -93,7 +94,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		registerSubCellClass()
 		internalCollectionView.frame = self.bounds
 
-		if #available(iOS 9.0, *) {
+		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
 
 			internalCollectionView.leadingAnchor.constraint(equalTo: margins.leadingAnchor, constant: 8).isActive = true
@@ -110,16 +111,20 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 		// setup page indicator layout
 		self.addSubview(pageIndicator)
-		if #available(iOS 9.0, *) {
+		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
 
 			pageIndicator.leadingAnchor.constraint(equalTo: margins.leadingAnchor, constant: 8).isActive = true
 			pageIndicator.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 8).isActive = true
-			pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
+//			pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
 			pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
 			pageIndicator.heightAnchor.constraint(equalToConstant: 36).isActive = true
 			pageIndicator.numberOfPages = layout.numberOfPages
-		} // fuck ios 8
+		}  else {
+			NSLayoutConstraint(item: pageIndicator, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: pageIndicator, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: pageIndicator, attribute: .height, relatedBy: .equal, toItem: self, attribute: .height, multiplier: 1.0, constant:0.0).isActive = true
+		}
 		//internalCollectionView
 	}
 
