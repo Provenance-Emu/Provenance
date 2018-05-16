@@ -46,7 +46,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		layout.minimumInteritemSpacing = minimumInteritemSpacing
 
 		let spacing : CGFloat = numberOfRows > 1 ? 36 + 5 : 36
-		let height = (self.bounds.height / CGFloat(numberOfRows)) - spacing
+		let height = max(0, (self.bounds.height / CGFloat(numberOfRows)) - spacing)
 		let minimumItemsPerPageRow : CGFloat = 3.0
 		let width = self.bounds.width - ((layout.minimumInteritemSpacing) * (minimumItemsPerPageRow) * 0.5)
 		//		let square = min(width, height)
@@ -188,7 +188,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		let pageIndicatorHeight = pageIndicator.frame.height
 		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + pageIndicatorHeight : pageIndicatorHeight
-		let height = (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing
+		let height = max(0,(collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
 
 		let viewWidth = internalCollectionView.bounds.size.width
 
