@@ -884,11 +884,13 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
 		try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
+        dismiss(animated: true, completion: nil)
 	}
 
     func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
         try createNewSaveState(auto: false, screenshot: saveStatesViewController.screenshot)
 		try PVSaveState.delete(state)
+        dismiss(animated: true, completion: nil)
     }
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
