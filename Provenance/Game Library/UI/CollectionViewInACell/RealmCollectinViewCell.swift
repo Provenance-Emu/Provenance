@@ -120,7 +120,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 			pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
 			pageIndicator.heightAnchor.constraint(equalToConstant: 36).isActive = true
 			pageIndicator.numberOfPages = layout.numberOfPages
-		}  else {
+		} else {
 			NSLayoutConstraint(item: pageIndicator, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0).isActive = true
 			NSLayoutConstraint(item: pageIndicator, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant:0.0).isActive = true
 			NSLayoutConstraint(item: pageIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 36).isActive = true
@@ -195,12 +195,12 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 		let pageIndicatorHeight = pageIndicator.frame.height
 		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + pageIndicatorHeight : pageIndicatorHeight
-		let height = max(0,(collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
+		let height = max(0, (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
 
 		let viewWidth = internalCollectionView.bounds.size.width
 
 		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-		let width :CGFloat = max(0,(viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
+		let width :CGFloat = max(0, (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
 
 		return CGSize(width: width, height: height)
 	}
