@@ -165,15 +165,15 @@ extension PVSaveStateInfoViewController {
 					do {
 						try PVSaveState.delete(saveState)
 					} catch {
-						let alert = UIAlertController(title: "Error deleting save state", message: error.localizedDescription, preferredStyle: .alert)
-						alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-
-						(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
+						self.presentError("Error deleting save state: " + error.localizedDescription)
 					}
+				} else {
+					ELOG("Save state var was nil, can't delete")
 				}
 			}))
 			alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-			self.present(alert, animated: true) {() -> Void in }
+
+			(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
 		}
 
 		return [playAction, deleteAction]

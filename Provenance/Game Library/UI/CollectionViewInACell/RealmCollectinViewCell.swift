@@ -155,7 +155,10 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 			switch changes {
 			case .initial(let result):
 				DLOG("Initial query result: \(result.count)")
-				self.internalCollectionView.reloadData()
+				DispatchQueue.main.async {
+					self.internalCollectionView.reloadData()
+					self.pageIndicator.numberOfPages = self.layout.numberOfPages
+				}
 			case .update(_, let deletions, let insertions, let modifications):
 				// Query results have changed, so apply them to the UICollectionView
 				self.handleUpdate(deletions: deletions, insertions: insertions, modifications: modifications)
@@ -167,8 +170,10 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	}
 
 	func handleUpdate( deletions: [Int], insertions: [Int], modifications: [Int]) {
-		internalCollectionView.reloadData()
-		pageIndicator.numberOfPages = layout.numberOfPages
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+			self.internalCollectionView.reloadData()
+			self.pageIndicator.numberOfPages = self.layout.numberOfPages
+		}
 		//		internalCollectionView.performBatchUpdates({
 		//			ILOG("Section SaveStates updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
 		//			internalCollectionView.insertItems(at: insertions.map({ return IndexPath(row: $0, section: 0) }))
