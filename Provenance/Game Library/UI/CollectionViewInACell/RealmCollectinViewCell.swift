@@ -198,7 +198,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		let viewWidth = internalCollectionView.bounds.size.width
 
 		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-		let width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow)
+		let width :CGFloat = max(0,(viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
 
 		return CGSize(width: width, height: height)
 	}

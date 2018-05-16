@@ -11,7 +11,7 @@ import UIKit
 class CenterViewFlowLayout: UICollectionViewFlowLayout {
 
 	var canvasSize : CGSize {
-		return self.collectionView!.frame.size
+		return self.collectionView?.frame.size ?? .zero
 	}
 
 	var columnCount : Int {
@@ -23,7 +23,10 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	var itemCount : Int? {
-		let count = self.collectionView?.dataSource?.collectionView(self.collectionView!, numberOfItemsInSection: 0)
+		guard let collectionView = self.collectionView else {
+			return nil
+		}
+		let count = collectionView.dataSource?.collectionView(collectionView, numberOfItemsInSection: 0)
 		return count
 	}
 
@@ -41,7 +44,7 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 
 	var numberOfPages : Int {
 		guard let itemCount = itemCount else {
-			return 0
+			return 1
 		}
 		return Int(CGFloat(itemCount) / CGFloat(rowCount * columnCount))
 	}

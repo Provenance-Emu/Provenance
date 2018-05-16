@@ -2042,6 +2042,26 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 		if searchResults != nil, indexPath.section == saveStateSection || indexPath.section == recentGamesSection {
 			return CGSize(width: CellWidth, height: CellWidth)
 		}
+
+		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
+		if indexPath.section == saveStateSection {
+			// TODO: Multirow?
+			let numberOfRows = 1
+			let width = viewWidth
+			let height = (144.0 * CGFloat(numberOfRows)) + 36
+			return CGSize(width: width, height: height)
+		}
+
+		if indexPath.section == recentGamesSection {
+			let numberOfRows = 1
+			let width = viewWidth
+			let game = self.game(at: indexPath)!
+			let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
+			var height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
+			height = (height * CGFloat(numberOfRows)) + 36
+			return CGSize(width: width, height: height)
+		}
+
 		let game = self.game(at: indexPath)!
 		let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 		return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
