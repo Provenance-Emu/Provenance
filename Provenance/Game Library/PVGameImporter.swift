@@ -640,10 +640,36 @@ public extension PVGameImporter {
 		} else {
 			isDirectory = (try? path.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
 		}
-		if path.lastPathComponent.hasPrefix(".") || isDirectory {
+		if path.lastPathComponent.hasPrefix(".") {
 			VLOG("Skipping file with . as first character or it's a directory")
 			return
 		}
+
+
+		// Handle folders, but only if no system ref was chosen (incase of CD folders)
+		if isDirectory {
+			if chosenSystemRef == nil {
+				do {
+					let subContents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+					if subContents.isEmpty {
+						// delete empty folders
+						try FileManager.default.removeItem(at: path)
+						ILOG("Deleted empty import folder \(path.path)")
+					} else {
+						ILOG("Found non-empty folder in improts dir. Will iterate subcontents for import")
+						subContents.forEach { subFile in
+							self.workQueue.addOperation {
+								self._handlePath(path: subFile, userChosenSystem: nil)
+							}
+						}
+					}
+
+				} catch {
+					ELOG("\(error)")
+				}
+			}
+		}
+
 		autoreleasepool {
 			var systemsMaybe: [PVSystem]? = nil
 

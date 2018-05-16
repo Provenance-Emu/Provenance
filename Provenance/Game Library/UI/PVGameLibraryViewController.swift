@@ -2162,7 +2162,21 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
                 let destination = importPath.appendingPathComponent(fileName, isDirectory: false)
                 do {
                     // Since we're in UIDocumentPickerModeImport, these URLs are temporary URLs so a move is what we want
-                    try FileManager.default.moveItem(at: url, to: destination)
+
+					if #available(iOS 9.0, *) {
+						if url.hasDirectoryPath {
+							let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+							for subFile in subFiles {
+								_ = subFile.startAccessingSecurityScopedResource()
+								try FileManager.default.moveItem(at: subFile, to: destination)
+								subFile.stopAccessingSecurityScopedResource()
+							}
+						} else {
+							try FileManager.default.moveItem(at: url, to: destination)
+						}
+					} else {
+						try FileManager.default.moveItem(at: url, to: destination)
+					}
                 } catch {
                     ELOG("Failed to move file from \(url.path) to \(destination.path)")
                 }
