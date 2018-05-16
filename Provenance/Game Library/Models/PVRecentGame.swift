@@ -13,13 +13,15 @@ import Foundation
 
     dynamic var game: PVGame!
     dynamic var lastPlayedDate: Date = Date()
+	dynamic var core: PVCore?
 
     override public static func indexedProperties() -> [String] {
         return ["lastPlayedDate"]
     }
 
-    public convenience init(withGame game: PVGame) {
+	public convenience init(withGame game: PVGame, core: PVCore? = nil) {
         self.init()
         self.game = game
+		self.core = core
     }
 }

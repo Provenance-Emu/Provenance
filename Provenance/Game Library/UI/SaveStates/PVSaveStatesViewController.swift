@@ -224,7 +224,7 @@ class PVSaveStatesViewController: UICollectionViewController {
 	}
 
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SaveStateView", for: indexPath) as! PVSaveStateCollectionViewCell
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier, for: indexPath) as! PVSaveStateCollectionViewCell
 		var saveState: PVSaveState?
 		switch indexPath.section {
 		case 0:
