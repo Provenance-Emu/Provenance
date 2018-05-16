@@ -143,8 +143,10 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		let pageIndicator = UIPageControl(frame: CGRect(origin: CGPoint(x: bounds.midX - 38.2, y: bounds.maxY-18), size: CGSize(width:38, height:36)))
 		pageIndicator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
 		pageIndicator.translatesAutoresizingMaskIntoConstraints = false
+		#if os(iOS)
 		pageIndicator.currentPageIndicatorTintColor = Theme.currentTheme.defaultTintColor
 		pageIndicator.pageIndicatorTintColor = Theme.currentTheme.gameLibraryText
+		#endif
 		return pageIndicator
 	}()
 
