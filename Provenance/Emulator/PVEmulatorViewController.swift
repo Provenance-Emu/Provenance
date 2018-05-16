@@ -224,7 +224,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         super.viewDidLoad()
         title = game.title
         view.backgroundColor = UIColor.black
-        
+
 		initNotifcationObservers()
 		initCore()
 
@@ -330,12 +330,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		convertOldSaveStatesToNewIfNeeded()
 
         core.startEmulation()
-		
+
         gameAudio = OEGameAudio(core: core)
         gameAudio?.volume = PVSettingsModel.sharedInstance().volume
         gameAudio?.outputDeviceID = 0
         gameAudio?.start()
-
 
         // stupid bug in tvOS 9.2
         // the controller paused handler (if implemented) seems to cause a 'back' navigation action
@@ -359,7 +358,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
 #endif
     }
-    
+
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         //Notifies UIKit that your view controller updated its preference regarding the visual indicator
@@ -422,7 +421,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
 #endif
-    
+
 #if os(iOS)
     var safeAreaInsets: UIEdgeInsets {
         if #available(iOS 11.0, tvOS 11.0, *) {
@@ -432,14 +431,14 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         }
     }
 #endif
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 #if os(iOS)
         layoutMenuButton()
 #endif
     }
-    
+
 #if os(iOS)
     func layoutMenuButton() {
         if let menuButton = self.menuButton {
@@ -484,7 +483,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appWillResignActive(_ note: Notification?) {
-		if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates  {
+		if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
 			do {
 				try autoSaveState()
 			} catch {
@@ -766,7 +765,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			}
 		}
 	}
-	
+
 	func autoSaveState() throws {
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
@@ -1123,7 +1122,6 @@ extension PVEmulatorViewController {
         }
     }
 }
-
 
 // Extension to make gesture.allowedPressTypes and gesture.allowedTouchTypes sane.
 @available(iOS 9.0, *)

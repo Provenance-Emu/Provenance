@@ -168,7 +168,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var volume: Float {
         didSet {
@@ -176,7 +176,7 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
-    
+
     @objc
     var volumeHUD: Bool {
         didSet {

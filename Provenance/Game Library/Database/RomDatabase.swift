@@ -191,7 +191,6 @@ public final class RomDatabase {
 //		return sharedInstance.realm.objects(PVLibrary.self).filter { !$0.isLocal }
 //	}
 
-
     // Private shared instance that propery initializes
     private static var _sharedInstance: RomDatabase!
 

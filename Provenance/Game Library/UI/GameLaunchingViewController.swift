@@ -42,7 +42,6 @@ class TextFieldEditBlocker : NSObject, UITextFieldDelegate {
 		}
 	}
 
-
 	// Prevent selection
 	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
 		// Get rid of border
@@ -391,15 +390,14 @@ extension GameLaunchingViewController where Self : UIViewController {
 		self.updateRecentGames(game)
 	}
 
-	private func checkForSaveStateThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
+	private func checkForSaveStateThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?) -> Void) {
 		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
 			let shouldAutoLoadSaveState: Bool = PVSettingsModel.sharedInstance().autoLoadSaves
 
 			if shouldAutoLoadSaveState {
 				completion(latestSaveState)
-			}
-			else if shouldAskToLoadSaveState {
+			} else if shouldAskToLoadSaveState {
 
 				// 1) Alert to ask about loading latest save state
 				let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .alert)
@@ -407,7 +405,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 				let switchControl = UISwitch()
 				switchControl.isOn = !PVSettingsModel.sharedInstance().askToAutoLoad
 				textEditBlocker.switchControl = switchControl
-                
+
                 // Add a save this setting toggle
                 alert.addTextField { (textField) in
                     textField.text = "Auto Load Saves"
@@ -419,12 +417,12 @@ extension GameLaunchingViewController where Self : UIViewController {
                     textField.borderStyle = .none
                     textField.layer.borderColor = Theme.currentTheme.settingsCellBackground!.cgColor
                     textField.delegate = textEditBlocker // Weak ref
-                    
+
                     switchControl.translatesAutoresizingMaskIntoConstraints = false
                     switchControl.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
                 }
             #endif
-                
+
 				// Restart
 				alert.addAction(UIAlertAction(title: "Restart", style: .default, handler: { (_ action: UIAlertAction) -> Void in
             #if os(iOS)
@@ -435,7 +433,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             #endif
 					completion(nil)
 				}))
-                
+
             #if os(tvOS)
                 // Restart Always…
                 alert.addAction(UIAlertAction(title: "Restart (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -444,7 +442,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                     completion(nil)
                 }))
             #endif
-            
+
 				// Continue…
 				alert.addAction(UIAlertAction(title: "Continue…", style: .default, handler: { (_ action: UIAlertAction) -> Void in
             #if os(iOS)
@@ -455,7 +453,7 @@ extension GameLaunchingViewController where Self : UIViewController {
             #endif
 					completion(latestSaveState)
 				}))
-                
+
             #if os(tvOS)
                 // Continue Always…
                 alert.addAction(UIAlertAction(title: "Continue… (Always)", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -464,7 +462,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                     completion(latestSaveState)
                 }))
             #endif
-                
+
 				// Present the alert
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {() -> Void in
 					self.present(alert, animated: true) {() -> Void in }

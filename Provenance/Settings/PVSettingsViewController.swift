@@ -48,7 +48,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var allRightShouldersSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
 
-    
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
@@ -88,7 +87,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
-        
+
         let masterBranch = kGITBranch.lowercased() == "master"
 
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -119,7 +118,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -136,7 +135,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     override func viewDidAppear(_ animated: Bool) {
         // placed for animation use later…
     }
-    
+
     override func viewDidLayoutSubviews() {
         if PVSettingsModel.sharedInstance().autoLoadSaves == true {
             disableAskToLoadSavesCell()
@@ -211,30 +210,30 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
         PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
     }
-    
+
     @IBAction func toggleVolumeHUD(_ sender: Any) {
         PVSettingsModel.sharedInstance().volumeHUD = volumeHUDSwitch.isOn
     }
-    
+
     @IBAction func toggleAllRightShoulders(_ sender: Any) {
         PVSettingsModel.sharedInstance().allRightShoulders = allRightShouldersSwitch.isOn
     }
-    
+
     func disableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 0.5
         askToLoadSwitch.isEnabled = false
     }
-    
+
     func disableAutoLoadSaves() {
         askToLoadSwitch.setOn(false, animated: true)
         PVSettingsModel.sharedInstance().askToAutoLoad = false
     }
-    
+
     func enableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 1.0
         askToLoadSwitch.isEnabled = true
     }
-    
+
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {

@@ -602,8 +602,6 @@ public extension PVGameImporter {
         return filteredGames.isEmpty ? nil : Array(filteredGames)
     }
 
-
-
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: PVSystem? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
@@ -644,7 +642,6 @@ public extension PVGameImporter {
 			VLOG("Skipping file with . as first character or it's a directory")
 			return
 		}
-
 
 		// Handle folders, but only if no system ref was chosen (incase of CD folders)
 		if isDirectory {
@@ -961,7 +958,6 @@ public extension PVGameImporter {
         let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
 
         let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
-
 
         let queryString: String
         if key == "romFileName", let systemID = systemID {

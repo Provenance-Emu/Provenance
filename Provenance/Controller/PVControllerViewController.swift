@@ -209,16 +209,16 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 feedbackGenerator?.prepare()
             }
             updateHideTouchControls()
-        
+
         if PVSettingsModel.shared.volumeHUD {
             volume.barTintColor = .white
             volume.barBackgroundColor = UIColor.white.withAlphaComponent(0.3)
             volume.animation = .slideDown
             view.addSubview(volume)
         }
-        
+
         NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: NSNotification.Name.UIApplicationDidBecomeActive, object: nil)
-        
+
         #endif
     }
 
@@ -313,12 +313,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         updateHideTouchControls()
     #endif
     }
-    
+
     #if os(iOS)
     func layoutVolume() {
         let volumeYPadding: CGFloat = 10
         let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2
-        
+
         volume.superview?.bringSubview(toFront: volume)
         volume.layer.cornerRadius = volumeHeight / 2
         volume.frame = CGRect(x: safeAreaInsets.left + volumeXPadding, y: safeAreaInsets.top + volumeYPadding, width: UIScreen.main.bounds.width - (volumeXPadding * 2) - safeAreaInsets.left - safeAreaInsets.right, height: volumeHeight)
@@ -403,7 +403,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                     let bottomPadding: CGFloat = 16
                     let buttonsOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                     let buttonsFrame = CGRect(x: view.bounds.maxX - controlSize.width - xPadding, y: buttonsOriginY, width: controlSize.width, height: controlSize.height)
-                    
+
                     if let buttonGroup = self.buttonGroup {
                         buttonGroup.frame = buttonsFrame
                     } else {
@@ -457,18 +457,18 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         var rightShoulderFrame: CGRect!
-        
+
         if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)! - (controlSize.height * 2) - 4, width: controlSize.width, height: controlSize.height)
-            
+
             if PVSettingsModel.shared.allRightShoulders && (system.shortName == "GBA") {
                 rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
             }
-            
+
         } else {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if rightShoulderButton == nil {
             let rightShoulderButton = JSButton(frame: rightShoulderFrame)
             if let tintColor = control.PVControlTint {
@@ -506,13 +506,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             rightShoulderButton?.frame = rightShoulderFrame
         }
     }
-    
+
     func layoutZTriggerButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         var zTriggerFrame: CGRect!
-        
+
         if rightShoulderButton != nil {
             zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
         } else {
@@ -539,7 +539,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             view.addSubview(zTriggerButton)
         }
     }
-    
+
     func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let xPadding: CGFloat = safeAreaInsets.left + 10
@@ -550,19 +550,19 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         } else {
             leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if PVSettingsModel.shared.allRightShoulders {
             if zTriggerButton != nil {
                 leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
             } else if zTriggerButton == nil && rightShoulderButton != nil {
                 leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
-                
+
                 if system.shortName == "GBA" {
                     leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
                 }
             }
         }
-        
+
         if leftShoulderButton == nil {
             let leftShoulderButton = JSButton(frame: leftShoulderFrame)
             self.leftShoulderButton = leftShoulderButton
@@ -579,7 +579,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
             view.addSubview(leftShoulderButton)
         } else if leftShoulderButton2 == nil, let title = control.PVControlTitle, title == "L2" {
-            
+
             let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
             if let tintColor = control.PVControlTint {
                 leftShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -594,21 +594,21 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             leftShoulderButton2.alpha = alpha
             leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
             view.addSubview(leftShoulderButton2)
-            
+
         } else {
             leftShoulderButton2?.frame = leftShoulderFrame
             leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height
             leftShoulderButton?.frame = leftShoulderFrame
         }
     }
-    
+
     func layoutSelectButton( control: ControlLayoutEntry ) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.left + 10
         let spacing: CGFloat = 20
         var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-        
+
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (dPad != nil) && !(dPad?.isHidden)! {
                 selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
@@ -619,7 +619,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
             selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
         }
-        
+
         if let selectButton = self.selectButton {
             selectButton.frame = selectFrame
         } else {
@@ -639,15 +639,15 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             view.addSubview(selectButton)
         }
     }
-    
+
     func layoutStartButton(control: ControlLayoutEntry) {
         let controlSize: CGSize = CGSizeFromString(control.PVControlSize)
         let yPadding: CGFloat = safeAreaInsets.bottom + 10
         let xPadding: CGFloat = safeAreaInsets.right + 10
         let spacing: CGFloat = 20
         var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
- 
-        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad  {
+
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
                 if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" {
@@ -662,7 +662,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 startFrame.origin.x -= (spacing / 2) + (controlSize.width / 2)
             }
         }
-        
+
         if let startButton = self.startButton {
             startButton.frame = startFrame
         } else {
@@ -682,6 +682,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             view.addSubview(startButton)
         }
     }
-    
+
     #endif
 }

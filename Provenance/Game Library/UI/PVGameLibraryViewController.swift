@@ -24,7 +24,6 @@ let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell
 let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
 let PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier = "RecentlyPlayedColletionCell"
 
-
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
 // For Obj-C
@@ -498,7 +497,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 				self.saveStatesIsEmpty = needsDelete
 
-
 				// If there are more than 6 save states in total, and we are deleting some, if any of the 6 slots in the recent states secion
 				// will be backfilled, then we just transform the deletions into modifications, so they are reloaded.
 //				var modifications = modifications
@@ -535,7 +533,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 }
 
                 self.collectionView?.reloadData()
-            case .update(_, let deletions, let insertions, let _/*modifications*/):
+            case .update(_, let deletions, let insertions, _/*modifications*/):
 				if self.isInSearch {
 					return
 				}

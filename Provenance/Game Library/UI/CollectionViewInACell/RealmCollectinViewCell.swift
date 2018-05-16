@@ -63,7 +63,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		#if os(iOS)
 		collectionView.isPagingEnabled = true
 		#endif
-		collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(2, 2, 0, 2)
+		collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 2, left: 2, bottom: 0, right: 2)
 		collectionView.indicatorStyle = .white
 		return collectionView
 	}()
@@ -148,7 +148,6 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		return pageIndicator
 	}()
 
-
 	// ----
 	private func setupToken() {
 		queryUpdateToken = query.observe { [unowned self] (changes: RealmCollectionChange) in
@@ -199,7 +198,6 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	/// whether or not dragging has ended
 	fileprivate var endDragging = false
-
 
 	/// the current page
 	var currentIndex: Int = 0 {
