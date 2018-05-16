@@ -329,14 +329,14 @@ static void FinalizeSamplesAudioCallback(void *)
 }
 
 #pragma mark Save States
-- (BOOL)saveStateToFileAtPath: (NSString *) fileName
+- (BOOL)saveStateToFileAtPath: (NSString *) fileName error:(NSError**)error  
 {
     @synchronized(self) {
         return S9xFreezeGame([fileName UTF8String]) ? YES : NO;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath: (NSString *) fileName
+- (BOOL)loadStateFromFileAtPath: (NSString *) fileName error:(NSError**)error
 {
     @synchronized(self) {
         return S9xUnfreezeGame([fileName UTF8String]) ? YES : NO;

@@ -391,9 +391,6 @@ extension GameLaunchingViewController where Self : UIViewController {
 		self.updateRecentGames(game)
 	}
 
-	private func runEmu(withCore core: PVCore, game: PVGame) {
-
-	}
 	private func checkForSaveStateThenRun(withCore core : PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?)->Void) {
 		if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
 			let shouldAskToLoadSaveState: Bool = PVSettingsModel.sharedInstance().askToAutoLoad
@@ -525,6 +522,7 @@ extension GameLaunchingViewController where Self : UIViewController {
                 ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
             }
         } else {
+			// TODO: Add PVCore
             let newRecent = PVRecentGame(withGame: game)
             do {
                 try database.add(newRecent, update: false)
@@ -548,7 +546,12 @@ extension GameLaunchingViewController where Self : UIViewController {
 			}
 
 			gameVC.core.setPauseEmulation(true)
-			gameVC.core.loadStateFromFile(atPath: saveState.file.url.path)
+			do {
+				try gameVC.core.loadStateFromFile(atPath: saveState.file.url.path)
+			} catch {
+				let reason = (error as NSError).localizedFailureReason
+				presentError("Failed to load save state: \(error.localizedDescription) \(reason ?? "")")
+			}
 			gameVC.core.setPauseEmulation(false)
 		} else {
 			presentWarning("No core loaded")

@@ -299,32 +299,32 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type
+- (BOOL)loadSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = stella_retro_get_memory_size(type);
     void *ramData = stella_retro_get_memory_data(type);
     
     if (size == 0 || !ramData)
     {
-        return;
+        return NO;
     }
     
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
         DLog(@"Couldn't load save file.");
+		return NO;
     }
     
     [data getBytes:ramData length:size];
+	return YES;
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
-{
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     size_t size = stella_retro_get_memory_size(type);
     void *ramData = stella_retro_get_memory_data(type);
-    
-    if (ramData && (size > 0))
-    {
+
+    if (ramData && (size > 0)) {
         stella_retro_serialize(ramData, size);
         NSData *data = [NSData dataWithBytes:ramData length:size];
         BOOL success = [data writeToFile:path atomically:YES];
@@ -332,8 +332,45 @@ static void writeSaveFile(const char* path, int type)
         {
             DLog(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		ELOG("Stella ramdata is invalid");
+		return NO;
+	}
 }
+
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error   {
+	NSDictionary *userInfo = @{
+							   NSLocalizedDescriptionKey: @"Failed to save state.",
+							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
+							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
+							   };
+
+	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+											code:PVEmulatorCoreErrorCodeCouldNotSaveState
+										userInfo:userInfo];
+
+	*error = newError;
+	return NO;
+//	return [self writeSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+}
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error   {
+	NSDictionary *userInfo = @{
+							   NSLocalizedDescriptionKey: @"Failed to load state.",
+							   NSLocalizedFailureReasonErrorKey: @"Stella does not support save states.",
+							   NSLocalizedRecoverySuggestionErrorKey: @"Check for future updates on ticket #753."
+							   };
+
+	NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+											code:PVEmulatorCoreErrorCodeCouldNotLoadState
+										userInfo:userInfo];
+
+	*error = newError;
+	return NO;
+//	return [self loadSaveFile:fileName forType:RETRO_MEMORY_SAVE_RAM];
+}
+
 
 #pragma mark Input
 - (void)pollControllers {
@@ -359,7 +396,16 @@ static void writeSaveFile(const char* path, int type)
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_DOWN]  = (dpad.down.isPressed  || gamepad.leftThumbstick.down.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_LEFT]  = (dpad.left.isPressed  || gamepad.leftThumbstick.left.isPressed);
             _pad[playerIndex][RETRO_DEVICE_ID_JOYPAD_RIGHT] = (dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed);
-            
+
+			// #688, use second thumb to control second player input if no controller active
+			// some games used both joysticks for 1 player optinally
+			if(playerIndex == 0 && self.controller2 == nil) {
+				_pad[1][RETRO_DEVICE_ID_JOYPAD_UP]    = gamepad.rightThumbstick.up.isPressed;
+				_pad[1][RETRO_DEVICE_ID_JOYPAD_DOWN]  = gamepad.rightThumbstick.down.isPressed;
+				_pad[1][RETRO_DEVICE_ID_JOYPAD_LEFT]  = gamepad.rightThumbstick.left.isPressed;
+				_pad[1][RETRO_DEVICE_ID_JOYPAD_RIGHT] = gamepad.rightThumbstick.right.isPressed;
+			}
+
                 // Buttons
             
                 // Fire 1
@@ -536,16 +582,6 @@ static void writeSaveFile(const char* path, int type)
 - (NSUInteger)channelCount
 {
     return 2;
-}
-
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
-{
-    return NO;
-}
-
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
-{
-    return NO;
 }
 
 -(BOOL)supportsSaveStates {

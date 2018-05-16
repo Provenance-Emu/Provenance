@@ -801,7 +801,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			}
 		}
 
-		if self.core.saveStateToFile(atPath: saveFile.url.path) {
+		do {
+			try self.core.saveStateToFile(atPath: saveFile.url.path)
+
 			DLOG("Succeeded saving state, auto: \(auto)")
 			if let realm = try? Realm() {
 				guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
@@ -829,8 +831,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 					}
 				}
 			}
-		} else {
-			throw SaveStateError.failedToSave(isAutosave: auto)
+		} catch {
+			throw error
+//			throw SaveStateError.failedToSave(isAutosave: auto)
 		}
 	}
 
@@ -850,7 +853,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			try! realm.write {
 				state.lastOpened = Date()
 			}
-			self.core.loadStateFromFile(atPath: state.file.url.path)
+
+			do {
+				try self.core.loadStateFromFile(atPath: state.file.url.path)
+			} catch {
+				self.presentError("Failed to load save state. \(error.localizedDescription)")
+			}
 			self.core.setPauseEmulation(false)
 			self.isShowingMenu = false
 			self.enableContorllerInput(false)

@@ -182,6 +182,8 @@ class M6532 : public Device
  
     // Assignment operator isn't supported by this class so make it private
     M6532& operator = (const M6532&);
+
+  public: uInt8* getRAM() { return myRAM; }
 };
 
 #endif

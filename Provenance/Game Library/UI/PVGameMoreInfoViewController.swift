@@ -632,13 +632,17 @@ extension PVGameMoreInfoViewController {
 
      // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {
+		guard let game = game else {
+			return [UIPreviewActionItem]()
+		}
+
         let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
-				libVC.load(self.game!, sender: self.view, core: nil)
+				libVC.load(game, sender: self.view, core: nil)
             }
         }
 
-        let isFavorite = game?.isFavorite ?? false
+        let isFavorite = game.isFavorite
         let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { (action, viewController) in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -653,7 +657,11 @@ extension PVGameMoreInfoViewController {
             let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 // Delete from Realm
-				RomDatabase.sharedInstance.delete(game: self.game!)
+				do {
+					try RomDatabase.sharedInstance.delete(game: game)
+				} catch {
+					self.presentError(error.localizedDescription)
+				}
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
 			(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)

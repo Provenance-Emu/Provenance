@@ -107,7 +107,7 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)stopEmulation;
 - (void)frameRefreshThread:(id)anArgument;
 - (void)executeFrame;
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
 - (void)updateControllers;
 
 - (const void *)videoBuffer;
@@ -131,10 +131,7 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index;
 
-- (void)loadSaveFile:(NSString *)path forType:(int)type;
-- (void)writeSaveFile:(NSString *)path forType:(int)type;
-
-- (BOOL)saveStateToFileAtPath:(NSString *)path;
-- (BOOL)loadStateFromFileAtPath:(NSString *)path;
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
 
 @end

@@ -140,7 +140,14 @@ static __weak PVFCEUEmulatorCore *_current;
 
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);
-    
+
+	// 4 Player
+	if (FCEUGameInfo->inputfc == SIFC_4PLAYER) {
+		FCEUI_SetInputFourscore(true);
+		// This needed?
+		//	FCEUI_SetInput(2, SI_GAMEPAD, &pad[2], 0);
+		//	FCEUI_SetInput(3, SI_GAMEPAD, &pad[3], 0);
+	}
 
     FCEU_ResetPalette();
 
@@ -239,7 +246,7 @@ static __weak PVFCEUEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error  
 {
     @synchronized(self) {
         FCEUSS_Save([fileName UTF8String], false);
@@ -247,10 +254,24 @@ static __weak PVFCEUEmulatorCore *_current;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return FCEUSS_Load([fileName UTF8String], false);
+        BOOL success = FCEUSS_Load([fileName UTF8String], false);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
@@ -422,11 +443,11 @@ FCEUFILE *FCEUD_OpenArchive(ArchiveScanRecord &asr, std::string &fname, std::str
 ArchiveScanRecord FCEUD_ScanArchive(std::string fname) { return ArchiveScanRecord(); }
 void FCEUD_PrintError(const char *s)
 {
-    DLog(@"FCEUX error: %s", s);
+    ELOG(@"FCEUX: %s", s);
 }
 void FCEUD_Message(const char *s)
 {
-    DLog(@"FCEUX message: %s", s);
+    ILOG(@"FCEUX: %s", s);
 }
 
 @end

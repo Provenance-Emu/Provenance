@@ -313,7 +313,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
     return NO;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     return [self loadFileAtPath:path];
 }
@@ -456,26 +456,16 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 #pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
 	[self doesNotImplementSelector:_cmd];
 	return NO;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError**)error
 {
 	[self doesNotImplementSelector:_cmd];
 	return NO;
-}
-
-- (void)loadSaveFile:(NSString *)path forType:(int)type
-{
-	[self doesNotImplementSelector:_cmd];
-}
-
-- (void)writeSaveFile:(NSString *)path forType:(int)type
-{
-	[self doesNotImplementSelector:_cmd];
 }
 
 -(BOOL)supportsSaveStates {
