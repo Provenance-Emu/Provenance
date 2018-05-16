@@ -3281,7 +3281,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# ./Provenance/Resources/createVersionHeader.sh";
+			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
 		E32D548D1D99C82E00C41A52 /* Set Git SHA */ = {
 			isa = PBXShellScriptBuildPhase;
