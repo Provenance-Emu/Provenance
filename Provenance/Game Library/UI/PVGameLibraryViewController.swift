@@ -1783,9 +1783,17 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //				let location2 = recentlyPlayedCell.internalCollectionView.convert(location, from: collectionView)
 //				let indexPath2 = recentlyPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
 //
-                game = recentGames?[indexPath.row].game
+				if let recentGames = recentGames, recentGames.count > row {
+					game = recentGames[row].game
+				} else {
+					ELOG("row \(row) out of bounds for recentGame count \(recentGames?.count ?? -1)")
+				}
 			} else if section == saveStateSection {
-				game = saveStates?[row].game
+				if let saveStates = saveStates, saveStates.count > row {
+					game = saveStates[row].game
+				} else {
+					ELOG("row \(row) out of bounds for saveStates count \(saveStates?.count ?? -1)")
+				}
 			} else if let system = systems?[section - systemsSectionOffset] {
                 game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
             }
