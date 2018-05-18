@@ -1230,7 +1230,6 @@ extension PVGameImporter {
     func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {
 
         let filePath = candidateFile.filePath
-        var newPath: URL? = nil
         var subfolderPathMaybe: URL? = nil
 
         var systemID: String? = nil
