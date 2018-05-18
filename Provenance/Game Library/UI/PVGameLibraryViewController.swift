@@ -89,6 +89,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
+	var filePathsToImport = [URL]()
+	
     var collectionView: UICollectionView?
 	let maxForSpecialSection = 6
 
@@ -1053,7 +1055,20 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
 
             if let paths = paths {
-                self.gameImporter?.startImport(forPaths: paths)
+				self.filePathsToImport.append(contentsOf: paths)
+				do {
+					let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+					let archives = contents.filter {
+						let exts = PVEmulatorConfiguration.archiveExtensions
+						let ext = $0.pathExtension.lowercased()
+						return exts.contains(ext)
+					}
+					if archives.count == 0 {
+						self.gameImporter?.startImport(forPaths: self.filePathsToImport)
+					}
+				} catch {
+					ELOG("\(error.localizedDescription)")
+				}
             }
         })
 
