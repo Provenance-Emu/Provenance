@@ -183,6 +183,20 @@ public class PVGameImporter {
     }
 
     func importFiles(atPaths paths: [URL]) -> [URL] {
+		// If directory, map out sub directories if folder
+		let paths : [URL] = paths.compactMap { (url) -> [URL]? in
+			if #available(iOS 9.0, *) {
+				if url.hasDirectoryPath {
+					return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+				} else {
+					return [url]
+				}
+			} else {
+				// Fallback on earlier versions
+				return [url]
+			}
+		}.joined().map{ $0 }
+
 
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
 
@@ -605,6 +619,20 @@ public extension PVGameImporter {
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: PVSystem? = nil) {
         let database = RomDatabase.sharedInstance
         database.refresh()
+
+		// If directory, map out sub directories if folder
+		let paths : [URL] = paths.compactMap { (url) -> [URL]? in
+			if #available(iOS 9.0, *) {
+				if url.hasDirectoryPath {
+					return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+				} else {
+					return [url]
+				}
+			} else {
+				// Fallback on earlier versions
+				return [url]
+			}
+		}.joined().map{ $0 }
 
         paths.forEach { (path) in
 			// Needs to be in loop, can't double resolve a ref

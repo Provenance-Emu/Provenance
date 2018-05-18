@@ -2185,46 +2185,83 @@ extension PVGameLibraryViewController: UIDocumentMenuDelegate {
 
 // MARK: UIDocumentPickerDelegate
 extension PVGameLibraryViewController: UIDocumentPickerDelegate {
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
-
-        let importPath = PVEmulatorConfiguration.romsImportPath
-
-        sortedUrls.forEach { (url) in
-            defer {
-                url.stopAccessingSecurityScopedResource()
-            }
-
-            // Doesn't seem we need access in dev builds?
-            _ = url.startAccessingSecurityScopedResource()
-
-//            if access {
-                let fileName = url.lastPathComponent
-                let destination = importPath.appendingPathComponent(fileName, isDirectory: false)
-                do {
-                    // Since we're in UIDocumentPickerModeImport, these URLs are temporary URLs so a move is what we want
-
-					if #available(iOS 9.0, *) {
-						if url.hasDirectoryPath {
-							let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
-							for subFile in subFiles {
-								_ = subFile.startAccessingSecurityScopedResource()
-								try FileManager.default.moveItem(at: subFile, to: destination)
-								subFile.stopAccessingSecurityScopedResource()
-							}
-						} else {
-							try FileManager.default.moveItem(at: url, to: destination)
-						}
-					} else {
-						try FileManager.default.moveItem(at: url, to: destination)
+	func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+		// If directory, map out sub directories if folder
+		let urls : [URL] = urls.compactMap { (url) -> [URL]? in
+			if #available(iOS 9.0, *) {
+				if url.hasDirectoryPath {
+					ILOG("Trying to import directory \(url.path). Scanning subcontents")
+					do {
+						_ = url.startAccessingSecurityScopedResource()
+						let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey], options: .skipsHiddenFiles)
+						url.stopAccessingSecurityScopedResource()
+						return subFiles
+					} catch {
+						ELOG("Subdir scan failed. \(error)")
+						return [url]
 					}
-                } catch {
-                    ELOG("Failed to move file from \(url.path) to \(destination.path)")
-                }
+				} else {
+					return [url]
+				}
+			} else {
+				// Fallback on earlier versions
+				return [url]
+			}
+			}.joined().map{ $0 }
+
+		let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
+
+		let importPath = PVEmulatorConfiguration.romsImportPath
+
+		sortedUrls.forEach { (url) in
+			defer {
+				url.stopAccessingSecurityScopedResource()
+			}
+
+			// Doesn't seem we need access in dev builds?
+			_ = url.startAccessingSecurityScopedResource()
+
+			//            if access {
+			let fileName = url.lastPathComponent
+			let destination : URL
+			if #available(iOS 9.0, *) {
+				destination = importPath.appendingPathComponent(fileName, isDirectory: url.hasDirectoryPath)
+			} else {
+				destination = importPath.appendingPathComponent(fileName, isDirectory: false)
+			}
+			do {
+				// Since we're in UIDocumentPickerModeImport, these URLs are temporary URLs so a move is what we want
+				try FileManager.default.moveItem(at: url, to: destination)
+				ILOG("Document picker to moved file from \(url.path) to \(destination.path)")
+			} catch {
+				ELOG("Failed to move file from \(url.path) to \(destination.path)")
+			}
+		}
+
+// Test for moving directory subcontents
+//					if #available(iOS 9.0, *) {
+//						if url.hasDirectoryPath {
+//							ILOG("Tryingn to import directory \(url.path)")
+//							let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+//							for subFile in subFiles {
+//								_ = subFile.startAccessingSecurityScopedResource()
+//								try FileManager.default.moveItem(at: subFile, to: destination)
+//								subFile.stopAccessingSecurityScopedResource()
+//								ILOG("Moved \(subFile.path) to \(destination.path)")
+//							}
+//						} else {
+//							try FileManager.default.moveItem(at: url, to: destination)
+//						}
+//					} else {
+//						try FileManager.default.moveItem(at: url, to: destination)
+//					}
+//                } catch {
+//                    ELOG("Failed to move file from \(url.path) to \(destination.path)")
+//                }
 //            } else {
 //                ELOG("Wasn't granded access to \(url.path)")
 //            }
-        }
+
     }
 
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
