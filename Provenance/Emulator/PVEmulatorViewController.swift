@@ -770,7 +770,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
 			throw SaveStateError.saveStatesUnsupportedByCore
-			return
 		}
 
         let image = captureScreenshot()
@@ -781,7 +780,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
 			throw SaveStateError.saveStatesUnsupportedByCore
-			return
 		}
 
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
