@@ -97,8 +97,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
 
-			internalCollectionView.leadingAnchor.constraint(equalTo: margins.leadingAnchor, constant: 8).isActive = true
-			internalCollectionView.trailingAnchor.constraint(equalTo: margins.trailingAnchor, constant: 8).isActive = true
+			internalCollectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
+			internalCollectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
 			internalCollectionView.heightAnchor.constraint(equalTo: margins.heightAnchor, constant: 0).isActive = true
 		} else {
 			NSLayoutConstraint(item: internalCollectionView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
