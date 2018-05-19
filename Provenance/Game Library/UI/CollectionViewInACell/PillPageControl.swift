@@ -10,9 +10,9 @@ import UIKit
 
 //@IBDesignable
 open class PillPageControl: UIView {
-    
+
     // MARK: - PageControl
-    
+
     @IBInspectable open var pageCount: Int = 0 {
         didSet {
             updateNumberOfPages(pageCount)
@@ -26,13 +26,12 @@ open class PillPageControl: UIView {
     open var currentPage: Int {
         return Int(round(progress))
     }
-    
-    
+
     // MARK: - Appearance
-    
+
     @IBInspectable open var pillSize: CGSize = CGSize(width: 20, height: 2.5) {
         didSet {
-            
+
         }
     }
     @IBInspectable open var activeTint: UIColor = UIColor.white {
@@ -50,7 +49,7 @@ open class PillPageControl: UIView {
             layoutInactivePageIndicators(inactiveLayers)
         }
     }
-    
+
     fileprivate var inactiveLayers = [CALayer]()
     fileprivate lazy var activeLayer: CALayer = { [unowned self] in
         let layer = CALayer()
@@ -64,10 +63,9 @@ open class PillPageControl: UIView {
             "position": NSNull()]
         return layer
     }()
-    
-    
+
     // MARK: - State Update
-    
+
     fileprivate func updateNumberOfPages(_ count: Int) {
         // no need to update
         guard count != inactiveLayers.count else { return }
@@ -87,17 +85,16 @@ open class PillPageControl: UIView {
         layoutActivePageIndicator(progress)
         self.invalidateIntrinsicContentSize()
     }
-    
-    
+
     // MARK: - Layout
-    
+
     fileprivate func layoutActivePageIndicator(_ progress: CGFloat) {
         // ignore if progress is outside of page indicators' bounds
         guard progress >= 0 && progress <= CGFloat(pageCount - 1) else { return }
         let denormalizedProgress = progress * (pillSize.width + indicatorPadding)
         activeLayer.frame.origin.x = denormalizedProgress
     }
-    
+
     fileprivate func layoutInactivePageIndicators(_ layers: [CALayer]) {
         var layerFrame = CGRect(origin: CGPoint.zero, size: pillSize)
         layers.forEach() { layer in
@@ -106,14 +103,13 @@ open class PillPageControl: UIView {
             layerFrame.origin.x += layerFrame.width + indicatorPadding
         }
     }
-    
+
     override open var intrinsicContentSize: CGSize {
         return sizeThatFits(CGSize.zero)
     }
-    
+
     override open func sizeThatFits(_ size: CGSize) -> CGSize {
         return CGSize(width: CGFloat(inactiveLayers.count) * pillSize.width + CGFloat(inactiveLayers.count - 1) * indicatorPadding,
                       height: pillSize.height)
     }
 }
-
