@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RealmCollectinViewCellDelegate {
+protocol RealmCollectinViewCellDelegate : class {
 	func didSelectObject(_ : Object)
 }
 
@@ -21,7 +21,7 @@ extension RealmCollectionViewCellBase {
 		#if os(tvOS)
 		return 50
 		#else
-		return 5.0
+		return 8.0
 		#endif
 	}
 }
@@ -29,8 +29,13 @@ extension RealmCollectionViewCellBase {
 public let PageIndicatorHeight : CGFloat = 2.5
 
 class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Object> : UICollectionViewCell, RealmCollectionViewCellBase, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UICollectionViewDataSource {
-	var queryUpdateToken: NotificationToken?
-	var selectionDelegate : RealmCollectinViewCellDelegate?
+	var queryUpdateToken: NotificationToken? {
+		willSet {
+			queryUpdateToken?.invalidate()
+		}
+	}
+
+	weak var selectionDelegate : RealmCollectinViewCellDelegate?
 
 	let query: Results<SelectionObject>
 	let cellId : String
@@ -169,8 +174,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 			case .initial(let result):
 				DLOG("Initial query result: \(result.count)")
 				DispatchQueue.main.async {
-					self.internalCollectionView.reloadData()
-					self.pageIndicator.pageCount = self.layout.numberOfPages
+					self.refreshCollectionView()
 				}
 			case .update(_, let deletions, let insertions, let modifications):
 				// Query results have changed, so apply them to the UICollectionView
@@ -182,10 +186,17 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		}
 	}
 
+	func refreshCollectionView() {
+		self.internalCollectionView.invalidateIntrinsicContentSize()
+		self.internalCollectionView.reloadData()
+		self.internalCollectionView.collectionViewLayout.invalidateLayout()
+		self.pageIndicator.pageCount = self.layout.numberOfPages
+	}
+
 	func handleUpdate( deletions: [Int], insertions: [Int], modifications: [Int]) {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-			self.internalCollectionView.reloadData()
-			self.pageIndicator.pageCount = self.layout.numberOfPages
+			ILOG("Update for collection view cell for class \(self.cellId)")
+			self.refreshCollectionView()
 		}
 		//		internalCollectionView.performBatchUpdates({
 		//			ILOG("Section SaveStates updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
