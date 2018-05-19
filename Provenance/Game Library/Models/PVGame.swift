@@ -104,6 +104,23 @@ protocol PVLibraryEntry where Self: Object {}
     }
 }
 
+public extension PVGame {
+	var isCD : Bool {
+		let ext = (romPath as NSString).pathExtension
+		var exts = PVEmulatorConfiguration.supportedCDFileExtensions
+		exts.formUnion(["m3u"])
+		return exts.contains(ext.lowercased())
+	}
+
+	var discCount : Int {
+		if isCD {
+			return relatedFiles.filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
+		} else {
+			return 0
+		}
+	}
+}
+
 //public extension PVGame {
 //    // Support older code
 //    var md5Hash : String {
