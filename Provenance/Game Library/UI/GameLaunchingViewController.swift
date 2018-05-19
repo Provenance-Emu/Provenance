@@ -263,6 +263,12 @@ extension GameLaunchingViewController where Self : UIViewController {
             return
         }
 
+		// Check if file exists
+		if game.file.missing {
+			displayAndLogError(withTitle: "Cannot open game", message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
+			return
+		}
+
         // Pre-flight
         guard let system = game.system else {
             displayAndLogError(withTitle: "Cannot open game", message: "Requested system cannot be found for game '\(game.title)'.")

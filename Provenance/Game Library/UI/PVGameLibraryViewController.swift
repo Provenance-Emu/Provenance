@@ -2070,7 +2070,7 @@ extension PVGameLibraryViewController : RealmCollectinViewCellDelegate {
 	func didSelectObject(_ object : Object, indexPath: IndexPath) {
 		if let game = object as? PVGame {
 			let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: favoritesSection))
-			load(game, sender: cell, core: game.core, saveState: nil)
+			load(game, sender: cell, core: nil, saveState: nil)
 		} else if let recentGame = object as? PVRecentGame {
 			let cell = collectionView?.cellForItem(at: IndexPath(row: 0, section: recentGamesSection))
 			load(recentGame.game, sender: cell, core: recentGame.core, saveState: nil)
