@@ -231,19 +231,19 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			#endif
 		}
 	}
-	@IBOutlet /*weak*/ var artworkContainerView: UIView!
+	@IBOutlet /*weak*/ var artworkContainerView: UIView?
 
-	@IBOutlet /*weak*/ var discCountContainerView: UIView! {
+	@IBOutlet /*weak*/ var discCountContainerView: UIView? {
 		didSet {
 			roundDiscCountCorners()
 		}
 	}
-	@IBOutlet /*weak*/ var discCountLabel: UILabel! {
+	@IBOutlet /*weak*/ var discCountLabel: UILabel? {
 		didSet {
-			discCountLabel.adjustsFontSizeToFitWidth = true
+			discCountLabel?.adjustsFontSizeToFitWidth = true
 		}
 	}
-	@IBOutlet weak var topRightCornerBadgeView: CornerBadgeView!
+	@IBOutlet weak var topRightCornerBadgeView: CornerBadgeView?
 
 	@IBOutlet private(set) var titleLabel: UILabel! {
 		didSet {
@@ -443,16 +443,16 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 		let hasPlayed = game.playCount > 1
 		let favorite = game.isFavorite
-		self.topRightCornerBadgeView.glyph = favorite ? "★" : ""
+		self.topRightCornerBadgeView?.glyph = favorite ? "★" : ""
 
 		if favorite {
 			#if os(iOS)
-			self.topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
+			self.topRightCornerBadgeView?.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
 			#else
-			self.topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.65)
+			self.topRightCornerBadgeView?.fillColor = UIColor.blue.withAlphaComponent(0.65)
 			#endif
 		} else if !hasPlayed {
-			self.topRightCornerBadgeView.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
+			self.topRightCornerBadgeView?.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
 		}
 
 		self.topRightCornerBadgeView?.isHidden = hasPlayed && !favorite
@@ -461,54 +461,62 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 
-		if #available(iOS 9.0, tvOS 9.0, *) {
+		#if os(iOS)
+		if #available(iOS 9.0, *) {
 			// Using nibs
 		} else {
-			var imageHeight: CGFloat = frame.size.height
-			if PVSettingsModel.shared.showGameTitles {
-				imageHeight -= 44
-			}
-
-			let imageView = UIImageView()
-			self.imageView = imageView
-
-			let newTitleLabel = UILabel()
-			self.titleLabel = newTitleLabel
-
-			contentView.addSubview(titleLabel)
-			contentView.addSubview(imageView)
-
-			let imageFrame = CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight)
-			let titleFrame = CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight)
-
-			let dccWidth = imageFrame.size.width * 0.25
-			let discCountContainerFrame = CGRect(x: imageFrame.maxX-dccWidth, y: imageFrame.maxX-dccWidth, width: dccWidth, height: dccWidth)
-			discCountContainerView = UIView(frame: discCountContainerFrame)
-			contentView.addSubview(discCountContainerView)
-
-			discCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: dccWidth, height: dccWidth))
-			discCountContainerView.addSubview(discCountLabel)
-
-			if #available(iOS 9.0, tvOS 9.0, *) {
-				discCountContainerView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
-				discCountContainerView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
-				discCountContainerView.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
-				discCountContainerView.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25, constant: 0).isActive = true
-
-				discCountLabel.centerXAnchor.constraint(equalTo: discCountContainerView.centerXAnchor).isActive = true
-				discCountLabel.centerYAnchor.constraint(equalTo: discCountContainerView.centerYAnchor).isActive = true
-				discCountLabel.leadingAnchor.constraint(equalTo: discCountContainerView.leadingAnchor, constant: 8.0).isActive = true
-				discCountLabel.trailingAnchor.constraint(equalTo: discCountContainerView.trailingAnchor, constant: 8.0).isActive = true
-				discCountLabel.heightAnchor.constraint(equalTo: discCountContainerView.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
-			} else {
-				// TODO: iOS 8 layout, or just hide them?
-				discCountContainerView.isHidden = true
-			}
-			imageView.frame = imageFrame
-			titleLabel.frame = titleFrame
+			oldViewInit()
 		}
+		#else
+		oldViewInit()
+		#endif
 
 		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
+	}
+
+	private func oldViewInit() {
+		var imageHeight: CGFloat = frame.size.height
+		if PVSettingsModel.shared.showGameTitles {
+			imageHeight -= 44
+		}
+
+		let imageView = UIImageView()
+		self.imageView = imageView
+
+		let newTitleLabel = UILabel()
+		self.titleLabel = newTitleLabel
+
+		contentView.addSubview(titleLabel)
+		contentView.addSubview(imageView)
+
+		let imageFrame = CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight)
+		let titleFrame = CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight)
+
+		let dccWidth = imageFrame.size.width * 0.25
+		let discCountContainerFrame = CGRect(x: imageFrame.maxX-dccWidth, y: imageFrame.maxX-dccWidth, width: dccWidth, height: dccWidth)
+		discCountContainerView = UIView(frame: discCountContainerFrame)
+		contentView.addSubview(discCountContainerView!)
+
+		discCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: dccWidth, height: dccWidth))
+		discCountContainerView?.addSubview(discCountLabel!)
+
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
+			discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+			discCountContainerView?.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+			discCountContainerView?.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25, constant: 0).isActive = true
+
+			discCountLabel?.centerXAnchor.constraint(equalTo: discCountContainerView!.centerXAnchor).isActive = true
+			discCountLabel?.centerYAnchor.constraint(equalTo: discCountContainerView!.centerYAnchor).isActive = true
+			discCountLabel?.leadingAnchor.constraint(equalTo: discCountContainerView!.leadingAnchor, constant: 8.0).isActive = true
+			discCountLabel?.trailingAnchor.constraint(equalTo: discCountContainerView!.trailingAnchor, constant: 8.0).isActive = true
+			discCountLabel?.heightAnchor.constraint(equalTo: discCountContainerView!.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
+		} else {
+			// TODO: iOS 8 layout, or just hide them?
+			discCountContainerView?.isHidden = true
+		}
+		imageView.frame = imageFrame
+		titleLabel.frame = titleFrame
 	}
 
     required init?(coder aDecoder: NSCoder) {
@@ -616,8 +624,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 	func roundDiscCountCorners() {
 		let maskLayer = CAShapeLayer()
-		maskLayer.path = UIBezierPath(roundedRect: discCountContainerView.bounds, byRoundingCorners: [.topLeft], cornerRadii: CGSize(width: 10, height: 10)).cgPath
-		discCountContainerView.layer.mask = maskLayer
+		maskLayer.path = UIBezierPath(roundedRect: discCountContainerView!.bounds, byRoundingCorners: [.topLeft], cornerRadii: CGSize(width: 10, height: 10)).cgPath
+		discCountContainerView?.layer.mask = maskLayer
 	}
 
 	override func sizeThatFits(_ size: CGSize) -> CGSize {
