@@ -47,11 +47,11 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 		guard let itemCount = itemCount else {
 			return 1
 		}
-		let denom = CGFloat(rowCount * columnCount)
-		if denom == 0 {
+		let itemsPerPage = CGFloat(rowCount * columnCount)
+		if itemsPerPage == 0 {
 			return 1
 		}
-		return Int(CGFloat(itemCount) / denom)
+		return Int(ceil((CGFloat(itemCount) / itemsPerPage)))
 	}
 
 	func frameForItemAtIndexPath(_ indexPath: IndexPath) -> CGRect {
