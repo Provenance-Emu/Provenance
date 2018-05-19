@@ -9,7 +9,7 @@
 import Foundation
 
 protocol RealmCollectinViewCellDelegate : class {
-	func didSelectObject(_ : Object)
+	func didSelectObject(_ : Object, indexPath: IndexPath)
 }
 
 protocol RealmCollectionViewCellBase {
@@ -243,7 +243,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	// MARK: - UICollectionViewDelegate
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		let selectedObject = query[indexPath.row]
-		selectionDelegate?.didSelectObject(selectedObject)
+		selectionDelegate?.didSelectObject(selectedObject, indexPath: indexPath)
 	}
 
 	// MARK: - UICollectionViewDataSource
