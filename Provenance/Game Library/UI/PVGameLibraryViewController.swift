@@ -224,7 +224,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             migrateLibrary()
         }
         initRealmResultsStorage()
-        setUpGameLibrary()
+//        setUpGameLibrary()
 
 		#if os(iOS)
 		if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
@@ -976,90 +976,60 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func setUpGameLibrary() {
         fetchGames()
+		setupGameImporter()
+		setupDirectoryWatcher()
+    }
 
-        gameImporter = PVGameImporter(completionHandler: {[unowned self] (_ encounteredConflicts: Bool) -> Void in
-            if encounteredConflicts {
-                self.needToShowConflictsAlert = true
-                self.showConflictsAlert()
-            }
-        })
+	func setupDirectoryWatcher() {
 
-        gameImporter.importStartedHandler = {(_ path: String) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) {
-                    hud.isUserInteractionEnabled = false
-                    hud.mode = .indeterminate
-                    let filename = URL(fileURLWithPath: path).lastPathComponent
-                    hud.labelText = "Importing \(filename)"
-                }
-            }
-        }
+		let labelMaker: (URL) -> String = { path in
+			#if os(tvOS)
+			return "Extracting Archive: \(path.lastPathComponent)"
+			#else
+			return "Extracting Archive..."
+			#endif
+		}
 
-        gameImporter.finishedImportHandler = {(_ md5: String, _ modified: Bool) -> Void in
-            // This callback is always called,
-            // even if the started handler was not called because it didn't require a refresh.
-            self.finishedImportingGame(withMD5: md5, modified: modified)
-        }
-        gameImporter.finishedArtworkHandler = {(_ url: String) -> Void in
-        }
+		watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
 
-        do {
-            let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
-            if !existingFiles.isEmpty {
-                gameImporter.startImport(forPaths: existingFiles)
-            }
-        } catch {
-            ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
-        }
+			DispatchQueue.main.async {
+				guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
+					WLOG("No hud")
+					return
+				}
 
-        let labelMaker: (URL) -> String = { path in
-            #if os(tvOS)
-            return "Extracting Archive: \(path.lastPathComponent)"
-            #else
-            return "Extracting Archive..."
-            #endif
-        }
+				hud.show(true)
+				hud.isUserInteractionEnabled = false
+				hud.mode = .annularDeterminate
+				hud.progress = 0
+				hud.labelText = labelMaker(path)
+			}
+		}, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
 
-        watcher = PVDirectoryWatcher(directory: PVEmulatorConfiguration.romsImportPath, extractionStartedHandler: {(_ path: URL) -> Void in
+			DispatchQueue.main.async {
+				guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) else {
+					WLOG("No hud")
+					return
+				}
+				hud.isUserInteractionEnabled = false
+				hud.mode = .annularDeterminate
+				hud.progress = progress
+				hud.labelText = labelMaker(path)
+			}
+		}, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
+			DispatchQueue.main.async {
+				if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) {
+					hud.isUserInteractionEnabled = false
+					hud.mode = .annularDeterminate
+					hud.progress = 1
+					hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
+					hud.hide(true, afterDelay: 0.5)
+				} else {
+					WLOG("No hud")
+				}
+			}
 
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) else {
-                    WLOG("No hud")
-                    return
-                }
-
-                hud.show(true)
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = 0
-                hud.labelText = labelMaker(path)
-            }
-        }, extractionUpdatedHandler: {(_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void in
-
-            DispatchQueue.main.async {
-                guard let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) else {
-                    WLOG("No hud")
-                    return
-                }
-                hud.isUserInteractionEnabled = false
-                hud.mode = .annularDeterminate
-                hud.progress = progress
-                hud.labelText = labelMaker(path)
-            }
-        }, extractionCompleteHandler: {(_ paths: [URL]?) -> Void in
-            DispatchQueue.main.async {
-                if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: false) {
-                    hud.isUserInteractionEnabled = false
-                    hud.mode = .annularDeterminate
-                    hud.progress = 1
-                    hud.labelText = paths != nil ? "Extraction Complete!" : "Extraction Failed."
-                    hud.hide(true, afterDelay: 0.5)
-                } else {
-                    WLOG("No hud")
-                }
-            }
-
-            if let paths = paths {
+			if let paths = paths {
 				self.filePathsToImport.append(contentsOf: paths)
 				do {
 					let contents = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
@@ -1074,32 +1044,81 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				} catch {
 					ELOG("\(error.localizedDescription)")
 				}
-            }
-        })
+			}
+		})
 
-        watcher?.startMonitoring()
+		watcher?.startMonitoring()
+	}
 
-        // Scan each Core direxctory and looks for ROMs in them
-        let allSystems = PVSystem.all
+	func setupGameImporter() {
+		gameImporter = PVGameImporter(completionHandler: {[unowned self] (_ encounteredConflicts: Bool) -> Void in
+			if encounteredConflicts {
+				self.needToShowConflictsAlert = true
+				self.showConflictsAlert()
+			}
+		})
 
-        allSystems.forEach { system in
-            let systemDir = system.romsDirectory
-            //URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
+		gameImporter.importStartedHandler = {(_ path: String) -> Void in
+			DispatchQueue.main.async {
+				if let hud = MBProgressHUD(for: self.view) ?? MBProgressHUD.showAdded(to: self.view, animated: true) {
+					hud.isUserInteractionEnabled = false
+					hud.mode = .indeterminate
+					let filename = URL(fileURLWithPath: path).lastPathComponent
+					hud.labelText = "Importing \(filename)"
+				}
+			}
+		}
 
-            // Check if a folder actually exists, nothing to do if it doesn't
-            guard FileManager.default.fileExists(atPath: systemDir.path) else {
-                VLOG("Nothing found at \(systemDir.path)")
-                return
-            }
+		gameImporter.finishedImportHandler = {(_ md5: String, _ modified: Bool) -> Void in
+			// This callback is always called,
+			// even if the started handler was not called because it didn't require a refresh.
+			self.finishedImportingGame(withMD5: md5, modified: modified)
+		}
 
-            guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir,
-                                                                              includingPropertiesForKeys: nil,
-                                                                              options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
-                !contents.isEmpty else {
-                return
-            }
+		gameImporter.finishedArtworkHandler = {(_ url: String) -> Void in
+		}
 
-            let systemRef = ThreadSafeReference(to: system)
+		// Wait for the importer to finish setting up it's data from Realm
+		gameImporter.initialized.notify(queue: DispatchQueue.global(qos: .background)) {
+			self.initialROMScan()
+		}
+	}
+
+	private func initialROMScan() {
+		do {
+			let existingFiles = try FileManager.default.contentsOfDirectory(at: PVEmulatorConfiguration.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsPackageDescendants, .skipsSubdirectoryDescendants])
+			if !existingFiles.isEmpty {
+				self.gameImporter.startImport(forPaths: existingFiles)
+			}
+		} catch {
+			ELOG("No existing ROM path at \(PVEmulatorConfiguration.romsImportPath.path)")
+		}
+
+		self.importerScanSystemsDirs()
+	}
+
+	private func importerScanSystemsDirs() {
+		// Scan each Core direxctory and looks for ROMs in them
+		let allSystems = PVSystem.all
+
+		allSystems.forEach { system in
+			let systemDir = system.romsDirectory
+			//URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
+
+			// Check if a folder actually exists, nothing to do if it doesn't
+			guard FileManager.default.fileExists(atPath: systemDir.path) else {
+				VLOG("Nothing found at \(systemDir.path)")
+				return
+			}
+
+			guard let contents = try? FileManager.default.contentsOfDirectory(at: systemDir,
+																			  includingPropertiesForKeys: nil,
+																			  options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles]),
+				!contents.isEmpty else {
+					return
+			}
+
+			let systemRef = ThreadSafeReference(to: system)
 
 			gameImporter.serialImportQueue.addOperation {
 				let realm = try! Realm()
@@ -1114,8 +1133,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					}
 				}
 			}
-        }
-    }
+		}
+	}
 
     func fetchGames() {
         let database = RomDatabase.sharedInstance
@@ -1242,7 +1261,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         DispatchQueue.main.async {
             self.collectionView?.reloadData()
         }
-        setUpGameLibrary()
+
+		initialROMScan()
+//        setUpGameLibrary()
         //    dispatch_async([self.gameImporter serialImportQueue], ^{
         //        [self.gameImporter getRomInfoForFilesAtPaths:romPaths userChosenSystem:nil];
         //        if ([self.gameImporter completionHandler])
