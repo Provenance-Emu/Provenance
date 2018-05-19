@@ -9,3 +9,4 @@ build
 xcuserdata
 *.mode1v3
 /Provenance/Version.h
+/Provenance/Version.swift
