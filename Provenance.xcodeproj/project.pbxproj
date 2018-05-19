@@ -660,8 +660,6 @@
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
-		B3D534E420AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
-		B3D534E520AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E720AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
 		B3D534E820AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
 		B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
@@ -3969,7 +3967,6 @@
 				B3D8DD17206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
 				B3D8DCFF206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3BE968B2055F41A00281880 /* PVBIOS.swift in Sources */,
-				B3D534E520AFF21900A83D4E /* Version.swift in Sources */,
 				B3D534EF20B001D700A83D4E /* PillPageControl.swift in Sources */,
 				B3D8DD0B206EAA9E008FAC42 /* Realm.swift in Sources */,
 				B3D8DD07206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
@@ -3993,7 +3990,6 @@
 				B3D8DD12206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
 				B3D8DD2E206EAA9E008FAC42 /* Aliases.swift in Sources */,
 				B3D8DD02206EAA9E008FAC42 /* Util.swift in Sources */,
-				B3D534E420AFF21900A83D4E /* Version.swift in Sources */,
 				B3D8DD22206EAA9E008FAC42 /* Optional.swift in Sources */,
 				B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3D8DD1E206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
