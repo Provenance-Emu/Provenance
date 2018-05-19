@@ -149,8 +149,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	override func prepareForReuse() {
 		super.prepareForReuse()
 		selectionDelegate = nil
-		queryUpdateToken?.invalidate()
-		queryUpdateToken = nil
+//		queryUpdateToken?.invalidate()
+//		queryUpdateToken = nil
 	}
 
 	lazy var pageIndicator : PillPageControl = {
