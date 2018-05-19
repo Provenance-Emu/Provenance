@@ -21,6 +21,7 @@ let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
 
 let PVGameLibraryCollectionViewCellIdentifier = "PVGameLibraryCollectionViewCell"
+let PVGameLibraryCollectionViewFavoritesCellIdentifier = "FavoritesColletionCell"
 let PVGameLibraryCollectionViewSaveStatesCellIdentifier = "SaveStateColletionCell"
 let PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier = "RecentlyPlayedColletionCell"
 
@@ -281,6 +282,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.addGestureRecognizer(longPressRecognizer)
 
 		// Cells that are a collection view themsevles
+		collectionView.register(FavoritesPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewFavoritesCellIdentifier)
 		collectionView.register(SaveStatesCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
 		collectionView.register(RecentlyPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier)
 
@@ -594,12 +596,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					return
 				}
 
-                let needsInsert = self.favoritesIsHidden
+//                let needsInsert = self.favoritesIsHidden
                 let needsDelete = self.favoriteGames?.isEmpty ?? false
                 self.favoritesIsHidden = needsDelete
 
                 // Query results have changed, so apply them to the UICollectionView
-                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
+//                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
@@ -1337,13 +1339,26 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 
 			var recentGameMaybe : PVGame?
-			if searchResults == nil, indexPath.section == recentGamesSection {
+			if searchResults == nil, indexPath.section == recentGamesSection, let recentGames = recentGames {
 
 				let recentGamesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
 				let location2 = recentGamesCell.internalCollectionView.convert(point, from: collectionView)
 				let indexPath2 = recentGamesCell.internalCollectionView.indexPathForItem(at: location2)!
 
-				recentGameMaybe = recentGames![indexPath2.row].game
+				if indexPath2.row < recentGames.count {
+					recentGameMaybe = recentGames[indexPath2.row].game
+				}
+			}
+
+			if searchResults == nil, indexPath.section == favoritesSection, let favoriteGames = favoriteGames {
+
+				let favoritesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: favoritesSection)) as! FavoritesPlayedCollectionCell
+				let location2 = favoritesCell.internalCollectionView.convert(point, from: collectionView)
+				let indexPath2 = favoritesCell.internalCollectionView.indexPathForItem(at: location2)!
+
+				if indexPath2.row < favoriteGames.count {
+					recentGameMaybe = favoriteGames[indexPath2.row]
+				}
 			}
 
             guard let game: PVGame = recentGameMaybe ?? self.game(at: indexPath) else {
@@ -1748,7 +1763,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 let sectionNumber = section - systemsSectionOffset
                 return systems?[sectionNumber].games.count ?? 0
             } else if section == favoritesSection {
-                return favoriteGames?.count ?? 0
+                return 1
             } else if section == saveStateSection {
 				return 1
 			} else if section == recentGamesSection {
@@ -1779,6 +1794,16 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 			let game = searchResults[indexPath.item]
 			cell.game = game
+			return cell
+		}
+
+		if indexPath.section == favoritesSection {
+			guard let cell = self.collectionView?.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewFavoritesCellIdentifier, for: indexPath) as? FavoritesPlayedCollectionCell else {
+				fatalError("Couldn't create cell of type PVGameLibraryCollectionViewFavoritesCellIdentifier")
+			}
+
+			cell.selectionDelegate = self
+
 			return cell
 		}
 
@@ -1821,7 +1846,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let row = indexPath.row
 
             if section == favoritesSection {
-                game = favoriteGames?[row]
+				if let favoriteGames = favoriteGames, row < favoriteGames.count {
+					game = favoriteGames[row]
+				} else {
+					ELOG("row \(row) out of bounds for favoriteGames count \(favoriteGames?.count ?? -1)")
+				}
             } else if section == recentGamesSection {
 //				let recentlyPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
 //
@@ -2077,7 +2106,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			height = (144.0 + PageIndicatorHeight) * CGFloat(numberOfRows)
 		}
 
-		if indexPath.section == recentGamesSection {
+		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows = 1
 			width = viewWidth
 			height = (height + PageIndicatorHeight + 12) * CGFloat(numberOfRows)
@@ -2090,7 +2119,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
 	#if os(tvOS)
 	private func tvos_collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		if searchResults != nil, indexPath.section == saveStateSection || indexPath.section == recentGamesSection {
+		if searchResults != nil, indexPath.section == saveStateSection || indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			return CGSize(width: CellWidth, height: CellWidth)
 		}
 
@@ -2103,11 +2132,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			return CGSize(width: width, height: height)
 		}
 
-		if indexPath.section == recentGamesSection {
+		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows = 1
 			let width = viewWidth
-			let game = self.game(at: indexPath)!
-			let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 			var height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
 			height = (height * CGFloat(numberOfRows)) + PageIndicatorHeight
 			return CGSize(width: width, height: height)
@@ -2133,7 +2160,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
         #if os(tvOS)
             return UIEdgeInsets(top: 40, left: 0, bottom: 120, right: 0)
         #else
-			if section == saveStateSection || section == recentGamesSection {
+			if section == saveStateSection || section == recentGamesSection || section == favoritesSection {
 				return UIEdgeInsets.zero
 			} else {
 				return UIEdgeInsets(top: section == 0 ? 5 : 15, left: 10, bottom: 5, right: 10)
@@ -2341,11 +2368,18 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 
 				let selectedIndexPath : IndexPath
 				if indexPath.section == recentGamesSection {
-					let recentPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
+					let recentPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: indexPath.section))! as! RecentlyPlayedCollectionCell
 
 					let location2 = recentPlayedCell.internalCollectionView.convert(location, from: collectionView)
 					let indexPath2 = recentPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
 					selectedIndexPath = indexPath2
+				} else if indexPath.section == favoritesSection {
+					let favoritesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: indexPath.section))! as! FavoritesPlayedCollectionCell
+
+					let location2 = favoritesCell.internalCollectionView.convert(location, from: collectionView)
+					let indexPath2 = favoritesCell.internalCollectionView.indexPathForItem(at: location2)!
+					selectedIndexPath = indexPath2
+
 				} else {
 					selectedIndexPath = indexPath
 				}
