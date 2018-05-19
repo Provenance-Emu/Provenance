@@ -308,6 +308,16 @@ class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollecti
 		super.init(frame: frame, query: recentGamesQuery, cellId: PVGameLibraryCollectionViewCellIdentifier)
 	}
 
+	override func registerSubCellClass() {
+		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		} else {
+			internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		}
+	}
+
+
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}

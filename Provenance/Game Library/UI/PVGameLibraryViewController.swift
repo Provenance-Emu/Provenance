@@ -284,7 +284,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		collectionView.register(SaveStatesCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewSaveStatesCellIdentifier)
 		collectionView.register(RecentlyPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier)
 
-        collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		} else {
+			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		}
 
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
@@ -2033,7 +2038,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 		var height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
 		let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
 		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-		var width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow)
+
+		var width :CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow * 0.67)
+//		if let game = self.game(at: indexPath) {
+//			let ratioWidth = (game.boxartAspectRatio.rawValue * height) - minimumInteritemSpacing
+//			 width = min(width, ratioWidth)
+//		}
 
 		if indexPath.section == saveStateSection {
 			// TODO: Multirow?
@@ -2048,7 +2058,8 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			height = (height + 36) * CGFloat(numberOfRows)
 		}
 
-		return CGSize(width: width, height: height)
+		let size = CGSize(width: width, height: height)
+		return size
 	}
 	#endif
 

@@ -19,8 +19,12 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
         super.viewDidLoad()
         RomDatabase.sharedInstance.refresh()
         (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
-        collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: "SearchResultCell")
-        collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		} else {
+			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		}
+		collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -32,7 +36,7 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchResultCell", for: indexPath) as! PVGameLibraryCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
 
         if let game = searchResults?[indexPath.item] {
             cell.game = game
