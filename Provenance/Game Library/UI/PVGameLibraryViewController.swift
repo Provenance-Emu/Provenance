@@ -563,12 +563,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 if needsInsert {
                     ILOG("Needs insert, recentGamesHidden - false")
-                    self.recentGamesIsEmpty = false
+					self.recentGamesIsEmpty = false
+					self.collectionView?.insertSections([self.recentGamesSection])
                 }
 
                 if needsDelete {
                     ILOG("Needs delete, recentGamesHidden - true")
                     self.recentGamesIsEmpty = true
+					self.collectionView?.deleteSections([self.recentGamesSection])
                 }
 
                 // Query results have changed, so apply them to the UICollectionView
@@ -596,9 +598,17 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					return
 				}
 
-//                let needsInsert = self.favoritesIsHidden
+                let needsInsert = self.favoritesIsHidden && !insertions.isEmpty
                 let needsDelete = self.favoriteGames?.isEmpty ?? false
                 self.favoritesIsHidden = needsDelete
+
+				if needsInsert {
+					self.collectionView?.insertSections([self.favoritesSection])
+				}
+
+				if needsDelete {
+					self.collectionView?.deleteSections([self.favoritesSection])
+				}
 
                 // Query results have changed, so apply them to the UICollectionView
 //                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
