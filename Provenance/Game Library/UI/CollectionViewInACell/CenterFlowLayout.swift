@@ -19,7 +19,8 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	var rowCount : Int {
-		return Int((canvasSize.height - self.itemSize.height) / (self.itemSize.height + self.minimumInteritemSpacing) + 1)
+		let count = Int((canvasSize.height - self.itemSize.height) / (self.itemSize.height + self.minimumInteritemSpacing) + 1)
+		return max(count, 1)
 	}
 
 	var itemCount : Int? {
@@ -46,7 +47,11 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 		guard let itemCount = itemCount else {
 			return 1
 		}
-		return Int(CGFloat(itemCount) / CGFloat(rowCount * columnCount))
+		let denom = CGFloat(rowCount * columnCount)
+		if denom == 0 {
+			return 1
+		}
+		return Int(CGFloat(itemCount) / denom)
 	}
 
 	func frameForItemAtIndexPath(_ indexPath: IndexPath) -> CGRect {
