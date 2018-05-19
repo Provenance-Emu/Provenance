@@ -21,16 +21,16 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKb-WS-gGA" userLabel="ArtworkContainerView">
-                        <rect key="frame" x="0.0" y="0.0" width="164" height="108"/>
+                        <rect key="frame" x="0.0" y="0.0" width="164" height="109.66666666666667"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
-                                <rect key="frame" x="0.0" y="0.0" width="164" height="108"/>
+                                <rect key="frame" x="0.0" y="0.0" width="164" height="109.66666666666667"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
                             <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
-                                <rect key="frame" x="25.666666666666671" y="-8" width="113.00000000000001" height="124"/>
+                                <rect key="frame" x="25.666666666666671" y="-7.6666666666666643" width="113.00000000000001" height="124"/>
                                 <subviews>
                                     <view alpha="0.55000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mmT-El-XIM">
                                         <rect key="frame" x="-0.6666666666666714" y="0.0" width="113" height="124"/>
@@ -57,10 +57,10 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
-                                <rect key="frame" x="123" y="66.666666666666671" width="41" height="41.333333333333329"/>
+                                <rect key="frame" x="123" y="68.333333333333329" width="41" height="41.333333333333329"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="2" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="4" translatesAutoresizingMaskIntoConstraints="NO" id="fFj-aX-6m6">
-                                        <rect key="frame" x="8" y="8.3333333333333286" width="25" height="25"/>
+                                        <rect key="frame" x="8" y="8.3333333333333428" width="25" height="25"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -112,13 +112,16 @@
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="tcd-RI-wfD"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is the title of a game, some long title that goes on and on" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE">
-                        <rect key="frame" x="8" y="108" width="148" height="36"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="114.33333333333333" width="164" height="29.666666666666671"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                         <userDefinedRuntimeAttributes>
                             <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="NO"/>
+                            <userDefinedRuntimeAttribute type="number" keyPath="alignmentCode">
+                                <integer key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>
@@ -126,12 +129,13 @@
             <constraints>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="6KK-cp-gKM"/>
                 <constraint firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="6xC-fV-K8o"/>
-                <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.25" id="dr3-Br-VIF"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="centerX" secondItem="hUV-Gh-K0R" secondAttribute="centerX" id="Oob-wr-6mO"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.2" constant="1" id="dr3-Br-VIF"/>
                 <constraint firstAttribute="bottom" secondItem="98d-iv-EkE" secondAttribute="bottom" id="fKb-4g-dTS"/>
-                <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" constant="8" id="gmr-Cy-QOx"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="gmr-Cy-QOx"/>
                 <constraint firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="s6P-SU-FR7"/>
-                <constraint firstAttribute="trailing" secondItem="98d-iv-EkE" secondAttribute="trailing" constant="8" id="sNV-ZF-HL8"/>
-                <constraint firstItem="98d-iv-EkE" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="tZX-ZO-dZM"/>
+                <constraint firstAttribute="trailing" secondItem="98d-iv-EkE" secondAttribute="trailing" id="sNV-ZF-HL8"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="bottom" constant="5" id="tZX-ZO-dZM"/>
             </constraints>
             <size key="customSize" width="715" height="589"/>
             <connections>

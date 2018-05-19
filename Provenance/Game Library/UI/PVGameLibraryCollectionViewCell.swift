@@ -264,7 +264,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 				titleLabel.backgroundColor = UIColor.clear
 				titleLabel.textColor = UIColor.white.withAlphaComponent(0.6)
-//				titleLabel.alpha = 0.6
 				titleLabel.textAlignment = .center
 				titleLabel.baselineAdjustment = .alignBaselines
 				titleLabel.numberOfLines = 2
