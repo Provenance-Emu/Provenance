@@ -664,6 +664,10 @@
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E420AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E520AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
+		B3D534E720AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
+		B3D534E820AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
+		B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
+		B3D534EA20AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
 		B3D8DC6B206EA6D3008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC66206EA6BD008FAC42 /* Realm.framework */; };
 		B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; };
 		B3D8DC6F206EA6F5008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; };
@@ -719,10 +723,6 @@
 		B3D8DD2D206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
 		B3D8DD2E206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
 		B3D8DD2F206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
-		B3D8DD30206EAA9E008FAC42 /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */; };
-		B3D8DD31206EAA9E008FAC42 /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */; };
-		B3D8DD32206EAA9E008FAC42 /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */; };
-		B3D8DD33206EAA9E008FAC42 /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */; };
 		B3D8DD34206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
 		B3D8DD35206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
 		B3D8DD36206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
@@ -1506,6 +1506,7 @@
 		B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPokeMiniControllerViewController.swift; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PV32XControllerViewController.swift; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
+		B3D534E620AFF85500A83D4E /* SwiftVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftVersion.swift; sourceTree = "<group>"; };
 		B3D8DC5A206EA681008FAC42 /* PVFCEU.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = "<group>"; };
 		B3D8DC5E206EA682008FAC42 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = "<group>"; };
 		B3D8DC5F206EA682008FAC42 /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-dxxctpxdxguofwbxweirtnyaiucn/Build/Products/Release-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
@@ -1528,7 +1529,6 @@
 		B3D8DCF2206EAA9C008FAC42 /* Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		B3D8DCF3206EAA9D008FAC42 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Aliases.swift; sourceTree = "<group>"; };
-		B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftVersion.swift; sourceTree = "<group>"; };
 		B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeReference.swift; sourceTree = "<group>"; };
 		B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfiguration.swift; sourceTree = "<group>"; };
 		B3D8DCF8206EAA9E008FAC42 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
@@ -2854,8 +2854,8 @@
 				B3D8DCF9206EAA9E008FAC42 /* Results.swift */,
 				B3D8DCE8206EAA9B008FAC42 /* Schema.swift */,
 				B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */,
-				B3D8DCF5206EAA9D008FAC42 /* SwiftVersion.swift */,
 				B3D8DCF2206EAA9C008FAC42 /* Sync.swift */,
+				B3D534E620AFF85500A83D4E /* SwiftVersion.swift */,
 				B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */,
 				B3D8DCE9206EAA9B008FAC42 /* Util.swift */,
 			);
@@ -3372,6 +3372,7 @@
 				B349AEE51E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				B349AEE91E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
+				B3D534E720AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3FF441B205F9C3F00E5A84B /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
@@ -3622,7 +3623,6 @@
 				B349AEEB1E9ABCF900ACD416 /* VirtThread.cpp in Sources */,
 				B349AF651E9ABCFA00ACD416 /* LzmaSDKObjCItem.mm in Sources */,
 				B349AE451E9ABCF900ACD416 /* 7zBuf2.c in Sources */,
-				B3D8DD30206EAA9E008FAC42 /* SwiftVersion.swift in Sources */,
 				B349AF191E9ABCF900ACD416 /* MyAes.cpp in Sources */,
 				B349AE7B1E9ABCF900ACD416 /* Ppmd7Dec.c in Sources */,
 			);
@@ -3645,7 +3645,6 @@
 				B349AF5C1E9ABCFA00ACD416 /* LzmaSDKObjCExtern.mm in Sources */,
 				B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
 				B349AE721E9ABCF900ACD416 /* LzmaDec.c in Sources */,
-				B3D8DD31206EAA9E008FAC42 /* SwiftVersion.swift in Sources */,
 				B349AF161E9ABCF900ACD416 /* 7zAes.cpp in Sources */,
 				B349AF581E9ABCFA00ACD416 /* LzmaSDKObjCCommon.cpp in Sources */,
 				B349AE4E1E9ABCF900ACD416 /* 7zFile.c in Sources */,
@@ -3729,6 +3728,7 @@
 				B3D8DD3D206EAA9E008FAC42 /* List.swift in Sources */,
 				B394C97D20609D0D0014A65D /* PVGBControllerViewController.swift in Sources */,
 				B3D8DD45206EAA9E008FAC42 /* Property.swift in Sources */,
+				B3D534E820AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */,
 				1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.swift in Sources */,
 				1AD481ED1BA3548400FDA50A /* zip.c in Sources */,
@@ -3961,7 +3961,6 @@
 				B3D8DD3F206EAA9E008FAC42 /* List.swift in Sources */,
 				B36D9DFB2035F6AB00D583C4 /* PVRecentGame.swift in Sources */,
 				B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */,
-				B3D8DD33206EAA9E008FAC42 /* SwiftVersion.swift in Sources */,
 				B3995E55205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3D8DD43206EAA9E008FAC42 /* Results.swift in Sources */,
 				B3BE968C2055F41A00281880 /* PVSystem.swift in Sources */,
@@ -3974,6 +3973,7 @@
 				B3780B402057F1F70018211E /* PVCore.swift in Sources */,
 				B3D8DD3B206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B3BE967C2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
+				B3D534EA20AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3D8DD1B206EAA9E008FAC42 /* Object.swift in Sources */,
 				B3BE968A2055F40000281880 /* PVFile.swift in Sources */,
 			);
@@ -3991,6 +3991,7 @@
 				B3D8DD02206EAA9E008FAC42 /* Util.swift in Sources */,
 				B3D534E420AFF21900A83D4E /* Version.swift in Sources */,
 				B3D8DD22206EAA9E008FAC42 /* Optional.swift in Sources */,
+				B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3D8DD1E206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
@@ -4007,7 +4008,6 @@
 				B3D8DD3E206EAA9E008FAC42 /* List.swift in Sources */,
 				B36D9DF92035AC8300D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */,
-				B3D8DD32206EAA9E008FAC42 /* SwiftVersion.swift in Sources */,
 				B3BE968E2055F41A00281880 /* PVSystem.swift in Sources */,
 				B3D8DD42206EAA9E008FAC42 /* Results.swift in Sources */,
 				B3BE968D2055F41A00281880 /* PVBIOS.swift in Sources */,
