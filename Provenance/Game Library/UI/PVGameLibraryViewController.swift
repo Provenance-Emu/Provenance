@@ -90,7 +90,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
 	var filePathsToImport = [URL]()
-	
+
     var collectionView: UICollectionView?
 	let maxForSpecialSection = 6
 
@@ -2239,7 +2239,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 				// Fallback on earlier versions
 				return [url]
 			}
-			}.joined().map{ $0 }
+			}.joined().map { $0 }
 
 		let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
 

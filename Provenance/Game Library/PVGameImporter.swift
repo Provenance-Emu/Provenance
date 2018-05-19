@@ -198,8 +198,7 @@ public class PVGameImporter {
 				// Fallback on earlier versions
 				return [url]
 			}
-		}.joined().map{ $0 }
-
+		}.joined().map { $0 }
 
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
 
@@ -635,7 +634,7 @@ public extension PVGameImporter {
 				// Fallback on earlier versions
 				return [url]
 			}
-		}.joined().map{ $0 }
+		}.joined().map { $0 }
 
         paths.forEach { (path) in
 			// Needs to be in loop, can't double resolve a ref

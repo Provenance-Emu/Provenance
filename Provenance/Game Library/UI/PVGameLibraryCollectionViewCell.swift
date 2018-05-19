@@ -257,7 +257,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 			#else // iOS
 
-			if #available(iOS 9.0,tvOS 9.0, *) {
+			if #available(iOS 9.0, tvOS 9.0, *) {
 				// Use XIB
 			} else {
 				titleLabel.font = titleLabel.font.withSize(12)
@@ -272,8 +272,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 			#endif
 
-
-			if #available(iOS 9.0,tvOS 9.0, *) {
+			if #available(iOS 9.0, tvOS 9.0, *) {
 //				titleLabel.allowsDefaultTighteningForTruncation = true
 //				titleLabel.translatesAutoresizingMaskIntoConstraints = false
 			} else {
@@ -317,7 +316,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
 		let size : CGSize
-		if #available(iOS 9.0,tvOS 9.0, *) {
+		if #available(iOS 9.0, tvOS 9.0, *) {
 			size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
 		} else {
 			size = CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
@@ -403,7 +402,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                     let boxartSize = CGSize(width: width, height: width / game.boxartAspectRatio.rawValue)
                     self.imageView.frame = CGRect(x: 0, y: 0, width: width, height: boxartSize.height)
 #else
-					if #available(iOS 9.0,tvOS 9.0, *) {
+					if #available(iOS 9.0, tvOS 9.0, *) {
 					} else {
 						var imageHeight: CGFloat = self.frame.size.height
 						if PVSettingsModel.shared.showGameTitles {
@@ -420,7 +419,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		self.setupBadges()
 
         setNeedsLayout()
-        if #available(iOS 9.0,tvOS 9.0, *) {
+        if #available(iOS 9.0, tvOS 9.0, *) {
             setNeedsFocusUpdate()
         }
     }
