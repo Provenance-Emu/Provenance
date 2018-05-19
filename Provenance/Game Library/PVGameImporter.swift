@@ -103,8 +103,8 @@ public class PVGameImporter {
 		return queue
 	}()
 
-    public private(set) var systemToPathMap = [String: URL]()
-    public private(set) var romExtensionToSystemsMap = [String: [String]]()
+    public private(set) lazy var systemToPathMap = [String: URL]()
+    public private(set) lazy var romExtensionToSystemsMap = [String: [String]]()
 
     // MARK: - Paths
     let documentsPath: URL = PVEmulatorConfiguration.documentsPath
@@ -137,9 +137,11 @@ public class PVGameImporter {
     }
 
     var notificationToken: NotificationToken?
+	public let initialized = DispatchGroup()
 
     required public init(completionHandler: PVGameImporterCompletionHandler?) {
 
+		initialized.enter()
         self.completionHandler = completionHandler
 
         let systems = PVSystem.all
@@ -150,10 +152,11 @@ public class PVGameImporter {
             case .initial:
                 // Results are now populated and can be accessed without blocking the UI
                 self.systemToPathMap = self.updateSystemToPathMap()
-                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
-            case .update:
+				self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+				self.initialized.leave()
+			case .update:
                 self.systemToPathMap = self.updateSystemToPathMap()
-                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+				self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
