@@ -2074,13 +2074,13 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			// TODO: Multirow?
 			let numberOfRows = 1
 			width = viewWidth
-			height = (144.0 + 36) * CGFloat(numberOfRows)
+			height = (144.0 + PageIndicatorHeight) * CGFloat(numberOfRows)
 		}
 
 		if indexPath.section == recentGamesSection {
 			let numberOfRows = 1
 			width = viewWidth
-			height = (height + 36) * CGFloat(numberOfRows)
+			height = (height + PageIndicatorHeight + 12) * CGFloat(numberOfRows)
 		}
 
 		let size = CGSize(width: width, height: height)
@@ -2099,7 +2099,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			// TODO: Multirow?
 			let numberOfRows = 1
 			let width = viewWidth
-			let height = (144.0 * CGFloat(numberOfRows)) + 36
+			let height = (144.0 * CGFloat(numberOfRows)) + PageIndicatorHeight
 			return CGSize(width: width, height: height)
 		}
 
@@ -2109,7 +2109,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			let game = self.game(at: indexPath)!
 			let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 			var height :CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
-			height = (height * CGFloat(numberOfRows)) + 36
+			height = (height * CGFloat(numberOfRows)) + PageIndicatorHeight
 			return CGSize(width: width, height: height)
 		}
 

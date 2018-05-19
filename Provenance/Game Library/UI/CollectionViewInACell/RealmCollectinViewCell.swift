@@ -26,6 +26,8 @@ extension RealmCollectionViewCellBase {
 	}
 }
 
+public let PageIndicatorHeight : CGFloat = 2.5
+
 class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Object> : UICollectionViewCell, RealmCollectionViewCellBase, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UICollectionViewDataSource {
 	var queryUpdateToken: NotificationToken?
 	var selectionDelegate : RealmCollectinViewCellDelegate?
@@ -45,7 +47,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		layout.minimumLineSpacing = 0
 		layout.minimumInteritemSpacing = minimumInteritemSpacing
 
-		let spacing : CGFloat = numberOfRows > 1 ? 36 + 5 : 36
+		let spacing : CGFloat = numberOfRows > 1 ? PageIndicatorHeight + 5 : PageIndicatorHeight
 		let height = max(0, (self.bounds.height / CGFloat(numberOfRows)) - spacing)
 		let minimumItemsPerPageRow : CGFloat = 3.0
 		let width = self.bounds.width - ((layout.minimumInteritemSpacing) * (minimumItemsPerPageRow) * 0.5)
@@ -114,16 +116,16 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
 
-			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
-			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
+//			pageIndicator.leadingAnchor.constraint(lessThanOrEqualTo: margins.leadingAnchor, constant: 8).isActive = true
+//			pageIndicator.trailingAnchor.constraint(lessThanOrEqualTo: margins.trailingAnchor, constant: 8).isActive = true
 			pageIndicator.centerXAnchor.constraint(equalTo: margins.centerXAnchor).isActive = true
 			pageIndicator.bottomAnchor.constraint(equalTo: margins.bottomAnchor, constant: 0).isActive = true
-			pageIndicator.heightAnchor.constraint(equalToConstant: 36).isActive = true
-			pageIndicator.numberOfPages = layout.numberOfPages
+			pageIndicator.heightAnchor.constraint(equalToConstant: PageIndicatorHeight).isActive = true
+			pageIndicator.pageCount = layout.numberOfPages
 		} else {
 			NSLayoutConstraint(item: pageIndicator, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerXWithinMargins, multiplier: 1.0, constant: 0).isActive = true
 			NSLayoutConstraint(item: pageIndicator, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant:0.0).isActive = true
-			NSLayoutConstraint(item: pageIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: 36).isActive = true
+			NSLayoutConstraint(item: pageIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant: PageIndicatorHeight).isActive = true
 			NSLayoutConstraint(item: pageIndicator, attribute: .leading, relatedBy: .lessThanOrEqual, toItem: self, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
 			NSLayoutConstraint(item: pageIndicator, attribute: .trailing, relatedBy: .lessThanOrEqual, toItem: self, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
 		}
@@ -146,13 +148,16 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		queryUpdateToken = nil
 	}
 
-	lazy var pageIndicator : UIPageControl = {
-		let pageIndicator = UIPageControl(frame: CGRect(origin: CGPoint(x: bounds.midX - 38.2, y: bounds.maxY-18), size: CGSize(width:38, height:36)))
+	lazy var pageIndicator : PillPageControl = {
+		let pageIndicator = PillPageControl(frame: CGRect(origin: CGPoint(x: bounds.midX - 38.2, y: bounds.maxY-18), size: CGSize(width:38, height:PageIndicatorHeight)))
 		pageIndicator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
 		pageIndicator.translatesAutoresizingMaskIntoConstraints = false
+		pageIndicator.activeTint = UIColor.init(white: 1.0, alpha: 0.9)
+		pageIndicator.activeTint = UIColor.init(white: 1.0, alpha: 0.3)
+
 		#if os(iOS)
-		pageIndicator.currentPageIndicatorTintColor = Theme.currentTheme.defaultTintColor
-		pageIndicator.pageIndicatorTintColor = Theme.currentTheme.gameLibraryText
+//		pageIndicator.currentPageIndicatorTintColor = Theme.currentTheme.defaultTintColor
+//		pageIndicator.pageIndicatorTintColor = Theme.currentTheme.gameLibraryText
 		#endif
 		return pageIndicator
 	}()
@@ -165,7 +170,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 				DLOG("Initial query result: \(result.count)")
 				DispatchQueue.main.async {
 					self.internalCollectionView.reloadData()
-					self.pageIndicator.numberOfPages = self.layout.numberOfPages
+					self.pageIndicator.pageCount = self.layout.numberOfPages
 				}
 			case .update(_, let deletions, let insertions, let modifications):
 				// Query results have changed, so apply them to the UICollectionView
@@ -180,7 +185,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	func handleUpdate( deletions: [Int], insertions: [Int], modifications: [Int]) {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
 			self.internalCollectionView.reloadData()
-			self.pageIndicator.numberOfPages = self.layout.numberOfPages
+			self.pageIndicator.pageCount = self.layout.numberOfPages
 		}
 		//		internalCollectionView.performBatchUpdates({
 		//			ILOG("Section SaveStates updated with Insertions<\(insertions.count)> Mods<\(modifications.count)> Deletions<\(deletions.count)>")
@@ -193,8 +198,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	}
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		let pageIndicatorHeight = pageIndicator.frame.height
-		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + pageIndicatorHeight : pageIndicatorHeight
+		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + PageIndicatorHeight : PageIndicatorHeight
 		let height = max(0, (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
 
 		let viewWidth = internalCollectionView.bounds.size.width
@@ -258,8 +262,15 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	Update accessory views (i.e. UIPageControl, UIButtons).
 	*/
 	func updateAccessoryViews() {
-		pageIndicator.numberOfPages = layout.numberOfPages
-		pageIndicator.currentPage = currentIndex
+		pageIndicator.pageCount = layout.numberOfPages
+//		pageIndicator.currentPage = currentIndex
+	}
+
+	public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		let page = scrollView.contentOffset.x / scrollView.bounds.width
+		let progressInPage = scrollView.contentOffset.x - (page * scrollView.bounds.width)
+		let progress = CGFloat(page) + progressInPage
+		pageIndicator.progress = progress
 	}
 
 	/**

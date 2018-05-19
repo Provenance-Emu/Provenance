@@ -175,6 +175,8 @@
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B311A14720AFE14A00C2D782 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B311A14620AFE14900C2D782 /* PillPageControl.swift */; };
+		B311A14820AFE14A00C2D782 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B311A14620AFE14900C2D782 /* PillPageControl.swift */; };
 		B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96792055F2B400281880 /* PVGame+Spotlight.swift */; };
 		B32D8F7D1EA7F79900175FBF /* PVEmulatorConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B32D8F7C1EA7F79900175FBF /* PVEmulatorConfigurationTests.m */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
@@ -1092,6 +1094,7 @@
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3081C072080693000C5E77B /* PViCadeMocuteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeMocuteController.m; sourceTree = "<group>"; };
 		B3081C082080693000C5E77B /* PViCadeMocuteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeMocuteController.h; sourceTree = "<group>"; };
+		B311A14620AFE14900C2D782 /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PillPageControl.swift; path = "../../../../../../../Downloads/PageControls-master/PageControls/Classes/PillPageControl.swift"; sourceTree = "<group>"; };
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVWonderSwanControllerViewController.swift; sourceTree = "<group>"; };
 		B32893771E0B4EA30090B97A /* PVLynxControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVLynxControllerViewController.swift; sourceTree = "<group>"; };
 		B328937C1E0B87960090B97A /* PVVBControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVVBControllerViewController.swift; sourceTree = "<group>"; };
@@ -2207,6 +2210,7 @@
 			children = (
 				B33468D120AB347300092CA6 /* CenterFlowLayout.swift */,
 				B33468D520AB392C00092CA6 /* RealmCollectinViewCell.swift */,
+				B311A14620AFE14900C2D782 /* PillPageControl.swift */,
 			);
 			path = CollectionViewInACell;
 			sourceTree = "<group>";
@@ -3569,6 +3573,7 @@
 				B3995E52205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
+				B311A14720AFE14A00C2D782 /* PillPageControl.swift in Sources */,
 				B349AE791E9ABCF900ACD416 /* Ppmd7.c in Sources */,
 				B349AE4F1E9ABCF900ACD416 /* 7zStream.c in Sources */,
 				B349AF091E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
@@ -3828,6 +3833,7 @@
 				B349AEDE1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
 				B349AEE01E9ABCF900ACD416 /* ProgressUtils.cpp in Sources */,
 				B3DBF13D2094669A005935A8 /* UTI.swift in Sources */,
+				B311A14820AFE14A00C2D782 /* PillPageControl.swift in Sources */,
 				B3D8DD05206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */,
 				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
