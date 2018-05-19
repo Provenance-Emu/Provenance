@@ -700,7 +700,6 @@ extension Results where Element == SyncPermission {
 // Partial sync subscriptions are only available in Swift 3.2 and newer.
 #if swift(>=3.2)
 
-
 /// The possible states of a sync subscription.
 public enum SyncSubscriptionState: Equatable {
     /// The subscription is being created, but has not yet been written to the synced Realm.

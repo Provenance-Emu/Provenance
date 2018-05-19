@@ -174,7 +174,6 @@ public struct Migration {
     }
 }
 
-
 // MARK: Private Helpers
 
 internal func accessorMigrationBlock(_ migrationBlock: @escaping MigrationBlock) -> RLMMigrationBlock {
