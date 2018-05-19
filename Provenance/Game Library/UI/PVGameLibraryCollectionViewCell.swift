@@ -293,18 +293,18 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 	@IBOutlet weak var missingFileView: UIView? {
 		didSet {
-			missingFileView!.layer.compositingFilter = BlendModes.hardLightBlendMode.rawValue //"colorDodgeBlendMode"
+//			missingFileView!.layer.compositingFilter = BlendModes.hardLightBlendMode.rawValue //"colorDodgeBlendMode"
 		}
 	}
 	@IBOutlet weak var missingRedSquareView: UIView! {
 		didSet {
-			missingRedSquareView.layer.compositingFilter = BlendModes.softLightBlendMode.rawValue //"colorDodgeBlendMode"
+			missingRedSquareView.layer.compositingFilter = BlendModes.hardLightBlendMode.rawValue //"colorDodgeBlendMode"
 		}
 	}
 
-	@IBOutlet weak var waringSignLabel: UILabel! {
+	@IBOutlet weak var waringSignLabel: UIImageView! {
 		didSet {
-			waringSignLabel.layer.compositingFilter = BlendModes.screenBlendMode.rawValue //"colorDodgeBlendMode"
+//			waringSignLabel.layer.compositingFilter = BlendModes.screenBlendMode.rawValue //"colorDodgeBlendMode"
 		}
 	}
 	@IBOutlet weak var topRightBadgeTopConstraint: NSLayoutConstraint?

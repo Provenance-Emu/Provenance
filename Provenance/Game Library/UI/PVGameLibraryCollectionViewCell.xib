@@ -29,30 +29,30 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <view hidden="YES" alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
+                            <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
                                 <rect key="frame" x="25.666666666666671" y="-8" width="113.00000000000001" height="124"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mmT-El-XIM">
-                                        <rect key="frame" x="0.0" y="0.0" width="113" height="124"/>
-                                        <color key="backgroundColor" red="0.75572374131944442" green="0.10113687413670656" blue="0.17231826303590558" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <view alpha="0.55000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mmT-El-XIM">
+                                        <rect key="frame" x="-0.6666666666666714" y="0.0" width="113" height="124"/>
+                                        <color key="backgroundColor" red="0.59214952256944442" green="0.18615206510892879" blue="0.17231826303590558" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="⚠️" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="4" translatesAutoresizingMaskIntoConstraints="NO" id="ifh-lr-tWS">
-                                        <rect key="frame" x="16" y="16" width="81" height="92"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="90"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution-icon" translatesAutoresizingMaskIntoConstraints="NO" id="kJf-Ta-dgV">
+                                        <rect key="frame" x="35.666666666666671" y="44" width="42" height="36"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="ifh-lr-tWS" secondAttribute="trailing" constant="16" id="14G-jr-LtI"/>
                                     <constraint firstAttribute="trailing" secondItem="mmT-El-XIM" secondAttribute="trailing" id="2pq-Uf-jtP"/>
+                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3SN-fo-fqC" secondAttribute="leading" constant="10" id="3Ff-zZ-v5A"/>
                                     <constraint firstItem="mmT-El-XIM" firstAttribute="leading" secondItem="3SN-fo-fqC" secondAttribute="leading" id="3b6-2X-oen"/>
-                                    <constraint firstItem="ifh-lr-tWS" firstAttribute="leading" secondItem="3SN-fo-fqC" secondAttribute="leading" constant="16" id="Bq1-Ud-POY"/>
+                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="7Ug-8C-aMc"/>
                                     <constraint firstAttribute="bottom" secondItem="mmT-El-XIM" secondAttribute="bottom" id="D1V-P5-DG8"/>
+                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="MC7-uM-uDB"/>
                                     <constraint firstAttribute="height" constant="124" id="PZp-2e-tFD"/>
                                     <constraint firstAttribute="width" constant="113.00000000000001" id="aqp-MU-SI1"/>
-                                    <constraint firstItem="ifh-lr-tWS" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" constant="16" id="gl2-g8-ffs"/>
-                                    <constraint firstAttribute="bottom" secondItem="ifh-lr-tWS" secondAttribute="bottom" constant="16" id="vC4-6X-wFK"/>
+                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="top" relation="greaterThanOrEqual" secondItem="3SN-fo-fqC" secondAttribute="top" constant="10" id="ioM-fI-6af"/>
+                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="kJf-Ta-dgV" secondAttribute="bottom" constant="10" id="stZ-qs-B0Q"/>
+                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="kJf-Ta-dgV" secondAttribute="trailing" constant="10" id="yeT-ri-Oc9"/>
                                     <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="zI8-wE-s6p"/>
                                 </constraints>
                             </view>
@@ -149,9 +149,12 @@
                 <outlet property="topRightBadgeTopConstraint" destination="eqW-Eg-3eO" id="k1X-HN-KoO"/>
                 <outlet property="topRightBadgeTrailingConstraint" destination="iDr-pp-Vh8" id="1Rj-wN-I6X"/>
                 <outlet property="topRightCornerBadgeView" destination="pdf-KX-U3g" id="T4k-bE-YcX"/>
-                <outlet property="waringSignLabel" destination="ifh-lr-tWS" id="HnW-Qr-rPK"/>
+                <outlet property="waringSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
             </connections>
             <point key="canvasLocation" x="-416" y="-155"/>
         </collectionViewCell>
     </objects>
+    <resources>
+        <image name="caution-icon" width="42" height="36"/>
+    </resources>
 </document>
