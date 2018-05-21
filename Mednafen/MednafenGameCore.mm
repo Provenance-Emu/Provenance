@@ -217,11 +217,12 @@ static void mednafen_init(MednafenGameCore* current)
 
 	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
 
-	// The buttons to press to toggle analog / digital mode
-	uint64 amct = ((1 << PSXMap[PVPSXButtonStart]) |
-				   (1 << PSXMap[PVPSXButtonSelect]) |
+	// The buttons to press to toggle analog / digital mode (hold for couple seconds)
+	uint64 amct = ((1 << PSXMap[PVPSXButtonCircle]) |
 				   (1 << PSXMap[PVPSXButtonL1]) |
-				   (1 << PSXMap[PVPSXButtonR1]));
+                   (1 << PSXMap[PVPSXButtonL2]) |
+                   (1 << PSXMap[PVPSXButtonR1]) |
+				   (1 << PSXMap[PVPSXButtonR2]));
 	MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
 
 	// PCE Settings
