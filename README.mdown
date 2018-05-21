@@ -74,7 +74,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - Automatic ROM Matching (Game Title, Cover Art, Description, Genre, etc…) via [OpenVGDB](https://github.com/OpenVGDB/OpenVGDB)
 - ROM Customizations (Cover Art, Game Titles) ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Customizing-ROMs))
 - Multiple Options for Managing ROMs, Game Saves and Cover Art:
-  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/Provenance-Emu/Provenance/wiki/Exporting-Files):
+  - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs) / [Export](https://github.com/Provenance-Emu/Provenance/wiki/Restoring-Files):
     - Uploading _(via built-in web server)_
   - [Import](https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs):
     - Downloading _(from mobile browsers)_
@@ -84,9 +84,9 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 - iOS 8+ (iPhone, iPad)
   - 3D Touch Shortcuts for Recent Games (iPhone 6s and later)
   - Taptic Engine Button Feedback (iPhone 7 and later)
-  - Spotlight Searching
+  - Spotlight Searching ([Setup](https://github.com/Provenance-Emu/Provenance/wiki/Installing-Provenance#advanced-features-full))
 - tvOS 9+ (Apple TV 4+)
-  - TopShelf Support ([Instructions](https://github.com/Provenance-Emu/Provenance/wiki/Setup-TopShelf-&-Spotlight))
+  - TopShelf Support ([Setup](https://github.com/Provenance-Emu/Provenance/wiki/Installing-Provenance#advanced-features-full))
 
 <sub>Feel free to suggest/request features or report bugs by posting an issue, but please read up on our [Issues Usage](https://github.com/Provenance-Emu/Provenance/wiki/Issues-Usage) first, before posting.</sub><br><br>
 
@@ -145,7 +145,7 @@ Provenance would not be possible without the great work of those who came before
 <sub>**Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:**<br> 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer • 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. • 3. Neither the name of the Provenance project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.</sub><br>
 
-<SUB> THIS SOFTWARE IS PROVIDED BY PROVENANCE-EMU "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL PROVENANCE-EMU OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ONANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+<SUB> THIS SOFTWARE IS PROVIDED BY PROVENANCE-EMU "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL PROVENANCE-EMU OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. </SUB><BR>
 
 <sub> The views and conclusions contained in the software and documentation are those of the
