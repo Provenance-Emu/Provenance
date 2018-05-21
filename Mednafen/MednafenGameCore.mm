@@ -583,7 +583,8 @@ static void emulation_run(BOOL skipFrame) {
     else if (self.systemType == MednaSystemPSX)
     {
         for(unsigned i = 0; i < multiTapPlayerCount; i++) {
-            game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
+            // changing "dualshock" to "gampepad" ↓ to make games playable for now, until we can fix the analog input bugs
+            game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
         }
         
         // Multi-Disc check
