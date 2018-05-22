@@ -54,6 +54,33 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		return internalCollectionView
 	}
 
+//	func collectionView(collectionView: UICollectionView, shouldUpdateFocusInContext context: UICollectionViewFocusUpdateContext) -> Bool {
+//		guard let indexPaths = internalCollectionView.indexPathsForSelectedItems() else { return true }
+//		return indexPaths.isEmpty
+//	}
+//
+//	override var preferredFocusEnvironments: [UIFocusEnvironment] {
+//		if let p = internalCollectionView.preferredFocusedView {
+//			return [p]
+//		} else {
+//			return [internalCollectionView]
+//		}
+//	}
+
+//	override func shouldUpdateFocus(in context: UIFocusUpdateContext) -> Bool {
+//		if context.previouslyFocusedView == internalCollectionView && (context.focusHeading == .left || context.focusHeading == .right) {
+//			return true
+//		} else if context.focusHeading == .up || context.focusHeading == .down {
+//			return true
+//		} else {
+//			return false
+//		}
+//	}
+
+	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
+		return indexPath.row < numberOfRows
+	}
+
 	lazy var layout : CenterViewFlowLayout = {
 		let layout = CenterViewFlowLayout()
 		layout.scrollDirection = .horizontal
@@ -365,11 +392,15 @@ class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollecti
 
 	override func registerSubCellClass() {
 		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
+		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		} else {
 			internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
+		#else
+		internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		#endif
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -392,11 +423,15 @@ class FavoritesPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollect
 
 	override func registerSubCellClass() {
 		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
+		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		} else {
 			internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
+		#else
+		internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+		#endif
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -421,7 +456,9 @@ class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionView
 	}
 
 	@objc init(frame: CGRect) {
-		let saveStatesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(byKeyPath: #keyPath(SelectionObject.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(SelectionObject.date), ascending: false)
+		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.lastOpened), ascending: false), SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
+
+		let saveStatesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(by: sortDescriptors)
 		super.init(frame: frame, query: saveStatesQuery, cellId: "SaveStateView")
 	}
 

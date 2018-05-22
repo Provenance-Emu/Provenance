@@ -340,6 +340,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			imageView.ignoresInvertColors = true
 			#else
 			imageView.adjustsImageWhenAncestorFocused = true
+			imageView.clipsToBounds = false
 			#endif
 		}
 	}
@@ -435,6 +436,14 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		}
 		return size
     }
+
+	#if os(tvOS)
+	override var canBecomeFocused: Bool {
+		return true
+	}
+
+	
+	#endif
 
     var token: NotificationToken?
     var game: PVGame? {

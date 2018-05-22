@@ -46,9 +46,6 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 				label.text = saveState.game.title
 				secondLabel.text = timeText + coreOrSystem
-
-                label.textColor = UIColor.white
-                label.alpha = 0.6
 			}
 
 			setNeedsLayout()
@@ -62,7 +59,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		imageView.image = nil
 		label.text = nil
 #if os(tvOS)
-		self.label.alpha = 0
+//		self.label.alpha = 0
 		self.label.transform = .identity
 #endif
 	}
@@ -81,13 +78,28 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
+				let yTrasform = self.label.bounds.height * -0.25
 				var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-				transform = transform.translatedBy(x: 0, y: 0)
-				self.label.alpha = 1
-				self.label.transform = transform
+				transform = transform.translatedBy(x: 0, y: yTrasform * 2.0)
+//				self.label.alpha = 1
+				self.label.transform = transform.translatedBy(x: 0, y: yTrasform + 1)
+//				self.secondLabel.alpha = 1
+				self.secondLabel.transform = transform
+
+				self.superview?.bringSubview(toFront: self)
+
+				let labelBGColor = UIColor.black.withAlphaComponent(0.8)
+				self.label.backgroundColor = labelBGColor
+				self.secondLabel.backgroundColor = labelBGColor
 			} else {
-				self.label.alpha = 0
+//				self.label.alpha = 0
 				self.label.transform = .identity
+//				self.secondLabel.alpha = 0
+				self.secondLabel.transform = .identity
+
+				let labelBGColor = UIColor.clear
+				self.label.backgroundColor = labelBGColor
+				self.secondLabel.backgroundColor = labelBGColor
 			}
 		}) {() -> Void in }
 	}
