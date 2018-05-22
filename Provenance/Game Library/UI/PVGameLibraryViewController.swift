@@ -2183,6 +2183,12 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 //			 width = min(width, ratioWidth)
 //		}
 
+
+		if searchResults != nil {
+			let size = CGSize(width: width, height: height)
+			return size
+		}
+
 		if indexPath.section == saveStateSection {
 			// TODO: Multirow?
 			let numberOfRows = 1
