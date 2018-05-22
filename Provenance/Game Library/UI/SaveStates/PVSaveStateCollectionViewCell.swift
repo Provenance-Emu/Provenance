@@ -25,6 +25,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var imageView: UIImageView!
 	@IBOutlet weak var noScreenshotLabel: UILabel!
 	@IBOutlet weak var label: UILabel!
+	@IBOutlet weak var secondLabel: UILabel!
 
 	weak var saveState: PVSaveState? {
 		didSet {
@@ -35,17 +36,17 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
                     imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
                 }
 				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
-				if label.numberOfLines > 1 {
-					let multipleCores = saveState.game.system.cores.count > 1
-					let system = saveState.game.system
-					var coreOrSystem : String = (multipleCores ? saveState.core.projectName : system?.shortNameAlt ?? system?.shortName ?? "")
-					if coreOrSystem.count > 0 {
-						coreOrSystem = " " + coreOrSystem
-					}
-					label.text = "\(saveState.game.title)\n\(timeText)" + coreOrSystem
-				} else {
-					label.text = timeText
+
+				let multipleCores = saveState.game.system.cores.count > 1
+				let system = saveState.game.system
+				var coreOrSystem : String = (multipleCores ? saveState.core.projectName : system?.shortNameAlt ?? system?.shortName ?? "")
+				if coreOrSystem.count > 0 {
+					coreOrSystem = " " + coreOrSystem
 				}
+
+				label.text = saveState.game.title
+				secondLabel.text = timeText + coreOrSystem
+
                 label.textColor = UIColor.white
                 label.alpha = 0.6
 			}

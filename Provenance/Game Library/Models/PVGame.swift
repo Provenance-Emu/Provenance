@@ -125,6 +125,14 @@ public extension PVGame {
 	var autoSaves : [PVSaveState] {
 		return saveStates.filter({ $0.isAutosave == true  }).sorted(by: {$0.date > $1.date})
 	}
+
+	var lastAutosaveAge : TimeInterval? {
+		guard let first = autoSaves.first else {
+			return nil
+		}
+
+		return first.date.timeIntervalSinceNow * -1
+	}
 }
 
 //public extension PVGame {

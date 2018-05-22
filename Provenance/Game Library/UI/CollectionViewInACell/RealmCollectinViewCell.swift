@@ -123,7 +123,9 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		registerSubCellClass()
 		internalCollectionView.frame = self.bounds
 
+		#if os(iOS)
 		NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+		#endif
 
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
@@ -411,7 +413,11 @@ class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionView
 	typealias CellClass = PVSaveStateCollectionViewCell
 
 	override var subCellSize : CGSize {
+		#if os(tvOS)
+		return CGSize(width: 300, height: 300)
+		#else
 		return CGSize(width: 124, height: 144)
+		#endif
 	}
 
 	@objc init(frame: CGRect) {
