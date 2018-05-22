@@ -440,7 +440,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		self.discCountLabel?.text = "\(game.discCount)"
 		self.discCountLabel?.textColor = UIColor.white
 
-		let hasPlayed = game.playCount > 1
+		let hasPlayed = game.playCount > 0
 		let favorite = game.isFavorite
 		self.topRightCornerBadgeView?.glyph = favorite ? "★" : ""
 
