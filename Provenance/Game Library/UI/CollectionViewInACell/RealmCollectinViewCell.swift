@@ -456,7 +456,8 @@ class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionView
 	}
 
 	@objc init(frame: CGRect) {
-		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.lastOpened), ascending: false), SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
+//		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.lastOpened), ascending: false), SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
+		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
 
 		let saveStatesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(by: sortDescriptors)
 		super.init(frame: frame, query: saveStatesQuery, cellId: "SaveStateView")
