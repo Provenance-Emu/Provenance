@@ -9,13 +9,13 @@
 import Foundation
 
 @IBDesignable class VerticalAlignLabel: UILabel {
-    
+
     @IBInspectable var alignmentCode: Int = 0 {
         didSet {
             applyAlignmentCode()
         }
     }
-    
+
     func applyAlignmentCode() {
         switch alignmentCode {
         case 0:
@@ -30,34 +30,34 @@ import Foundation
             break
         }
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         self.applyAlignmentCode()
     }
-    
+
     override func prepareForInterfaceBuilder() {
         super.prepareForInterfaceBuilder()
-        
+
         self.applyAlignmentCode()
     }
-    
+
     enum VerticalAlignment {
         case top
         case topcenter
         case middle
         case bottom
     }
-    
+
     var verticalAlignment : VerticalAlignment = .top {
         didSet {
             setNeedsDisplay()
         }
     }
-    
+
     override public func textRect(forBounds bounds: CGRect, limitedToNumberOfLines: Int) -> CGRect {
         let rect = super.textRect(forBounds: bounds, limitedToNumberOfLines: limitedToNumberOfLines)
-        
+
         if #available(iOS 9.0, *) {
             if UIView.userInterfaceLayoutDirection(for: .unspecified) == .rightToLeft {
                 switch verticalAlignment {
@@ -87,7 +87,7 @@ import Foundation
             return rect
         }
     }
-    
+
     override public func drawText(in rect: CGRect) {
         let r = self.textRect(forBounds: rect, limitedToNumberOfLines: self.numberOfLines)
         super.drawText(in: r)
