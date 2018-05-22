@@ -2210,7 +2210,6 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 //			 width = min(width, ratioWidth)
 //		}
 
-
 		if searchResults != nil {
 			let size = CGSize(width: width, height: height)
 			return size
@@ -2640,7 +2639,7 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 	}
 
 	func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
-		
+
 	}
 
 	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
@@ -2648,7 +2647,6 @@ extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
 		load(state.game, sender: self, core: state.core, saveState: state)
 	}
 }
-
 
 #if os(iOS)
 extension PVGameLibraryViewController: UIPopoverControllerDelegate {

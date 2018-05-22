@@ -442,7 +442,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		return true
 	}
 
-	
 	#endif
 
     var token: NotificationToken?
