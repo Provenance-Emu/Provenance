@@ -546,6 +546,11 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	}
 
 	private func setupBadges() {
+		if !PVSettingsModel.shared.showGameBadges {
+			self.topRightCornerBadgeView?.isHidden = true
+			return
+		}
+
 		guard let game = game else {
 			self.topRightCornerBadgeView?.isHidden = true
 			self.discCountContainerView?.isHidden = true

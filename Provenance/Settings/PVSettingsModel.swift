@@ -19,6 +19,7 @@ let kImageSmoothingKey = "kImageSmoothingKey"
 let kCRTFilterKey = "kCRTFilterKey"
 let kShowRecentGamesKey = "kShowRecentGamesKey"
 let kShowRecentSavesKey = "kShowRecentSavesKey"
+let kShowGameBadgesKey = "kShowGameBadgesKey"
 let kICadeControllerSettingKey = "kiCadeControllerSettingKey"
 let kVolumeSettingKey = "kVolumeSettingKey"
 let kFPSCountKey = "kFPSCountKey"
@@ -93,6 +94,14 @@ public class PVSettingsModel: NSObject {
 	var showRecentSaveStates: Bool {
 		didSet {
 			UserDefaults.standard.set(showRecentSaveStates, forKey: kShowRecentSavesKey)
+			UserDefaults.standard.synchronize()
+		}
+	}
+
+	@objc
+	var showGameBadges: Bool {
+		didSet {
+			UserDefaults.standard.set(showGameBadges, forKey: kShowGameBadgesKey)
 			UserDefaults.standard.synchronize()
 		}
 	}
@@ -218,6 +227,7 @@ public class PVSettingsModel: NSObject {
                                                   kCRTFilterKey: false,
                                                   kShowRecentGamesKey: true,
 												  kShowRecentSavesKey: true,
+												  kShowGameBadgesKey: true,
                                                   kICadeControllerSettingKey: iCadeControllerSetting.settingDisabled.rawValue,
                                                   kVolumeSettingKey: 1.0,
                                                   kFPSCountKey: false,
@@ -239,6 +249,7 @@ public class PVSettingsModel: NSObject {
         crtFilterEnabled = UserDefaults.standard.bool(forKey: kCRTFilterKey)
 		showRecentSaveStates = UserDefaults.standard.bool(forKey: kShowRecentSavesKey)
         showRecentGames = UserDefaults.standard.bool(forKey: kShowRecentGamesKey)
+		showGameBadges = UserDefaults.standard.bool(forKey: kShowGameBadgesKey)
         let iCade = UserDefaults.standard.integer(forKey: kICadeControllerSettingKey)
         myiCadeControllerSetting = iCadeControllerSetting(rawValue: Int(iCade))!
         volume = UserDefaults.standard.float(forKey: kVolumeSettingKey)
@@ -258,4 +269,15 @@ public class PVSettingsModel: NSObject {
 
         super.init()
     }
+
+	@discardableResult
+	func toggle(_ key : String) -> Bool {
+		guard var value = UserDefaults.standard.object(forKey: key) as? Bool else {
+			return false
+		}
+
+		value = !value
+		UserDefaults.standard.set(value, forKey: key)
+		return value
+	}
 }
