@@ -12,10 +12,13 @@ import UIKit
 open class PillPageControl: UIView {
 
     // MARK: - PageControl
+	// TODO: Fixme when true, not refreshing on rotation
+	var hideOnSinglePage : Bool = false
 
     @IBInspectable open var pageCount: Int = 0 {
         didSet {
             updateNumberOfPages(pageCount)
+			isHidden = hideOnSinglePage && pageCount < 2
         }
     }
     @IBInspectable open var progress: CGFloat = 0 {
