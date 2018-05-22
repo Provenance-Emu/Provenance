@@ -26,6 +26,8 @@ import UIKit
 class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
+    @IBOutlet weak var timedAutoSavesSwitch: UISwitch!
+    @IBOutlet weak var timedAutoSavesCell: UITableViewCell!
     @IBOutlet weak var askToLoadSwitch: UISwitch!
     @IBOutlet weak var askToLoadSavesCell: UITableViewCell!
     @IBOutlet weak var autoLockSwitch: UISwitch!
@@ -72,6 +74,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         title = "Settings"
         let settings = PVSettingsModel.shared
         autoSaveSwitch.isOn = settings.autoSave
+        timedAutoSavesSwitch.isOn = settings.timedAutoSaves
         autoLoadSwitch.isOn = settings.autoLoadSaves
         askToLoadSwitch.isOn = settings.askToAutoLoad
         opacitySlider.value = Float(settings.controllerOpacity)
@@ -143,6 +146,12 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         } else {
             enableAskToLoadSavesCell()
         }
+        if PVSettingsModel.sharedInstance().autoSave == false {
+            disableTimedAutoSaveCell()
+            disableTimedAutoSaves()
+        } else {
+            enableTimedAutoSavesCell()
+        }
     }
 
     @IBAction func help(_ sender: Any) {
@@ -156,6 +165,16 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 
     @IBAction func toggleAutoSave(_ sender: Any) {
         PVSettingsModel.shared.autoSave = autoSaveSwitch.isOn
+        if autoSaveSwitch.isOn {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.enableTimedAutoSavesCell()
+            }, completion: nil)
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.disableTimedAutoSaveCell()
+            }, completion: nil)
+            disableTimedAutoSaves()
+        }
     }
 
     @IBAction func toggleAutoLoadSaves(_ sender: Any) {
@@ -172,6 +191,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         }
     }
 
+    @IBAction func toggleTimedAutoSaves(_ sender: Any) {
+        PVSettingsModel.shared.timedAutoSaves = timedAutoSavesSwitch.isOn
+    }
+    
+    
     @IBAction func toggleAskToLoadSaves(_ sender: Any) {
         PVSettingsModel.shared.askToAutoLoad = askToLoadSwitch.isOn
     }
@@ -219,11 +243,26 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         PVSettingsModel.sharedInstance().allRightShoulders = allRightShouldersSwitch.isOn
     }
 
+    func disableTimedAutoSaveCell() {
+        timedAutoSavesCell.alpha = 0.5
+        timedAutoSavesSwitch.isEnabled = false
+    }
+    
+    func disableTimedAutoSaves() {
+        timedAutoSavesSwitch.setOn(false, animated: true)
+        PVSettingsModel.sharedInstance().timedAutoSaves = false
+    }
+    
+    func enableTimedAutoSavesCell() {
+        timedAutoSavesCell.alpha = 1.0
+        timedAutoSavesSwitch.isEnabled = true
+    }
+    
     func disableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 0.5
         askToLoadSwitch.isEnabled = false
     }
-
+    
     func disableAutoLoadSaves() {
         askToLoadSwitch.setOn(false, animated: true)
         PVSettingsModel.sharedInstance().askToAutoLoad = false
@@ -233,6 +272,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         askToLoadSavesCell.alpha = 1.0
         askToLoadSwitch.isEnabled = true
     }
+    
 
     // Show web server (stays on)
     @available(iOS 9.0, *)
