@@ -80,7 +80,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			collectionView.remembersLastFocusedIndexPath = true
 		}
-		
+
 		#if os(iOS)
 		collectionView.isPagingEnabled = true
 		#endif
@@ -295,7 +295,6 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		fatalError("Override me")
 	}
 
-	
 //}
 //
 //
