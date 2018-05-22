@@ -20,6 +20,8 @@ let kCRTFilterKey = "kCRTFilterKey"
 let kShowRecentGamesKey = "kShowRecentGamesKey"
 let kShowRecentSavesKey = "kShowRecentSavesKey"
 let kShowGameBadgesKey = "kShowGameBadgesKey"
+let kTimedAutoSaves = "kTimedAutoSavesKey"
+let kTimedAutoSaveInterval = "kTimedAutoSaveIntervalKey"
 let kICadeControllerSettingKey = "kiCadeControllerSettingKey"
 let kVolumeSettingKey = "kVolumeSettingKey"
 let kFPSCountKey = "kFPSCountKey"
@@ -40,6 +42,22 @@ public class PVSettingsModel: NSObject {
             UserDefaults.standard.synchronize()
         }
     }
+
+	@objc
+	var timedAutoSaves: Bool {
+		didSet {
+			UserDefaults.standard.set(timedAutoSaves, forKey: kTimedAutoSaves)
+			UserDefaults.standard.synchronize()
+		}
+	}
+
+	@objc
+	var timedAutoSaveInterval: Double {
+		didSet {
+			UserDefaults.standard.set(timedAutoSaveInterval, forKey: kTimedAutoSaveInterval)
+			UserDefaults.standard.synchronize()
+		}
+	}
 
     @objc
     var askToAutoLoad: Bool {
@@ -218,6 +236,8 @@ public class PVSettingsModel: NSObject {
         #endif
 
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
+												  kTimedAutoSaves: true,
+												  kTimedAutoSaveInterval: minutes(5),
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadSavesKey: false,
                                                   kControllerOpacityKey: 0.8,
@@ -241,6 +261,8 @@ public class PVSettingsModel: NSObject {
         UserDefaults.standard.synchronize()
 
         autoSave = UserDefaults.standard.bool(forKey: kAutoSaveKey)
+		timedAutoSaves = UserDefaults.standard.bool(forKey: kTimedAutoSaves)
+		timedAutoSaveInterval = UserDefaults.standard.double(forKey: kTimedAutoSaveInterval)
         autoLoadSaves = UserDefaults.standard.bool(forKey: kAutoLoadSavesKey)
         controllerOpacity = CGFloat(UserDefaults.standard.float(forKey: kControllerOpacityKey))
         disableAutoLock = UserDefaults.standard.bool(forKey: kDisableAutoLockKey)
