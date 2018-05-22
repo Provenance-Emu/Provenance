@@ -61,6 +61,10 @@ class PVSaveStatesViewController: UICollectionViewController {
 		autoSaves = allSaves.filter("isAutosave == true")
 		manualSaves = allSaves.filter("isAutosave == false")
 
+		if screenshot == nil {
+			navigationItem.rightBarButtonItem = nil
+		}
+
 		autoSaveStatesObserverToken = autoSaves.observe { [unowned self] (changes: RealmCollectionChange) in
 			switch changes {
 			case .initial:

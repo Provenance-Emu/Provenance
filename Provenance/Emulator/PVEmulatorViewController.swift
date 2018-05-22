@@ -71,7 +71,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var BIOSPath = ""
     var menuButton: UIButton?
 
-    var glViewController: PVGLViewController?
+	private(set) var glViewController: PVGLViewController?
     var gameAudio: OEGameAudio!
     let controllerViewController: (UIViewController & StartSelectDelegate)?
     var fpsTimer: Timer?

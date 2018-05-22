@@ -1510,6 +1510,33 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.pasteCustomArtwork(for: game)
             }))
 
+			if !game.saveStates.isEmpty {
+				actionSheet.addAction(UIAlertAction(title: "View Save States", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+					guard let saveStatesNavController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
+						return
+					}
+
+					if let saveStatesViewController = saveStatesNavController.viewControllers.first as? PVSaveStatesViewController {
+						saveStatesViewController.saveStates = game.saveStates
+						saveStatesViewController.delegate = self
+					}
+
+					saveStatesNavController.modalPresentationStyle = .overCurrentContext
+
+					#if os(iOS)
+					if self.traitCollection.userInterfaceIdiom == .pad {
+						saveStatesNavController.modalPresentationStyle = .formSheet
+					}
+					#endif
+					#if os(tvOS)
+					if #available(tvOS 11, *) {
+						saveStatesNavController.modalPresentationStyle = .blurOverFullScreen
+					}
+					#endif
+					self.present(saveStatesNavController, animated: true)
+				}))
+			}
+
 			// conditinally show Restore Original Artwork
             if !game.originalArtworkURL.isEmpty, !game.customArtworkURL.isEmpty, game.originalArtworkURL != game.customArtworkURL {
                 actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
@@ -2602,6 +2629,26 @@ extension PVGameLibraryViewController: UITableViewDelegate {
 		}
     }
 }
+
+extension PVGameLibraryViewController : PVSaveStatesViewControllerDelegate {
+	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController) {
+		dismiss(animated: true, completion: nil)
+	}
+
+	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
+
+	}
+
+	func saveStatesViewControllerOverwriteState(_ saveStatesViewController: PVSaveStatesViewController, state: PVSaveState) throws {
+		
+	}
+
+	func saveStatesViewController(_ saveStatesViewController: PVSaveStatesViewController, load state: PVSaveState) {
+		dismiss(animated: true, completion: nil)
+		load(state.game, sender: self, core: state.core, saveState: state)
+	}
+}
+
 
 #if os(iOS)
 extension PVGameLibraryViewController: UIPopoverControllerDelegate {
