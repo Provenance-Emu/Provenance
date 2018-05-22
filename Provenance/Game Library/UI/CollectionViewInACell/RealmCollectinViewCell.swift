@@ -139,7 +139,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		collectionView.showsVerticalScrollIndicator = false
 
 		if #available(iOS 9.0, tvOS 9.0, *) {
-			collectionView.remembersLastFocusedIndexPath = true
+//			collectionView.remembersLastFocusedIndexPath = true
 		}
 
 		#if os(iOS)
