@@ -56,6 +56,10 @@ enum SortOptions: String {
         }
     }
 
+	static var count : Int {
+		return 3
+	}
+
     static func optionForRow(_ row: UInt) -> SortOptions {
         switch row {
         case 0:
@@ -104,6 +108,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var gameToRename: PVGame?
     var gameForCustomArt: PVGame?
 
+	@IBOutlet weak var getMoreRomsBarButtonItem: UIBarButtonItem!
+	@IBOutlet weak var sortOptionBarButtonItem: UIBarButtonItem!
+
     var sectionTitles: [String] {
         var sectionsTitles = [String]()
         if !favoritesIsHidden {
@@ -129,16 +136,22 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var isInitialAppearance = false
     var mustRefreshDataSource = false
 
-    @IBOutlet weak var sortButtonItem: UIBarButtonItem!
     var needToShowConflictsAlert = false
 
     @IBOutlet var sortOptionsTableView: UITableView!
     var currentSort: SortOptions = .title {
         didSet {
-            if isViewLoaded {
-                fetchGames()
-                collectionView?.reloadData()
-            }
+			if currentSort != oldValue {
+				systemSectionsTokens.forEach {
+					$1.sortOrder = currentSort
+				}
+
+				if isViewLoaded {
+					sortOptionBarButtonItem?.title = "Sort: \(currentSort.rawValue)"
+					fetchGames()
+					collectionView?.reloadData()
+				}
+			}
         }
     }
 
@@ -321,6 +334,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
         #endif
 
+		sortOptionBarButtonItem?.title = "Sort: \(currentSort.rawValue)"
+
         loadGameFromShortcut()
         becomeFirstResponder()
     }
@@ -368,7 +383,63 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
 
-    var systemSectionsTokens = [String : NotificationToken]()
+	class SystemSection : Equatable {
+		let id : String
+		let system : PVSystem
+
+		var sortOrder : SortOptions {
+			didSet {
+				if sortOrder != oldValue {
+					storedQuery = nil
+				}
+			}
+		}
+
+		init(system : PVSystem, sortOrder : SortOptions = .title) {
+			self.system = system
+			self.id = system.identifier
+			self.sortOrder = sortOrder
+		}
+
+		var notificationToken : NotificationToken?
+
+		private var storedQuery : Results<PVGame>?
+		var query : Results<PVGame> {
+			if let storedQuery = storedQuery {
+				return storedQuery
+			} else {
+				let newQuery = generateQuery()
+				storedQuery = newQuery
+				return newQuery
+			}
+		}
+
+		private func generateQuery() -> Results<PVGame> {
+			var sortDescriptors = [SortDescriptor(keyPath: #keyPath(PVGame.isFavorite), ascending: false)]
+			switch sortOrder {
+			case .title:
+				break
+			case .importDate:
+				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.importDate), ascending: true))
+			case .lastPlayed:
+				sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.lastPlayed), ascending: true))
+			}
+
+			sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
+
+			return system.games.sorted(by: sortDescriptors)
+		}
+
+		deinit {
+			notificationToken?.invalidate()
+		}
+
+		public static func == (lhs: SystemSection, rhs: SystemSection) -> Bool {
+			return lhs.id == rhs.id
+		}
+	}
+
+    var systemSectionsTokens = [String : SystemSection]()
     var systemsSectionOffset: Int {
         var section = favoritesIsHidden ? 0 : 1
 		section += saveStatesIsHidden ? 0 : 1
@@ -381,7 +452,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 
     func addSectionToken(forSystem system: PVSystem) {
-        let newToken = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true).observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
+		let newSystemSection = SystemSection(system: system, sortOrder: currentSort)
+
+        let newToken = newSystemSection.query.observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
             switch changes {
             case .initial:
                 // New additions already handled by systems token
@@ -411,9 +484,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 fatalError("\(error)")
             }
         }
-
-        systemSectionsTokens[system.identifier]?.invalidate()
-        systemSectionsTokens[system.identifier] = newToken
+		newSystemSection.notificationToken = newToken
+        systemSectionsTokens[newSystemSection.id] = newSystemSection
     }
 
     func initRealmResultsStorage() {
@@ -651,7 +723,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         recentGamesToken?.invalidate()
         favoritesToken?.invalidate()
 		searchResultsToken?.invalidate()
-        systemSectionsTokens.values.forEach {$0.invalidate()}
 
         systemsToken = nil
 		savesStatesToken = nil
@@ -819,11 +890,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         #if os(iOS)
         avc.modalPresentationStyle = .popover
 //        avc.popoverPresentationController?.delegate = self
-        avc.popoverPresentationController?.barButtonItem = sortButtonItem
+        avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
 		avc.popoverPresentationController?.sourceView = collectionView
         #endif
-        avc.preferredContentSize = CGSize(width: 200, height: 200)
-
+        avc.preferredContentSize = CGSize(width: 300, height: 500)
+		sortOptionsTableView.reloadData()
         present(avc, animated: true, completion: nil)
 
     }
@@ -1879,7 +1950,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					ELOG("row \(row) out of bounds for saveStates count \(saveStates?.count ?? -1)")
 				}
 			} else if let system = systems?[section - systemsSectionOffset] {
-                game = system.games.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)[row]
+                game = systemSectionsTokens[system.identifier]?.query[row]
             }
         }
 
@@ -2444,26 +2515,82 @@ class PVGameLibraryCollectionFlowLayout: UICollectionViewFlowLayout {
 }
 
 extension PVGameLibraryViewController: UITableViewDataSource {
+	func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+		switch section {
+		case 0:
+			return "Sort By"
+		case 1:
+			return "View Options"
+		default:
+			return nil
+		}
+	}
+
+	func numberOfSections(in tableView: UITableView) -> Int {
+		return 2
+	}
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 3 : 0
+		return section == 0 ? SortOptions.count : 4
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
+		if indexPath.section == 0 {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "sortCell", for: indexPath)
 
-        let sortOption = SortOptions.optionForRow(UInt(indexPath.row))
+			let sortOption = SortOptions.optionForRow(UInt(indexPath.row))
 
-        cell.textLabel?.text = sortOption.rawValue
-        cell.accessoryType = sortOption == currentSort ? .checkmark : .none
-        return cell
+			cell.textLabel?.text = sortOption.rawValue
+			cell.accessoryType = indexPath.row == currentSort.row ? .checkmark : .none
+			return cell
+		} else if indexPath.section == 1 {
+			let cell = tableView.dequeueReusableCell(withIdentifier: "viewOptionsCell", for: indexPath)
+
+			switch indexPath.row {
+			case 0:
+				cell.textLabel?.text = "Show Game Titles"
+				cell.accessoryType = PVSettingsModel.shared.showGameTitles ? .checkmark : .none
+			case 1:
+				cell.textLabel?.text = "Show Recently Played Games"
+				cell.accessoryType = PVSettingsModel.shared.showRecentGames ? .checkmark : .none
+			case 2:
+				cell.textLabel?.text = "Show Recent Save States"
+				cell.accessoryType = PVSettingsModel.shared.showRecentSaveStates ? .checkmark : .none
+			case 3:
+				cell.textLabel?.text = "Show Game Badges"
+				cell.accessoryType = PVSettingsModel.shared.showGameBadges ? .checkmark : .none
+			default:
+				fatalError("Invalid row")
+			}
+
+			return cell
+		}
+		fatalError("Invalid section")
     }
 }
 
 extension PVGameLibraryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        currentSort = SortOptions.optionForRow(UInt(indexPath.row))
-        tableView.reloadData()
-        dismiss(animated: true, completion: nil)
+		if indexPath.section == 0 {
+			currentSort = SortOptions.optionForRow(UInt(indexPath.row))
+			dismiss(animated: true, completion: nil)
+		} else if indexPath.section == 1 {
+			switch indexPath.row {
+			case 0:
+				PVSettingsModel.shared.showGameTitles = !PVSettingsModel.shared.showGameTitles
+			case 1:
+				PVSettingsModel.shared.showRecentGames = !PVSettingsModel.shared.showRecentGames
+			case 2:
+				PVSettingsModel.shared.showRecentSaveStates = !PVSettingsModel.shared.showRecentSaveStates
+			case 3:
+				PVSettingsModel.shared.showGameBadges = !PVSettingsModel.shared.showGameBadges
+			default:
+				fatalError("Invalid row")
+			}
+
+			tableView.reloadRows(at: [indexPath], with: .automatic)
+			collectionView?.reloadData()
+		}
     }
 }
 
