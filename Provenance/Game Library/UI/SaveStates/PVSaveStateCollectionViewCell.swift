@@ -76,6 +76,8 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 #if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+		super.didUpdateFocus(in: context, with: coordinator)
+
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				let yTrasform = self.label.bounds.height * -0.25

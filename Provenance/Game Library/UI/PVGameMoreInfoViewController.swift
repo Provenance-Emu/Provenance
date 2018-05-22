@@ -46,6 +46,8 @@ class LongPressLabel: UILabel {
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+		super.didUpdateFocus(in: context, with: coordinator)
+
         coordinator.addCoordinatedAnimations({ [unowned self] in
             if self.isFocused {
                 self.backgroundColor = UIColor.lightGray
@@ -712,6 +714,8 @@ extension PVGameMoreInfoViewController {
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+		super.didUpdateFocus(in: context, with: coordinator)
+
 //        coordinator.addCoordinatedAnimations({ [unowned self] in
 //
 //            }, completion: nil)
