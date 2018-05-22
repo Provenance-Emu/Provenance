@@ -44,7 +44,12 @@ class PVSaveStatesViewController: UICollectionViewController {
 #if os(iOS)
 		title = "Save States"
 #endif
-
+		#if os(tvOS)
+		collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+		#else
+		collectionView?.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: "SaveStateView")
+		#endif
+		
 		let allSaves : Results<PVSaveState>
 		if let coreID = coreID {
 			let filter : String = "core.identifier == \"" + coreID + "\""
