@@ -43,7 +43,15 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	var numberOfRows = 1
 
 	var subCellSize : CGSize {
+		#if os(tvOS)
+		return CGSize(width: 300, height: 300)
+		#else
 		return CGSize(width: 124, height: 144)
+		#endif
+	}
+
+	override var preferredFocusedView: UIView? {
+		return internalCollectionView
 	}
 
 	lazy var layout : CenterViewFlowLayout = {
@@ -68,6 +76,11 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
+
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			collectionView.remembersLastFocusedIndexPath = true
+		}
+		
 		#if os(iOS)
 		collectionView.isPagingEnabled = true
 		#endif
@@ -88,6 +101,15 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		setupToken()
 	}
 
+	@objc
+	func rotated() {
+		refreshCollectionView()
+	}
+
+	deinit {
+		NotificationCenter.default.removeObserver(self)
+	}
+
 	func setupViews() {
 		#if os(iOS)
 		backgroundColor = Theme.currentTheme.gameLibraryBackground
@@ -100,6 +122,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 		registerSubCellClass()
 		internalCollectionView.frame = self.bounds
+
+		NotificationCenter.default.addObserver(self, selector: #selector(RealmCollectinViewCell.rotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
 
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			let margins = self.layoutMarginsGuide
@@ -144,6 +168,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	override func layoutMarginsDidChange() {
 		super.layoutMarginsDidChange()
 		internalCollectionView.flashScrollIndicators()
+		self.pageIndicator.pageCount = self.layout.numberOfPages
 	}
 
 	override func prepareForReuse() {
@@ -188,8 +213,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	func refreshCollectionView() {
 		self.internalCollectionView.invalidateIntrinsicContentSize()
-		self.internalCollectionView.reloadData()
 		self.internalCollectionView.collectionViewLayout.invalidateLayout()
+		self.internalCollectionView.reloadData()
 		self.pageIndicator.pageCount = self.layout.numberOfPages
 	}
 
@@ -208,17 +233,17 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		//		})
 	}
 
-	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + PageIndicatorHeight : PageIndicatorHeight
-		let height = max(0, (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
-
-		let viewWidth = internalCollectionView.bounds.size.width
-
-		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
-		let width :CGFloat = max(0, (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
-
-		return CGSize(width: width, height: height)
-	}
+//	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//		let spacing : CGFloat = numberOfRows > 1 ? minimumInteritemSpacing + PageIndicatorHeight : PageIndicatorHeight
+//		let height = max(0, (collectionView.frame.size.height / CGFloat(numberOfRows)) - spacing)
+//
+//		let viewWidth = internalCollectionView.bounds.size.width
+//
+//		let itemsPerRow :CGFloat = viewWidth > 800 ? 6 : 3
+//		let width :CGFloat = max(0, (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow))
+//
+//		return CGSize(width: width, height: height)
+//	}
 
 	/// whether or not dragging has ended
 	fileprivate var endDragging = false
@@ -246,6 +271,11 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		selectionDelegate?.didSelectObject(selectedObject, indexPath: indexPath)
 	}
 
+	override func didTransition(from oldLayout: UICollectionViewLayout, to newLayout: UICollectionViewLayout) {
+		super.didTransition(from: oldLayout, to: newLayout)
+		pageIndicator.pageCount = layout.numberOfPages
+	}
+
 	// MARK: - UICollectionViewDataSource
 	func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		guard let cell = internalCollectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as? CellClass else {
@@ -264,6 +294,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		//
 		fatalError("Override me")
 	}
+
+	
 //}
 //
 //

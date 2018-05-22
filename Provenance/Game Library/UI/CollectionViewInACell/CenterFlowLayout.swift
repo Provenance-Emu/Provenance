@@ -47,33 +47,69 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 		guard let itemCount = itemCount else {
 			return 1
 		}
-		let itemsPerPage = CGFloat(rowCount * columnCount)
+		let itemsPerPage = maxItemsPerPage
 		if itemsPerPage == 0 {
 			return 1
 		}
-		return Int(ceil((CGFloat(itemCount) / itemsPerPage)))
+		return Int(ceil((CGFloat(itemCount) / CGFloat(itemsPerPage))))
 	}
 
+	var maxItemsPerPage : Int {
+		return rowCount * columnCount
+	}
+
+	// TODO: Fixme when true
+	var evenlyDistributeItemsInRemainderPage = false
+
 	func frameForItemAtIndexPath(_ indexPath: IndexPath) -> CGRect {
-		let pageMarginX = (canvasSize.width - CGFloat(columnCount) * self.itemSize.width - (columnCount > 1 ? CGFloat(columnCount - 1) * (self.minimumLineSpacing/2.0) : 0)) / 2.0
-		let pageMarginY = (canvasSize.height - CGFloat(rowCount) * self.itemSize.height - (rowCount > 1 ? CGFloat(rowCount - 1) * (self.minimumInteritemSpacing/2.0) : 0)) / 2.0
+		var pageMarginX = (canvasSize.width - CGFloat(columnCount) * self.itemSize.width - (columnCount > 1 ? CGFloat(columnCount - 1) * (self.minimumLineSpacing/2.0) : 0)) / 2.0
+		var pageMarginY = (canvasSize.height - CGFloat(rowCount) * self.itemSize.height - (rowCount > 1 ? CGFloat(rowCount - 1) * (self.minimumInteritemSpacing/2.0) : 0)) / 2.0
+		pageMarginX = abs(pageMarginX)
+		pageMarginY = abs(pageMarginY)
 
 		let page = Int(CGFloat(indexPath.row) / CGFloat(rowCount * columnCount))
-		let remainder = Int(CGFloat(indexPath.row) - CGFloat(page) * CGFloat(rowCount * columnCount))
+		let remainder = Int(CGFloat(indexPath.row) - CGFloat(page) * CGFloat(maxItemsPerPage))
 		let row = Int(CGFloat(remainder) / CGFloat(columnCount))
 		let column = Int(CGFloat(remainder) - CGFloat(row) * CGFloat(columnCount))
 
 		var cellFrame = CGRect.zero
-		cellFrame.origin.x = pageMarginX + CGFloat(column) * (self.itemSize.width + self.minimumLineSpacing)
-		cellFrame.origin.y = pageMarginY + CGFloat(row) * (self.itemSize.height + self.minimumInteritemSpacing)
+
+		let xOffset : CGFloat
+		// Calculate centering of cells if page is unfilled
+		if evenlyDistributeItemsInRemainderPage {
+			// TODO: multiple row version of this var
+			let numberOfCellsInRow = numberOfCellsInPage(page+1)
+			// TODO: multiple row version of this var
+			let maxItemsPerRow = maxItemsPerPage
+			let unusedCellsInRow = maxItemsPerRow - numberOfCellsInRow
+			let unusedWidth = (self.itemSize.width + self.minimumLineSpacing) * CGFloat(unusedCellsInRow - 1)
+			let unusedWidthPerCell = unusedWidth / CGFloat(numberOfCellsInRow)
+			let odd = numberOfCellsInRow % 2 != 0
+			xOffset = unusedWidthPerCell * CGFloat(column+1) + (odd ? unusedWidthPerCell / 2.0 : 0)
+		} else {
+			xOffset = 0
+		}
+
+		let itemHeight = min(self.itemSize.height, canvasSize.height)
+
+		cellFrame.origin.x = pageMarginX + CGFloat(column) * (self.itemSize.width + self.minimumLineSpacing) + xOffset
+		cellFrame.origin.y = pageMarginY + CGFloat(row) * (itemHeight + self.minimumInteritemSpacing)
 		cellFrame.size.width = self.itemSize.width
-		cellFrame.size.height = self.itemSize.height
+		cellFrame.size.height = itemHeight
 
 		if self.scrollDirection == UICollectionViewScrollDirection.horizontal {
 			cellFrame.origin.x += CGFloat(page) * canvasSize.width
 		}
 
 		return cellFrame
+	}
+
+	func numberOfCellsInPage(_ pageNumber : Int) -> Int {
+		if pageNumber == numberOfPages, let itemCount = itemCount {
+			return itemCount - ((pageNumber - 1) * maxItemsPerPage)
+		} else {
+			return maxItemsPerPage
+		}
 	}
 
 	override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
@@ -96,5 +132,9 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 		}
 
 		return attrs
+	}
+
+	override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+		return true
 	}
 }
