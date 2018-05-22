@@ -1323,7 +1323,7 @@ extension PVGameImporter {
 		// check by md5
 		let fileMD5 = candidateFile.md5?.uppercased()
 
-		if let gotit = try! self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? "")?.first,
+		if let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5 ?? ""), let gotit = searchResults?.first,
 			let sid : Int = gotit["systemID"] as? Int,
 			let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
 			let subfolderPath = self.path(forSystemID: system.identifier),
