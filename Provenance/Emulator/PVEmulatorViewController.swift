@@ -425,7 +425,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 game.timeSpentInGame = totalTimeSpent
-                game.lastPlayed = Date()
+//                game.lastPlayed = Date()
             }
         } catch {
             presentError("\(error.localizedDescription)")
@@ -504,7 +504,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     #endif
 
     @objc func appWillEnterForeground(_ note: Notification?) {
-        updatePlayedDuration()
+        updateLastPlayedTime()
     }
 
     @objc func appDidEnterBackground(_ note: Notification?) {
@@ -799,6 +799,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
 			throw SaveStateError.saveStatesUnsupportedByCore
+		}
+
+		let minimumPlayTimeToMakeAutosave : Double = 10
+		if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1)  < minimumPlayTimeToMakeAutosave {
+			ILOG("Haven't been playing game long enough to make an autosave")
+			return
 		}
 
 		guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
