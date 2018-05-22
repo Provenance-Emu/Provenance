@@ -1138,12 +1138,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 
 	func setupGameImporter() {
-		gameImporter = PVGameImporter(completionHandler: {[unowned self] (_ encounteredConflicts: Bool) -> Void in
+		gameImporter = PVGameImporter.shared
+		gameImporter.completionHandler = {[unowned self] (_ encounteredConflicts: Bool) -> Void in
 			if encounteredConflicts {
 				self.needToShowConflictsAlert = true
 				self.showConflictsAlert()
+
 			}
-		})
+		}
 
 		gameImporter.importStartedHandler = {(_ path: String) -> Void in
 			DispatchQueue.main.async {

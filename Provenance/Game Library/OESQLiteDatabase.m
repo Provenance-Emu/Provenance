@@ -26,6 +26,7 @@
 
 #import "OESQLiteDatabase.h"
 #import <sqlite3.h>
+#import <PVSupport/PVSupport.h>
 
 NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
 @interface OESQLiteDatabase ()
@@ -60,7 +61,7 @@ NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
     int res = sqlite3_close(connection);
     if(res != SQLITE_OK)
     {
-        DLog(@"Could not close SQL Database correctly. (Error Code %d: %s)", res, sqlite3_errmsg(connection));
+        DLOG(@"Could not close SQL Database correctly. (Error Code %d: %s)", res, sqlite3_errmsg(connection));
     }
 }
 

@@ -493,7 +493,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     @IBAction func nameTapped(_ sender: Any) {
-        editKey(\PVGame.title, title: "Title", label: nameLabel)
+		editKey(\PVGame.title, title: "Title", label: nameLabel, reloadGameInfoAfter: true)
     }
 
     @IBAction func developerTapped(_ sender: Any) {
@@ -569,7 +569,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     // Deal with non-null - non-empty keys paths
-    private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
+	private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel, reloadGameInfoAfter: Bool = false) {
 
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
@@ -600,6 +600,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                     }
 
                     label.text = newValue
+
+					if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
+						PVGameImporter.shared.lookupInfo(for: self.game)
+					}
                 } catch {
                     ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")
                 }
@@ -705,9 +709,9 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 
 #if os(tvOS)
 extension PVGameMoreInfoViewController {
-    override var preferredFocusedView: UIView? {
-        return artworkImageView
-    }
+//    override var preferredFocusedView: UIView? {
+//        return artworkImageView
+//    }
 
     override var preferredFocusEnvironments: [UIFocusEnvironment] {
         return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]

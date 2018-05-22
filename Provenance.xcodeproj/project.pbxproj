@@ -176,6 +176,12 @@
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3BE96792055F2B400281880 /* PVGame+Spotlight.swift */; };
+		B328B3CE20B4485300AE4E00 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.swift */; };
+		B328B3CF20B4485400AE4E00 /* PVGameImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9AA2F1ACC871F00EC87A0 /* PVGameImporter.swift */; };
+		B328B3D020B449D700AE4E00 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
+		B328B3D120B449D800AE4E00 /* OESQLiteDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AECF4AB1966D7A600F8704E /* OESQLiteDatabase.m */; };
+		B328B3D220B44A1C00AE4E00 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
+		B328B3D320B44A1D00AE4E00 /* NSData+Hashing.m in Sources */ = {isa = PBXBuildFile; fileRef = 423BB97E17DD46BC0048F457 /* NSData+Hashing.m */; };
 		B32D8F7D1EA7F79900175FBF /* PVEmulatorConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B32D8F7C1EA7F79900175FBF /* PVEmulatorConfigurationTests.m */; };
 		B32D8F7F1EA7FD6300175FBF /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F7E1EA7FD6300175FBF /* PVSupport.framework */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
@@ -3949,6 +3955,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B328B3D120B449D800AE4E00 /* OESQLiteDatabase.m in Sources */,
 				B3D8DD47206EAA9E008FAC42 /* Property.swift in Sources */,
 				B3D8DD4B206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				B3BE96932056026800281880 /* PVSaveState.swift in Sources */,
@@ -3963,6 +3970,7 @@
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
 				B3E21D7B20321B53009939D3 /* PVGame.swift in Sources */,
 				B3D8DD0F206EAA9E008FAC42 /* Migration.swift in Sources */,
+				B328B3CF20B4485400AE4E00 /* PVGameImporter.swift in Sources */,
 				B3D8DD37206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				B3E21D7820321AA8009939D3 /* RomDatabase.swift in Sources */,
 				B3BE96982056032600281880 /* PVGame+BoxArt.swift in Sources */,
@@ -3970,6 +3978,7 @@
 				B3D8DD2B206EAA9E008FAC42 /* Error.swift in Sources */,
 				B36D9DFA2035AC8600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3D8DD27206EAA9E008FAC42 /* Sync.swift in Sources */,
+				B328B3D320B44A1D00AE4E00 /* NSData+Hashing.m in Sources */,
 				B3D8DD3F206EAA9E008FAC42 /* List.swift in Sources */,
 				B36D9DFB2035F6AB00D583C4 /* PVRecentGame.swift in Sources */,
 				B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */,
@@ -4008,6 +4017,7 @@
 				B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3D8DD1E206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */,
+				B328B3D020B449D700AE4E00 /* OESQLiteDatabase.m in Sources */,
 				B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
 				B3D8DD0E206EAA9E008FAC42 /* Migration.swift in Sources */,
@@ -4017,6 +4027,7 @@
 				B36954E22094391B009D958D /* PVLibrary.swift in Sources */,
 				B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */,
 				B3D8DD2A206EAA9E008FAC42 /* Error.swift in Sources */,
+				B328B3CE20B4485300AE4E00 /* PVGameImporter.swift in Sources */,
 				B3E21D6520320E6E009939D3 /* Logging.swift in Sources */,
 				B3D8DD26206EAA9E008FAC42 /* Sync.swift in Sources */,
 				B3D8DD3E206EAA9E008FAC42 /* List.swift in Sources */,
@@ -4033,6 +4044,7 @@
 				B3D8DD06206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
 				B3D8DD3A206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
+				B328B3D220B44A1C00AE4E00 /* NSData+Hashing.m in Sources */,
 				B3DBF13E2094669A005935A8 /* UTI.swift in Sources */,
 				B3BE96892055F40000281880 /* PVFile.swift in Sources */,
 				B3D8DD1A206EAA9E008FAC42 /* Object.swift in Sources */,

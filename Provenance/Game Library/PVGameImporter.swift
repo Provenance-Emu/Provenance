@@ -80,13 +80,15 @@ public typealias PVGameImporterCompletionHandler = (_ encounteredConflicts: Bool
 public typealias PVGameImporterFinishedImportingGameHandler = (_ md5Hash: String, _ modified: Bool) -> Void
 public typealias PVGameImporterFinishedGettingArtworkHandler = (_ artworkURL: String) -> Void
 
-public class PVGameImporter {
+public final class PVGameImporter {
 
     public var importStartedHandler: PVGameImporterImportStartedHandler?
     public var completionHandler: PVGameImporterCompletionHandler?
     public var finishedImportHandler: PVGameImporterFinishedImportingGameHandler?
     public var finishedArtworkHandler: PVGameImporterFinishedGettingArtworkHandler?
     public private(set) var encounteredConflicts = false
+
+	static let shared: PVGameImporter = PVGameImporter()
 
 	let workQueue : OperationQueue = {
 		let q = OperationQueue()
@@ -139,10 +141,9 @@ public class PVGameImporter {
     var notificationToken: NotificationToken?
 	public let initialized = DispatchGroup()
 
-    required public init(completionHandler: PVGameImporterCompletionHandler?) {
+    required public init() {
 
 		initialized.enter()
-        self.completionHandler = completionHandler
 
         let systems = PVSystem.all
 
@@ -842,8 +843,8 @@ public extension PVGameImporter {
             ELOG("\(error.localizedDescription)")
         }
 
-        if resultsMaybe == nil || resultsMaybe!.isEmpty {
-            let fileName: String = URL(fileURLWithPath: game.romPath, isDirectory: true).lastPathComponent
+		if resultsMaybe == nil || resultsMaybe!.isEmpty, PVEmulatorConfiguration.supportedROMFileExtensions.contains(game.file.url.pathExtension.lowercased()) {
+			let fileName: String = game.file.url.lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
 
             let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: PVGameImporter.charset)

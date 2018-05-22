@@ -351,6 +351,11 @@ public extension RomDatabase {
 				try RomDatabase.sharedInstance.writeTransaction {
 					game.title = title
 				}
+
+				if game.releaseID == nil || game.releaseID!.isEmpty {
+					ILOG("Game isn't already matched, going to try to re-match after a rename")
+					PVGameImporter.shared.lookupInfo(for: game)
+				}
 			} catch {
 				ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")
 			}
