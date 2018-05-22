@@ -14,9 +14,19 @@ protocol RealmCollectinViewCellDelegate : class {
 
 protocol RealmCollectionViewCellBase {
 	var minimumInteritemSpacing : CGFloat { get}
+//	var additionalFilter : Bool { get }
+//	func isIncluded(_ object : Object) -> Bool
 }
 
 extension RealmCollectionViewCellBase {
+//	func isIncluded(_ object : Object) -> Bool {
+//		return true
+//	}
+
+//	var additionalFilter : Bool {
+//		return false
+//	}
+
 	var minimumInteritemSpacing : CGFloat {
 		#if os(tvOS)
 		return 50
@@ -29,6 +39,14 @@ extension RealmCollectionViewCellBase {
 public let PageIndicatorHeight : CGFloat = 2.5
 
 class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Object> : UICollectionViewCell, RealmCollectionViewCellBase, UICollectionViewDelegateFlowLayout, UIScrollViewDelegate, UICollectionViewDataSource {
+	var additionalFilter : Bool {
+		return false
+	}
+
+	func isIncluded(_ object : SelectionObject) -> Bool {
+		return true
+	}
+
 	var queryUpdateToken: NotificationToken? {
 		willSet {
 			queryUpdateToken?.invalidate()
@@ -38,6 +56,22 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	weak var selectionDelegate : RealmCollectinViewCellDelegate?
 
 	let query: Results<SelectionObject>
+	var count : Int {
+		if additionalFilter {
+			return query.filter({return self.isIncluded($0)}).count
+		} else {
+			return query.count
+		}
+	}
+
+	func itemForIndex(_ index : Int) -> SelectionObject {
+		if additionalFilter {
+			return query.filter({return self.isIncluded($0)})[index]
+		} else {
+			return query[index]
+		}
+	}
+
 	let cellId : String
 
 	var numberOfRows = 1
@@ -290,13 +324,12 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 	}
 
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		let count = query.count
 		return count
 	}
 
 	// MARK: - UICollectionViewDelegate
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-		let selectedObject = query[indexPath.row]
+		let selectedObject = itemForIndex(indexPath.row)
 		selectionDelegate?.didSelectObject(selectedObject, indexPath: indexPath)
 	}
 
@@ -311,10 +344,10 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 			fatalError("Couldn't create cell of type ...")
 		}
 
-		if indexPath.row < query.count {
-			let objectForRow = query[indexPath.row]
+//		if indexPath.row < count {
+			let objectForRow = itemForIndex(indexPath.row)
 			setCellObject(objectForRow, cell: cell)
-		}
+//		}
 
 		return cell
 	}
@@ -460,7 +493,16 @@ class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionView
 		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]
 
 		let saveStatesQuery: Results<SelectionObject> = SelectionObject.all.filter("game != nil").sorted(by: sortDescriptors)
+
 		super.init(frame: frame, query: saveStatesQuery, cellId: "SaveStateView")
+	}
+
+	@objc override func isIncluded(_ object : SelectionObject) -> Bool {
+		return !object.isAutosave || object.isNewestAutosave
+	}
+
+	@objc override var additionalFilter : Bool {
+		return true
 	}
 
 	override func registerSubCellClass() {
