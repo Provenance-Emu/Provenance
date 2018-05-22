@@ -801,6 +801,11 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
+		guard game.lastAutosaveAge == nil || game.lastAutosaveAge! > minutes(1) else {
+			ILOG("Last autosave is too new to make new one")
+			return
+		}
+
         let image = captureScreenshot()
         try createNewSaveState(auto: true, screenshot: image)
     }
@@ -809,15 +814,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		guard core.supportsSaveStates else {
 			WLOG("Core \(core.description) doesn't support save states.")
 			throw SaveStateError.saveStatesUnsupportedByCore
-		}
-
-		// Check if autosave already exists that's super new
-		if auto, let lastAutoSave = game.autoSaves.first, (lastAutoSave.date.timeIntervalSinceNow * -1) < minutes(1) {
-			do {
-				try lastAutoSave.delete()
-			} catch {
-				ELOG("Failed to delete fairly new autosave: \(error.localizedDescription)")
-			}
 		}
 
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
