@@ -93,7 +93,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
 		staticSelf = self
 
-        if PVSettingsModel.sharedInstance().autoSave {
+        if PVSettingsModel.shared.autoSave {
             NSSetUncaughtExceptionHandler(uncaughtExceptionHandler)
         } else {
             NSSetUncaughtExceptionHandler(nil)
@@ -783,7 +783,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		}
 
 		// Check if autosave already exists that's super new
-		if auto, let lastAutoSave = game.saveStates.first, (lastAutoSave.date.timeIntervalSinceNow * -1) < minutes(1) {
+		if auto, let lastAutoSave = game.autoSaves.first, (lastAutoSave.date.timeIntervalSinceNow * -1) < minutes(1) {
 			do {
 				try lastAutoSave.delete()
 			} catch {
