@@ -77,9 +77,9 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 //		}
 //	}
 
-	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
-		return indexPath.row < numberOfRows
-	}
+//	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
+//		return indexPath.row < numberOfRows
+//	}
 
 	lazy var layout : CenterViewFlowLayout = {
 		let layout = CenterViewFlowLayout()
