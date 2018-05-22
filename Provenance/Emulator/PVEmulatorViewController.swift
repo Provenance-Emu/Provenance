@@ -782,6 +782,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
+		// Check if autosave already exists that's super new
+		if auto, let lastAutoSave = game.saveStates.first, lastAutoSave.date.timeIntervalSinceNow < minutes(1) {
+			do {
+				try lastAutoSave.delete()
+			} catch {
+				ELOG("Failed to delete fairly new autosave: \(error.localizedDescription)")
+			}
+		}
+
 		let saveFile = PVFile(withURL: URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).svs"))
 
 		var imageFile: PVImageFile?
@@ -819,7 +828,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
 				// Delete the oldest auto-saves over 5 count
 				try? realm.write {
-					let autoSaves = game.saveStates.filter({ $0.isAutosave == true  }).sorted(by: {$0.date > $1.date})
+					let autoSaves = game.autoSaves
 					if autoSaves.count > 5 {
 						autoSaves.suffix(from: 5).forEach {
 							DLOG("Deleting old auto save of \($0.game.title) dated: \($0.date.description)")
