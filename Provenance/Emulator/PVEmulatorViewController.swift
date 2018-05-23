@@ -120,9 +120,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #if os(iOS)
     GCController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
-        if !isShowingMenu {
-            updatePlayedDuration()
-        }
+        updatePlayedDuration()
 		destroyAutosaveTimer()
     }
 
@@ -414,22 +412,24 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			// Fallback on earlier versions
 		}
 	}
-
+    
     @objc
     public func updatePlayedDuration() {
-        guard let startTime = game.lastPlayed else {
-            return
-        }
-
-        let duration = startTime.timeIntervalSinceNow * -1
-        let totalTimeSpent = game.timeSpentInGame + Int(duration)
-
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.timeSpentInGame = totalTimeSpent
+        if !isShowingMenu {
+            guard let startTime = game.lastPlayed else {
+                return
             }
-        } catch {
-            presentError("\(error.localizedDescription)")
+
+            let duration = startTime.timeIntervalSinceNow * -1
+            let totalTimeSpent = game.timeSpentInGame + Int(duration)
+
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.timeSpentInGame = totalTimeSpent
+                }
+            } catch {
+                presentError("\(error.localizedDescription)")
+            }
         }
     }
 
@@ -509,9 +509,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appDidEnterBackground(_ note: Notification?) {
-        if !isShowingMenu {
-            updatePlayedDuration()
-        }
+        updatePlayedDuration()
     }
 
     @objc func appWillResignActive(_ note: Notification?) {
@@ -549,6 +547,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     @objc func showMenu(_ sender: Any?) {
         enableContorllerInput(true)
         core.setPauseEmulation(true)
+        updatePlayedDuration()
         isShowingMenu = true
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad {
@@ -673,7 +672,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         present(actionsheet, animated: true, completion: {() -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
-        updatePlayedDuration()
     }
 
     @objc func hideModeInfo() {
@@ -1002,9 +1000,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
         dismiss(animated: true, completion: completion)
         enableContorllerInput(false)
-        if !isShowingMenu {
-            updatePlayedDuration()
-        }
+        updatePlayedDuration()
     }
 
 // MARK: - Controllers
