@@ -801,7 +801,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
-		let minimumPlayTimeToMakeAutosave : Double = 10
+		let minimumPlayTimeToMakeAutosave : Double = 60
 		if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1)  < minimumPlayTimeToMakeAutosave {
 			ILOG("Haven't been playing game long enough to make an autosave")
 			return
