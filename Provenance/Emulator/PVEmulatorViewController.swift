@@ -120,7 +120,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #if os(iOS)
     GCController.controllers().forEach { $0.controllerPausedHandler = nil }
 #endif
-        updatePlayedDuration()
+        if !isShowingMenu {
+            updatePlayedDuration()
+        }
 		destroyAutosaveTimer()
     }
 
@@ -425,7 +427,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 game.timeSpentInGame = totalTimeSpent
-//                game.lastPlayed = Date()
             }
         } catch {
             presentError("\(error.localizedDescription)")
@@ -508,7 +509,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appDidEnterBackground(_ note: Notification?) {
-        updatePlayedDuration()
+        if !isShowingMenu {
+            updatePlayedDuration()
+        }
     }
 
     @objc func appWillResignActive(_ note: Notification?) {
@@ -999,7 +1002,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
         dismiss(animated: true, completion: completion)
         enableContorllerInput(false)
-        updatePlayedDuration()
+        if !isShowingMenu {
+            updatePlayedDuration()
+        }
     }
 
 // MARK: - Controllers
