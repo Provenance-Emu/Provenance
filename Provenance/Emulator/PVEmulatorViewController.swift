@@ -412,7 +412,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			// Fallback on earlier versions
 		}
 	}
-    
+
     @objc
     public func updatePlayedDuration() {
         if !isShowingMenu {

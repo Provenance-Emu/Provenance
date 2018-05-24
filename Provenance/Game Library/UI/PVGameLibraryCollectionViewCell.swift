@@ -553,7 +553,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			return
 		}
 
-
 		let hasPlayed = game.playCount > 0
 		let favorite = game.isFavorite
 		topRightCornerBadgeView.glyph = favorite ? "★" : ""
