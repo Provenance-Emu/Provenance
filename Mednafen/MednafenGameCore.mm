@@ -216,7 +216,24 @@ static void mednafen_init(MednafenGameCore* current)
 	MDFNI_SetSetting("psx.region_default", "na"); // Set default region to North America if auto detect fails, default: jp
 
 	MDFNI_SetSettingB("psx.input.analog_mode_ct", true); // Enable Analog mode toggle
-
+		/*
+		 0x0001=SELECT
+		 0x0002=L3
+		 0x0004=R3
+		 0x0008=START
+		 0x0010=D-Pad UP
+		 0x0020=D-Pad Right
+		 0x0040=D-Pad Down
+		 0x0080=D-Pad Left
+		 0x0100=L2
+		 0x0200=R2
+		 0x0400=L1
+		 0x0800=R1
+		 0x1000=△
+		 0x2000=○
+		 0x4000=x
+		 0x8000=□
+		 */
 	// The buttons to press to toggle analog / digital mode (hold for couple seconds)
 	uint64 amct = ((1 << PSXMap[PVPSXButtonCircle]) |
 				   (1 << PSXMap[PVPSXButtonL1]) |
