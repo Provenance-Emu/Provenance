@@ -1,0 +1,10 @@
+
+project 'CLI'
+workspace '../Demos'
+
+target :'CLI' do
+  platform :osx, '10.8'
+
+  pod 'CocoaLumberjack/CLI', :path => '../../'
+end
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:XCDLumberjackNSLogger Demo/XCDLumberjackNSLogger Demo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:XCDLumberjackNSLogger.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Carthage/Checkouts/CocoaLumberjack/Lumberjack.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Carthage/Checkouts/NSLogger/NSLogger.xcodeproj">
+   </FileRef>
+</Workspace>

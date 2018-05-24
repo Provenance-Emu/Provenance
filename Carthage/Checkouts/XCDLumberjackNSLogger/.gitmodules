@@ -1,0 +1,6 @@
+[submodule "Carthage/Checkouts/CocoaLumberjack"]
+	path = Carthage/Checkouts/CocoaLumberjack
+	url = https://github.com/CocoaLumberjack/CocoaLumberjack.git
+[submodule "Carthage/Checkouts/NSLogger"]
+	path = Carthage/Checkouts/NSLogger
+	url = https://github.com/fpillet/NSLogger.git

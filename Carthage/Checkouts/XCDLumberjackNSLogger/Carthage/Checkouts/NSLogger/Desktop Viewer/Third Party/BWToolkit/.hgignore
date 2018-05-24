@@ -1,0 +1,9 @@
+syntax: glob
+
+*.pbxuser
+*.mode1
+*.mode1v3
+*~.nib
+*~
+*.orig
+.DS_Store

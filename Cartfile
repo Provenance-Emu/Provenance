@@ -1,0 +1,3 @@
+github "CocoaLumberjack/CocoaLumberjack"
+github "0xced/XCDLumberjackNSLogger" ~> 1.1
+
