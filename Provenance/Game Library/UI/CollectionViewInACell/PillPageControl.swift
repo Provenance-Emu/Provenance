@@ -13,12 +13,11 @@ open class PillPageControl: UIView {
 
     // MARK: - PageControl
 	// TODO: Fixme when true, not refreshing on rotation
-	var hideOnSinglePage : Bool = false
+	var hideOnSinglePage : Bool = true
 
     @IBInspectable open var pageCount: Int = 0 {
         didSet {
             updateNumberOfPages(pageCount)
-			isHidden = hideOnSinglePage && pageCount < 2
         }
     }
     @IBInspectable open var progress: CGFloat = 0 {
@@ -70,6 +69,8 @@ open class PillPageControl: UIView {
     // MARK: - State Update
 
     fileprivate func updateNumberOfPages(_ count: Int) {
+		isHidden = hideOnSinglePage && pageCount < 2
+
         // no need to update
         guard count != inactiveLayers.count else { return }
         // reset current layout
