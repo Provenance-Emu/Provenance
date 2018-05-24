@@ -463,15 +463,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                             ELOG("The object was deleted.")
                         }
                     }
-					self.missingFileView?.isHidden = !game.file.missing
                     self.setup(with: game)
 				} else {
 					self.discCountContainerView?.isHidden = true
 					self.topRightCornerBadgeView?.isHidden = true
 					self.missingFileView?.isHidden = true
 				}
-
-				self.tintImageIfMissing()
             }
         }
     }
@@ -540,6 +537,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             }
         }
 
+		self.missingFileView?.isHidden = !game.file.missing
+
 		self.setupBadges()
 
         setNeedsLayout()
@@ -548,43 +547,45 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
     }
 
-	func tintImageIfMissing() {
-//		let missing = game?.file.missing ?? true
-//		imageView.tintColor = missing ? UIColor.red : nil
-	}
-
-	private func setupBadges() {
-		if !PVSettingsModel.shared.showGameBadges {
+	private func setupTopRightBadge() {
+		guard let game = game, PVSettingsModel.shared.showGameBadges, let topRightCornerBadgeView = topRightCornerBadgeView else {
 			self.topRightCornerBadgeView?.isHidden = true
 			return
 		}
 
-		guard let game = game else {
-			self.topRightCornerBadgeView?.isHidden = true
+
+		let hasPlayed = game.playCount > 0
+		let favorite = game.isFavorite
+		topRightCornerBadgeView.glyph = favorite ? "★" : ""
+
+		if favorite {
+			#if os(iOS)
+			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
+			#else
+			topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.65)
+			#endif
+		} else if !hasPlayed {
+			topRightCornerBadgeView.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
+		}
+
+		topRightCornerBadgeView.isHidden = hasPlayed && !favorite
+	}
+
+	private func setupDiscCountBadge() {
+		guard let game = game, let discCountContainerView = self.discCountContainerView, let discCountLabel = discCountLabel else {
 			self.discCountContainerView?.isHidden = true
 			return
 		}
 
 		let multieDisc = game.isCD && game.discCount > 1
-		self.discCountContainerView?.isHidden = !multieDisc
-		self.discCountLabel?.text = "\(game.discCount)"
-		self.discCountLabel?.textColor = UIColor.white
+		discCountContainerView.isHidden = !multieDisc
+		discCountLabel.text = "\(game.discCount)"
+		discCountLabel.textColor = UIColor.white
+	}
 
-		let hasPlayed = game.playCount > 0
-		let favorite = game.isFavorite
-		self.topRightCornerBadgeView?.glyph = favorite ? "★" : ""
-
-		if favorite {
-			#if os(iOS)
-			self.topRightCornerBadgeView?.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
-			#else
-			self.topRightCornerBadgeView?.fillColor = UIColor.blue.withAlphaComponent(0.65)
-			#endif
-		} else if !hasPlayed {
-			self.topRightCornerBadgeView?.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
-		}
-
-		self.topRightCornerBadgeView?.isHidden = hasPlayed && !favorite
+	private func setupBadges() {
+		setupTopRightBadge()
+		setupDiscCountBadge()
 	}
 
 	override init(frame: CGRect) {
@@ -699,6 +700,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
 //		imageView.tintColor = nil
         titleLabel.text = nil
+		discCountLabel?.text = nil
 		discCountContainerView?.isHidden = true
 		topRightCornerBadgeView?.isHidden = true
 		missingFileView?.isHidden = true
