@@ -1932,6 +1932,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 			let game = searchResults[indexPath.item]
 			cell.game = game
+			cell.delegate = self
+
 			return cell
 		}
 
@@ -1971,6 +1973,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		let game = self.game(at: indexPath)
         cell.game = game
+		cell.delegate = self
 
         return cell
     }
@@ -2684,3 +2687,23 @@ extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 
 }
 #endif
+
+extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
+	func promptToDeleteGame(_ game: PVGame, completion: @escaping ((Bool) -> Void)) {
+		let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+		alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+			// Delete from Realm
+			do {
+				try self.delete(game: game)
+				completion(true)
+			} catch {
+				completion(false)
+				self.presentError(error.localizedDescription)
+			}
+		}))
+		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler:  {(_ action: UIAlertAction) -> Void in
+			completion(false)
+		}))
+		self.present(alert, animated: true) {() -> Void in }
+	}
+}
