@@ -187,7 +187,16 @@
                         </subviews>
                     </view>
                     <toolbarItems>
-                        <barButtonItem title="Play" id="N8T-lW-KL5"/>
+                        <barButtonItem title="Play" id="N8T-lW-KL5">
+                            <connections>
+                                <action selector="playButtonTapped:" destination="rRL-5Z-sl7" id="LRj-J2-jMH"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem systemItem="action" id="l9S-Xk-bvo">
+                            <connections>
+                                <action selector="shareButtonClicked:" destination="rRL-5Z-sl7" id="7Xb-Qv-qIp"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>

@@ -90,7 +90,7 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 }
 #endif
 
-class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
+class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController {
 
 	var collectionViewZoom : CGFloat = 1.0
 
@@ -1591,6 +1591,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #if os(tvOS)
             actionSheet.message = "Options for \(game.title)"
 #endif
+			#if os(iOS)
+			actionSheet.addAction(UIAlertAction(title: "Share", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.share(for: game)
+			}))
+			#endif
+
             actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
@@ -1604,7 +1610,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
                 self.present(alert, animated: true) {() -> Void in }
             }))
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+			actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(actionSheet, animated: true) {() -> Void in }
         }
     }
