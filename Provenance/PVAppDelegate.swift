@@ -15,8 +15,10 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var shortcutItemMD5: String?
-	var _logViewController: PVLogViewController?
 
+	#if os(iOS)
+	var _logViewController: PVLogViewController?
+	#endif
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
@@ -181,7 +183,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension PVAppDelegate {
-	
+
 	func _initLogging() {
 		// Initialize logging
 		PVLogging.sharedInstance()
