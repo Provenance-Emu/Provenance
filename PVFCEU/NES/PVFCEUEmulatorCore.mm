@@ -136,7 +136,7 @@ static __weak PVFCEUEmulatorCore *_current;
         return NO;
     }
 
-    //DLog(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
+    //DLOG(@"FPS: %d", FCEUI_GetDesiredFPS() >> 24); // Hz
 
     FCEUI_SetInput(0, SI_GAMEPAD, &pad[0], 0);
     FCEUI_SetInput(1, SI_GAMEPAD, &pad[1], 0);

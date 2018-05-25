@@ -59,7 +59,7 @@ class LongPressLabel: UILabel {
     #endif
 }
 
-class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController {
+class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
     override func viewDidLoad() {
@@ -82,6 +82,14 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
 
     }
+
+	@IBAction func shareButtonClicked(_ sender: Any) {
+		guard let game = game else {
+			return
+		}
+
+		share(for: game)
+	}
 
     // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
     public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -193,7 +201,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
 }
 
-class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
+class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
 
     @objc
     public var game: PVGame! {
@@ -394,8 +402,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
     }
 
+	@IBAction func shareButtonClicked(_ sender: Any) {
+		share(for: game)
+	}
+
     #if os(iOS)
-    @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
+
+	@IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
         if #available(iOS 9.0, *) {
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
@@ -673,7 +686,14 @@ extension PVGameMoreInfoViewController {
 			(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
         }
 
-		return [playAction, favoriteToggle, deleteAction]
+		let shareAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) in
+
+			if let libVC = viewController as? GameSharingViewController {
+				libVC.share(for: game)
+			}
+		}
+
+		return [playAction, favoriteToggle, shareAction, deleteAction]
     }
 }
 

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3401" systemVersion="13B42" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="LoggerClientData" representedClassName="LoggerClientData" syncable="YES">
+        <attribute name="clientDevice" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientHash" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="clientName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientOSName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientOSVersion" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientUDID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientVersion" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="connectionStatus" optional="YES" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="LoggerConnectionStatusData" inverseName="clientInfo" inverseEntity="LoggerConnectionStatusData" syncable="YES"/>
+    </entity>
+    <entity name="LoggerConnectionStatusData" representedClassName="LoggerConnectionStatusData" syncable="YES">
+        <attribute name="clientAddress" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientHash" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="endTime" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="runCount" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="startTime" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="transportInfo" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="clientInfo" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LoggerClientData" inverseName="connectionStatus" inverseEntity="LoggerClientData" syncable="YES"/>
+    </entity>
+    <entity name="LoggerMessageData" representedClassName="LoggerMessageData" syncable="YES">
+        <attribute name="clientHash" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="contentsType" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="dataFilepath" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileFuncRepresentation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="functionName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageSize" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="landscapeFileFuncHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="landscapeHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="landscapeHintHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="landscapeMessageSize" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="level" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="lineNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="messageText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="messageType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="portraitFileFuncHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="portraitHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="portraitHintHeight" optional="YES" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="portraitMessageSize" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="runCount" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="sequence" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="tag" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="textRepresentation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="threadID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" attributeType="Integer 64" defaultValueString="0" indexed="YES" syncable="YES"/>
+        <attribute name="timestampString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="truncated" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="type" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="LoggerClientData" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="LoggerConnectionStatusData" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="LoggerMessageData" positionX="0" positionY="0" width="0" height="0"/>
+    </elements>
+</model>

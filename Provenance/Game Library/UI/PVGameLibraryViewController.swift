@@ -90,7 +90,9 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 }
 #endif
 
-class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
+class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController {
+
+	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
@@ -284,13 +286,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
-#if os(tvOS)
-        collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
-#else
-    collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-    searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
-#endif
-        view.addSubview(collectionView)
+		#if os(tvOS)
+		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+		#else
+		collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+		searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
+
+		let pinchGesture = UIPinchGestureRecognizer(target: self, action:  #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
+		pinchGesture.cancelsTouchesInView = true
+		collectionView.addGestureRecognizer(pinchGesture)
+		#endif
+
+		view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
 
@@ -382,6 +389,52 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
         }
     }
+
+	#if os(iOS)
+	@objc
+	func didReceivePinchGesture(gesture : UIPinchGestureRecognizer) {
+		guard let collectionView = collectionView else {
+			return
+		}
+
+		let minScale :CGFloat = 0.4
+		let maxScale :CGFloat = traitCollection.horizontalSizeClass == .compact ? 1.5 : 2.0
+
+		struct Holder {
+			static var scaleStart : CGFloat = 1.0
+			static var normalisedY : CGFloat = 0.0
+		}
+
+		switch gesture.state {
+		case .began:
+			Holder.scaleStart = self.collectionViewZoom
+			collectionView.isScrollEnabled = false
+
+			Holder.normalisedY = gesture.location(in: collectionView).y / collectionView.collectionViewLayout.collectionViewContentSize.height
+		case .changed:
+			var newScale = Holder.scaleStart * gesture.scale
+			if newScale < minScale {
+				newScale = minScale
+			} else if newScale > maxScale {
+				newScale = maxScale
+			}
+
+			if newScale != collectionViewZoom {
+				collectionViewZoom = newScale
+				collectionView.collectionViewLayout.invalidateLayout()
+
+				let dragCenter = gesture.location(in: collectionView.superview ?? collectionView)
+				let currentY = Holder.normalisedY * collectionView.collectionViewLayout.collectionViewContentSize.height
+				collectionView.setContentOffset(CGPoint(x: 0, y: currentY - dragCenter.y), animated: false)
+			}
+		case .ended, .cancelled:
+			collectionView.isScrollEnabled = true
+			PVSettingsModel.shared.gameLibraryScale = Double(collectionViewZoom)
+		default:
+			break
+		}
+	}
+	#endif
 
 	class SystemSection : Equatable {
 		let id : String
@@ -1539,6 +1592,12 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #if os(tvOS)
             actionSheet.message = "Options for \(game.title)"
 #endif
+			#if os(iOS)
+			actionSheet.addAction(UIAlertAction(title: "Share", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.share(for: game)
+			}))
+			#endif
+
             actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
@@ -1552,7 +1611,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
                 self.present(alert, animated: true) {() -> Void in }
             }))
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+			actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(actionSheet, animated: true) {() -> Void in }
         }
     }
@@ -1879,6 +1939,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 			let game = searchResults[indexPath.item]
 			cell.game = game
+			cell.delegate = self
+
 			return cell
 		}
 
@@ -1918,6 +1980,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		let game = self.game(at: indexPath)
         cell.game = game
+		cell.delegate = self
 
         return cell
     }
@@ -2197,12 +2260,13 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			let numberOfRows = 1
 			width = viewWidth
 			height = (144.0 + PageIndicatorHeight) * CGFloat(numberOfRows)
-		}
-
-		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
+		} else if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows = 1
 			width = viewWidth
 			height = (height + PageIndicatorHeight + 12) * CGFloat(numberOfRows)
+		} else {
+			width *= collectionViewZoom
+			height *= collectionViewZoom
 		}
 
 		let size = CGSize(width: width, height: height)
@@ -2630,3 +2694,23 @@ extension PVGameLibraryViewController: UIPopoverControllerDelegate {
 
 }
 #endif
+
+extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
+	func promptToDeleteGame(_ game: PVGame, completion: @escaping ((Bool) -> Void)) {
+		let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+		alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
+			// Delete from Realm
+			do {
+				try self.delete(game: game)
+				completion(true)
+			} catch {
+				completion(false)
+				self.presentError(error.localizedDescription)
+			}
+		}))
+		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
+			completion(false)
+		}))
+		self.present(alert, animated: true) {() -> Void in }
+	}
+}

@@ -392,7 +392,13 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 present(alert, animated: true, completion: nil)
             }
-        }
+		} else if indexPath.section == 6 && indexPath.row == 2 {
+			// Log Viewer
+			let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+			logViewController.hideDoneButton()
+			navigationController?.pushViewController(logViewController, animated: true)
+			logViewController.hideDoneButton()
+		}
 
         self.tableView.deselectRow(at: indexPath, animated: true)
         navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVSettingsViewController.done(_:))), animated: false)

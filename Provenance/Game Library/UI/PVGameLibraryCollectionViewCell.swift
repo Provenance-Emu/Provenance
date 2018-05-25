@@ -174,6 +174,10 @@ extension UIImageView {
 	}
 }
 
+protocol GameLibraryCollectionViewDelegate : class {
+	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
+}
+
 //@IBDesignable
 class CornerBadgeView : UIView {
 	enum FillCorner {
@@ -326,6 +330,9 @@ extension UIImage {
 }
 
 class PVGameLibraryCollectionViewCell: UICollectionViewCell {
+
+	weak var delegate : GameLibraryCollectionViewDelegate?
+
 	@IBOutlet private(set) var imageView: UIImageView! {
 		didSet {
 			if #available(iOS 9.0, tvOS 9.0, *) {
@@ -426,6 +433,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var missingFileWidthContraint: NSLayoutConstraint?
 	@IBOutlet weak var missingFileHeightContraint: NSLayoutConstraint?
 	@IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint?
+	@IBOutlet weak var deleteActionView: UIView?
 
 	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
 		let size : CGSize
@@ -603,6 +611,104 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 	}
 
+	#if os(iOS)
+	private func setupPanGesture() {
+		if #available(iOS 9.0, tvOS 9.0, *) {
+
+			let panGesture = UIPanGestureRecognizer(target: self, action: #selector(PVGameLibraryCollectionViewCell.containerPanGestureRecognized(panGesture:)))
+			panGesture.cancelsTouchesInView = true
+			panGesture.delegate = self
+			panGesture.maximumNumberOfTouches = 1
+			self.addGestureRecognizer(panGesture)
+
+			if let deleteActionView = deleteActionView {
+				deleteActionView.removeFromSuperview()
+				deleteActionView.translatesAutoresizingMaskIntoConstraints = false
+				deleteActionView.frame = contentView.bounds
+				backgroundView = UIView(frame: bounds)
+				backgroundView?.isOpaque = true
+				backgroundView?.backgroundColor = Theme.currentTheme.gameLibraryBackground
+				contentView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+				backgroundColor = Theme.currentTheme.gameLibraryBackground
+				isOpaque = true
+				contentView.isOpaque = true
+
+				insertSubview(deleteActionView, belowSubview: contentView)
+
+				deleteActionView.subviews.forEach {
+					if let label = $0 as? UILabel {
+						label.textColor = UIColor.white
+					}
+				}
+
+				deleteActionView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
+				deleteActionView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+				deleteActionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+				deleteActionView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+			}
+		}
+	}
+
+	@objc
+	private func containerPanGestureRecognized(panGesture : UIPanGestureRecognizer) {
+		guard let delegate = delegate, let game = game else {
+			return
+		}
+
+		struct Holder {
+			static var originalLocation : CGPoint = .zero
+		}
+
+		switch panGesture.state {
+		case .began:
+			Holder.originalLocation = panGesture.location(in: contentView)
+			self.deleteActionView?.alpha = 1
+		case .changed:
+			let newX = min(max(panGesture.location(in: self).x - Holder.originalLocation.x, contentView.frame.width * 0.85 * -1), 0)
+
+			var f = contentView.frame
+			f.origin.x = newX
+
+			contentView.frame = f
+		case .ended:
+			var f = contentView.frame
+
+			let animateBack : (() -> Void) = {
+				f.origin.x = 0
+				UIView.animate(withDuration: 0.25, delay: 0.1, usingSpringWithDamping: 0.75, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: {
+					self.deleteActionView?.alpha = 0
+					self.contentView.frame = f
+				}) { (completed) in
+
+				}
+			}
+
+			let swipeDistanceRequired = contentView.frame.width * 0.6 * -1
+			let swipedFarEnough = contentView.frame.origin.x < swipeDistanceRequired
+			if swipedFarEnough {
+				let finalX = contentView.frame.width * 0.9 * -1
+				f.origin.x = finalX
+				UIView.animate(withDuration: 0.1) {
+					self.contentView.frame = f
+				}
+				delegate.promptToDeleteGame(game) { (deleted) in
+					animateBack()
+				}
+			} else {
+				animateBack()
+			}
+		case .cancelled:
+			var f = contentView.frame
+			f.origin.x = 0
+			UIView.animate(withDuration: 0.25) {
+				self.contentView.frame = f
+			}
+		default:
+			break
+		}
+	}
+	#endif
+
 	private func oldViewInit() {
 		var imageHeight: CGFloat = frame.size.height
 		if PVSettingsModel.shared.showGameTitles {
@@ -660,6 +766,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 
+		#if os(iOS)
+		setupPanGesture()
+		#endif
 //		contentView.layer.borderWidth = 1.0
 //		contentView.layer.borderColor = UIColor.white.cgColor
 //
@@ -704,6 +813,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		topRightCornerBadgeView?.isHidden = true
 		missingFileView?.isHidden = true
         token?.invalidate()
+		
+		// Clear image loading from the queue is not needed
+		if let operation = operation, !operation.isFinished, !operation.isExecuting {
+			operation.cancel()
+		}
+
         token = nil
     }
 
@@ -784,5 +899,16 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 	override var preferredFocusedView: UIView? {
 		return artworkContainerView ?? imageView
+	}
+}
+
+extension PVGameLibraryCollectionViewCell : UIGestureRecognizerDelegate {
+	override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+			let velocity = panGestureRecognizer.velocity(in: self)
+			return delegate != nil && game != nil && velocity.x < -150 && abs(velocity.y) < 75
+		} else {
+			return super.gestureRecognizerShouldBegin(gestureRecognizer)
+		}
 	}
 }

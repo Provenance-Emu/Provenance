@@ -112,7 +112,7 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 }
 
 static void input_poll_callback(void) {
-	//DLog(@"poll callback");
+	//DLOG(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
@@ -147,7 +147,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             NSString *appSupportPath = [strongCurrent BIOSPath];
             
             *(const char **)data = [appSupportPath UTF8String];
-            DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
             break;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
@@ -155,7 +155,7 @@ static bool environment_callback(unsigned cmd, void *data) {
             break;
         }
         default : {
-            DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
+            DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
         }
     }
@@ -184,10 +184,10 @@ static void loadSaveFile(const char* path, int type) {
     
     int rc = fread(data, sizeof(uint8_t), size, file);
     if ( rc != size ) {
-        DLog(@"Couldn't load save file.");
+        DLOG(@"Couldn't load save file.");
     }
     
-    DLog(@"Loaded save file: %s", path);
+    DLOG(@"Loaded save file: %s", path);
     fclose(file);
 }
 
@@ -201,10 +201,10 @@ static void writeSaveFile(const char* path, int type)
         FILE *file = fopen(path, "wb");
         if ( file != NULL )
         {
-            DLog(@"Saving state %s. Size: %d bytes.", path, (int)size);
+            DLOG(@"Saving state %s. Size: %d bytes.", path, (int)size);
             stella_retro_serialize(data, size);
             if ( fwrite(data, sizeof(uint8_t), size, file) != size )
-                DLog(@"Did not save state properly.");
+                DLOG(@"Did not save state properly.");
             fclose(file);
         }
     }
@@ -312,7 +312,7 @@ static void writeSaveFile(const char* path, int type)
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
-        DLog(@"Couldn't load save file.");
+        DLOG(@"Couldn't load save file.");
 		return NO;
     }
     
@@ -330,11 +330,11 @@ static void writeSaveFile(const char* path, int type)
         BOOL success = [data writeToFile:path atomically:YES];
         if (!success)
         {
-            DLog(@"Error writing save file");
+            DLOG(@"Error writing save file");
         }
 		return success;
 	} else {
-		ELOG("Stella ramdata is invalid");
+		ELOG(@"Stella ramdata is invalid");
 		return NO;
 	}
 }

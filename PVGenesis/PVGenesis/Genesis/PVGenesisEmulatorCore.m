@@ -9,6 +9,7 @@
 #import "PVGenesisEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
+#import <PVSupport/PVLogging.h>
 #import <PVGenesis/libretro.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
@@ -68,12 +69,12 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
 static void input_poll_callback(void)
 {
-	//DLog(@"poll callback");
+	//DLOG(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
-	//DLog(@"polled input: port: %d device: %d id: %d", port, device, id);
+	//DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
 	
 	__strong PVGenesisEmulatorCore *strongCurrent = _current;
     int16_t value = 0;
@@ -119,7 +120,7 @@ static bool environment_callback(unsigned cmd, void *data)
 			NSString *appSupportPath = [strongCurrent BIOSPath];
 			
 			*(const char **)data = [appSupportPath UTF8String];
-			DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+			DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
 			break;
 		}
 		case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
@@ -127,7 +128,7 @@ static bool environment_callback(unsigned cmd, void *data)
 			break;
 		}
 		default :
-			DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
+			DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
 			return false;
 	}
 	
@@ -281,7 +282,7 @@ static bool environment_callback(unsigned cmd, void *data)
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
-        DLog(@"Couldn't load save file.");
+        WLOG(@"Couldn't load save file.");
     }
     
     [data getBytes:ramData length:size];
@@ -299,7 +300,7 @@ static bool environment_callback(unsigned cmd, void *data)
         BOOL success = [data writeToFile:path atomically:YES];
         if (!success)
         {
-            DLog(@"Error writing save file");
+            ELOG(@"Error writing save file");
         }
 		return success;
 	} else {
@@ -513,7 +514,7 @@ static bool environment_callback(unsigned cmd, void *data)
                              error:&error];
         if (error)
         {
-            DLog(@"Error saving state: %@", [error localizedDescription]);
+            ELOG(@"Error saving state: %@", [error localizedDescription]);
             return NO;
         }
         
@@ -537,7 +538,7 @@ static bool environment_callback(unsigned cmd, void *data)
 													code:PVEmulatorCoreErrorCodeCouldNotLoadState
 												userInfo:userInfo];
 			*error = newError;
-            DLog(@"Unable to load save state from path: %@", path);
+            ELOG(@"Unable to load save state from path: %@", path);
             return NO;
         }
         
@@ -553,7 +554,7 @@ static bool environment_callback(unsigned cmd, void *data)
 													code:PVEmulatorCoreErrorCodeCouldNotLoadState
 												userInfo:userInfo];
 			*error = newError;
-            DLog(@"Unable to load save state");
+            DLOG(@"Unable to load save state");
             return NO;
         }
         

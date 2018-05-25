@@ -10,6 +10,7 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
+#import "PVLogging.h"
 #import <AVFoundation/AVFoundation.h>
 
 /* Timing */
@@ -412,7 +413,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 		return [self channelCount];
 	}
 	
-	DLog(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
+	ELOG(@"Buffer counts greater than 1 must implement %@", NSStringFromSelector(_cmd));
 	[self doesNotImplementSelector:_cmd];
 	
 	return 0;
@@ -435,7 +436,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 		return [self audioSampleRate];
 	}
 	
-    DLog(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
+    ELOG(@"Buffer count is greater than 1, must implement %@", NSStringFromSelector(_cmd));
     [self doesNotImplementSelector:_cmd];
     return 0;
 }

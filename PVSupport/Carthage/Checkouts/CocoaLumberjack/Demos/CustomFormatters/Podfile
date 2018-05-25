@@ -1,0 +1,10 @@
+
+project 'CustomFormatters'
+workspace '../Demos'
+
+target :'CustomFormatters' do
+  platform :osx, '10.8'
+  use_frameworks!
+  pod 'CocoaLumberjack', :path => '../../'
+end
+

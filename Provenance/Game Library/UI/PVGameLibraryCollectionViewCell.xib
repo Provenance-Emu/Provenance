@@ -20,6 +20,24 @@
                 <rect key="frame" x="0.0" y="0.0" width="164" height="144"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dcz-5q-ONB">
+                        <rect key="frame" x="0.0" y="0.0" width="164" height="144"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Delete" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.25" translatesAutoresizingMaskIntoConstraints="NO" id="k2y-oJ-wzu">
+                                <rect key="frame" x="8" y="8" width="146" height="128"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="highlightedColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="k2y-oJ-wzu" secondAttribute="trailing" constant="10" id="4cW-z2-9MQ"/>
+                            <constraint firstAttribute="bottom" secondItem="k2y-oJ-wzu" secondAttribute="bottom" constant="8" id="LJt-PV-dR9"/>
+                            <constraint firstItem="k2y-oJ-wzu" firstAttribute="top" secondItem="dcz-5q-ONB" secondAttribute="top" constant="8" id="RAo-h9-KEF"/>
+                            <constraint firstItem="k2y-oJ-wzu" firstAttribute="leading" secondItem="dcz-5q-ONB" secondAttribute="leading" constant="8" id="bpx-A1-Mi3"/>
+                        </constraints>
+                    </view>
                     <view clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKb-WS-gGA" userLabel="ArtworkContainerView">
                         <rect key="frame" x="0.0" y="0.0" width="164" height="109.66666666666667"/>
                         <subviews>
@@ -56,7 +74,7 @@
                                     <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="zI8-wE-s6p"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
                                 <rect key="frame" x="123" y="68.333333333333329" width="41" height="41.333333333333329"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="2" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="4" translatesAutoresizingMaskIntoConstraints="NO" id="fFj-aX-6m6">
@@ -75,7 +93,7 @@
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="top" secondItem="mwp-JA-v4w" secondAttribute="top" constant="8" id="cQR-PD-B7n"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
                                 <rect key="frame" x="123" y="0.0" width="41" height="41"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -129,7 +147,11 @@
             <constraints>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="6KK-cp-gKM"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="6xC-fV-K8o"/>
+                <constraint firstAttribute="bottom" secondItem="dcz-5q-ONB" secondAttribute="bottom" id="Ce8-1f-WhZ"/>
+                <constraint firstItem="dcz-5q-ONB" firstAttribute="top" secondItem="hUV-Gh-K0R" secondAttribute="top" id="DP6-i3-7TP"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="centerX" secondItem="hUV-Gh-K0R" secondAttribute="centerX" id="Oob-wr-6mO"/>
+                <constraint firstItem="dcz-5q-ONB" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="Vt1-FU-HY8"/>
+                <constraint firstAttribute="trailing" secondItem="dcz-5q-ONB" secondAttribute="trailing" id="Wmu-7y-5S9"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.2" constant="1" id="dr3-Br-VIF"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="bottom" secondItem="hUV-Gh-K0R" secondAttribute="bottom" id="fKb-4g-dTS"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="gmr-Cy-QOx"/>
@@ -140,6 +162,7 @@
             <size key="customSize" width="715" height="589"/>
             <connections>
                 <outlet property="artworkContainerView" destination="RKb-WS-gGA" id="rBu-ZT-iY6"/>
+                <outlet property="deleteActionView" destination="dcz-5q-ONB" id="bwL-0M-LnS"/>
                 <outlet property="discCountContainerView" destination="mwp-JA-v4w" id="wtl-38-ugX"/>
                 <outlet property="discCountLabel" destination="fFj-aX-6m6" id="lgA-FG-MaR"/>
                 <outlet property="discCountTrailingConstraint" destination="kJ6-P7-xAu" id="bYT-Lm-kML"/>

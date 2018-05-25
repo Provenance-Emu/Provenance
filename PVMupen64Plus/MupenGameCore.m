@@ -80,7 +80,7 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
 #if DEBUG
-//	DLOG("%s", _pText);
+//	DLOG(@"%s", _pText);
 #endif
 }
 
@@ -552,7 +552,7 @@ static void ConfigureGLideN64(NSString *romFolder) {
 
 	// Warning, anything other than 0 crashes shader compilation
 	// "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)"
-	int MultiSampling =0;
+	int MultiSampling = 0;
 	ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
 #endif
 
@@ -560,10 +560,14 @@ static void ConfigureGLideN64(NSString *romFolder) {
 	 "txDeposterize", config.textureFilter.txDeposterize, "Deposterize texture before enhancement."
 	 "txFilterIgnoreBG", config.textureFilter.txFilterIgnoreBG, "Don't filter background textures."
 	 "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
-	 "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
 	 "txDump", config.textureFilter.txDump, "Enable dump of loaded N64 textures."
 	 "txForce16bpp", config.textureFilter.txForce16bpp, "Force use 16bit texture formats for HD textures."
 	*/
+
+	// "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
+	int txHresAltCRC = 0;
+	ConfigSetParameter(gliden64, "txHresAltCRC", M64TYPE_BOOL, &txHresAltCRC);
+
 
 	// "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
 	int txHiresFullAlphaChannel = 1;
@@ -648,6 +652,20 @@ static void ConfigureRICE() {
 	// Copy default config files if they don't exist
 	NSArray<NSString*>* iniFiles = @[@"GLideN64.ini", @"GLideN64.custom.ini", @"RiceVideoLinux.ini", @"mupen64plus.ini"];
 	NSFileManager *fm = [NSFileManager defaultManager];
+
+	// Create destination folder if missing
+
+	BOOL isDirectory;
+	if (![fm fileExistsAtPath:romFolder isDirectory:&isDirectory]) {
+		ILOG(@"ROM data folder doesn't exist, creating %@", romFolder);
+		NSError *error;
+		BOOL success = [fm createDirectoryAtPath:romFolder withIntermediateDirectories:YES attributes:nil error:&error];
+		if (!success) {
+			ELOG(@"Failed to create destination folder %@. Error: %@", romFolder, error.localizedDescription);
+			return;
+		}
+	}
+
 	for (NSString *iniFile in iniFiles) {
 		NSString *destinationPath = [romFolder stringByAppendingPathComponent:iniFile];
 
@@ -722,6 +740,8 @@ static void ConfigureRICE() {
 
 	// Copy default ini files to the config path
 	[self copyIniFiles:configPath];
+	// Rice looks in the data path for some reason, fuck it copy it there too - joe m
+	[self copyIniFiles:dataPath];
 
 	// Setup configs
 	ConfigureAll(romFolder);
@@ -832,11 +852,11 @@ static void ConfigureRICE() {
 	ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
 #else
 	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
-		ILOG("No 64bit or GLES3. Using RICE GFX plugin.");
+		ILOG(@"No 64bit or GLES3. Using RICE GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
 		ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
 	} else {
-		ILOG("64bit and GLES3. Using GLiden64 GFX plugin.");
+		ILOG(@"64bit and GLES3. Using GLiden64 GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
 
 		ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");

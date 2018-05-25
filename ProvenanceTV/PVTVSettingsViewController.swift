@@ -8,7 +8,7 @@
 import UIKit
 
 class PVTVSettingsViewController: UITableViewController {
-    var gameImporter: PVGameImporter = PVGameImporter(completionHandler: nil)
+    var gameImporter: PVGameImporter = PVGameImporter()
     @IBOutlet weak var autoSaveValueLabel: UILabel!
     @IBOutlet weak var autoLoadValueLabel: UILabel!
     @IBOutlet weak var versionValueLabel: UILabel!

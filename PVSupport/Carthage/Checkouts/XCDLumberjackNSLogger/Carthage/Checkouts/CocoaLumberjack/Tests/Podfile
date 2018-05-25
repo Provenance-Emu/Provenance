@@ -1,0 +1,21 @@
+source 'https://github.com/CocoaPods/Specs'
+
+xcodeproj 'CocoaLumberjack Tests'
+workspace '../Framework/Lumberjack'
+inhibit_all_warnings!
+
+def import_pods
+  pod 'Expecta'
+  pod 'OCMock'
+  pod 'CocoaLumberjack', :path => '../'
+end
+
+target :'iOS Tests' do
+  platform :ios, '5.1.1'
+  import_pods
+end
+
+target :'OS X Tests' do
+  platform :osx, '10.7'
+  import_pods
+end

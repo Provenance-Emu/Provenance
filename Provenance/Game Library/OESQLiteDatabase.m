@@ -135,12 +135,12 @@ NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
         }
         case SQLITE_BLOB:
         {
-            DLog(@"SQLITE Type Blob not supported right now");
+            DLOG(@"SQLITE Type Blob not supported right now");
             value = nil;
             break;
         }
         default:
-            DLog(@"Unknown data type: %d", type);
+            DLOG(@"Unknown data type: %d", type);
             value = nil;
             break;
     }

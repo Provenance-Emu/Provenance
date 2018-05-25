@@ -26,6 +26,65 @@ public protocol GameLaunchingViewController: class {
 	func presentCoreSelection(forGame game : PVGame, sender : Any?)
 }
 
+public protocol GameSharingViewController : class {
+	func share(for game: PVGame)
+}
+
+extension GameSharingViewController where Self : UIViewController {
+	func share(for game: PVGame) {
+		/*
+		TODO:
+		Add native share action for sharing to other provenance devices
+		Add metadata files to shares so they can cleanly re-import
+		Well, then also need a way to import save states
+		*/
+		#if os(iOS)
+		// Add save states
+		var files = Array(game.saveStates.compactMap {
+			return $0.file.url
+		})
+
+		ILOG("Adding \(files.count) save states to zip")
+
+		// Add main game file
+		files.append(game.file.url)
+
+		// Check for and add battery saves
+		if FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
+			ILOG("Adding \(batterySaves.count) battery saves to zip")
+			files.append(contentsOf: batterySaves)
+		}
+
+		let tempDir = NSTemporaryDirectory()
+		let tempDirURL = URL(fileURLWithPath: tempDir, isDirectory: true)
+
+		do {
+			try FileManager.default.createDirectory(at: tempDirURL, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			ELOG("Failed to create temp dir \(tempDir). Error: " + error.localizedDescription)
+			return
+		}
+
+		let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system.shortNameAlt ?? game.system.shortName).zip", isDirectory: false)
+		let paths : [String] = files.map { $0.path }
+
+		let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
+		guard success else {
+			ELOG("Failed to zip of game files")
+			return
+		}
+
+		let shareVC = UIActivityViewController(activityItems: [zipPath], applicationActivities: nil)
+		if isBeingPresented {
+			present(shareVC, animated: true)
+		} else {
+			let vc = UIApplication.shared.delegate?.window??.rootViewController
+			vc?.present(shareVC, animated: true)
+		}
+		#endif
+	}
+}
+
 public enum GameLaunchingError: Error {
     case systemNotFound
     case generic(String)
@@ -380,7 +439,7 @@ extension GameLaunchingViewController where Self : UIViewController {
 			// Use a timer loop on ios 10+ to check if the emulator has started running
 			if let saveState = saveState {
 				emulatorViewController.glViewController?.view.isHidden = true
-				if #available(iOS 10.0, *) {
+				if #available(iOS 10.0, tvOS 10.0, *) {
 					_ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: { (timer) in
 						if !emulatorViewController.core.isEmulationPaused() {
 							timer.invalidate()
