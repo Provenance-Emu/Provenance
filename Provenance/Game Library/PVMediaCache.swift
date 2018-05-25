@@ -30,7 +30,11 @@ public class PVMediaCache: NSObject {
 		return cache
 	}()
 
-    private var operationQueue: OperationQueue = OperationQueue() // Was this meant to be a serial queue?
+	private var operationQueue: OperationQueue = {
+		let queue = OperationQueue() // Was this meant to be a serial queue?
+		queue.qualityOfService = .userInitiated
+		return queue
+	}()
 
 // MARK: - Object life cycle
     static var _sharedInstance: PVMediaCache = PVMediaCache()

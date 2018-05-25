@@ -74,7 +74,7 @@
                                     <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="zI8-wE-s6p"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
                                 <rect key="frame" x="123" y="68.333333333333329" width="41" height="41.333333333333329"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="2" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="4" translatesAutoresizingMaskIntoConstraints="NO" id="fFj-aX-6m6">
@@ -93,7 +93,7 @@
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="top" secondItem="mwp-JA-v4w" secondAttribute="top" constant="8" id="cQR-PD-B7n"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
                                 <rect key="frame" x="123" y="0.0" width="41" height="41"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
