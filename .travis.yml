@@ -5,6 +5,11 @@ xcode_scheme: Provenance-Release
 language: objective-c
 osx_image: xcode9.3
 
+cache:
+  directories:
+  - Carthage
+  - PVSupport/Carthage
+
 # branches:
 #   only:
 #     - develop
@@ -14,7 +19,11 @@ env:
 before_install:
   - gem install xcpretty -N
   - brew update
-  - brew install swiftlint || true
+  - brew outdated swiftlint || brew upgrade swiftlint
+  - brew outdated carthage || brew upgrade carthage
+  - cd PVSupport
+  - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
+  - cd ..
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
