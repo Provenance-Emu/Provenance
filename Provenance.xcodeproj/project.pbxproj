@@ -3377,7 +3377,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#/usr/local/bin/carthage build --cache-builds\n#/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "#/usr/local/bin/carthage build --cache-builds --platform iOS\n#/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 		B3E708A720B7E465005BAA5A /* Check Carthage Outdated */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -499,7 +499,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage build --cache-builds\n/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 		B3E708A920B7E918005BAA5A /* Carthage Build */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -513,7 +513,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage build --cache-builds\n/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 /* End PBXShellScriptBuildPhase section */
 
