@@ -32,6 +32,7 @@ let kButtonTintsKey = "kButtonsTintsKey"
 let kStartSelectAlwaysOnKey = "kStartSelectAlwaysOnKey"
 let kAllRightShouldersKey = "kAllRightShouldersKey"
 let kVolumeHUDKey = "kVolumeHUDKey"
+let kGameLibraryScaleKey = "kkGameLibraryScaleKey"
 
 public class PVSettingsModel: NSObject {
 
@@ -148,6 +149,14 @@ public class PVSettingsModel: NSObject {
         }
     }
 
+	@objc
+	var gameLibraryScale: Double {
+		didSet {
+			UserDefaults.standard.set(gameLibraryScale, forKey: kGameLibraryScaleKey)
+			UserDefaults.standard.synchronize()
+		}
+	}
+
     @objc
     var webDavAlwaysOn: Bool {
         didSet {
@@ -257,6 +266,7 @@ public class PVSettingsModel: NSObject {
                                                   kStartSelectAlwaysOnKey: false,
                                                   kAllRightShouldersKey: false,
                                                   kVolumeHUDKey: true,
+												  kGameLibraryScaleKey: 1.0,
                                                   kThemeKey: theme])
         UserDefaults.standard.synchronize()
 
@@ -283,6 +293,7 @@ public class PVSettingsModel: NSObject {
         startSelectAlwaysOn = UserDefaults.standard.bool(forKey: kStartSelectAlwaysOnKey)
         allRightShoulders = UserDefaults.standard.bool(forKey: kAllRightShouldersKey)
         volumeHUD = UserDefaults.standard.bool(forKey: kVolumeHUDKey)
+		gameLibraryScale = UserDefaults.standard.double(forKey: kGameLibraryScaleKey)
 
         #if os(iOS)
         let themeString = UserDefaults.standard.string(forKey: kThemeKey) ?? Themes.defaultTheme.rawValue

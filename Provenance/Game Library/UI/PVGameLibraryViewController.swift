@@ -92,7 +92,7 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController {
 
-	var collectionViewZoom : CGFloat = 1.0
+	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
@@ -429,6 +429,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 		case .ended, .cancelled:
 			collectionView.isScrollEnabled = true
+			PVSettingsModel.shared.gameLibraryScale = Double(collectionViewZoom)
 		default:
 			break
 		}
