@@ -237,7 +237,7 @@ public class PVSettingsModel: NSObject {
 
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
 												  kTimedAutoSaves: true,
-												  kTimedAutoSaveInterval: minutes(5),
+												  kTimedAutoSaveInterval: minutes(10),
                                                   kAskToAutoLoadKey: true,
                                                   kAutoLoadSavesKey: false,
                                                   kControllerOpacityKey: 0.8,

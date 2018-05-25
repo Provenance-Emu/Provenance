@@ -415,20 +415,21 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     @objc
     public func updatePlayedDuration() {
-        guard let startTime = game.lastPlayed else {
-            return
-        }
-
-        let duration = startTime.timeIntervalSinceNow * -1
-        let totalTimeSpent = game.timeSpentInGame + Int(duration)
-
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                game.timeSpentInGame = totalTimeSpent
-//                game.lastPlayed = Date()
+        if !isShowingMenu {
+            guard let startTime = game.lastPlayed else {
+                return
             }
-        } catch {
-            presentError("\(error.localizedDescription)")
+
+            let duration = startTime.timeIntervalSinceNow * -1
+            let totalTimeSpent = game.timeSpentInGame + Int(duration)
+
+            do {
+                try RomDatabase.sharedInstance.writeTransaction {
+                    game.timeSpentInGame = totalTimeSpent
+                }
+            } catch {
+                presentError("\(error.localizedDescription)")
+            }
         }
     }
 
@@ -546,6 +547,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     @objc func showMenu(_ sender: Any?) {
         enableContorllerInput(true)
         core.setPauseEmulation(true)
+        updatePlayedDuration()
         isShowingMenu = true
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad {
@@ -670,7 +672,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         present(actionsheet, animated: true, completion: {() -> Void in
             PVControllerManager.shared.iCadeController?.refreshListener()
         })
-        updatePlayedDuration()
     }
 
     @objc func hideModeInfo() {
@@ -801,7 +802,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
-		let minimumPlayTimeToMakeAutosave : Double = 10
+		let minimumPlayTimeToMakeAutosave : Double = 60
 		if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1)  < minimumPlayTimeToMakeAutosave {
 			ILOG("Haven't been playing game long enough to make an autosave")
 			return

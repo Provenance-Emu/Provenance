@@ -581,26 +581,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}
 
 				self.saveStatesIsEmpty = needsDelete
-
-				// If there are more than 6 save states in total, and we are deleting some, if any of the 6 slots in the recent states secion
-				// will be backfilled, then we just transform the deletions into modifications, so they are reloaded.
-//				var modifications = modifications
-//				var deletions = deletions
-//				if (self.saveStates?.count ?? 0) >= self.maxForSpecialSection && deletions.count > 0 {
-//					deletions = []
-//					for i in 0..<self.maxForSpecialSection {
-//						modifications.append(i)
-//					}
-//				}
-//
-				// Query results have changed, so apply them to the UICollectionView
-//				let filteredDeletions = self.filterRecents(deletions)
-//				let filteredInsertions = self.filterRecents(insertions)
-//				let filteredModifications = self.filterRecents(modifications)
-//
-//                self.handleUpdate(forSection: section, deletions: filteredDeletions, insertions: filteredInsertions, modifications: filteredModifications, needsInsert: needsInsert, needsDelete: needsDelete)
 			case .error(let error):
-				// An error occurred while opening the Realm file on the background worker thread
+					// An error occurred while opening the Realm file on the background worker thread
 				fatalError("\(error)")
 			}
 		}
@@ -610,11 +592,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             case .initial(let result):
                 if !result.isEmpty {
                     self.recentGamesIsEmpty = false
-
-//                    if !self.recentGamesIsHidden {
-//                        let section = self.recentGamesSection
-//                        collectionView.insertSections([section])
-//                    }
                 }
 
                 self.collectionView?.reloadData()
@@ -645,47 +622,45 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					self.collectionView?.deleteSections([self.recentGamesSection])
                 }
 
-                // Query results have changed, so apply them to the UICollectionView
-//                self.handleUpdate(forSection: section, deletions: self.filterRecents(deletions), insertions: self.filterRecents(insertions), modifications: self.filterRecents(modifications), needsInsert: needsInsert, needsDelete: needsDelete)
+                	// Query results have changed, so apply them to the UICollectionView
                 self.recentGamesIsEmpty = needsDelete
             case .error(let error):
-                // An error occurred while opening the Realm file on the background worker thread
+                	// An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
         }
 
         favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
-            let section = 0
-
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
                     self.favoritesIsHidden = false
-//                    collectionView.insertSections([section])
                 }
 
                 self.collectionView?.reloadData()
-            case .update(_, let deletions, let insertions, let modifications):
+            case .update(_, let deletions, let insertions, _):
 				if self.isInSearch {
 					return
 				}
 
                 let needsInsert = self.favoritesIsHidden && !insertions.isEmpty
-                let needsDelete = self.favoriteGames?.isEmpty ?? false
+				var needsDelete : Bool = false
+				if let favoriteGames = self.favoriteGames {
+					let totalDeletions = deletions.count - insertions.count
+					needsDelete = (favoriteGames.isEmpty && insertions.isEmpty) || (favoriteGames.count < totalDeletions)
+				}
+				let existingFavoritesSection = self.favoritesSection
                 self.favoritesIsHidden = needsDelete
 
 				if needsInsert {
 					self.collectionView?.insertSections([self.favoritesSection])
 				}
 
-				if needsDelete {
-					self.collectionView?.deleteSections([self.favoritesSection])
+				if needsDelete, existingFavoritesSection >= 0 {
+					self.collectionView?.deleteSections([existingFavoritesSection])
 				}
-
-                // Query results have changed, so apply them to the UICollectionView
-//                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: needsInsert, needsDelete: needsDelete)
             case .error(let error):
-                // An error occurred while opening the Realm file on the background worker thread
+					// An error occurred while opening the Realm file on the background worker thread
                 fatalError("\(error)")
             }
         }
