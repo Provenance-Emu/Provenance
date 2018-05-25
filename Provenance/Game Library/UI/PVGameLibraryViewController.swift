@@ -435,7 +435,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 	#endif
 
-
 	class SystemSection : Equatable {
 		let id : String
 		let system : PVSystem
@@ -2701,7 +2700,7 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
 				self.presentError(error.localizedDescription)
 			}
 		}))
-		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler:  {(_ action: UIAlertAction) -> Void in
+		alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
 			completion(false)
 		}))
 		self.present(alert, animated: true) {() -> Void in }

@@ -174,7 +174,6 @@ extension UIImageView {
 	}
 }
 
-
 protocol GameLibraryCollectionViewDelegate : class {
 	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
 }

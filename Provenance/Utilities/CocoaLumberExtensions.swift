@@ -52,7 +52,7 @@ public final class PVTTYFormatter : NSObject, DDLogFormatter {
 		let hours : Double = timeInterval / 3600
 		return (Int(hours), Int(minutes), seconds)
 	}
-	
+
     public struct Themes {
         static let HeartTheme = EmojiTheme(verbose: "💜", info: "💙:", debug: "💚", warning:  "💛", error: "❤️")
         static let RecycleTheme = EmojiTheme(verbose: "♳", info: "♴:", debug: "♵", warning:  "♶", error: "♷")
@@ -99,14 +99,14 @@ public final class PVTTYFormatter : NSObject, DDLogFormatter {
 		if seconds > 0 {
 			timeStampBuilder += String(format: "%02.1fs", arguments: [seconds])
 		}
-		
+
         if timeStampBuilder.count < 8 && timeStampBuilder.count > 1 {
             timeStampBuilder = timeStampBuilder.padding(toLength: 8, withPad: " ", startingAt: 0)
         }
 
 //        let queue = logMessage.queueLabel != "com.apple.main-thread" ? "(\(logMessage.queueLabel))" : ""
         let text = logMessage.message
-        
+
         return "🕐\(timeStampBuilder) \(emoji)\(level) \(logMessage.fileName):\(logMessage.line).\(logMessage.function ?? "") ↩\n\t☞ \(text)"
     }
 }
@@ -115,18 +115,18 @@ extension DDLogFlag {
     public static func fromLogLevel(_ logLevel: DDLogLevel) -> DDLogFlag {
         return DDLogFlag(rawValue: logLevel.rawValue)
     }
-    
+
     public init(_ logLevel: DDLogLevel) {
         self = DDLogFlag(rawValue: logLevel.rawValue)
     }
-    
+
     ///returns the log level, or the lowest equivalant.
     public func toLogLevel() -> DDLogLevel {
         if let ourValid = DDLogLevel(rawValue: self.rawValue) {
             return ourValid
         } else {
             let logFlag:DDLogFlag = self
-            
+
             if logFlag.contains(.verbose) {
                 return .verbose
             } else if logFlag.contains(.debug) {
@@ -199,7 +199,6 @@ public func CurrentFileName(_ fileName: StaticString = #file) -> String {
     }
     return str
 }
-
 
 //import Foundation
 //import CocoaLumberjack

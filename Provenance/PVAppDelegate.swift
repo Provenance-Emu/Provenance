@@ -206,11 +206,11 @@ extension PVAppDelegate {
 		}
 
 		let secretTap = UITapGestureRecognizer(target: self, action: #selector(PVAppDelegate._displayLogViewer))
-		secretTap.numberOfTapsRequired = 3;
+		secretTap.numberOfTapsRequired = 3
 		#if targetEnvironment(simulator)
-		secretTap.numberOfTouchesRequired = 2;
+		secretTap.numberOfTouchesRequired = 2
 		#else
-		secretTap.numberOfTouchesRequired = 3;
+		secretTap.numberOfTouchesRequired = 3
 		#endif
 		window.addGestureRecognizer(secretTap)
 	}
