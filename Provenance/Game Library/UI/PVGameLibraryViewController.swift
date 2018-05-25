@@ -92,6 +92,8 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 
 class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController {
 
+	var collectionViewZoom : CGFloat = 1.0
+
     var watcher: PVDirectoryWatcher?
     var gameImporter: PVGameImporter!
 	var filePathsToImport = [URL]()
@@ -284,13 +286,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView.register(PVGameLibrarySectionHeaderView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier)
         collectionView.register(PVGameLibrarySectionFooterView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: PVGameLibraryFooterViewIdentifier)
 
-#if os(tvOS)
-        collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
-#else
-    collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
-    searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
-#endif
-        view.addSubview(collectionView)
+		#if os(tvOS)
+		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+		#else
+		collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+		searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
+
+		let pinchGesture = UIPinchGestureRecognizer(target: self, action:  #selector(PVGameLibraryViewController.didReceivePinchGesture(gesture:)))
+		pinchGesture.cancelsTouchesInView = true
+		collectionView.addGestureRecognizer(pinchGesture)
+		#endif
+
+		view.addSubview(collectionView)
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVGameLibraryViewController.longPressRecognized(_:)))
         collectionView.addGestureRecognizer(longPressRecognizer)
 
@@ -382,6 +389,52 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             return (favoritesIsHidden ? 0 : 1) + (saveStatesIsHidden ? 0 : 1)
         }
     }
+
+	#if os(iOS)
+	@objc
+	func didReceivePinchGesture(gesture : UIPinchGestureRecognizer) {
+		guard let collectionView = collectionView else {
+			return
+		}
+
+		let minScale :CGFloat = 0.4
+		let maxScale :CGFloat = traitCollection.horizontalSizeClass == .compact ? 1.5 : 2.0
+
+		struct Holder {
+			static var scaleStart : CGFloat = 1.0
+			static var normalisedY : CGFloat = 0.0
+		}
+
+		switch gesture.state {
+		case .began:
+			Holder.scaleStart = self.collectionViewZoom
+			collectionView.isScrollEnabled = false
+
+			Holder.normalisedY = gesture.location(in: collectionView).y / collectionView.collectionViewLayout.collectionViewContentSize.height
+		case .changed:
+			var newScale = Holder.scaleStart * gesture.scale
+			if newScale < minScale {
+				newScale = minScale
+			} else if newScale > maxScale {
+				newScale = maxScale
+			}
+
+			if newScale != collectionViewZoom {
+				collectionViewZoom = newScale
+				collectionView.collectionViewLayout.invalidateLayout()
+
+				let dragCenter = gesture.location(in: collectionView.superview ?? collectionView)
+				let currentY = Holder.normalisedY * collectionView.collectionViewLayout.collectionViewContentSize.height
+				collectionView.setContentOffset(CGPoint(x: 0, y: currentY - dragCenter.y), animated: false)
+			}
+		case .ended, .cancelled:
+			collectionView.isScrollEnabled = true
+		default:
+			break
+		}
+	}
+	#endif
+
 
 	class SystemSection : Equatable {
 		let id : String
@@ -2197,12 +2250,13 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			let numberOfRows = 1
 			width = viewWidth
 			height = (144.0 + PageIndicatorHeight) * CGFloat(numberOfRows)
-		}
-
-		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
+		} else if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows = 1
 			width = viewWidth
 			height = (height + PageIndicatorHeight + 12) * CGFloat(numberOfRows)
+		} else {
+			width *= collectionViewZoom
+			height *= collectionViewZoom
 		}
 
 		let size = CGSize(width: width, height: height)
