@@ -786,26 +786,26 @@
 		B3E6DACA20B79C3600454DD4 /* CocoaLumberExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DAC620B79C0C00454DD4 /* CocoaLumberExtensions.swift */; };
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; };
-		B3E7088820B7E0BB005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088320B7E0BA005BAA5A /* NSLogger.framework */; };
-		B3E7088920B7E0BB005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088320B7E0BA005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7088A20B7E0BC005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088420B7E0BA005BAA5A /* XCDLumberjackNSLogger.framework */; };
-		B3E7088B20B7E0BC005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088420B7E0BA005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7088C20B7E0BC005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088520B7E0BA005BAA5A /* CocoaLumberjack.framework */; };
-		B3E7088D20B7E0BC005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088520B7E0BA005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7088E20B7E0BC005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088620B7E0BB005BAA5A /* NSLoggerSwift.framework */; };
-		B3E7088F20B7E0BC005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088620B7E0BB005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7089020B7E0BC005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088720B7E0BB005BAA5A /* CocoaLumberjackSwift.framework */; };
-		B3E7089120B7E0BC005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7088720B7E0BB005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7089C20B7E144005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089720B7E143005BAA5A /* XCDLumberjackNSLogger.framework */; };
-		B3E7089D20B7E144005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089720B7E143005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E7089E20B7E144005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089820B7E143005BAA5A /* CocoaLumberjack.framework */; };
-		B3E7089F20B7E144005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089820B7E143005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E708A020B7E144005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089920B7E143005BAA5A /* CocoaLumberjackSwift.framework */; };
-		B3E708A120B7E144005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089920B7E143005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E708A220B7E144005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089A20B7E144005BAA5A /* NSLogger.framework */; };
-		B3E708A320B7E144005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089A20B7E144005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E708A420B7E144005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089B20B7E144005BAA5A /* NSLoggerSwift.framework */; };
-		B3E708A520B7E144005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E7089B20B7E144005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708AF20B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */; };
+		B3E708B020B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708B120B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */; };
+		B3E708B220B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708B320B7EB2B005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */; };
+		B3E708B420B7EB2B005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708B520B7EB2B005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */; };
+		B3E708B620B7EB2B005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */; };
+		B3E708B820B7EB2B005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708BE20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; };
+		B3E708BF20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708C020B7EB45005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BA20B7EB43005BAA5A /* NSLogger.framework */; };
+		B3E708C120B7EB45005BAA5A /* NSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BA20B7EB43005BAA5A /* NSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708C220B7EB45005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */; };
+		B3E708C320B7EB45005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708C420B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */; };
+		B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3E708C620B7EB45005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */; };
+		B3E708C720B7EB45005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3F64EC9205CBC6100C273C7 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
@@ -900,23 +900,23 @@
 			files = (
 				B3661722206EC4FC00A4F306 /* Realm.framework in Embed Frameworks */,
 				B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */,
-				B3E7089F20B7E144005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3C9D4B21DEA74500068D057 /* PVGB.framework in Embed Frameworks */,
+				B3E708C320B7EB45005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
 				B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3995E502058229F001D4985 /* PVFCEU.framework in Embed Frameworks */,
-				B3E7089D20B7E144005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
+				B3E708BF20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3C9D5DC1DEA8A200068D057 /* PVGBA.framework in Embed Frameworks */,
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
-				B3E708A320B7E144005BAA5A /* NSLogger.framework in Embed Frameworks */,
-				B3E708A120B7E144005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
-				B3E708A520B7E144005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B3E708C120B7EB45005BAA5A /* NSLogger.framework in Embed Frameworks */,
+				B3E708C720B7EB45005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
+				B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */,
@@ -932,27 +932,27 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3661720206EC4D100A4F306 /* Realm.framework in Embed Frameworks */,
-				B3E7088F20B7E0BC005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
-				B3E7089120B7E0BC005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
-				B3E7088B20B7E0BC005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
+				B3E708B220B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
 				B3C9D4AF1DEA74390068D057 /* PVGB.framework in Embed Frameworks */,
-				B3E7088920B7E0BB005BAA5A /* NSLogger.framework in Embed Frameworks */,
+				B3E708B420B7EB2B005BAA5A /* NSLoggerSwift.framework in Embed Frameworks */,
 				B3B0860B1E71316A007F39E1 /* PVMednafen.framework in Embed Frameworks */,
 				1A19EE162080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */,
+				B3E708B020B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Embed Frameworks */,
 				B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */,
+				B3E708B620B7EB2B005BAA5A /* NSLogger.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
 				B354693D1DECDA710018B6F3 /* PVAtari800.framework in Embed Frameworks */,
+				B3E708B820B7EB2B005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				B3E7088D20B7E0BC005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1599,16 +1599,16 @@
 		B3E6DADA20B7AD1500454DD4 /* PVLogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogViewController.h; sourceTree = "<group>"; };
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
 		B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PVLogViewController.xib; sourceTree = "<group>"; };
-		B3E7088320B7E0BA005BAA5A /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3E7088420B7E0BA005BAA5A /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
-		B3E7088520B7E0BA005BAA5A /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
-		B3E7088620B7E0BB005BAA5A /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
-		B3E7088720B7E0BB005BAA5A /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		B3E7089720B7E143005BAA5A /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = Carthage/Build/tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
-		B3E7089820B7E143005BAA5A /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
-		B3E7089920B7E143005BAA5A /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = Carthage/Build/tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
-		B3E7089A20B7E144005BAA5A /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
-		B3E7089B20B7E144005BAA5A /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = Carthage/Build/tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = PVSupport/Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = PVSupport/Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = PVSupport/Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = PVSupport/Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = PVSupport/Carthage/Build/tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B3E708BA20B7EB43005BAA5A /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = PVSupport/Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = PVSupport/Carthage/Build/tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = PVSupport/Carthage/Build/tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = PVSupport/Carthage/Build/tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
 		B3F64ECB205CD1D600C273C7 /* JSDPad.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSDPad.swift; sourceTree = "<group>"; };
 		B3F64ECE205CD1F100C273C7 /* JSButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSButton.swift; sourceTree = "<group>"; };
@@ -1663,13 +1663,13 @@
 				B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
-				B3E7088A20B7E0BC005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
+				B3E708B120B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
 				B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */,
-				B3E7088E20B7E0BC005BAA5A /* NSLoggerSwift.framework in Frameworks */,
 				DF3751942026B83600EE727E /* PVRSPCXD4.framework in Frameworks */,
 				B3B3B8921DECF8BC00602746 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
 				B3C9D4AE1DEA74390068D057 /* PVGB.framework in Frameworks */,
+				B3E708AF20B7EB2B005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
@@ -1677,19 +1677,18 @@
 				B3C9D4331DEA1B340068D057 /* PVGenesis.framework in Frameworks */,
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B3E7089020B7E0BC005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
-				B3E7088C20B7E0BC005BAA5A /* CocoaLumberjack.framework in Frameworks */,
+				B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
-				B3E7088820B7E0BB005BAA5A /* NSLogger.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
 				1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B3E708B520B7EB2B005BAA5A /* NSLogger.framework in Frameworks */,
 				B3C9D5211DEA787D0068D057 /* PVGBA.framework in Frameworks */,
 				B3B3B8951DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
@@ -1697,6 +1696,7 @@
 				1A19EE152080EA8000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3C9D55D1DEA85C60068D057 /* PVSNES.framework in Frameworks */,
 				1A3D409817B2DCE4004DFFFC /* UIKit.framework in Frameworks */,
+				B3E708B320B7EB2B005BAA5A /* NSLoggerSwift.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
 				B3C9D5E71DEAA7E80068D057 /* PVStella.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
@@ -1710,18 +1710,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E708A020B7E144005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
+				B3E708C620B7EB45005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
 				B3CB85C21E9BFB16009155A6 /* PVPokeMini.framework in Frameworks */,
+				B3E708BE20B7EB45005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
 				1AD4821B1BA3594300FDA50A /* libstdc++.tbd in Frameworks */,
 				B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+				B3E708C420B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
 				1AD482191BA3593900FDA50A /* libc++.tbd in Frameworks */,
 				1AD482171BA3592D00FDA50A /* libsqlite3.tbd in Frameworks */,
 				1AD482251BA3598C00FDA50A /* libxml2.tbd in Frameworks */,
 				B3C9D5E11DEA8A290068D057 /* PVGenesis.framework in Frameworks */,
-				B3E7089E20B7E144005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				1AD4822D1BA359D300FDA50A /* libz.tbd in Frameworks */,
 				1AD4BC6D1BFD3896007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3C9D5601DEA85D10068D057 /* PVSNES.framework in Frameworks */,
@@ -1733,19 +1734,18 @@
 				1AD482331BA35A0500FDA50A /* Foundation.framework in Frameworks */,
 				1AD482311BA359FF00FDA50A /* UIKit.framework in Frameworks */,
 				1AD4822F1BA359DA00FDA50A /* OpenGLES.framework in Frameworks */,
-				B3E708A220B7E144005BAA5A /* NSLogger.framework in Frameworks */,
+				B3E708C220B7EB45005BAA5A /* NSLoggerSwift.framework in Frameworks */,
 				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
 				1AD4822B1BA359C800FDA50A /* GLKit.framework in Frameworks */,
-				B3E7089C20B7E144005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
 				B36CBFEB20397D9100728482 /* PVMednafen.framework in Frameworks */,
 				1AD482291BA359BA00FDA50A /* AudioToolbox.framework in Frameworks */,
 				B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */,
+				B3E708C020B7EB45005BAA5A /* NSLogger.framework in Frameworks */,
 				B3B3B9761DED14A100602746 /* PVMupen64Plus.framework in Frameworks */,
 				B3C9D5DB1DEA8A200068D057 /* PVGBA.framework in Frameworks */,
 				1AD482271BA3599400FDA50A /* CoreData.framework in Frameworks */,
 				1AD482231BA3598100FDA50A /* SystemConfiguration.framework in Frameworks */,
 				1AD482211BA3597500FDA50A /* Security.framework in Frameworks */,
-				B3E708A420B7E144005BAA5A /* NSLoggerSwift.framework in Frameworks */,
 				B3DEE8E91E9E9C880004D25E /* PVAtari800.framework in Frameworks */,
 				1AD4821F1BA3596D00FDA50A /* MobileCoreServices.framework in Frameworks */,
 				1AD4821D1BA3596200FDA50A /* CFNetwork.framework in Frameworks */,
@@ -1849,6 +1849,14 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */,
+				B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */,
+				B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */,
+				B3E708BA20B7EB43005BAA5A /* NSLogger.framework */,
+				B3E708AC20B7EB2A005BAA5A /* NSLoggerSwift.framework */,
+				B3E708BB20B7EB44005BAA5A /* NSLoggerSwift.framework */,
+				B3E708AB20B7EB29005BAA5A /* XCDLumberjackNSLogger.framework */,
+				B3E708BC20B7EB44005BAA5A /* XCDLumberjackNSLogger.framework */,
 				1A3D409D17B2DCE4004DFFFC /* Provenance */,
 				1AD9AA361ACC988F00EC87A0 /* Provenance Tests */,
 				1AD481B51BA350A400FDA50A /* ProvenanceTV */,
@@ -1859,21 +1867,13 @@
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				B3E21D7E20321EE0009939D3 /* Spotlight-Bridging-Header.h */,
-				B3E7089820B7E143005BAA5A /* CocoaLumberjack.framework */,
-				B3E7089920B7E143005BAA5A /* CocoaLumberjackSwift.framework */,
-				B3E7089A20B7E144005BAA5A /* NSLogger.framework */,
-				B3E7089B20B7E144005BAA5A /* NSLoggerSwift.framework */,
-				B3E7089720B7E143005BAA5A /* XCDLumberjackNSLogger.framework */,
 				B3E3B5C7202E3AB700A11871 /* TopShelf-Bridging-Header.h */,
 				DF0035C7203C97FA00F63831 /* GLideN64.ini */,
 				DF0035C4203C97D800F63831 /* GLideN64.custom.ini */,
 				B3BDEC921DED60A1002BD7A4 /* mupen64plus.ini */,
 				B3BDEC8D1DED5EDD002BD7A4 /* RiceVideoLinux.ini */,
-				B3E7088520B7E0BA005BAA5A /* CocoaLumberjack.framework */,
-				B3E7088720B7E0BB005BAA5A /* CocoaLumberjackSwift.framework */,
-				B3E7088320B7E0BA005BAA5A /* NSLogger.framework */,
-				B3E7088620B7E0BB005BAA5A /* NSLoggerSwift.framework */,
-				B3E7088420B7E0BA005BAA5A /* XCDLumberjackNSLogger.framework */,
+				B3E708AE20B7EB2A005BAA5A /* CocoaLumberjack.framework */,
+				B3E708AA20B7EB29005BAA5A /* CocoaLumberjackSwift.framework */,
 				B366171E206EBF6900A4F306 /* Recovered References */,
 			);
 			sourceTree = "<group>";
@@ -3371,7 +3371,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "#/usr/local/bin/carthage build --cache-builds\n#/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 		B3E708A720B7E465005BAA5A /* Check Carthage Outdated */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3385,7 +3385,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "#/usr/local/bin/carthage build --cache-builds\n#/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4307,7 +4307,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4354,7 +4354,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4408,7 +4408,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4466,7 +4466,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4523,7 +4523,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4778,7 +4778,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4830,7 +4830,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4873,7 +4873,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4915,7 +4915,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
-					"\"$(SRCROOT)/Carthage/Build/iOS\"",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4952,7 +4952,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4993,7 +4993,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -5034,7 +5034,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
-					"$(PROJECT_DIR)/Carthage/Build/tvOS",
+					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

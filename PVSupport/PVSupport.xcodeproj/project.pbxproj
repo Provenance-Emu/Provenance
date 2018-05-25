@@ -371,6 +371,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport tvOS" */;
 			buildPhases = (
+				B3E708A920B7E918005BAA5A /* Carthage Build */,
 				B3C96E991D62C3A3003F1E93 /* Sources */,
 				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
 				B3C96E9B1D62C3A3003F1E93 /* Headers */,
@@ -389,6 +390,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport" */;
 			buildPhases = (
+				B3E708A820B7E8F9005BAA5A /* Carthage build */,
 				B3C96EBF1D62C5E7003F1E93 /* Sources */,
 				B3C96EC71D62C5E7003F1E93 /* Frameworks */,
 				B3C96EC81D62C5E7003F1E93 /* Headers */,
@@ -484,6 +486,34 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#/usr/local/bin/carthage copy-frameworks\n";
+		};
+		B3E708A820B7E8F9005BAA5A /* Carthage build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage build --cache-builds\n/usr/local/bin/carthage outdated --xcode-warnings";
+		};
+		B3E708A920B7E918005BAA5A /* Carthage Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage build --cache-builds\n/usr/local/bin/carthage outdated --xcode-warnings";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -686,7 +716,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/tvOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -724,7 +754,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/tvOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -761,7 +791,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/tvOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -800,7 +830,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/iOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -843,7 +873,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/iOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -885,7 +915,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../Carthage/Build/iOS\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
