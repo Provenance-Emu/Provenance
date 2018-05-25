@@ -80,7 +80,7 @@ static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, 
 EXPORT static void PV_DrawOSD(const char *_pText, float _x, float _y)
 {
 #if DEBUG
-//	DLOG("%s", _pText);
+//	DLOG(@"%s", _pText);
 #endif
 }
 
@@ -832,11 +832,11 @@ static void ConfigureRICE() {
 	ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
 #else
 	if(self.glesVersion < GLESVersion3 || sizeof(void*) == 4) {
-		ILOG("No 64bit or GLES3. Using RICE GFX plugin.");
+		ILOG(@"No 64bit or GLES3. Using RICE GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
 		ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
 	} else {
-		ILOG("64bit and GLES3. Using GLiden64 GFX plugin.");
+		ILOG(@"64bit and GLES3. Using GLiden64 GFX plugin.");
 		success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoGlideN64");
 
 		ptr_SetOSDCallback = dlsym(RTLD_DEFAULT, "SetOSDCallback");

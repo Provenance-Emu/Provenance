@@ -7,15 +7,20 @@
 
 let TEST_THEMES = false
 import CoreSpotlight
+import PVSupport
+import CocoaLumberjackSwift
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var shortcutItemMD5: String?
+	var _logViewController: PVLogViewController?
+
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
+		_initLogging()
 
 		do {
 			try RomDatabase.initDefaultDatabase()
@@ -173,4 +178,59 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             PVWebServer.shared.startWebDavServer()
         }
     }
+}
+
+extension PVAppDelegate {
+	
+	func _initLogging() {
+		// Initialize logging
+		PVLogging.sharedInstance()
+
+		#if os(iOS)
+		// Debug view logger
+		DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
+		_addLogViewerGesture()
+		#endif
+
+		DDTTYLogger.sharedInstance.colorsEnabled = true
+		DDTTYLogger.sharedInstance.logFormatter = PVTTYFormatter()
+	}
+
+	#if os(iOS)
+	func _addLogViewerGesture() {
+		guard let window = window else {
+			ELOG("No window")
+			return
+		}
+
+		let secretTap = UITapGestureRecognizer(target: self, action: #selector(PVAppDelegate._displayLogViewer))
+		secretTap.numberOfTapsRequired = 3;
+		#if targetEnvironment(simulator)
+		secretTap.numberOfTouchesRequired = 2;
+		#else
+		secretTap.numberOfTouchesRequired = 3;
+		#endif
+		window.addGestureRecognizer(secretTap)
+	}
+
+	@objc func _displayLogViewer() {
+		guard let window = window else {
+			ELOG("No window")
+			return
+		}
+
+		if _logViewController == nil, let logClass = NSClassFromString("PVLogViewController") {
+			let bundle = Bundle(for: logClass)
+			_logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: bundle)
+
+		}
+		// Window incase the mainNav never displays
+		var  controller: UIViewController? = window.rootViewController
+
+		if let presentedViewController = controller?.presentedViewController {
+			controller = presentedViewController
+		}
+		controller!.present(_logViewController!, animated: true, completion: nil)
+	}
+	#endif
 }
