@@ -1468,7 +1468,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}
 			}
 
-            guard let game: PVGame = recentGameMaybe ?? self.game(at: indexPath) else {
+            guard let game: PVGame = recentGameMaybe ?? self.game(at: indexPath, location: point) else {
                 ELOG("No game at inde path \(indexPath)")
                 return
             }
@@ -1917,14 +1917,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             fatalError("Couldn't create cell of type PVGameLibraryCollectionViewCellIdentifier")
         }
 
-		let game = self.game(at: indexPath)
+		let game = self.game(at: indexPath, location: .zero)
         cell.game = game
 		cell.delegate = self
 
         return cell
     }
 
-    func game(at indexPath: IndexPath) -> PVGame? {
+	func game(at indexPath: IndexPath, location: CGPoint) -> PVGame? {
         var game: PVGame? = nil
         if let searchResults = searchResults {
             game = Array(searchResults)[indexPath.item]
@@ -1933,19 +1933,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             let row = indexPath.row
 
             if section == favoritesSection {
-				if let favoriteGames = favoriteGames, row < favoriteGames.count {
-					game = favoriteGames[row]
+				let favoritesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: favoritesSection)) as! FavoritesPlayedCollectionCell
+
+				let location2 = favoritesCell.internalCollectionView.convert(location, from: collectionView)
+				let indexPath2 = favoritesCell.internalCollectionView.indexPathForItem(at: location2)!
+
+				if let favoriteGames = favoriteGames, favoriteGames.count > indexPath2.row {
+					game = favoriteGames[indexPath2.row]
 				} else {
 					ELOG("row \(row) out of bounds for favoriteGames count \(favoriteGames?.count ?? -1)")
 				}
             } else if section == recentGamesSection {
-//				let recentlyPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
-//
-//				let location2 = recentlyPlayedCell.internalCollectionView.convert(location, from: collectionView)
-//				let indexPath2 = recentlyPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
-//
-				if let recentGames = recentGames, recentGames.count > row {
-					game = recentGames[row].game
+				let recentlyPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: recentGamesSection)) as! RecentlyPlayedCollectionCell
+
+				let location2 = recentlyPlayedCell.internalCollectionView.convert(location, from: collectionView)
+				let indexPath2 = recentlyPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
+
+				if let recentGames = recentGames, recentGames.count > indexPath2.row {
+					game = recentGames[indexPath2.row].game
 				} else {
 					ELOG("row \(row) out of bounds for recentGame count \(recentGames?.count ?? -1)")
 				}
@@ -2180,7 +2185,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			return CGSize(width: width, height: height)
 		}
 
-		if let game = self.game(at: indexPath) {
+		if let game = self.game(at: indexPath, location: .zero) {
 			let boxartSize = CGSize(width: CellWidth, height: CellWidth / game.boxartAspectRatio.rawValue)
 			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: boxartSize)
 		} else {
@@ -2236,7 +2241,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegate {
 //			let saveState = saveStates![indexPath.row]
 //			load(saveState.game, sender: cell, core: saveState.core, saveState: saveState)
 //		} else {
-			if let game = self.game(at: indexPath) {
+			if let game = self.game(at: indexPath, location: .zero) {
 				let cell = collectionView.cellForItem(at: indexPath)
 				load(game, sender: cell, core: nil)
 			} else {
@@ -2376,74 +2381,9 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 }
 #endif
 
-#if os(iOS)
-    @available(iOS 9.0, *)
-    extension PVGameLibraryViewController: UIViewControllerPreviewingDelegate {
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-
-		if let moreInfoVC = viewControllerToCommit as? PVGameMoreInfoViewController {
-			let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
-			moreInfoGamePageVC.setViewControllers([moreInfoVC], direction: .forward, animated: false, completion: nil)
-			navigationController!.show(moreInfoGamePageVC, sender: self)
-		} else if let saveSaveInfoVC = viewControllerToCommit as? PVSaveStateInfoViewController {
-			navigationController!.show(saveSaveInfoVC, sender: self)
-		}
-    }
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = collectionView!.indexPathForItem(at: location), let cellAttributes = collectionView!.layoutAttributesForItem(at: indexPath) {
-
-			//This will show the cell clearly and blur the rest of the screen for our peek.
-			previewingContext.sourceRect = cellAttributes.frame
-
-			let storyBoard = UIStoryboard(name: "Provenance", bundle: nil)
-
-			if searchResults == nil, indexPath.section == saveStateSection {
-				let saveStateInfoVC = storyBoard.instantiateViewController(withIdentifier: "saveStateInfoVC") as! PVSaveStateInfoViewController
-				let saveStatesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: saveStateSection)) as! SaveStatesCollectionCell
-
-				let location2 = saveStatesCell.internalCollectionView.convert(location, from: collectionView)
-				let indexPath2 = saveStatesCell.internalCollectionView.indexPathForItem(at: location2)!
-				saveStateInfoVC.saveState = saveStates![indexPath2.row]
-				return saveStateInfoVC
-			} else {
-				let moreInfoViewContrller = storyBoard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
-
-				let selectedIndexPath : IndexPath
-				if indexPath.section == recentGamesSection {
-					let recentPlayedCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: indexPath.section))! as! RecentlyPlayedCollectionCell
-
-					let location2 = recentPlayedCell.internalCollectionView.convert(location, from: collectionView)
-					let indexPath2 = recentPlayedCell.internalCollectionView.indexPathForItem(at: location2)!
-					selectedIndexPath = indexPath2
-				} else if indexPath.section == favoritesSection {
-					let favoritesCell = collectionView!.cellForItem(at: IndexPath(row: 0, section: indexPath.section))! as! FavoritesPlayedCollectionCell
-
-					let location2 = favoritesCell.internalCollectionView.convert(location, from: collectionView)
-					let indexPath2 = favoritesCell.internalCollectionView.indexPathForItem(at: location2)!
-					selectedIndexPath = indexPath2
-
-				} else {
-					selectedIndexPath = indexPath
-				}
-
-				guard let game = game(at: selectedIndexPath) else {
-					ELOG("No game at index : \(selectedIndexPath)")
-					return nil
-				}
-				moreInfoViewContrller.game = game
-				moreInfoViewContrller.showsPlayButton = true
-				return moreInfoViewContrller
-			}
-        }
-        return nil
-    }
-}
-
 extension PVGameLibraryViewController: UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
 
 }
-#endif
 
 extension PVGameLibraryViewController: UISearchControllerDelegate {
     func didDismissSearchController(_ searchController: UISearchController) {
