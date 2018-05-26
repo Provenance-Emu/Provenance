@@ -736,6 +736,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		discCountContainerView?.addSubview(discCountLabel!)
 
 		if #available(iOS 9.0, tvOS 9.0, *) {
+			discCountContainerView?.translatesAutoresizingMaskIntoConstraints = false
+			discCountLabel?.translatesAutoresizingMaskIntoConstraints = false
+
 			discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
 			discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
 			discCountContainerView?.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
@@ -743,8 +746,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 			discCountLabel?.centerXAnchor.constraint(equalTo: discCountContainerView!.centerXAnchor).isActive = true
 			discCountLabel?.centerYAnchor.constraint(equalTo: discCountContainerView!.centerYAnchor).isActive = true
-			discCountLabel?.leadingAnchor.constraint(equalTo: discCountContainerView!.leadingAnchor, constant: 8.0).isActive = true
-			discCountLabel?.trailingAnchor.constraint(equalTo: discCountContainerView!.trailingAnchor, constant: 8.0).isActive = true
+			discCountLabel?.widthAnchor.constraint(equalTo: discCountContainerView!.widthAnchor, multiplier:1, constant: -16).isActive = true
 			discCountLabel?.heightAnchor.constraint(equalTo: discCountContainerView!.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
 		} else {
 			// TODO: iOS 8 layout, or just hide them?

@@ -78,7 +78,7 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	var subCellSize : CGSize {
 		#if os(tvOS)
-		return CGSize(width: 300, height: 300)
+		return CGSize(width: 300, height: 295)
 		#else
 		return CGSize(width: 124, height: 144)
 		#endif
@@ -180,7 +180,8 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 		internalCollectionView.delegate = self
 		internalCollectionView.dataSource = self
-
+		internalCollectionView.translatesAutoresizingMaskIntoConstraints = false
+		
 		registerSubCellClass()
 		internalCollectionView.frame = self.bounds
 
@@ -480,13 +481,13 @@ class SaveStatesCollectionCell: RealmCollectinViewCell<PVSaveStateCollectionView
 	typealias SelectionObject = PVSaveState
 	typealias CellClass = PVSaveStateCollectionViewCell
 
-	override var subCellSize : CGSize {
-		#if os(tvOS)
-		return CGSize(width: 300, height: 300)
-		#else
-		return CGSize(width: 124, height: 144)
-		#endif
-	}
+//	override var subCellSize : CGSize {
+//		#if os(tvOS)
+//		return CGSize(width: 300, height: 300)
+//		#else
+//		return CGSize(width: 124, height: 144)
+//		#endif
+//	}
 
 	@objc init(frame: CGRect) {
 //		let sortDescriptors = [SortDescriptor(keyPath: #keyPath(SelectionObject.lastOpened), ascending: false), SortDescriptor(keyPath: #keyPath(SelectionObject.date), ascending: false)]

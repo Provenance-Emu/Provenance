@@ -556,6 +556,8 @@
 		B380EBE920B39830002988F9 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = B380EBE520B39830002988F9 /* Utilities.swift */; };
 		B385542E20336D02006CA50B /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */; };
+		B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
+		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -1505,6 +1507,7 @@
 		B380EBE520B39830002988F9 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
+		B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+CollectionView.swift"; sourceTree = "<group>"; };
 		B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
@@ -3015,6 +3018,7 @@
 			children = (
 				B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */,
 				B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */,
+				B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */,
 				B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */,
 				1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */,
 				42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */,
@@ -3742,6 +3746,7 @@
 				B3D8DD48206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				B349AE771E9ABCF900ACD416 /* MtCoder.c in Sources */,
+				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
 				B3E6DAC820B79C0C00454DD4 /* CocoaLumberExtensions.swift in Sources */,
 				E4F9369A1B50829F009403C5 /* PViCade8BitdoController.m in Sources */,
 				B36D9DF520351C9600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
@@ -3904,6 +3909,7 @@
 				B349AE8A1E9ABCF900ACD416 /* XzCrc64Opt.c in Sources */,
 				1AD481D41BA3542200FDA50A /* PVWebServer.m in Sources */,
 				B349AEBA1E9ABCF900ACD416 /* MultiStream.cpp in Sources */,
+				B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
 				B36D9DF620351C9600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B394C98220609D0D0014A65D /* PVPSXControllerViewController.swift in Sources */,
 				B349AF521E9ABCF900ACD416 /* LzmaSDKObjC.mm in Sources */,
