@@ -482,7 +482,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     private func updateImageView() {
         if showingFrontArt {
             if let imageKey = (game?.customArtworkURL.isEmpty ?? true) ? game?.originalArtworkURL : game?.customArtworkURL {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (key, image) in
                     if let image = image {
                         if self.artworkImageView.image == nil {
                             // Don't animate the first load, it's annoying
@@ -499,7 +499,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 			}
         } else {
             if let imageKey = game?.boxBackArtworkURL, !imageKey.isEmpty {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (key, image) in
                     if let image = image {
                         self.flipImageView(withImage: image)
                     } else {

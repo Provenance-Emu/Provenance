@@ -20,15 +20,15 @@ class PVSearchViewController: UICollectionViewController, GameLaunchingViewContr
         RomDatabase.sharedInstance.refresh()
         (collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
 
-		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
+			#if os(iOS)
 			collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#else
+			collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#endif
 		} else {
 			collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-		#else
-		collectionView?.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-		#endif
 		collectionView?.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 
 		let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(PVSearchViewController.longPressRecognized(_:)))

@@ -78,55 +78,40 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 	var subCellSize : CGSize {
 		#if os(tvOS)
-		return CGSize(width: 300, height: 295)
+		return CGSize(width: 350, height: 280)
 		#else
-		return CGSize(width: 124, height: 144)
+		return CGSize(width: 124, height: 130)
 		#endif
 	}
 
-	override var preferredFocusedView: UIView? {
-		return internalCollectionView
+
+	#if os(tvOS)
+	// MARK: tvOS focus
+	override var preferredFocusEnvironments: [UIFocusEnvironment] {
+		return [internalCollectionView]
 	}
 
-//	func collectionView(collectionView: UICollectionView, shouldUpdateFocusInContext context: UICollectionViewFocusUpdateContext) -> Bool {
-//		guard let indexPaths = internalCollectionView.indexPathsForSelectedItems() else { return true }
-//		return indexPaths.isEmpty
-//	}
-//
-//	override var preferredFocusEnvironments: [UIFocusEnvironment] {
-//		if let p = internalCollectionView.preferredFocusedView {
-//			return [p]
-//		} else {
-//			return [internalCollectionView]
-//		}
-//	}
+	override var canBecomeFocused: Bool {
+		return false
+	}
 
-//	override func shouldUpdateFocus(in context: UIFocusUpdateContext) -> Bool {
-//		if context.previouslyFocusedView == internalCollectionView && (context.focusHeading == .left || context.focusHeading == .right) {
-//			return true
-//		} else if context.focusHeading == .up || context.focusHeading == .down {
-//			return true
-//		} else {
-//			return false
-//		}
-//	}
-
-//	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
-//		return indexPath.row < numberOfRows
-//	}
+	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
+		return false
+	}
+	#endif
 
 	lazy var layout : CenterViewFlowLayout = {
 		let layout = CenterViewFlowLayout()
 		layout.scrollDirection = .horizontal
-		layout.minimumLineSpacing = 0
+		layout.minimumLineSpacing = minimumInteritemSpacing
 		layout.minimumInteritemSpacing = minimumInteritemSpacing
 
-		let spacing : CGFloat = numberOfRows > 1 ? PageIndicatorHeight + 5 : PageIndicatorHeight
-		let height = max(0, (self.bounds.height / CGFloat(numberOfRows)) - spacing)
-		let minimumItemsPerPageRow : CGFloat = 3.0
-		let width = self.bounds.width - ((layout.minimumInteritemSpacing) * (minimumItemsPerPageRow) * 0.5)
-		//		let square = min(width, height)
-		let square = 120
+//		let spacing : CGFloat = numberOfRows > 1 ? PageIndicatorHeight + 5 : PageIndicatorHeight
+//		let height = max(0, (self.bounds.height / CGFloat(numberOfRows)) - spacing)
+//		let minimumItemsPerPageRow : CGFloat = 3.0
+//		let width = self.bounds.width - ((layout.minimumInteritemSpacing) * (minimumItemsPerPageRow) * 0.5)
+//		//		let square = min(width, height)
+//		let square = 120
 		// TODO : Fix me, hard coded these cause the maths are weird with CenterViewFlowLayout and margins - Joe M
 		layout.itemSize = subCellSize
 		return layout
@@ -137,13 +122,19 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		collectionView.showsHorizontalScrollIndicator = false
 		collectionView.showsVerticalScrollIndicator = false
+		collectionView.delegate = self
+		collectionView.dataSource = self
+		collectionView.translatesAutoresizingMaskIntoConstraints = false
+		collectionView.clipsToBounds = false // allows tvOS magnifcations to overflow the borders
 
 		if #available(iOS 9.0, tvOS 9.0, *) {
-//			collectionView.remembersLastFocusedIndexPath = true
+			collectionView.remembersLastFocusedIndexPath = false
 		}
 
 		#if os(iOS)
 		collectionView.isPagingEnabled = true
+		#else
+//		collectoinView.isScrollEnabled = false
 		#endif
 		collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 2, left: 2, bottom: 0, right: 2)
 		collectionView.indicatorStyle = .white
@@ -178,10 +169,6 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 
 		addSubview(internalCollectionView)
 
-		internalCollectionView.delegate = self
-		internalCollectionView.dataSource = self
-		internalCollectionView.translatesAutoresizingMaskIntoConstraints = false
-		
 		registerSubCellClass()
 		internalCollectionView.frame = self.bounds
 
@@ -309,6 +296,16 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 //		return CGSize(width: width, height: height)
 //	}
 
+//	#if os(tvOS)
+//	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+//		// Quick hack to fix paging on left scrolling on tvOS, not sure why the layout class is missing this, somehting to do with tvOS focus and autoscrolling
+//		if var indexPath = context.nextFocusedIndexPath, context.focusHeading == .left, let previouslyFocusedIndexPath = context.previouslyFocusedIndexPath, previouslyFocusedIndexPath.row % layout.columnCount == 0 {
+//			indexPath.row = max(0, indexPath.row - layout.columnCount)
+//			collectionView.scrollToItem(at: indexPath, at: [.right], animated: true)
+//		}
+//	}
+//	#endif
+
 	/// whether or not dragging has ended
 	fileprivate var endDragging = false
 
@@ -426,15 +423,15 @@ class RecentlyPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollecti
 
 	override func registerSubCellClass() {
 		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
-		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
+			#if os(iOS)
 			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#else
+			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#endif
 		} else {
 			internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-		#else
-		internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-		#endif
 	}
 
 	required init?(coder aDecoder: NSCoder) {
@@ -457,15 +454,15 @@ class FavoritesPlayedCollectionCell: RealmCollectinViewCell<PVGameLibraryCollect
 
 	override func registerSubCellClass() {
 		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
-		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
+			#if os(iOS)
 			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#else
+			internalCollectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#endif
 		} else {
 			internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-		#else
-		internalCollectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-		#endif
 	}
 
 	required init?(coder aDecoder: NSCoder) {

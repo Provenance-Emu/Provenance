@@ -59,10 +59,21 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	// TODO: Fixme when true
+	#if os(tvOS)
 	var evenlyDistributeItemsInRemainderPage = false
+	#else
+	var evenlyDistributeItemsInRemainderPage = false
+	#endif
 
 	func frameForItemAtIndexPath(_ indexPath: IndexPath) -> CGRect {
-		var pageMarginX = (canvasSize.width - CGFloat(columnCount) * self.itemSize.width - (columnCount > 1 ? CGFloat(columnCount - 1) * (self.minimumLineSpacing/2.0) : 0)) / 2.0
+		var allItemsWidth : CGFloat = 0
+		if columnCount > 1 {
+			allItemsWidth = (CGFloat(columnCount) * self.itemSize.width) + (CGFloat(columnCount-1) * self.minimumLineSpacing)
+		} else {
+			allItemsWidth = self.itemSize.width
+		}
+
+		var pageMarginX = (canvasSize.width - allItemsWidth) / 2.0
 		var pageMarginY = (canvasSize.height - CGFloat(rowCount) * self.itemSize.height - (rowCount > 1 ? CGFloat(rowCount - 1) * (self.minimumInteritemSpacing/2.0) : 0)) / 2.0
 		pageMarginX = abs(pageMarginX)
 		pageMarginY = abs(pageMarginY)

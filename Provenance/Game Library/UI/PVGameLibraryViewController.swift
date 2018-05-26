@@ -204,6 +204,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         loadGameFromShortcut()
     }
 
+	/// Cell to focus on if we update focus
+	var manualFocusCell: IndexPath?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -265,11 +268,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         //load the config file
         title = "Library"
 
-        let layout = UICollectionViewFlowLayout()
+        let layout = PVGameLibraryCollectionFlowLayout()
+		layout.scrollDirection = .vertical
 
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: layout)
         self.collectionView = collectionView
-        collectionView.collectionViewLayout = PVGameLibraryCollectionFlowLayout()
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -282,6 +285,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 		#if os(tvOS)
 		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
+		collectionView.remembersLastFocusedIndexPath = false
 		#else
 		collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
 		searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
@@ -301,15 +305,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		collectionView.register(RecentlyPlayedCollectionCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewRecentlyPlayedCellIdentifier)
 
 		// TODO: Use nib for cell once we drop iOS 8 and can use layouts
-		#if os(iOS)
 		if #available(iOS 9.0, tvOS 9.0, *) {
+			#if os(iOS)
 			collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#else
+			collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+			#endif
 		} else {
 			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-		#else
-		collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
-		#endif
 
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas

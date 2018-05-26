@@ -150,9 +150,9 @@ public class PVMediaCache: NSObject {
     }
 
     @discardableResult
-    public func image(forKey key: String, completion: ((_ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
+	public func image(forKey key: String, completion: ((_ key: String,_ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
         if key.isEmpty {
-            completion?(nil)
+            completion?(key, nil)
             return nil
         }
 
@@ -174,7 +174,7 @@ public class PVMediaCache: NSObject {
             }
 
             DispatchQueue.main.async(execute: {() -> Void in
-                completion?(image)
+                completion?(key, image)
             })
         })
 

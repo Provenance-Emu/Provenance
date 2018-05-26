@@ -558,6 +558,8 @@
 		B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */; };
 		B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
+		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
+		B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
 		B38973B420AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -1508,6 +1510,7 @@
 		B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGameMoreInfoViewController.swift; sourceTree = "<group>"; };
 		B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+PeekPop.swift"; sourceTree = "<group>"; };
 		B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibraryViewController+CollectionView.swift"; sourceTree = "<group>"; };
+		B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVGameLibraryCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
 		B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
@@ -3017,6 +3020,7 @@
 			isa = PBXGroup;
 			children = (
 				B38973B320AEC94800E36522 /* PVGameLibraryCollectionViewCell.xib */,
+				B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */,
 				B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */,
 				B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */,
 				B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */,
@@ -3303,6 +3307,7 @@
 				B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 				B349AE3A1E9ABCF900ACD416 /* .travis.yml in Resources */,
 				B349AF4E1E9ABCF900ACD416 /* LzmaSDKObjC.podspec in Resources */,
+				B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				1AD482381BA35A3500FDA50A /* openvgdb.sqlite in Resources */,
 				B349AE3E1E9ABCF900ACD416 /* LICENSE in Resources */,
@@ -3981,6 +3986,7 @@
 				B349AEE01E9ABCF900ACD416 /* ProgressUtils.cpp in Sources */,
 				B3DBF13D2094669A005935A8 /* UTI.swift in Sources */,
 				B3D8DD05206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
+				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
 				B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */,
 				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
 				B349AF421E9ABCF900ACD416 /* Wildcard.cpp in Sources */,

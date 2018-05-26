@@ -9,7 +9,7 @@
 import Foundation
 
 // tvOS
-private let TVOSCellWidth: CGFloat = 308.0
+let TVOSCellWidth: CGFloat = 308.0
 
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
@@ -78,14 +78,14 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			let numberOfRows : CGFloat = 1.0
 			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right
 			let height = TVOSCellWidth * numberOfRows + PageIndicatorHeight
-			return CGSize(width: width, height: height)
+			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
 		}
 
 		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {
 			let numberOfRows : CGFloat = 1.0
 			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right
 			let height :CGFloat = TVOSCellWidth * numberOfRows + PageIndicatorHeight
-			return CGSize(width: width, height: height)
+			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height / PVGameBoxArtAspectRatio.tall.rawValue))
 		}
 
 		if let game = self.game(at: indexPath, location: .zero) {
@@ -108,7 +108,11 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 	#endif
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-		return minimumInteritemSpacing
+		if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
+			return 0
+		} else {
+			return minimumInteritemSpacing
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -246,17 +250,6 @@ extension PVGameLibraryViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension PVGameLibraryViewController: UICollectionViewDelegate {
-	#if os(tvOS)
-	func collectionView(_ collectionView: UICollectionView, canFocusItemAt indexPath: IndexPath) -> Bool {
-		return true
-	}
-
-	func collectionView(_ collectionView: UICollectionView, shouldUpdateFocusIn context: UICollectionViewFocusUpdateContext) -> Bool {
-		return true
-	}
-
-	#endif
-
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		//		if searchResults == nil, indexPath.section == saveStateSection {
 		//			let cell = collectionView.cellForItem(at: indexPath)
