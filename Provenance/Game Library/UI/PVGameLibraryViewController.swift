@@ -1594,7 +1594,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #endif
 			#if os(iOS)
 			actionSheet.addAction(UIAlertAction(title: "Share", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				self.share(for: game)
+				self.share(for: game, sender: self.collectionView?.cellForItem(at: indexPath))
 			}))
 			#endif
 
