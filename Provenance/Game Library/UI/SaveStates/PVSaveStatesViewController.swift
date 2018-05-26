@@ -116,8 +116,8 @@ class PVSaveStatesViewController: UICollectionViewController {
 
 		if let emulatorViewController = presentingViewController as? PVEmulatorViewController {
 			emulatorViewController.core.setPauseEmulation(false)
-			emulatorViewController.isPaused = false
-			emulatorViewController.enableControllerInput(false)
+			emulatorViewController.isShowingMenu = false
+			emulatorViewController.enableContorllerInput(false)
 		}
 	}
 
