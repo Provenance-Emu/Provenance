@@ -111,7 +111,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				}
 				gameStartTime = Date()
 			} else {
-				updateLastPlayedTime()
+				updatePlayedDuration()
 			}
 		}
 	}
@@ -444,7 +444,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		// Calcuate what the new total spent time should be
 		let duration = gameStartTime.timeIntervalSinceNow * -1
 		let totalTimeSpent = game.timeSpentInGame + Int(duration)
-
+		ILOG("Played for duration \(duration). New total play time: \(totalTimeSpent) for \(game.title)")
 		// Write that to the database
 		do {
 			try RomDatabase.sharedInstance.writeTransaction {
@@ -456,6 +456,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc public func updateLastPlayedTime() {
+		ILOG("Updating last played")
         do {
             try RomDatabase.sharedInstance.writeTransaction {
                 game.lastPlayed = Date()
