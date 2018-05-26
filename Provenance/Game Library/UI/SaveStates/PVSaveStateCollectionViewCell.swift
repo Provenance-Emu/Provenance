@@ -24,9 +24,10 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 	@IBOutlet weak var imageView: UIImageView!
 	@IBOutlet weak var noScreenshotLabel: UILabel!
-	@IBOutlet weak var label: UILabel!
-	@IBOutlet weak var secondLabel: UILabel!
-
+	@IBOutlet weak var titleLabel: UILabel!
+	@IBOutlet weak var timeStampLabel: UILabel!
+    @IBOutlet weak var coreLabel: UILabel!
+    
 	weak var saveState: PVSaveState? {
 		didSet {
 			if let saveState = saveState {
@@ -35,7 +36,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
                     imageView.layer.borderWidth = 1.0
                     imageView.layer.borderColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.3).cgColor
                 }
-				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)), \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
+				let timeText = "\(PVSaveStateCollectionViewCell.dateFormatter.string(from: saveState.date)) \(PVSaveStateCollectionViewCell.timeFormatter.string(from: saveState.date))"
 
 				let multipleCores = saveState.game.system.cores.count > 1
 				let system = saveState.game.system
@@ -44,8 +45,9 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 					coreOrSystem = " " + coreOrSystem
 				}
 
-				label.text = saveState.game.title
-				secondLabel.text = timeText + coreOrSystem
+				titleLabel.text = saveState.game.title
+				timeStampLabel.text = timeText
+                coreLabel.text = system?.shortName
 			}
 
 			setNeedsLayout()
@@ -57,10 +59,10 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		super.prepareForReuse()
 
 		imageView.image = nil
-		label.text = nil
+		titleLabel.text = nil
 #if os(tvOS)
 //		self.label.alpha = 0
-		self.label.transform = .identity
+		self.titleLabel.transform = .identity
 #endif
 	}
 
@@ -80,28 +82,28 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-				let yTrasform = self.label.bounds.height * -0.25
+				let yTrasform = self.titleLabel.bounds.height * -0.25
 				var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
 				transform = transform.translatedBy(x: 0, y: yTrasform * 2.0)
 //				self.label.alpha = 1
-				self.label.transform = transform.translatedBy(x: 0, y: yTrasform + 1)
+				self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform + 1)
 //				self.secondLabel.alpha = 1
-				self.secondLabel.transform = transform
+				self.timeStampLabel.transform = transform
 
 				self.superview?.bringSubview(toFront: self)
 
 				let labelBGColor = UIColor.black.withAlphaComponent(0.8)
-				self.label.backgroundColor = labelBGColor
-				self.secondLabel.backgroundColor = labelBGColor
+				self.titleLabel.backgroundColor = labelBGColor
+				self.timeStampLabel.backgroundColor = labelBGColor
 			} else {
 //				self.label.alpha = 0
-				self.label.transform = .identity
+				self.titleLabel.transform = .identity
 //				self.secondLabel.alpha = 0
-				self.secondLabel.transform = .identity
+				self.timeStampLabel.transform = .identity
 
 				let labelBGColor = UIColor.clear
-				self.label.backgroundColor = labelBGColor
-				self.secondLabel.backgroundColor = labelBGColor
+				self.titleLabel.backgroundColor = labelBGColor
+				self.timeStampLabel.backgroundColor = labelBGColor
 			}
 		}) {() -> Void in }
 	}
