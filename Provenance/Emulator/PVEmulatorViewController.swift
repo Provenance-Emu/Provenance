@@ -81,7 +81,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     var menuGestureRecognizer: UITapGestureRecognizer?
 
     weak var menuActionSheet: UIAlertController?
-    var isShowingMenu: Bool = false
+    var isPaused: Bool = false
 
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
@@ -415,7 +415,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     @objc
     public func updatePlayedDuration() {
-        if !isShowingMenu {
+        if !self.isPaused {
             guard let startTime = game.lastPlayed else {
                 return
             }
@@ -525,14 +525,14 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appDidBecomeActive(_ note: Notification?) {
-        if !isShowingMenu {
+        if !self.isPaused {
             core.setPauseEmulation(false)
         }
         core.setPauseEmulation(true)
         gameAudio?.start()
     }
 
-    func enableContorllerInput(_ enabled: Bool) {
+    func enableControllerInput(_ enabled: Bool) {
 #if os(tvOS)
         controllerUserInteractionEnabled = enabled
 #else
@@ -545,10 +545,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func showMenu(_ sender: Any?) {
-        enableContorllerInput(true)
-        core.setPauseEmulation(true)
+        enableControllerInput(true)
         updatePlayedDuration()
-        isShowingMenu = true
+        core.setPauseEmulation(true)
+        self.isPaused = true
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad {
             actionsheet.popoverPresentationController?.sourceView = menuButton
@@ -559,8 +559,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             actionsheet.addAction(UIAlertAction(title: "Disconnect iCade", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 NotificationCenter.default.post(name: .GCControllerDidDisconnect, object: PVControllerManager.shared.iCadeController)
                 self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.isPaused = false
+                self.enableControllerInput(false)
             }))
         }
         let controllerManager = PVControllerManager.shared
@@ -577,21 +577,21 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 // right trigger bound to Select
                 actionsheet.addAction(UIAlertAction(title: "P1 Start", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
+                    self.isPaused = false
                     self.controllerViewController?.pressStart(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: {() -> Void in
                         self.controllerViewController?.releaseStart(forPlayer: 0)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
                 actionsheet.addAction(UIAlertAction(title: "P1 Select", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
+                    self.isPaused = false
                     self.controllerViewController?.pressSelect(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: {() -> Void in
                         self.controllerViewController?.releaseSelect(forPlayer: 0)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
             }
         }
@@ -599,21 +599,21 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             if (player2.extendedGamepad != nil || wantsStartSelectInMenu) {
                 actionsheet.addAction(UIAlertAction(title: "P2 Start", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
+                    self.isPaused = false
                     self.controllerViewController?.pressStart(forPlayer: 1)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {() -> Void in
                         self.controllerViewController?.releaseStart(forPlayer: 1)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
                 actionsheet.addAction(UIAlertAction(title: "P2 Select", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     self.core.setPauseEmulation(false)
-                    self.isShowingMenu = false
+                    self.isPaused = false
                     self.controllerViewController?.pressSelect(forPlayer: 1)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2, execute: {() -> Void in
                         self.controllerViewController?.releaseSelect(forPlayer: 1)
                     })
-                    self.enableContorllerInput(false)
+                    self.enableControllerInput(false)
                 }))
             }
         }
@@ -643,8 +643,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             }
             self.core.setPauseEmulation(false)
             self.core.resetEmulation()
-            self.isShowingMenu = false
-            self.enableContorllerInput(false)
+            self.isPaused = false
+            self.enableControllerInput(false)
         }))
         actionsheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             let sb = UIStoryboard(name: "Provenance", bundle: nil)
@@ -654,16 +654,15 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             moreInfoViewContrller?.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.hideModeInfo))
             let newNav = UINavigationController(rootViewController: moreInfoViewContrller ?? UIViewController())
             self.present(newNav, animated: true) {() -> Void in }
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+			self.enableControllerInput(false)
         }))
         actionsheet.addAction(UIAlertAction(title: "Return to Game Library", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
             self.quit()
         }))
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
                 self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.isPaused = false
+                self.enableControllerInput(false)
             })
         actionsheet.addAction(resumeAction)
         if #available(iOS 9.0, *) {
@@ -685,10 +684,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     func hideMenu() {
-        enableContorllerInput(false)
+        enableControllerInput(false)
         if menuActionSheet != nil {
             dismiss(animated: true) {() -> Void in }
-            isShowingMenu = false
+            isPaused = false
         }
         updateLastPlayedTime()
         core.setPauseEmulation(false)
@@ -702,6 +701,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func showSaveStateMenu() {
+        self.isPaused = true
 		guard let saveStatesNavController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
 			return
 		}
@@ -898,8 +898,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				self.presentError("Failed to load save state. \(error.localizedDescription)")
 			}
 			self.core.setPauseEmulation(false)
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+			self.isPaused = false
+			self.enableControllerInput(false)
 		}
 
 		if core.projectVersion != state.createdWithCoreVersion {
@@ -917,8 +917,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 	func saveStatesViewControllerDone(_ saveStatesViewController: PVSaveStatesViewController) {
 		dismiss(animated: true, completion: nil)
 		self.core.setPauseEmulation(false)
-		self.isShowingMenu = false
-		self.enableContorllerInput(false)
+		self.isPaused = false
+		self.enableControllerInput(false)
 	}
 
 	func saveStatesViewControllerCreateNewState(_ saveStatesViewController: PVSaveStatesViewController) throws {
@@ -956,11 +956,12 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			})
 		}
 		self.core.setPauseEmulation(false)
-		self.isShowingMenu = false
+		self.isPaused = false
     }
 
 #endif
     @objc func showSpeedMenu() {
+        self.isPaused = true
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -971,8 +972,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             actionSheet.addAction(UIAlertAction(title: title, style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.core.gameSpeed = GameSpeed(rawValue: idx) ?? .normal
                 self.core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.isPaused = false
+                self.enableControllerInput(false)
             }))
         }
         present(actionSheet, animated: true, completion: {() -> Void in
@@ -999,7 +1000,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         UIApplication.shared.setStatusBarHidden(false, with: .fade)
 #endif
         dismiss(animated: true, completion: completion)
-        enableContorllerInput(false)
+        enableControllerInput(false)
         updatePlayedDuration()
     }
 
@@ -1009,7 +1010,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     @available(iOS 9.0, *)
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
 
-        if let press = presses.first, press.type == .menu && !isShowingMenu {
+        if let press = presses.first, press.type == .menu && !isPaused {
             //         [self controllerPauseButtonPressed];
         } else {
             super.pressesBegan(presses, with: event)
@@ -1019,7 +1020,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     //#endif
     @objc func controllerPauseButtonPressed(_ sender: Any?) {
         DispatchQueue.main.async(execute: {() -> Void in
-            if !self.isShowingMenu {
+            if !self.isPaused {
                 self.showMenu(self)
             } else {
                 self.hideMenu()
@@ -1113,8 +1114,8 @@ extension PVEmulatorViewController {
     func showSwapDiscsMenu() {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {
 			presentError("Internal error: No core found.")
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+			self.isPaused = false
+			self.enableControllerInput(false)
             return
         }
 
@@ -1122,8 +1123,8 @@ extension PVEmulatorViewController {
         guard numberOfDiscs > 1 else {
             presentError("Game only supports 1 disc.")
 			core.setPauseEmulation(false)
-			self.isShowingMenu = false
-			self.enableContorllerInput(false)
+			self.isPaused = false
+			self.enableControllerInput(false)
             return
         }
 
@@ -1138,16 +1139,16 @@ extension PVEmulatorViewController {
                 })
 
                 core.setPauseEmulation(false)
-                self.isShowingMenu = false
-                self.enableContorllerInput(false)
+                self.isPaused = false
+                self.enableControllerInput(false)
             }))
         }
 
         // Add cancel action
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[unowned self] (sheet) in
             core.setPauseEmulation(false)
-            self.isShowingMenu = false
-			self.enableContorllerInput(false)
+            self.isPaused = false
+			self.enableControllerInput(false)
         }))
 
         // Present
