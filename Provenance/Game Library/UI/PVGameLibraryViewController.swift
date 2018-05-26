@@ -2381,9 +2381,11 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 }
 #endif
 
+#if os(iOS)
 extension PVGameLibraryViewController: UIImagePickerControllerDelegate, SFSafariViewControllerDelegate {
 
 }
+#endif
 
 extension PVGameLibraryViewController: UISearchControllerDelegate {
     func didDismissSearchController(_ searchController: UISearchController) {
