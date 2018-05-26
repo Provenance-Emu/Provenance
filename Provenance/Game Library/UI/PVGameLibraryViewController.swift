@@ -102,12 +102,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	let maxForSpecialSection = 6
 
     #if os(iOS)
-    var renameToolbar: UIToolbar?
     var assetsLibrary: ALAssetsLibrary?
     #endif
-    var renameOverlay: UIView?
-    var renameTextField: UITextField?
-    var gameToRename: PVGame?
     var gameForCustomArt: PVGame?
 
 	@IBOutlet weak var getMoreRomsBarButtonItem: UIBarButtonItem!
@@ -1644,83 +1640,26 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func renameGame(_ game: PVGame) {
-#if os(tvOS)
-        let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title)", preferredStyle: .alert)
+
+		let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title)", preferredStyle: .alert)
         alert.addTextField(configurationHandler: {(_ textField: UITextField) -> Void in
             textField.placeholder = game.title
+			textField.text = game.title
         })
 
-    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+		alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             if let title = alert.textFields?.first?.text {
-                self.renameGame(game, toTitle: title)
+				guard !title.isEmpty else {
+					self.presentError("Cannot set a blank title.")
+					return
+				}
+
+				RomDatabase.sharedInstance.renameGame(game, toTitle: title)
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true) {() -> Void in }
-#else
-        // TODO: There's a bug here that you'll never see the text input if a hardware keyboard is attached.
-        // Maybe just use the same code as atV - jm
-        gameToRename = game
-        renameOverlay = UIView(frame: UIScreen.main.bounds)
-        renameOverlay?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        renameOverlay?.backgroundColor = UIColor(white: 0.0, alpha: 0.3)
-        renameOverlay?.alpha = 0.0
-        view.addSubview(renameOverlay!)
-
-        UIView.animate(withDuration: 0.3, delay: 0.0, options: .beginFromCurrentState, animations: {
-            self.renameOverlay?.alpha = 1.0
-        }, completion: nil)
-
-        renameToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 44))
-        renameToolbar?.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-        renameToolbar?.barStyle = .black
-        renameTextField = UITextField(frame: CGRect(x: 0, y: 0, width: view.bounds.size.width - 24, height: 30))
-        renameTextField?.autoresizingMask = .flexibleWidth
-        renameTextField?.borderStyle = .roundedRect
-        renameTextField?.placeholder = game.title
-        renameTextField?.text = game.title
-        renameTextField?.keyboardAppearance = .alert
-        renameTextField?.returnKeyType = .done
-        renameTextField?.delegate = self
-        let textFieldItem = UIBarButtonItem(customView: renameTextField!)
-        renameToolbar?.items = [textFieldItem]
-        renameToolbar?.setOriginY(view.bounds.size.height)
-        renameOverlay?.addSubview(renameToolbar!)
-        navigationController?.view.addSubview(renameOverlay!)
-        NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
-        renameTextField?.becomeFirstResponder()
-        renameTextField?.selectAll(nil)
-#endif
     }
-
-    #if os(iOS)
-    func doneRenaming(_ sender: Any) {
-        defer {
-            UIView.animate(withDuration: 0.3, delay: 0.0, options: .beginFromCurrentState, animations: {() -> Void in
-                self.renameOverlay?.alpha = 0.0
-            }, completion: {(_ finished: Bool) -> Void in
-                self.renameOverlay?.removeFromSuperview()
-                self.renameOverlay = nil
-            })
-            NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
-            renameTextField?.resignFirstResponder()
-        }
-
-        guard let newTitle = renameTextField?.text, let gameToRename = gameToRename else {
-            ELOG("No rename textor game")
-            return
-        }
-
-        renameGame(gameToRename, toTitle: newTitle)
-        self.gameToRename = nil
-    }
-
-    #endif
-	func renameGame(_ game: PVGame, toTitle title: String) {
-		RomDatabase.sharedInstance.renameGame(game, toTitle: title)
-//		fetchGames()
-//		collectionView?.reloadData()
-	}
 
 	func delete(game: PVGame) throws {
 		try RomDatabase.sharedInstance.delete(game: game)
@@ -2054,24 +1993,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 // MARK: - Text Field and Keyboard Delegate
-#if os(iOS)
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField != searchField {
-            doneRenaming(self)
-        } else {
-            textField.resignFirstResponder()
-        }
-        return true
-    }
-
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        if textField == searchField {
-            textField.perform(#selector(self.resignFirstResponder), with: nil, afterDelay: 0.0)
-        }
-        return true
-    }
-
-#endif
     @objc func handleTextFieldDidChange(_ notification: Notification) {
         if let text = searchField?.text, !text.isEmpty {
             searchLibrary(text)
@@ -2080,44 +2001,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
     }
 
-#if os(iOS)
-    @objc func keyboardWillShow(_ note: Notification) {
-        guard let userInfo = note.userInfo else {
-            return
-        }
-
-        var keyboardEndFrame: CGRect = (userInfo[UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
-        keyboardEndFrame = view.window!.convert(keyboardEndFrame, to: navigationController!.view)
-        let animationDuration = CGFloat((userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).floatValue)
-        let animationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).uintValue
-
-        UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0.0, options: [.beginFromCurrentState, UIViewAnimationOptions(rawValue: animationCurve)], animations: {() -> Void in
-            self.renameToolbar?.setOriginY(keyboardEndFrame.origin.y - (self.renameToolbar?.frame.size.height ?? 0))
-        }, completion: {(_ finished: Bool) -> Void in
-        })
-    }
-
-#endif
-#if os(iOS)
-    @objc func keyboardWillHide(_ note: Notification) {
-        guard let userInfo = note.userInfo else {
-            return
-        }
-
-        let animationDuration = CGFloat((userInfo[UIKeyboardAnimationDurationUserInfoKey] as! NSNumber).floatValue)
-        let animationCurve = (userInfo[UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).uintValue
-
-        UIView.animate(withDuration: TimeInterval(animationDuration), delay: 0.0, options: [.beginFromCurrentState, UIViewAnimationOptions(rawValue: animationCurve)], animations: {() -> Void in
-            self.renameToolbar?.setOriginY(UIScreen.main.bounds.size.height)
-        }, completion: {(_ finished: Bool) -> Void in
-            self.renameToolbar?.removeFromSuperview()
-            self.renameToolbar = nil
-            self.renameTextField = nil
-        })
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
-    }
-#endif
 // MARK: - Image Picker Delegate
 #if os(iOS)
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]) {
