@@ -88,10 +88,10 @@ extension GameSharingViewController where Self : UIViewController {
 		})
 
 		let addImage : (String?, String) -> Void  = { (imageURL, suffix) in
-			guard let imageURL = imageURL else {
+			guard let imageURL = imageURL, !imageURL.isEmpty, PVMediaCache.fileExists(forKey: imageURL) else {
 				return
 			}
-			if !imageURL.isEmpty, PVMediaCache.fileExists(forKey: imageURL), let localURL = PVMediaCache.filePath(forKey: imageURL), FileManager.default.fileExists(atPath: localURL.path) {
+			if let localURL = PVMediaCache.filePath(forKey: imageURL), FileManager.default.fileExists(atPath: localURL.path) {
 				var originalExtension = (imageURL as NSString).pathExtension
 				if originalExtension.isEmpty {
 					originalExtension = localURL.pathExtension
