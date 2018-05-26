@@ -2544,7 +2544,11 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 					selectedIndexPath = indexPath
 				}
 
-				moreInfoViewContrller.game = game(at: selectedIndexPath)
+				guard let game = game(at: selectedIndexPath) else {
+					ELOG("No game at index : \(selectedIndexPath)")
+					return nil
+				}
+				moreInfoViewContrller.game = game
 				moreInfoViewContrller.showsPlayButton = true
 				return moreInfoViewContrller
 			}
