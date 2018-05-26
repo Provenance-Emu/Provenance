@@ -615,7 +615,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                     label.text = newValue
 
 					if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
-						PVGameImporter.shared.lookupInfo(for: self.game)
+						PVGameImporter.shared.lookupInfo(for: self.game, overwrite: false)
 					}
                 } catch {
                     ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")

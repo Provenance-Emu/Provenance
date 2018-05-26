@@ -346,7 +346,7 @@ public extension RomDatabase {
     }
 
 	func renameGame(_ game: PVGame, toTitle title: String) {
-		if title.count != 0 {
+		if !title.isEmpty {
 			do {
 				try RomDatabase.sharedInstance.writeTransaction {
 					game.title = title
@@ -354,7 +354,7 @@ public extension RomDatabase {
 
 				if game.releaseID == nil || game.releaseID!.isEmpty {
 					ILOG("Game isn't already matched, going to try to re-match after a rename")
-					PVGameImporter.shared.lookupInfo(for: game)
+					PVGameImporter.shared.lookupInfo(for: game, overwrite: false)
 				}
 			} catch {
 				ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")

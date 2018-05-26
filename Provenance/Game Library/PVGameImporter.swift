@@ -810,7 +810,7 @@ public extension PVGameImporter {
 
     // MARK: - ROM Lookup
 
-    public func lookupInfo(for game: PVGame) {
+	public func lookupInfo(for game: PVGame, overwrite: Bool = true) {
         let database = RomDatabase.sharedInstance
         database.refresh()
         if game.md5Hash.isEmpty {
@@ -917,62 +917,61 @@ public extension PVGameImporter {
                      serial
                  */
 
-                if let title = chosenResult["gameTitle"] as? String, !title.isEmpty {
+                if let title = chosenResult["gameTitle"] as? String, !title.isEmpty, overwrite || game.title.isEmpty {
                     // Remove just (Disc 1) from the title. Discs with other numbers will retain their names
                     let revisedTitle = title.replacingOccurrences(of: "\\ \\(Disc 1\\)", with: "", options: .regularExpression)
-
                     game.title = revisedTitle
                 }
 
-                if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty {
+                if let boxImageURL = chosenResult["boxImageURL"] as? String, !boxImageURL.isEmpty, overwrite || game.originalArtworkURL.isEmpty {
                     game.originalArtworkURL = boxImageURL
                 }
 
-                if let regionName = chosenResult["region"] as? String, !regionName.isEmpty {
+                if let regionName = chosenResult["region"] as? String, !regionName.isEmpty, overwrite || game.regionName == nil {
                     game.regionName = regionName
                 }
 
-				if let regionID = chosenResult["regionID"] as? Int {
+				if let regionID = chosenResult["regionID"] as? Int, overwrite || game.regionID == nil {
 					game.regionID = regionID
 				}
 
-                if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty {
+                if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
                     game.gameDescription = gameDescription
                 }
 
-                if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty {
+                if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
                     game.boxBackArtworkURL = boxBackURL
                 }
 
-                if let developer = chosenResult["developer"] as? String, !developer.isEmpty {
+                if let developer = chosenResult["developer"] as? String, !developer.isEmpty, overwrite || game.developer == nil {
                     game.developer = developer
                 }
 
-                if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty {
+                if let publisher = chosenResult["publisher"] as? String, !publisher.isEmpty, overwrite || game.publisher == nil {
                     game.publisher = publisher
                 }
 
-                if let genres = chosenResult["genres"] as? String, !genres.isEmpty {
+                if let genres = chosenResult["genres"] as? String, !genres.isEmpty, overwrite || game.genres == nil {
                     game.genres = genres
                 }
 
-                if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty {
+                if let releaseDate = chosenResult["releaseDate"] as? String, !releaseDate.isEmpty, overwrite || game.publishDate == nil {
                     game.publishDate = releaseDate
                 }
 
-                if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty {
+                if let referenceURL = chosenResult["referenceURL"] as? String, !referenceURL.isEmpty, overwrite || game.referenceURL == nil {
                     game.referenceURL = referenceURL
                 }
 
-                if let releaseID = chosenResult["releaseID"] as? String, !releaseID.isEmpty {
-                    game.releaseID = releaseID
+                if let releaseID = chosenResult["releaseID"] as? NSNumber, !releaseID.stringValue.isEmpty, overwrite || game.releaseID == nil {
+                    game.releaseID = releaseID.stringValue
                 }
 
-                if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty {
+                if let systemShortName = chosenResult["systemShortName"] as? String, !systemShortName.isEmpty, overwrite || game.systemShortName == nil {
                     game.systemShortName = systemShortName
                 }
 
-                if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty {
+                if let romSerial = chosenResult["serial"] as? String, !romSerial.isEmpty, overwrite || game.romSerial == nil {
                     game.romSerial = romSerial
                 }
             }
@@ -1153,7 +1152,7 @@ extension PVGameImporter {
                     self.importStartedHandler?(fullpath.path)
                 })
             }
-            lookupInfo(for: game)
+            lookupInfo(for: game, overwrite: true)
             modified = true
         }
 
