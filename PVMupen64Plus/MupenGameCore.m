@@ -951,7 +951,7 @@ static void ConfigureRICE() {
 
 - (void)startEmulation
 {
-    if(!isRunning)
+    if(!self.isRunning)
     {
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];

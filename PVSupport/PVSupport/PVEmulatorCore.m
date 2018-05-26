@@ -33,6 +33,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 
 @interface PVEmulatorCore()
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
+@property (nonatomic, assign, readwrite) BOOL isRunning;
 @end
 
 @implementation PVEmulatorCore
@@ -87,12 +88,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 {
 	if ([self class] != PVEmulatorCoreClass)
     {
-		if (!isRunning)
+		if (!_isRunning)
 		{
 #if !TARGET_OS_TV
 			[self setPreferredSampleRate:[self audioSampleRate]];
 #endif
-			isRunning  = YES;
+			self.isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
             [NSThread detachNewThreadSelector:@selector(emulationLoopThread) toTarget:self withObject:nil];
@@ -117,23 +118,23 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 {
     if (flag)
 	{
-		isRunning = NO;
+		self.isRunning = NO;
 	}
     else
 	{
-		isRunning = YES;
+		self.isRunning = YES;
 	}
 }
 
 - (BOOL)isEmulationPaused
 {
-    return !isRunning;
+	return !_isRunning;
 }
 
 - (void)stopEmulation
 {
 	shouldStop = YES;
-    isRunning  = NO;
+	self.isRunning  = NO;
 
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
@@ -172,7 +173,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
         [self updateControllers];
         
         @synchronized (self) {
-            if (isRunning) {
+			if (_isRunning) {
                 if (self.isSpeedModified)
                 {
                     [self executeFrame];

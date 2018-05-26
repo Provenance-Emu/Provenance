@@ -50,8 +50,6 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 	
 	NSTimeInterval gameInterval;
 	NSTimeInterval _frameInterval;
-
-    BOOL isRunning;
     BOOL shouldStop;
 }
 
@@ -61,6 +59,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property(weak)     id<PVAudioDelegate>    audioDelegate;
 @property(weak)     id<PVRenderDelegate>   renderDelegate;
 
+@property (nonatomic, assign, readonly) BOOL isRunning;
 @property (nonatomic, copy) NSString *romName;
 @property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;

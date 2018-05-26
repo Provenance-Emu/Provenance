@@ -98,7 +98,23 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
         } else {
             NSSetUncaughtExceptionHandler(nil)
         }
+
+		// Add KVO watcher for isRunning state so we can update play time
+		core.addObserver(self, forKeyPath: "isRunning", options: .new, context: nil)
     }
+
+	override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+		if keyPath == "isRunning" {
+			if core.isRunning {
+				if gameStartTime != nil {
+					ELOG("Didn't expect to get a KVO update of isRunning to true while we still have an unflushed gameStartTime variable")
+				}
+				gameStartTime = Date()
+			} else {
+				updateLastPlayedTime()
+			}
+		}
+	}
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -122,6 +138,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
         updatePlayedDuration()
 		destroyAutosaveTimer()
+		core.removeObserver(self, forKeyPath: "isRunning")
     }
 
 	private func initNotifcationObservers() {
@@ -413,24 +430,29 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		}
 	}
 
+	var gameStartTime : Date?
     @objc
     public func updatePlayedDuration() {
-        if !isShowingMenu {
-            guard let startTime = game.lastPlayed else {
-                return
-            }
+		defer {
+			// Clear any temp pointer to start time
+			self.gameStartTime = nil
+		}
+		guard let gameStartTime = gameStartTime else {
+			return
+		}
 
-            let duration = startTime.timeIntervalSinceNow * -1
-            let totalTimeSpent = game.timeSpentInGame + Int(duration)
+		// Calcuate what the new total spent time should be
+		let duration = gameStartTime.timeIntervalSinceNow * -1
+		let totalTimeSpent = game.timeSpentInGame + Int(duration)
 
-            do {
-                try RomDatabase.sharedInstance.writeTransaction {
-                    game.timeSpentInGame = totalTimeSpent
-                }
-            } catch {
-                presentError("\(error.localizedDescription)")
-            }
-        }
+		// Write that to the database
+		do {
+			try RomDatabase.sharedInstance.writeTransaction {
+				game.timeSpentInGame = totalTimeSpent
+			}
+		} catch {
+			presentError("\(error.localizedDescription)")
+		}
     }
 
     @objc public func updateLastPlayedTime() {
@@ -509,8 +531,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     @objc func appDidEnterBackground(_ note: Notification?) {
-        updatePlayedDuration()
-    }
+
+	}
 
     @objc func appWillResignActive(_ note: Notification?) {
 		if PVSettingsModel.sharedInstance().autoSave, core.supportsSaveStates {
@@ -547,7 +569,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     @objc func showMenu(_ sender: Any?) {
         enableContorllerInput(true)
         core.setPauseEmulation(true)
-        updatePlayedDuration()
         isShowingMenu = true
         let actionsheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         if traitCollection.userInterfaceIdiom == .pad {

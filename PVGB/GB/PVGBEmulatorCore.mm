@@ -166,7 +166,7 @@ public:
 
 - (void)stopEmulation
 {
-    if (isRunning)
+    if (self.isRunning)
     {
         gb.saveSavedata();
 
