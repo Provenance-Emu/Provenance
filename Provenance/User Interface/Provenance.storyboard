@@ -244,7 +244,7 @@
                                 <color key="backgroundColor" white="0.060845269063888888" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" id="sD7-l1-Ret">
-                                <rect key="frame" x="16" y="88" width="343" height="160"/>
+                                <rect key="frame" x="16" y="96" width="343" height="152"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <gestureRecognizers/>
                                 <connections>
