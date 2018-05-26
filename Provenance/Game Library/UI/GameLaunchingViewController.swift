@@ -27,11 +27,11 @@ public protocol GameLaunchingViewController: class {
 }
 
 public protocol GameSharingViewController : class {
-	func share(for game: PVGame)
+	func share(for game: PVGame, sender: Any?)
 }
 
 extension GameSharingViewController where Self : UIViewController {
-	func share(for game: PVGame) {
+	func share(for game: PVGame, sender: Any?) {
 		/*
 		TODO:
 		Add native share action for sharing to other provenance devices
@@ -39,22 +39,9 @@ extension GameSharingViewController where Self : UIViewController {
 		Well, then also need a way to import save states
 		*/
 		#if os(iOS)
-		// Add save states
-		var files = Array(game.saveStates.compactMap {
-			return $0.file.url
-		})
 
-		ILOG("Adding \(files.count) save states to zip")
 
-		// Add main game file
-		files.append(game.file.url)
-
-		// Check for and add battery saves
-		if FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
-			ILOG("Adding \(batterySaves.count) battery saves to zip")
-			files.append(contentsOf: batterySaves)
-		}
-
+			// - Create temporary directory
 		let tempDir = NSTemporaryDirectory()
 		let tempDirURL = URL(fileURLWithPath: tempDir, isDirectory: true)
 
@@ -64,23 +51,128 @@ extension GameSharingViewController where Self : UIViewController {
 			ELOG("Failed to create temp dir \(tempDir). Error: " + error.localizedDescription)
 			return
 		}
+		
+
+		let deleteTempDir : ()->Void = {
+			do {
+				try FileManager.default.removeItem(at: tempDirURL)
+			} catch {
+				ELOG("Failed to delete temp dir: " + error.localizedDescription)
+			}
+		}
+
+		// - Add save states and images
+		// - Use symlinks to images so we can modify the filenames
+		var files = game.saveStates.reduce([URL](), { (arr, save) -> [URL] in
+			guard !save.file.missing else {
+				WLOG("Save file is missing. Can't add to zip")
+				return arr
+			}
+			var arr = arr
+			arr.append(save.file.url)
+			if let image = save.image, !image.missing {
+					// Construct destination url "{SAVEFILE}.{EXT}"
+				let destination = tempDirURL.appendingPathComponent(save.file.fileNameWithoutExtension + "." + image.url.pathExtension, isDirectory: false)
+				if FileManager.default.fileExists(atPath: destination.path) {
+					arr.append(destination)
+				} else {
+					do {
+						try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: image.url)
+						arr.append(destination)
+					} catch {
+						ELOG("Failed to make symlink: " + error.localizedDescription)
+					}
+				}
+			}
+			return arr
+		})
+
+		let addImage : (String?, String) -> Void  = { (imageURL, suffix) in
+			guard let imageURL = imageURL, !imageURL.isEmpty, PVMediaCache.fileExists(forKey: imageURL) else {
+				return
+			}
+			if let localURL = PVMediaCache.filePath(forKey: imageURL), FileManager.default.fileExists(atPath: localURL.path) {
+				var originalExtension = (imageURL as NSString).pathExtension
+				if originalExtension.isEmpty {
+					originalExtension = localURL.pathExtension
+				}
+				if originalExtension.isEmpty {
+					originalExtension = "png" // now this is just a guess
+				}
+				let destination = tempDirURL.appendingPathComponent(game.title + suffix + "." + originalExtension, isDirectory: false)
+				try? FileManager.default.removeItem(at: destination)
+				do {
+					try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: localURL)
+					files.append(destination)
+					ILOG("Added \(suffix) image to zip")
+				} catch {
+					// Add anyway to catch the fact that fileExists doesnt' work for symlinks that already exist
+					ELOG("Failed to make symlink: " + error.localizedDescription)
+				}
+			}
+		}
+
+		ILOG("Adding \(files.count) save states and their images to zip")
+		addImage(game.originalArtworkURL, "")
+		addImage(game.originalArtworkURL, "-Custom")
+		addImage(game.boxBackArtworkURL, "-Back")
+
+		// - Add main game file
+		files.append(game.file.url)
+
+		// Check for and add battery saves
+		if FileManager.default.fileExists(atPath: game.batterSavesPath.path), let batterySaves = try? FileManager.default.contentsOfDirectory(at: game.batterSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
+			ILOG("Adding \(batterySaves.count) battery saves to zip")
+			files.append(contentsOf: batterySaves)
+		}
 
 		let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system.shortNameAlt ?? game.system.shortName).zip", isDirectory: false)
 		let paths : [String] = files.map { $0.path }
 
-		let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
-		guard success else {
-			ELOG("Failed to zip of game files")
-			return
+		let hud = MBProgressHUD.showAdded(to: view, animated: true)!
+		hud.isUserInteractionEnabled = false
+		hud.mode = .indeterminate
+		hud.labelText = "Creating ZIP"
+		hud.detailsLabelText = "Please be patient, this may take a while..."
+
+		DispatchQueue.global(qos: .background).async {
+			let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
+
+			DispatchQueue.main.async {
+				hud.hide(true, afterDelay: 0.1)
+				guard success else {
+					deleteTempDir()
+					ELOG("Failed to zip of game files")
+					return
+				}
+
+				let shareVC = UIActivityViewController(activityItems: [zipPath], applicationActivities: nil)
+
+				if let anyView = sender as? UIView {
+					shareVC.popoverPresentationController?.sourceView = anyView
+					shareVC.popoverPresentationController?.sourceRect = anyView.convert(anyView.frame, from: self.view)
+				} else if let anyBarButtonItem = sender as? UIBarButtonItem {
+					shareVC.popoverPresentationController?.barButtonItem = anyBarButtonItem
+				} else {
+					shareVC.popoverPresentationController?.sourceView = self.view
+					shareVC.popoverPresentationController?.sourceRect = self.view.bounds
+				}
+
+				// Executed after share is completed
+				shareVC.completionWithItemsHandler = {(activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, error: Error?) in
+					// Cleanup our temp folder
+					deleteTempDir()
+				}
+
+				if self.isBeingPresented {
+					self.present(shareVC, animated: true)
+				} else {
+					let vc = UIApplication.shared.delegate?.window??.rootViewController
+					vc?.present(shareVC, animated: true)
+				}
+			}
 		}
 
-		let shareVC = UIActivityViewController(activityItems: [zipPath], applicationActivities: nil)
-		if isBeingPresented {
-			present(shareVC, animated: true)
-		} else {
-			let vc = UIApplication.shared.delegate?.window??.rootViewController
-			vc?.present(shareVC, animated: true)
-		}
 		#endif
 	}
 }

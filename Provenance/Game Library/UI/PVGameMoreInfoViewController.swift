@@ -88,7 +88,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
 			return
 		}
 
-		share(for: game)
+		share(for: game, sender: sender)
 	}
 
     // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
@@ -403,7 +403,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
 	@IBAction func shareButtonClicked(_ sender: Any) {
-		share(for: game)
+		share(for: game, sender: sender)
 	}
 
     #if os(iOS)
@@ -688,8 +688,8 @@ extension PVGameMoreInfoViewController {
 
 		let shareAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) in
 
-			if let libVC = viewController as? GameSharingViewController {
-				libVC.share(for: game)
+			if let libVC = viewController as? (UIViewController & GameSharingViewController) {
+				libVC.share(for: game, sender: libVC.view)
 			}
 		}
 

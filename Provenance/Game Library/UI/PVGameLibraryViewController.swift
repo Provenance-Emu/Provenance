@@ -1594,7 +1594,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #endif
 			#if os(iOS)
 			actionSheet.addAction(UIAlertAction(title: "Share", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-				self.share(for: game)
+				self.share(for: game, sender: self.collectionView?.cellForItem(at: indexPath))
 			}))
 			#endif
 
@@ -2544,7 +2544,11 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
 					selectedIndexPath = indexPath
 				}
 
-				moreInfoViewContrller.game = game(at: selectedIndexPath)
+				guard let game = game(at: selectedIndexPath) else {
+					ELOG("No game at index : \(selectedIndexPath)")
+					return nil
+				}
+				moreInfoViewContrller.game = game
 				moreInfoViewContrller.showsPlayButton = true
 				return moreInfoViewContrller
 			}
