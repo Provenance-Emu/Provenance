@@ -247,7 +247,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
 			// Navigation bar large titles
 			navigationController?.navigationBar.prefersLargeTitles = false
-			navigationItem.title = "Library"
+			//navigationItem.title = "Library"
 
 			// Create a search contorller
 			let searchController = UISearchController(searchResultsController: nil)
@@ -265,8 +265,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#endif
 
         //load the config file
-        title = "Library"
-
+        //title = "Library"
+        
         let layout = PVGameLibraryCollectionFlowLayout()
 		layout.scrollDirection = .vertical
 
