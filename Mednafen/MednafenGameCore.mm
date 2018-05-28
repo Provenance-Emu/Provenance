@@ -2134,9 +2134,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVVBButtonR:
                 return [[pad rightShoulder] isPressed];
             case PVVBButtonStart:
-                return [[pad leftTrigger] isPressed];
-            case PVVBButtonSelect:
                 return [[pad rightTrigger] isPressed];
+            case PVVBButtonSelect:
+                return [[pad leftTrigger] isPressed];
             default:
                 break;
         }
@@ -2163,9 +2163,9 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
             case PVVBButtonR:
                 return [[pad rightShoulder] isPressed];
             case PVVBButtonStart:
-                return [[pad buttonX] isPressed];
-            case PVVBButtonSelect:
                 return [[pad buttonY] isPressed];
+            case PVVBButtonSelect:
+                return [[pad buttonX] isPressed];
             default:
                 break;
         }
