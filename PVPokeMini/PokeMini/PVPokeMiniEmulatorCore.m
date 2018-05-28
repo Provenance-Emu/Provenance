@@ -418,24 +418,37 @@ int saveEEPROM(const char *filename)
                     }
                 }
                 // Extra buttons
-                else if (element == gamepad.leftTrigger) {
-                    if (strongSelf->controllerState.menu != gamepad.leftTrigger.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftTrigger.isPressed ? 1 : 0);
-                        strongSelf->controllerState.menu = gamepad.leftTrigger.isPressed;
-                        DLOG(@"Menu %@", strongSelf->controllerState.menu ? @"Pressed" : @"Unpressed");
-                    }
-                }
-                else if (element == gamepad.rightTrigger) {
-                    if (strongSelf->controllerState.shake != gamepad.rightTrigger.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightTrigger.isPressed ? 1 : 0);
-                        strongSelf->controllerState.shake = gamepad.rightTrigger.isPressed;
-                        DLOG(@"Shake %@", strongSelf->controllerState.shake ? @"Pressed" : @"Unpressed");
+                else if (element == gamepad.buttonY) {
+                    if (strongSelf->controllerState.menu != gamepad.buttonY.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonY.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.buttonY.isPressed;
                     }
                 }
                 else if (element == gamepad.leftShoulder) {
-                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+                    if (strongSelf->controllerState.menu != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.leftShoulder.isPressed;
+                        DLOG(@"Menu %@", strongSelf->controllerState.menu ? @"Pressed" : @"Unpressed");
+                    }
+                }
+                else if (element == gamepad.leftTrigger) {
+                    if (strongSelf->controllerState.shake != gamepad.leftTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.leftTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.leftTrigger.isPressed;
+                        DLOG(@"Shake %@", strongSelf->controllerState.shake ? @"Pressed" : @"Unpressed");
+                    }
+                }
+                else if (element == gamepad.rightShoulder) {
+                    if (strongSelf->controllerState.power != gamepad.rightShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.rightShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.rightShoulder.isPressed;
+                        DLOG(@"Power %@", strongSelf->controllerState.power ? @"Pressed" : @"Unpressed");
+                    }
+                }
+                else if (element == gamepad.rightTrigger) {
+                    if (strongSelf->controllerState.power != gamepad.rightTrigger.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.rightTrigger.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.rightTrigger.isPressed;
                         DLOG(@"Power %@", strongSelf->controllerState.power ? @"Pressed" : @"Unpressed");
                     }
                 }
@@ -474,22 +487,22 @@ int saveEEPROM(const char *filename)
                     }
                 }
                 // Extra buttons
-                else if (element == gamepad.buttonX) {
-                    if (strongSelf->controllerState.menu != gamepad.buttonX.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonX.isPressed ? 1 : 0);
-                        strongSelf->controllerState.menu = gamepad.buttonX.isPressed;
-                    }
-                }
-                else if (element == gamepad.rightShoulder) {
-                    if (strongSelf->controllerState.shake != gamepad.rightShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonShake, gamepad.rightShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.shake = gamepad.rightShoulder.isPressed;
+                else if (element == gamepad.buttonY) {
+                    if (strongSelf->controllerState.menu != gamepad.buttonY.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonMenu, gamepad.buttonY.isPressed ? 1 : 0);
+                        strongSelf->controllerState.menu = gamepad.buttonY.isPressed;
                     }
                 }
                 else if (element == gamepad.leftShoulder) {
-                    if (strongSelf->controllerState.power != gamepad.leftShoulder.isPressed) {
-                        JoystickButtonsEvent(PVPMButtonPower, gamepad.leftShoulder.isPressed ? 1 : 0);
-                        strongSelf->controllerState.power = gamepad.leftShoulder.isPressed;
+                    if (strongSelf->controllerState.shake != gamepad.leftShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonShake, gamepad.leftShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.shake = gamepad.leftShoulder.isPressed;
+                    }
+                }
+                else if (element == gamepad.rightShoulder) {
+                    if (strongSelf->controllerState.power != gamepad.rightShoulder.isPressed) {
+                        JoystickButtonsEvent(PVPMButtonPower, gamepad.rightShoulder.isPressed ? 1 : 0);
+                        strongSelf->controllerState.power = gamepad.rightShoulder.isPressed;
                     }
                 }
             };
