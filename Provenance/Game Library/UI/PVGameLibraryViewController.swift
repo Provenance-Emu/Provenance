@@ -143,7 +143,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}
 
 				if isViewLoaded {
-					sortOptionBarButtonItem?.title = "Sort: \(currentSort.rawValue)"
 					fetchGames()
 					collectionView?.reloadData()
 				}
@@ -339,7 +338,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
         #endif
 
-		sortOptionBarButtonItem?.title = "Sort: \(currentSort.rawValue)"
 
         loadGameFromShortcut()
         becomeFirstResponder()
