@@ -429,7 +429,7 @@ static bool environment_callback(unsigned cmd, void *data)
             case PVGenesisButtonZ:
                 return [[pad rightShoulder] isPressed];
             case PVGenesisButtonStart:
-                return [[pad leftTrigger] isPressed];
+                return [[pad rightTrigger] isPressed];
             default:
                 break;
         }
