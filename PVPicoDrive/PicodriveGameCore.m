@@ -277,7 +277,7 @@ static void writeSaveFile(const char* path, int type)
             case PVSega32XButtonZ:
                 return [[gamePad rightShoulder] isPressed];
             case PVSega32XButtonStart:
-                return [[gamePad leftTrigger] isPressed];
+                return [[gamePad rightTrigger] isPressed];
             default:
                 break;
         }
