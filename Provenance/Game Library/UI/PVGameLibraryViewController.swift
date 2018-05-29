@@ -266,7 +266,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
         //load the config file
         //title = "Library"
-        
+
         let layout = PVGameLibraryCollectionFlowLayout()
 		layout.scrollDirection = .vertical
 
@@ -337,7 +337,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             registerForPreviewing(with: self, sourceView: collectionView)
         }
         #endif
-
 
         loadGameFromShortcut()
         becomeFirstResponder()

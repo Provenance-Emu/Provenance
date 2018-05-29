@@ -43,7 +43,7 @@ open class PillPageControl: UIView {
     }
     @IBInspectable open var inactiveTint: UIColor = UIColor(white: 1, alpha: 0.3) {
         didSet {
-            inactiveLayers.forEach() { $0.backgroundColor = inactiveTint.cgColor }
+            inactiveLayers.forEach { $0.backgroundColor = inactiveTint.cgColor }
         }
     }
     @IBInspectable open var indicatorPadding: CGFloat = 7 {
@@ -74,10 +74,10 @@ open class PillPageControl: UIView {
         // no need to update
         guard count != inactiveLayers.count else { return }
         // reset current layout
-        inactiveLayers.forEach() { $0.removeFromSuperlayer() }
+        inactiveLayers.forEach { $0.removeFromSuperlayer() }
         inactiveLayers = [CALayer]()
         // add layers for new page count
-        inactiveLayers = stride(from: 0, to:count, by:1).map() { _ in
+        inactiveLayers = stride(from: 0, to:count, by:1).map { _ in
             let layer = CALayer()
             layer.backgroundColor = self.inactiveTint.cgColor
             self.layer.addSublayer(layer)
@@ -101,7 +101,7 @@ open class PillPageControl: UIView {
 
     fileprivate func layoutInactivePageIndicators(_ layers: [CALayer]) {
         var layerFrame = CGRect(origin: CGPoint.zero, size: pillSize)
-        layers.forEach() { layer in
+        layers.forEach { layer in
             layer.cornerRadius = layerFrame.size.height / 2
             layer.frame = layerFrame
             layerFrame.origin.x += layerFrame.width + indicatorPadding

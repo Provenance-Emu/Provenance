@@ -41,7 +41,6 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     titleLabel.frame = CGRect(x: 14, y: bounds.size.height - labelHeight - labelBottomMargin, width: bounds.size.width - 40, height: labelHeight)
     titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 
-
 //        let topSeparator = UIView(frame: CGRect(x: 0, y: 0, width: bounds.size.width, height: 1.0))
 //        topSeparator.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
 //        topSeparator.autoresizingMask = .flexibleWidth
@@ -53,7 +52,7 @@ class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         bottomSeparator.autoresizingMask = .flexibleWidth
 
         addSubview(bottomSeparator)
-        
+
         // Style
         self.backgroundColor = UIColor.black.withAlphaComponent(0.8)
         titleLabel.textAlignment = .left
