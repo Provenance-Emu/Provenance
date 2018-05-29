@@ -12,8 +12,7 @@ protocol WebServerActivatorController : class {
 	func showServerActiveAlert()
 }
 
-extension WebServerActivatorController where Self:UIViewController {
-	#if os(iOS)
+extension WebServerActivatorController where Self:PVSettingsViewController {
 	// Show "Web Server Active" alert view
 	func showServerActiveAlert() {
 		let message = """
@@ -48,7 +47,9 @@ extension WebServerActivatorController where Self:UIViewController {
 		}
 		present(alert, animated: true) {() -> Void in }
 	}
-	#else
+}
+
+extension WebServerActivatorController where Self:PVGameLibraryViewController {
 	func showServerActiveAlert() {
 		// Start Webserver
 		// Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -89,5 +90,4 @@ extension WebServerActivatorController where Self:UIViewController {
 			}
 		}
 	}
-	#endif
 }
