@@ -23,11 +23,13 @@ env:
     - PROJECT_NAME="Provenance.xcodeproj"
     - SCHEME_IOS_FRAMEWORK="Provenance"
     - SCHEME_TVOS_FRAMEWORK="ProvenanceTV"
+    - IOS_PLATFORM="iOS Simulator"
+    - TVOS_PLATFORM="tvOS Simulator"
     - IOS_SDK=iphonesimulator11.3
     - TVOS_SDK=appletvsimulator11.3
   matrix:
-    - DESTINATION="OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_FRAMEWORK" SDK="$IOS_SDK"
-    - DESTINATION="OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_FRAMEWORK" SDK="$TVOS_SDK"
+    - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_FRAMEWORK" SDK="$IOS_SDK"
+    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_FRAMEWORK" SDK="$TVOS_SDK"
 before_install:
   # - gem install xcpretty -N
   - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
@@ -38,6 +40,7 @@ before_script:
   # bootstrap the dependencies for the project
     - cd PVSupport
     - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
+    - carthage bootstrap --verbose --no-use-binaries --platform tvOS --cache-builds
     - cd ..
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
