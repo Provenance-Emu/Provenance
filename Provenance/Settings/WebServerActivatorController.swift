@@ -52,7 +52,7 @@ extension WebServerActivatorController where Self:PVSettingsViewController {
 #endif
 
 #if os(tvOS)
-typealias WebServerActivatorControllerRootClass = PVTVSettingsViewController
+typealias WebServerActivatorControllerRootClass = UIViewController
 #else
 typealias WebServerActivatorControllerRootClass = PVGameLibraryViewController
 #endif
