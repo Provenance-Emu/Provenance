@@ -18,7 +18,7 @@
 @property (nonatomic, strong) GCDWebUploader *webServer;
 @property (nonatomic, strong) GCDWebDAVServer *webDavServer;
 @property (nonatomic, strong) NSUserActivity *handoffActivity;
-
+@property (nonatomic, strong, readwrite) NSURL *bonjourSeverURL;
 @end
 
 @interface PVWebServer () <GCDWebUploaderDelegate>
@@ -28,7 +28,7 @@
 @end
 
 @implementation PVWebServer
-@dynamic documentsDirectory, IPAddress, URLString, WebDavURLString, URL, bonjourSeverURL;
+@dynamic documentsDirectory, IPAddress, URLString, WebDavURLString, URL;
 + (PVWebServer *)sharedInstance
 {
     static PVWebServer *_sharedInstance;
@@ -234,7 +234,7 @@
 
 -(NSString *)URLString
 {
-    NSString *ipAddress = self.IPAddress;
+	NSString *ipAddress = self.bonjourSeverURL.host ?: self.IPAddress;
     
 #if TARGET_IPHONE_SIMULATOR
     ipAddress = [ipAddress stringByAppendingString:@":8080"];
@@ -246,8 +246,8 @@
 
 -(NSString *)WebDavURLString
 {
-    NSString *ipAddress = self.IPAddress;
-    
+	NSString *ipAddress = self.bonjourSeverURL.host ?: self.IPAddress;
+
 #if TARGET_IPHONE_SIMULATOR
     ipAddress = [ipAddress stringByAppendingString:@":8081"];
 #else
@@ -265,11 +265,6 @@
     return url;
 }
  
-- (NSURL *)bonjourServerURL
-{
-    return self.webServer.bonjourServerURL;
-}
-
 #pragma mark - GCDWebServerDelegate
 
 - (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path
@@ -294,6 +289,7 @@
 
 - (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server {
     ILOG(@"Bonjor register completed for URL: %@", server.bonjourServerURL.absoluteString);
+	self.bonjourSeverURL = server.bonjourServerURL;
 }
 
 
