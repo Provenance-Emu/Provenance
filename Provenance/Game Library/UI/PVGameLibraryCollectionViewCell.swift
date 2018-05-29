@@ -819,7 +819,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		topRightCornerBadgeView?.isHidden = true
 		missingFileView?.isHidden = true
         token?.invalidate()
-		
+
 		// Clear image loading from the queue is not needed
 		if let operation = operation, !operation.isFinished, !operation.isExecuting {
 			operation.cancel()

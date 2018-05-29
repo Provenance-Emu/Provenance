@@ -40,7 +40,6 @@ extension GameSharingViewController where Self : UIViewController {
 		*/
 		#if os(iOS)
 
-
 			// - Create temporary directory
 		let tempDir = NSTemporaryDirectory()
 		let tempDirURL = URL(fileURLWithPath: tempDir, isDirectory: true)
@@ -51,9 +50,8 @@ extension GameSharingViewController where Self : UIViewController {
 			ELOG("Failed to create temp dir \(tempDir). Error: " + error.localizedDescription)
 			return
 		}
-		
 
-		let deleteTempDir : ()->Void = {
+		let deleteTempDir : () -> Void = {
 			do {
 				try FileManager.default.removeItem(at: tempDirURL)
 			} catch {

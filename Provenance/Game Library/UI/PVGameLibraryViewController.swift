@@ -1830,8 +1830,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         collectionView?.reloadData()
     }
 
-
-
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
 #if os(tvOS)
         return CGSize(width: view.bounds.size.width, height: 90)

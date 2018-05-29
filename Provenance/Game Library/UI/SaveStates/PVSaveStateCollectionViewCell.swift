@@ -27,7 +27,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var titleLabel: UILabel!
 	@IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var coreLabel: UILabel!
-    
+
 	weak var saveState: PVSaveState? {
 		didSet {
 			if let saveState = saveState {

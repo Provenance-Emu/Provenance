@@ -84,7 +84,6 @@ class RealmCollectinViewCell<CellClass:UICollectionViewCell, SelectionObject:Obj
 		#endif
 	}
 
-
 	#if os(tvOS)
 	// MARK: tvOS focus
 	override var preferredFocusEnvironments: [UIFocusEnvironment] {

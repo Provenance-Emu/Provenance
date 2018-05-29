@@ -25,8 +25,8 @@ public enum MediaCacheError: Error {
 
 public class PVMediaCache: NSObject {
 
-	static let memCache : NSCache<NSString,UIImage> = {
-		let cache = NSCache<NSString,UIImage>()
+	static let memCache : NSCache<NSString, UIImage> = {
+		let cache = NSCache<NSString, UIImage>()
 		return cache
 	}()
 
@@ -150,7 +150,7 @@ public class PVMediaCache: NSObject {
     }
 
     @discardableResult
-	public func image(forKey key: String, completion: ((_ key: String,_ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
+	public func image(forKey key: String, completion: ((_ key: String, _ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
         if key.isEmpty {
             completion?(key, nil)
             return nil
