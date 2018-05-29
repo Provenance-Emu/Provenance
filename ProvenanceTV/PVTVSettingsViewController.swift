@@ -7,8 +7,8 @@
 
 import UIKit
 
-class PVTVSettingsViewController: UITableViewController {
-    var gameImporter: PVGameImporter = PVGameImporter()
+class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
+    lazy var gameImporter: PVGameImporter = PVGameImporter()
     @IBOutlet weak var autoSaveValueLabel: UILabel!
     @IBOutlet weak var autoLoadValueLabel: UILabel!
     @IBOutlet weak var versionValueLabel: UILabel!
@@ -144,44 +144,7 @@ class PVTVSettingsViewController: UITableViewController {
                         // Update the label to hide / show the instructions to connect
                         updateWebDavTitleLabel()
                     case 1:
-                            // Start Webserver
-                            // Check to see if we are connected to WiFi. Cannot continue otherwise.
-                        let reachability = Reachability.forLocalWiFi()
-                        reachability.startNotifier()
-                        let status: NetworkStatus = reachability.currentReachabilityStatus()
-                        if status != .reachableViaWiFi {
-                            let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                            }))
-                            present(alert, animated: true) {() -> Void in }
-                        } else {
-                            // connected via wifi, let's continue
-                            // start web transfer service
-                            if PVWebServer.shared.startServers() {
-                                    // get the IP address of the device
-                                let webServerAddress: String = PVWebServer.shared.urlString
-                                let webDavAddress: String = PVWebServer.shared.webDavURLString
-                                let message = """
-                                    Read Importing ROMs wiki…
-                                    Upload/Download files at:
-
-                                    \(webServerAddress)  ᵂᵉᵇᵁᴵ
-                                    \(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-
-                                    """
-                                let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                                    PVWebServer.shared.stopServers()
-                                }))
-                                present(alert, animated: true) {() -> Void in }
-                            } else {
-                                    // Display error
-                                let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
-                                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                                }))
-                                present(alert, animated: true) {() -> Void in }
-                            }
-                        }
+						showServerActiveAlert()
                     default:
                         break
                 }

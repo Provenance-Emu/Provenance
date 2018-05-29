@@ -443,11 +443,11 @@
                             <rect key="frame" x="0.0" y="99.333333333333343" width="240" height="44"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bhh-7D-iQS" id="Jux-ig-0O7">
-                                <rect key="frame" x="0.0" y="0.0" width="208" height="43.666666666666664"/>
+                                <rect key="frame" x="0.0" y="0.0" width="200" height="43.666666666666664"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VpU-YI-9QR">
-                                        <rect key="frame" x="15" y="0.0" width="190" height="43.666666666666664"/>
+                                        <rect key="frame" x="16" y="0.0" width="184" height="43.666666666666664"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <color key="backgroundColor" red="0.1336681545" green="0.13369312880000001" blue="0.13366028669999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>

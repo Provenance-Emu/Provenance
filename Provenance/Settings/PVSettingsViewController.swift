@@ -23,7 +23,7 @@ import UIKit
     }
 }
 
-class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
+class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate, WebServerActivatorController {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
     @IBOutlet weak var timedAutoSavesSwitch: UISwitch!
@@ -293,41 +293,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         navigationController?.popViewController(animated: true)
         PVWebServer.shared.stopServers()
         importLabel.text = "Web server: OFF"
-    }
-
-    // Show "Web Server Active" alert view
-    func showServerActiveAlert() {
-        let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
-
-
-            """
-        let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-        let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-        ipField.backgroundColor = UIColor.clear
-        ipField.textAlignment = .center
-        ipField.font = UIFont.systemFont(ofSize: 13)
-        ipField.textColor = UIColor.gray
-		let ipFieldText = """
-        WebUI: \(PVWebServer.shared.urlString)
-        WebDav: \(PVWebServer.shared.webDavURLString)
-        """
-        ipField.text = ipFieldText
-        ipField.isUserInteractionEnabled = false
-        alert.view.addSubview(ipField)
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.shared.stopServers()
-            self.importLabel.text = "Web server: OFF"
-        }))
-
-        if #available(iOS 9.0, *) {
-            let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-            alert.addAction(viewAction)
-        }
-        present(alert, animated: true) {() -> Void in }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

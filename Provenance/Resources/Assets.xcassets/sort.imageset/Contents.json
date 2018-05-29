@@ -1,8 +1,27 @@
 {
   "images" : [
     {
-      "idiom" : "universal",
+      "idiom" : "iphone",
       "filename" : "sort.pdf"
+    },
+    {
+      "idiom" : "ipad",
+      "filename" : "sort-1.pdf"
+    },
+    {
+      "idiom" : "tv",
+      "filename" : "page.pdf",
+      "resizing" : {
+        "mode" : "3-part-horizontal",
+        "center" : {
+          "mode" : "stretch",
+          "width" : 1
+        },
+        "cap-insets" : {
+          "right" : 31,
+          "left" : 10
+        }
+      }
     }
   ],
   "info" : {
@@ -10,6 +29,7 @@
     "author" : "xcode"
   },
   "properties" : {
+    "template-rendering-intent" : "template",
     "preserves-vector-representation" : true
   }
 }

@@ -88,7 +88,7 @@ class PVDocumentPickerViewController: UIDocumentPickerViewController {
 }
 #endif
 
-class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController {
+class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
 
 	lazy var collectionViewZoom : CGFloat = CGFloat(PVSettingsModel.shared.gameLibraryScale)
 
@@ -864,48 +864,6 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
 #endif
-    // Show "Web Server Active" alert view
-    func showServerActiveAlert() {
-        let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
-
-
-            """
-        let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-        let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-        ipField.backgroundColor = UIColor.clear
-        ipField.textAlignment = .center
-        ipField.font = UIFont.systemFont(ofSize: 13)
-        ipField.textColor = UIColor.gray
-        let ipFieldText = """
-            WebUI: \(PVWebServer.shared.urlString)
-            WebDav: \(PVWebServer.shared.webDavURLString)
-            """
-        ipField.text = ipFieldText
-        ipField.isUserInteractionEnabled = false
-        alert.view.addSubview(ipField)
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.shared.stopServers()
-            if self.needToShowConflictsAlert {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                    self.showConflictsAlert()
-                })
-            }
-        }))
-
-        if #available(iOS 9.0, *) {
-            #if os(iOS)
-                let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-                alert.addAction(viewAction)
-            #endif
-        } else {
-            // Fallback on earlier versions
-        }
-        present(alert, animated: true) {() -> Void in }
-    }
 
     @IBAction func sortButtonTapped(_ sender: Any) {
         let optionsTableView = sortOptionsTableView
@@ -916,11 +874,19 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 //        avc.popoverPresentationController?.delegate = self
         avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
 		avc.popoverPresentationController?.sourceView = collectionView
+		avc.preferredContentSize = CGSize(width: 300, height: 500)
+		#else
+//		providesPresentationContextTransitionStyle = true
+//		definesPresentationContext = true
+		if #available(tvOS 11.0, *) {
+			avc.modalPresentationStyle = .blurOverFullScreen
+		} else {
+			avc.modalPresentationStyle = .currentContext
+		}
+		avc.modalTransitionStyle = .coverVertical
         #endif
-        avc.preferredContentSize = CGSize(width: 300, height: 500)
 		sortOptionsTableView.reloadData()
         present(avc, animated: true, completion: nil)
-
     }
     // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
@@ -1272,7 +1238,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         }
 
         #if os(iOS)
-            // Add to split database
+            // Add to spotlight database
             if #available(iOS 9.0, *) {
                 // TODO: Would be better to pass the PVGame direclty using threads.
                 // https://realm.io/blog/obj-c-swift-2-2-thread-safe-reference-sort-properties-relationships/
