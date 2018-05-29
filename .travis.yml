@@ -15,15 +15,30 @@ cache:
 #     - develop
 #     - master
 env:
-  - LC_CTYPE=en_US.UTF-8 LANG=en_US.UTF-8
+  #environment variables
+  global:
+    - LANG=en_US.UTF-8
+    - LC_ALL=en_US.UTF-8
+    - WORKSPACE_NAME="Provenance.xcworkspace"
+    - PROJECT_NAME="Provenance.xcodeproj"
+    - SCHEME_IOS_FRAMEWORK="Provenance"
+    - SCHEME_TVOS_FRAMEWORK="ProvenanceTV"
+    - IOS_SDK=iphonesimulator11.3
+    - TVOS_SDK=appletvsimulator11.3
+  matrix:
+    - DESTINATION="OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_FRAMEWORK" SDK="$IOS_SDK"
+    - DESTINATION="OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_FRAMEWORK" SDK="$TVOS_SDK"
 before_install:
-  - gem install xcpretty -N
+  # - gem install xcpretty -N
+  - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
   - brew update
   - brew outdated swiftlint || brew upgrade swiftlint
   - brew outdated carthage || brew upgrade carthage
-  - cd PVSupport
-  - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
-  - cd ..
+before_script:
+  # bootstrap the dependencies for the project
+    - cd PVSupport
+    - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
+    - cd ..
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
@@ -34,5 +49,5 @@ after_failure:
   - ./send.sh failure $WEBHOOK_URL
 script:
   - set -o pipefail
-  - xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO | xcpretty -c
+  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
   - swiftlint
