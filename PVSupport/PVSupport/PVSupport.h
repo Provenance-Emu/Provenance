@@ -28,3 +28,7 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 #import <PVSupport/OEGameAudio.h>
 #import <PVSupport/NSObject+PVAbstractAdditions.h>
 #import <PVSupport/NSFileManager+OEHashingAdditions.h>
+#import <PVSupport/PVLogging.h>
+#import <PVSupport/PVLogEntry.h>
+#import <PVSupport/PVProvenanceLogging.h>
+#import <PVSupport/PVCocoaLumberJackLogging.h>

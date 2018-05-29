@@ -11,37 +11,63 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateView" id="uM8-Fa-txq" customClass="PVSaveStateCollectionViewCell" customModule="Provenance" customModuleProvider="target">
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SaveStateView" id="uM8-Fa-txq" customClass="PVSaveStateCollectionViewCell" customModule="Provenance" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
                 <rect key="frame" x="0.0" y="0.0" width="150" height="150"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C1h-m7-fmx">
-                        <rect key="frame" x="10" y="10" width="130" height="100"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" adjustsImageWhenAncestorFocused="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C1h-m7-fmx">
+                        <rect key="frame" x="10" y="10" width="130" height="96"/>
                     </imageView>
-                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="No Screenshot" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OgV-Ch-p6c">
-                        <rect key="frame" x="10" y="10" width="130" height="100"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Screenshot" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OgV-Ch-p6c">
+                        <rect key="frame" x="10" y="10" width="130" height="96"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="30/03/18, 13:29" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="cCl-RP-Lin">
-                        <rect key="frame" x="10" y="109" width="130" height="41"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30/03/18, 13:29" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="cCl-RP-Lin">
+                        <rect key="frame" x="10" y="106" width="130" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="Wj0-nL-e6Q"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                        <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="30/03/18, 13:29" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="5lG-f7-vgh">
+                        <rect key="frame" x="10" y="126" width="130" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="vlA-Bt-MZ1"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                         <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
             </view>
+            <constraints>
+                <constraint firstItem="5lG-f7-vgh" firstAttribute="leading" secondItem="uM8-Fa-txq" secondAttribute="leading" constant="10" id="4ll-G3-UEB"/>
+                <constraint firstItem="cCl-RP-Lin" firstAttribute="leading" secondItem="uM8-Fa-txq" secondAttribute="leading" constant="10" id="Bhd-0s-Wku"/>
+                <constraint firstAttribute="trailing" secondItem="cCl-RP-Lin" secondAttribute="trailing" constant="10" id="C5U-pX-hIc"/>
+                <constraint firstItem="C1h-m7-fmx" firstAttribute="bottom" secondItem="cCl-RP-Lin" secondAttribute="top" id="G4f-Ec-zad"/>
+                <constraint firstItem="OgV-Ch-p6c" firstAttribute="centerY" secondItem="C1h-m7-fmx" secondAttribute="centerY" id="Nez-8O-tLb"/>
+                <constraint firstItem="cCl-RP-Lin" firstAttribute="bottom" secondItem="5lG-f7-vgh" secondAttribute="top" id="PrL-xx-oCh"/>
+                <constraint firstItem="OgV-Ch-p6c" firstAttribute="centerX" secondItem="C1h-m7-fmx" secondAttribute="centerX" id="Qdw-FU-6iy"/>
+                <constraint firstItem="C1h-m7-fmx" firstAttribute="leading" secondItem="uM8-Fa-txq" secondAttribute="leading" constant="10" id="T6E-lB-mXQ"/>
+                <constraint firstItem="OgV-Ch-p6c" firstAttribute="width" secondItem="C1h-m7-fmx" secondAttribute="width" id="mHL-Oa-Qd4"/>
+                <constraint firstItem="OgV-Ch-p6c" firstAttribute="height" secondItem="C1h-m7-fmx" secondAttribute="height" id="oTD-vz-Hy0"/>
+                <constraint firstItem="C1h-m7-fmx" firstAttribute="top" secondItem="uM8-Fa-txq" secondAttribute="top" constant="10" id="pRC-nt-hhE"/>
+                <constraint firstItem="5lG-f7-vgh" firstAttribute="trailing" secondItem="uM8-Fa-txq" secondAttribute="trailing" constant="-10" id="s3q-EL-K52"/>
+                <constraint firstItem="5lG-f7-vgh" firstAttribute="bottom" secondItem="uM8-Fa-txq" secondAttribute="bottom" constant="-4" id="wqu-HW-hqG"/>
+                <constraint firstItem="C1h-m7-fmx" firstAttribute="trailing" secondItem="uM8-Fa-txq" secondAttribute="trailing" constant="-10" id="yEH-Hm-DXK"/>
+            </constraints>
             <connections>
                 <outlet property="imageView" destination="C1h-m7-fmx" id="whn-aL-2hl"/>
-                <outlet property="label" destination="cCl-RP-Lin" id="eUu-rh-sVd"/>
+                <outlet property="label" destination="cCl-RP-Lin" id="EO1-QV-8ok"/>
                 <outlet property="noScreenshotLabel" destination="OgV-Ch-p6c" id="fBM-cc-8Cy"/>
+                <outlet property="secondLabel" destination="5lG-f7-vgh" id="DHx-9L-G3Y"/>
             </connections>
         </collectionViewCell>
     </objects>

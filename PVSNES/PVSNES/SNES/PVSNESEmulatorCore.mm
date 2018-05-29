@@ -120,7 +120,7 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 		
-        DLog(@"Trying to save SRAM");
+        DLOG(@"Trying to save SRAM");
 		
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
 		
@@ -191,18 +191,18 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     //S9xSetRenderPixelFormat(RGB565);
     if(!Memory.Init() || !S9xInitAPU() || !S9xGraphicsInit())
     {
-        DLog(@"Couldn't init");
+        DLOG(@"Couldn't init");
         return NO;
     }
 
-    DLog(@"loading %@", path);
+    DLOG(@"loading %@", path);
 
     /* buffer_ms : buffer size given in millisecond
      lag_ms    : allowable time-lag given in millisecond
      S9xInitSound(macSoundBuffer_ms, macSoundLagEnable ? macSoundBuffer_ms / 2 : 0); */
     if(!S9xInitSound(100, 0))
     {
-        DLog(@"Couldn't init sound");
+        DLOG(@"Couldn't init sound");
     }
 
     S9xSetSamplesAvailableCallback(FinalizeSamplesAudioCallback, NULL);
@@ -329,14 +329,14 @@ static void FinalizeSamplesAudioCallback(void *)
 }
 
 #pragma mark Save States
-- (BOOL)saveStateToFileAtPath: (NSString *) fileName
+- (BOOL)saveStateToFileAtPath: (NSString *) fileName error:(NSError**)error  
 {
     @synchronized(self) {
         return S9xFreezeGame([fileName UTF8String]) ? YES : NO;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath: (NSString *) fileName
+- (BOOL)loadStateFromFileAtPath: (NSString *) fileName error:(NSError**)error
 {
     @synchronized(self) {
         return S9xUnfreezeGame([fileName UTF8String]) ? YES : NO;

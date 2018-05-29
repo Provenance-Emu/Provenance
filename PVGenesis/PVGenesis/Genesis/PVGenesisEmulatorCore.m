@@ -9,6 +9,7 @@
 #import "PVGenesisEmulatorCore.h"
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
+#import <PVSupport/PVLogging.h>
 #import <PVGenesis/libretro.h>
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
@@ -68,12 +69,12 @@ static void video_callback(const void *data, unsigned width, unsigned height, si
 
 static void input_poll_callback(void)
 {
-	//DLog(@"poll callback");
+	//DLOG(@"poll callback");
 }
 
 static int16_t input_state_callback(unsigned port, unsigned device, unsigned index, unsigned _id)
 {
-	//DLog(@"polled input: port: %d device: %d id: %d", port, device, id);
+	//DLOG(@"polled input: port: %d device: %d id: %d", port, device, id);
 	
 	__strong PVGenesisEmulatorCore *strongCurrent = _current;
     int16_t value = 0;
@@ -119,7 +120,7 @@ static bool environment_callback(unsigned cmd, void *data)
 			NSString *appSupportPath = [strongCurrent BIOSPath];
 			
 			*(const char **)data = [appSupportPath UTF8String];
-			DLog(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+			DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
 			break;
 		}
 		case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
@@ -127,7 +128,7 @@ static bool environment_callback(unsigned cmd, void *data)
 			break;
 		}
 		default :
-			DLog(@"Environ UNSUPPORTED (#%u).\n", cmd);
+			DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
 			return false;
 	}
 	
@@ -281,13 +282,13 @@ static bool environment_callback(unsigned cmd, void *data)
     NSData *data = [NSData dataWithContentsOfFile:path];
     if (!data || ![data length])
     {
-        DLog(@"Couldn't load save file.");
+        WLOG(@"Couldn't load save file.");
     }
     
     [data getBytes:ramData length:size];
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
@@ -299,9 +300,12 @@ static bool environment_callback(unsigned cmd, void *data)
         BOOL success = [data writeToFile:path atomically:YES];
         if (!success)
         {
-            DLog(@"Error writing save file");
+            ELOG(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		return NO;
+	}
 }
 
 #pragma mark - Video
@@ -425,7 +429,7 @@ static bool environment_callback(unsigned cmd, void *data)
             case PVGenesisButtonZ:
                 return [[pad rightShoulder] isPressed];
             case PVGenesisButtonStart:
-                return [[pad leftTrigger] isPressed];
+                return [[pad rightTrigger] isPressed];
             default:
                 break;
         }
@@ -494,7 +498,7 @@ static bool environment_callback(unsigned cmd, void *data)
 
 #pragma mark - State Saving
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     @synchronized(self) {
         int serial_size = retro_serialize_size();
@@ -510,7 +514,7 @@ static bool environment_callback(unsigned cmd, void *data)
                              error:&error];
         if (error)
         {
-            DLog(@"Error saving state: %@", [error localizedDescription]);
+            ELOG(@"Error saving state: %@", [error localizedDescription]);
             return NO;
         }
         
@@ -518,19 +522,39 @@ static bool environment_callback(unsigned cmd, void *data)
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)path
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
     @synchronized(self) {
         NSData *saveStateData = [NSData dataWithContentsOfFile:path];
         if (!saveStateData)
         {
-            DLog(@"Unable to load save state from path: %@", path);
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to load save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+			*error = newError;
+            ELOG(@"Unable to load save state from path: %@", path);
             return NO;
         }
         
         if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
         {
-            DLog(@"Unable to load save state");
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to load save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+									   NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+			*error = newError;
+            DLOG(@"Unable to load save state");
             return NO;
         }
         

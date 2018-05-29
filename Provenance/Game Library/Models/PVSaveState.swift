@@ -49,4 +49,17 @@ import Foundation
 			throw error
 		}
     }
+
+	@objc dynamic var isNewestAutosave : Bool {
+		guard isAutosave, let game = game, let newestSave = game.autoSaves.first else {
+			return false
+		}
+
+		let isNewest = newestSave == self
+		return isNewest
+	}
+
+	public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
+		return lhs.file.url == rhs.file.url
+	}
 }

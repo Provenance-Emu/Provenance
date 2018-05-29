@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<array>
+		<dict>
+			<key>item_title</key>
+			<string>Status</string>
+			<key>item_class</key>
+			<string>LoggerStatusPane</string>
+		</dict>
+	</array>
+	<array>
+		<dict>
+			<key>item_title</key>
+			<string>Network</string>
+			<key>item_class</key>
+			<string>LoggerNetworkPane</string>
+		</dict>
+		<dict>
+			<key>item_title</key>
+			<string>General</string>
+			<key>item_class</key>
+			<string>LoggerGeneralPane</string>
+		</dict>
+		<dict>
+			<key>item_title</key>
+			<string>Repository</string>
+			<key>item_class</key>
+			<string>LoggerRepoPane</string>
+		</dict>
+	</array>
+	<array>
+		<dict>
+			<key>item_title</key>
+			<string>License</string>
+			<key>item_class</key>
+			<string>LoggerLicensePane</string>
+		</dict>
+	</array>
+</array>
+</plist>

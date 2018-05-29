@@ -1,3 +1,35 @@
+3.4.0 Release notes (2018-04-25)
+=============================================================
+
+### Enhancements
+
+* Add wrapper functions for email confirmation and password reset to `SyncUser`.
+
+### Bugfixes
+
+* Fix incorrect results when using optional chaining to access a RealmOptional
+  property in Release builds, or otherwise interacting with a RealmOptional
+  object after the owning Object has been deallocated.
+
+3.4.0 Release notes (2018-04-19)
+=============================================================
+
+The prebuilt binary for Carthage is now built for Swift 4.1.
+
+### Enhancements
+
+* Expose `RLMSyncManager.authorizationHeaderName`/`SyncManager.authorizationHeaderName`
+  as a way to override the transport header for Realm Object Server authorization.
+* Expose `RLMSyncManager.customRequestHeaders`/`SyncManager.customRequestHeaders`
+  which allows custom HTTP headers to be appended on requests to the Realm Object Server.
+* Expose `RLMSSyncConfiguration.urlPrefix`/`SyncConfiguration.urlPrefix` as a mechanism
+  to replace the default path prefix in Realm Sync WebSocket requests.
+
+3.3.2 Release notes (2018-04-03)
+=============================================================
+
+Add a prebuilt binary for Xcode 9.3.
+
 3.3.1 Release notes (2018-03-28)
 =============================================================
 

@@ -1,0 +1,10 @@
+
+project 'ContextFilter'
+workspace '../Demos'
+
+target :'ContextFilter' do
+  platform :osx, '10.8'
+  use_frameworks!
+  pod 'CocoaLumberjack', :path => '../../'
+end
+

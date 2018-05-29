@@ -552,7 +552,7 @@ void MDFN_FinalizeSettings(void)
    if(!strcmp(CurrentSettings[i].name, CurrentSettings[j].name))
    {
     printf("Duplicate setting name %s\n", CurrentSettings[j].name);
-    abort();
+//    abort();
    }
   }
  }
