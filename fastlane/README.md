@@ -30,12 +30,17 @@ Travis Test
 ```
 fastlane ios userbuild
 ```
-Users create their own build
+User Setup
 ### ios beta
 ```
 fastlane ios beta
 ```
 Push a new beta build to TestFlight
+### ios alpha
+```
+fastlane ios alpha
+```
+Push a new alpha build to Hockeyapp
 ### ios certificates
 ```
 fastlane ios certificates

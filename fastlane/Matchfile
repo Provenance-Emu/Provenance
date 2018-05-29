@@ -1,5 +1,5 @@
 git_url("http://bitbucket.org/jmattiello/provenancecerts.git")
-git_branch("Provenance") #oops type-o fix later
+git_branch("Provenance")
 
 type("adhoc") # The default type, can be: appstore, adhoc, enterprise or development
 

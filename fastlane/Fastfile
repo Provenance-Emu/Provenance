@@ -10,8 +10,15 @@
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
 
+# TODO: Fix files getting deleted after - upload to my server and host them, script to let other setup their builds - script to download and resign latest build from web
+# script to resign the last local archive and copy to device
+# use is_ci to detect travis
+# lane_context[SharedValues::IPA_OUTPUT_PATH] lane_context[SharedValues::BUILD_NUMBER] https://docs.fastlane.tools/advanced/#lane-context
+# CredentialsManager https://github.com/fastlane/fastlane/tree/master/credentials_manager
+# clipboard clipboard(value: lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK] || "")
+# twitter https://github.com/rb-de0/fastlane-plugin-twitter
 # Uncomment the line if you want fastlane to automatically update itself
-update_fastlane
+#update_fastlane
 
 REQUIRED_XCODE_VERSION = "9.3.1"
 # Can also use .xcode-version file
@@ -63,23 +70,24 @@ platform :ios do
     beta
   end
 
-  desc "Users create their own build"
+  desc "User Setup"
   lane :userbuild do
-    UI.message "Neutral message (usually white)"
-    UI.success "Successfully finished processing (usually green)"
-    UI.error "Wahaha, what's going on here! (usually red)"
-    UI.important "Make sure to use Windows (usually yellow)"
+    UI.message "This lane will help you setup Provenance for signing and build. T"
+    #UI.success "Successfully finished processing (usually green)"
+    #UI.error "Wahaha, what's going on here! (usually red)"
+    #UI.important "Make sure to use Windows (usually yellow)"
 
-    UI.header "Inputs" # a big box
+    #UI.header "Inputs" # a big box
 
-    name = UI.input("What's your name? ")
-    if UI.confirm("Are you '#{name}'?")
-      UI.success "Oh yeah"
-    else
-      UI.error "Wups, invalid"
-    end
+    apple_id = UI.input("What's your Apple ID login? (usually an e-mail address)")
+    apple_pass = UI.password("Your password please: ") # password inputs are hidden
 
-    UI.password("Your password please: ") # password inputs are hidden
+    # if UI.confirm("Are you '#{name}'?")
+    #   UI.success "Oh yeah"
+    # else
+    #   UI.error "Wups, invalid"
+    # end
+
 
     ###### A "Dropdown" for the user
     project = UI.select("Select your project: ", ["Test Project", "Test Workspace"])
@@ -106,107 +114,52 @@ platform :ios do
     UI.deprecated("The '--key' parameter is deprecated")
   end
 
-  desc "Push a new beta build to TestFlight"
-  lane :beta do
+
+  private_lane :pre_build do
     #get_certificates           # invokes cert
     #get_provisioning_profile   # invokes sigh
 
     # Git git commit count
-    build_number = number_of_commits()
+    ENV["build_number"] = number_of_commits().to_s
 
-    # -- Update bundle names and ids
-    # - iOS
-    update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'Provenance', # Scheme really means target
-      display_name: 'Prov Beta',
-      app_identifier: 'com.provenance-emu.provenance-jm',
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "Provenance/Provenance-Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: "com.provenance-emu.provenance-jm" # The App Identifier
-    )
-
-    # - Spotlight
-    update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'Spotlight',
-      app_identifier: 'com.provenance-emu.provenance-jm.Spotlight',
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "Spotlight/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: "com.provenance-emu.provenance-jm.Spotlight" # The App Identifier
-    )
-
-    # - tvOS
-    # Use the same bundle ID as iOS so it's 'universal install'
-    update_info_plist(
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'ProvenanceTV',
-      display_name: 'Prov Beta',
-      app_identifier: 'com.provenance-emu.provenance-jm',
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "ProvenanceTV/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: "com.provenance-emu.provenance-jm" # The App Identifier
-    )
-
-
-    # - Top Shelf
-    update_info_plist(
-      app_identifier: 'com.provenance-emu.provenance-jm.topshelf',
-      xcodeproj: 'Provenance.xcodeproj',
-      scheme: 'TopShelf',
-    )
-    update_app_identifier(
-      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
-      plist_path: "TopShelf/Info.plist", # Path to info plist file, relative to xcodeproj
-      app_identifier: "com.provenance-emu.provenance-jm.topshelf" # The App Identifier
-    )
+    plist_set(normal: false)
 
     # Clean the dir for git
     # ensure_git_status_clean
     # ensure_git_in_sync
     # certificates # Download the certs?
-    sync_code_signing
+    setup_certificates_private
 
     # temporarily disable automatic code signing
-    team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
-    disable_automatic_code_signing(path: "Provenance.xcodeproj",
-      targets: ["Provenance"],
-      code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc com.provenance-emu.provenance-jm",
-      bundle_identifier: "com.provenance-emu.provenance-jm",
-      use_automatic_signing: false,
-      team_id: team_id)
+    codesign_toggle(automatic: false)
 
-    disable_automatic_code_signing(path: "Provenance.xcodeproj",
-      targets: ["Spotlight"],
-      code_sign_identity: "iPhone Distribution",
-      profile_name: "match AdHoc com.provenance-emu.provenance-jm.Spotlight",
-      bundle_identifier: "com.provenance-emu.provenance-jm.Spotlight",
-      use_automatic_signing: false,
-      team_id: team_id)
+    # carthage(
+    #   command: "bootstrap",
+    #   use_binaries: false,
+    #   cache_builds: true,
+    #   platform: "iOS",
+    #   project_directory: "PVSupport"
+    # )
+    #
+    # carthage(
+    #   command: "build",
+    #   use_binaries: false,
+    #   cache_builds: true,
+    #   platform: "iOS",
+    #   project_directory: "PVSupport"
+    # )
+  end
 
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    pre_build
+    build_appstore
+    reset_enviroment
+  end
 
-    carthage(
-      command: "bootstrap",
-      use_binaries: false,
-      cache_builds: true,
-      platform: "iOS",
-      project_directory: "PVSupport"
-    )
-
-    carthage(
-      command: "build",
-      use_binaries: false,
-      cache_builds: true,
-      platform: "iOS",
-      project_directory: "PVSupport"
-    )
+  desc "Push a new alpha build to Hockeyapp"
+  lane :alpha do
+    pre_build
 
     # Codesign
     # Types, appstore adhoc development enterprise
@@ -220,8 +173,10 @@ platform :ios do
     # )
 
         # Build iOS App
-    ipa_name = "Provenace-#{git_branch}-#{build_number}.ipa"
-    buid_ios_adhoc(ipa_name: ipa_name)
+    build_number = ENV["build_number"]
+    ipa_name = "Provenance-#{git_branch}-#{build_number}.ipa"
+    badge_alpha
+    buid_ios_adhoc(ipa_name: ipa_name, activeArchOnly: true)
       # export_xcargs: "-allowProvisioningUpdates", don't use for CI, needs xcode account setup
 
     # uploadToWordpress("./build/#{ipa_name}")
@@ -241,28 +196,59 @@ platform :ios do
     #   platform: "tvOS",
     #   project_directory: "PVSupport"
     # )
-    # ipa_name = "ProvenaceTV-#{git_branch}-#{build_number}.ipa"
+    # ipa_name = "ProvenanceTV-#{git_branch}-#{build_number}.ipa"
     # build_app(workspace: "Provenance.xcworkspace", scheme: "ProvenanceTV-Release", output_name: ipa_name, include_bitcode: false)
 
-
-    enable_automatic_code_signing(path: "Provenance.xcodeproj")
 
     # uploadToWordpress("./build/#{ipa_name}")
     #user = CredentialsManager::AppfileConfig.try_fetch_value(:apple_id)
     # keychain_entry = CredentialsManager::AccountManager.new(user: user)
     # password = keychain_entry.password
-    # scp(
-    #   username: ENV["FASTLANE_USER"],
-    #   password: ENV["FASTLANE_PASSWORD"],
-    #   host: "provenance.joemattello.com",
-    #    upload: {
-    #     src: ipa_name,
-    #     dst: "/usr/share/nginx/provenance.joemattiello.com/builds/" + git_branch + "/"
-    #   }
-    # )
 
+    reset_enviroment
+  end
+
+  private_lane :scp_upload do |options|
+
+    source = options[:source]
+    subfolder = options[:subfolder]
+
+    filename = File.basename(source)
+
+    host = "provenance.joemattiello.com"
+    port = "22"
+
+    destination = "/usr/share/nginx/provenance.joemattiello.com/www/#{git_branch}/#{subfolder}/#{filename}"
+    username = "provenance" #ENV["FASTLANE_USER"],
+
+    puts "SCP'ing from #{source} to #{host}:#{destination}"
+
+    scp(
+      username: username,
+      # password: ENV["FASTLANE_PASSWORD"],
+      host: host,
+      port: port,
+      upload: {
+        src: source,
+        dst: destination
+      }
+    )
+
+  end
+
+  private_lane :badge_alpha do
+    # add_badge(alpha: true, dark: false)
+  end
+
+  private_lane :badge_beta do
+    # add_badge(alpha: true, dark: false)
+  end
+
+  private_lane :reset_enviroment do
+    plist_set(normal: true)
+    codesign_toggle(automatic: true)
     # Make sure our directory is clean, except for changes Fastlane has made
-    clean_build_artifacts
+    # clean_build_artifacts
   end
 
   desc "Setup Certs for Match - New Devs"
@@ -270,6 +256,85 @@ platform :ios do
     setup_certificates_private(type: "development")
     setup_certificates_private(type: "adhoc")
     # setup_certificates_private(type: "appstore")
+  end
+
+  private_lane :codesign_toggle do |options|
+    automatic = options[:automatic]
+    team_id = CredentialsManager::AppfileConfig.try_fetch_value(:team_id)
+    disable_automatic_code_signing(path: "Provenance.xcodeproj",
+      targets: ["Provenance"],
+      code_sign_identity: "iPhone Distribution",
+      profile_name: "match AdHoc com.provenance-emu.provenance-jm",
+      bundle_identifier: "com.provenance-emu.provenance-jm",
+      use_automatic_signing: automatic,
+      team_id: team_id)
+
+    disable_automatic_code_signing(path: "Provenance.xcodeproj",
+      targets: ["Spotlight"],
+      code_sign_identity: "iPhone Distribution",
+      profile_name: "match AdHoc com.provenance-emu.provenance-jm.Spotlight",
+      bundle_identifier: "com.provenance-emu.provenance-jm.Spotlight",
+      use_automatic_signing: automatic,
+      team_id: team_id)
+
+  end
+
+  private_lane :plist_set do |options|
+    normal = options[:normal]
+    suffix = normal ? "" : "-jm"
+    display_name = normal ? "Provenance" : 'Provenance α' # or Beta β
+    # -- Update bundle names and ids
+    # - iOS
+    update_info_plist(
+      xcodeproj: 'Provenance.xcodeproj',
+      scheme: 'Provenance', # Scheme really means target
+      display_name: display_name,
+      app_identifier: "com.provenance-emu.provenance#{suffix}",
+    )
+    update_app_identifier(
+      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "Provenance/Provenance-Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}" # The App Identifier
+    )
+
+    # - Spotlight
+    update_info_plist(
+      xcodeproj: 'Provenance.xcodeproj',
+      scheme: 'Spotlight',
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance${suffix}.Spotlight",
+    )
+    update_app_identifier(
+      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "Spotlight/Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.Spotlight" # The App Identifier
+    )
+
+    # - tvOS
+    # Use the same bundle ID as iOS so it's 'universal install'
+    update_info_plist(
+      xcodeproj: 'Provenance.xcodeproj',
+      scheme: 'ProvenanceTV',
+      display_name: display_name,
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}",
+    )
+    update_app_identifier(
+      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "ProvenanceTV/Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}" # The App Identifier
+    )
+
+
+    # - Top Shelf
+    update_info_plist(
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.topshelf",
+      xcodeproj: 'Provenance.xcodeproj',
+      scheme: 'TopShelf',
+    )
+    update_app_identifier(
+      xcodeproj: "Provenance.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "TopShelf/Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: normal ? "$(PRODUCT_BUNDLE_IDENTIFIER)" : "com.provenance-emu.provenance#{suffix}.topshelf" # The App Identifier
+    )
   end
 
   private_lane :setup_certificates_private do |options|
@@ -306,39 +371,89 @@ platform :ios do
     clear_derived_data
   end
 
+  # Future Alpha builds
   private_lane :buid_ios_adhoc do |options|
+    activeArchOnly = options[:activeArchOnly] || false
     ipa_name = options.fetch(:ipa_name, 'Provenance.ipa')
+    build_time = Time.now.strftime('%F')
+    output_directory = "build/" + build_time
+
+    # Method used to export the archive.
+    # Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+    export_method = options.fetch(:export_method, 'ad-hoc')
+    build_configuration = options.fetch(:build_configuration, 'Debug')
+    scheme = options.fetch(:scheme, 'Provenance')
+
+    puts "Building #{scheme} as #{export_method} app #{ipa_name} to #{output_directory}.\nConfig: #{build_configuration}"
+
     build_app(
       workspace: "Provenance.xcworkspace",
-      scheme: "Provenance-Travis",
-      export_method: "ad-hoc", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
-      configuration: "Travis",
+      scheme: scheme,
+      export_method: export_method,
+      configuration: build_configuration,
       # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+      silent:true,
       clean: false,
-      output_directory: " build/adhoc",
+      skip_profile_detection: true,
+      #skip_build_archive: true,
+      output_directory: build_configuration,
       output_name: ipa_name,
       include_bitcode: false,
-      include_symbols:true,
-      #xcargs: "PROVISIONING_PROFILE_SPECIFIER='match Development com.provenance-emu.provenance-jm'",
-      # export_options: {
-      #   method: "ad-hoc",
-      #   manifest: {
-      #     appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
-      #   },
-      #   provisioningProfiles: {
-      #     "com.provenance-emu.provenance-jm" => "match AdHoc com.provenance-emu.provenance-jm", # match AdHoc match AppStore match Development
-      #     "com.provenance-emu.provenance-jm.Spotlight" => "match AdHoc com.provenance-emu.provenance-jm.Spotlight"
-      #   }
-      # }
+      include_symbols: true,
+      #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      export_options: {
+        method: export_method,
+        manifest: {
+          appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+          displayImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon57x57.png", # 57x57
+          fullSizeImageURL: "https://provenance-emu.com/github-files/ipa-assets/Icon512x512.png" # 512x512
+        },
+        provisioningProfiles: {
+          "com.provenance-emu.provenance-jm" => "match AdHoc com.provenance-emu.provenance-jm", # match AdHoc match AppStore match Development
+          "com.provenance-emu.provenance-jm.Spotlight" => "match AdHoc com.provenance-emu.provenance-jm.Spotlight"
+        },
+        compileBitcode: false,
+        uploadBitcode: false,
+      }
     )
 
-    # Send to hockey app
-    # NOTE: hockey action will use the latest ipa and latest dsym built
-    # hockey(
-    #    api_token: ENV['HOCKEY_APP_TOKEN'],
-    #    notes: "The Official QuizUp Beta",
-    #    public_identifier: ENV['HOCKEY_BETA_APP_ID'],
-    #    notify: false)
+    # Push to Hockeyapp as Alpha release "2" alpha, "0" beta, "3" release
+    publish_hockey(release_type: "2")
+
+    # SCP to file server for storage
+    scp_upload(source: lane_context[SharedValues::IPA_OUTPUT_PATH], subfolder: build_time)
+    scp_upload(source: lane_context[SharedValues::DSYM_OUTPUT_PATH], subfolder: build_time)
+  end
+
+
+  desc "Submits a new Beta Build to Apple TestFlight"
+  private_lane :build_appstore do
+    build_app(
+      workspace: "Provenance.xcworkspace",
+      scheme: "Provenance",
+      export_method: "app-store", # Method used to export the archive. Valid values are: app-store, ad-hoc, package, enterprise, development, developer-id
+      configuration: "Release",
+      # codesigning_identity: "iPhone Developer",#{}"Joe Mattiello", "iPhone Distribution"
+      clean: false,
+      silent: true,
+      #output_directory: output_directory,
+      #output_name: ipa_name,
+      include_bitcode: false,
+      include_symbols: true,
+      #xcargs: activeArchOnly ? "-arch arm64 ONLY_ACTIVE_ARCH=YES" : "",
+      export_options: {
+        method: "app-store",
+        manifest: {
+          appURL: "https://www.provenance-emu.com/builds/#{ipa_name}",
+        },
+        provisioningProfiles: {
+          "com.provenance-emu.provenance-jm" => "match AppStore com.provenance-emu.provenance-jm", # match AdHoc match AppStore match Development
+          "com.provenance-emu.provenance-jm.Spotlight" => "match AppStore com.provenance-emu.provenance-jm.Spotlight"
+        }
+      }
+    )
+
+    pilot(app_identifier: "com.provenance-emu.provenance-jm")
   end
 
   # private_lane :versionIcon do
@@ -379,9 +494,49 @@ platform :ios do
 # )
 #   end
 
-# lane :hockey do
-  #token 6f0fc66f062044349a25aaeede834921 app id a1fd56cd852d4c959988484eba69f724 secret f5093f18984251498a3751f5e05440f9
-# end
+# TODO: iCloud
+private_lane :set_icloud_container do
+  update_icloud_container_identifiers(
+    entitlements_file: "/path/to/entitlements_file.entitlements",
+    icloud_container_identifiers: ["iCloud.com.companyname.appname"]
+  )
+end
+
+# Resign and copy to device
+private_lane :resign_and_copy do
+  # TODO: this
+end
+
+# Copy to device
+private_lane :copy_to_device do
+  # Need to first install ios-deploy
+  # npm -g i ios-deploy
+  # can call ios-deply --detect to list devices
+  install_on_device(
+    skip_wifi: true, # Don't look for devices on wifi
+    # device_id: "a3be6c9ff7e5c3c6028597513243b0f933b876d4", # First device if no ID given
+    ipa: "./app.ipa"
+  )
+end
+
+# Publish to hockeyapp
+private_lane :publish_hockey do |options|
+  # Send to hockey app
+  # NOTE: hockey action will use the latest ipa and latest dsym built
+  ENV["HOCKEY_APP_TOKEN"] = "6f0fc66f062044349a25aaeede834921"
+  ENV["HOCKEY_BETA_APP_ID"] = "a1fd56cd852d4c959988484eba69f724"
+
+  hockey(
+    api_token: ENV['HOCKEY_APP_TOKEN'],
+    notes: "The Official Provenance Beta",
+    public_identifier: ENV['HOCKEY_BETA_APP_ID'],
+    release_type: options[:release_type],
+    notify: "0")
+
+    # Alert discord?
+    hockLink = lane_context[SharedValues::HOCKEY_DOWNLOAD_LINK]
+    puts "Hockeyapp download link is at #{hockLink}."
+end
 
   # error block is executed when a error occurs
   # error do |lane, exception|
