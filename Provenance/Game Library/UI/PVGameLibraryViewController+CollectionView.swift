@@ -11,6 +11,22 @@ import Foundation
 // tvOS
 let TVOSCellWidth: CGFloat = 308.0
 
+extension PVGameLibraryViewController {
+//	func collectionView(_ collectionView: UICollectionView, didUpdateFocusIn context: UICollectionViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+//		if let focusedIndexPath = context.nextFocusedIndexPath {
+//			let section = focusedIndexPath.section
+//			// Fix scroll offset off for special sections
+//			if section == recentGamesSection || section == favoritesSection || section == saveStateSection {
+//				coordinator.addCoordinatedAnimations({
+//					collectionView.scrollToItem(at: focusedIndexPath,
+//												at: .centeredVertically,
+//												animated: true)
+//				}, completion: nil)
+//			}
+//		}
+//	}
+}
+
 // MARK: - UICollectionViewDelegateFlowLayout
 extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 
@@ -308,6 +324,8 @@ extension PVGameLibraryViewController {
 				}
 			} else if let system = systems?[section - systemsSectionOffset] {
 				game = systemSectionsTokens[system.identifier]?.query[row]
+			} else {
+				ELOG("Unknown section \(section)")
 			}
 		}
 

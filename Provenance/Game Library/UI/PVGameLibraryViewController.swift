@@ -435,19 +435,24 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	class SystemSection : Equatable {
 		let id : String
 		let system : PVSystem
+		let gameLibraryGameController : PVGameLibraryViewController
 
 		var sortOrder : SortOptions {
 			didSet {
 				if sortOrder != oldValue {
-					storedQuery = nil
+					self.storedQuery = generateQuery()
+					self.notificationToken = generateToken()
 				}
 			}
 		}
 
-		init(system : PVSystem, sortOrder : SortOptions = .title) {
+		init(system : PVSystem, gameLibraryViewController: PVGameLibraryViewController, sortOrder : SortOptions = .title) {
 			self.system = system
 			self.id = system.identifier
 			self.sortOrder = sortOrder
+			self.gameLibraryGameController = gameLibraryViewController
+			self.storedQuery = generateQuery()
+			self.notificationToken = generateToken()
 		}
 
 		var notificationToken : NotificationToken?
@@ -459,6 +464,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			} else {
 				let newQuery = generateQuery()
 				storedQuery = newQuery
+				notificationToken = generateToken()
 				return newQuery
 			}
 		}
@@ -477,6 +483,50 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			sortDescriptors.append(SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: true))
 
 			return system.games.sorted(by: sortDescriptors)
+		}
+
+		private func generateToken() -> NotificationToken {
+			let newToken = query.observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
+				switch changes {
+				case .initial:
+					if self.gameLibraryGameController.isInSearch {
+						return
+					}
+					// New additions already handled by systems token
+					//                guard let collectionView = self.collectionView else {
+					//                    return
+					//                }
+					//                let systemsCount = self.systems.count
+					//                if systemsCount > 0 {
+					//                    let indexes = self.systemsSectionOffset..<(systemsCount + self.systemsSectionOffset)
+					//                    let indexSet = IndexSet(indexes)
+					//                    collectionView.insertSections(indexSet)
+					//                }
+					// Query results have changed, so apply them to the UICollectionView
+					guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+						WLOG("Index of system changed.")
+						return
+					}
+					let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
+					self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+				case .update(_, let deletions, let insertions, let modifications):
+					if self.gameLibraryGameController.isInSearch {
+						return
+					}
+
+					// Query results have changed, so apply them to the UICollectionView
+					guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+						WLOG("Index of system changed.")
+						return
+					}
+					let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
+					self.gameLibraryGameController.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
+				case .error(let error):
+					// An error occurred while opening the Realm file on the background worker thread
+					fatalError("\(error)")
+				}
+			}
+			return newToken
 		}
 
 		deinit {
@@ -501,47 +551,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 	}
 
     func addSectionToken(forSystem system: PVSystem) {
-		let newSystemSection = SystemSection(system: system, sortOrder: currentSort)
-
-        let newToken = newSystemSection.query.observe {[unowned self] (changes: RealmCollectionChange<Results<PVGame>>) in
-            switch changes {
-            case .initial:
-                // New additions already handled by systems token
-//                guard let collectionView = self.collectionView else {
-//                    return
-//                }
-//                let systemsCount = self.systems.count
-//                if systemsCount > 0 {
-//                    let indexes = self.systemsSectionOffset..<(systemsCount + self.systemsSectionOffset)
-//                    let indexSet = IndexSet(indexes)
-//                    collectionView.insertSections(indexSet)
-//                }
-                break
-            case .update(_, let deletions, let insertions, let modifications):
-				if self.isInSearch {
-					return
-				}
-
-                // Query results have changed, so apply them to the UICollectionView
-                guard let indexOfSystem = self.systems?.index(of: system) else {
-                    return
-                }
-                let section = indexOfSystem + self.systemsSectionOffset
-                self.handleUpdate(forSection: section, deletions: deletions, insertions: insertions, modifications: modifications, needsInsert: false)
-            case .error(let error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
-            }
-        }
-		newSystemSection.notificationToken = newToken
-        systemSectionsTokens[newSystemSection.id] = newSystemSection
+		let newSystemSection = SystemSection(system: system, gameLibraryViewController: self, sortOrder: currentSort)
+		systemSectionsTokens[newSystemSection.id] = newSystemSection
     }
 
     func initRealmResultsStorage() {
-        systems = PVSystem.all.sorted(byKeyPath: #keyPath(PVSystem.identifier)).filter("games.@count > 0")
+        systems = PVSystem.all.filter("games.@count > 0").sorted(byKeyPath: #keyPath(PVSystem.identifier))
 		saveStates = PVSaveState.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
         recentGames = PVRecentGame.all.filter("game != nil").sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-        favoriteGames = RomDatabase.sharedInstance.all(PVGame.self, where: "isFavorite", value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        favoriteGames = PVGame.all.filter("isFavorite == YES").sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
     }
 
     func deinitRealmResultsStorage() {
