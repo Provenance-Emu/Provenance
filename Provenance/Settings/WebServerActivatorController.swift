@@ -12,6 +12,7 @@ protocol WebServerActivatorController : class {
 	func showServerActiveAlert()
 }
 
+#if os(iOS)
 extension WebServerActivatorController where Self:PVSettingsViewController {
 	// Show "Web Server Active" alert view
 	func showServerActiveAlert() {
@@ -48,8 +49,24 @@ extension WebServerActivatorController where Self:PVSettingsViewController {
 		present(alert, animated: true) {() -> Void in }
 	}
 }
+#endif
 
 extension WebServerActivatorController where Self:PVGameLibraryViewController {
+	var webServerAlertMessage : String {
+		// get the IP address or bonjour name of the device
+		let webServerAddress: String = PVWebServer.shared.urlString
+		let webDavAddress: String = PVWebServer.shared.webDavURLString
+		let message = """
+		Read Importing ROMs wiki…
+		Upload/Download files at:
+
+		\(webServerAddress)  ᵂᵉᵇᵁᴵ
+		\(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
+
+		"""
+		return  message
+	}
+
 	func showServerActiveAlert() {
 		// Start Webserver
 		// Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -65,22 +82,14 @@ extension WebServerActivatorController where Self:PVGameLibraryViewController {
 			// connected via wifi, let's continue
 			// start web transfer service
 			if PVWebServer.shared.startServers() {
-				// get the IP address of the device
-				let webServerAddress: String = PVWebServer.shared.urlString
-				let webDavAddress: String = PVWebServer.shared.webDavURLString
-				let message = """
-				Read Importing ROMs wiki…
-				Upload/Download files at:
 
-				\(webServerAddress)  ᵂᵉᵇᵁᴵ
-				\(webDavAddress)  ᵂᵉᵇᴰᵃᵛ
-
-				"""
-				let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
+				let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
 				alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 					PVWebServer.shared.stopServers()
 				}))
-				present(alert, animated: true) {() -> Void in }
+				present(alert, animated: true) {() -> Void in
+					alert.message = self.webServerAlertMessage
+				}
 			} else {
 				// Display error
 				let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
