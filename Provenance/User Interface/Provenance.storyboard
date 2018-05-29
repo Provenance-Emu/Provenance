@@ -377,7 +377,7 @@
                             </connections>
                         </barButtonItem>
                         <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="redraw" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="Search" borderStyle="roundedRect" placeholder="Search" textAlignment="center" minimumFontSize="17" clearButtonMode="always" id="FMl-Ia-DzO">
-                            <rect key="frame" x="79" y="7" width="202" height="30"/>
+                            <rect key="frame" x="73" y="7" width="202" height="30"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="0.25159489197863472" alpha="0.1543771404109589" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <color key="textColor" white="0.80292426215277779" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -393,7 +393,7 @@
                                     <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem title="Title" id="TUE-QR-fbw">
+                            <barButtonItem image="sort" id="TUE-QR-fbw">
                                 <connections>
                                     <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="poc-Sm-FpJ"/>
                                 </connections>
@@ -1742,6 +1742,7 @@
     <resources>
         <image name="gear" width="20" height="20"/>
         <image name="questionMark" width="20" height="20"/>
+        <image name="sort" width="20" height="20"/>
     </resources>
     <color key="tintColor" red="0.51793235540390015" green="0.5159609317779541" blue="0.53913700580596924" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
 </document>
