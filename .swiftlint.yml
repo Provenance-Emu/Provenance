@@ -63,6 +63,7 @@ disabled_rules:
   # - private_over_fileprivate
 excluded: # paths to ignore during linting. overridden byincluded.
   - Carthage
+  - PVSupport/Carthage
   - Pods
 # parameterized rules can be customized from this configuration file
 line_length: 200

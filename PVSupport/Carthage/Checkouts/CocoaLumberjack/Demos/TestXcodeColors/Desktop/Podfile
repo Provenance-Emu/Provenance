@@ -1,0 +1,10 @@
+
+project 'TestXcodeColors'
+workspace '../../Demos'
+
+target :'TestXcodeColors' do
+  platform :osx, '10.8'
+  use_frameworks!
+  pod 'CocoaLumberjack', :path => '../../../'
+end
+

@@ -104,6 +104,41 @@ protocol PVLibraryEntry where Self: Object {}
     }
 }
 
+public extension PVGame {
+	var isCD : Bool {
+		let ext = (romPath as NSString).pathExtension
+		var exts = PVEmulatorConfiguration.supportedCDFileExtensions
+		exts.formUnion(["m3u"])
+		return exts.contains(ext.lowercased())
+	}
+
+	var discCount : Int {
+		if isCD {
+			return relatedFiles.filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
+		} else {
+			return 0
+		}
+	}
+}
+
+public extension PVGame {
+	var autoSaves : Results<PVSaveState> {
+		return saveStates.filter("isAutosave == true").sorted(byKeyPath: "date", ascending: false)
+	}
+
+	var newestAutoSave : PVSaveState? {
+		return autoSaves.first
+	}
+
+	var lastAutosaveAge : TimeInterval? {
+		guard let first = autoSaves.first else {
+			return nil
+		}
+
+		return first.date.timeIntervalSinceNow * -1
+	}
+}
+
 //public extension PVGame {
 //    // Support older code
 //    var md5Hash : String {

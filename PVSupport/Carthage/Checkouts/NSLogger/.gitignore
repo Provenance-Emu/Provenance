@@ -1,0 +1,17 @@
+# OS X
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+*.xcuserdatad
+
+# The HockeyApp configuration file contains the AppID
+# we don't want it to be duplicated in forks - therefore,
+# it stays blank in the repo and only the local copy
+# is updated
+/Desktop Viewer/Resources/HockeyConf.plist
+Built Products

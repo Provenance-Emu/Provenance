@@ -1,0 +1,10 @@
+
+project 'WebServerIPhone'
+workspace '../Demos'
+
+target :'WebServerIPhone' do
+  platform :ios, '8.0'
+  use_frameworks!
+  pod 'CocoaLumberjack', :path => '../../'
+end
+

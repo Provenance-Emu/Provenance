@@ -23,7 +23,7 @@ extension PVRecentGame {
 
         item.title = game.title
 		let url = URL(string: game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL)
-		
+
         item.imageURL = url
         item.imageShape = imageType
         item.displayURL = self.displayURL
