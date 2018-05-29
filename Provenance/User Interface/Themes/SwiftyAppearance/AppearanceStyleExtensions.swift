@@ -8,7 +8,7 @@
 
 import UIKit
 
-@IBDesignable
+//@IBDesignable
 public extension UIView {
 
     @IBInspectable public var appearanceStyleName: String {
@@ -31,7 +31,7 @@ public extension UIView {
     }
 }
 
-@IBDesignable
+//@IBDesignable
 public extension UIViewController {
 
     @IBInspectable public var appearanceStyleName: String {

@@ -314,6 +314,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     #endif
     }
 
+    #if os(iOS)
     func layoutVolume() {
         #if TARGET_OS_IOS
         let volumeYPadding: CGFloat = 10
@@ -647,7 +648,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         let spacing: CGFloat = 20
         var startFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 
-        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad  {
+        if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             if (buttonGroup != nil) && !(buttonGroup?.isHidden)! {
                 startFrame = CGRect(x: (buttonGroup?.frame.origin.x)! - controlSize.width + (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
                 if system.shortName == "SG" || system.shortName == "SCD" || system.shortName == "32X" {

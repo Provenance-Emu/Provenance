@@ -10,15 +10,7 @@
 #import "kICadeControllerSetting.h"
 #import "LzmaSDKObjCReader.h"
 #import "SSZipArchive.h"
-#import "Provenance/Version.h"
-#import <Realm/Realm.h>
-// Hack cause they can't make modules for some reason
-#ifndef SWIFT_BRIDGE
-#define SWIFT_BRIDGE 1
-#endif
-#import <ProSystem/ProSystemGameCore.h>
-#import <PicoDrive/PicodriveGameCore.h>
-#import <PVYabause/YabauseGameCore.h>
+//#import "Provenance/Version.h"
 
 // -----------------------------------------------------------------------------
 // Begin Swiftify generated imports

@@ -110,7 +110,7 @@ public enum SubtleVolumeError: Error {
   fileprivate let overlay = UIView()
   public fileprivate(set) var volumeLevel = Double(0)
   open static let DefaultVolumeStep: Double = 0.05
-  
+
   private var audioSessionOutputVolumeObserver: Any?
 
   @objc convenience public init(style: SubtleVolumeStyle, frame: CGRect) {
@@ -136,7 +136,6 @@ public enum SubtleVolumeError: Error {
     fatalError("Please use the convenience initializers instead")
   }
 
-  
   /// Increase the volume by a given step
   ///
   /// - Parameter delta: the volume increase. The volume goes from 0 to 1, delta must be a Double in that range
@@ -144,7 +143,7 @@ public enum SubtleVolumeError: Error {
   @objc public func increseVolume(by step: Double = DefaultVolumeStep, animated: Bool = false) throws {
     try setVolumeLevel(volumeLevel + step, animated: animated)
   }
-  
+
   /// Increase the volume by a given step
   ///
   /// - Parameter delta: the volume increase. The volume goes from 0 to 1, delta must be a Double in that range
@@ -152,7 +151,7 @@ public enum SubtleVolumeError: Error {
   @objc public func decreaseVolume(by step: Double = DefaultVolumeStep, animated: Bool = false) throws {
     try setVolumeLevel(volumeLevel - step, animated: animated)
   }
-  
+
   /**
    Programatically set the volume level.
 
@@ -163,7 +162,7 @@ public enum SubtleVolumeError: Error {
     guard let slider = volume.subviews.compactMap({ $0 as? UISlider }).first else {
       throw SubtleVolumeError.unableToChangeVolumeLevel
     }
-    
+
     let updateVolume = {
       // Trick iOS into thinking that slider value has changed
       slider.value = max(0, min(1, Float(volumeLevel)))
@@ -172,9 +171,9 @@ public enum SubtleVolumeError: Error {
     // If user opted out of animation, toggle observation for the duration of the change
     if !animated {
       audioSessionOutputVolumeObserver = nil
-      
+
       updateVolume()
-      
+
       DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
         guard let `self` = self else { return }
         self.audioSessionOutputVolumeObserver = AVAudioSession.sharedInstance().observe(\.outputVolume) { [weak self] (audioSession, _) in
@@ -186,7 +185,7 @@ public enum SubtleVolumeError: Error {
       updateVolume()
     }
   }
-  
+
   /// Resume audio session. Call this once the app becomes active after being pushed in background
   @objc public func resume() {
     do {
@@ -196,7 +195,7 @@ public enum SubtleVolumeError: Error {
       return
     }
   }
-  
+
   fileprivate func setup() {
     resume()
     updateVolume(Double(AVAudioSession.sharedInstance().outputVolume), animated: false)
@@ -232,7 +231,7 @@ public enum SubtleVolumeError: Error {
 
     UIView.animate(withDuration: animated ? 0.1 : 0, animations: { () -> Void in
       self.overlay.frame.size.width = self.frame.size.width * CGFloat(self.volumeLevel)
-    }) 
+    })
 
     UIView.animateKeyframes(withDuration: animated ? 1.5 : 0, delay: 0, options: .beginFromCurrentState, animations: { () -> Void in
       UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.2, animations: {

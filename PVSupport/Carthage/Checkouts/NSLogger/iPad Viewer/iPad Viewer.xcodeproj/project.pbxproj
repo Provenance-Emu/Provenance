@@ -1,0 +1,852 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0426F51417AC8FD500B50BFA /* LoggerTCPTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 0426F51017AC8FD500B50BFA /* LoggerTCPTransport.m */; };
+		0426F51517AC8FD500B50BFA /* LoggerTCPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 0426F51217AC8FD500B50BFA /* LoggerTCPConnection.m */; };
+		0426F51D17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 0426F51C17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.m */; };
+		0426F52417ACD78C00B50BFA /* LoggerNativeTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 0426F52217ACD78C00B50BFA /* LoggerNativeTransport.m */; };
+		0426F52A17ACDAA800B50BFA /* LoggerJSONMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 0426F52917ACDAA800B50BFA /* LoggerJSONMessage.m */; };
+		042DEB2A1716E9CD00088195 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 042DEB231716E9CD00088195 /* BaseViewController.m */; };
+		042DEB2B1716E9CD00088195 /* BaseViewKeyboardAddition.m in Sources */ = {isa = PBXBuildFile; fileRef = 042DEB261716E9CD00088195 /* BaseViewKeyboardAddition.m */; };
+		042F180B170E7D3A007ECDA4 /* LoggerMessageFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 042F1803170E7D3A007ECDA4 /* LoggerMessageFormatter.m */; };
+		042F180C170E7D3A007ECDA4 /* LoggerClientSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 042F1806170E7D3A007ECDA4 /* LoggerClientSize.m */; };
+		042F180D170E7D3A007ECDA4 /* LoggerMarkerSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 042F1808170E7D3A007ECDA4 /* LoggerMarkerSize.m */; };
+		042F180E170E7D3A007ECDA4 /* LoggerMessageSize.m in Sources */ = {isa = PBXBuildFile; fileRef = 042F180A170E7D3A007ECDA4 /* LoggerMessageSize.m */; };
+		044FEF1C16AC49810067FA53 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEF1B16AC49810067FA53 /* UIKit.framework */; };
+		044FEF1E16AC49810067FA53 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEF1D16AC49810067FA53 /* Foundation.framework */; };
+		044FEF2016AC49810067FA53 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEF1F16AC49810067FA53 /* CoreGraphics.framework */; };
+		044FEF2616AC49810067FA53 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 044FEF2416AC49810067FA53 /* InfoPlist.strings */; };
+		044FEF2816AC49810067FA53 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF2716AC49810067FA53 /* main.m */; };
+		044FEF2C16AC49810067FA53 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF2B16AC49810067FA53 /* AppDelegate.m */; };
+		044FEF2E16AC49810067FA53 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 044FEF2D16AC49810067FA53 /* Default.png */; };
+		044FEF3016AC49810067FA53 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 044FEF2F16AC49810067FA53 /* Default@2x.png */; };
+		044FEF3216AC49810067FA53 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 044FEF3116AC49810067FA53 /* Default-568h@2x.png */; };
+		044FEF9616AC4A810067FA53 /* LoggerConstApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF4C16AC4A810067FA53 /* LoggerConstApp.m */; };
+		044FEF9716AC4A810067FA53 /* LoggerConstController.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF4E16AC4A810067FA53 /* LoggerConstController.m */; };
+		044FEF9816AC4A810067FA53 /* LoggerConstModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5016AC4A810067FA53 /* LoggerConstModel.m */; };
+		044FEF9916AC4A810067FA53 /* LoggerConstView.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5216AC4A810067FA53 /* LoggerConstView.m */; };
+		044FEF9B16AC4A810067FA53 /* LoggerMessageData.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5616AC4A810067FA53 /* LoggerMessageData.m */; };
+		044FEF9C16AC4A810067FA53 /* LoggerMessages.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5716AC4A810067FA53 /* LoggerMessages.xcdatamodeld */; };
+		044FEF9D16AC4A810067FA53 /* LoggerCertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5B16AC4A810067FA53 /* LoggerCertManager.m */; };
+		044FEF9E16AC4A810067FA53 /* LoggerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5D16AC4A810067FA53 /* LoggerDataManager.m */; };
+		044FEF9F16AC4A810067FA53 /* LoggerPreferenceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF5F16AC4A810067FA53 /* LoggerPreferenceManager.m */; };
+		044FEFA016AC4A810067FA53 /* LoggerTransportManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF6116AC4A810067FA53 /* LoggerTransportManager.m */; };
+		044FEFA416AC4A810067FA53 /* LoggerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF6B16AC4A810067FA53 /* LoggerConnection.m */; };
+		044FEFA516AC4A810067FA53 /* LoggerIPConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF6D16AC4A810067FA53 /* LoggerIPConnection.m */; };
+		044FEFA616AC4A810067FA53 /* LoggerMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF6F16AC4A810067FA53 /* LoggerMessage.m */; };
+		044FEFA716AC4A810067FA53 /* LoggerTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF7116AC4A810067FA53 /* LoggerTransport.m */; };
+		044FEFAB16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF7C16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.m */; };
+		044FEFAC16AC4A810067FA53 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF7F16AC4A810067FA53 /* NSFileManager+DirectoryLocations.m */; };
+		044FEFAD16AC4A810067FA53 /* LoggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF8116AC4A810067FA53 /* LoggerUtils.m */; };
+		044FEFAE16AC4A810067FA53 /* ValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF8916AC4A810067FA53 /* ValueTransformers.m */; };
+		044FEFAF16AC4A810067FA53 /* LoggerMessageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 044FEF8D16AC4A810067FA53 /* LoggerMessageViewController.m */; };
+		044FEFB016AC4A810067FA53 /* LoggerMessageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 044FEF8E16AC4A810067FA53 /* LoggerMessageViewController.xib */; };
+		044FEFB716AC4AC60067FA53 /* NSLoggerResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 044FEFB616AC4AC60067FA53 /* NSLoggerResource.bundle */; };
+		044FEFB916AC4B7A0067FA53 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 044FEFB816AC4B7A0067FA53 /* MainWindow.xib */; };
+		044FEFBF16AC4BC30067FA53 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEFBE16AC4BC30067FA53 /* CoreData.framework */; };
+		044FEFC116AC4BCF0067FA53 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEFC016AC4BCF0067FA53 /* CFNetwork.framework */; };
+		044FEFC316AC4BD90067FA53 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 044FEFC216AC4BD90067FA53 /* Security.framework */; };
+		047DC61F17A7FBAC0067471C /* LoggerTextStyleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 047DC61E17A7FBAC0067471C /* LoggerTextStyleManager.m */; };
+		048444B916D29AA600FBAA6B /* LoggerDataDelete.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444AE16D29AA600FBAA6B /* LoggerDataDelete.m */; };
+		048444BA16D29AA600FBAA6B /* LoggerDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444B016D29AA600FBAA6B /* LoggerDataOperation.m */; };
+		048444BB16D29AA600FBAA6B /* LoggerDataRead.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444B216D29AA600FBAA6B /* LoggerDataRead.m */; };
+		048444BC16D29AA600FBAA6B /* LoggerDataWrite.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444B416D29AA600FBAA6B /* LoggerDataWrite.m */; };
+		048444BD16D29AA600FBAA6B /* LoggerDataEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444B616D29AA600FBAA6B /* LoggerDataEntry.m */; };
+		048444BE16D29AA600FBAA6B /* LoggerDataStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 048444B816D29AA600FBAA6B /* LoggerDataStorage.m */; };
+		04A4EEE41738001E00479F0E /* LoggerClientInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A4EED61738001E00479F0E /* LoggerClientInfoCell.m */; };
+		04A4EEE51738001E00479F0E /* LoggerMarkerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A4EED81738001E00479F0E /* LoggerMarkerCell.m */; };
+		04A4EEE61738001E00479F0E /* LoggerMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A4EEDA1738001E00479F0E /* LoggerMessageCell.m */; };
+		04A8844C17074A4100A64257 /* ICloudSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A8844B17074A4100A64257 /* ICloudSupport.m */; };
+		04C27EE41747B7B600765A3C /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 04C27EE31747B7B600765A3C /* LICENSE */; };
+		04D13F5216B56AF4004FDB3A /* LoggerNativeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D13F4E16B56AF4004FDB3A /* LoggerNativeMessage.m */; };
+		04D13F5816B56B17004FDB3A /* LoggerClientData.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D13F5516B56B17004FDB3A /* LoggerClientData.m */; };
+		04D13F5916B56B17004FDB3A /* LoggerConnectionStatusData.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D13F5716B56B17004FDB3A /* LoggerConnectionStatusData.m */; };
+		04D13F5B16B56B2A004FDB3A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 04D13F5A16B56B2A004FDB3A /* libz.dylib */; };
+		04E405E817A6BDF70013FD63 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04E405E717A6BDF70013FD63 /* CoreText.framework */; };
+		713A99671AE8D34F00CEA52B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 713A99661AE8D34F00CEA52B /* Images.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0426F51017AC8FD500B50BFA /* LoggerTCPTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerTCPTransport.m; sourceTree = "<group>"; };
+		0426F51117AC8FD500B50BFA /* LoggerTCPTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerTCPTransport.h; sourceTree = "<group>"; };
+		0426F51217AC8FD500B50BFA /* LoggerTCPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerTCPConnection.m; sourceTree = "<group>"; };
+		0426F51317AC8FD500B50BFA /* LoggerTCPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerTCPConnection.h; sourceTree = "<group>"; };
+		0426F51817ACACEE00B50BFA /* LoggerTransportDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoggerTransportDelegate.h; sourceTree = "<group>"; };
+		0426F51B17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerNativeLegacyTransport.h; sourceTree = "<group>"; };
+		0426F51C17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerNativeLegacyTransport.m; sourceTree = "<group>"; };
+		0426F52217ACD78C00B50BFA /* LoggerNativeTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerNativeTransport.m; sourceTree = "<group>"; };
+		0426F52317ACD78C00B50BFA /* LoggerNativeTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerNativeTransport.h; sourceTree = "<group>"; };
+		0426F52817ACDAA800B50BFA /* LoggerJSONMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerJSONMessage.h; sourceTree = "<group>"; };
+		0426F52917ACDAA800B50BFA /* LoggerJSONMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerJSONMessage.m; sourceTree = "<group>"; };
+		042DEB221716E9CD00088195 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
+		042DEB231716E9CD00088195 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
+		042DEB251716E9CD00088195 /* BaseViewKeyboardAddition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewKeyboardAddition.h; sourceTree = "<group>"; };
+		042DEB261716E9CD00088195 /* BaseViewKeyboardAddition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewKeyboardAddition.m; sourceTree = "<group>"; };
+		042F1802170E7D3A007ECDA4 /* LoggerMessageFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessageFormatter.h; sourceTree = "<group>"; };
+		042F1803170E7D3A007ECDA4 /* LoggerMessageFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessageFormatter.m; sourceTree = "<group>"; };
+		042F1805170E7D3A007ECDA4 /* LoggerClientSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerClientSize.h; sourceTree = "<group>"; };
+		042F1806170E7D3A007ECDA4 /* LoggerClientSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerClientSize.m; sourceTree = "<group>"; };
+		042F1807170E7D3A007ECDA4 /* LoggerMarkerSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMarkerSize.h; sourceTree = "<group>"; };
+		042F1808170E7D3A007ECDA4 /* LoggerMarkerSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMarkerSize.m; sourceTree = "<group>"; };
+		042F1809170E7D3A007ECDA4 /* LoggerMessageSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessageSize.h; sourceTree = "<group>"; };
+		042F180A170E7D3A007ECDA4 /* LoggerMessageSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessageSize.m; sourceTree = "<group>"; };
+		0431653C16C5486300C078D8 /* UIColorRGBA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIColorRGBA.h; sourceTree = "<group>"; };
+		044FEF1716AC49810067FA53 /* iPad Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iPad Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		044FEF1B16AC49810067FA53 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		044FEF1D16AC49810067FA53 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		044FEF1F16AC49810067FA53 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		044FEF2316AC49810067FA53 /* iPad Viewer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPad Viewer-Info.plist"; sourceTree = "<group>"; };
+		044FEF2516AC49810067FA53 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		044FEF2716AC49810067FA53 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		044FEF2916AC49810067FA53 /* iPad Viewer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iPad Viewer-Prefix.pch"; sourceTree = "<group>"; };
+		044FEF2A16AC49810067FA53 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		044FEF2B16AC49810067FA53 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		044FEF2D16AC49810067FA53 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		044FEF2F16AC49810067FA53 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		044FEF3116AC49810067FA53 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		044FEF4B16AC4A810067FA53 /* LoggerConstApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConstApp.h; sourceTree = "<group>"; };
+		044FEF4C16AC4A810067FA53 /* LoggerConstApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConstApp.m; sourceTree = "<group>"; };
+		044FEF4D16AC4A810067FA53 /* LoggerConstController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConstController.h; sourceTree = "<group>"; };
+		044FEF4E16AC4A810067FA53 /* LoggerConstController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConstController.m; sourceTree = "<group>"; };
+		044FEF4F16AC4A810067FA53 /* LoggerConstModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConstModel.h; sourceTree = "<group>"; };
+		044FEF5016AC4A810067FA53 /* LoggerConstModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConstModel.m; sourceTree = "<group>"; };
+		044FEF5116AC4A810067FA53 /* LoggerConstView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConstView.h; sourceTree = "<group>"; };
+		044FEF5216AC4A810067FA53 /* LoggerConstView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConstView.m; sourceTree = "<group>"; };
+		044FEF5516AC4A810067FA53 /* LoggerMessageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessageData.h; sourceTree = "<group>"; };
+		044FEF5616AC4A810067FA53 /* LoggerMessageData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessageData.m; sourceTree = "<group>"; };
+		044FEF5816AC4A810067FA53 /* LoggerMessages.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LoggerMessages.xcdatamodel; sourceTree = "<group>"; };
+		044FEF5A16AC4A810067FA53 /* LoggerCertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerCertManager.h; sourceTree = "<group>"; };
+		044FEF5B16AC4A810067FA53 /* LoggerCertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerCertManager.m; sourceTree = "<group>"; };
+		044FEF5C16AC4A810067FA53 /* LoggerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataManager.h; sourceTree = "<group>"; };
+		044FEF5D16AC4A810067FA53 /* LoggerDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataManager.m; sourceTree = "<group>"; };
+		044FEF5E16AC4A810067FA53 /* LoggerPreferenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerPreferenceManager.h; sourceTree = "<group>"; };
+		044FEF5F16AC4A810067FA53 /* LoggerPreferenceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerPreferenceManager.m; sourceTree = "<group>"; };
+		044FEF6016AC4A810067FA53 /* LoggerTransportManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerTransportManager.h; sourceTree = "<group>"; };
+		044FEF6116AC4A810067FA53 /* LoggerTransportManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerTransportManager.m; sourceTree = "<group>"; };
+		044FEF6A16AC4A810067FA53 /* LoggerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConnection.h; sourceTree = "<group>"; };
+		044FEF6B16AC4A810067FA53 /* LoggerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConnection.m; sourceTree = "<group>"; };
+		044FEF6C16AC4A810067FA53 /* LoggerIPConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerIPConnection.h; sourceTree = "<group>"; };
+		044FEF6D16AC4A810067FA53 /* LoggerIPConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerIPConnection.m; sourceTree = "<group>"; };
+		044FEF6E16AC4A810067FA53 /* LoggerMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessage.h; sourceTree = "<group>"; };
+		044FEF6F16AC4A810067FA53 /* LoggerMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessage.m; sourceTree = "<group>"; };
+		044FEF7016AC4A810067FA53 /* LoggerTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerTransport.h; sourceTree = "<group>"; };
+		044FEF7116AC4A810067FA53 /* LoggerTransport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerTransport.m; sourceTree = "<group>"; };
+		044FEF7B16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+FetchAdditions.h"; sourceTree = "<group>"; };
+		044FEF7C16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+FetchAdditions.m"; sourceTree = "<group>"; };
+		044FEF7E16AC4A810067FA53 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
+		044FEF7F16AC4A810067FA53 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
+		044FEF8016AC4A810067FA53 /* LoggerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerUtils.h; sourceTree = "<group>"; };
+		044FEF8116AC4A810067FA53 /* LoggerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerUtils.m; sourceTree = "<group>"; };
+		044FEF8316AC4A810067FA53 /* Macro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Macro.h; sourceTree = "<group>"; };
+		044FEF8516AC4A810067FA53 /* NullStringCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullStringCheck.h; sourceTree = "<group>"; };
+		044FEF8616AC4A810067FA53 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
+		044FEF8716AC4A810067FA53 /* time_converter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = time_converter.h; sourceTree = "<group>"; };
+		044FEF8816AC4A810067FA53 /* ValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueTransformers.h; sourceTree = "<group>"; };
+		044FEF8916AC4A810067FA53 /* ValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValueTransformers.m; sourceTree = "<group>"; };
+		044FEF8C16AC4A810067FA53 /* LoggerMessageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessageViewController.h; sourceTree = "<group>"; };
+		044FEF8D16AC4A810067FA53 /* LoggerMessageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessageViewController.m; sourceTree = "<group>"; };
+		044FEF8E16AC4A810067FA53 /* LoggerMessageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoggerMessageViewController.xib; sourceTree = "<group>"; };
+		044FEFB616AC4AC60067FA53 /* NSLoggerResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = NSLoggerResource.bundle; sourceTree = SOURCE_ROOT; };
+		044FEFB816AC4B7A0067FA53 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		044FEFBE16AC4BC30067FA53 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		044FEFC016AC4BCF0067FA53 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		044FEFC216AC4BD90067FA53 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		047BF70016D0E43900866DFB /* AppDelegateCycleHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegateCycleHandle.h; sourceTree = "<group>"; };
+		047DC61D17A7FBAC0067471C /* LoggerTextStyleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerTextStyleManager.h; sourceTree = "<group>"; };
+		047DC61E17A7FBAC0067471C /* LoggerTextStyleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerTextStyleManager.m; sourceTree = "<group>"; };
+		048444AD16D29AA600FBAA6B /* LoggerDataDelete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataDelete.h; sourceTree = "<group>"; };
+		048444AE16D29AA600FBAA6B /* LoggerDataDelete.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataDelete.m; sourceTree = "<group>"; };
+		048444AF16D29AA600FBAA6B /* LoggerDataOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataOperation.h; sourceTree = "<group>"; };
+		048444B016D29AA600FBAA6B /* LoggerDataOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataOperation.m; sourceTree = "<group>"; };
+		048444B116D29AA600FBAA6B /* LoggerDataRead.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataRead.h; sourceTree = "<group>"; };
+		048444B216D29AA600FBAA6B /* LoggerDataRead.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataRead.m; sourceTree = "<group>"; };
+		048444B316D29AA600FBAA6B /* LoggerDataWrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataWrite.h; sourceTree = "<group>"; };
+		048444B416D29AA600FBAA6B /* LoggerDataWrite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataWrite.m; sourceTree = "<group>"; };
+		048444B516D29AA600FBAA6B /* LoggerDataEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataEntry.h; sourceTree = "<group>"; };
+		048444B616D29AA600FBAA6B /* LoggerDataEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataEntry.m; sourceTree = "<group>"; };
+		048444B716D29AA600FBAA6B /* LoggerDataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerDataStorage.h; sourceTree = "<group>"; };
+		048444B816D29AA600FBAA6B /* LoggerDataStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerDataStorage.m; sourceTree = "<group>"; };
+		04A4EED51738001E00479F0E /* LoggerClientInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerClientInfoCell.h; sourceTree = "<group>"; };
+		04A4EED61738001E00479F0E /* LoggerClientInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerClientInfoCell.m; sourceTree = "<group>"; };
+		04A4EED71738001E00479F0E /* LoggerMarkerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMarkerCell.h; sourceTree = "<group>"; };
+		04A4EED81738001E00479F0E /* LoggerMarkerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMarkerCell.m; sourceTree = "<group>"; };
+		04A4EED91738001E00479F0E /* LoggerMessageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerMessageCell.h; sourceTree = "<group>"; };
+		04A4EEDA1738001E00479F0E /* LoggerMessageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerMessageCell.m; sourceTree = "<group>"; };
+		04A8844A17074A4100A64257 /* ICloudSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ICloudSupport.h; sourceTree = "<group>"; };
+		04A8844B17074A4100A64257 /* ICloudSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ICloudSupport.m; sourceTree = "<group>"; };
+		04C27EE31747B7B600765A3C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = SOURCE_ROOT; };
+		04D13F4D16B56AF4004FDB3A /* LoggerNativeMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerNativeMessage.h; sourceTree = "<group>"; };
+		04D13F4E16B56AF4004FDB3A /* LoggerNativeMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerNativeMessage.m; sourceTree = "<group>"; };
+		04D13F5416B56B17004FDB3A /* LoggerClientData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerClientData.h; sourceTree = "<group>"; };
+		04D13F5516B56B17004FDB3A /* LoggerClientData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerClientData.m; sourceTree = "<group>"; };
+		04D13F5616B56B17004FDB3A /* LoggerConnectionStatusData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerConnectionStatusData.h; sourceTree = "<group>"; };
+		04D13F5716B56B17004FDB3A /* LoggerConnectionStatusData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoggerConnectionStatusData.m; sourceTree = "<group>"; };
+		04D13F5A16B56B2A004FDB3A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		04E405E717A6BDF70013FD63 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		713A99661AE8D34F00CEA52B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D8E674A61FC5549B00A43953 /* LoggerCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoggerCommon.h; path = ../Client/iOS/LoggerCommon.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		044FEF1416AC49810067FA53 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				04E405E817A6BDF70013FD63 /* CoreText.framework in Frameworks */,
+				04D13F5B16B56B2A004FDB3A /* libz.dylib in Frameworks */,
+				044FEFC316AC4BD90067FA53 /* Security.framework in Frameworks */,
+				044FEFC116AC4BCF0067FA53 /* CFNetwork.framework in Frameworks */,
+				044FEFBF16AC4BC30067FA53 /* CoreData.framework in Frameworks */,
+				044FEF1C16AC49810067FA53 /* UIKit.framework in Frameworks */,
+				044FEF1E16AC49810067FA53 /* Foundation.framework in Frameworks */,
+				044FEF2016AC49810067FA53 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		040AD41B16ACF5F60072DFAD /* Views & Cells */ = {
+			isa = PBXGroup;
+			children = (
+				04A4EED41738001E00479F0E /* MessageCell */,
+			);
+			path = "Views & Cells";
+			sourceTree = "<group>";
+		};
+		0426F52717ACDAA700B50BFA /* JSONFormat */ = {
+			isa = PBXGroup;
+			children = (
+				0426F52817ACDAA800B50BFA /* LoggerJSONMessage.h */,
+				0426F52917ACDAA800B50BFA /* LoggerJSONMessage.m */,
+			);
+			path = JSONFormat;
+			sourceTree = "<group>";
+		};
+		042DEB211716E9CD00088195 /* BaseViewController */ = {
+			isa = PBXGroup;
+			children = (
+				042DEB221716E9CD00088195 /* BaseViewController.h */,
+				042DEB231716E9CD00088195 /* BaseViewController.m */,
+				042DEB241716E9CD00088195 /* KeyboardAddition */,
+			);
+			path = BaseViewController;
+			sourceTree = "<group>";
+		};
+		042DEB241716E9CD00088195 /* KeyboardAddition */ = {
+			isa = PBXGroup;
+			children = (
+				042DEB251716E9CD00088195 /* BaseViewKeyboardAddition.h */,
+				042DEB261716E9CD00088195 /* BaseViewKeyboardAddition.m */,
+			);
+			path = KeyboardAddition;
+			sourceTree = "<group>";
+		};
+		042DEB2D1716EA2B00088195 /* Vendors */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Vendors;
+			sourceTree = "<group>";
+		};
+		042F1801170E7D3A007ECDA4 /* MessageFormatter */ = {
+			isa = PBXGroup;
+			children = (
+				042F1802170E7D3A007ECDA4 /* LoggerMessageFormatter.h */,
+				042F1803170E7D3A007ECDA4 /* LoggerMessageFormatter.m */,
+			);
+			path = MessageFormatter;
+			sourceTree = "<group>";
+		};
+		042F1804170E7D3A007ECDA4 /* MessageSizeCalculator */ = {
+			isa = PBXGroup;
+			children = (
+				042F1805170E7D3A007ECDA4 /* LoggerClientSize.h */,
+				042F1806170E7D3A007ECDA4 /* LoggerClientSize.m */,
+				042F1807170E7D3A007ECDA4 /* LoggerMarkerSize.h */,
+				042F1808170E7D3A007ECDA4 /* LoggerMarkerSize.m */,
+				042F1809170E7D3A007ECDA4 /* LoggerMessageSize.h */,
+				042F180A170E7D3A007ECDA4 /* LoggerMessageSize.m */,
+			);
+			path = MessageSizeCalculator;
+			sourceTree = "<group>";
+		};
+		0431653B16C5486300C078D8 /* UIColor */ = {
+			isa = PBXGroup;
+			children = (
+				0431653C16C5486300C078D8 /* UIColorRGBA.h */,
+			);
+			path = UIColor;
+			sourceTree = "<group>";
+		};
+		044FEF0C16AC49810067FA53 = {
+			isa = PBXGroup;
+			children = (
+				D8E674A61FC5549B00A43953 /* LoggerCommon.h */,
+				040AD41B16ACF5F60072DFAD /* Views & Cells */,
+				044FEF8A16AC4A810067FA53 /* ViewController */,
+				044FEF5916AC4A810067FA53 /* Managers */,
+				048444AB16D29AA600FBAA6B /* DataStorage */,
+				044FEF5316AC4A810067FA53 /* CoreDataModel */,
+				044FEF6216AC4A810067FA53 /* Model */,
+				044FEF4A16AC4A810067FA53 /* Constants */,
+				044FEF7916AC4A810067FA53 /* Utilities */,
+				044FEF2116AC49810067FA53 /* iPad Viewer */,
+				042DEB2D1716EA2B00088195 /* Vendors */,
+				044FEF1A16AC49810067FA53 /* Frameworks */,
+				044FEF1816AC49810067FA53 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		044FEF1816AC49810067FA53 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF1716AC49810067FA53 /* iPad Viewer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		044FEF1A16AC49810067FA53 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				04E405E717A6BDF70013FD63 /* CoreText.framework */,
+				04D13F5A16B56B2A004FDB3A /* libz.dylib */,
+				044FEFC216AC4BD90067FA53 /* Security.framework */,
+				044FEFC016AC4BCF0067FA53 /* CFNetwork.framework */,
+				044FEFBE16AC4BC30067FA53 /* CoreData.framework */,
+				044FEF1B16AC49810067FA53 /* UIKit.framework */,
+				044FEF1D16AC49810067FA53 /* Foundation.framework */,
+				044FEF1F16AC49810067FA53 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		044FEF2116AC49810067FA53 /* iPad Viewer */ = {
+			isa = PBXGroup;
+			children = (
+				04C27EE31747B7B600765A3C /* LICENSE */,
+				044FEFB616AC4AC60067FA53 /* NSLoggerResource.bundle */,
+				044FEF2A16AC49810067FA53 /* AppDelegate.h */,
+				044FEF2B16AC49810067FA53 /* AppDelegate.m */,
+				044FEFB816AC4B7A0067FA53 /* MainWindow.xib */,
+				713A99661AE8D34F00CEA52B /* Images.xcassets */,
+				044FEF2216AC49810067FA53 /* Supporting Files */,
+			);
+			path = "iPad Viewer";
+			sourceTree = "<group>";
+		};
+		044FEF2216AC49810067FA53 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF2316AC49810067FA53 /* iPad Viewer-Info.plist */,
+				044FEF2416AC49810067FA53 /* InfoPlist.strings */,
+				044FEF2716AC49810067FA53 /* main.m */,
+				044FEF2916AC49810067FA53 /* iPad Viewer-Prefix.pch */,
+				044FEF2D16AC49810067FA53 /* Default.png */,
+				044FEF2F16AC49810067FA53 /* Default@2x.png */,
+				044FEF3116AC49810067FA53 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		044FEF4A16AC4A810067FA53 /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF4B16AC4A810067FA53 /* LoggerConstApp.h */,
+				044FEF4C16AC4A810067FA53 /* LoggerConstApp.m */,
+				044FEF4D16AC4A810067FA53 /* LoggerConstController.h */,
+				044FEF4E16AC4A810067FA53 /* LoggerConstController.m */,
+				044FEF4F16AC4A810067FA53 /* LoggerConstModel.h */,
+				044FEF5016AC4A810067FA53 /* LoggerConstModel.m */,
+				044FEF5116AC4A810067FA53 /* LoggerConstView.h */,
+				044FEF5216AC4A810067FA53 /* LoggerConstView.m */,
+			);
+			path = Constants;
+			sourceTree = "<group>";
+		};
+		044FEF5316AC4A810067FA53 /* CoreDataModel */ = {
+			isa = PBXGroup;
+			children = (
+				04D13F5416B56B17004FDB3A /* LoggerClientData.h */,
+				04D13F5516B56B17004FDB3A /* LoggerClientData.m */,
+				04D13F5616B56B17004FDB3A /* LoggerConnectionStatusData.h */,
+				04D13F5716B56B17004FDB3A /* LoggerConnectionStatusData.m */,
+				044FEF5516AC4A810067FA53 /* LoggerMessageData.h */,
+				044FEF5616AC4A810067FA53 /* LoggerMessageData.m */,
+				044FEF5716AC4A810067FA53 /* LoggerMessages.xcdatamodeld */,
+			);
+			path = CoreDataModel;
+			sourceTree = "<group>";
+		};
+		044FEF5916AC4A810067FA53 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF5A16AC4A810067FA53 /* LoggerCertManager.h */,
+				044FEF5B16AC4A810067FA53 /* LoggerCertManager.m */,
+				044FEF5C16AC4A810067FA53 /* LoggerDataManager.h */,
+				044FEF5D16AC4A810067FA53 /* LoggerDataManager.m */,
+				044FEF5E16AC4A810067FA53 /* LoggerPreferenceManager.h */,
+				044FEF5F16AC4A810067FA53 /* LoggerPreferenceManager.m */,
+				044FEF6016AC4A810067FA53 /* LoggerTransportManager.h */,
+				044FEF6116AC4A810067FA53 /* LoggerTransportManager.m */,
+				047DC61D17A7FBAC0067471C /* LoggerTextStyleManager.h */,
+				047DC61E17A7FBAC0067471C /* LoggerTextStyleManager.m */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		044FEF6216AC4A810067FA53 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0426F52717ACDAA700B50BFA /* JSONFormat */,
+				042F1801170E7D3A007ECDA4 /* MessageFormatter */,
+				042F1804170E7D3A007ECDA4 /* MessageSizeCalculator */,
+				04D13F4A16B56AF4004FDB3A /* NativeLogFormat */,
+				0426F51117AC8FD500B50BFA /* LoggerTCPTransport.h */,
+				0426F51017AC8FD500B50BFA /* LoggerTCPTransport.m */,
+				0426F51317AC8FD500B50BFA /* LoggerTCPConnection.h */,
+				0426F51217AC8FD500B50BFA /* LoggerTCPConnection.m */,
+				044FEF6A16AC4A810067FA53 /* LoggerConnection.h */,
+				044FEF6B16AC4A810067FA53 /* LoggerConnection.m */,
+				044FEF6C16AC4A810067FA53 /* LoggerIPConnection.h */,
+				044FEF6D16AC4A810067FA53 /* LoggerIPConnection.m */,
+				044FEF6E16AC4A810067FA53 /* LoggerMessage.h */,
+				044FEF6F16AC4A810067FA53 /* LoggerMessage.m */,
+				044FEF7016AC4A810067FA53 /* LoggerTransport.h */,
+				044FEF7116AC4A810067FA53 /* LoggerTransport.m */,
+				0426F51817ACACEE00B50BFA /* LoggerTransportDelegate.h */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		044FEF7916AC4A810067FA53 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				047BF70016D0E43900866DFB /* AppDelegateCycleHandle.h */,
+				044FEF8016AC4A810067FA53 /* LoggerUtils.h */,
+				044FEF8116AC4A810067FA53 /* LoggerUtils.m */,
+				044FEF8616AC4A810067FA53 /* SynthesizeSingleton.h */,
+				044FEF8716AC4A810067FA53 /* time_converter.h */,
+				044FEF8816AC4A810067FA53 /* ValueTransformers.h */,
+				044FEF8916AC4A810067FA53 /* ValueTransformers.m */,
+				04A8844917074A4100A64257 /* ICloud */,
+				044FEF7A16AC4A810067FA53 /* CoreData */,
+				044FEF7D16AC4A810067FA53 /* Directory */,
+				044FEF8216AC4A810067FA53 /* Macro */,
+				044FEF8416AC4A810067FA53 /* String */,
+				0431653B16C5486300C078D8 /* UIColor */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		044FEF7A16AC4A810067FA53 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF7B16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.h */,
+				044FEF7C16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.m */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		044FEF7D16AC4A810067FA53 /* Directory */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF7E16AC4A810067FA53 /* NSFileManager+DirectoryLocations.h */,
+				044FEF7F16AC4A810067FA53 /* NSFileManager+DirectoryLocations.m */,
+			);
+			path = Directory;
+			sourceTree = "<group>";
+		};
+		044FEF8216AC4A810067FA53 /* Macro */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF8316AC4A810067FA53 /* Macro.h */,
+			);
+			path = Macro;
+			sourceTree = "<group>";
+		};
+		044FEF8416AC4A810067FA53 /* String */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF8516AC4A810067FA53 /* NullStringCheck.h */,
+			);
+			path = String;
+			sourceTree = "<group>";
+		};
+		044FEF8A16AC4A810067FA53 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				042DEB211716E9CD00088195 /* BaseViewController */,
+				044FEF8B16AC4A810067FA53 /* MessageViewController */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		044FEF8B16AC4A810067FA53 /* MessageViewController */ = {
+			isa = PBXGroup;
+			children = (
+				044FEF8C16AC4A810067FA53 /* LoggerMessageViewController.h */,
+				044FEF8D16AC4A810067FA53 /* LoggerMessageViewController.m */,
+				044FEF8E16AC4A810067FA53 /* LoggerMessageViewController.xib */,
+			);
+			path = MessageViewController;
+			sourceTree = "<group>";
+		};
+		048444AB16D29AA600FBAA6B /* DataStorage */ = {
+			isa = PBXGroup;
+			children = (
+				048444AC16D29AA600FBAA6B /* DataOperation */,
+				048444B516D29AA600FBAA6B /* LoggerDataEntry.h */,
+				048444B616D29AA600FBAA6B /* LoggerDataEntry.m */,
+				048444B716D29AA600FBAA6B /* LoggerDataStorage.h */,
+				048444B816D29AA600FBAA6B /* LoggerDataStorage.m */,
+			);
+			path = DataStorage;
+			sourceTree = "<group>";
+		};
+		048444AC16D29AA600FBAA6B /* DataOperation */ = {
+			isa = PBXGroup;
+			children = (
+				048444AF16D29AA600FBAA6B /* LoggerDataOperation.h */,
+				048444B016D29AA600FBAA6B /* LoggerDataOperation.m */,
+				048444AD16D29AA600FBAA6B /* LoggerDataDelete.h */,
+				048444AE16D29AA600FBAA6B /* LoggerDataDelete.m */,
+				048444B116D29AA600FBAA6B /* LoggerDataRead.h */,
+				048444B216D29AA600FBAA6B /* LoggerDataRead.m */,
+				048444B316D29AA600FBAA6B /* LoggerDataWrite.h */,
+				048444B416D29AA600FBAA6B /* LoggerDataWrite.m */,
+			);
+			path = DataOperation;
+			sourceTree = "<group>";
+		};
+		04A4EED41738001E00479F0E /* MessageCell */ = {
+			isa = PBXGroup;
+			children = (
+				04A4EED51738001E00479F0E /* LoggerClientInfoCell.h */,
+				04A4EED61738001E00479F0E /* LoggerClientInfoCell.m */,
+				04A4EED71738001E00479F0E /* LoggerMarkerCell.h */,
+				04A4EED81738001E00479F0E /* LoggerMarkerCell.m */,
+				04A4EED91738001E00479F0E /* LoggerMessageCell.h */,
+				04A4EEDA1738001E00479F0E /* LoggerMessageCell.m */,
+			);
+			path = MessageCell;
+			sourceTree = "<group>";
+		};
+		04A8844917074A4100A64257 /* ICloud */ = {
+			isa = PBXGroup;
+			children = (
+				04A8844A17074A4100A64257 /* ICloudSupport.h */,
+				04A8844B17074A4100A64257 /* ICloudSupport.m */,
+			);
+			path = ICloud;
+			sourceTree = "<group>";
+		};
+		04D13F4A16B56AF4004FDB3A /* NativeLogFormat */ = {
+			isa = PBXGroup;
+			children = (
+				0426F52317ACD78C00B50BFA /* LoggerNativeTransport.h */,
+				0426F52217ACD78C00B50BFA /* LoggerNativeTransport.m */,
+				04D13F4D16B56AF4004FDB3A /* LoggerNativeMessage.h */,
+				04D13F4E16B56AF4004FDB3A /* LoggerNativeMessage.m */,
+				0426F51B17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.h */,
+				0426F51C17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.m */,
+			);
+			path = NativeLogFormat;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		044FEF1616AC49810067FA53 /* iPad Viewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 044FEF3B16AC49810067FA53 /* Build configuration list for PBXNativeTarget "iPad Viewer" */;
+			buildPhases = (
+				044FEF1316AC49810067FA53 /* Sources */,
+				044FEF1416AC49810067FA53 /* Frameworks */,
+				044FEF1516AC49810067FA53 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "iPad Viewer";
+			productName = "iPad Viewer";
+			productReference = 044FEF1716AC49810067FA53 /* iPad Viewer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		044FEF0E16AC49810067FA53 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0910;
+				ORGANIZATIONNAME = "Colorful Glue";
+			};
+			buildConfigurationList = 044FEF1116AC49810067FA53 /* Build configuration list for PBXProject "iPad Viewer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 044FEF0C16AC49810067FA53;
+			productRefGroup = 044FEF1816AC49810067FA53 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				044FEF1616AC49810067FA53 /* iPad Viewer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		044FEF1516AC49810067FA53 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044FEF2616AC49810067FA53 /* InfoPlist.strings in Resources */,
+				044FEF2E16AC49810067FA53 /* Default.png in Resources */,
+				044FEF3016AC49810067FA53 /* Default@2x.png in Resources */,
+				044FEF3216AC49810067FA53 /* Default-568h@2x.png in Resources */,
+				713A99671AE8D34F00CEA52B /* Images.xcassets in Resources */,
+				044FEFB016AC4A810067FA53 /* LoggerMessageViewController.xib in Resources */,
+				044FEFB716AC4AC60067FA53 /* NSLoggerResource.bundle in Resources */,
+				044FEFB916AC4B7A0067FA53 /* MainWindow.xib in Resources */,
+				04C27EE41747B7B600765A3C /* LICENSE in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		044FEF1316AC49810067FA53 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				044FEF2816AC49810067FA53 /* main.m in Sources */,
+				044FEF2C16AC49810067FA53 /* AppDelegate.m in Sources */,
+				044FEF9616AC4A810067FA53 /* LoggerConstApp.m in Sources */,
+				044FEF9716AC4A810067FA53 /* LoggerConstController.m in Sources */,
+				044FEF9816AC4A810067FA53 /* LoggerConstModel.m in Sources */,
+				044FEF9916AC4A810067FA53 /* LoggerConstView.m in Sources */,
+				044FEF9B16AC4A810067FA53 /* LoggerMessageData.m in Sources */,
+				044FEF9C16AC4A810067FA53 /* LoggerMessages.xcdatamodeld in Sources */,
+				044FEF9D16AC4A810067FA53 /* LoggerCertManager.m in Sources */,
+				044FEF9E16AC4A810067FA53 /* LoggerDataManager.m in Sources */,
+				044FEF9F16AC4A810067FA53 /* LoggerPreferenceManager.m in Sources */,
+				044FEFA016AC4A810067FA53 /* LoggerTransportManager.m in Sources */,
+				044FEFA416AC4A810067FA53 /* LoggerConnection.m in Sources */,
+				044FEFA516AC4A810067FA53 /* LoggerIPConnection.m in Sources */,
+				044FEFA616AC4A810067FA53 /* LoggerMessage.m in Sources */,
+				044FEFA716AC4A810067FA53 /* LoggerTransport.m in Sources */,
+				044FEFAB16AC4A810067FA53 /* NSManagedObjectContext+FetchAdditions.m in Sources */,
+				044FEFAC16AC4A810067FA53 /* NSFileManager+DirectoryLocations.m in Sources */,
+				044FEFAD16AC4A810067FA53 /* LoggerUtils.m in Sources */,
+				044FEFAE16AC4A810067FA53 /* ValueTransformers.m in Sources */,
+				044FEFAF16AC4A810067FA53 /* LoggerMessageViewController.m in Sources */,
+				04D13F5216B56AF4004FDB3A /* LoggerNativeMessage.m in Sources */,
+				04D13F5816B56B17004FDB3A /* LoggerClientData.m in Sources */,
+				04D13F5916B56B17004FDB3A /* LoggerConnectionStatusData.m in Sources */,
+				048444B916D29AA600FBAA6B /* LoggerDataDelete.m in Sources */,
+				048444BA16D29AA600FBAA6B /* LoggerDataOperation.m in Sources */,
+				048444BB16D29AA600FBAA6B /* LoggerDataRead.m in Sources */,
+				048444BC16D29AA600FBAA6B /* LoggerDataWrite.m in Sources */,
+				048444BD16D29AA600FBAA6B /* LoggerDataEntry.m in Sources */,
+				048444BE16D29AA600FBAA6B /* LoggerDataStorage.m in Sources */,
+				04A8844C17074A4100A64257 /* ICloudSupport.m in Sources */,
+				042F180B170E7D3A007ECDA4 /* LoggerMessageFormatter.m in Sources */,
+				042F180C170E7D3A007ECDA4 /* LoggerClientSize.m in Sources */,
+				042F180D170E7D3A007ECDA4 /* LoggerMarkerSize.m in Sources */,
+				042F180E170E7D3A007ECDA4 /* LoggerMessageSize.m in Sources */,
+				042DEB2A1716E9CD00088195 /* BaseViewController.m in Sources */,
+				042DEB2B1716E9CD00088195 /* BaseViewKeyboardAddition.m in Sources */,
+				04A4EEE41738001E00479F0E /* LoggerClientInfoCell.m in Sources */,
+				04A4EEE51738001E00479F0E /* LoggerMarkerCell.m in Sources */,
+				04A4EEE61738001E00479F0E /* LoggerMessageCell.m in Sources */,
+				047DC61F17A7FBAC0067471C /* LoggerTextStyleManager.m in Sources */,
+				0426F51417AC8FD500B50BFA /* LoggerTCPTransport.m in Sources */,
+				0426F51517AC8FD500B50BFA /* LoggerTCPConnection.m in Sources */,
+				0426F51D17ACBCBF00B50BFA /* LoggerNativeLegacyTransport.m in Sources */,
+				0426F52417ACD78C00B50BFA /* LoggerNativeTransport.m in Sources */,
+				0426F52A17ACDAA800B50BFA /* LoggerJSONMessage.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		044FEF2416AC49810067FA53 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				044FEF2516AC49810067FA53 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		044FEF3916AC49810067FA53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		044FEF3A16AC49810067FA53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		044FEF3C16AC49810067FA53 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPad Viewer/iPad Viewer-Prefix.pch";
+				INFOPLIST_FILE = "iPad Viewer/iPad Viewer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.colorfulglue.ipadviewer.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		044FEF3D16AC49810067FA53 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPad Viewer/iPad Viewer-Prefix.pch";
+				INFOPLIST_FILE = "iPad Viewer/iPad Viewer-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.colorfulglue.ipadviewer.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		044FEF1116AC49810067FA53 /* Build configuration list for PBXProject "iPad Viewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044FEF3916AC49810067FA53 /* Debug */,
+				044FEF3A16AC49810067FA53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		044FEF3B16AC49810067FA53 /* Build configuration list for PBXNativeTarget "iPad Viewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				044FEF3C16AC49810067FA53 /* Debug */,
+				044FEF3D16AC49810067FA53 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		044FEF5716AC4A810067FA53 /* LoggerMessages.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				044FEF5816AC4A810067FA53 /* LoggerMessages.xcdatamodel */,
+			);
+			currentVersion = 044FEF5816AC4A810067FA53 /* LoggerMessages.xcdatamodel */;
+			path = LoggerMessages.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 044FEF0E16AC49810067FA53 /* Project object */;
+}

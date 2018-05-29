@@ -1,0 +1,10 @@
+
+project 'NonArcTest'
+workspace '../Demos'
+
+target :'NonArcTest' do
+  platform :osx, '10.8'
+  use_frameworks!
+  pod 'CocoaLumberjack', :path => '../../'
+end
+

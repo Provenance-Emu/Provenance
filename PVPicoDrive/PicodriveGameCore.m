@@ -277,7 +277,7 @@ static void writeSaveFile(const char* path, int type)
             case PVSega32XButtonZ:
                 return [[gamePad rightShoulder] isPressed];
             case PVSega32XButtonStart:
-                return [[gamePad leftTrigger] isPressed];
+                return [[gamePad rightTrigger] isPressed];
             default:
                 break;
         }
@@ -454,7 +454,7 @@ static void writeSaveFile(const char* path, int type)
     retro_run();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
 {
         // Copy default cartHW.cfg if need be
     [self copyCartHWCFG];
@@ -556,7 +556,7 @@ static void writeSaveFile(const char* path, int type)
     [data getBytes:ramData length:size];
 }
 
-- (void)writeSaveFile:(NSString *)path forType:(int)type
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
@@ -570,7 +570,10 @@ static void writeSaveFile(const char* path, int type)
         {
             NSLog(@"Error writing save file");
         }
-    }
+		return success;
+	} else {
+		return NO;
+	}
 }
 
 #pragma mark Video
@@ -662,7 +665,7 @@ static void writeSaveFile(const char* path, int type)
 
 #pragma mark - Save States
 
-- (NSData *)serializeStateWithError:(NSError **)outError
+- (NSData *)serializeStateWithError:(NSError *__autoreleasing *)outError
 {
     size_t length = retro_serialize_size();
     void *bytes = malloc(length);
@@ -680,7 +683,7 @@ static void writeSaveFile(const char* path, int type)
     return nil;
 }
 
-- (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
+- (BOOL)deserializeState:(NSData *)state withError:(NSError *__autoreleasing *)outError
 {
     size_t serial_size = retro_serialize_size();
     if(serial_size != [state length]) {
@@ -706,50 +709,70 @@ static void writeSaveFile(const char* path, int type)
     return NO;
 }
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName //completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error //completionHandler:(void (^)(BOOL, NSError *))block
 {
     size_t serial_size = retro_serialize_size();
     NSMutableData *stateData = [NSMutableData dataWithLength:serial_size];
 
     if(!retro_serialize([stateData mutableBytes], serial_size)) {
-        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotSaveState userInfo:@{
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotSaveState
+											userInfo:@{
             NSLocalizedDescriptionKey : @"Save state data could not be written",
             NSLocalizedRecoverySuggestionErrorKey : @"The emulator could not write the state data."
         }];
+
+		*error = newError;
 //        block(NO, error);
         return NO;
     }
 
-    NSError *error = nil;
     BOOL success = [stateData writeToFile:fileName options:NSDataWritingAtomic error:&error];
 //    block(success, success ? nil : error);
+	
     return success;
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName //completionHandler:(void (^)(BOOL, NSError *))block
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error //completionHandler:(void (^)(BOOL, NSError *))block
 {
-    NSError *error = nil;
-    NSData *data = [NSData dataWithContentsOfFile:fileName options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
+    NSData *data = [NSData dataWithContentsOfFile:fileName options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:error];
     if(data == nil)  {
 //        block(NO, error);
+		NSDictionary *userInfo = @{
+								   NSLocalizedDescriptionKey: @"Failed to save state.",
+								   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state. No Data at path.",
+								   NSLocalizedRecoverySuggestionErrorKey: @""
+								   };
+
+		NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+												code:PVEmulatorCoreErrorCodeCouldNotLoadState
+											userInfo:userInfo];
+
+		*error = newError;
+
         return NO;
     }
 
     int serial_size = 678514;
     if(serial_size != [data length]) {
-        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+											 code:PVEmulatorCoreErrorCodeStateHasWrongSize
+										 userInfo:@{
             NSLocalizedDescriptionKey : @"Save state has wrong file size.",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
         }];
+
+		*error = newError;
 //        block(NO, error);
         return NO;
     }
 
     if(!retro_unserialize([data bytes], serial_size)) {
-        NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
+        NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeCouldNotLoadState userInfo:@{
             NSLocalizedDescriptionKey : @"The save state data could not be read",
             NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"Could not read the file state in %@.", fileName]
         }];
+		*error = newError;
 //        block(NO, error);
         return NO;
     }

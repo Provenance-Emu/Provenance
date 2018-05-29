@@ -33,6 +33,12 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>800</string>
+	<key>GitBranch</key>
+	<string></string>
+	<key>GitDate</key>
+	<string></string>
+	<key>GitTag</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

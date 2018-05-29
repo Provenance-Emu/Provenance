@@ -51,7 +51,7 @@ public class UTI: RawRepresentable, Equatable {
 		#endif
 
 		/// Convenience variable for internal use.
-		
+
 		fileprivate var rawCFValue: CFString {
 			return self.rawValue as CFString
 		}
@@ -59,7 +59,6 @@ public class UTI: RawRepresentable, Equatable {
 
 	public typealias RawValue = String
 	public let rawValue: String
-
 
 	/// Convenience variable for internal use.
 
@@ -69,7 +68,6 @@ public class UTI: RawRepresentable, Equatable {
 	}
 
 	// MARK: Initialization
-
 
 	/**
 	
@@ -263,7 +261,6 @@ public class UTI: RawRepresentable, Equatable {
 
 	// MARK: List all UTIs associated with a tag
 
-
 	/**
 	Returns all UTIs that are associated with a specified tag.
 	
@@ -278,7 +275,6 @@ public class UTI: RawRepresentable, Equatable {
 	public static func utis(for tag: TagClass, value: String, conformingTo conforming: UTI? = nil) -> Array<UTI> {
 
 		let unmanagedIdentifiers = UTTypeCreateAllIdentifiersForTag(tag.rawCFValue, value as CFString, conforming?.rawCFValue)
-
 
 		guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? Array<CFString> else {
 			return []
@@ -316,7 +312,7 @@ public class UTI: RawRepresentable, Equatable {
 	// MARK: Accessing Information about an UTI
 
 	/// Returns the localized, user-readable type description string associated with a uniform type identifier.
-	
+
 	public var description: String? {
 
 		let unmanagedDescription = UTTypeCopyDescription(self.rawCFValue)
@@ -361,7 +357,6 @@ public class UTI: RawRepresentable, Equatable {
 		return UTTypeIsDynamic(self.rawCFValue)
 	}
 }
-
 
 // MARK: System defined UTIs
 public extension UTI {
@@ -504,7 +499,6 @@ public extension UTI {
 
 	extension OSType {
 
-
 		/// Returns the OSType encoded as a String.
 
 		var string: String {
@@ -514,15 +508,14 @@ public extension UTI {
 			return unmanagedString.takeRetainedValue() as String
 		}
 
-
 		/// Initializes a OSType from a String.
 		///
 		/// - Parameter string: A String representing an OSType.
-		
+
 		init(with string: String) {
-			
+
 			self = UTGetOSTypeFromString(string as CFString)
 		}
 	}
-	
+
 #endif

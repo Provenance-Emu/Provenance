@@ -6,8 +6,288 @@
 //
 
 // import RealmSwift
+import CoreGraphics
+import AVFoundation
 
 private let LabelHeight: CGFloat = 44.0
+
+enum BlendModes : String {
+	case normalBlendMode
+	//
+	case darkenBlendMode
+	case multiplyBlendMode
+	case colorBurnBlendMode
+	//
+	case lightenBlendMode
+	case screenBlendMode
+	case colorDodgeBlendMode
+	//
+	case overlayBlendMode
+	case softLightBlendMode
+	case hardLightBlendMode
+	//
+	case differenceBlendMode
+	case exclusionBlendMode
+	//
+	/*
+	case hueBlendMode
+	case saturationBlendMode
+	case colorBlendMode
+	case luminosityBlendMode
+	*/
+}
+
+extension CGRect {
+	var topLeftPoint : CGPoint {
+		return CGPoint(x: 0, y: 0)
+	}
+
+	var topRightPoint : CGPoint {
+		return CGPoint(x: maxX, y: 0)
+	}
+
+	var bottomRightPoint : CGPoint {
+		return CGPoint(x: maxX, y: maxY)
+	}
+
+	var bottomLeftPoint : CGPoint {
+		return CGPoint(x: 0, y: maxY)
+	}
+
+}
+
+extension CGSize {
+	enum Orientation {
+		case landscape
+		case portrait
+		case square
+	}
+
+	var orientation : Orientation {
+		if width > height {
+			return .landscape
+		} else if height > width {
+			return .portrait
+		} else {
+			return .square
+		}
+	}
+
+	var aspectRatio : CGFloat {
+		switch orientation {
+		case .portrait:
+			return width / height
+		case .landscape:
+			return height / width
+		case .square:
+			return 1.0
+		}
+	}
+
+	var longestLength : CGFloat {
+		return max(width, height)
+	}
+
+	var shortestLength : CGFloat {
+		return min(width, height)
+	}
+
+	var debugDescription : String {
+		return "(width:\(width) height:\(height))"
+	}
+//	func scaleAspectToFitInside(_ boundingSize : CGSize) -> CGSize {
+//		let mW = boundingSize.width / self.width;
+//		let mH = boundingSize.height / self.height;
+//
+//		var newSize = boundingSize
+//		if( mH < mW ) {
+//			newSize.width = boundingSize.height / self.height * self.width;
+//		}
+//		else if( mW < mH ) {
+//			newSize.height = boundingSize.width / self.width * self.height;
+//		}
+//
+//		return boundingSize;
+//	}
+//	func scaleAspectToFitInside(_ size : CGSize) -> CGSize {
+//
+//		let newSize : CGSize
+//		switch (orientation, size.orientation) {
+//		case (.landscape, .landscape):
+//			newSize = CGSize(width: size.width, height: size.height * aspectRatio)
+//		case (.landscape, .portrait):
+//			newSize = CGSize(width: size.width, height: size.height * aspectRatio)
+//		case (.portrait, .portrait):
+//			newSize = CGSize(width: size.width * aspectRatio, height: size.height)
+//
+//		case (.square,.square):
+//			let minSide = size.shortestLength
+//			newSize = CGSize(width: minSide, height: minSide)
+//		}
+//
+//		return newSize
+//	}
+}
+
+extension CGRect {
+	func scaleAspectToFitInside(_ rect : CGRect) -> CGRect {
+//		let newSize = size.scaleAspectToFitInside(rect.size)
+//		var newRect = CGRect(origin: .zero, size: newSize)
+//		if newSize.width < rect.width {
+//			newRect.origin.x = (rect.width - newSize.width) / 2.0
+//		}
+//
+//		if newSize.height < rect.height {
+//			newRect.origin.y = (rect.height - newSize.height) / 2.0
+//		}
+//
+//		return newRect
+		return AVMakeRect(aspectRatio: self.size, insideRect: rect)
+	}
+
+	var debugDescription : String {
+		return "(x:\(origin.x) y:\(origin.y) width:\(size.width) height:\(size.height))"
+	}
+}
+
+extension UIImageView {
+	// What is the bounds of the image when it's scaled to fit
+	var contentClippingRect: CGRect {
+		guard let image = image else {
+			VLOG("No image")
+			return bounds
+		}
+		guard contentMode == .scaleAspectFit else {
+			VLOG("Unsupported content mode")
+			return bounds
+		}
+		let imageSize = image.size
+		guard imageSize.width > 0 && imageSize.height > 0 else { return bounds }
+
+		var clippingRect = CGRect(origin: .zero, size: imageSize).scaleAspectToFitInside(bounds)
+		clippingRect.origin.x = (bounds.width - clippingRect.width) / 2.0
+		clippingRect.origin.y = (bounds.height - clippingRect.height) / 2.0
+
+//		VLOG("imageSize:\(imageSize.debugDescription) bounds:\(bounds.debugDescription) clippingRect:\(clippingRect.debugDescription) ratio:\(imageSize.aspectRatio)")
+
+		return clippingRect
+	}
+}
+
+protocol GameLibraryCollectionViewDelegate : class {
+	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
+}
+
+//@IBDesignable
+class CornerBadgeView : UIView {
+	enum FillCorner {
+		case topLeft
+		case topRight
+		case bottomLeft
+		case bottomRight
+	}
+
+	@IBInspectable var glyph : String = "" {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+
+	@IBInspectable var fillColor : UIColor = UIColor.orange {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+
+	@IBInspectable var strokeColor : UIColor = UIColor.orange {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+
+	@IBInspectable var textColor : UIColor = UIColor.black {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+
+	var fillCorner : FillCorner = .topRight {
+		didSet {
+			setNeedsDisplay()
+		}
+	}
+
+	override func draw(_ rect: CGRect) {
+		super.draw(rect)
+
+		guard let context: CGContext = UIGraphicsGetCurrentContext() else {
+			return
+		}
+
+		context.setFillColor(fillColor.cgColor)
+		context.setStrokeColor(strokeColor.cgColor)
+		context.setLineWidth(0.5)
+
+		let triangle = createTriangle()
+		triangle.fill()
+		triangle.stroke(with: .darken, alpha: 0.8)
+
+		context.setFillColor(textColor.cgColor)
+		context.setBlendMode(.luminosity)
+		drawGlyph()
+	}
+
+	private func drawGlyph() {
+		guard !glyph.isEmpty else {
+			return
+		}
+
+		let gString = glyph as NSString
+
+		var triangleBounds = createTriangle().bounds
+		switch fillCorner {
+		case .topRight:
+			triangleBounds = triangleBounds.offsetBy(dx: triangleBounds.size.width * 0.35, dy: triangleBounds.size.width * -0.15)
+		default:
+			break
+		}
+
+		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.7), .foregroundColor: textColor ]
+		gString.draw(in: triangleBounds, withAttributes: attributes)
+	}
+
+	private func createTriangle() -> UIBezierPath {
+		let triangle = UIBezierPath()
+		switch fillCorner {
+		case .topLeft:
+			triangle.move(to: bounds.topLeftPoint)
+			triangle.addLine(to: bounds.topRightPoint)
+			triangle.addLine(to: bounds.bottomLeftPoint)
+		case .topRight:
+			triangle.move(to: bounds.topLeftPoint)
+			triangle.addLine(to: bounds.topRightPoint)
+			triangle.addLine(to: bounds.bottomRightPoint)
+		case .bottomLeft:
+			triangle.move(to: bounds.topLeftPoint)
+			triangle.addLine(to: bounds.bottomLeftPoint)
+			triangle.addLine(to: bounds.bottomRightPoint)
+		case .bottomRight:
+			triangle.move(to: bounds.topRightPoint)
+			triangle.addLine(to: bounds.bottomRightPoint)
+			triangle.addLine(to: bounds.bottomLeftPoint)
+		}
+		triangle.close()
+		return triangle
+	}
+
+	/*
+override func prepareForInterfaceBuilder() {
+self.layer.cornerRadius = self.bounds.size.width/2
+self.layer.borderWidth = 6
+self.layer.borderColor = UIColor.blackColor().CGColor
+self.layer.masksToBounds = true
+}*/
+}
 
 extension UIImage {
     class func image(withSize size: CGSize, color: UIColor, text: NSAttributedString) -> UIImage? {
@@ -31,21 +311,152 @@ extension UIImage {
 
         return image
     }
+
+	func imageWithBorder(width: CGFloat, color: UIColor) -> UIImage? {
+		let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: size))
+		imageView.contentMode = .center
+		imageView.image = self
+		//		imageView.layer.cornerRadius = square.width/2
+		imageView.layer.masksToBounds = true
+		imageView.layer.borderWidth = width
+		imageView.layer.borderColor = color.cgColor
+		UIGraphicsBeginImageContextWithOptions(imageView.bounds.size, false, scale)
+		guard let context = UIGraphicsGetCurrentContext() else { return nil }
+		imageView.layer.render(in: context)
+		let result = UIGraphicsGetImageFromCurrentImageContext()
+		UIGraphicsEndImageContext()
+		return result
+	}
 }
 
 class PVGameLibraryCollectionViewCell: UICollectionViewCell {
-    private(set) var imageView: UIImageView!
-    private(set) var titleLabel: UILabel!
+
+	weak var delegate : GameLibraryCollectionViewDelegate?
+
+	@IBOutlet private(set) var imageView: UIImageView! {
+		didSet {
+			if #available(iOS 9.0, tvOS 9.0, *) {
+				imageView.translatesAutoresizingMaskIntoConstraints = false
+			} else {
+				imageView.contentMode = .scaleAspectFit
+				imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+			}
+
+			#if os(iOS)
+			//Ignore Smart Invert
+			imageView.ignoresInvertColors = true
+			#endif
+		}
+	}
+	@IBOutlet /*weak*/ var artworkContainerView: UIView?
+
+	@IBOutlet /*weak*/ var discCountContainerView: UIView? {
+		didSet {
+			roundDiscCountCorners()
+		}
+	}
+	@IBOutlet /*weak*/ var discCountLabel: UILabel? {
+		didSet {
+			discCountLabel?.adjustsFontSizeToFitWidth = true
+		}
+	}
+	@IBOutlet weak var topRightCornerBadgeView: CornerBadgeView?
+
+	@IBOutlet private(set) var titleLabel: UILabel! {
+		didSet {
+			#if os(tvOS)
+			// The label's alpha will get set to 1 on focus
+			titleLabel.alpha = 0
+			titleLabel.textColor = UIColor.white
+			titleLabel.layer.masksToBounds = false
+//			titleLabel.shadowColor = UIColor.black.withAlphaComponent(0.8)
+//			titleLabel.shadowOffset = CGSize(width: -1, height: 1)
+			if #available(tvOS 10.0, *) {
+				titleLabel.adjustsFontForContentSizeCategory = true
+			}
+			titleLabel.adjustsFontSizeToFitWidth = true
+
+			#else // iOS
+
+			if #available(iOS 9.0, tvOS 9.0, *) {
+				// Use XIB
+			} else {
+				titleLabel.font = titleLabel.font.withSize(12)
+
+				titleLabel.backgroundColor = UIColor.clear
+				titleLabel.textColor = UIColor.white.withAlphaComponent(0.6)
+				titleLabel.textAlignment = .center
+				titleLabel.baselineAdjustment = .alignBaselines
+				titleLabel.numberOfLines = 2
+			}
+
+			#endif
+
+			if #available(iOS 9.0, tvOS 9.0, *) {
+//				titleLabel.allowsDefaultTighteningForTruncation = true
+//				titleLabel.translatesAutoresizingMaskIntoConstraints = false
+			} else {
+				titleLabel.lineBreakMode = .byTruncatingTail
+
+				titleLabel.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+				titleLabel.minimumScaleFactor = 0.6
+
+				titleLabel.backgroundColor = UIColor.clear
+				titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
+				titleLabel.textAlignment = .center
+				titleLabel.adjustsFontSizeToFitWidth = true
+			}
+
+		}
+	}
     var operation: BlockOperation?
 
-    class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
-        return CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
+	@IBOutlet weak var missingFileView: UIView? {
+		didSet {
+//			missingFileView!.layer.compositingFilter = BlendModes.hardLightBlendMode.rawValue //"colorDodgeBlendMode"
+		}
+	}
+	@IBOutlet weak var missingRedSquareView: UIView! {
+		didSet {
+			missingRedSquareView.layer.compositingFilter = BlendModes.hardLightBlendMode.rawValue //"colorDodgeBlendMode"
+		}
+	}
+
+	@IBOutlet weak var waringSignLabel: UIImageView! {
+		didSet {
+//			waringSignLabel.layer.compositingFilter = BlendModes.screenBlendMode.rawValue //"colorDodgeBlendMode"
+		}
+	}
+	@IBOutlet weak var topRightBadgeTopConstraint: NSLayoutConstraint?
+	@IBOutlet weak var topRightBadgeTrailingConstraint: NSLayoutConstraint?
+	@IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
+	@IBOutlet weak var discCountTrailingConstraint: NSLayoutConstraint?
+	@IBOutlet weak var missingFileWidthContraint: NSLayoutConstraint?
+	@IBOutlet weak var missingFileHeightContraint: NSLayoutConstraint?
+	@IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint?
+	@IBOutlet weak var deleteActionView: UIView?
+	@IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
+
+	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
+		let size : CGSize
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+		} else {
+			size = CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
+		}
+		return size
     }
+
+	#if os(tvOS)
+	override var canBecomeFocused: Bool {
+		return true
+	}
+
+	#endif
 
     var token: NotificationToken?
     var game: PVGame? {
         didSet {
-
             DispatchQueue.main.async { [unowned self] in
                 self.token?.invalidate()
 
@@ -57,13 +468,17 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
                                 self?.setup(with: game)
                             }
                         case .error(let error):
-                            print("An error occurred: \(error)")
+                            ELOG("An error occurred: \(error)")
                         case .deleted:
-                            print("The object was deleted.")
+                            ELOG("The object was deleted.")
                         }
                     }
                     self.setup(with: game)
-                }
+				} else {
+					self.discCountContainerView?.isHidden = true
+					self.topRightCornerBadgeView?.isHidden = true
+					self.missingFileView?.isHidden = true
+				}
             }
         }
     }
@@ -71,6 +486,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     deinit {
         token?.invalidate()
     }
+
+	private func updateImageBageConstraints() {
+
+	}
 
     private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
@@ -88,107 +507,280 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             } else {
                 artworkText = game.title
             }
-            imageView.image = image(withText: artworkText)
+			imageView.image = image(withText: artworkText) //?.withRenderingMode(.alwaysTemplate)
+			updateImageConstraints()
+			setNeedsLayout()
         } else {
             var maybeKey: String? = !artworkURL.isEmpty ? artworkURL : nil
             if maybeKey == nil {
                 maybeKey = !originalArtworkURL.isEmpty ? originalArtworkURL : nil
             }
             if let key = maybeKey {
-                operation = PVMediaCache.shareInstance().image(forKey: key, completion: {(_ image: UIImage?) -> Void in
-                    var artworkText: String
-                    if PVSettingsModel.shared.showGameTitles {
-                        artworkText = placeholderImageText
-                    } else {
-                        artworkText = game.title
-                    }
-                    let artwork: UIImage? = image ?? self.image(withText: artworkText)
-                    self.imageView.image = artwork
-#if os(tvOS)
-                    let width: CGFloat = self.frame.width
-                    let boxartSize = CGSize(width: width, height: width / game.boxartAspectRatio.rawValue)
-                    self.imageView.frame = CGRect(x: 0, y: 0, width: width, height: boxartSize.height)
-#else
-                    var imageHeight: CGFloat = self.frame.size.height
-                    if PVSettingsModel.shared.showGameTitles {
-                        imageHeight -= 44
-                    }
-                    self.imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: imageHeight)
-#endif
-                    self.setNeedsLayout()
+				operation = PVMediaCache.shareInstance().image(forKey: key, completion: {(_ key: String, _ image: UIImage?) -> Void in
+					guard let game = self.game, key == game.customArtworkURL || key == game.originalArtworkURL else {
+						// We must have recyclied already
+						return
+					}
+					DispatchQueue.main.async {
+						var artworkText: String
+						if PVSettingsModel.shared.showGameTitles {
+							artworkText = placeholderImageText
+						} else {
+							artworkText = game.title
+						}
+						let artwork: UIImage? = image ?? self.image(withText: artworkText)
+						self.imageView.image = artwork //?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
+						#if os(tvOS)
+						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
+						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
+						self.artworkContainerViewHeightConstraint?.constant = height
+						#else
+						if #available(iOS 9.0, tvOS 9.0, *) {
+						} else {
+							var imageHeight: CGFloat = self.frame.size.height
+							if PVSettingsModel.shared.showGameTitles {
+								imageHeight -= 44
+							}
+							self.imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: imageHeight)
+						}
+						#endif
+						self.updateImageConstraints()
+						self.setNeedsLayout()
+					}
                 })
             }
         }
 
+		self.missingFileView?.isHidden = !game.file.missing
+
+		self.setupBadges()
+
         setNeedsLayout()
-        if #available(iOS 9.0, *) {
+        if #available(iOS 9.0, tvOS 9.0, *) {
             setNeedsFocusUpdate()
         }
-        setNeedsLayout()
     }
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+	private func setupTopRightBadge() {
+		guard let game = game, PVSettingsModel.shared.showGameBadges, let topRightCornerBadgeView = topRightCornerBadgeView else {
+			self.topRightCornerBadgeView?.isHidden = true
+			return
+		}
 
-        var imageHeight: CGFloat = frame.size.height
-        if PVSettingsModel.shared.showGameTitles {
-            imageHeight -= 44
-        }
+		let hasPlayed = game.playCount > 0
+		let favorite = game.isFavorite
+		topRightCornerBadgeView.glyph = favorite ? "★" : ""
 
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight))
-        self.imageView = imageView
-        imageView.contentMode = .scaleAspectFit
-        imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		if favorite {
+			#if os(iOS)
+			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
+			#else
+			topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.65)
+			#endif
+		} else if !hasPlayed {
+			topRightCornerBadgeView.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
+		}
 
-#if os(iOS)
-		//Ignore Smart Invert
-		imageView.ignoresInvertColors = true
-#endif
+		topRightCornerBadgeView.isHidden = hasPlayed && !favorite
+	}
 
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight))
-        self.titleLabel = titleLabel
-        titleLabel.lineBreakMode = .byTruncatingTail
-#if os(tvOS)
-        // The label's alpha will get set to 1 on focus
-        titleLabel.alpha = 0
-        imageView.adjustsImageWhenAncestorFocused = true
-        titleLabel.textColor = UIColor.white
-        titleLabel.layer.masksToBounds = false
-        titleLabel.shadowColor = UIColor.black.withAlphaComponent(0.8)
-        titleLabel.shadowOffset = CGSize(width: -1, height: 1)
-#else
-        titleLabel.numberOfLines = 0
-#endif
-        titleLabel.lineBreakMode = .byTruncatingTail
-        titleLabel.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-        titleLabel.backgroundColor = UIColor.clear
-        titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        titleLabel.textAlignment = .center
-#if os(iOS)
-        titleLabel.font = titleLabel.font.withSize(12)
+	private func setupDiscCountBadge() {
+		guard let game = game, let discCountContainerView = self.discCountContainerView, let discCountLabel = discCountLabel else {
+			self.discCountContainerView?.isHidden = true
+			return
+		}
 
-        titleLabel.backgroundColor = UIColor.clear
-        titleLabel.textColor = UIColor.white
-        titleLabel.alpha = 0.6
-        titleLabel.textAlignment = .center
-        titleLabel.contentMode = .center
-        titleLabel.numberOfLines = 2
-        titleLabel.lineBreakMode = .byTruncatingTail
-#endif
-        if #available(iOS 9.0, *) {
-            titleLabel.allowsDefaultTighteningForTruncation = true
-        }
-        titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.minimumScaleFactor = 0.85
-        if PVSettingsModel.shared.showGameTitles {
-            contentView.addSubview(titleLabel)
-        }
-        contentView.addSubview(imageView)
-    }
+		let multieDisc = game.isCD && game.discCount > 1
+		discCountContainerView.isHidden = !multieDisc
+		discCountLabel.text = "\(game.discCount)"
+		discCountLabel.textColor = UIColor.white
+	}
+
+	private func setupBadges() {
+		setupTopRightBadge()
+		setupDiscCountBadge()
+	}
+
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			// Using nibs
+		} else {
+			oldViewInit()
+		}
+
+		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
+	}
+
+	#if os(iOS)
+	private func setupPanGesture() {
+		if #available(iOS 9.0, tvOS 9.0, *) {
+
+			let panGesture = UIPanGestureRecognizer(target: self, action: #selector(PVGameLibraryCollectionViewCell.containerPanGestureRecognized(panGesture:)))
+			panGesture.cancelsTouchesInView = true
+			panGesture.delegate = self
+			panGesture.maximumNumberOfTouches = 1
+			self.addGestureRecognizer(panGesture)
+
+			if let deleteActionView = deleteActionView {
+				deleteActionView.removeFromSuperview()
+				deleteActionView.translatesAutoresizingMaskIntoConstraints = false
+				deleteActionView.frame = contentView.bounds
+				backgroundView = UIView(frame: bounds)
+				backgroundView?.isOpaque = true
+				backgroundView?.backgroundColor = Theme.currentTheme.gameLibraryBackground
+				contentView.backgroundColor = Theme.currentTheme.gameLibraryBackground
+				backgroundColor = Theme.currentTheme.gameLibraryBackground
+				isOpaque = true
+				contentView.isOpaque = true
+
+				insertSubview(deleteActionView, belowSubview: contentView)
+
+				deleteActionView.subviews.forEach {
+					if let label = $0 as? UILabel {
+						label.textColor = UIColor.white
+					}
+				}
+
+				deleteActionView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
+				deleteActionView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+				deleteActionView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+				deleteActionView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+			}
+		}
+	}
+
+	@objc
+	private func containerPanGestureRecognized(panGesture : UIPanGestureRecognizer) {
+		guard let delegate = delegate, let game = game else {
+			return
+		}
+
+		struct Holder {
+			static var originalLocation : CGPoint = .zero
+		}
+
+		switch panGesture.state {
+		case .began:
+			Holder.originalLocation = panGesture.location(in: contentView)
+			self.deleteActionView?.alpha = 1
+		case .changed:
+			let newX = min(max(panGesture.location(in: self).x - Holder.originalLocation.x, contentView.frame.width * 0.85 * -1), 0)
+
+			var f = contentView.frame
+			f.origin.x = newX
+
+			contentView.frame = f
+		case .ended:
+			var f = contentView.frame
+
+			let animateBack : (() -> Void) = {
+				f.origin.x = 0
+				UIView.animate(withDuration: 0.25, delay: 0.1, usingSpringWithDamping: 0.75, initialSpringVelocity: 1, options: .beginFromCurrentState, animations: {
+					self.deleteActionView?.alpha = 0
+					self.contentView.frame = f
+				}) { (completed) in
+
+				}
+			}
+
+			let swipeDistanceRequired = contentView.frame.width * 0.6 * -1
+			let swipedFarEnough = contentView.frame.origin.x < swipeDistanceRequired
+			if swipedFarEnough {
+				let finalX = contentView.frame.width * 0.9 * -1
+				f.origin.x = finalX
+				UIView.animate(withDuration: 0.1) {
+					self.contentView.frame = f
+				}
+				delegate.promptToDeleteGame(game) { (deleted) in
+					animateBack()
+				}
+			} else {
+				animateBack()
+			}
+		case .cancelled:
+			var f = contentView.frame
+			f.origin.x = 0
+			UIView.animate(withDuration: 0.25) {
+				self.contentView.frame = f
+			}
+		default:
+			break
+		}
+	}
+	#endif
+
+	private func oldViewInit() {
+		var imageHeight: CGFloat = frame.size.height
+		if PVSettingsModel.shared.showGameTitles {
+			imageHeight -= 44
+		}
+
+		let imageView = UIImageView()
+		self.imageView = imageView
+
+		let newTitleLabel = UILabel()
+		self.titleLabel = newTitleLabel
+
+		contentView.addSubview(titleLabel)
+		contentView.addSubview(imageView)
+
+		let imageFrame = CGRect(x: 0, y: 0, width: frame.size.width, height: imageHeight)
+		let titleFrame = CGRect(x: 0, y: imageView.frame.size.height, width: frame.size.width, height: LabelHeight)
+
+		let dccWidth = imageFrame.size.width * 0.25
+		let discCountContainerFrame = CGRect(x: imageFrame.maxX-dccWidth, y: imageFrame.maxX-dccWidth, width: dccWidth, height: dccWidth)
+		discCountContainerView = UIView(frame: discCountContainerFrame)
+		contentView.addSubview(discCountContainerView!)
+
+		discCountLabel = UILabel(frame: CGRect(x: 0, y: 0, width: dccWidth, height: dccWidth))
+		discCountContainerView?.addSubview(discCountLabel!)
+
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			discCountContainerView?.translatesAutoresizingMaskIntoConstraints = false
+			discCountLabel?.translatesAutoresizingMaskIntoConstraints = false
+
+			discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.trailingAnchor).isActive = true
+			discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.bottomAnchor).isActive = true
+			discCountContainerView?.widthAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+			discCountContainerView?.heightAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 0.25, constant: 0).isActive = true
+
+			discCountLabel?.centerXAnchor.constraint(equalTo: discCountContainerView!.centerXAnchor).isActive = true
+			discCountLabel?.centerYAnchor.constraint(equalTo: discCountContainerView!.centerYAnchor).isActive = true
+			discCountLabel?.widthAnchor.constraint(equalTo: discCountContainerView!.widthAnchor, multiplier:1, constant: -16).isActive = true
+			discCountLabel?.heightAnchor.constraint(equalTo: discCountContainerView!.heightAnchor, multiplier: 0.75, constant: 0).isActive = true
+		} else {
+			// TODO: iOS 8 layout, or just hide them?
+			discCountContainerView?.isHidden = true
+		}
+		imageView.frame = imageFrame
+		titleLabel.frame = titleFrame
+	}
 
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+		super.init(coder: aDecoder)
     }
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		self.contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+		self.contentView.translatesAutoresizingMaskIntoConstraints = true
+
+		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
+
+		#if os(iOS)
+		setupPanGesture()
+		#else
+
+		#endif
+//		contentView.layer.borderWidth = 1.0
+//		contentView.layer.borderColor = UIColor.white.cgColor
+//
+//		imageView.layer.borderWidth = 1.0
+//		imageView.layer.borderColor = UIColor.green.cgColor
+	}
 
     func image(withText text: String) -> UIImage? {
         #if os(iOS)
@@ -220,29 +812,140 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+//		imageView.tintColor = nil
         titleLabel.text = nil
+		discCountLabel?.text = nil
+		discCountContainerView?.isHidden = true
+		topRightCornerBadgeView?.isHidden = true
+		missingFileView?.isHidden = true
         token?.invalidate()
+
+		// Clear image loading from the queue is not needed
+		if let operation = operation, !operation.isFinished, !operation.isExecuting {
+			operation.cancel()
+		}
+
         token = nil
     }
 
     override func layoutSubviews() {
-        super.layoutSubviews()
+		super.layoutSubviews()
+
+		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 #if os(tvOS)
-        let titleTransform: CGAffineTransform = titleLabel.transform
-        if isFocused {
-            titleLabel.transform = .identity
-        }
-        contentView.bringSubview(toFront: titleLabel ?? UIView())
+		if let game = game {
+			let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
+			self.artworkContainerViewHeightConstraint?.constant = height
+		} else {
+			let height: CGFloat = self.contentView.bounds.height
+			self.artworkContainerViewHeightConstraint?.constant = height
+		}
+
+//        let titleTransform: CGAffineTransform = titleLabel.transform
+//        if isFocused {
+//            titleLabel.transform = .identity
+//        }
+        contentView.bringSubview(toFront: titleLabel!)
         titleLabel.sizeToFit()
-        titleLabel.setWidth(contentView.bounds.size.width)
-        titleLabel.setOriginX(0)
-        titleLabel.setOriginY(imageView.frame.maxY)
-        titleLabel.transform = titleTransform
+//        titleLabel.transform = titleTransform
 #else
-        var imageHeight: CGFloat = frame.size.height
-        if PVSettingsModel.shared.showGameTitles {
-            imageHeight -= 44
-        }
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			self.contentView.frame = self.bounds
+		} else {
+			var imageHeight: CGFloat = frame.size.height
+			if PVSettingsModel.shared.showGameTitles {
+				imageHeight -= 44
+			}
+			imageView.frame.size.height = imageHeight
+		}
 #endif
-    }
+
+		updateImageConstraints()
+
+		#if os(iOS)
+		if !PVSettingsModel.shared.showGameTitles, let titleLabelHeightConstraint = titleLabelHeightConstraint {
+			titleLabelHeightConstraint.constant = contentView.bounds.height * titleLabelHeightConstraint.multiplier * -1
+		} else {
+			titleLabelHeightConstraint?.constant = 0.0
+		}
+		#endif
+	}
+
+	func updateImageConstraints() {
+		let imageContentFrame = imageView.contentClippingRect
+
+		let topConstant = imageContentFrame.origin.y
+		let trailingConstant = imageContentFrame.origin.x * -1.0
+//		print("system: \(game?.system.shortName ?? "nil") : trailingConstant:\(trailingConstant) topConstant:\(topConstant)")
+
+		topRightBadgeWidthConstraint?.constant = imageContentFrame.size.longestLength * 0.25
+		topRightBadgeTrailingConstraint?.constant = trailingConstant
+		topRightBadgeTopConstraint?.constant = topConstant
+
+		discCountTrailingConstraint?.constant = trailingConstant
+
+		missingFileWidthContraint?.constant = imageContentFrame.width
+		missingFileHeightContraint?.constant = imageContentFrame.height
+
+		roundDiscCountCorners()
+	}
+
+	func roundDiscCountCorners() {
+		let maskLayer = CAShapeLayer()
+		maskLayer.path = UIBezierPath(roundedRect: discCountContainerView!.bounds, byRoundingCorners: [.topLeft], cornerRadii: CGSize(width: 10, height: 10)).cgPath
+		discCountContainerView?.layer.mask = maskLayer
+	}
+
+	override func sizeThatFits(_ size: CGSize) -> CGSize {
+		if let game = game {
+			let ratio = game.boxartAspectRatio.rawValue
+			var imageHeight = size.height
+			if PVSettingsModel.shared.showGameTitles {
+				imageHeight -= titleLabel.bounds.height
+			}
+			let width = imageHeight * ratio
+			return CGSize(width: width, height: size.height)
+		} else {
+			return size
+		}
+	}
+
+//	override var preferredFocusedView: UIView? {
+//		return artworkContainerView ?? imageView
+//	}
+
+	#if os(tvOS)
+	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+		super.didUpdateFocus(in: context, with: coordinator)
+
+		coordinator.addCoordinatedAnimations({() -> Void in
+			if self.isFocused {
+				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
+
+				self.superview?.bringSubview(toFront: self)
+				if PVSettingsModel.shared.showGameTitles {
+					let yTrasform : CGFloat = 55.0
+					self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform)
+					self.titleLabel.alpha = 1.0
+				}
+				self.artworkContainerView!.transform = transform
+			} else {
+				self.artworkContainerView!.transform = .identity
+				self.titleLabel.transform = .identity
+				self.titleLabel.alpha = 0.0
+			}
+		}) {() -> Void in }
+	}
+	#endif
+}
+
+extension PVGameLibraryCollectionViewCell : UIGestureRecognizerDelegate {
+	override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+		if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+			let velocity = panGestureRecognizer.velocity(in: self)
+			return delegate != nil && game != nil && velocity.x < -150 && abs(velocity.y) < 75
+		} else {
+			return super.gestureRecognizerShouldBegin(gestureRecognizer)
+		}
+	}
 }

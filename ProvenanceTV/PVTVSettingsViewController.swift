@@ -7,8 +7,8 @@
 
 import UIKit
 
-class PVTVSettingsViewController: UITableViewController {
-    var gameImporter: PVGameImporter = PVGameImporter(completionHandler: nil)
+class PVTVSettingsViewController: UITableViewController, WebServerActivatorController {
+    lazy var gameImporter: PVGameImporter = PVGameImporter()
     @IBOutlet weak var autoSaveValueLabel: UILabel!
     @IBOutlet weak var timedAutoSavesValueLabel: UILabel!
     @IBOutlet weak var timedAutoSavesCell: UITableViewCell!
@@ -151,17 +151,26 @@ class PVTVSettingsViewController: UITableViewController {
                     TOGGLE_SETTING(\PVSettingsModel.timedAutoSaves, timedAutoSavesValueLabel)
                 }
             case 2:
-                // Auto Load Saves
-                TOGGLE_SETTING(\PVSettingsModel.autoLoadSaves, autoLoadValueLabel)
-                if autoLoadValueLabel.text == "ON" {
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.disableAskToLoadSavesCell()
-                    }, completion: nil)
-                    disableAutoLoadSaves()
-                } else {
-                    UIView.animate(withDuration: 0.5, animations: {
-                        self.enableAskToLoadSavesCell()
-                    }, completion: nil)
+                // Actions
+                switch indexPath.row {
+                    case 0:
+                        PVSettingsModel.shared.webDavAlwaysOn = !PVSettingsModel.shared.webDavAlwaysOn
+                        // Always on WebDav server
+                        // Currently this is only exposed on ATV since it would be a drain on battery
+                        // for a mobile device to have this on and doesn't seem nearly as useful.
+                        // Web dav can still be manually started alone side the web server
+                        if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
+                            PVWebServer.shared.startWebDavServer()
+                        } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
+                            PVWebServer.shared.stopWebDavServer()
+                        }
+
+                        // Update the label to hide / show the instructions to connect
+                        updateWebDavTitleLabel()
+                    case 1:
+						showServerActiveAlert()
+                    default:
+                        break
                 }
             case 3:
                 // Ask to Load Saves

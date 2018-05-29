@@ -1,0 +1,8 @@
+app_identifier("com.provenance-emu.provenancejm") # The bundle identifier of your app
+apple_id("mail@joemattiello.com") # Your Apple email address
+
+itc_team_id("10795") # iTunes Connect Team ID
+team_id("9DSA2J9CHZ") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

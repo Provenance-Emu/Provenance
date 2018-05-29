@@ -1,0 +1,444 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C230B1BE1CCAC70600CD5302 /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C2EECA1C2AD98300C5725E /* XCDLumberjackNSLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C235320B1CCE4E1100ED8F7D /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C2EECA1C2AD98300C5725E /* XCDLumberjackNSLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C235320C1CCE4E1200ED8F7D /* XCDLumberjackNSLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C2EECA1C2AD98300C5725E /* XCDLumberjackNSLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C235320D1CCE4E4300ED8F7D /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C2C2EED21C2ADA7800C5725E /* XCDLumberjackNSLogger.m */; };
+		C235320E1CCE4E4400ED8F7D /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C2C2EED21C2ADA7800C5725E /* XCDLumberjackNSLogger.m */; };
+		C235320F1CCE4EDD00ED8F7D /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C230B1BC1CCAC57D00CD5302 /* NSLogger.framework */; };
+		C23532101CCE4EE800ED8F7D /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2C2EED41C2AE09300C5725E /* CocoaLumberjack.framework */; };
+		C23532111CCE4EEA00ED8F7D /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C230B1BC1CCAC57D00CD5302 /* NSLogger.framework */; };
+		C23532121CCE4EED00ED8F7D /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2C2EED41C2AE09300C5725E /* CocoaLumberjack.framework */; };
+		C23532131CCE4EEF00ED8F7D /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C230B1BC1CCAC57D00CD5302 /* NSLogger.framework */; };
+		C2C2EED31C2ADA7800C5725E /* XCDLumberjackNSLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = C2C2EED21C2ADA7800C5725E /* XCDLumberjackNSLogger.m */; };
+		C2C2EED51C2AE09300C5725E /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2C2EED41C2AE09300C5725E /* CocoaLumberjack.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C230B1BC1CCAC57D00CD5302 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NSLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C23531F61CCE46FD00ED8F7D /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XCDLumberjackNSLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C23532031CCE4A6300ED8F7D /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XCDLumberjackNSLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2C2EEC71C2AD98300C5725E /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XCDLumberjackNSLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2C2EECA1C2AD98300C5725E /* XCDLumberjackNSLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XCDLumberjackNSLogger.h; sourceTree = "<group>"; };
+		C2C2EECC1C2AD98300C5725E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C2C2EED21C2ADA7800C5725E /* XCDLumberjackNSLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCDLumberjackNSLogger.m; sourceTree = "<group>"; };
+		C2C2EED41C2AE09300C5725E /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CocoaLumberjack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C23531F21CCE46FD00ED8F7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C23532101CCE4EE800ED8F7D /* CocoaLumberjack.framework in Frameworks */,
+				C23532111CCE4EEA00ED8F7D /* NSLogger.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C23531FF1CCE4A6300ED8F7D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C23532121CCE4EED00ED8F7D /* CocoaLumberjack.framework in Frameworks */,
+				C23532131CCE4EEF00ED8F7D /* NSLogger.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2C2EEC31C2AD98300C5725E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2C2EED51C2AE09300C5725E /* CocoaLumberjack.framework in Frameworks */,
+				C235320F1CCE4EDD00ED8F7D /* NSLogger.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C2C2EEBD1C2AD98300C5725E = {
+			isa = PBXGroup;
+			children = (
+				C2C2EEC91C2AD98300C5725E /* XCDLumberjackNSLogger */,
+				C2C2EED61C2AE0FF00C5725E /* Frameworks */,
+				C2C2EEC81C2AD98300C5725E /* Products */,
+			);
+			indentWidth = 4;
+			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 1;
+		};
+		C2C2EEC81C2AD98300C5725E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C2C2EEC71C2AD98300C5725E /* XCDLumberjackNSLogger.framework */,
+				C23531F61CCE46FD00ED8F7D /* XCDLumberjackNSLogger.framework */,
+				C23532031CCE4A6300ED8F7D /* XCDLumberjackNSLogger.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C2C2EEC91C2AD98300C5725E /* XCDLumberjackNSLogger */ = {
+			isa = PBXGroup;
+			children = (
+				C2C2EECC1C2AD98300C5725E /* Info.plist */,
+				C2C2EECA1C2AD98300C5725E /* XCDLumberjackNSLogger.h */,
+				C2C2EED21C2ADA7800C5725E /* XCDLumberjackNSLogger.m */,
+			);
+			path = XCDLumberjackNSLogger;
+			sourceTree = "<group>";
+		};
+		C2C2EED61C2AE0FF00C5725E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C2C2EED41C2AE09300C5725E /* CocoaLumberjack.framework */,
+				C230B1BC1CCAC57D00CD5302 /* NSLogger.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C23531F31CCE46FD00ED8F7D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C235320B1CCE4E1100ED8F7D /* XCDLumberjackNSLogger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C23532001CCE4A6300ED8F7D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C235320C1CCE4E1200ED8F7D /* XCDLumberjackNSLogger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2C2EEC41C2AD98300C5725E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C230B1BE1CCAC70600CD5302 /* XCDLumberjackNSLogger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C23531F51CCE46FD00ED8F7D /* XCDLumberjackNSLogger OS X */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C23531FB1CCE46FD00ED8F7D /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger OS X" */;
+			buildPhases = (
+				C23531F31CCE46FD00ED8F7D /* Headers */,
+				C23531F11CCE46FD00ED8F7D /* Sources */,
+				C23531F21CCE46FD00ED8F7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "XCDLumberjackNSLogger OS X";
+			productName = XCDLumberjackNSLogger;
+			productReference = C23531F61CCE46FD00ED8F7D /* XCDLumberjackNSLogger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		C23532021CCE4A6300ED8F7D /* XCDLumberjackNSLogger tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C23532081CCE4A6300ED8F7D /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger tvOS" */;
+			buildPhases = (
+				C23532001CCE4A6300ED8F7D /* Headers */,
+				C23531FE1CCE4A6300ED8F7D /* Sources */,
+				C23531FF1CCE4A6300ED8F7D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "XCDLumberjackNSLogger tvOS";
+			productName = "XCDLumberjackNSLogger tvOS";
+			productReference = C23532031CCE4A6300ED8F7D /* XCDLumberjackNSLogger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		C2C2EEC61C2AD98300C5725E /* XCDLumberjackNSLogger iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2C2EECF1C2AD98300C5725E /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger iOS" */;
+			buildPhases = (
+				C2C2EEC41C2AD98300C5725E /* Headers */,
+				C2C2EEC21C2AD98300C5725E /* Sources */,
+				C2C2EEC31C2AD98300C5725E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "XCDLumberjackNSLogger iOS";
+			productName = XCDLumberjackNSLogger;
+			productReference = C2C2EEC71C2AD98300C5725E /* XCDLumberjackNSLogger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C2C2EEBE1C2AD98300C5725E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Pitaya;
+				TargetAttributes = {
+					C23531F51CCE46FD00ED8F7D = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					C23532021CCE4A6300ED8F7D = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					C2C2EEC61C2AD98300C5725E = {
+						CreatedOnToolsVersion = 7.2;
+					};
+				};
+			};
+			buildConfigurationList = C2C2EEC11C2AD98300C5725E /* Build configuration list for PBXProject "XCDLumberjackNSLogger" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = C2C2EEBD1C2AD98300C5725E;
+			productRefGroup = C2C2EEC81C2AD98300C5725E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C2C2EEC61C2AD98300C5725E /* XCDLumberjackNSLogger iOS */,
+				C23531F51CCE46FD00ED8F7D /* XCDLumberjackNSLogger OS X */,
+				C23532021CCE4A6300ED8F7D /* XCDLumberjackNSLogger tvOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C23531F11CCE46FD00ED8F7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C235320D1CCE4E4300ED8F7D /* XCDLumberjackNSLogger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C23531FE1CCE4A6300ED8F7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C235320E1CCE4E4400ED8F7D /* XCDLumberjackNSLogger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2C2EEC21C2AD98300C5725E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2C2EED31C2ADA7800C5725E /* XCDLumberjackNSLogger.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C23531FC1CCE46FD00ED8F7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C23531FD1CCE46FD00ED8F7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C23532091CCE4A6300ED8F7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		C235320A1CCE4A6300ED8F7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		C2C2EECD1C2AD98300C5725E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.1.1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = XCDLumberjackNSLogger/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.pitaya.XCDLumberjackNSLogger;
+				PRODUCT_NAME = "$(PROJECT_NAME)";
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "Semantic Versioning";
+			};
+			name = Debug;
+		};
+		C2C2EECE1C2AD98300C5725E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1.0.0;
+				DYLIB_CURRENT_VERSION = 1.1.1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = XCDLumberjackNSLogger/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.pitaya.XCDLumberjackNSLogger;
+				PRODUCT_NAME = "$(PROJECT_NAME)";
+				SKIP_INSTALL = YES;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "Semantic Versioning";
+			};
+			name = Release;
+		};
+		C2C2EED01C2AD98300C5725E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C2C2EED11C2AD98300C5725E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C23531FB1CCE46FD00ED8F7D /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger OS X" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C23531FC1CCE46FD00ED8F7D /* Debug */,
+				C23531FD1CCE46FD00ED8F7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C23532081CCE4A6300ED8F7D /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C23532091CCE4A6300ED8F7D /* Debug */,
+				C235320A1CCE4A6300ED8F7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2C2EEC11C2AD98300C5725E /* Build configuration list for PBXProject "XCDLumberjackNSLogger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2C2EECD1C2AD98300C5725E /* Debug */,
+				C2C2EECE1C2AD98300C5725E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C2C2EECF1C2AD98300C5725E /* Build configuration list for PBXNativeTarget "XCDLumberjackNSLogger iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2C2EED01C2AD98300C5725E /* Debug */,
+				C2C2EED11C2AD98300C5725E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C2C2EEBE1C2AD98300C5725E /* Project object */;
+}
