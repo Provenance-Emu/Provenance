@@ -10,18 +10,7 @@
     },
     {
       "idiom" : "tv",
-      "filename" : "page.pdf",
-      "resizing" : {
-        "mode" : "3-part-horizontal",
-        "center" : {
-          "mode" : "stretch",
-          "width" : 1
-        },
-        "cap-insets" : {
-          "right" : 31,
-          "left" : 10
-        }
-      }
+      "filename" : "sort-tv.pdf"
     }
   ],
   "info" : {
