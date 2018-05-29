@@ -243,6 +243,11 @@ public class PVSettingsModel: NSObject {
         #else
         let theme = ""
         #endif
+		#if os(tvOS) && DEBUG
+		let initialkStartSelectAlwaysOnKey = true
+		#else
+		let initialkStartSelectAlwaysOnKey = false
+		#endif
 
         UserDefaults.standard.register(defaults: [kAutoSaveKey: true,
 												  kTimedAutoSaves: true,
@@ -263,7 +268,7 @@ public class PVSettingsModel: NSObject {
                                                   kShowGameTitlesKey: true,
                                                   kWebDayAlwwaysOnKey: false,
                                                   kButtonTintsKey: false,
-                                                  kStartSelectAlwaysOnKey: false,
+												  kStartSelectAlwaysOnKey: initialkStartSelectAlwaysOnKey,
                                                   kAllRightShouldersKey: false,
                                                   kVolumeHUDKey: true,
 												  kGameLibraryScaleKey: 1.0,
