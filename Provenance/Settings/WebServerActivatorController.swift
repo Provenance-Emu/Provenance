@@ -51,7 +51,13 @@ extension WebServerActivatorController where Self:PVSettingsViewController {
 }
 #endif
 
-extension WebServerActivatorController where Self:PVGameLibraryViewController {
+#if os(tvOS)
+typealias WebServerActivatorControllerRootClass = PVTVSettingsViewController
+#else
+typealias WebServerActivatorControllerRootClass = PVGameLibraryViewController
+#endif
+
+extension WebServerActivatorController where Self: WebServerActivatorControllerRootClass {
 	var webServerAlertMessage : String {
 		// get the IP address or bonjour name of the device
 		let webServerAddress: String = PVWebServer.shared.urlString
