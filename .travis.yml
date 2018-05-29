@@ -49,5 +49,5 @@ after_failure:
   - ./send.sh failure $WEBHOOK_URL
 script:
   - set -o pipefail
-  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
   - swiftlint
+  - xcodebuild -workspace "$WORKSPACE_NAME" -scheme "$SCHEME" -destination "$DESTINATION" -sdk "$SDK" ONLY_ACTIVE_ARCH=YES CODE_SIGNING_REQUIRED=NO | xcpretty -f `xcpretty-travis-formatter`
