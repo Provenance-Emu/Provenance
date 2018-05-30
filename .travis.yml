@@ -21,15 +21,15 @@ env:
     - LC_ALL=en_US.UTF-8
     - WORKSPACE_NAME="Provenance.xcworkspace"
     - PROJECT_NAME="Provenance.xcodeproj"
-    - SCHEME_IOS_FRAMEWORK="Provenance"
-    - SCHEME_TVOS_FRAMEWORK="ProvenanceTV"
+    - SCHEME_IOS_APP="Provenance"
+    - SCHEME_TVOS_APP="Provenance-TV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
     - IOS_SDK=iphonesimulator11.3
     - TVOS_SDK=appletvsimulator11.3
   matrix:
-    - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_FRAMEWORK" SDK="$IOS_SDK"
-    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_FRAMEWORK" SDK="$TVOS_SDK"
+    - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
+    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
 before_install:
   # - gem install xcpretty -N
   - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
