@@ -43,7 +43,6 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet weak var volumeValueLabel: UILabel!
     @IBOutlet weak var fpsCountSwitch: UISwitch!
-    @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
     @IBOutlet weak var startSelectSwitch: UISwitch!
     @IBOutlet weak var volumeHUDSwitch: UISwitch!
@@ -292,14 +291,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         // Done button pressed
         navigationController?.popViewController(animated: true)
         PVWebServer.shared.stopServers()
-        importLabel.text = "Web server: OFF"
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 && indexPath.row == 6 {
-            let iCadeControllerViewController = PViCadeControllerViewController()
-            navigationController?.pushViewController(iCadeControllerViewController, animated: true)
-        } else if indexPath.section == 3 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
 
@@ -314,12 +309,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 // connected via wifi, let's continue
                 // start web transfer service
                 if PVWebServer.shared.startServers() {
-                    importLabel.text = "Web server: ON"
                     //show alert view
                     showServerActiveAlert()
                 } else {
                         // Display error
-                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     }))
                     present(alert, animated: true) {() -> Void in }
