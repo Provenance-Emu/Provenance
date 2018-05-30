@@ -962,7 +962,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             //show alert view
             self.showServerActiveAlert()
         } else {
-            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             }))
             self.present(alert, animated: true) {() -> Void in }
