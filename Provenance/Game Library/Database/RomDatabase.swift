@@ -190,18 +190,14 @@ public final class RomDatabase {
 //	public static var remoteLibraries : Results<PVLibrary> {
 //		return sharedInstance.realm.objects(PVLibrary.self).filter { !$0.isLocal }
 //	}
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 5beff1a35541e7c261ddb73f223ce70f9210f1b7
-    // Private shared instance that propery initializes
+t
+    // Private shared instance that properly initializes
     private static var _sharedInstance: RomDatabase!
 
     // Public shared instance that makes sure threads are handeled right
     // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
     // this helper might do more damage than just putting a fatalError() around isMainThread
-    // and simply fixing any threaded callst to call temporaryDatabaseContext
+    // and simply fixing any threaded call to call temporaryDatabaseContext
     // Or maybe there should be no public sharedInstance and instead only a
     // databaseContext object that must be used for all calls. It would be another class
     // and RomDatabase would just exist to provide context instances and init the initial database - jm
