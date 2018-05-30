@@ -294,10 +294,7 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 && indexPath.row == 6 {
-            let iCadeControllerViewController = PViCadeControllerViewController()
-            navigationController?.pushViewController(iCadeControllerViewController, animated: true)
-        } else if indexPath.section == 3 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
 

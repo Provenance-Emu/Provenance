@@ -32,10 +32,12 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         tableView.backgroundColor = UIColor.clear
 
         let settings = PVSettingsModel.shared
-        autoSaveValueLabel.text = settings.autoSave ? "On" : "Off"
-        autoLoadValueLabel.text = settings.autoLoadSaves ? "On" : "Off"
-        showFPSCountValueLabel.text = settings.showFPSCount ? "On" : "Off"
-        crtFilterLabel.text = settings.crtFilterEnabled ? "On" : "Off"
+        autoSaveValueLabel.text = settings.autoSave ? "ON" : "OFF"
+        timedAutoSavesValueLabel.text = settings.timedAutoSaves ? "ON" : "OFF"
+        autoLoadValueLabel.text = settings.autoLoadSaves ? "ON" : "OFF"
+        askToLoadSavesValueLabel.text = settings.askToAutoLoad ? "ON" : "OFF"
+        showFPSCountValueLabel.text = settings.showFPSCount ? "ON" : "OFF"
+        crtFilterLabel.text = settings.crtFilterEnabled ? "ON" : "OFF"
         imageSmoothingLabel.text = settings.imageSmoothing.onOffString
 
         let masterBranch = kGITBranch.lowercased() == "master"
@@ -89,6 +91,21 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+            disableAskToLoadSavesCell()
+            disableAutoLoadSaves()
+        } else {
+            enableAskToLoadSavesCell()
+        }
+        if PVSettingsModel.sharedInstance().autoSave == false {
+            disableTimedAutoSaveCell()
+            disableTimedAutoSaves()
+        } else {
+            enableTimedAutoSavesCell()
+        }
+    }
+
     func updateWebDavTitleLabel() {
         let isAlwaysOn: Bool = PVSettingsModel.shared.webDavAlwaysOn
         // Set the status indicator text
@@ -125,25 +142,17 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             // Settings
             switch indexPath.row {
             case 0:
-                // Emu Settings
-                switch indexPath.row {
-                    case 0:
-                        // Auto save
-                        TOGGLE_SETTING(\PVSettingsModel.autoSave, autoSaveValueLabel)
-                    case 1:
-                        // auto load
-                        TOGGLE_SETTING(\PVSettingsModel.autoLoadSaves, autoLoadValueLabel)
-                    case 2:
-                        // CRT Filter
-                        TOGGLE_SETTING(\PVSettingsModel.crtFilterEnabled, crtFilterLabel)
-                    case 3:
-                    // Image Smoother
-                    TOGGLE_SETTING(\PVSettingsModel.imageSmoothing, imageSmoothingLabel)
-                    case 4:
-                        // FPS Counter
-                        TOGGLE_SETTING(\PVSettingsModel.showFPSCount, showFPSCountValueLabel)
-                    default:
-                        break
+                // Auto Save
+                TOGGLE_SETTING(\PVSettingsModel.autoSave, autoSaveValueLabel)
+                if autoSaveValueLabel.text == "ON" {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.enableTimedAutoSavesCell()
+                    }, completion: nil)
+                } else {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.disableTimedAutoSaveCell()
+                    }, completion: nil)
+                    disableTimedAutoSaves()
                 }
             case 1:
                 // Timed Auto Saves
@@ -151,26 +160,17 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
                     TOGGLE_SETTING(\PVSettingsModel.timedAutoSaves, timedAutoSavesValueLabel)
                 }
             case 2:
-                // Actions
-                switch indexPath.row {
-                    case 0:
-                        PVSettingsModel.shared.webDavAlwaysOn = !PVSettingsModel.shared.webDavAlwaysOn
-                        // Always on WebDav server
-                        // Currently this is only exposed on ATV since it would be a drain on battery
-                        // for a mobile device to have this on and doesn't seem nearly as useful.
-                        // Web dav can still be manually started alone side the web server
-                        if PVSettingsModel.shared.webDavAlwaysOn && !PVWebServer.shared.isWebDavServerRunning {
-                            PVWebServer.shared.startWebDavServer()
-                        } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
-                            PVWebServer.shared.stopWebDavServer()
-                        }
-
-                        // Update the label to hide / show the instructions to connect
-                        updateWebDavTitleLabel()
-                    case 1:
-						showServerActiveAlert()
-                    default:
-                        break
+                // Auto Load Saves
+                TOGGLE_SETTING(\PVSettingsModel.autoLoadSaves, autoLoadValueLabel)
+                if autoLoadValueLabel.text == "ON" {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.disableAskToLoadSavesCell()
+                    }, completion: nil)
+                    disableAutoLoadSaves()
+                } else {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        self.enableAskToLoadSavesCell()
+                    }, completion: nil)
                 }
             case 3:
                 // Ask to Load Saves
@@ -249,6 +249,11 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         default:
             break
         }
+        PVSettingsModel.sharedInstance().askToAutoLoad = false
+    }
+
+    func enableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 1.0
     }
 
     func disableTimedAutoSaveCell() {
