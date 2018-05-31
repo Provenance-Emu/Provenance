@@ -22,7 +22,7 @@ env:
     - WORKSPACE_NAME="Provenance.xcworkspace"
     - PROJECT_NAME="Provenance.xcodeproj"
     - SCHEME_IOS_APP="Provenance"
-    - SCHEME_TVOS_APP="Provenance-TV"
+    - SCHEME_TVOS_APP="ProvenanceTV"
     - IOS_PLATFORM="iOS Simulator"
     - TVOS_PLATFORM="tvOS Simulator"
     - IOS_SDK=iphonesimulator11.3
