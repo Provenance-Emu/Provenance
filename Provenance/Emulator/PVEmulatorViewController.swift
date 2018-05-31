@@ -82,6 +82,8 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     weak var menuActionSheet: UIAlertController?
     var isShowingMenu: Bool = false
+    
+    let minimumPlayTimeToMakeAutosave : Double = 60
 
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
@@ -680,9 +682,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             self.enableContorllerInput(false)
         }))
         var quitTitle = "Quit"
-        if PVSettingsModel.shared.autoSave {
+        if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1) > minimumPlayTimeToMakeAutosave && PVSettingsModel.shared.autoSave {
             quitTitle = "Save & Quit"
         }
+
         actionsheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
             self.quit()
         }))
@@ -828,7 +831,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			throw SaveStateError.saveStatesUnsupportedByCore
 		}
 
-		let minimumPlayTimeToMakeAutosave : Double = 60
 		if let lastPlayed = game.lastPlayed, (lastPlayed.timeIntervalSinceNow * -1)  < minimumPlayTimeToMakeAutosave {
 			ILOG("Haven't been playing game long enough to make an autosave")
 			return
