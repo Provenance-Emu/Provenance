@@ -1,6 +1,6 @@
 <p align="center" style="text-align: center; align: center">
-<h1>Provenance</h1>
-<h4>An iOS & tvOS Frontend for Multiple Emulators</h4>
+<h1 align="center" style="text-align: center; align: center">Provenance</h1> 
+<h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
 
 ![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
