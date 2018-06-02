@@ -91,6 +91,14 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
 				alert.addAction(UIAlertAction(title: "Stop", style: .default, handler: {(_ action: UIAlertAction) -> Void in
 					PVWebServer.shared.stopServers()
 				}))
+				#if os(iOS)
+				if #available(iOS 9.0, *) {
+					let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+						self.showServer()
+					})
+					alert.addAction(viewAction)
+				}
+				#endif
 				present(alert, animated: true) {() -> Void in
 					alert.message = self.webServerAlertMessage
 				}
