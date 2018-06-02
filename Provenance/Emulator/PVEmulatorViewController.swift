@@ -859,6 +859,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
 				do {
 					try pngData.write(to: imageURL)
+					try RomDatabase.sharedInstance.writeTransaction {
+						let newFile = PVImageFile(withURL: imageURL)
+						game.screenShots.append(newFile)
+					}
 				} catch let error {
 					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
 				}
