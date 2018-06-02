@@ -1550,13 +1550,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }))
 #if os(iOS)
 
-    #if DEBUG
             actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 let md5URL = "provenance://open?md5=\(game.md5Hash)"
                 UIPasteboard.general.string = md5URL
+				self.present(UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert), animated: true)
             }))
-    #endif
-            actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+
+			actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
 
