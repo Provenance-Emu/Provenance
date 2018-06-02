@@ -82,7 +82,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 
     weak var menuActionSheet: UIAlertController?
     var isShowingMenu: Bool = false
-    
+
     let minimumPlayTimeToMakeAutosave : Double = 60
 
     required init(game: PVGame, core: PVEmulatorCore) {

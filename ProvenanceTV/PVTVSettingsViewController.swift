@@ -75,7 +75,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
         iCadeControllerSetting.text = iCadeControllerSettingToString(settings.myiCadeControllerSetting)
         updateWebDavTitleLabel()
     }
-    
+
     override func viewDidLayoutSubviews() {
         if PVSettingsModel.sharedInstance().autoLoadSaves == true {
             disableAskToLoadSavesCell()
@@ -200,7 +200,7 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
                 } else if !(PVSettingsModel.shared.webDavAlwaysOn && PVWebServer.shared.isWebDavServerRunning) {
                     PVWebServer.shared.stopWebDavServer()
                 }
-                
+
                 // Update the label to hide / show the instructions to connect
                 updateWebDavTitleLabel()
             default:
@@ -235,33 +235,33 @@ class PVTVSettingsViewController: UITableViewController, WebServerActivatorContr
             break
         }
     }
-    
+
     func disableTimedAutoSaveCell() {
         timedAutoSavesCell.alpha = 0.2
     }
-    
+
     func disableTimedAutoSaves() {
         if timedAutoSavesValueLabel.text == "ON" {
             TOGGLE_SETTING(\PVSettingsModel.timedAutoSaves, timedAutoSavesValueLabel)
         }
         PVSettingsModel.sharedInstance().timedAutoSaves = false
     }
-    
+
     func enableTimedAutoSavesCell() {
         timedAutoSavesCell.alpha = 1.0
     }
-    
+
     func disableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 0.2
     }
-    
+
     func disableAutoLoadSaves() {
         if askToLoadSavesValueLabel.text == "ON" {
             TOGGLE_SETTING(\PVSettingsModel.askToAutoLoad, askToLoadSavesValueLabel)
         }
         PVSettingsModel.sharedInstance().askToAutoLoad = false
     }
-    
+
     func enableAskToLoadSavesCell() {
         askToLoadSavesCell.alpha = 1.0
     }
