@@ -20,10 +20,10 @@
                 <rect key="frame" x="0.0" y="0.0" width="164" height="144"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKb-WS-gGA" userLabel="ArtworkContainerView">
+                    <view opaque="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKb-WS-gGA" userLabel="ArtworkContainerView">
                         <rect key="frame" x="0.0" y="0.0" width="164" height="109"/>
                         <subviews>
-                            <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
+                            <imageView opaque="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
                                 <rect key="frame" x="0.0" y="0.0" width="164" height="109"/>
                             </imageView>
                             <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
@@ -125,11 +125,12 @@
             <constraints>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="6KK-cp-gKM"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="6xC-fV-K8o"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="RKb-WS-gGA" secondAttribute="leading" id="76K-oN-siw"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="centerX" secondItem="hUV-Gh-K0R" secondAttribute="centerX" id="Oob-wr-6mO"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.2" constant="1" id="dr3-Br-VIF"/>
-                <constraint firstItem="98d-iv-EkE" firstAttribute="width" secondItem="RKb-WS-gGA" secondAttribute="width" id="ogX-u7-5XD"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="top" secondItem="hUV-Gh-K0R" secondAttribute="top" id="s6P-SU-FR7"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="bottom" constant="5" id="tZX-ZO-dZM"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="zJx-SX-h3c"/>
             </constraints>
             <size key="customSize" width="715" height="589"/>
             <connections>
