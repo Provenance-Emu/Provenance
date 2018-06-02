@@ -1,4 +1,4 @@
-<p text-align="center" align="center">
+<p text-align="center" style="align:center" align="center">
 <h1>Provenance</h1>
 <h4>An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
