@@ -1,12 +1,19 @@
 # Provenance
 An iOS & tvOS Frontend for Multiple Emulators
+<div style="align:center" align="center">
+<a href="https://github.com/provenance-emu/Provenance/network">
+  <img src="https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square"/>
+</a>
+<a href="https://github.com/provenance-emu/Provenance/stargazers">
+<img src="https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square"/>
+</a>
+<a href="https://github.com/Provenance-Emu/Provenance/graphs/contributors">
+  <img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/>
+</a>
+<img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
+</div>
 
 ![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
-
-[![GitHub forks](https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/network) 
-[![GitHub stars](https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square)](https://github.com/provenance-emu/Provenance/stargazers)
-![GitHub contributors](https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square)
-![GitHub language count](https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square)
 
 
 ## Installation
