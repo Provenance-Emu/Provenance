@@ -83,7 +83,23 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
             let destinationPath = PVEmulatorConfiguration.romsImportPath.appendingPathComponent(filename, isDirectory: false)
 
             do {
-                try FileManager.default.moveItem(at: url, to: destinationPath)
+				defer {
+					url.stopAccessingSecurityScopedResource()
+				}
+
+				// Doesn't seem we need access in dev builds?
+				_ = url.startAccessingSecurityScopedResource()
+				
+				if #available(iOS 9.0, *) {
+					if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
+						try FileManager.default.copyItem(at: url, to: destinationPath)
+					} else {
+						try FileManager.default.moveItem(at: url, to: destinationPath)
+					}
+				} else {
+					// Fallback on earlier versions
+					try FileManager.default.copyItem(at: url, to: destinationPath)
+				}
             } catch {
                 ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
                 return false
