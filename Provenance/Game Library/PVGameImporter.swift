@@ -535,22 +535,49 @@ public extension PVGameImporter {
         }
 
         // We already verified that above that there's 1 and only 1 system ID that matmched so force first!
-        let system = systems.first!
+		guard let system = systems.first else {
+			ELOG("systems empty")
+			return nil
+		}
 
         // TODO: This will break if we move the ROMS to a new spot
-        let gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory: true).appendingPathComponent(gameFilename).path
-        if gamePartialPath.isEmpty {
+		// Remove extension and leading '/' so we can match 'com.provenance.vb/Tetris [SomeThing] US BLAH.vb'
+		// will match with /com.provenance.vb/Tetris.vb since it becomes 'com.provenance.vb/Tetris' since I use a beginswith query
+		// First try an extact match though incase there are mulitples that start with similiar
+        var gamePartialPath: String = URL(fileURLWithPath: system.identifier, isDirectory: true).appendingPathComponent(gameFilename).deletingPathExtension().path
+		if gamePartialPath.first == "/" {
+			gamePartialPath.removeFirst()
+		}
+
+		if gamePartialPath.isEmpty {
             ELOG("Game path was empty")
             return nil
         }
 
         // Find the game in the database
-        guard let game = database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: gamePartialPath).first else {
-            ELOG("Couldn't find game for path \(gamePartialPath)")
-            return nil
-        }
+		// First find an exact match incase there are multiples like com.provenance.vb/Teris [US].vb etc,
+		// If that's null, ie no matches, do a begins with
+		// TODO: Warn / error / ask if more than 1 returned
+		var games = database.all(PVGame.self, where: #keyPath(PVGame.romPath), value: gamePartialPath)
+		if games.isEmpty {
+			// No reults, so do a beginsWith query
+			games = database.all(PVGame.self, where: #keyPath(PVGame.romPath), beginsWith: gamePartialPath)
+		}
+
+		guard !games.isEmpty else {
+			ELOG("Couldn't find game for path \(gamePartialPath)")
+			return nil
+		}
+
+		if games.count > 1 {
+			// TODO: Prompt use for which one? or change all, or all where custom artwork isn't set but only if tehre's at least one that isn't? =jm
+			WLOG("There were mutliple matches for \(gamePartialPath)! #\(games.count). Going with first for now until we make better code to prompt user.")
+		}
+
+		let game = games.first!
 
         guard let hash = scaleAndMoveImageToCache(imageFullPath: imageFullPath) else {
+			ELOG("scaleAndMoveImageToCache failed")
             return nil
         }
 

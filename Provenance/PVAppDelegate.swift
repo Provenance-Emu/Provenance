@@ -89,7 +89,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
 				// Doesn't seem we need access in dev builds?
 				_ = url.startAccessingSecurityScopedResource()
-				
+
 				if #available(iOS 9.0, *) {
 					if let openInPlace = options[.openInPlace] as? Bool, openInPlace {
 						try FileManager.default.copyItem(at: url, to: destinationPath)
@@ -291,7 +291,7 @@ extension PVAppDelegate : BITHockeyManagerDelegate {
 		if (description.characters.count > maxSize) {
 			description = description.substring(from: description.index(description.startIndex, offsetBy: description.characters.count - maxSize - 1))
 		}
-		return description;
+		return description
 	}
 
 	func applicationLog(for crashManager: BITCrashManager!) -> String! {
