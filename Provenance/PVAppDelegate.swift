@@ -192,7 +192,7 @@ extension PVAppDelegate {
 		PVLogging.sharedInstance()
 
 		fileLogger.maximumFileSize = (1024 * 64); // 64 KByte
-		fileLogger.logFileManager.maximumNumberOfLogFiles = 1;
+		fileLogger.logFileManager.maximumNumberOfLogFiles = 1
 		fileLogger.rollLogFile(withCompletion: nil)
 		DDLog.add(fileLogger)
 
@@ -213,7 +213,7 @@ extension PVAppDelegate {
 		BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
 		#endif
 		#if DEBUG
-		BITHockeyManager.shared().disableMetricsManager = true
+		BITHockeyManager.shared().isMetricsManagerDisabled = true
 		#endif
 
 		BITHockeyManager.shared().logLevel = BITLogLevel.warning
