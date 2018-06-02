@@ -9,12 +9,14 @@ let TEST_THEMES = false
 import CoreSpotlight
 import PVSupport
 import CocoaLumberjackSwift
+import HockeySDK
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var shortcutItemMD5: String?
+	var fileLogger:DDFileLogger = DDFileLogger()
 
 	#if os(iOS)
 	var _logViewController: PVLogViewController?
@@ -23,6 +25,7 @@ class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]? = nil) -> Bool {
         UIApplication.shared.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
 		_initLogging()
+		_initHockeyApp()
 
 		do {
 			try RomDatabase.initDefaultDatabase()
@@ -188,6 +191,11 @@ extension PVAppDelegate {
 		// Initialize logging
 		PVLogging.sharedInstance()
 
+		fileLogger.maximumFileSize = (1024 * 64); // 64 KByte
+		fileLogger.logFileManager.maximumNumberOfLogFiles = 1;
+		fileLogger.rollLogFile(withCompletion: nil)
+		DDLog.add(fileLogger)
+
 		#if os(iOS)
 		// Debug view logger
 		DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
@@ -196,6 +204,21 @@ extension PVAppDelegate {
 
 		DDTTYLogger.sharedInstance.colorsEnabled = true
 		DDTTYLogger.sharedInstance.logFormatter = PVTTYFormatter()
+	}
+
+	func _initHockeyApp() {
+		#if os(tvOS)
+		BITHockeyManager.shared().configure(withIdentifier: "613008343753414d93a7202324461575", delegate: self)
+		#else
+		BITHockeyManager.shared().configure(withIdentifier: "a1fd56cd852d4c959988484eba69f724", delegate: self)
+		#endif
+		#if DEBUG
+		BITHockeyManager.shared().disableMetricsManager = true
+		#endif
+
+		BITHockeyManager.shared().logLevel = BITLogLevel.warning
+		BITHockeyManager.shared().start()
+		BITHockeyManager.shared().authenticator.authenticateInstallation() // This line is obsolete in the crash only builds
 	}
 
 	#if os(iOS)
@@ -235,4 +258,32 @@ extension PVAppDelegate {
 		controller!.present(_logViewController!, animated: true, completion: nil)
 	}
 	#endif
+}
+
+extension PVAppDelegate : BITHockeyManagerDelegate {
+	func getLogFilesContentWithMaxSize(_ maxSize: Int) -> String {
+		var description = ""
+		if let sortedLogFileInfos = fileLogger.logFileManager.sortedLogFileInfos {
+			for logFile in sortedLogFileInfos {
+				if let logData = FileManager.default.contents(atPath: logFile.filePath) {
+					if logData.count > 0 {
+						description.append(String(data: logData, encoding: String.Encoding.utf8)!)
+					}
+				}
+			}
+		}
+		if (description.characters.count > maxSize) {
+			description = description.substring(from: description.index(description.startIndex, offsetBy: description.characters.count - maxSize - 1))
+		}
+		return description;
+	}
+
+	func applicationLog(for crashManager: BITCrashManager!) -> String! {
+		let description = getLogFilesContentWithMaxSize(5000) // 5000 bytes should be enough!
+		if (description.characters.count == 0) {
+			return nil
+		} else {
+			return description
+		}
+	}
 }

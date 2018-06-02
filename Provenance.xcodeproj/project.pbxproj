@@ -171,6 +171,11 @@
 		B302BFA420825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; };
 		B302BFA520825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F89520B73BD000C5E502 /* PVSupport.framework */; };
+		B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E220C29FDE002ECE63 /* HockeySDK.framework */; };
+		B30670E720C2A03C002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; };
+		B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E620C2A03B002ECE63 /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B30670EA20C2A047002ECE63 /* HockeySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E920C2A047002ECE63 /* HockeySDK.framework */; };
+		B30670EB20C2A047002ECE63 /* HockeySDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30670E920C2A047002ECE63 /* HockeySDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3081C092080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B3081C0A2080693100C5E77B /* PViCadeMocuteController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3081C072080693000C5E77B /* PViCadeMocuteController.m */; };
 		B311698D1D70A3A200D7AECA /* ProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -924,6 +929,7 @@
 				B3E708C720B7EB45005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
 				B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -957,6 +963,7 @@
 				B3E708B820B7EB2B005BAA5A /* CocoaLumberjack.framework in Embed Frameworks */,
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
+				B30670EB20C2A047002ECE63 /* HockeySDK.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -1146,6 +1153,10 @@
 		AA9B6EDD1D70981000422E5F /* PVPSXControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPSXControllerViewController.swift; sourceTree = "<group>"; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302F89520B73BD000C5E502 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30670E220C29FDE002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B30670E420C29FE6002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B30670E620C2A03B002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/tvOS/HockeySDK.framework; sourceTree = "<group>"; };
+		B30670E920C2A047002ECE63 /* HockeySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HockeySDK.framework; path = Carthage/Build/iOS/HockeySDK.framework; sourceTree = "<group>"; };
 		B3081C072080693000C5E77B /* PViCadeMocuteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PViCadeMocuteController.m; sourceTree = "<group>"; };
 		B3081C082080693000C5E77B /* PViCadeMocuteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PViCadeMocuteController.h; sourceTree = "<group>"; };
 		B32893721E0B250B0090B97A /* PVWonderSwanControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVWonderSwanControllerViewController.swift; sourceTree = "<group>"; };
@@ -1671,6 +1682,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */,
 				B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
@@ -1693,6 +1705,7 @@
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
 				B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */,
+				B30670EA20C2A047002ECE63 /* HockeySDK.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
@@ -1749,6 +1762,7 @@
 				B3C9D5E41DEA8AED0068D057 /* PVStella.framework in Frameworks */,
 				1AD4822B1BA359C800FDA50A /* GLKit.framework in Frameworks */,
 				B36CBFEB20397D9100728482 /* PVMednafen.framework in Frameworks */,
+				B30670E720C2A03C002ECE63 /* HockeySDK.framework in Frameworks */,
 				1AD482291BA359BA00FDA50A /* AudioToolbox.framework in Frameworks */,
 				B32F46341D6A8BD70085BA9F /* PVSupport.framework in Frameworks */,
 				B3E708C020B7EB45005BAA5A /* NSLogger.framework in Frameworks */,
@@ -1863,6 +1877,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B30670E620C2A03B002ECE63 /* HockeySDK.framework */,
+				B30670E920C2A047002ECE63 /* HockeySDK.framework */,
 				B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */,
 				B3E708B920B7EB43005BAA5A /* CocoaLumberjackSwift.framework */,
 				B3E708AD20B7EB2A005BAA5A /* NSLogger.framework */,
@@ -1907,6 +1923,8 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30670E220C29FDE002ECE63 /* HockeySDK.framework */,
+				B30670E420C29FE6002ECE63 /* HockeySDK.framework */,
 				B302F89520B73BD000C5E502 /* PVSupport.framework */,
 				B3684578206EBF1A0078FEC2 /* Linked */,
 				B3EFD10F1C76D5A1000DD650 /* Cores */,
@@ -3104,7 +3122,6 @@
 			buildConfigurationList = 1A3D40B117B2DCE4004DFFFC /* Build configuration list for PBXNativeTarget "Provenance" */;
 			buildPhases = (
 				B31D003620BE67E400850C70 /* Carthage */,
-				B3E708A620B7E44B005BAA5A /* Check Carthage Outdated */,
 				B3A95F6B20BCF48E00635F3E /* Swiftlint */,
 				B3FF744F202F7D67008C964A /* Create Version.h */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
@@ -3129,7 +3146,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AD481C81BA350A500FDA50A /* Build configuration list for PBXNativeTarget "ProvenanceTV" */;
 			buildPhases = (
-				B3E708A720B7E465005BAA5A /* Check Carthage Outdated */,
+				B3E708A720B7E465005BAA5A /* Carthage */,
 				B3A95F6C20BCF4B500635F3E /* Swift Lint */,
 				B3F9CDA320315CA8007F808D /* Create Version.h */,
 				1AD481B01BA350A400FDA50A /* Sources */,
@@ -3423,33 +3440,19 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
-		B3E708A620B7E44B005BAA5A /* Check Carthage Outdated */ = {
+		B3E708A720B7E465005BAA5A /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Carthage Outdated";
+			name = Carthage;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#/usr/local/bin/carthage build --cache-builds --platform iOS\n#/usr/local/bin/carthage outdated --xcode-warnings";
-		};
-		B3E708A720B7E465005BAA5A /* Check Carthage Outdated */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Carthage Outdated";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#/usr/local/bin/carthage build --cache-builds\n#/usr/local/bin/carthage outdated --xcode-warnings";
+			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4377,6 +4380,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4425,6 +4429,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
@@ -4480,6 +4485,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4543,6 +4549,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4604,6 +4611,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -4875,6 +4883,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
