@@ -188,7 +188,7 @@ public class PVEmulatorConfiguration: NSObject {
 		#endif
     }()
 
-    static let cdBasedSystems: [PVSystem] = {
+    static var cdBasedSystems: [PVSystem] {
 		#if swift(>=4.1)
 		return systems.compactMap({ (system) -> PVSystem? in
 			guard system.usesCDs else {
@@ -204,7 +204,7 @@ public class PVEmulatorConfiguration: NSObject {
             return system
         })
 		#endif
-    }()
+	}
 
     // MARK: BIOS
     static let supportedBIOSFileExtensions: [String] = {
