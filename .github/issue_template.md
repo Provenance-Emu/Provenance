@@ -24,9 +24,10 @@ Please tell us as much information as possible and fill out ALL of the sections 
 🚫 Reports that do not use the template will be locked immeditalty .🚫
 
 
-⚠️⚠️⚠️ ABOVE US ALL COMMENT CODE AND WON'T BE SEEN ⚠️⚠️⚠️
-⚠️⚠️⚠️      START AND EDIT REPORT BELOW HERE       ⚠️⚠️⚠️
+⚠️⚠️⚠️        ABOVE HERE IS ALL COMMENT CODE AND WON'T BE SEEN          ⚠️⚠️⚠️
+⚠️⚠️⚠️  START AND EDIT REPORT BELOW THIS LINE (No need to delete above) ⚠️⚠️⚠️
 ------------------------------------------------------------>
+<!----------- BEGIN HERE --------------->
 
 REPLACE_WITH_SUMMARY
 
