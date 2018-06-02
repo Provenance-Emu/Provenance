@@ -17,7 +17,8 @@ import Foundation
 public extension UTI {
     static let rom = UTI(rawValue: "com.provenance.rom")
     static let bios = UTI(rawValue: "com.provenance.rom")
-    static let saveState = UTI(rawValue: "com.provenance.savestate")
+	static let artwork = UTI(rawValue: "com.provence.artwork")
+    static let savestate = UTI(rawValue: "com.provenance.savestate")
     static let sevenZipArchive = UTI(rawValue: "org.7-zip.7-zip-archive")
 }
 
