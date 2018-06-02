@@ -131,7 +131,7 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 
 	override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
 		let originAttrs = super.layoutAttributesForElements(in: rect)
-		var attrs: [UICollectionViewLayoutAttributes]? = Array<UICollectionViewLayoutAttributes>()
+		var attrs: [UICollectionViewLayoutAttributes]? = [UICollectionViewLayoutAttributes]()
 
 		for attr in originAttrs! {
 			let idxPath = attr.indexPath

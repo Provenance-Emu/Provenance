@@ -104,7 +104,7 @@ public enum SubtleVolumeError: Error {
     }
   }
 
-  open var delegate: SubtleVolumeDelegate?
+  open weak var delegate: SubtleVolumeDelegate?
 
   fileprivate let volume = MPVolumeView(frame: CGRect.zero)
   fileprivate let overlay = UIView()

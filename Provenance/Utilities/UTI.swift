@@ -249,15 +249,15 @@ public class UTI: RawRepresentable, Equatable {
 		An array of all tags of the receiver of the specified class.
 	*/
 
-	public func tags(with tagClass: TagClass) -> Array<String> {
+	public func tags(with tagClass: TagClass) -> [String] {
 
 		let unmanagedTags = UTTypeCopyAllTagsWithClass(self.rawCFValue, tagClass.rawCFValue)
 
-		guard let tags = unmanagedTags?.takeRetainedValue() as? Array<CFString> else {
+		guard let tags = unmanagedTags?.takeRetainedValue() as? [CFString] else {
 			return []
 		}
 
-		return tags as Array<String>
+		return tags as [String]
 	}
 
 	// MARK: List all UTIs associated with a tag
@@ -273,11 +273,11 @@ public class UTI: RawRepresentable, Equatable {
 		An array of all UTIs that satisfy the specified parameters.
 	*/
 
-	public static func utis(for tag: TagClass, value: String, conformingTo conforming: UTI? = nil) -> Array<UTI> {
+	public static func utis(for tag: TagClass, value: String, conformingTo conforming: UTI? = nil) -> [UTI] {
 
 		let unmanagedIdentifiers = UTTypeCreateAllIdentifiersForTag(tag.rawCFValue, value as CFString, conforming?.rawCFValue)
 
-		guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? Array<CFString> else {
+		guard let identifiers = unmanagedIdentifiers?.takeRetainedValue() as? [CFString] else {
 			return []
 		}
 
@@ -306,7 +306,6 @@ public class UTI: RawRepresentable, Equatable {
 	}
 
 	public static func ==(lhs: UTI, rhs: UTI) -> Bool {
-
 		return UTTypeEqual(lhs.rawCFValue, rhs.rawCFValue) as Bool
 	}
 

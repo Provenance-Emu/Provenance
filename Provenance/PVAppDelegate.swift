@@ -288,15 +288,16 @@ extension PVAppDelegate : BITHockeyManagerDelegate {
 				}
 			}
 		}
-		if (description.characters.count > maxSize) {
-			description = description.substring(from: description.index(description.startIndex, offsetBy: description.characters.count - maxSize - 1))
+		if description.count > maxSize {
+			let index = description.index(description.startIndex, offsetBy: description.count - maxSize - 1)
+			description = String(description.suffix(from: index))
 		}
 		return description
 	}
 
 	func applicationLog(for crashManager: BITCrashManager!) -> String! {
 		let description = getLogFilesContentWithMaxSize(5000) // 5000 bytes should be enough!
-		if (description.characters.count == 0) {
+		if description.isEmpty {
 			return nil
 		} else {
 			return description
