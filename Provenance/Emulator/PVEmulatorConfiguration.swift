@@ -245,8 +245,12 @@ public class PVEmulatorConfiguration: NSObject {
         return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
     }()
 
-    static let archiveExtensions: [String] = ["zip", "7z", "rar"]
+    static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
     static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
+	static let specialExtensions: [String] = ["cue", "m3u", "svs", "plist"]
+	static let allKnownExtensions: [String] = {
+		archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
+	}()
 
     @objc
     class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {

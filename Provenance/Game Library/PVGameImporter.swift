@@ -235,6 +235,8 @@ public final class PVGameImporter {
 				if !["bin", "iso", "img", "sub"].contains(candidate.filePath.pathExtension) {
 					WLOG("File should have existed at \(candidate.filePath) but it might have been moved")
 				}
+				self.deleteIfJunk(candidate.filePath)
+
 				return nil
 			}
 		}
@@ -289,6 +291,22 @@ public final class PVGameImporter {
 		#endif
         return newPaths
     }
+
+	@discardableResult
+	private func deleteIfJunk(_ filePath : URL) -> Bool {
+		if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
+			ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.romsImportPath.lastPathComponent) directory. Deleting.")
+			do {
+				try FileManager.default.removeItem(at: filePath)
+				ILOG("Deleted \(filePath.path).")
+				return true
+			} catch {
+				ELOG("Deletion error: \(error.localizedDescription)")
+			}
+		}
+
+		return false
+	}
 
     func startImport(forPaths paths: [URL]) {
 		serialImportQueue.addOperation {
@@ -1360,6 +1378,7 @@ extension PVGameImporter {
 
         // Done dealing with BIOS file matches
         guard let systemsForExtension = systemIDsForRom(at: filePath), !systemsForExtension.isEmpty else {
+			deleteIfJunk(filePath)
             ELOG("No system found to match \(filePath.lastPathComponent)")
             return nil
         }
