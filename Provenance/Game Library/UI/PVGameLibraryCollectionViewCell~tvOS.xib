@@ -66,8 +66,8 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.5" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="leading" secondItem="mwp-JA-v4w" secondAttribute="leading" constant="8" id="7Sj-mo-uHz"/>
-                                    <constraint firstAttribute="bottom" secondItem="fFj-aX-6m6" secondAttribute="bottom" constant="8" id="Frt-Pr-WDv"/>
-                                    <constraint firstAttribute="trailing" secondItem="fFj-aX-6m6" secondAttribute="trailing" constant="8" id="SOv-dE-9es"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="bottom" secondItem="mwp-JA-v4w" secondAttribute="bottom" constant="-8" id="Frt-Pr-WDv"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="trailing" secondItem="mwp-JA-v4w" secondAttribute="trailing" constant="-8" id="SOv-dE-9es"/>
                                     <constraint firstAttribute="width" secondItem="mwp-JA-v4w" secondAttribute="height" multiplier="1:1" id="ZcS-pd-laL"/>
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="top" secondItem="mwp-JA-v4w" secondAttribute="top" constant="8" id="cQR-PD-B7n"/>
                                 </constraints>
@@ -108,16 +108,11 @@
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="tcd-RI-wfD"/>
                         </constraints>
                     </view>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="8" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.25" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE">
                         <rect key="frame" x="0.0" y="114" width="164" height="30"/>
                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                         <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <nil key="highlightedColor"/>
-                        <userDefinedRuntimeAttributes>
-                            <userDefinedRuntimeAttribute type="number" keyPath="alignmentCode">
-                                <integer key="value" value="1"/>
-                            </userDefinedRuntimeAttribute>
-                        </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>
             </view>
@@ -125,8 +120,8 @@
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="6KK-cp-gKM"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="6xC-fV-K8o"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="ES5-9w-mYT"/>
-                <constraint firstAttribute="trailing" secondItem="98d-iv-EkE" secondAttribute="trailing" id="MuH-CS-0PO"/>
-                <constraint firstAttribute="bottom" secondItem="98d-iv-EkE" secondAttribute="bottom" id="SQv-sh-Vlk"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="MuH-CS-0PO"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="bottom" secondItem="hUV-Gh-K0R" secondAttribute="bottom" id="SQv-sh-Vlk"/>
                 <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.2" constant="1" id="dr3-Br-VIF"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="top" secondItem="hUV-Gh-K0R" secondAttribute="top" id="s6P-SU-FR7"/>
                 <constraint firstItem="RKb-WS-gGA" firstAttribute="bottom" secondItem="98d-iv-EkE" secondAttribute="top" constant="-5" id="tZX-ZO-dZM"/>

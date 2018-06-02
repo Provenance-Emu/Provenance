@@ -11,6 +11,25 @@ import AVFoundation
 
 private let LabelHeight: CGFloat = 44.0
 
+public extension UIView {
+	@IBInspectable var borderColor : UIColor? {
+		get {
+			guard let bc = layer.borderColor else {
+				return nil
+			}
+			return UIColor(cgColor: bc)
+		}
+		set {
+			if let borderColor = newValue {
+				self.layer.borderWidth = 1.0
+				self.layer.borderColor = borderColor.cgColor
+			} else {
+				self.layer.borderWidth = 0.0
+				self.layer.borderColor = nil
+			}
+		}
+	}
+}
 enum BlendModes : String {
 	case normalBlendMode
 	//
@@ -853,7 +872,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 //            titleLabel.transform = .identity
 //        }
         contentView.bringSubview(toFront: titleLabel!)
-        titleLabel.sizeToFit()
 //        titleLabel.transform = titleTransform
 #else
 		if #available(iOS 9.0, tvOS 9.0, *) {
