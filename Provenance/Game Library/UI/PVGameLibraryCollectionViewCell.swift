@@ -721,6 +721,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		self.imageView = imageView
 
 		let newTitleLabel = UILabel()
+		newTitleLabel.textAlignment = .center
 		self.titleLabel = newTitleLabel
 
 		contentView.addSubview(titleLabel)
@@ -753,6 +754,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		} else {
 			// TODO: iOS 8 layout, or just hide them?
 			discCountContainerView?.isHidden = true
+
+			titleLabel.translatesAutoresizingMaskIntoConstraints = false
+			NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: imageView, attribute: .leadingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: imageView, attribute: .trailingMargin, multiplier: 1.0, constant: 8.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: imageView, attribute: .bottom, multiplier: 1.0, constant:5.0).isActive = true
+			NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1.0, constant:LabelHeight).isActive = true
 		}
 		imageView.frame = imageFrame
 		titleLabel.frame = titleFrame
