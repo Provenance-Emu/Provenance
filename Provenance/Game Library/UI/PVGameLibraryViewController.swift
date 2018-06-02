@@ -937,6 +937,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
 		avc.popoverPresentationController?.sourceView = collectionView
 		avc.preferredContentSize = CGSize(width: 300, height: 500)
+		if traitCollection.horizontalSizeClass == .compact {
+			// Add done button to iOS
+			let navController = UINavigationController(rootViewController: avc)
+			avc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
+			sortOptionsTableView.reloadData()
+			present(navController, animated: true, completion: nil)
+			return
+		}
 		#else
 //		providesPresentationContextTransitionStyle = true
 //		definesPresentationContext = true
@@ -950,6 +958,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		sortOptionsTableView.reloadData()
         present(avc, animated: true, completion: nil)
     }
+
+	@objc func dismissVC() {
+		dismiss(animated: true, completion: nil)
+	}
+
     // MARK: - Filesystem Helpers
 	@IBAction func getMoreROMs(_ sender: Any) {
         let reachability = Reachability.forLocalWiFi()
