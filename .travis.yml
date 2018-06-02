@@ -29,7 +29,7 @@ env:
     - TVOS_SDK=appletvsimulator11.3
   matrix:
     - DESTINATION="platform=$IOS_PLATFORM,OS=11.3,name=iPhone X" SCHEME="$SCHEME_IOS_APP" SDK="$IOS_SDK"
-    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 1080p" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
+    - DESTINATION="platform=$TVOS_PLATFORM,OS=11.3,name=Apple TV 4K" SCHEME="$SCHEME_TVOS_APP" SDK="$TVOS_SDK"
 before_install:
   # - gem install xcpretty -N
   - gem install xcpretty-travis-formatter --no-rdoc --no-ri --no-document --quiet
