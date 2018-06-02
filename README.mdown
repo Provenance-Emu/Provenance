@@ -1,5 +1,5 @@
-# Provenance
-<p text-align="center" style="align:center" align="center">
+<p text-align="center" style="color:black; text-decoration: none; text-align:center" align="center">
+  <a target="_blank" href="https://provenance-emu.com"><h1>Provenance</h1></a>
 An iOS & tvOS Frontend for Multiple Emulators  
 </p>
 
