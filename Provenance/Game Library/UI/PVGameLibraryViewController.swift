@@ -776,9 +776,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     func loadGameFromShortcut() {
         let appDelegate = UIApplication.shared.delegate as! PVAppDelegate
 
-        if let shortcutMD5 = appDelegate.shortcutItemMD5 {
-            loadGame(fromMD5: shortcutMD5)
-            appDelegate.shortcutItemMD5 = nil
+        if let shortcutItemGame = appDelegate.shortcutItemGame {
+			load(shortcutItemGame, sender: collectionView, core:nil)
+            appDelegate.shortcutItemGame = nil
         }
     }
 
