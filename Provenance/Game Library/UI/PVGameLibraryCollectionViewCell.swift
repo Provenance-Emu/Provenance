@@ -917,9 +917,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-//	override var preferredFocusedView: UIView? {
-//		return artworkContainerView ?? imageView
-//	}
+	override var preferredFocusedView: UIView? {
+		return artworkContainerView ?? imageView
+	}
 
 	#if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {

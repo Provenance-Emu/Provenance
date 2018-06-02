@@ -80,6 +80,12 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 #if os(tvOS)
 //		self.label.alpha = 0
 		self.titleLabel.transform = .identity
+		self.timeStampLabel.transform = .identity
+		self.coreLabel.transform = .identity
+
+		self.titleLabel.layer.masksToBounds = false
+		self.timeStampLabel.layer.masksToBounds = false
+		self.coreLabel.layer.masksToBounds = false
 #endif
 	}
 
@@ -99,16 +105,16 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-//				let labelTransform = CGAffineTransform(scaleX: 1.25, y: 1.25).translatedBy(x: 0, y: self.titleLabel.bounds.height * 0.25)
-//				self.titleLabel.transform = labelTransform
-//				self.timeStampLabel.transform = labelTransform
-//				self.coreLabel.transform = labelTransform
+				let labelTransform = CGAffineTransform(translationX: 0, y: 20)//CGAffineTransform(scaleX: 1.25, y: 1.25).translatedBy(x: 0, y: self.titleLabel.bounds.height * 0.25)
+				self.titleLabel.transform = labelTransform
+				self.timeStampLabel.transform = labelTransform
+				self.coreLabel.transform = labelTransform
 
 				self.superview?.bringSubview(toFront: self)
 			} else {
-//				self.titleLabel.transform = .identity
-//				self.timeStampLabel.transform = .identity
-//				self.coreLabel.transform = .identity
+				self.titleLabel.transform = .identity
+				self.timeStampLabel.transform = .identity
+				self.coreLabel.transform = .identity
 			}
 		}) {() -> Void in }
 	}

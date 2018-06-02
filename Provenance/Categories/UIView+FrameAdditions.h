@@ -13,7 +13,7 @@
 
 @end
 
-
+#if TARGET_OS_IOS
 // UIAppearance in workaround for iOS 8
 // https://stackoverflow.com/questions/24136874/appearancewhencontainedin-in-swift
 // UIAppearance+Swift.h
@@ -24,3 +24,4 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)my_appearanceWhenContainedIn:(Class<UIAppearanceContainer>)containerClass;
 @end
 NS_ASSUME_NONNULL_END
+#endif
