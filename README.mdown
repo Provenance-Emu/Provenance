@@ -1,5 +1,5 @@
 <p align="center" style="text-align: center; align: center">
-<h1 align="center" style="text-align: center; align: center">Provenance</h1> 
+<h1 align="center"><a href="http://www.procenance-emu.com" style="color:black;text-decoration:none;">Provenance</a></h1>
 <h4 align="center" style="text-align: center; align: center">An iOS & tvOS Frontend for Multiple Emulators</h4>
 </p>
 
