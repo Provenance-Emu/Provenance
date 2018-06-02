@@ -24,8 +24,9 @@ Please tell us as much information as possible and fill out ALL of the sections 
 🚫 Reports that do not use the template will be locked immeditalty .🚫
 
 
-⚠️⚠️⚠️ START REPORT HERE ⚠️⚠️⚠️
-------------------------------------->
+⚠️⚠️⚠️ ABOVE US ALL COMMENT CODE AND WON'T BE SEEN ⚠️⚠️⚠️
+⚠️⚠️⚠️      START AND EDIT REPORT BELOW HERE       ⚠️⚠️⚠️
+------------------------------------------------------------>
 
 REPLACE_WITH_SUMMARY
 
