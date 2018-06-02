@@ -1,5 +1,7 @@
 # Provenance
 An iOS & tvOS Frontend for Multiple Emulators
+![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
+
 <div style="align:center" align="center">
 <a href="https://github.com/provenance-emu/Provenance/network">
   <img src="https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square"/>
@@ -13,7 +15,6 @@ An iOS & tvOS Frontend for Multiple Emulators
 <img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
 </div>
 
-![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
 
 
 ## Installation
