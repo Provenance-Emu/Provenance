@@ -1,6 +1,8 @@
 # Provenance
+<p text-align="center" style="align:center" align="center">
 An iOS & tvOS Frontend for Multiple Emulators
 ![Provenance](https://provenance-emu.com/github-files/wiki-images/wiki_splash.jpg?_t=1527916938)
+</p>
 
 <div style="align:center" align="center">
 <a href="https://github.com/provenance-emu/Provenance/network">
