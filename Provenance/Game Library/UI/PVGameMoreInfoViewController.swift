@@ -22,6 +22,15 @@ import AssetsLibrary
  Add UICollectionView wrapper
  */
 
+extension UIImageView {
+	public override var ignoresInvertColors: Bool {
+		get {
+			return true
+		} set {
+		}
+	}
+}
+
 // Special label that renders Countries as flag emojis when available
 class RegionLabel: LongPressLabel {
     override var text: String? {
@@ -273,6 +282,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #if os(iOS)
 		// Ignore Smart Invert
 		artworkImageView.ignoresInvertColors = true
+
+		if #available(iOS 9.0, *) {
+
+		} else {
+			// Fix iOS 8 colors
+			descriptionTextView.textColor = Theme.currentTheme.settingsCellText
+		}
         #endif
     }
 
