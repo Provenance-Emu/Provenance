@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0940"
-   version = "1.3">
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -17,7 +18,7 @@
                BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
                BlueprintName = "PVSupport"
-               ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,16 +29,30 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-               BuildableName = "libPVGB-Static.a"
-               BlueprintName = "PVGB-Static"
-               ReferencedContainer = "container:PVGB.xcodeproj">
+               BlueprintIdentifier = "B3E21D6A203211BE009939D3"
+               BuildableName = "Spotlight.appex"
+               BlueprintName = "Spotlight"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+               BuildableName = "Provenance.app"
+               BlueprintName = "Provenance"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Travis"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -46,58 +61,62 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB-Static.a"
-            BlueprintName = "PVGB-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      buildConfiguration = "Travis"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
-      <MacroExpansion>
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB-Static.a"
-            BlueprintName = "PVGB-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Travis"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      debugDocumentVersioning = "YES"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AABDFDB1ABE366000FF6AEF"
-            BuildableName = "libPVGB-Static.a"
-            BlueprintName = "PVGB-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Travis">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Travis"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>

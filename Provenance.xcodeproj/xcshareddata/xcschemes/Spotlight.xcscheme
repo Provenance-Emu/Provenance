@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "0940"
-   version = "1.3">
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -14,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96E9D1D62C3A3003F1E93"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
                BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport tvOS"
-               ReferencedContainer = "container:../PVSupport/PVSupport.xcodeproj">
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -28,10 +29,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD482FF1BA3640500FDA50A"
-               BuildableName = "libPVGBTV-Static.a"
-               BlueprintName = "PVGBTV-Static"
-               ReferencedContainer = "container:PVGB.xcodeproj">
+               BlueprintIdentifier = "B3E21D6A203211BE009939D3"
+               BuildableName = "Spotlight.appex"
+               BlueprintName = "Spotlight"
+               ReferencedContainer = "container:Provenance.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+               BuildableName = "Provenance.app"
+               BlueprintName = "Provenance"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,10 +61,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD482FF1BA3640500FDA50A"
-            BuildableName = "libPVGBTV-Static.a"
-            BlueprintName = "PVGBTV-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -57,23 +72,25 @@
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
-      <MacroExpansion>
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD482FF1BA3640500FDA50A"
-            BuildableName = "libPVGBTV-Static.a"
-            BlueprintName = "PVGBTV-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -82,16 +99,18 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      debugDocumentVersioning = "YES"
+      launchAutomaticallySubstyle = "2">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD482FF1BA3640500FDA50A"
-            BuildableName = "libPVGBTV-Static.a"
-            BlueprintName = "PVGBTV-Static"
-            ReferencedContainer = "container:PVGB.xcodeproj">
+            BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+            BuildableName = "Provenance.app"
+            BlueprintName = "Provenance"
+            ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
