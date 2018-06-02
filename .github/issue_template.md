@@ -1,15 +1,33 @@
 <!------------------------------------
-❓ NEED HELP / HAVE SUGGESTIONS? Join our Discord: https://discord.gg/4TK7PU5
+⚠️⚠️⚠️ READ THE BELOW OR PERISH ⚠️⚠️⚠️
+
+
+❓❓❓ 
+NEED HELP ?!
+HAVE SUGGESTIONS !?
+Before posting, join our Discord: https://discord.gg/4TK7PU5 
+❓❓❓
+
 --------------------------------------
-🚫 We DO NOT support unofficial 3rd-party installations (buildstore, iemulators, tweakbox, etc…).
-Delete and use official install: https://git.io/vxABg
+
+🚫 We DO NOT support unofficial 3rd-party installations (buildstore, iemulators, tweakbox, etc…). 🚫
+🚫 Delete and use official install: https://git.io/vxABg 🚫
+
 --------------------------------------
+
 ⚠️ BUG REPORTS & FEATURE REQUESTS ONLY!
 Please tell us as much information as possible and fill out ALL of the sections below!!
+
+
+🔵   If you think you have a valid bug report and have read the above 🔵  
+🔴 Fill out the template below. 🔴
+🚫 Reports that do not use the template will be locked immeditalty .🚫
+
+
+⚠️⚠️⚠️ START REPORT HERE ⚠️⚠️⚠️
 ------------------------------------->
 
-
-replaceWithSummary
+REPLACE_WITH_SUMMARY
 
 ### Expected:  <!--- What did you expect to happen? -->
 replaceWithExpectedResults
@@ -25,9 +43,6 @@ replaceWithActualResults
 
 # 
 #### NOTES  <!--- Notes, Insights or Suggestions? Write them below -->
-
-
-
 
 #
 <!--------------------------------
