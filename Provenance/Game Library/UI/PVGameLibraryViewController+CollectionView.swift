@@ -94,7 +94,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
 			let numberOfRows : CGFloat = 1.0
 			let width = viewWidth - collectionView.contentInset.left - collectionView.contentInset.right
 			let height = TVOSCellWidth * numberOfRows + PageIndicatorHeight
-			return PVGameLibraryCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
+			return PVSaveStateCollectionViewCell.cellSize(forImageSize: CGSize(width: width, height: height))
 		}
 
 		if indexPath.section == recentGamesSection || indexPath.section == favoritesSection {

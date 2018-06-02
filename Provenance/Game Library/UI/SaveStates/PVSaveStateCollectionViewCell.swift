@@ -7,6 +7,7 @@
 //
 
 import UIKit
+private let LabelHeight: CGFloat = 20.0
 
 class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
@@ -27,6 +28,12 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var titleLabel: UILabel!
 	@IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var coreLabel: UILabel!
+
+	#if os(tvOS)
+	override var canBecomeFocused: Bool {
+		return true
+	}
+	#endif
 
 	weak var saveState: PVSaveState? {
 		didSet {
@@ -53,6 +60,16 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 			setNeedsLayout()
 			layoutIfNeeded()
 		}
+	}
+
+	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
+		let size : CGSize
+		if #available(iOS 9.0, tvOS 9.0, *) {
+			size = CGSize(width: imageSize.width, height: imageSize.height + (imageSize.height * 0.15))
+		} else {
+			size = CGSize(width: imageSize.width, height: imageSize.height + LabelHeight)
+		}
+		return size
 	}
 
 	override func prepareForReuse() {
@@ -82,28 +99,16 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-				let yTrasform = self.titleLabel.bounds.height * -0.25
-				var transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-				transform = transform.translatedBy(x: 0, y: yTrasform * 2.0)
-//				self.label.alpha = 1
-				self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform + 1)
-//				self.secondLabel.alpha = 1
-				self.timeStampLabel.transform = transform
+//				let labelTransform = CGAffineTransform(scaleX: 1.25, y: 1.25).translatedBy(x: 0, y: self.titleLabel.bounds.height * 0.25)
+//				self.titleLabel.transform = labelTransform
+//				self.timeStampLabel.transform = labelTransform
+//				self.coreLabel.transform = labelTransform
 
 				self.superview?.bringSubview(toFront: self)
-
-				let labelBGColor = UIColor.black.withAlphaComponent(0.8)
-				self.titleLabel.backgroundColor = labelBGColor
-				self.timeStampLabel.backgroundColor = labelBGColor
 			} else {
-//				self.label.alpha = 0
-				self.titleLabel.transform = .identity
-//				self.secondLabel.alpha = 0
-				self.timeStampLabel.transform = .identity
-
-				let labelBGColor = UIColor.clear
-				self.titleLabel.backgroundColor = labelBGColor
-				self.timeStampLabel.backgroundColor = labelBGColor
+//				self.titleLabel.transform = .identity
+//				self.timeStampLabel.transform = .identity
+//				self.coreLabel.transform = .identity
 			}
 		}) {() -> Void in }
 	}
