@@ -873,7 +873,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		if !PVSettingsModel.shared.showGameTitles, let titleLabelHeightConstraint = titleLabelHeightConstraint {
 			titleLabelHeightConstraint.constant = contentView.bounds.height * titleLabelHeightConstraint.multiplier * -1
 		} else {
-			titleLabelHeightConstraint?.constant = 0.0
+//			titleLabelHeightConstraint?.constant = 0.0
 		}
 		#endif
 	}
@@ -925,22 +925,22 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		super.didUpdateFocus(in: context, with: coordinator)
 
-		struct wrapper {
-			static let s_atvMotionEffect :UIMotionEffectGroup = {
-				let verticalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.y", type: .tiltAlongVerticalAxis)
-				verticalMotionEffect.minimumRelativeValue = -10
-				verticalMotionEffect.maximumRelativeValue = 10
-
-				let horizontalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.x", type: .tiltAlongHorizontalAxis)
-				horizontalMotionEffect.minimumRelativeValue = -10
-				horizontalMotionEffect.maximumRelativeValue = 10
-
-				let motionEffectGroup = UIMotionEffectGroup()
-				motionEffectGroup.motionEffects = [horizontalMotionEffect, verticalMotionEffect]
-				return motionEffectGroup
-			}()
-		}
-
+//		struct wrapper {
+//			static let s_atvMotionEffect :UIMotionEffectGroup = {
+//				let verticalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.y", type: .tiltAlongVerticalAxis)
+//				verticalMotionEffect.minimumRelativeValue = -10
+//				verticalMotionEffect.maximumRelativeValue = 10
+//
+//				let horizontalMotionEffect = UIInterpolatingMotionEffect(keyPath: "center.x", type: .tiltAlongHorizontalAxis)
+//				horizontalMotionEffect.minimumRelativeValue = -10
+//				horizontalMotionEffect.maximumRelativeValue = 10
+//
+//				let motionEffectGroup = UIMotionEffectGroup()
+//				motionEffectGroup.motionEffects = [horizontalMotionEffect, verticalMotionEffect]
+//				return motionEffectGroup
+//			}()
+//		}
+//
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
@@ -951,12 +951,12 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 					self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform)
 					self.titleLabel.alpha = 1.0
 				}
-				self.artworkContainerView!.transform = transform
-
-				self.artworkContainerView?.addMotionEffect(wrapper.s_atvMotionEffect)
+//				self.artworkContainerView!.transform = transform
+//
+//				self.artworkContainerView?.addMotionEffect(wrapper.s_atvMotionEffect)
 			} else {
-				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
-				self.artworkContainerView!.transform = .identity
+//				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
+//				self.artworkContainerView!.transform = .identity
 				self.titleLabel.transform = .identity
 				self.titleLabel.alpha = 0.0
 			}
