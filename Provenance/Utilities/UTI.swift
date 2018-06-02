@@ -305,7 +305,7 @@ public class UTI: RawRepresentable, Equatable {
 		return UTTypeConformsTo(self.rawCFValue, otherUTI.rawCFValue) as Bool
 	}
 
-	public static func ==(lhs: UTI, rhs: UTI) -> Bool {
+	public static func == (lhs: UTI, rhs: UTI) -> Bool {
 		return UTTypeEqual(lhs.rawCFValue, rhs.rawCFValue) as Bool
 	}
 

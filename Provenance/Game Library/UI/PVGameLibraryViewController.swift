@@ -451,10 +451,16 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			self.sortOrder = sortOrder
 			self.gameLibraryGameController = gameLibraryViewController
 			self.storedQuery = generateQuery()
-			self.notificationToken = generateToken()
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+				self.notificationToken = self.generateToken()
+			}
 		}
 
-		var notificationToken : NotificationToken?
+		var notificationToken : NotificationToken? {
+			didSet {
+				oldValue?.invalidate()
+			}
+		}
 
 		private var storedQuery : Results<PVGame>?
 		var query : Results<PVGame> {
@@ -551,6 +557,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
     func addSectionToken(forSystem system: PVSystem) {
 		let newSystemSection = SystemSection(system: system, gameLibraryViewController: self, sortOrder: currentSort)
+		if let existingToken = systemSectionsTokens[newSystemSection.id] {
+			existingToken.notificationToken?.invalidate()
+		}
 		systemSectionsTokens[newSystemSection.id] = newSystemSection
     }
 
@@ -569,7 +578,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     }
 
     func registerForChange() {
+		systemsToken?.invalidate()
         systemsToken = systems!.observe { [unowned self] (changes: RealmCollectionChange) in
+//			guard self.presentedViewController == nil && self.isViewLoaded else {
+//				self.mustRefreshDataSource = true
+//				return
+//			}
+
             switch changes {
             case .initial(let result):
                 result.forEach { system in
@@ -578,7 +593,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                 // Results are now populated and can be accessed without blocking the UI
                 self.setUpGameLibrary()
-            case .update(_, let deletions, let insertions, _):
+            case .update(let systems, let deletions, let insertions, _):
 				if self.isInSearch {
 					return
 				}
@@ -590,11 +605,18 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 
                     let delectIndexes = deletions.map { $0 + self.systemsSectionOffset }
                     collectionView.deleteSections(IndexSet(delectIndexes))
+
+					deletions.forEach {
+						guard let systems = self.systems else {
+							return
+						}
+						let identifier = systems[$0].identifier
+						self.systemSectionsTokens.removeValue(forKey: identifier)
+					}
                     // Not needed since we have watchers per section
                     // collectionView.reloadSection(modifications.map{ return IndexPath(row: 0, section: $0 + systemsSectionOffset) })
-
                 }, completion: { (success) in
-
+					systems.filter({self.systemSectionsTokens[$0.identifier] == nil}).forEach { self.addSectionToken(forSystem: $0) }
                 })
             case .error(let error):
                 // An error occurred while opening the Realm file on the background worker thread
@@ -602,7 +624,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
 
+		savesStatesToken?.invalidate()
 		savesStatesToken = saveStates!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
 			switch changes {
 			case .initial(let result):
 				if !result.isEmpty {
@@ -653,7 +681,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 		}
 
+		recentGamesToken?.invalidate()
         recentGamesToken = recentGames!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -696,7 +730,13 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             }
         }
 
+		favoritesToken?.invalidate()
         favoritesToken = favoriteGames!.observe { [unowned self] (changes: RealmCollectionChange) in
+			guard self.presentedViewController == nil && self.isViewLoaded else {
+				self.mustRefreshDataSource = true
+				return
+			}
+
             switch changes {
             case .initial(let result):
                 if !result.isEmpty {
@@ -814,6 +854,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             cell?.updateFocusIfNeeded()
 #endif
         }
+
+		if (self.mustRefreshDataSource) {
+			fetchGames()
+			collectionView?.reloadData()
+		}
     }
 
 	var transitioningToSize: CGSize?
