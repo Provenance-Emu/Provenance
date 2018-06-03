@@ -35,16 +35,18 @@
                                         <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
                                         <color key="backgroundColor" red="0.59214952256944442" green="0.18615206510892879" blue="0.17231826303590558" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
-                                    <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution-icon" translatesAutoresizingMaskIntoConstraints="NO" id="kJf-Ta-dgV">
+                                    <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution-icon" translatesAutoresizingMaskIntoConstraints="NO" id="kJf-Ta-dgV" userLabel="Warning Sign Label">
                                         <rect key="frame" x="107" y="81" width="42" height="36"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="7Ug-8C-aMc"/>
-                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="MC7-uM-uDB"/>
-                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerY" secondItem="kJf-Ta-dgV" secondAttribute="centerY" id="pgZ-QR-0Wi"/>
-                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerX" secondItem="kJf-Ta-dgV" secondAttribute="centerX" id="qPc-WO-AZB"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="4XD-76-KcB"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="B1r-0m-ngR"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="Iow-hk-O4K"/>
+                                    <constraint firstAttribute="bottom" secondItem="mmT-El-XIM" secondAttribute="bottom" id="e6G-OW-oAp"/>
+                                    <constraint firstAttribute="trailing" secondItem="mmT-El-XIM" secondAttribute="trailing" id="tSN-Ho-gbn"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="leading" secondItem="3SN-fo-fqC" secondAttribute="leading" id="vVK-5A-cwc"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
@@ -91,20 +93,26 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="2Qz-ng-6p4"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="RKb-WS-gGA" secondAttribute="height" id="Bf4-c3-R0M"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="top" secondItem="grq-R5-nkq" secondAttribute="top" id="0ce-sA-8bL"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="28c-P8-1G0"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="5j5-Lp-XBT"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="leading" secondItem="RKb-WS-gGA" secondAttribute="leading" id="Dz1-Ij-6IK"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="RKb-WS-gGA" secondAttribute="width" id="JwY-AE-XcP"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="leading" secondItem="grq-R5-nkq" secondAttribute="leading" id="FzP-a1-17L"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="L9d-CC-ALt"/>
-                            <constraint firstItem="mmT-El-XIM" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="MXT-yr-CBC"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="NdZ-bz-M7c"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="Omr-GR-SIc"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="Pgl-EB-3VG"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="trailing" secondItem="grq-R5-nkq" secondAttribute="trailing" id="Rix-uL-uSX"/>
                             <constraint firstItem="mwp-JA-v4w" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="YvL-tw-NYl"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="fIo-ir-rFH"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="iSk-rQ-ez7"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="fLB-wv-pUC"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="bottom" secondItem="grq-R5-nkq" secondAttribute="bottom" id="fPY-Kw-8C8"/>
                             <constraint firstItem="mwp-JA-v4w" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kJ6-P7-xAu"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="kJw-hn-XgC"/>
                             <constraint firstAttribute="trailing" secondItem="pdf-KX-U3g" secondAttribute="trailing" id="kPq-Ly-e8U"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="tcd-RI-wfD"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="tfB-fr-yJV"/>
                             <constraint firstItem="pdf-KX-U3g" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="wTB-ZR-buR"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="wnP-qD-f99"/>
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">

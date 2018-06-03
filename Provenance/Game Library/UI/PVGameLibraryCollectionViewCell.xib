@@ -50,7 +50,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="164" height="109"/>
                                 <subviews>
                                     <view alpha="0.55000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mmT-El-XIM">
-                                        <rect key="frame" x="0.0" y="1" width="164" height="109"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="164" height="109"/>
                                         <color key="backgroundColor" red="0.59214952256944442" green="0.18615206510892879" blue="0.17231826303590558" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </view>
                                     <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution-icon" translatesAutoresizingMaskIntoConstraints="NO" id="kJf-Ta-dgV" userLabel="Warning Sign Label">
@@ -59,10 +59,12 @@
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerX" secondItem="kJf-Ta-dgV" secondAttribute="centerX" id="WS0-lg-cOR"/>
-                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerY" secondItem="kJf-Ta-dgV" secondAttribute="centerY" id="XKe-m6-Vil"/>
-                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="hoa-h2-Ep6"/>
-                                    <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="qrt-dk-oei"/>
+                                    <constraint firstAttribute="trailing" secondItem="mmT-El-XIM" secondAttribute="trailing" id="1YA-48-kb9"/>
+                                    <constraint firstAttribute="bottom" secondItem="mmT-El-XIM" secondAttribute="bottom" id="4o3-wD-JK1"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="Hqm-Dh-QVH"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="leading" secondItem="3SN-fo-fqC" secondAttribute="leading" id="eKi-pq-fdD"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="pkG-In-rJO"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="xSQ-XZ-tvX"/>
                                 </constraints>
                             </view>
                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
@@ -109,20 +111,26 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="RKb-WS-gGA" secondAttribute="height" id="16E-Vm-i7c"/>
-                            <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="5Gc-vU-aqc"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="RKb-WS-gGA" secondAttribute="width" id="CRJ-B9-Nqf"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="7fe-Pm-H4u"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="bottom" secondItem="grq-R5-nkq" secondAttribute="bottom" id="9sF-1Y-g1E"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="leading" secondItem="RKb-WS-gGA" secondAttribute="leading" id="Dz1-Ij-6IK"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="IcW-XF-CgL"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="L9d-CC-ALt"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="MmB-T2-o2R"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="NdZ-bz-M7c"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="leading" secondItem="grq-R5-nkq" secondAttribute="leading" id="Pgj-3B-0Fs"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="leading" secondItem="grq-R5-nkq" secondAttribute="leading" id="NuN-ek-9wz"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="OJ4-Wp-mHM"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="U41-xP-S1B"/>
                             <constraint firstItem="mwp-JA-v4w" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="YvL-tw-NYl"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="top" secondItem="grq-R5-nkq" secondAttribute="top" id="ZXW-Bg-1nX"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="trailing" secondItem="grq-R5-nkq" secondAttribute="trailing" id="bbL-VR-RWE"/>
                             <constraint firstItem="pdf-KX-U3g" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="eqW-Eg-3eO"/>
                             <constraint firstItem="grq-R5-nkq" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="fIo-ir-rFH"/>
-                            <constraint firstItem="mmT-El-XIM" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="i0f-HZ-03z"/>
                             <constraint firstItem="pdf-KX-U3g" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="iDr-pp-Vh8"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="iyR-CS-sxz"/>
                             <constraint firstItem="mwp-JA-v4w" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kJ6-P7-xAu"/>
-                            <constraint firstItem="3SN-fo-fqC" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="rM6-4i-cQ8"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="qGZ-Cg-xE4"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="yIa-TI-4YI"/>
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
@@ -163,9 +171,7 @@
                 <outlet property="discCountLabel" destination="fFj-aX-6m6" id="lgA-FG-MaR"/>
                 <outlet property="discCountTrailingConstraint" destination="kJ6-P7-xAu" id="bYT-Lm-kML"/>
                 <outlet property="imageView" destination="grq-R5-nkq" id="i2d-Kv-OJ7"/>
-                <outlet property="missingFileHeightContraint" destination="16E-Vm-i7c" id="MGb-9l-0NS"/>
                 <outlet property="missingFileView" destination="3SN-fo-fqC" id="bud-9t-1uZ"/>
-                <outlet property="missingFileWidthContraint" destination="CRJ-B9-Nqf" id="J0F-aS-XHx"/>
                 <outlet property="missingRedSquareView" destination="mmT-El-XIM" id="ujB-2t-nbC"/>
                 <outlet property="titleLabel" destination="98d-iv-EkE" id="CiC-SG-e4O"/>
                 <outlet property="titleLabelHeightConstraint" destination="dr3-Br-VIF" id="Yxj-qN-rW3"/>
