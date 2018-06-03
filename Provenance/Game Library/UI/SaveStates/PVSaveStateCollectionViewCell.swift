@@ -110,7 +110,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
         self.imageView.layer.borderWidth = 0.0
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-                let yOffset = self.imageView.frame.height * 0.14
+                let yOffset = self.imageView.frame.maxY - self.labelContainer.frame.minY + 48
 				let labelTransform = CGAffineTransform(scaleX: 1.2, y: 1.2).translatedBy(x: 0, y: yOffset)
                 self.labelContainer.transform = labelTransform
                 self.sizeToFit()

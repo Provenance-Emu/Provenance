@@ -556,7 +556,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 						} else {
 							var imageHeight: CGFloat = self.frame.size.height
 							if PVSettingsModel.shared.showGameTitles {
-								imageHeight -= 44
+								imageHeight -= LabelHeight
 							}
 							self.imageView.frame = CGRect(x: 0, y: 0, width: self.frame.size.width, height: imageHeight)
 						}
@@ -731,7 +731,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	private func oldViewInit() {
 		var imageHeight: CGFloat = frame.size.height
 		if PVSettingsModel.shared.showGameTitles {
-			imageHeight -= 44
+			imageHeight -= LabelHeight
 		}
 
 		let imageView = UIImageView()
@@ -865,7 +865,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			self.artworkContainerViewHeightConstraint?.constant = height
 		}
         // Fixes the box art clipping…
-        // self.sizeToFit()
+        self.sizeToFit()
         
         contentView.bringSubview(toFront: titleLabel!)
 #else
@@ -874,7 +874,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		} else {
 			var imageHeight: CGFloat = frame.size.height
 			if PVSettingsModel.shared.showGameTitles {
-				imageHeight -= 44
+				imageHeight -= LabelHeight
 			}
 			imageView.frame.size.height = imageHeight
 		}
@@ -958,13 +958,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
 				self.superview?.bringSubview(toFront: self)
-				if PVSettingsModel.shared.showGameTitles {
-                    var yOffset = self.imageView.frame.height * 0.18
-                    if self.imageView.frame.height > self.imageView.frame.width {
-                        yOffset = self.imageView.frame.height * 0.14
-                    }
-					self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
-					self.titleLabel.alpha = 1.0
+                if PVSettingsModel.shared.showGameTitles {
+                    let yOffset = self.imageView.frame.maxY - self.titleLabel.frame.minY + 48
+                    self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
+                    self.titleLabel.alpha = 1.0
 				}
 //				self.artworkContainerView!.transform = transform
 //

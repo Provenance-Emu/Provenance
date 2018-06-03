@@ -338,12 +338,12 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="YeI-bH-0RW">
                         <leftBarButtonItems>
-                            <barButtonItem image="sort" width="44" id="d9C-DJ-Fuv">
+                            <barButtonItem image="sort" id="d9C-DJ-Fuv">
                                 <connections>
                                     <action selector="sortButtonTapped:" destination="In9-6L-5FX" id="Ncy-G2-J4k"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem width="44" style="plain" systemItem="add" id="qjY-qw-buq">
+                            <barButtonItem style="plain" systemItem="add" id="qjY-qw-buq">
                                 <connections>
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
@@ -369,11 +369,11 @@
                             <rect key="frame" x="0.0" y="80" width="28" height="66"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5lv-A6-HuR" id="y0R-gN-gry">
-                                <rect key="frame" x="-45" y="0.0" width="45" height="66"/>
+                                <rect key="frame" x="-33" y="0.0" width="33" height="65"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="dFB-G1-4da">
-                                        <rect key="frame" x="-52" y="0.0" width="72" height="66"/>
+                                        <rect key="frame" x="-40" y="0.0" width="60" height="65"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="38"/>
                                         <nil key="textColor"/>
