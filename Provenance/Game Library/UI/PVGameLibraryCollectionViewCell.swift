@@ -388,8 +388,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			titleLabel.alpha = 0
 			titleLabel.textColor = UIColor.white
 			titleLabel.layer.masksToBounds = false
-//			titleLabel.shadowColor = UIColor.black.withAlphaComponent(0.8)
-//			titleLabel.shadowOffset = CGSize(width: -1, height: 1)
 			if #available(tvOS 10.0, *) {
 				titleLabel.adjustsFontForContentSizeCategory = true
 			}
@@ -866,13 +864,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			let height: CGFloat = self.contentView.bounds.height
 			self.artworkContainerViewHeightConstraint?.constant = height
 		}
-
-//        let titleTransform: CGAffineTransform = titleLabel.transform
-//        if isFocused {
-//            titleLabel.transform = .identity
-//        }
+        // Fixes the box art clipping…
+        // self.sizeToFit()
+        
         contentView.bringSubview(toFront: titleLabel!)
-//        titleLabel.transform = titleTransform
 #else
 		if #available(iOS 9.0, tvOS 9.0, *) {
 			self.contentView.frame = self.bounds
@@ -962,11 +957,13 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
-
 				self.superview?.bringSubview(toFront: self)
 				if PVSettingsModel.shared.showGameTitles {
-					let yTrasform : CGFloat = 55.0
-					self.titleLabel.transform = transform.translatedBy(x: 0, y: yTrasform)
+                    var yOffset = self.imageView.frame.height * 0.18
+                    if self.imageView.frame.height > self.imageView.frame.width {
+                        yOffset = self.imageView.frame.height * 0.14
+                    }
+					self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
 					self.titleLabel.alpha = 1.0
 				}
 //				self.artworkContainerView!.transform = transform

@@ -28,12 +28,13 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var titleLabel: UILabel!
 	@IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var coreLabel: UILabel!
-
-	#if os(tvOS)
+    @IBOutlet weak var labelContainer: UIView!
+    
+#if os(tvOS)
 	override var canBecomeFocused: Bool {
 		return true
 	}
-	#endif
+#endif
 
 	weak var saveState: PVSaveState? {
 		didSet {
@@ -54,7 +55,11 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 
 				titleLabel.text = saveState.game.title
 				timeStampLabel.text = timeText
+//#if os(tvOS)
+//                coreLabel.text = coreOrSystem
+//#else
                 coreLabel.text = system?.shortName
+//#endif
 			}
 
 			setNeedsLayout()
@@ -102,19 +107,16 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 #if os(tvOS)
 	override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
 		super.didUpdateFocus(in: context, with: coordinator)
-
+        self.imageView.layer.borderWidth = 0.0
 		coordinator.addCoordinatedAnimations({() -> Void in
 			if self.isFocused {
-				let labelTransform = CGAffineTransform(translationX: 0, y: 20)//CGAffineTransform(scaleX: 1.25, y: 1.25).translatedBy(x: 0, y: self.titleLabel.bounds.height * 0.25)
-				self.titleLabel.transform = labelTransform
-				self.timeStampLabel.transform = labelTransform
-				self.coreLabel.transform = labelTransform
-
+                let yOffset = self.imageView.frame.height * 0.14
+				let labelTransform = CGAffineTransform(scaleX: 1.2, y: 1.2).translatedBy(x: 0, y: yOffset)
+                self.labelContainer.transform = labelTransform
+                self.sizeToFit()
 				self.superview?.bringSubview(toFront: self)
 			} else {
-				self.titleLabel.transform = .identity
-				self.timeStampLabel.transform = .identity
-				self.coreLabel.transform = .identity
+                self.labelContainer.transform = .identity
 			}
 		}) {() -> Void in }
 	}
