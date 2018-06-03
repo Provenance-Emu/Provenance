@@ -83,14 +83,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 		imageView.image = nil
 		titleLabel.text = nil
 #if os(tvOS)
-//		self.label.alpha = 0
-		self.titleLabel.transform = .identity
-		self.timeStampLabel.transform = .identity
-		self.coreLabel.transform = .identity
-
-		self.titleLabel.layer.masksToBounds = false
-		self.timeStampLabel.layer.masksToBounds = false
-		self.coreLabel.layer.masksToBounds = false
+        self.labelContainer.transform = .identity
 #endif
 	}
 

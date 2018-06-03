@@ -193,6 +193,14 @@ extension UIImageView {
 	}
 }
 
+func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString
+{
+    let result = NSMutableAttributedString()
+    result.append(left)
+    result.append(right)
+    return NSAttributedString(attributedString: result)
+}
+
 protocol GameLibraryCollectionViewDelegate : class {
 	func promptToDeleteGame(_ game : PVGame, completion: @escaping ((_ deleted: Bool) -> Swift.Void))
 }
@@ -266,12 +274,12 @@ class CornerBadgeView : UIView {
 		var triangleBounds = createTriangle().bounds
 		switch fillCorner {
 		case .topRight:
-			triangleBounds = triangleBounds.offsetBy(dx: triangleBounds.size.width * 0.35, dy: triangleBounds.size.width * -0.15)
+			triangleBounds = triangleBounds.offsetBy(dx: triangleBounds.size.width * 0.4, dy: triangleBounds.size.height * -0.08)
 		default:
 			break
 		}
 
-		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.7), .foregroundColor: textColor ]
+		let attributes : [NSAttributedStringKey:Any] = [ .font: UIFont.systemFont(ofSize: triangleBounds.height*0.64), .foregroundColor: UIColor.init(white: 1.0, alpha: 0.6) ]
 		gString.draw(in: triangleBounds, withAttributes: attributes)
 	}
 
@@ -393,6 +401,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			}
 			titleLabel.adjustsFontSizeToFitWidth = true
 
+            // set to attributed font…
+            titleLabel.font = UIFont.systemFont(ofSize: titleLabel.font.pointSize, weight: UIFont.Weight.bold)
+            
 			#else // iOS
 
 			if #available(iOS 9.0, tvOS 9.0, *) {
@@ -446,14 +457,15 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	}
 	@IBOutlet weak var topRightBadgeTopConstraint: NSLayoutConstraint?
 	@IBOutlet weak var topRightBadgeTrailingConstraint: NSLayoutConstraint?
-	@IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
+//    @IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
 	@IBOutlet weak var discCountTrailingConstraint: NSLayoutConstraint?
+    @IBOutlet weak var discCountBottomConstraint: NSLayoutConstraint?
 	@IBOutlet weak var missingFileWidthContraint: NSLayoutConstraint?
 	@IBOutlet weak var missingFileHeightContraint: NSLayoutConstraint?
 	@IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint?
 	@IBOutlet weak var deleteActionView: UIView?
-	@IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
-
+//    @IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
+    
 	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
 		let size : CGSize
 		if #available(iOS 9.0, tvOS 9.0, *) {
@@ -571,6 +583,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		self.missingFileView?.isHidden = !game.file.missing
 
 		self.setupBadges()
+        self.setupDots()
 
         setNeedsLayout()
         if #available(iOS 9.0, tvOS 9.0, *) {
@@ -578,25 +591,26 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
     }
 
+
+    
 	private func setupTopRightBadge() {
 		guard let game = game, PVSettingsModel.shared.showGameBadges, let topRightCornerBadgeView = topRightCornerBadgeView else {
 			self.topRightCornerBadgeView?.isHidden = true
 			return
 		}
-
 		let hasPlayed = game.playCount > 0
 		let favorite = game.isFavorite
-		topRightCornerBadgeView.glyph = favorite ? "★" : ""
-
+		topRightCornerBadgeView.glyph = favorite ? "♥︎" : ""
+        
 		if favorite {
-			#if os(iOS)
-			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.65)
-			#else
-			topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.65)
-			#endif
+			topRightCornerBadgeView.fillColor = UIColor.red.withAlphaComponent(0.85)
 		} else if !hasPlayed {
-			topRightCornerBadgeView.fillColor = UIColor(hex: "FF9300")!.withAlphaComponent(0.65)
-		}
+#if os(iOS)
+			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.85)
+#else
+            topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.85)
+#endif
+        }
 
 		topRightCornerBadgeView.isHidden = hasPlayed && !favorite
 	}
@@ -607,8 +621,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			return
 		}
 
-		let multieDisc = game.isCD && game.discCount > 1
-		discCountContainerView.isHidden = !multieDisc
+		let multiDisc = game.isCD && game.discCount > 1
+		discCountContainerView.isHidden = !multiDisc
 		discCountLabel.text = "\(game.discCount)"
 		discCountLabel.textColor = UIColor.white
 	}
@@ -617,6 +631,37 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		setupTopRightBadge()
 		setupDiscCountBadge()
 	}
+    
+    private func setupDots() {
+        guard let game = game else {
+            return
+        }
+        
+        #if os(iOS)
+        if PVSettingsModel.shared.showGameBadges {
+            return
+        }
+        #endif
+        
+        let hasPlayed = game.playCount > 0
+        let favorite = game.isFavorite
+        
+        var bullet = NSAttributedString(string: "")
+        let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.red ]
+        let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.blue ]
+        let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
+        let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
+        let attributedTitle = NSMutableAttributedString(string: game.title)
+        
+        if favorite {
+            bullet = bulletFavorite
+        } else if !hasPlayed {
+            bullet = bulletUnplayed
+        }
+        
+        self.titleLabel.attributedText = bullet + attributedTitle
+
+    }
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -895,14 +940,16 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		let imageContentFrame = imageView.contentClippingRect
 
 		let topConstant = imageContentFrame.origin.y
+        let bottomConstant = imageContentFrame.origin.y * -1.0
 		let trailingConstant = imageContentFrame.origin.x * -1.0
 //		print("system: \(game?.system.shortName ?? "nil") : trailingConstant:\(trailingConstant) topConstant:\(topConstant)")
 
-		topRightBadgeWidthConstraint?.constant = imageContentFrame.size.longestLength * 0.25
+//        topRightBadgeWidthConstraint?.constant = imageContentFrame.size.longestLength * 0.25
 		topRightBadgeTrailingConstraint?.constant = trailingConstant
 		topRightBadgeTopConstraint?.constant = topConstant
 
 		discCountTrailingConstraint?.constant = trailingConstant
+        discCountBottomConstraint?.constant = bottomConstant
 
 		missingFileWidthContraint?.constant = imageContentFrame.width
 		missingFileHeightContraint?.constant = imageContentFrame.height
@@ -958,19 +1005,29 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			if self.isFocused {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
 				self.superview?.bringSubview(toFront: self)
+                if PVSettingsModel.shared.showGameBadges {
+                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform }
+                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform }
+                    if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
+                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 0.0 }
+                }
                 if PVSettingsModel.shared.showGameTitles {
                     let yOffset = self.imageView.frame.maxY - self.titleLabel.frame.minY + 48
                     self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                     self.titleLabel.alpha = 1.0
 				}
-//				self.artworkContainerView!.transform = transform
-//
 //				self.artworkContainerView?.addMotionEffect(wrapper.s_atvMotionEffect)
 			} else {
 //				self.artworkContainerView?.removeMotionEffect(wrapper.s_atvMotionEffect)
-//				self.artworkContainerView!.transform = .identity
 				self.titleLabel.transform = .identity
 				self.titleLabel.alpha = 0.0
+                if PVSettingsModel.shared.showGameBadges {
+                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 1.0 }
+                    if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 1.0 }
+                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = .identity }
+                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = .identity }
+                }
+
 			}
 		}) {() -> Void in }
 	}
