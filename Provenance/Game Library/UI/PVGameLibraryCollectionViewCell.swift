@@ -562,7 +562,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 						#if os(tvOS)
 						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
 						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
-						self.artworkContainerViewHeightConstraint?.constant = height
+//                        self.artworkContainerViewHeightConstraint?.constant = height
 						#else
 						if #available(iOS 9.0, tvOS 9.0, *) {
 						} else {
@@ -904,10 +904,10 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 #if os(tvOS)
 		if let game = game {
 			let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
-			self.artworkContainerViewHeightConstraint?.constant = height
+//            self.artworkContainerViewHeightConstraint?.constant = height
 		} else {
 			let height: CGFloat = self.contentView.bounds.height
-			self.artworkContainerViewHeightConstraint?.constant = height
+//            self.artworkContainerViewHeightConstraint?.constant = height
 		}
         // Fixes the box art clipping…
         self.sizeToFit()
