@@ -400,10 +400,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 				titleLabel.adjustsFontForContentSizeCategory = true
 			}
 			titleLabel.adjustsFontSizeToFitWidth = true
-
-            // set to attributed font…
-            titleLabel.font = UIFont.systemFont(ofSize: titleLabel.font.pointSize, weight: UIFont.Weight.bold)
-            
+       
 			#else // iOS
 
 			if #available(iOS 9.0, tvOS 9.0, *) {
@@ -902,13 +899,13 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 		titleLabel.isHidden = !PVSettingsModel.shared.showGameTitles
 #if os(tvOS)
-		if let game = game {
-			let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
+//        if let game = game {
+//            let height: CGFloat = self.contentView.bounds.width / game.boxartAspectRatio.rawValue
 //            self.artworkContainerViewHeightConstraint?.constant = height
-		} else {
-			let height: CGFloat = self.contentView.bounds.height
+//        } else {
+//            let height: CGFloat = self.contentView.bounds.height
 //            self.artworkContainerViewHeightConstraint?.constant = height
-		}
+//        }
         // Fixes the box art clipping…
         self.sizeToFit()
         
