@@ -1003,8 +1003,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
 				self.superview?.bringSubview(toFront: self)
                 if PVSettingsModel.shared.showGameBadges {
-                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform }
-                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform }
+                    let xySlideOffset = CGFloat(42)
+                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
+                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset)  }
                     if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
                     if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 0.0 }
                 }
