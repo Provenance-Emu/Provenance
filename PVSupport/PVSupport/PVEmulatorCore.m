@@ -474,8 +474,4 @@ NSString *const PVEmulatorCoreErrorDomain = @"com.provenance-emu.EmulatorCore.Er
 	return YES;
 }
 
--(BOOL)supportsSaveStates {
-	return YES;
-}
-
 @end
