@@ -52,6 +52,7 @@
 //#import "mupen64plus-core/src/main/main.h"
 #import <dispatch/dispatch.h>
 #import <PVSupport/PVSupport.h>
+#import <PVSupport/PVLogging.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>

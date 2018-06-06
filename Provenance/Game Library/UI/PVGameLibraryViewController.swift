@@ -965,7 +965,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		}
 		#else
 		sortOptionsTableView.reloadData()
-		present(avc, animated: true, completion: nil)
+		present(sortOptionsTableViewController, animated: true, completion: nil)
         #endif
     }
 
