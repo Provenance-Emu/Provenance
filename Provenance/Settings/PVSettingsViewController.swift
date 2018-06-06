@@ -23,9 +23,13 @@ import UIKit
     }
 }
 
-class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate {
+class PVSettingsViewController: UITableViewController, SFSafariViewControllerDelegate, WebServerActivatorController {
     @IBOutlet weak var autoSaveSwitch: UISwitch!
     @IBOutlet weak var autoLoadSwitch: UISwitch!
+    @IBOutlet weak var timedAutoSavesSwitch: UISwitch!
+    @IBOutlet weak var timedAutoSavesCell: UITableViewCell!
+    @IBOutlet weak var askToLoadSwitch: UISwitch!
+    @IBOutlet weak var askToLoadSavesCell: UITableViewCell!
     @IBOutlet weak var autoLockSwitch: UISwitch!
     @IBOutlet weak var vibrateSwitch: UISwitch!
     @IBOutlet weak var imageSmoothing: UISwitch!
@@ -39,17 +43,17 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet weak var volumeValueLabel: UILabel!
     @IBOutlet weak var fpsCountSwitch: UISwitch!
-    @IBOutlet weak var importLabel: UILabel!
     @IBOutlet weak var tintSwitch: UISwitch!
     @IBOutlet weak var startSelectSwitch: UISwitch!
-    
-
+    @IBOutlet weak var volumeHUDSwitch: UISwitch!
+    @IBOutlet weak var allRightShouldersSwitch: UISwitch!
     @IBOutlet weak var themeValueLabel: UILabel!
 
     var gameImporter: PVGameImporter?
 
     @IBAction func wikiLinkButton(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Importing-ROMs"))!)
+		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/Formatting-ROMs")!)
+		navigationController?.pushViewController(webVC, animated: true)
     }
 
     @IBAction func done(_ sender: Any) {
@@ -69,7 +73,9 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         title = "Settings"
         let settings = PVSettingsModel.shared
         autoSaveSwitch.isOn = settings.autoSave
-        autoLoadSwitch.isOn = settings.autoLoadAutoSaves
+        timedAutoSavesSwitch.isOn = settings.timedAutoSaves
+        autoLoadSwitch.isOn = settings.autoLoadSaves
+        askToLoadSwitch.isOn = settings.askToAutoLoad
         opacitySlider.value = Float(settings.controllerOpacity)
         autoLockSwitch.isOn = settings.disableAutoLock
         vibrateSwitch.isOn = settings.buttonVibration
@@ -78,6 +84,8 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         fpsCountSwitch.isOn = settings.showFPSCount
         tintSwitch.isOn = settings.buttonTints
         startSelectSwitch.isOn = settings.startSelectAlwaysOn
+        allRightShouldersSwitch.isOn = settings.allRightShoulders
+        volumeHUDSwitch.isOn = settings.volumeHUD
         volumeSlider.value = settings.volume
         volumeValueLabel.text = String(format: "%.0f%%", volumeSlider.value * 100)
         opacityValueLabel.text = String(format: "%.0f%%", opacitySlider.value * 100)
@@ -130,8 +138,24 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         // placed for animation use later…
     }
 
+    override func viewDidLayoutSubviews() {
+        if PVSettingsModel.sharedInstance().autoLoadSaves == true {
+            disableAskToLoadSavesCell()
+            disableAutoLoadSaves()
+        } else {
+            enableAskToLoadSavesCell()
+        }
+        if PVSettingsModel.sharedInstance().autoSave == false {
+            disableTimedAutoSaveCell()
+            disableTimedAutoSaves()
+        } else {
+            enableTimedAutoSavesCell()
+        }
+    }
+
     @IBAction func help(_ sender: Any) {
-        UIApplication.shared.openURL((URL(string: "https://github.com/Provenance-Emu/Provenance/wiki"))!)
+		let webVC = WebkitViewController(url: URL(string: "https://github.com/Provenance-Emu/Provenance/wiki")!)
+		navigationController?.pushViewController(webVC, animated: true)
     }
 
     @IBAction func toggleFPSCount(_ sender: Any) {
@@ -140,10 +164,38 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
 
     @IBAction func toggleAutoSave(_ sender: Any) {
         PVSettingsModel.shared.autoSave = autoSaveSwitch.isOn
+        if autoSaveSwitch.isOn {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.enableTimedAutoSavesCell()
+            }, completion: nil)
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.disableTimedAutoSaveCell()
+            }, completion: nil)
+            disableTimedAutoSaves()
+        }
     }
 
-    @IBAction func toggleAutoLoadAutoSaves(_ sender: Any) {
-        PVSettingsModel.shared.autoLoadAutoSaves = autoLoadSwitch.isOn
+    @IBAction func toggleAutoLoadSaves(_ sender: Any) {
+        PVSettingsModel.shared.autoLoadSaves = autoLoadSwitch.isOn
+        if autoLoadSwitch.isOn {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.disableAskToLoadSavesCell()
+            }, completion: nil)
+            disableAutoLoadSaves()
+        } else {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.enableAskToLoadSavesCell()
+            }, completion: nil)
+        }
+    }
+
+    @IBAction func toggleTimedAutoSaves(_ sender: Any) {
+        PVSettingsModel.shared.timedAutoSaves = timedAutoSavesSwitch.isOn
+    }
+
+    @IBAction func toggleAskToLoadSaves(_ sender: Any) {
+        PVSettingsModel.shared.askToAutoLoad = askToLoadSwitch.isOn
     }
 
     @IBAction func controllerOpacityChanged(_ sender: Any) {
@@ -178,9 +230,47 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
     }
 
     @IBAction func toggleStartSelectAlwaysOn(_ sender: Any) {
-              PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
+        PVSettingsModel.sharedInstance().startSelectAlwaysOn = startSelectSwitch.isOn
     }
-    
+
+    @IBAction func toggleVolumeHUD(_ sender: Any) {
+        PVSettingsModel.sharedInstance().volumeHUD = volumeHUDSwitch.isOn
+    }
+
+    @IBAction func toggleAllRightShoulders(_ sender: Any) {
+        PVSettingsModel.sharedInstance().allRightShoulders = allRightShouldersSwitch.isOn
+    }
+
+    func disableTimedAutoSaveCell() {
+        timedAutoSavesCell.alpha = 0.5
+        timedAutoSavesSwitch.isEnabled = false
+    }
+
+    func disableTimedAutoSaves() {
+        timedAutoSavesSwitch.setOn(false, animated: true)
+        PVSettingsModel.sharedInstance().timedAutoSaves = false
+    }
+
+    func enableTimedAutoSavesCell() {
+        timedAutoSavesCell.alpha = 1.0
+        timedAutoSavesSwitch.isEnabled = true
+    }
+
+    func disableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 0.5
+        askToLoadSwitch.isEnabled = false
+    }
+
+    func disableAutoLoadSaves() {
+        askToLoadSwitch.setOn(false, animated: true)
+        PVSettingsModel.sharedInstance().askToAutoLoad = false
+    }
+
+    func enableAskToLoadSavesCell() {
+        askToLoadSavesCell.alpha = 1.0
+        askToLoadSwitch.isEnabled = true
+    }
+
     // Show web server (stays on)
     @available(iOS 9.0, *)
     func showServer() {
@@ -201,49 +291,10 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
         // Done button pressed
         navigationController?.popViewController(animated: true)
         PVWebServer.shared.stopServers()
-        importLabel.text = "Web server: OFF"
-    }
-
-    // Show "Web Server Active" alert view
-    func showServerActiveAlert() {
-        let message = """
-            Read Importing ROMs wiki…
-            Upload/Download files at:
-
-
-            """
-        let alert = UIAlertController(title: "Web Server Active", message: message, preferredStyle: .alert)
-        let ipField = UITextView(frame: CGRect(x: 20, y: 75, width: 231, height: 70))
-        ipField.backgroundColor = UIColor.clear
-        ipField.textAlignment = .center
-        ipField.font = UIFont.systemFont(ofSize: 13)
-        ipField.textColor = UIColor.gray
-		let ipFieldText = """
-        WebUI: \(PVWebServer.shared.urlString)
-        WebDav: \(PVWebServer.shared.webDavURLString)
-        """
-        ipField.text = ipFieldText
-        ipField.isUserInteractionEnabled = false
-        alert.view.addSubview(ipField)
-        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: {(_ action: UIAlertAction) -> Void in
-            PVWebServer.shared.stopServers()
-            self.importLabel.text = "Web server: OFF"
-        }))
-
-        if #available(iOS 9.0, *) {
-            let viewAction = UIAlertAction(title: "View", style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.showServer()
-                })
-            alert.addAction(viewAction)
-        }
-        present(alert, animated: true) {() -> Void in }
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 2 && indexPath.row == 5 {
-            let iCadeControllerViewController = PViCadeControllerViewController()
-            navigationController?.pushViewController(iCadeControllerViewController, animated: true)
-        } else if indexPath.section == 3 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             // import/export roms and game saves button
             tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
 
@@ -258,12 +309,11 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 // connected via wifi, let's continue
                 // start web transfer service
                 if PVWebServer.shared.startServers() {
-                    importLabel.text = "Web server: ON"
                     //show alert view
                     showServerActiveAlert()
                 } else {
                         // Display error
-                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or that something isn't already running on required ports 80 & 81", preferredStyle: .alert)
+                    let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     }))
                     present(alert, animated: true) {() -> Void in }
@@ -301,7 +351,13 @@ class PVSettingsViewController: UITableViewController, SFSafariViewControllerDel
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 present(alert, animated: true, completion: nil)
             }
-        }
+		} else if indexPath.section == 6 && indexPath.row == 2 {
+			// Log Viewer
+			let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+			logViewController.hideDoneButton()
+			navigationController?.pushViewController(logViewController, animated: true)
+			logViewController.hideDoneButton()
+		}
 
         self.tableView.deselectRow(at: indexPath, animated: true)
         navigationItem.setRightBarButton(UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVSettingsViewController.done(_:))), animated: false)

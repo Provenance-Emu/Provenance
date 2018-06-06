@@ -31,10 +31,17 @@
 @class OERingBuffer;
 
 typedef NS_ENUM(NSInteger, MednaSystem) {
+	MednaSystemGB,
+	MednaSystemGBA,
+	MednaSystemGG,
     MednaSystemLynx,
+	MednaSystemMD,
+	MednaSystemNES,
     MednaSystemNeoGeo,
     MednaSystemPCE,
     MednaSystemPCFX,
+	MednaSystemSMS,
+	MednaSystemSNES,
     MednaSystemPSX,
     MednaSystemVirtualBoy,
     MednaSystemWonderSwan
@@ -53,4 +60,5 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
+-(void)changeDisplayMode;
 @end

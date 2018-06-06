@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,6 +11,27 @@
 		059289501DC194FD0012644D /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		B35E6C37207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B35E6C38207EE15D0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
+		B302F88020B67D8D00C5E502 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F87B20B67D8C00C5E502 /* CocoaLumberjack.framework */; };
+		B302F88120B67D8D00C5E502 /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F87C20B67D8C00C5E502 /* NSLoggerSwift.framework */; };
+		B302F88220B67D8D00C5E502 /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F87D20B67D8C00C5E502 /* NSLogger.framework */; };
+		B302F88320B67D8D00C5E502 /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F87E20B67D8C00C5E502 /* XCDLumberjackNSLogger.framework */; };
+		B302F88420B67D8D00C5E502 /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302F87F20B67D8C00C5E502 /* CocoaLumberjackSwift.framework */; };
+		B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A220B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
+		B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89920B73D5F00C5E502 /* PVLogEntry.m */; };
+		B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89A20B73D6200C5E502 /* PVLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89B20B73D6300C5E502 /* PVLogEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A820B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B302F8AA20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
+		B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */; };
+		B302F8AC20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
+		B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89E20B73D6400C5E502 /* PVLogging.m */; };
+		B302F8AE20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
+		B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */; };
 		B3A74C8A20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A74C8B20522B04001D3D2E /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
 		B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4271DE86777008450F5 /* GameController.framework */; };
@@ -41,6 +62,13 @@
 		B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D73D3F1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
 		B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
+		B3E6DADE20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
+		B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
+		B3E7089220B7E117005BAA5A /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */; };
+		B3E7089320B7E117005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41120B67C9600AE4E00 /* CocoaLumberjackSwift.framework */; };
+		B3E7089420B7E117005BAA5A /* NSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41520B67C9700AE4E00 /* NSLogger.framework */; };
+		B3E7089520B7E117005BAA5A /* NSLoggerSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */; };
+		B3E7089620B7E117005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */; };
 		B3FA5D441D6B858A00060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA64717F7467D0031B1C9 /* Foundation.framework */; };
 		B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA67E17F7473C0031B1C9 /* AudioToolbox.framework */; };
 		B3FA5D491D6B859800060D71 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FA5D481D6B859800060D71 /* Foundation.framework */; };
@@ -77,6 +105,24 @@
 		1AD4BC6A1BFD381C007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		1AD4BC701BFD3920007D6C7C /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B35E6C36207EE15D0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		B302F87B20B67D8C00C5E502 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B302F87C20B67D8C00C5E502 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B302F87D20B67D8C00C5E502 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
+		B302F87E20B67D8C00C5E502 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B302F87F20B67D8C00C5E502 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVCocoaLumberJackLogging.h; sourceTree = "<group>"; };
+		B302F89920B73D5F00C5E502 /* PVLogEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogEntry.m; sourceTree = "<group>"; };
+		B302F89A20B73D6200C5E502 /* PVLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogging.h; sourceTree = "<group>"; };
+		B302F89B20B73D6300C5E502 /* PVLogEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogEntry.h; sourceTree = "<group>"; };
+		B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVProvenanceLogging.h; sourceTree = "<group>"; };
+		B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVProvenanceLogging.m; sourceTree = "<group>"; };
+		B302F89E20B73D6400C5E502 /* PVLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogging.m; sourceTree = "<group>"; };
+		B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVCocoaLumberJackLogging.m; sourceTree = "<group>"; };
+		B328B41120B67C9600AE4E00 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../Carthage/Build/tvOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
+		B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../Carthage/Build/tvOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/tvOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../Carthage/Build/tvOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B328B41520B67C9700AE4E00 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../Carthage/Build/tvOS/NSLogger.framework; sourceTree = "<group>"; };
 		B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVEmulatorCore.swift; sourceTree = "<group>"; };
 		B3A9F4271DE86777008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B3A9F4291DE86780008450F5 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
@@ -87,6 +133,13 @@
 		B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+OEHashingAdditions.h"; sourceTree = "<group>"; };
 		B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+OEHashingAdditions.m"; sourceTree = "<group>"; };
+		B3E6DAD220B7A02D00454DD4 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
+		B3E6DAE520B7D26B00454DD4 /* NSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLogger.framework; path = ../Carthage/Build/iOS/NSLogger.framework; sourceTree = "<group>"; };
+		B3E6DAE620B7D26C00454DD4 /* XCDLumberjackNSLogger.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCDLumberjackNSLogger.framework; path = ../Carthage/Build/iOS/XCDLumberjackNSLogger.framework; sourceTree = "<group>"; };
+		B3E6DAE720B7D26C00454DD4 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = ../Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = "<group>"; };
+		B3E6DAE820B7D26C00454DD4 /* NSLoggerSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NSLoggerSwift.framework; path = ../Carthage/Build/iOS/NSLoggerSwift.framework; sourceTree = "<group>"; };
+		B3E6DAE920B7D26D00454DD4 /* CocoaLumberjackSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjackSwift.framework; path = ../Carthage/Build/iOS/CocoaLumberjackSwift.framework; sourceTree = "<group>"; };
 		B3FA5D451D6B858E00060D71 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B3FA5D481D6B859800060D71 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3FA5D4A1D6B859C00060D71 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = DEVELOPER_DIR; };
@@ -104,6 +157,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E7089220B7E117005BAA5A /* CocoaLumberjack.framework in Frameworks */,
+				B3E7089320B7E117005BAA5A /* CocoaLumberjackSwift.framework in Frameworks */,
+				B3E7089420B7E117005BAA5A /* NSLogger.framework in Frameworks */,
+				B3E7089520B7E117005BAA5A /* NSLoggerSwift.framework in Frameworks */,
+				B3E7089620B7E117005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
 				B3A9F4301DE86E6D008450F5 /* UIKit.framework in Frameworks */,
 				B3A9F42A1DE86780008450F5 /* GameController.framework in Frameworks */,
 				B3FA5D4D1D6B859F00060D71 /* AudioToolbox.framework in Frameworks */,
@@ -115,6 +173,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B302F88020B67D8D00C5E502 /* CocoaLumberjack.framework in Frameworks */,
+				B302F88120B67D8D00C5E502 /* NSLoggerSwift.framework in Frameworks */,
+				B302F88220B67D8D00C5E502 /* NSLogger.framework in Frameworks */,
+				B302F88320B67D8D00C5E502 /* XCDLumberjackNSLogger.framework in Frameworks */,
+				B302F88420B67D8D00C5E502 /* CocoaLumberjackSwift.framework in Frameworks */,
 				B3A9F42E1DE86E65008450F5 /* UIKit.framework in Frameworks */,
 				B3A9F4281DE86777008450F5 /* GameController.framework in Frameworks */,
 				B3FA5D471D6B859100060D71 /* AudioToolbox.framework in Frameworks */,
@@ -129,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				1A4E718C1A6C699F005CA80F /* DebugUtils.h */,
+				B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */,
 			);
 			name = DebugUtils;
 			sourceTree = "<group>";
@@ -136,10 +200,12 @@
 		1ACEA63B17F7467D0031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				B302F89420B71C2300C5E502 /* Logging */,
 				1A4E718B1A6C693A005CA80F /* DebugUtils */,
 				1ACEA69017F748F80031B1C9 /* Audio */,
 				1ACEA64917F7467D0031B1C9 /* PVSupport */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
+				B3E7087820B7DF3E005BAA5A /* Carthage */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -156,6 +222,16 @@
 		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B328B41320B67C9700AE4E00 /* CocoaLumberjack.framework */,
+				B328B41120B67C9600AE4E00 /* CocoaLumberjackSwift.framework */,
+				B302F87F20B67D8C00C5E502 /* CocoaLumberjackSwift.framework */,
+				B328B41520B67C9700AE4E00 /* NSLogger.framework */,
+				B302F87D20B67D8C00C5E502 /* NSLogger.framework */,
+				B328B41220B67C9600AE4E00 /* NSLoggerSwift.framework */,
+				B328B41420B67C9700AE4E00 /* XCDLumberjackNSLogger.framework */,
+				B302F87B20B67D8C00C5E502 /* CocoaLumberjack.framework */,
+				B302F87C20B67D8C00C5E502 /* NSLoggerSwift.framework */,
+				B302F87E20B67D8C00C5E502 /* XCDLumberjackNSLogger.framework */,
 				B3A9F42F1DE86E6D008450F5 /* UIKit.framework */,
 				B3A9F4291DE86780008450F5 /* GameController.framework */,
 				B3A9F4271DE86777008450F5 /* GameController.framework */,
@@ -219,6 +295,34 @@
 			path = PVSupport/Audio;
 			sourceTree = "<group>";
 		};
+		B302F89420B71C2300C5E502 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				B302F89820B73D5F00C5E502 /* PVCocoaLumberJackLogging.h */,
+				B302F89F20B73D6500C5E502 /* PVCocoaLumberJackLogging.m */,
+				B302F89C20B73D6300C5E502 /* PVProvenanceLogging.h */,
+				B302F89D20B73D6400C5E502 /* PVProvenanceLogging.m */,
+				B302F89B20B73D6300C5E502 /* PVLogEntry.h */,
+				B302F89920B73D5F00C5E502 /* PVLogEntry.m */,
+				B302F89A20B73D6200C5E502 /* PVLogging.h */,
+				B302F89E20B73D6400C5E502 /* PVLogging.m */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		B3E7087820B7DF3E005BAA5A /* Carthage */ = {
+			isa = PBXGroup;
+			children = (
+				B3E6DAE520B7D26B00454DD4 /* NSLogger.framework */,
+				B3E6DAE820B7D26C00454DD4 /* NSLoggerSwift.framework */,
+				B3E6DAE620B7D26C00454DD4 /* XCDLumberjackNSLogger.framework */,
+				B3E6DAD220B7A02D00454DD4 /* CocoaLumberjack.framework */,
+				B3E6DAE720B7D26C00454DD4 /* CocoaLumberjack.framework */,
+				B3E6DAE920B7D26D00454DD4 /* CocoaLumberjackSwift.framework */,
+			);
+			name = Carthage;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -229,13 +333,17 @@
 				B3C96EA81D62C3C3003F1E93 /* OEGameAudio.h in Headers */,
 				B3C96EA71D62C3BE003F1E93 /* DebugUtils.h in Headers */,
 				B3FA5D5C1D6B908300060D71 /* OERingBuffer.h in Headers */,
+				B302F8A920B73D6500C5E502 /* PVProvenanceLogging.h in Headers */,
 				B3C96EAE1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3A9F42C1DE86DAD008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96EB01D62C3C7003F1E93 /* (null) in Headers */,
 				B3D73D3E1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96EBD1D62C54D003F1E93 /* PVSupport.h in Headers */,
+				B302F8A720B73D6500C5E502 /* PVLogEntry.h in Headers */,
 				B3FA5D641D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96EAD1D62C3C3003F1E93 /* TPCircularBuffer.h in Headers */,
+				B302F8A520B73D6500C5E502 /* PVLogging.h in Headers */,
+				B302F8A120B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,13 +354,17 @@
 				B3C96ECB1D62C5E7003F1E93 /* PVSupport.h in Headers */,
 				B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */,
 				B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */,
+				B302F8A820B73D6500C5E502 /* PVProvenanceLogging.h in Headers */,
 				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
 				B3A9F42D1DE86DAE008450F5 /* PVGameControllerUtilities.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
 				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3C96ECD1D62C5E7003F1E93 /* (null) in Headers */,
+				B302F8A620B73D6500C5E502 /* PVLogEntry.h in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
+				B302F8A420B73D6500C5E502 /* PVLogging.h in Headers */,
+				B302F8A020B73D6500C5E502 /* PVCocoaLumberJackLogging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +375,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96EA61D62C3A3003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport tvOS" */;
 			buildPhases = (
+				B3E708A920B7E918005BAA5A /* Carthage Build */,
 				B3C96E991D62C3A3003F1E93 /* Sources */,
 				B3C96E9A1D62C3A3003F1E93 /* Frameworks */,
 				B3C96E9B1D62C3A3003F1E93 /* Headers */,
@@ -281,10 +394,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3C96ED41D62C5E7003F1E93 /* Build configuration list for PBXNativeTarget "PVSupport" */;
 			buildPhases = (
+				B3E708A820B7E8F9005BAA5A /* Carthage build */,
 				B3C96EBF1D62C5E7003F1E93 /* Sources */,
 				B3C96EC71D62C5E7003F1E93 /* Frameworks */,
 				B3C96EC81D62C5E7003F1E93 /* Headers */,
 				B3C96ED21D62C5E7003F1E93 /* Resources */,
+				B328B41B20B67CDF00AE4E00 /* Carthage */,
 			);
 			buildRules = (
 			);
@@ -301,8 +416,9 @@
 		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = PV;
 				LastUpgradeCheck = 0930;
-				ORGANIZATIONNAME = "James Addyman";
+				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B3C96E9D1D62C3A3003F1E93 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -310,13 +426,13 @@
 						LastSwiftMigration = 0920;
 					};
 					B3C96EBE1D62C5E7003F1E93 = {
-						DevelopmentTeam = V78REPMQFZ;
 						LastSwiftMigration = 0920;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
 			buildConfigurationList = 1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVSupport" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -350,6 +466,61 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		B328B41B20B67CDF00AE4E00 /* Carthage */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../Carthage/Build/iOS/CocoaLumberjack.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/CocoaLumberjackSwift.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/NSLogger.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/NSLoggerSwift.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/XCDLumberjackNSLogger.framework",
+			);
+			name = Carthage;
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjack.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/CocoaLumberjackSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLogger.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/NSLoggerSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/XCDLumberjackNSLogger.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#/usr/local/bin/carthage copy-frameworks\n";
+		};
+		B3E708A820B7E8F9005BAA5A /* Carthage build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform iOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
+		};
+		B3E708A920B7E918005BAA5A /* Carthage Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Carthage Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B3C96E991D62C3A3003F1E93 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -363,8 +534,13 @@
 				B3C96EAF1D62C3C7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D661D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D401EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B302F8AD20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3C96EA91D62C3C3003F1E93 /* OEGameAudio.m in Sources */,
 				0592894F1DC194FD0012644D /* RealTimeThread.m in Sources */,
+				B302F8A320B73D6500C5E502 /* PVLogEntry.m in Sources */,
+				B3E6DADF20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */,
+				B302F8AB20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */,
+				B302F8AF20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,8 +556,13 @@
 				B3C96EC21D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3FA5D651D6B90BD00060D71 /* PVEmulatorCore.m in Sources */,
 				B3D73D3F1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m in Sources */,
+				B302F8AC20B73D6500C5E502 /* PVLogging.m in Sources */,
 				B3C96EC31D62C5E7003F1E93 /* OEGameAudio.m in Sources */,
 				059289501DC194FD0012644D /* RealTimeThread.m in Sources */,
+				B302F8A220B73D6500C5E502 /* PVLogEntry.m in Sources */,
+				B3E6DADE20B7BF8600454DD4 /* UIDeviceExtension.swift in Sources */,
+				B302F8AA20B73D6500C5E502 /* PVProvenanceLogging.m in Sources */,
+				B302F8AE20B73D6500C5E502 /* PVCocoaLumberJackLogging.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,7 +662,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -529,6 +711,7 @@
 		B3C96EA31D62C3A3003F1E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -540,18 +723,24 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -564,6 +753,7 @@
 		B3C96EA41D62C3A3003F1E93 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -576,15 +766,20 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -599,6 +794,7 @@
 		B3C96EA51D62C3A3003F1E93 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
@@ -611,15 +807,20 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/tvOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVSupport/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = PVSupport;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
@@ -634,16 +835,22 @@
 		B3C96ED51D62C5E7003F1E93 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -651,11 +858,18 @@
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -668,17 +882,23 @@
 		B3C96ED61D62C5E7003F1E93 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -686,10 +906,16 @@
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -702,17 +928,23 @@
 		B3C96ED71D62C5E7003F1E93 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/Carthage/Build/iOS\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "PVSupport/PVSupport-Prefix.pch";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -720,10 +952,16 @@
 				INFOPLIST_FILE = "$(SRCROOT)/PVSupport/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jamsoftonline.PVSupport;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVSupport";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

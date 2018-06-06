@@ -14,6 +14,7 @@ typedef NS_ENUM(NSInteger, iCadeControllerSetting) {
     iCadeControllerSetting8Bitdo,
     iCadeControllerSettingSteelSeries,
     iCadeControllerSetting8BitdoZero,
+	iCadeControllerSettingMocute,
     iCadeControllerSettingCount
 };
 

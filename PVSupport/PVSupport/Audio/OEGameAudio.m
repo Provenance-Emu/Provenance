@@ -178,11 +178,11 @@ OSStatus RenderCallback(void                       *in,
     
     //Create the graph
     err = NewAUGraph(&mGraph);
-    if(err) DLog(@"NewAUGraph failed");
+    if(err) ELOG(@"NewAUGraph failed");
     
     //Open the graph
     err = AUGraphOpen(mGraph);
-    if(err) DLog(@"couldn't open graph");
+    if(err) ELOG(@"couldn't open graph");
     
     AudioComponentDescription desc;
     
@@ -194,10 +194,10 @@ OSStatus RenderCallback(void                       *in,
 
     //Create the output node
     err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mOutputNode);
-    if(err) DLog(@"couldn't create node for output unit");
+    if(err) ELOG(@"couldn't create node for output unit");
     
     err = AUGraphNodeInfo(mGraph, mOutputNode, NULL, &mOutputUnit);
-    if(err) DLog(@"couldn't get output from node");
+    if(err) ELOG(@"couldn't get output from node");
     
     
     desc.componentType = kAudioUnitType_Mixer;
@@ -206,10 +206,10 @@ OSStatus RenderCallback(void                       *in,
 
     //Create the mixer node
     err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mMixerNode);
-    if(err) DLog(@"couldn't create node for file player");
+    if(err) ELOG(@"couldn't create node for file player");
     
     err = AUGraphNodeInfo(mGraph, mMixerNode, NULL, &mMixerUnit);
-    if(err) DLog(@"couldn't get player unit from node");
+    if(err) ELOG(@"couldn't get player unit from node");
 
     desc.componentType = kAudioUnitType_FormatConverter;
     desc.componentSubType = kAudioUnitSubType_AUConverter;
@@ -225,10 +225,10 @@ OSStatus RenderCallback(void                       *in,
         
         //Create the converter node
         err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mConverterNode);
-        if(err)  DLog(@"couldn't create node for converter");
+        if(err)  ELOG(@"couldn't create node for converter");
         
         err = AUGraphNodeInfo(mGraph, mConverterNode, NULL, &mConverterUnit);
-        if(err) DLog(@"couldn't get player unit from converter");
+        if(err) ELOG(@"couldn't get player unit from converter");
         
         
         AURenderCallbackStruct renderStruct;
@@ -265,7 +265,7 @@ OSStatus RenderCallback(void                       *in,
 
         err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, i);
         if(err) { ELOG(@"Couldn't connect the converter to the mixer"); }
-        else { DLog(@"Conncted the converter to the mixer"); }
+        else { ELOG(@"Conncted the converter to the mixer"); }
     }
     // connect the player to the output unit (stream format will propagate)
          

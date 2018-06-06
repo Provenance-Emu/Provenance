@@ -1,0 +1,95 @@
+/*
+ Localization provided by Wordcrafts
+ The Mac OS X and iOS localization experts.
+ http://www.wordcrafts.de
+ */
+
+
+/* General */
+
+/* For dialogs yes buttons */
+"HockeyYes" = "Sim";
+
+/* For dialogs no buttons */
+"HockeyNo" = "Não";
+
+/* For dialogs ok buttons */
+"HockeyOK" = "OK";
+
+/* Replacement for app name, if it could not be detected */
+"HockeyAppNamePlaceholder" = "Esta aplicação";
+
+/* Crash */
+
+
+/* Crash dialog */
+
+/* Title showing in the alert box when crash report data has been found */
+"CrashDataFoundTitle" = "%@ fechou inesperadamente";
+
+/* Description explaining that crash data has been found and ask the user if the data might be uploaded to the developers server */
+"CrashDataFoundAnonymousDescription" = "Pretende enviar um relatório anónimo para que possamos resolver o problema?";
+
+/* Description explaining that crash data has been found and ask the user if the non anonymous data might be uplaoded to the developers server */
+"CrashDataFoundDescription" = "Pretende enviar um relatório para que possamos resolver o problema?";
+
+/* Alert box button if the users wants to send crash data always automatically */
+"CrashSendReportAlways" = "Enviar sempre";
+
+/* Alert box button to send the crash report once */
+"CrashSendReport" = "Enviar relatório";
+
+/* Alert box button to decline sending the report */
+"CrashDontSendReport" = "Não enviar";
+
+/* Text showing in a processing box that the crash data is being uploaded to the server */
+"CrashReportSending" = "A enviar...";
+
+
+/* Update */
+
+
+/* Update Alert view */
+
+/* Update available */
+"UpdateAvailable" = "Actualização disponível";
+
+"UpdateAlertTextWithAppVersion" = "%@ está disponível.";
+
+"UpdateAlertMandatoryTextWithAppVersion" = "%@ está disponível e é uma actualização obrigatória!";
+
+"UpdateIgnore" = "Ignorar";
+
+/* Update Details */
+
+"UpdateButtonCheck" = "VERIFICAR";
+
+"UpdateVersion" = "Versão";
+
+"UpdateNoUpdateAvailableTitle" = "Nenhuma actualização disponível";
+
+"UpdateNoUpdateAvailableMessage" = "%@ é a mais recente.";
+
+"UpdateError" = "Erro";
+
+/* Authenticator */
+
+/* View Controller Title*/
+"HockeyAuthenticatorViewControllerTitle" = "HockeyApp";
+
+/* BITAuthenticatorAuthTypeEmail and BITAuthenticatorAuthTypeEmailAndPassword */
+"HockeyAuthenticationViewControllerDataEmailAndPasswordDescription" = "Introduza o endereço de e-mail e a palavra-passe da sua conta HockeyApp para autorizar o acesso a esta aplicação.";
+"HockeyAuthenticationViewControllerDataEmailDescription" = "Introduza o endereço de e-mail da sua conta HockeyApp para autorizar o acesso a esta aplicação.";
+"HockeyAuthenticationViewControllerEmailPlaceholder" = "email@exemplo.com";
+"HockeyAuthenticationViewControllerPasswordPlaceholder" = "Necessário";
+"HockeyAuthenticationViewControllerEmailDescription" = "E-mail";
+"HockeyAuthenticationViewControllerPasswordDescription" = "Palavra-passe";
+
+/* Error presented to the user if authentication failed because of networking issues */
+"HockeyAuthenticationViewControllerNetworkError" = "Falha ao autorizar porque provavelmente o dispositivo não tem ligação à Internet. Tente novamente.";
+
+"HockeyAuthenticationFailedAuthenticate" = "Falha ao autorizar. Tente novamente ou contacte o programador desta aplicação.";
+"HockeyAuthenticationNotMember" = "Não está autorizado a utilizar esta aplicação. Contacte o programador desta aplicação.";
+"HockeyAuthenticationContactDeveloper" = "Erro de autorização. Contacte o programador desta aplicação.";
+"HockeyAuthenticationWrongEmailPassword" = "Introduziu um e-mail ou palavra-passe inválida. Verifique e tente novamente.";
+"HockeyAuthenticationAuthSecretMissing" = "O \"authorization secret\" do HockeySDK não foi definido. Contacte o programador desta aplicação.";

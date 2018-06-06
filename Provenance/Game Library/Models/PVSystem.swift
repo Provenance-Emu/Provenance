@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 public enum ScreenType: String {
     case unknown = ""
@@ -38,6 +38,8 @@ public enum ScreenType: String {
     var bioses = LinkingObjects(fromType: PVBIOS.self, property: "system")
     var games = LinkingObjects(fromType: PVGame.self, property: "system")
     var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
+
+	dynamic var userPreferredCoreID : String?
 
     dynamic var identifier: String = ""
 

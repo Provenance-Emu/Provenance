@@ -1,0 +1,3 @@
+github "bitstadium/HockeySDK-iOS" "5.1.2"
+github "bitstadium/HockeySDK-tvOS" "5.1.0"
+github "realm/realm-cocoa" "a49409b1b841fc0913995a44d8f75052f79e05f7"

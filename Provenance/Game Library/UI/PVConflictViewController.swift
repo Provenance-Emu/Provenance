@@ -67,25 +67,8 @@ class PVConflictViewController: UITableViewController {
         conflictedFiles = tempConflictedFiles
     }
 
-    func documentsPath() -> String {
-#if TARGET_OS_TV
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-        let documentsDirectoryPath: String = paths[0]
-        return documentsDirectoryPath
-    }
-
-    func conflictsPath() -> String {
-#if TARGET_OS_TV
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-#else
-        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-#endif
-        let documentsDirectoryPath: String = paths[0]
-        return URL(fileURLWithPath: documentsDirectoryPath).appendingPathComponent("conflicts").absoluteString
-    }
+	lazy var documentsPath : URL = PVEmulatorConfiguration.documentsPath
+	lazy var conflictsPath : URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("conflicts", isDirectory: true)
 
 #if TARGET_OS_TV
     override func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
@@ -111,28 +94,29 @@ class PVConflictViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if conflictedFiles.isEmpty {
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "EmptyCell") ??  UITableViewCell(style: .default, reuseIdentifier: "EmptyCell")
+		let cell : UITableViewCell
 
+        if conflictedFiles.isEmpty {
+            cell = self.tableView.dequeueReusableCell(withIdentifier: "EmptyCell") ??  UITableViewCell(style: .default, reuseIdentifier: "EmptyCell")
             cell.textLabel?.textAlignment = .center
             if indexPath.row == 0 || indexPath.row == 1 {
                 cell.textLabel?.text = ""
             } else {
                 cell.textLabel?.text = "No Conflicts..."
-                #if os(iOS)
-                cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
-                #endif
-            }
-            return cell
+			}
         } else {
-            let cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ??  UITableViewCell(style: .default, reuseIdentifier: "Cell")
+        	cell = self.tableView.dequeueReusableCell(withIdentifier: "Cell") ??  UITableViewCell(style: .default, reuseIdentifier: "Cell")
 
             let file = conflictedFiles[indexPath.row]
             let name: String = file.deletingPathExtension().lastPathComponent
             cell.textLabel?.text = name
             cell.accessoryType = .disclosureIndicator
-            return cell
         }
+
+		#if os(iOS)
+		cell.textLabel?.textColor = Theme.currentTheme.settingsCellText
+		#endif
+		return cell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -149,20 +133,47 @@ class PVConflictViewController: UITableViewController {
         alertController.popoverPresentationController?.sourceView = view
         alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
 
-        PVSystem.all.forEach { system in
-            if system.supportedExtensions.contains(path.pathExtension) {
-                let name: String = system.name
-                alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
-                    self.gameImporter?.resolveConflicts(withSolutions: [path: system])
-                    // This update crashes since we remove for me on aTV.
-                    //                [self.tableView beginUpdates];
-                    //                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
-                    self.updateConflictedFiles()
-                    self.tableView.reloadData()
-                    //                [self.tableView endUpdates];
-                }))
-            }
-        }
+		// This should be a better query, testing - jm
+//		PVSystem.all.filter("supportedExtensions CONTAINS[cd] %@",  path.pathExtension ).forEach { system in
+//			let name: String = system.name
+//			alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//				self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+//				// This update crashes since we remove for me on aTV.
+//				//                [self.tableView beginUpdates];
+//				//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+//				self.updateConflictedFiles()
+//				self.tableView.reloadData()
+//				//                [self.tableView endUpdates];
+//			}))
+//		}
+
+		PVSystem.all.filter({ $0.supportedExtensions.contains(path.pathExtension) }).forEach { system in
+			let name: String = system.name
+			alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+				self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+				// This update crashes since we remove for me on aTV.
+				//                [self.tableView beginUpdates];
+				//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+				self.updateConflictedFiles()
+				self.tableView.reloadData()
+				//                [self.tableView endUpdates];
+			}))
+		}
+
+//        PVSystem.all.forEach { system in
+//            if system.supportedExtensions.contains(path.pathExtension) {
+//                let name: String = system.name
+//                alertController.addAction(UIAlertAction(title: name, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+//                    self.gameImporter?.resolveConflicts(withSolutions: [path: system])
+//                    // This update crashes since we remove for me on aTV.
+//                    //                [self.tableView beginUpdates];
+//                    //                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
+//                    self.updateConflictedFiles()
+//                    self.tableView.reloadData()
+//                    //                [self.tableView endUpdates];
+//                }))
+//            }
+//        }
 
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alertController, animated: true) {() -> Void in }

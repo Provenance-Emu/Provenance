@@ -40,5 +40,8 @@ typedef enum iCadeState {
     iCadeButtonF            = 0x200,
     iCadeButtonG            = 0x400,
     iCadeButtonH            = 0x800,
-    
+	iCadeButtonI			= 0x1000, // Mocute Left Trigger
+	iCadeButtonJ            = 0x2000, // Mocute Right Trigger
+	iCadeButtonK            = 0x4000,
+	iCadeButtonL            = 0x8000,
 } iCadeState;

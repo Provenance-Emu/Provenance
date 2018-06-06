@@ -7,7 +7,7 @@
 //
 
 import UIKit
-// import RealmSwift
+import RealmSwift
 #if os(iOS)
 import SafariServices
 import AssetsLibrary
@@ -21,6 +21,16 @@ import AssetsLibrary
  Wrap long press of UIGameLibrayVC to if !pushPop available, since all that stuff will be handled in this VC
  Add UICollectionView wrapper
  */
+#if os(iOS)
+extension UIImageView {
+	public override var ignoresInvertColors: Bool {
+		get {
+			return true
+		} set {
+		}
+	}
+}
+#endif
 
 // Special label that renders Countries as flag emojis when available
 class RegionLabel: LongPressLabel {
@@ -46,6 +56,8 @@ class LongPressLabel: UILabel {
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+		super.didUpdateFocus(in: context, with: coordinator)
+
         coordinator.addCoordinatedAnimations({ [unowned self] in
             if self.isFocused {
                 self.backgroundColor = UIColor.lightGray
@@ -57,7 +69,7 @@ class LongPressLabel: UILabel {
     #endif
 }
 
-class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController {
+class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
     override func viewDidLoad() {
@@ -80,6 +92,14 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     public func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
 
     }
+
+	@IBAction func shareButtonClicked(_ sender: Any) {
+		guard let game = game else {
+			return
+		}
+
+		share(for: game, sender: sender)
+	}
 
     // Sent when a gesture-initiated transition ends. The 'finished' parameter indicates whether the animation finished, while the 'completed' parameter indicates whether the transition completed or bailed out (if the user let go early).
     public func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
@@ -159,7 +179,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     // MARK: Actions
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+			load(game, sender: sender, core:nil)
         }
     }
 
@@ -191,7 +211,7 @@ class GameMoreInfoPageViewController: UIPageViewController, UIPageViewController
     @IBOutlet weak var onlineLookupBarButtonItem: UIBarButtonItem!
 }
 
-class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController {
+class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
 
     @objc
     public var game: PVGame! {
@@ -263,8 +283,19 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #if os(iOS)
 		// Ignore Smart Invert
 		artworkImageView.ignoresInvertColors = true
+
+		if #available(iOS 9.0, *) {
+
+		} else {
+			// Fix iOS 8 colors
+			descriptionTextView.textColor = Theme.currentTheme.settingsCellText
+		}
         #endif
     }
+
+	deinit {
+		token?.invalidate()
+	}
 
 //    override func viewWillDisappear(_ animated: Bool) {
 //        super.viewWillDisappear(animated)
@@ -378,6 +409,33 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         #endif
     }
 
+	func image(withText text: String) -> UIImage? {
+		#if os(iOS)
+		let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+		#else
+		let backgroundColor: UIColor = UIColor.init(white: 0.9, alpha: 0.9)
+		#endif
+		if text == "" {
+			return UIImage.image(withSize: CGSize(width: CGFloat(PVThumbnailMaxResolution), height: CGFloat(PVThumbnailMaxResolution)), color: backgroundColor, text: NSAttributedString(string: ""))
+		}
+		// TODO: To be replaced with the correct system placeholder
+		let paragraphStyle: NSMutableParagraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.alignment = .center
+
+		#if os(iOS)
+		let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: Theme.currentTheme.settingsCellText!])
+		#else
+		let attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 30.0), NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.foregroundColor: UIColor.gray])
+		#endif
+
+		let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
+		let ratio: CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
+		let width: CGFloat = height * ratio
+		let size = CGSize(width: width, height: height)
+		let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)
+		return missingArtworkImage
+	}
+
     var showingFrontArt = true
 
     var canShowBackArt: Bool {
@@ -388,8 +446,13 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
         }
     }
 
+	@IBAction func shareButtonClicked(_ sender: Any) {
+		share(for: game, sender: sender)
+	}
+
     #if os(iOS)
-    @IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
+
+	@IBAction func moreInfoButtonClicked(_ sender: UIBarButtonItem) {
         if #available(iOS 9.0, *) {
             if let urlString = game?.referenceURL, let url = URL(string: urlString) {
                 if #available(iOS 11.0, *) {
@@ -429,14 +492,14 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     @IBAction func playButtonTapped(_ sender: UIBarButtonItem) {
         if let game = game {
-            load(game)
+			load(game, sender: sender, core: nil)
         }
     }
 
     private func updateImageView() {
         if showingFrontArt {
             if let imageKey = (game?.customArtworkURL.isEmpty ?? true) ? game?.originalArtworkURL : game?.customArtworkURL {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (key, image) in
                     if let image = image {
                         if self.artworkImageView.image == nil {
                             // Don't animate the first load, it's annoying
@@ -444,12 +507,16 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                         } else {
                             self.flipImageView(withImage: image)
                         }
-                    }
+					} else {
+						self.artworkImageView.image = self.image(withText: self.game.title)
+					}
                 })
-            }
+			} else {
+				self.artworkImageView.image = self.image(withText: self.game.title)
+			}
         } else {
             if let imageKey = game?.boxBackArtworkURL, !imageKey.isEmpty {
-                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (image) in
+                PVMediaCache.shareInstance().image(forKey: imageKey, completion: { (key, image) in
                     if let image = image {
                         self.flipImageView(withImage: image)
                     } else {
@@ -487,7 +554,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     @IBAction func nameTapped(_ sender: Any) {
-        editKey(\PVGame.title, title: "Title", label: nameLabel)
+		editKey(\PVGame.title, title: "Title", label: nameLabel, reloadGameInfoAfter: true)
     }
 
     @IBAction func developerTapped(_ sender: Any) {
@@ -563,7 +630,7 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
     }
 
     // Deal with non-null - non-empty keys paths
-    private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel) {
+	private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel, reloadGameInfoAfter: Bool = false) {
 
         let currentValue = game![keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
@@ -594,6 +661,10 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
                     }
 
                     label.text = newValue
+
+					if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
+						PVGameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+					}
                 } catch {
                     ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")
                 }
@@ -605,10 +676,11 @@ class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewControlle
 
     var token: NotificationToken?
     func registerForChange() {
+		token?.invalidate()
         token = game?.observe({ (change) in
             switch change {
             case .change(let properties):
-                if !properties.isEmpty {
+                if !properties.isEmpty, self.isViewLoaded {
                     DispatchQueue.main.async {
                         self.updateContent()
                     }
@@ -627,13 +699,17 @@ extension PVGameMoreInfoViewController {
 
      // Buttons that shw up under thie VC when it's in a push/pop preview display mode
     override var previewActionItems: [UIPreviewActionItem] {
+		guard let game = game else {
+			return [UIPreviewActionItem]()
+		}
+
         let playAction = UIPreviewAction(title: "Play", style: .default) { (action, viewController) in
             if let libVC = self.presentingViewController as? PVGameLibraryViewController {
-                libVC.load(self.game!)
+				libVC.load(game, sender: self.view, core: nil)
             }
         }
 
-        let isFavorite = game?.isFavorite ?? false
+        let isFavorite = game.isFavorite
         let favoriteToggle = UIPreviewAction(title: "Favorite", style: isFavorite ? .selected : .default) { (action, viewController) in
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
@@ -648,13 +724,24 @@ extension PVGameMoreInfoViewController {
             let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: {(_ action: UIAlertAction) -> Void in
                 // Delete from Realm
-				RomDatabase.sharedInstance.delete(game: self.game!)
+				do {
+					try RomDatabase.sharedInstance.delete(game: game)
+				} catch {
+					self.presentError(error.localizedDescription)
+				}
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-            self.present(alert, animated: true) {() -> Void in }
+			(UIApplication.shared.delegate?.window??.rootViewController ?? self).present(alert, animated: true)
         }
 
-		return [playAction, favoriteToggle, deleteAction]
+		let shareAction = UIPreviewAction(title: "Share", style: .default) { (action, viewController) in
+
+			if let libVC = viewController as? (UIViewController & GameSharingViewController) {
+				libVC.share(for: game, sender: libVC.view)
+			}
+		}
+
+		return [playAction, favoriteToggle, shareAction, deleteAction]
     }
 }
 
@@ -690,18 +777,20 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 
 #if os(tvOS)
 extension PVGameMoreInfoViewController {
-    override var preferredFocusedView: UIView? {
-        return artworkImageView
-    }
+//    override var preferredFocusedView: UIView? {
+//        return artworkImageView
+//    }
 
     override var preferredFocusEnvironments: [UIFocusEnvironment] {
         return [artworkImageView, nameLabel, developerLabel, publishDateLabel, regionLabel, genresLabel, playCountLabel, timeSpentLabel, descriptionTextView]
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
-        coordinator.addCoordinatedAnimations({ [unowned self] in
+		super.didUpdateFocus(in: context, with: coordinator)
 
-            }, completion: nil)
+//        coordinator.addCoordinatedAnimations({ [unowned self] in
+//
+//            }, completion: nil)
     }
 
 //    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {

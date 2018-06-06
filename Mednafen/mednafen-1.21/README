@@ -1,0 +1,68 @@
+------------------
+Compilation Notes:
+------------------
+	gcc or LLVM clang is required for compiling Mednafen.  Intel's C compiler may work, but is untested.
+	Probably doesn't need to be said, but the compilers optionally specified via CC and CXX *must* be the same version.
+
+	clang: 3.5.0 or newer is required, though gcc 4.9.x is preferable for performance reasons.
+
+	gcc: 4.8(4.8.4+), or 4.9(4.9.2+) or newer is required.  gcc 4.9 is recommended; gcc 5.x and gcc 6.x tend to produce
+	slower executables, at least with Mednafen on x86_64.
+
+	Reportedly, passing:	--build=x86_64-apple-darwin`uname -r`
+	to the configure script is necessary for building on Mac OS X to work properly.
+
+	Compiling at -O3 or higher, or with other custom optimization flags, is discouraged.
+
+
+---------------------------------------------
+Some notes(and reminders) on the source code:
+---------------------------------------------
+	Check "mednafen/src/types.h" for standard C and C++ library header includes, and avoid #include'ing the same files redundantly elsewhere.
+
+	Avoid %= in save state load variable sanitizing code unless the variable is unsigned.
+
+	malloc(), realloc(), calloc()'ing 0 bytes of memory may return a NULL pointer.
+
+	memcpy()/memmove()/etc. with NULL pointers is undefined and bad even when length is 0.
+
+	Careful to not do something like: void somefunc(int something[16]); [...] sizeof(something)
+
+	Try to avoid writing new code that violates strict overflow(even though we compile with -fwrapv), especially be mindful
+	of stuff like what's described at http://kqueue.org/blog/2013/09/17/cltq/
+
+	Order of operations != Operator precedence.  Remember sequence point rules, and don't do stuff like:
+		value = FuncWithSideEffects() | (FuncWithSideEffects() << 8);	// BAD BAD
+	See: http://en.cppreference.com/w/cpp/language/eval_order
+
+	Avoid writing new code that shifts left signed integers or negative values to avoid technically undefined behavior; use
+	ugly typecasting, or multiply by powers of 2 instead(remotely modern compilers can optimize it to a shift internally).
+
+	Vanishing temporaries: https://gcc.gnu.org/onlinedocs/gcc/Temporaries.html#Temporaries
+
+	Do not place a period before the field width for "s" and "[" conversion specifiers in *scanf() format strings; perhaps a bad
+	habit picked up long ago from working with a buggy libc or trio?
+
+	Avoid compiling different C++ files with different compiler flags in regards to instruction set used(like -mmmx, -msse, -mfpmath, -march),
+	or else there may be (template-)function ODR violations that could cause compatibility problems.
+
+	GPLv3-incompatible code:
+		WonderSwan emulation code from Cygne.
+		QuickLZ(old version used)
+
+	Don't do greater-than and less-than comparisons between pointers unless they're pointers to members of the same array/struct/etc.
+
+	Avoid using a pointer into a nested array of a multidimensional array to access elements of the multidimensional array that lie outside of that specific
+	nested array, as such behavior is probably undefined.
+
+	Pointer provenance, DR260.
+
+	Don't create temporarily-invalid pointers via careless pointer arithmetic; restructure the expressions if possible, or utilize uintptr_t instead.
+
+	x86_64 inline assembly, stack red zone.
+
+	https://gcc.gnu.org/onlinedocs/gccint/Memory-model.html#Memory-model
+
+	Don't use memcmp() on class/struct objects unless they're initialized with memset() and copied around with only memcpy()(or equivalent).
+
+	Don't rely on malloc(), realloc(), and calloc() setting errno to ENOMEM on a memory allocation error.

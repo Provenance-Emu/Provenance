@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.AppleTV.XIB" version="3.0" toolsVersion="14113" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="appleTV" orientation="landscape">
+        <adaptation id="light"/>
+    </device>
+    <dependencies>
+        <deployment identifier="tvOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PVGameLibraryCollectionViewCell" id="hUV-Gh-K0R" customClass="PVGameLibraryCollectionViewCell" customModule="Provenance" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="256" height="256"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                <rect key="frame" x="0.0" y="0.0" width="256" height="256"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view opaque="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RKb-WS-gGA" userLabel="ArtworkContainerView">
+                        <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
+                        <subviews>
+                            <imageView opaque="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" adjustsImageWhenAncestorFocused="YES" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
+                            </imageView>
+                            <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
+                                <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
+                                <subviews>
+                                    <view alpha="0.55000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mmT-El-XIM">
+                                        <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
+                                        <color key="backgroundColor" red="0.59214952256944442" green="0.18615206510892879" blue="0.17231826303590558" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </view>
+                                    <imageView userInteractionEnabled="NO" alpha="0.80000000000000004" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="caution-icon" translatesAutoresizingMaskIntoConstraints="NO" id="kJf-Ta-dgV" userLabel="Warning Sign Label">
+                                        <rect key="frame" x="107" y="81" width="42" height="36"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerY" secondItem="3SN-fo-fqC" secondAttribute="centerY" id="4XD-76-KcB"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="centerX" secondItem="3SN-fo-fqC" secondAttribute="centerX" id="B1r-0m-ngR"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="top" secondItem="3SN-fo-fqC" secondAttribute="top" id="Iow-hk-O4K"/>
+                                    <constraint firstAttribute="bottom" secondItem="mmT-El-XIM" secondAttribute="bottom" id="e6G-OW-oAp"/>
+                                    <constraint firstAttribute="trailing" secondItem="mmT-El-XIM" secondAttribute="trailing" id="tSN-Ho-gbn"/>
+                                    <constraint firstItem="mmT-El-XIM" firstAttribute="leading" secondItem="3SN-fo-fqC" secondAttribute="leading" id="vVK-5A-cwc"/>
+                                </constraints>
+                            </view>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mwp-JA-v4w">
+                                <rect key="frame" x="204" y="147" width="52" height="52"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="2" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="28" translatesAutoresizingMaskIntoConstraints="NO" id="fFj-aX-6m6">
+                                        <rect key="frame" x="0.0" y="0.0" width="52" height="52"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="32"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.75" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="mwp-JA-v4w" secondAttribute="height" multiplier="1:1" id="Kz1-E8-NNQ"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="height" secondItem="mwp-JA-v4w" secondAttribute="height" id="efg-Lj-GPj"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="centerX" secondItem="mwp-JA-v4w" secondAttribute="centerX" id="fy3-JN-YGX"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="width" secondItem="mwp-JA-v4w" secondAttribute="width" id="h3p-eo-2o9"/>
+                                    <constraint firstItem="fFj-aX-6m6" firstAttribute="centerY" secondItem="mwp-JA-v4w" secondAttribute="centerY" id="iFF-mj-cDj"/>
+                                    <constraint firstAttribute="height" constant="52" id="p8p-ib-0Qi"/>
+                                </constraints>
+                            </view>
+                            <view hidden="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="pdf-KX-U3g" customClass="CornerBadgeView" customModule="Provenance" customModuleProvider="target">
+                                <rect key="frame" x="200" y="0.0" width="56" height="56"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="56" id="W0o-sy-oMz"/>
+                                    <constraint firstAttribute="width" secondItem="pdf-KX-U3g" secondAttribute="height" multiplier="1:1" id="u1L-Gc-ctf"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="fillColor">
+                                        <color key="value" red="1" green="0.14913141730000001" blue="0.0" alpha="0.94940603595890416" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="textColor">
+                                        <color key="value" red="0.99999600649999998" green="1" blue="1" alpha="0.85905393835616439" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="glyph" value="♥︎"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="strokeColor">
+                                        <color key="value" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="top" secondItem="grq-R5-nkq" secondAttribute="top" id="0ce-sA-8bL"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="28c-P8-1G0"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="5j5-Lp-XBT"/>
+                            <constraint firstItem="grq-R5-nkq" firstAttribute="leading" secondItem="RKb-WS-gGA" secondAttribute="leading" id="Dz1-Ij-6IK"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="leading" secondItem="grq-R5-nkq" secondAttribute="leading" id="FzP-a1-17L"/>
+                            <constraint firstItem="grq-R5-nkq" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="L9d-CC-ALt"/>
+                            <constraint firstItem="grq-R5-nkq" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="NdZ-bz-M7c"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="Omr-GR-SIc"/>
+                            <constraint firstItem="mmT-El-XIM" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="Pgl-EB-3VG"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="trailing" secondItem="grq-R5-nkq" secondAttribute="trailing" id="Rix-uL-uSX"/>
+                            <constraint firstItem="mwp-JA-v4w" firstAttribute="bottom" secondItem="RKb-WS-gGA" secondAttribute="bottom" id="YvL-tw-NYl"/>
+                            <constraint firstItem="grq-R5-nkq" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="fIo-ir-rFH"/>
+                            <constraint firstItem="kJf-Ta-dgV" firstAttribute="centerX" secondItem="RKb-WS-gGA" secondAttribute="centerX" id="fLB-wv-pUC"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="bottom" secondItem="grq-R5-nkq" secondAttribute="bottom" id="fPY-Kw-8C8"/>
+                            <constraint firstItem="mwp-JA-v4w" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kJ6-P7-xAu"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="kJw-hn-XgC"/>
+                            <constraint firstItem="pdf-KX-U3g" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kPq-Ly-e8U"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="tfB-fr-yJV"/>
+                            <constraint firstItem="pdf-KX-U3g" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="wTB-ZR-buR"/>
+                            <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="wnP-qD-f99"/>
+                        </constraints>
+                    </view>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Long Game Title: Extra Extra Long Exaggerated Long Game Subtitle " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="98d-iv-EkE" customClass="VerticalAlignLabel" customModule="Provenance" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="204" width="256" height="52"/>
+                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption2"/>
+                        <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="alignmentCode">
+                                <integer key="value" value="1"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </label>
+                </subviews>
+            </view>
+            <constraints>
+                <constraint firstItem="RKb-WS-gGA" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="6KK-cp-gKM"/>
+                <constraint firstItem="RKb-WS-gGA" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="6xC-fV-K8o"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="leading" secondItem="hUV-Gh-K0R" secondAttribute="leading" id="ES5-9w-mYT"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="trailing" secondItem="hUV-Gh-K0R" secondAttribute="trailing" id="MuH-CS-0PO"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="bottom" secondItem="hUV-Gh-K0R" secondAttribute="bottom" id="SQv-sh-Vlk"/>
+                <constraint firstItem="98d-iv-EkE" firstAttribute="height" secondItem="hUV-Gh-K0R" secondAttribute="height" multiplier="0.2" constant="1" id="dr3-Br-VIF"/>
+                <constraint firstItem="RKb-WS-gGA" firstAttribute="top" secondItem="hUV-Gh-K0R" secondAttribute="top" id="s6P-SU-FR7"/>
+                <constraint firstItem="RKb-WS-gGA" firstAttribute="bottom" secondItem="98d-iv-EkE" secondAttribute="top" constant="-5" id="tZX-ZO-dZM"/>
+            </constraints>
+            <size key="customSize" width="821" height="712"/>
+            <connections>
+                <outlet property="artworkContainerView" destination="RKb-WS-gGA" id="rBu-ZT-iY6"/>
+                <outlet property="discCountContainerView" destination="mwp-JA-v4w" id="wtl-38-ugX"/>
+                <outlet property="discCountLabel" destination="fFj-aX-6m6" id="lgA-FG-MaR"/>
+                <outlet property="discCountTrailingConstraint" destination="kJ6-P7-xAu" id="bYT-Lm-kML"/>
+                <outlet property="imageView" destination="grq-R5-nkq" id="i2d-Kv-OJ7"/>
+                <outlet property="missingFileView" destination="3SN-fo-fqC" id="bud-9t-1uZ"/>
+                <outlet property="missingRedSquareView" destination="mmT-El-XIM" id="ujB-2t-nbC"/>
+                <outlet property="titleLabel" destination="98d-iv-EkE" id="iyv-CT-5gs"/>
+                <outlet property="titleLabelHeightConstraint" destination="dr3-Br-VIF" id="Yxj-qN-rW3"/>
+                <outlet property="topRightCornerBadgeView" destination="pdf-KX-U3g" id="T4k-bE-YcX"/>
+                <outlet property="waringSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
+            </connections>
+            <point key="canvasLocation" x="-363" y="-94"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="caution-icon" width="42" height="36"/>
+    </resources>
+</document>

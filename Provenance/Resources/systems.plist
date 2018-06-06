@@ -109,17 +109,9 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 				<key>PVControlTint</key>
 				<string>#cc0000</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVSelectButton</string>
-				<key>PVControlTitle</key>
-				<string>Z</string>
-				<key>PVControlSize</key>
-				<string>{62,22}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -127,7 +119,7 @@
 				<key>PVControlTitle</key>
 				<string>L</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -135,7 +127,15 @@
 				<key>PVControlTitle</key>
 				<string>R</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVZTriggerButton</string>
+				<key>PVControlTitle</key>
+				<string>Z</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -264,7 +264,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -272,7 +272,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -280,7 +280,7 @@
 				<key>PVControlTitle</key>
 				<string>L1</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -288,7 +288,7 @@
 				<key>PVControlTitle</key>
 				<string>L2</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -296,7 +296,7 @@
 				<key>PVControlTitle</key>
 				<string>R1</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -304,7 +304,7 @@
 				<key>PVControlTitle</key>
 				<string>R2</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -383,7 +383,7 @@
 				<key>PVControlTitle</key>
 				<string>Option 1</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -391,7 +391,7 @@
 				<key>PVControlTitle</key>
 				<string>Option 2</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -457,7 +457,7 @@
 				<key>PVControlTitle</key>
 				<string>Option</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -525,7 +525,7 @@
 				<key>PVControlTitle</key>
 				<string>Option</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -589,7 +589,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -597,7 +597,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -605,7 +605,7 @@
 				<key>PVControlTitle</key>
 				<string>L</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -613,7 +613,7 @@
 				<key>PVControlTitle</key>
 				<string>R</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -632,12 +632,12 @@
 		<string>1999</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVPortable</key>
+		<true/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.ws</string>
 		<key>PVDatabaseID</key>
 		<string>9</string>
-		<key>PVPortable</key>
-		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ws</string>
@@ -690,7 +690,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -698,7 +698,7 @@
 				<key>PVControlTitle</key>
 				<string>Sound</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -766,7 +766,7 @@
 				<key>PVControlTitle</key>
 				<string>Run</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -774,51 +774,34 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
 	<dict>
 		<key>PVManufacturer</key>
 		<string>NEC</string>
-		<key>PVSupportedExtensions</key>
-		<array>
-			<string>cue</string>
-		</array>
-		<key>PVSystemShortName</key>
-		<string>TG16CD</string>
-		<key>PVSystemShortNames</key>
-		<string>PCECD/TG16CD</string>
 		<key>PVSystemName</key>
-		<string>TurboGrafx-CD</string>
+		<string>SuperGrafx</string>
 		<key>PVSystemNames</key>
-		<string>PC Engine CD/TurboGrafx-CD</string>
+		<string>PC Engine SG/SuperGrafx</string>
+		<key>PVSystemShortName</key>
+		<string>SGFX</string>
+		<key>PVSystemsShortNames</key>
+		<string>PCESG/SGFX</string>
+		<key>PVReleaseYear</key>
+		<string>1989</string>
 		<key>PVBit</key>
 		<string>16</string>
-		<key>PVReleaseYear</key>
-		<string>1988</string>
 		<key>PVPortable</key>
 		<false/>
 		<key>PVSystemIdentifier</key>
-		<string>com.provenance.pcecd</string>
+		<string>com.provenance.sgfx</string>
 		<key>PVDatabaseID</key>
-		<string>15</string>
-		<key>PVUsesCDs</key>
-		<true/>
-		<key>PVRequiresBIOS</key>
-		<true/>
-		<key>PVBIOSNames</key>
+		<string>17</string>
+		<key>PVSupportedExtensions</key>
 		<array>
-			<dict>
-				<key>Description</key>
-				<string>TurboGrafx-CD/PC Engine CD BIOS</string>
-				<key>MD5</key>
-				<string>ff1a674273fe3540ccef576376407d1d</string>
-				<key>Name</key>
-				<string>syscard3.pce</string>
-				<key>Size</key>
-				<integer>262656</integer>
-			</dict>
+			<string>pce</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -859,7 +842,7 @@
 				<key>PVControlTitle</key>
 				<string>Run</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -867,7 +850,101 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
+			</dict>
+		</array>
+	</dict>
+	<dict>
+		<key>PVManufacturer</key>
+		<string>NEC</string>
+		<key>PVSystemShortName</key>
+		<string>TG16CD</string>
+		<key>PVSystemShortNames</key>
+		<string>PCECD/TG16CD</string>
+		<key>PVSystemName</key>
+		<string>TurboGrafx-CD</string>
+		<key>PVSystemNames</key>
+		<string>PC Engine CD/TurboGrafx-CD</string>
+		<key>PVBit</key>
+		<string>16</string>
+		<key>PVReleaseYear</key>
+		<string>1988</string>
+		<key>PVPortable</key>
+		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.pcecd</string>
+		<key>PVDatabaseID</key>
+		<string>15</string>
+		<key>PVUsesCDs</key>
+		<true/>
+		<key>PVRequiresBIOS</key>
+		<true/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>TurboGrafx-CD/PC Engine CD BIOS</string>
+				<key>MD5</key>
+				<string>ff1a674273fe3540ccef576376407d1d</string>
+				<key>Name</key>
+				<string>syscard3.pce</string>
+				<key>Size</key>
+				<integer>262656</integer>
+			</dict>
+		</array>
+		<key>PVSupportedExtensions</key>
+		<array>
+			<string>cue</string>
+			<string>ccd</string>
+		</array>
+		<key>PVControlLayout</key>
+		<array>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVButtonGroup</string>
+				<key>PVControlSize</key>
+				<string>{180, 180}</string>
+				<key>PVGroupedButtons</key>
+				<array>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>II</string>
+						<key>PVControlFrame</key>
+						<string>{{60,116},{60,60}}</string>
+					</dict>
+					<dict>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+						<key>PVControlTitle</key>
+						<string>I</string>
+						<key>PVControlFrame</key>
+						<string>{{116,60},{60,60}}</string>
+					</dict>
+				</array>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVDPad</string>
+				<key>PVControlSize</key>
+				<string>{180,180}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVStartButton</string>
+				<key>PVControlTitle</key>
+				<string>Run</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVSelectButton</string>
+				<key>PVControlTitle</key>
+				<string>Select</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -946,7 +1023,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>iV</string>
+						<string>IV</string>
 						<key>PVControlFrame</key>
 						<string>{{8,24},{60,60}}</string>
 					</dict>
@@ -980,7 +1057,7 @@
 				<key>PVControlTitle</key>
 				<string>Run</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -988,7 +1065,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1125,7 +1202,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1140,16 +1217,16 @@
 		<string>SG</string>
 		<key>PVSystemShortNames</key>
 		<string>SG/SMD</string>
-		<key>PVSystemIdentifier</key>
-		<string>com.provenance.genesis</string>
 		<key>PVReleaseYear</key>
 		<string>1988</string>
 		<key>PVBit</key>
 		<string>16</string>
-		<key>PVDatabaseID</key>
-		<string>33</string>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVSystemIdentifier</key>
+		<string>com.provenance.genesis</string>
+		<key>PVDatabaseID</key>
+		<string>33</string>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>smd</string>
@@ -1227,7 +1304,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1291,7 +1368,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1355,7 +1432,7 @@
 				<key>PVControlTitle</key>
 				<string>Pause</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1372,6 +1449,8 @@
 		<string>1990</string>
 		<key>PVBit</key>
 		<string>16</string>
+		<key>PVPortable</key>
+		<false/>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.snes</string>
 		<key>PVDatabaseID</key>
@@ -1446,7 +1525,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1454,7 +1533,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1462,7 +1541,7 @@
 				<key>PVControlTitle</key>
 				<string>L</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1470,7 +1549,7 @@
 				<key>PVControlTitle</key>
 				<string>R</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1534,7 +1613,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1542,7 +1621,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1550,7 +1629,7 @@
 				<key>PVControlTitle</key>
 				<string>L</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1558,7 +1637,7 @@
 				<key>PVControlTitle</key>
 				<string>R</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1622,7 +1701,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1630,7 +1709,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1695,7 +1774,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1703,7 +1782,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1777,7 +1856,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1785,7 +1864,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1864,7 +1943,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1872,7 +1951,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -1980,7 +2059,7 @@
 				<key>PVControlTitle</key>
 				<string>Reset</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -1988,7 +2067,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2004,7 +2083,7 @@
 		<key>PVSystemName</key>
 		<string>Atari 7800</string>
 		<key>PVSystemShortName</key>
-		<string>7800</string>
+		<string>A7800</string>
 		<key>PVReleaseYear</key>
 		<string>1986</string>
 		<key>PVBit</key>
@@ -2056,7 +2135,7 @@
 				<key>PVControlTitle</key>
 				<string>Reset</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2064,7 +2143,7 @@
 				<key>PVControlTitle</key>
 				<string>Select</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2167,7 +2246,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2175,7 +2254,7 @@
 				<key>PVControlTitle</key>
 				<string>Mode</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>
@@ -2223,7 +2302,7 @@
 				<key>PVControlTitle</key>
 				<string>Reset</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 				<key>PVControlTint</key>
 				<string>#f96763</string>
 			</dict>
@@ -2262,7 +2341,7 @@
 				<key>PVControlTitle</key>
 				<string>Start</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2270,7 +2349,7 @@
 				<key>PVControlTitle</key>
 				<string>Pause</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2371,7 +2450,7 @@
 				<key>PVControlTitle</key>
 				<string>Power</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 			<dict>
 				<key>PVControlType</key>
@@ -2379,7 +2458,7 @@
 				<key>PVControlTitle</key>
 				<string>Shake</string>
 				<key>PVControlSize</key>
-				<string>{62,22}</string>
+				<string>{60,42}</string>
 			</dict>
 		</array>
 	</dict>

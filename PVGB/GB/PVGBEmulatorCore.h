@@ -35,8 +35,8 @@
 
 @end
 
-// For swift
+// for Swiwt extensions
 @interface PVGBEmulatorCore()
-- (void)changeDisplayMode:(NSInteger)displayMode;
+-(void)changeDisplayMode;
+-(void)changeDisplayMode:(NSInteger)displayMode;
 @end
-

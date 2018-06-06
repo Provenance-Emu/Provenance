@@ -1,0 +1,171 @@
+<html>
+ <head>
+  <title>Mednafen Debugger Documentation</title>
+  <link rel="stylesheet" type="text/css" media="screen, projection" href="mednafen.css" />
+ </head>
+ <body>
+  <center><h1><img alt="Mednafen" src="mednafen.png" width="696" height="204" /></h1></center>
+  <center><h1>Debugger Documentation</h1></center>
+  <center><i>Last updated April 11, 2015<br />Valid as of Mednafen 0.9.38.4</i></center>
+  <hr>
+   <h2>Notes and Cautions:</h2>
+   <p>
+    <u><b>Save States, Power/Reset</b></u>:  Utilizing save states and power toggling/resetting in step mode may lead to
+      significant malfunctions or glitches in the following emulation modules:
+	<ul>
+	 <li>md</li>
+	 <li>nes</li>
+	 <li>psx</li>
+	 <li>ss</li>
+	 <li>vb</li>
+	 <li>wswan</li>
+	</ul>
+      Additionally, these aforementioned acts may cause minor non-fatal glitches in the sound output with all modules with debugger functionality.
+  </p>
+  <p>
+   <u><b>Video Updates</b></u>: The last valid(non-skipped) video frame is drawn while in step mode.  Older versions of Mednafen would
+   attempt to draw the current, incomplete frame as emulation progressed, but this was rather buggy because the emulation code was not
+   designed with it in mind.
+  </p>
+  <p>
+   <u><b>Read Breakpoints</b></u>: Opcode, operand, and prefix(in WonderSwan case) fetches will trigger read breakpoints in the NES, PC Engine, and WonderSwan
+    debuggers.
+  </p>
+  <p>
+   <u><b>PC Breakpoints</b></u>: PC breakpoints are evaluated only for the state of PC at the start of the instruction(or start of prefixes for an instruction
+   in the case of V30MZ); IE, a PC breakpoint set on the address of an operand byte(6502, HuC6280, V30MZ) or the second
+   16-bits of a 32-bit instruction(V810) will not be triggered when the instruction is executed.
+  </p>
+  <p>
+   <u><b>Branch History</b></u>: When the CPU debugger view is not active, the branch history will only be updated reliably when at least one breakpoint
+   is active/installed.
+  </p>
+  <hr>
+  <p>
+  <h2>Quick Key Reference</h2>
+   <table cellspacing="4" border="1">
+    <tr><th>Key</th><th width="100%">Action</th></tr>
+    <tr><td>ALT+D</td><td>Master debugger view toggle.</td></tr>
+    <tr><td colspan="2"><hr /></td></tr>
+    <tr><td>ALT+1</td><td>CPU debugger view.</td></tr>
+    <tr><td>ALT+2</td><td>Graphics viewer.</td></tr>
+    <tr><td>ALT+3</td><td>Memory editor.</td></tr>
+    <tr><td>ALT+4</td><td>Log viewer.</td></tr>
+    <tr><td>-/+</td><td>Decrease/Increase debugger background opacity.</td></tr>
+    <tr><th colspan="2">CPU Debugger</th></tr>
+    <tr><td>R</td><td>Run</td></tr>
+    <tr><td>S</td><td>Step</td></tr>
+    <tr><td>T</td><td>Toggle disassembly mode.  Currently only used for selecting between Intel and AT&amp;T syntaxes for the WonderSwan debugger.</td></tr>
+    <tr><td>Return</td><td>Edit disassembly address, or edit selected register.</td></tr>
+    <tr><td>SHIFT+Return</td><td>Edit watch address.</td></tr>
+    <tr><td>Space</td><td>Toggle PC breakpoint on selected disassembly address.</td></tr>
+    <tr><td>SHIFT+R</td><td>Edit read breakpoints.</td></tr>
+    <tr><td>SHIFT+W</td><td>Edit write breakpoints.</td></tr>
+    <tr><td>CTRL+SHIFT+R</td><td>Edit I/O read breakpoints(for PC-FX and WonderSwan; I/O instructions on VB go through regular read/write breakpoints).</td></tr>
+    <tr><td>CTRL+SHIFT+W</td><td>Edit I/O write breakpoints(for PC-FX and WonderSwan; I/O instructions on VB go through regular read/write breakpoints).</td></tr>
+    <tr><td>CTRL+R</td><td>Edit Aux read breakpoints.</td></tr>
+    <tr><td>CTRL+W</td><td>Edit Aux write breakpoints.</td></tr>
+    <tr><td>SHIFT+O</td><td>Edit opcode breakpoints(PC Engine only for now).</td></tr>
+    <tr><td>Tab</td><td>Switch cursor focus between disassembly and registers.</td></tr>
+    <tr><td>Up, Left, Right, Down, PageUp, PageDown</td><td>Select disassembly address or select register.</td></tr>
+    <tr><td>SHIFT + (Up, Left, Right, Down, PageUp, PageDown)</td><td>Select watch address.</td></tr>
+    <tr><td>M</td><td>Toggle watch window between logical and physical(if available) addressing.</td></tr>
+    <tr><td>P</td><td>Poke a value to memory.</td></tr>
+    <tr><td>SHIFT + P</td><td>High-level poke a value to the underlying ROM or RAM.</td></tr>
+
+    <tr><th colspan="2">Graphics Viewer</th></tr>
+    <tr><td>&lt;</td><td>Decrease palette bank number.</td></tr>
+    <tr><td>&gt;</td><td>Increase palette bank number.</td></tr>
+    <tr><td>Up, Down</td><td>Scroll up or down.</td></tr>
+    <tr><td>Left, Right</td><td>Select graphics layer.</td></tr>
+    <tr><td>-/+</td><td>Select line number(not necessarily visible line number...) to decode graphics on.</td></tr>
+
+    <tr><th colspan="2">Memory Editor</th></tr>
+    <tr><td>D</td><td>Dump memory from the selected address space to a file.
+Two specification string are recognized:
+<blockquote>
+<pre>start_address end_address(inclusive) filename
+
+<b>Example:</b> 0 1fff dump.bin</pre>
+</blockquote>
+and
+<blockquote>
+<pre>start_address +count filename
+
+<b>Example:</b> 0 +2000 dump.bin</pre>
+</blockquote>
+</td></tr>
+    <tr><td>L</td><td>Load memory from file into selected address space.  Uses the same format of specification string as the "dump memory" function.</td></tr>
+    <tr><td>S</td><td>Byte(hex)-string search.</td></tr>
+    <tr><td>R</td><td>8-bit relative byte-string search.</td></tr>
+    <tr><td>T</td><td>Text search.</td></tr>
+    <tr><td>&lt;, &gt;</td><td>Select address space.</td></tr>
+    <tr><td>Up, Down, Left, Right</td><td>Move the cursor around and possibly scroll.</td></tr>
+    <tr><td>PageUp, PageDown</td><td>Scroll up, or scroll down, one page(256 bytes).</td></tr>
+    <tr><td>Home</td><td>Move cursor to address 0.</td></tr>
+    <tr><td>End</td><td>Move cursor to the end of the address space minus 16.</td></tr>
+    <tr><td>Insert</td><td>Enter edit mode.</td></tr>
+
+    <tr><th colspan="2">Log Viewer(PC Engine CD and PC-FX only for now)</th></tr>
+    <tr><td>T</td><td>Toggle logging on/off.</td></tr>
+   </table>
+  </p>
+  <hr>
+  <p>
+  <h2>Memory Poking</h2>
+  </p>
+  <p>High-level poking will attempt to write the desired value to the underlying storage(ROM or RAM).  Normal(low-level) poking
+  will go through the same write handlers as the virtual CPU operates through.  Note that high-level poking is not implemented
+  for all systems.
+  </p>
+  <p>The format for the string to enter when poking memory(highlevel or lowlevel), is "[*]address value [size]", with values
+  in brackets being optional.  Prefixing the address with a "*" will cause the address to be treated as a physical address,
+  which is currently only meaningful on systems that have paging registers internal to the CPU, such as the PC Engine/TurboGrafx 16.
+  </p>
+  <h2>Read and Write Breakpoints</h2>
+  <p>
+  You may enter either a single address to break on, or a range.  Read and write breakpoints operate on logical addresses, unless you prefix the address with a "*", or the first
+  address in the case of a range.<br><big><b>Exception:</b></big>  WonderSwan read/write breakpoints only operate on 20-bit physical addresses for
+  the time being.  Furthermore, only the lower 8 bits of WonderSwan I/O breakpoints are considered.
+  </p>
+  <p>
+  Multiple entries should be separated by one space character.  Examples:</p>
+  <pre>
+   2000-2007 4014 4015
+   0000 1800 2300-23ff
+   *1fe000
+  </pre>
+  You may also use "segment:offset" form with absolute addresses with PC Engine emulation, such as:
+  <pre>
+   *ff:0000-ff:03ff
+  </pre>
+  ...which will cause a break on any writes to the VDC, including the ST0, ST1, ST2 instructions.  Note that the offset is internally ANDed with 0x1FFF, so 0x2000 and 0x0000 would be equivalent offsets.
+  <p>
+  <b>WonderSwan notes:</b><br>
+  Segment(16-bit):offset(16-bit) form can also be used with the WonderSwan debugger, but you still need to prefix it with a "*", even though logical address
+  breakpoints aren't supported with WonderSwan emulation currently.  Also, the segment:offset pair is internally translated to a 20-bit address,
+  and because segments overlap, you can get breakpoints to occur on writes with other segments than the one you specified.
+  </p>
+  <h3>Aux Read and Write Breakpoints</h3>
+  <p>
+  Aux r/w breakpoints operate on secondary storage reads and writes.
+  </p>
+  <table cellspacing="4" border="1">
+   <tr><th colspan="2">PC Engine</th></tr>
+   <tr><td>0000-7FFF</td><td>VDC VRAM</td></tr>
+   <tr><td>10000-17FFF</td><td>VDC-B VRAM(SuperGrafx only)</td></tr>
+   <tr><td>20000-2001F</td><td>VDC Indexed Register</td></tr>
+   <tr><td>30000-3001F</td><td>VDC-B Indexed Register(SuperGrafx only)</td></tr>
+  </table>
+  <br>
+  <table cellspacing="4" border="1">
+   <tr><th colspan="2">PC-FX</th></tr>
+   <tr><td>00000-3FFFF</td><td>KING KRAM Page 0</td></tr>
+   <tr><td>40000-7FFFF</td><td>KING KRAM Page 1</td></tr>
+   <tr><td>80000-8FFFF</td><td>VDC-A VRAM</td></tr>
+   <tr><td>90000-9FFFF</td><td>VDC-B VRAM</td></tr>
+   <tr><td>A0000-A001F</td><td>VDC-A Indexed Register</td></tr>
+   <tr><td>B0000-B001F</td><td>VDC-B Indexed Register</td></tr>
+  </table>
+ </body>
+</html>

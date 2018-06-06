@@ -38,7 +38,7 @@ public func appearance(for traitCollection: UITraitCollection? = nil, inAny cont
 }
 
 public extension UIAppearanceContainer {
-    
+
     /// Nested appearance scope for `Self` container and trait collection
     ///
     /// - Parameter

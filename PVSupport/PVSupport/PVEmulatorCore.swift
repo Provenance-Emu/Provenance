@@ -15,6 +15,33 @@ import UIKit
     func swapDisc(number: UInt)
 }
 
+public struct CoreActionOption {
+	public let title : String
+	public let selected : Bool
+
+	public init(title: String, selected: Bool = false) {
+		self.title = title
+		self.selected = selected
+	}
+}
+
+public struct CoreAction {
+	public let title : String
+	public let requiresReset : Bool
+	public let options : [CoreActionOption]?
+
+	public init(title: String, requiresReset: Bool = false, options: [CoreActionOption]? = nil) {
+		self.title = title
+		self.requiresReset = requiresReset
+		self.options = options
+	}
+}
+
+public protocol CoreActions {
+	var coreActions : [CoreAction]? { get }
+	func selected(action : CoreAction)
+}
+
 @objc public protocol ResponderClient: class {
 
 }
@@ -462,13 +489,14 @@ import UIKit
     case button6
     case run
     case select
+	case mode
     case count
 }
 
-@objc public protocol PVPCEFXSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(didPushPCEFXButton:forPlayer:)
+@objc public protocol PVPCFXSystemResponderClient: ResponderClient, ButtonResponder {
+    @objc(didPushPCFXButton:forPlayer:)
     func didPush(_ button: PVPCFXButton, forPlayer player: Int)
-    @objc(didReleasePCEFXButton:forPlayer:)
+    @objc(didReleasePCFXButton:forPlayer:)
     func didRelease(_ button: PVPCFXButton, forPlayer player: Int)
 }
 

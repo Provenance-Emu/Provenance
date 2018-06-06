@@ -1,0 +1,135 @@
+
+language: objective-c
+osx_image: xcode9.3
+
+env:
+  global:
+    - LC_CTYPE=en_US.UTF-8
+    - LANG=en_US.UTF-8
+
+
+before_install:
+    - env
+    - locale
+    - gem install cocoapods --pre --no-rdoc --no-ri --no-document --quiet
+    - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
+    - pod --version
+    - pod setup --silent > /dev/null
+    - pod repo update --silent
+    - xcpretty --version
+    - xcodebuild -version
+    - xcodebuild -showsdks
+
+script:
+    - set -o pipefail
+
+    - echo Check if the library described by the podspec can be built
+    - pod lib lint --swift-version=4.0
+
+    - echo Build as static library
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjack-iOS-Static' -sdk iphonesimulator PLATFORM_NAME=iphonesimulator -configuration Release | xcpretty -c
+
+    - echo Build test app using the static library
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'iOSLibStaticTest' -sdk iphonesimulator PLATFORM_NAME=iphonesimulator -configuration Release | xcpretty -c
+
+
+    - echo "Build as dynamic framework (ObjectiveC), each platform (iOS, macOS, tvOS, watchOS)"
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjack-iOS' -configuration Release -sdk iphonesimulator | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjack-macOS' -configuration Release -sdk macosx | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjack-tvOS' -destination 'platform=tvOS Simulator,name=Apple TV 4K' -configuration Release -sdk appletvsimulator | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjack-watchOS' -configuration Release -sdk watchsimulator | xcpretty -c
+
+
+    - echo "Build as dynamic framework (Swift), each platform (iOS, macOS, tvOS, watchOS)"
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjackSwift-iOS' -configuration Release -sdk iphonesimulator | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjackSwift-macOS' -configuration Release -sdk macosx | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjackSwift-tvOS' -destination 'platform=tvOS Simulator,name=Apple TV 4K' -configuration Release -sdk appletvsimulator | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'CocoaLumberjackSwift-watchOS' -configuration Release -sdk watchsimulator | xcpretty -c
+
+
+    - echo "Build test apps using the dynamic framework, each platform (iOS, macOS, tvOS, watchOS)"
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'SwiftTest' -configuration Release -sdk macosx | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'FmwkTest' -configuration Release -sdk macosx | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'tvOSSwiftTest' -destination 'platform=tvOS Simulator,name=Apple TV 4K' -configuration Release -sdk appletvsimulator | xcpretty -c
+    - xcodebuild clean build -workspace Framework/Lumberjack.xcworkspace -scheme 'watchOSSwiftTest' -configuration Release -sdk watchsimulator | xcpretty -c
+    
+
+    - echo Run the tests
+    - pod install --project-directory=Tests
+    - xcodebuild test -workspace Framework/Lumberjack.xcworkspace -scheme 'iOS Tests' -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=latest' GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES | xcpretty -c
+    - xcodebuild test -workspace Framework/Lumberjack.xcworkspace -scheme 'OS X Tests' -sdk macosx GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES | xcpretty -c
+
+
+    - echo Building the Demos
+    - cd Demos
+    - pod install --project-directory=ContextFilter
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'ContextFilter' | xcpretty -c
+
+    - pod install --project-directory=CoreDataLogger
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'CoreDataLogger' | xcpretty -c
+
+    - pod install --project-directory=CustomFormatters
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'CustomFormatters' | xcpretty -c
+
+    - pod install --project-directory=CustomLogLevels
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'CustomLogLevels' | xcpretty -c
+
+    - pod install --project-directory=DispatchQueueLogger
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'DispatchQueueLogger' | xcpretty -c
+
+    - pod install --project-directory=FineGrainedLogging
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'FineGrainedLogging' | xcpretty -c
+
+    - pod install --project-directory=GlobalLogLevel
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'GlobalLogLevel' | xcpretty -c
+
+    - pod install --project-directory=LogFileCompressor
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'LogFileCompressor' | xcpretty -c
+
+    - pod install --project-directory=NonArcTest
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'NonArcTest' | xcpretty -c
+
+    - pod install --project-directory=OverflowTestMac
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'OverflowTestMac' | xcpretty -c
+
+    - pod install --project-directory=PerUserLogLevels
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'PerUserLogLevels' | xcpretty -c
+
+    - pod install --project-directory=RegisteredDynamicLogging/Mobile
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'RegisteredLoggingTest (Mobile)' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+    - pod install --project-directory=RegisteredDynamicLogging/Desktop
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'RegisteredLoggingTest (Desktop)' | xcpretty -c
+
+    - pod install --project-directory=RollingTestMac
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'RollingTestMac' | xcpretty -c
+
+    - pod install --project-directory=TestXcodeColors/Desktop
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'TestXcodeColors (Desktop)' | xcpretty -c
+
+    - pod install --project-directory=TestXcodeColors/Mobile
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'TextXcodeColors (Mobile)' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+    - pod install --project-directory=WebServerIPhone
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'WebServerIPhone' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+    - pod install --project-directory=Benchmark/Desktop
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'BenchmarkMac' | xcpretty -c
+
+    - pod install --project-directory=Benchmark/Mobile
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'BenchmarkIPhone' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+    - pod install --project-directory=SQLiteLogger
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'SQLiteLogger' | xcpretty -c
+
+    - pod install --project-directory=UniversalApp
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'UniversalApp' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+    - pod install --project-directory=CLI
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'CLI' | xcpretty -c
+
+    - pod install --project-directory=CaptureASL
+    - xcodebuild clean build -workspace Demos.xcworkspace -scheme 'CaptureASL' -configuration Release -sdk iphonesimulator | xcpretty -c
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

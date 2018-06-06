@@ -1,0 +1,152 @@
+1.21.1
+nes
+Nintendo Entertainment System/Famicom
+256
+240
+7
+nes.pal
+NTSC NES/Famicom
+64 512 
+nes-pal.pal
+PAL NES
+64 512 
+rp2c04-0001.pal
+Arcade RP2C04-0001
+64 
+rp2c04-0002.pal
+Arcade RP2C04-0002
+64 
+rp2c04-0003.pal
+Arcade RP2C04-0003
+64 
+rp2c04-0004.pal
+Arcade RP2C04-0004
+64 
+rp2c0x.pal
+Arcade RP2C03/RP2C05
+64 
+snes
+Super Nintendo Entertainment System/Super Famicom
+256
+240
+1
+snes.pal
+SNES 15-bit BGR
+32768 
+snes_faust
+Super Nintendo Entertainment System/Super Famicom
+292
+224
+0
+gb
+GameBoy (Color)
+160
+144
+2
+gb.pal
+GameBoy(mono)
+4 8 12 
+gbc.pal
+GameBoy Color 15-bit BGR
+32768 
+gba
+GameBoy Advance
+240
+160
+1
+gba.pal
+GBA 15-bit BGR
+32768 
+pce
+PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx
+320
+232
+1
+pce.pal
+PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.
+512 1024 
+pce_fast
+PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx
+288
+232
+1
+pce_fast.pal
+PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.
+512 1024 
+lynx
+Atari Lynx
+160
+102
+1
+lynx.pal
+Atari Lynx 12-bit BRG
+4096 
+md
+Sega Genesis/MegaDrive
+320
+240
+0
+pcfx
+PC-FX
+288
+240
+0
+ngp
+Neo Geo Pocket (Color)
+160
+152
+0
+psx
+Sony PlayStation
+320
+240
+0
+ss
+Sega Saturn
+302
+240
+0
+ssfplay
+Sega Saturn Sound Format Player
+480
+300
+0
+vb
+Virtual Boy
+384
+224
+1
+vb.pal
+VB LED Active Time; 256 left, 256 right.  If only 256 triplets are present, then they will be used for both left and right views.  When the custom palette's right view colors are the same as the left view colors(either explicitly, or when using a 256-entry custom palette), and anaglyph 3D mode is active, then the custom palette will not be used.
+256 512 
+wswan
+WonderSwan
+224
+144
+0
+sms
+Sega Master System
+256
+240
+1
+sms.pal
+SMS 6-bit BGR
+64 
+gg
+Sega Game Gear
+160
+144
+1
+gg.pal
+GG 12-bit BGR
+4096 
+cdplay
+CD-DA Player
+192
+144
+0
+demo
+Mednafen Demo/Example Module
+400
+300
+0

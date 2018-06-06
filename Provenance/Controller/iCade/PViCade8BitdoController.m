@@ -37,10 +37,10 @@
                     [[weakSelf.iCadeGamepad leftShoulder] buttonPressed];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf.iCadeGamepad leftTrigger] buttonPressed];
+                    [[weakSelf.iCadeGamepad rightTrigger] buttonPressed];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf.iCadeGamepad rightTrigger] buttonPressed];
+                    [[weakSelf.iCadeGamepad leftTrigger] buttonPressed];
                     break;
                 case iCadeJoystickDown:
                 case iCadeJoystickLeft:
@@ -77,10 +77,10 @@
                     [[weakSelf.iCadeGamepad leftShoulder] buttonReleased];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf.iCadeGamepad leftTrigger] buttonReleased];
+                    [[weakSelf.iCadeGamepad rightTrigger] buttonReleased];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf.iCadeGamepad rightTrigger] buttonReleased];
+                    [[weakSelf.iCadeGamepad leftTrigger] buttonReleased];
                     break;
                 case iCadeJoystickDown:
                 case iCadeJoystickLeft:
@@ -128,10 +128,10 @@
                     [[weakSelf.iCadeGamepad leftShoulder] buttonPressed];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf.iCadeGamepad leftTrigger] buttonPressed];
+                    [[weakSelf.iCadeGamepad rightTrigger] buttonPressed];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf.iCadeGamepad rightTrigger] buttonPressed];
+                    [[weakSelf.iCadeGamepad leftTrigger] buttonPressed];
                     break;
                 case iCadeJoystickDown:
                 case iCadeJoystickLeft:
@@ -168,10 +168,10 @@
                     [[weakSelf.iCadeGamepad leftShoulder] buttonReleased];
                     break;
                 case iCadeButtonG:
-                    [[weakSelf.iCadeGamepad leftTrigger] buttonReleased];
+                    [[weakSelf.iCadeGamepad rightTrigger] buttonReleased];
                     break;
                 case iCadeButtonH:
-                    [[weakSelf.iCadeGamepad rightTrigger] buttonReleased];
+                    [[weakSelf.iCadeGamepad leftTrigger] buttonReleased];
                     break;
                 case iCadeJoystickDown:
                 case iCadeJoystickLeft:

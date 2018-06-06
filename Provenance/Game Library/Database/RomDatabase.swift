@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 import UIKit
 
 public extension Notification.Name {
@@ -137,6 +137,7 @@ extension Thread {
     }
 }
 
+public typealias RomDB = RomDatabase
 public final class RomDatabase {
 
 	static var databaseInitilized = false
@@ -146,11 +147,52 @@ public final class RomDatabase {
 			RealmConfiguration.setDefaultRealmConfig()
 			try _sharedInstance = RomDatabase()
 			databaseInitilized = true
+
+			let existingLocalLibraries = _sharedInstance.realm.objects(PVLibrary.self).filter("isLocal == YES")
+
+			if !existingLocalLibraries.isEmpty, let first = existingLocalLibraries.first {
+				VLOG("Existing PVLibrary(s) found.")
+				_sharedInstance.libraryRef = ThreadSafeReference(to: first)
+			} else {
+				VLOG("No local library, need to create")
+				createInitialLocalLibrary()
+			}
 		}
 	}
 
+	private static func createInitialLocalLibrary() {
+		// This is all pretty much place holder as I scope out the idea of
+		// local and remote libraries
+		let newLibrary = PVLibrary()
+		newLibrary.bonjourName = ""
+		newLibrary.domainname = "localhost"
+		newLibrary.name = "Default Library"
+		newLibrary.ipaddress = "127.0.0.1"
+		if let existingGames = _sharedInstance?.realm.objects(PVGame.self).filter("libraries.@count == 0") {
+			newLibrary.games.append(objectsIn: existingGames)
+		}
+		try! _sharedInstance?.add(newLibrary)
+		_sharedInstance.libraryRef = ThreadSafeReference(to: newLibrary)
+	}
+
+	// Primary local library
+
+	private var libraryRef : ThreadSafeReference<PVLibrary>!
+	public var library : PVLibrary {
+		let realm = try! Realm()
+		return realm.resolve(libraryRef)!
+	}
+
+//	public static var localLibraries : Results<PVLibrary> {
+//		return sharedInstance.realm.objects(PVLibrary.self).filter { $0.isLocal }
+//	}
+//
+//	public static var remoteLibraries : Results<PVLibrary> {
+//		return sharedInstance.realm.objects(PVLibrary.self).filter { !$0.isLocal }
+//	}
+
     // Private shared instance that propery initializes
-    private static var _sharedInstance: RomDatabase?
+    private static var _sharedInstance: RomDatabase!
 
     // Public shared instance that makes sure threads are handeled right
     // TODO: Since if a function calls a bunch of RomDatabase.sharedInstance calls,
@@ -219,6 +261,14 @@ public extension RomDatabase {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", value))
     }
 
+	public func all<T: Object>(_ type: T.Type, where keyPath: String, contains value: String) -> Results<T> {
+		return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) CONTAINS[cd] %@", value))
+	}
+
+	public func all<T: Object>(_ type: T.Type, where keyPath: String, beginsWith value: String) -> Results<T> {
+		return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) BEGINSWITH[cd] %@", value))
+	}
+
     public func all<T: Object>(_ type: T.Type, where keyPath: String, value: Bool) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", NSNumber(value: value)))
     }
@@ -226,6 +276,10 @@ public extension RomDatabase {
     public func all<T: Object, KeyType>(_ type: T.Type, where keyPath: String, value: KeyType) -> Results<T> {
         return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %@", [value]))
     }
+
+	public func all<T: Object>(_ type: T.Type, where keyPath: String, value: Int) -> Results<T> {
+		return realm.objects(T.self).filter(NSPredicate(format: "\(keyPath) == %i", value))
+	}
 
     public func all<T: Object>(_ type: T.Type, filter: NSPredicate) -> Results<T> {
         return realm.objects(T.self).filter(filter)
@@ -249,53 +303,66 @@ public extension RomDatabase {
     }
 }
 
+public enum RomDeletionError : Error {
+	case relatedFiledDeletionError
+}
+
 // MARK: - Update
 public extension RomDatabase {
     @objc
     public func writeTransaction(_ block: () -> Void) throws {
-        try realm.write {
-            block()
-        }
+		if realm.isInWriteTransaction {
+			block()
+		} else {
+			try realm.write {
+				block()
+			}
+		}
     }
 
     @objc
     public func add(_ object: Object, update: Bool = false) throws {
-        try realm.write {
+		try writeTransaction {
             realm.add(object, update: update)
         }
     }
 
     public func add<T: Object>(objects: [T], update: Bool = false) throws {
-        try realm.write {
+		try writeTransaction {
             realm.add(objects, update: update)
         }
     }
 
     @objc
     public func deleteAll() throws {
-        try realm.write {
+		try writeTransaction {
             realm.deleteAll()
         }
     }
 
     public func deleteAll<T: Object>(_ type: T.Type) throws {
-        try realm.write {
-            realm.delete(realm.objects(type))
-        }
+		try writeTransaction {
+			realm.delete(realm.objects(type))
+		}
     }
 
     @objc
     public func delete(_ object: Object) throws {
-        try realm.write {
+		try writeTransaction {
             realm.delete(object)
         }
     }
 
 	func renameGame(_ game: PVGame, toTitle title: String) {
-		if title.count != 0 {
+		if !title.isEmpty {
 			do {
 				try RomDatabase.sharedInstance.writeTransaction {
 					game.title = title
+				}
+
+				if game.releaseID == nil || game.releaseID!.isEmpty {
+					ILOG("Game isn't already matched, going to try to re-match after a rename")
+					PVGameImporter.shared.lookupInfo(for: game, overwrite: false)
 				}
 			} catch {
 				ELOG("Failed to rename game \(game.title)\n\(error.localizedDescription)")
@@ -303,35 +370,41 @@ public extension RomDatabase {
 		}
 	}
 
-	func delete(game: PVGame) {
+	func delete(game: PVGame) throws {
 		let romURL = PVEmulatorConfiguration.path(forGame: game)
 
 		if !game.customArtworkURL.isEmpty {
 			do {
 				try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 			} catch {
-				ELOG("Failed to delete image \(game.customArtworkURL)")
+				ELOG("Failed to delete image " + game.customArtworkURL)
+				// Don't throw, not a big deal
 			}
 		}
 
 		let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
-		do {
-			try FileManager.default.removeItem(at: savesPath)
-		} catch {
-			WLOG("Unable to delete save states at path: \(savesPath.path) because: \(error.localizedDescription)")
+		if FileManager.default.fileExists(atPath: savesPath.path) {
+			do {
+				try FileManager.default.removeItem(at: savesPath)
+			} catch {
+				ELOG("Unable to delete save states at path: " + savesPath.path + "because: " + error.localizedDescription)
+			}
 		}
 
 		let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
-		do {
-			try FileManager.default.removeItem(at: batteryPath)
-		} catch {
-			WLOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
+		if FileManager.default.fileExists(atPath: batteryPath.path) {
+			do {
+				try FileManager.default.removeItem(at: batteryPath)
+			} catch {
+				ELOG("Unable to delete battery states at path: \(batteryPath.path) because: \(error.localizedDescription)")
+			}
 		}
 
 		do {
 			try FileManager.default.removeItem(at: romURL)
 		} catch {
-			WLOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
+			ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
+			throw error
 		}
 
 		// Delete from Spotlight search
@@ -341,18 +414,22 @@ public extension RomDatabase {
 		}
 		#endif
 
-		game.saveStates.forEach { try! $0.delete() }
-		game.recentPlays.forEach { try! $0.delete() }
+		game.saveStates.forEach { try? $0.delete() }
+		game.recentPlays.forEach { try? $0.delete() }
+		game.screenShots.forEach { try? $0.delete() }
 
-		deleteRelatedFilesGame(game)
-		try? game.delete()
+		try deleteRelatedFilesGame(game)
+		try game.delete()
 	}
 
-	func deleteRelatedFilesGame(_ game: PVGame) {
-
+	func deleteRelatedFilesGame(_ game: PVGame) throws {
 		guard let system = game.system else {
 			ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
-			return
+			throw RomDeletionError.relatedFiledDeletionError
+		}
+
+		try game.relatedFiles.forEach {
+			try FileManager.default.removeItem(at: $0.url )
 		}
 
 		let romDirectory = system.romsDirectory
@@ -371,17 +448,17 @@ public extension RomDatabase {
 			return filename.contains(relatedFileName)
 		}
 
-		matchingFiles.forEach {
+		try matchingFiles.forEach {
 			let file = romDirectory.appendingPathComponent( $0.lastPathComponent, isDirectory: false)
 			do {
 				try FileManager.default.removeItem(at: file)
 			} catch {
 				ELOG("Failed to remove item \(file.path).\n \(error.localizedDescription)")
+				throw error
 			}
 		}
 	}
 }
-
 
 // MARK: - Spotlight
 #if os(iOS)
@@ -410,7 +487,6 @@ extension RomDatabase {
 	}
 }
 #endif
-
 
 public extension RomDatabase {
     @objc

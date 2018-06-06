@@ -26,9 +26,11 @@
     
     PViCadeGamepadButtonInput* _leftTrigger;
     PViCadeGamepadButtonInput* _rightTrigger;
-    
+
+	PViCadeGamepadButtonInput* _start;
+	PViCadeGamepadButtonInput* _select;
+
     PViCadeGamepadDirectionPad* _dummyThumbstick;
-    
 }
 
 -(PViCadeGamepadDirectionPad*) dpad;

@@ -19,7 +19,6 @@ class PVAppearanceViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Appearance"
 #if os(iOS)
         let settings = PVSettingsModel.shared
         hideTitlesSwitch = UISwitch()
@@ -58,6 +57,10 @@ class PVAppearanceViewController: UITableViewController {
 // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Appearance"
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -114,7 +117,7 @@ class PVAppearanceViewController: UITableViewController {
             } else if indexPath.row == 1 {
                 settings.showRecentGames = !settings.showRecentGames
                 cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
-			} else if indexPath.row == 1 {
+			} else if indexPath.row == 2 {
 				settings.showRecentSaveStates = !settings.showRecentSaveStates
 				cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
 			}

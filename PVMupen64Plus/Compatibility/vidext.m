@@ -27,6 +27,7 @@
 #include "api/m64p_vidext.h"
 #include "api/vidext.h"
 #import "../MupenGameCore.h"
+#import <PVSupport/PVLogging.h>
 
 #include <dlfcn.h>
 
@@ -48,13 +49,42 @@ EXPORT m64p_error CALL VidExt_Quit(void)
 
 EXPORT m64p_error CALL VidExt_ListFullscreenModes(m64p_2d_size *SizeArray, int *NumSizes)
 {
-    *NumSizes = 0;
+	m64p_2d_size size[2];
+
+	// Default size
+	size[0].uiWidth = 640;
+	size[0].uiHeight = 480;
+
+	// Full device size
+	CGSize fullWindow = UIApplication.sharedApplication.keyWindow.bounds.size;
+	size[1].uiWidth = fullWindow.width;
+	size[1].uiHeight = fullWindow.height;
+
+	SizeArray = &size;
+    *NumSizes = 2;
+
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPixel, m64p_video_mode ScreenMode, m64p_video_flags Flags)
 {
-    GET_CURRENT_OR_RETURN(M64ERR_SUCCESS);
+	NSString *windowMode;
+	switch (ScreenMode) {
+		case 1:
+			windowMode = @"None";
+			break;
+		case 2:
+			windowMode = @"Window";
+			break;
+		case 3:
+			windowMode = @"Fullscreen";
+			break;
+		default:
+			windowMode = @"Unknown";
+			break;
+	}
+	DLOG(@"(%i,%i) %ibpp %@", Width, Height, BitsPerPixel, windowMode);
+    GET_CURRENT_OR_RETURN(M64ERR_INVALID_STATE);
 
     current.videoWidth = Width;
     current.videoHeight = Height;
@@ -67,12 +97,13 @@ EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPix
 
 EXPORT m64p_error CALL VidExt_SetCaption(const char *Title)
 {
-    DLog(@"Mupen caption: %s", Title);
+    DLOG(@"Mupen caption: %s", Title);
     return M64ERR_SUCCESS;
 }
 
 EXPORT m64p_error CALL VidExt_ToggleFullScreen(void)
 {
+	DLOG(@"VidExt_ToggleFullScreen - Unimplimented");
     return M64ERR_UNSUPPORTED;
 }
 
@@ -83,6 +114,7 @@ EXPORT void * CALL VidExt_GL_GetProcAddress(const char* Proc)
 
 EXPORT m64p_error CALL VidExt_GL_SetAttribute(m64p_GLattr Attr, int Value)
 {
+	DLOG(@"Set: %i, Value: %i -- Unimplimented.", Attr, Value);
     // TODO configure MSAA here, whatever else is possible
     return M64ERR_UNSUPPORTED;
 }
@@ -107,13 +139,13 @@ m64p_error OverrideVideoFunctions(m64p_video_extension_functions *VideoFunctionS
 
 EXPORT m64p_error CALL VidExt_ResizeWindow(int width, int height)
 {
-    DLog(@"Mupen wants to resize to %d x %d", width, height);
+    DLOG(@"Mupen wants to resize to %d x %d", width, height);
     return M64ERR_SUCCESS;
 }
 
 int VidExt_InFullscreenMode(void)
 {
-    return 0;
+    return 1;
 }
 
 int VidExt_VideoRunning(void)

@@ -21,10 +21,15 @@
 		<string>com.provenance.vb</string>
 		<string>com.provenance.ws</string>
 		<string>com.provenance.wsc</string>
+		<string>com.provenance.nes</string>
+		<string>com.provenance.snes</string>
+		<string>com.provenance.gb</string>
+		<string>com.provenance.gbc</string>
+		<string>com.provenance.gba</string>
 	</array>
 	<key>PVProjectURL</key>
 	<string>https://mednafen.github.io</string>
 	<key>PVProjectVersion</key>
-	<string>unknown</string>
+	<string>1.21.1</string>
 </dict>
 </plist>

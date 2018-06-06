@@ -1,0 +1,1355 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Mednafen General Documentation</title>
+  <link rel="stylesheet" type="text/css" media="screen, projection" href="mednafen.css">
+ </head>
+ <body>
+  <center><h1><img alt="Mednafen" src="mednafen.png" width="696" height="204"></h1></center>
+  <center><h1>General Documentation</h1></center>
+  <center><i>Last updated March 12, 2018<br>Valid as of 1.21.1</i></center>
+ <p></p>
+ <b>Table of Contents:</b>
+ <ul><li><a href="#Section_introduction">Introduction</a><ul><li><a href="#Section_base_directory">Base Directory</a><ul></ul></li></ul></li><li><a href="#Section_core_features">Core Features</a><ul><li><a href="#Section_cdrom_emulation">CD Emulation</a><ul><li><a href="#Section_cd_images">Compact Disc Images</a><ul></ul></li><li><a href="#Section_multicd_games">Multiple-CD Games</a><ul></ul></li><li><a href="#Section_cdg">CD+G</a><ul></ul></li><li><a href="#Section_photocdportfolio">PhotoCD Portfolio</a><ul></ul></li></ul></li></ul></li><li><a href="#Section_security">Security Issues</a><ul><li><a href="#Section_security_savestates">Save States</a><ul></ul></li><li><a href="#Section_security_includes">CD images and PSF(PSF1, GSF, etc.) Files</a><ul></ul></li><li><a href="#Section_security_netplay">Network Play</a><ul></ul></li></ul></li><li><a href="#Section_using">Using Mednafen</a><ul><li><a href="#Section_key_assignments">Key Assignments</a><ul></ul></li><li><a href="#Section_input_grabbing">Input Grabbing</a><ul></ul></li><li><a href="#Section_remapping_input">Remapping Buttons and Keys</a><ul></ul></li><li><a href="#Section_command_line">Command-line</a><ul></ul></li><li><a href="#Section_config_files">Configuration Files</a><ul></ul></li><li><a href="#Global+Settings+Reference">Global Settings Reference</a><ul></ul></li><li><a href="#Section_firmware_bios">Firmware/BIOS</a><ul></ul></li><li><a href="#Section_custom_palettes">Custom Palettes</a><ul></ul></li><li><a href="#Section_ips_patching">Automatic IPS Patching</a><ul></ul></li></ul></li><li><a href="#Section_advanced">Advanced Usage</a><ul><li><a href="#Section_lag">Minimizing video/audio/input Lag</a><ul><li><a href="#Section_lag_hardware">Hardware Selection</a><ul></ul></li><li><a href="#Section_minimize_video_lag">Settings to Minimize Video Lag</a><ul></ul></li><li><a href="#Section_minimize_audio_lag">Settings to Minimize Audio Lag</a><ul></ul></li></ul></li><li><a href="#Section_input_mapping_format">Input Mapping Settings Format</a><ul><li><a href="#Section_ims_keyboard">Keyboard</a><ul></ul></li><li><a href="#Section_ims_mouse">Mouse</a><ul></ul></li><li><a href="#Section_ims_joystick">Joystick</a><ul></ul></li></ul></li></ul></li><li><a href="#Section_troubleshooting">Troubleshooting and Common Solutions</a><ul><li><a href="#Section_troubleshooting_nosoundlinux">No sound output on Linux.</a><ul></ul></li><li><a href="#Section_troubleshooting_configcrlf">Configuration file is a mess in Notepad in Windows.</a><ul></ul></li></ul></li><li>Emulation Module Documentation<ul><li><a href="lynx.html">Atari Lynx</a> [lynx]<li><a href="cdplay.html">CD-DA Player</a> [cdplay]<li><a href="gb.html">GameBoy (Color)</a> [gb]<li><a href="gba.html">GameBoy Advance</a> [gba]<li><a href="ngp.html">Neo Geo Pocket (Color)</a> [ngp]<li><a href="nes.html">Nintendo Entertainment System/Famicom</a> [nes]<li><a href="pce_fast.html">PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx</a> [pce_fast]<li><a href="pce.html">PC Engine (CD)/TurboGrafx 16 (CD)/SuperGrafx</a> [pce]<li><a href="pcfx.html">PC-FX</a> [pcfx]<li><a href="gg.html">Sega Game Gear</a> [gg]<li><a href="md.html">Sega Genesis/MegaDrive</a> [md]<li><a href="sms.html">Sega Master System</a> [sms]<li><a href="ss.html">Sega Saturn</a> [ss]<li><a href="ssfplay.html">Sega Saturn Sound Format Player</a> [ssfplay]<li><a href="psx.html">Sony PlayStation</a> [psx]<li><a href="snes_faust.html">Super Nintendo Entertainment System/Super Famicom</a> [snes_faust]<li><a href="snes.html">Super Nintendo Entertainment System/Super Famicom</a> [snes]<li><a href="vb.html">Virtual Boy</a> [vb]<li><a href="wswan.html">WonderSwan</a> [wswan]</ul></li><li><a href="debugger.html">Debugger</a><li><a href="netplay.html">Network Play</a><li><a href="#Section_legal">Licenses, Copyright Notices, and Code Credits</a><ul><li><a href="#Section_legal_libmpcdec">libmpcdec</a><ul></ul></li><li><a href="#Section_legal_tremor">Tremor</a><ul></ul></li><li><a href="#Section_legal_gb_snd_emu">Gb_Snd_Emu</a><ul></ul></li><li><a href="#Section_legal_blip_buffer">Blip_Buffer</a><ul></ul></li><li><a href="#Section_legal_sms_snd_emu">Sms_Snd_Emu(base for T6W28_Apu NGP code)</a><ul></ul></li><li><a href="#Section_legal_handy">Handy</a><ul></ul></li><li><a href="#Section_legal_pc2e">PC2e (Used in portions of PC Engine CD emulation)</a><ul></ul></li><li><a href="#Section_legal_scale2x">Scale2x</a><ul></ul></li><li><a href="#Section_legal_hqnx">hq2x, hq3x, hq4x</a><ul></ul></li><li><a href="#Section_legal_nes_ntsc">nes_ntsc</a><ul></ul></li><li><a href="#Section_legal_2xsai">2xSaI</a><ul></ul></li><li><a href="#Section_legal_vba">VisualBoyAdvance GameBoy and GBA code</a><ul></ul></li><li><a href="#Section_legal_trio">trio</a><ul></ul></li><li><a href="#Section_legal_md5">MD5 Hashing</a><ul></ul></li><li><a href="#Section_legal_v810">V810 Emulator</a><ul></ul></li><li><a href="#Section_legal_minilzo">MiniLZO</a><ul></ul></li><li><a href="#Section_legal_fuse">Fuse Z80 emulation code</a><ul></ul></li><li><a href="#Section_legal_neopop">NeoPop Neo Geo Pocket (Color) Code</a><ul></ul></li><li><a href="#Section_legal_jrevdct">PC-FX MJPEG Decoding</a><ul></ul></li><li><a href="#Section_legal_emu2413">VRC7 Sound Emulation</a><ul></ul></li><li><a href="#Section_legal_v30mz">NEC V30MZ Emulator</a><ul></ul></li><li><a href="#Section_legal_v30mzdis">NEC V30MZ disassembler(modified BOCHS x86 disassembler)</a><ul></ul></li><li><a href="#Section_legal_cygne">Cygne</a><ul></ul></li><li><a href="#Section_legal_fceu">FCE Ultra</a><ul></ul></li><li><a href="#Section_legal_quicklz">QuickLZ</a><ul></ul></li><li><a href="#Section_legal_cdrdao">Q-Subchannel CRC16 Code</a><ul></ul></li><li><a href="#Section_legal_sms_plus">SMS Plus</a><ul></ul></li><li><a href="#Section_legal_genesis_plus">Genesis Plus</a><ul></ul></li><li><a href="#Section_legal_genesis_plus_gx">Genesis Plus GX</a><ul></ul></li><li><a href="#Section_legal_emu2413_sms">EMU2413(used in SMS emulation)</a><ul></ul></li><li><a href="#Section_legal_dvdisaster">CD-ROM data correction code</a><ul></ul></li><li><a href="#Section_legal_ym2612">YM2612 Emulator</a><ul></ul></li><li><a href="#Section_legal_svp_ssp16">Sega Genesis SVP/SSP16 Emulator</a><ul></ul></li><li><a href="#Section_legal_speex">Speex Resampler</a><ul></ul></li><li><a href="#Section_legal_sabr">SABR v3.0 Shader</a><ul></ul></li><li><a href="#Section_legal_ffmpeg">ffmpeg cputest</a><ul></ul></li></ul></li></ul><hr width="100%">
+ <h2><a name="Section_introduction">Introduction</a></h2><p></p> <p>
+ This main document covers general Mednafen usage, generally regardless of which system is being emulated.  Documentation covering key assignments, settings, and related information for each system emulation module is linked to in the table of contents under "Emulation Module Documentation".
+ </p>
+
+ <p>
+  The term "movie" used in this documentation refers to save-state and recorded input stream stored in a file, generally usable only in Mednafen itself.<br>
+  The terms "audio/video movie", "QuickTime movie", and variations thereof refer to audio and video data recorded and stored in a file, and
+  usable with external programs.
+ </p>
+  <h3><a name="Section_base_directory">Base Directory</a></h3><p></p>   <p>
+    Mednafen's "base directory" is the directory under which Mednafen stores its data and
+    looks for various auxillary data by default.  If the "<b>HOME</b>" environment variable is set, it will be suffixed with "/.mednafen"
+    and used as the base directory(in other words ~/.mednafen, or $HOME/.mednafen).  If the "<b>MEDNAFEN_HOME</b>" environment variable is set,
+    it will be used as the base directory.  If neither the "HOME" nor "MEDNAFEN_HOME" environment
+    variable is set, and the current user has an entry in the password file, the corresponding home directory
+    will be used as if it were the "HOME" environment variable.
+   </p>
+
+   <p>
+    On Microsoft Windows, these conditions are typically
+    not met, in which case the directory the Mednafen executable("mednafen.exe") is in will be used as the base directory.
+   </p>
+
+   <p>
+    If none of the preceding conditions were met, then you're doomed, doomy doomy DOOMED, GOTO DOOM.
+   </p>
+
+  <hr width="75%">
+ <hr width="75%">
+ <h2><a name="Section_core_features">Core Features</a></h2><p></p> <ul>
+  <li>Physical joystick/gamepad support.</li>
+  <li>Versatile input configuration system; assign multiple physical buttons to a virtual button or action.</li>
+  <li>Multiple graphics filters and scaling modes.</li>
+  <li>Save states.</li>
+  <li>Real-time game rewinding.</li>
+  <li>Screen snapshots, saved in PNG format.</li>
+  <li>QuickTime movie recording.</li>
+  <li>MS WAV-format sound logging.</li>
+  <li>Loading games from gzip and (pk)zip compressed archives.</li>
+  <li>Network play(utilizing an external dedicated server program).</li>
+</ul>
+
+ <h3><a name="Section_cdrom_emulation">CD Emulation</a></h3><p></p> <p>
+  Mednafen can load CD-ROM games from a dumped copy of the disc, such as CUE+BIN.  Physical CD support was removed in version 0.9.38.
+ </p>
+
+<h4><a name="Section_cd_images">Compact Disc Images</a></h4><p></p> <p>
+  Mednafen supports "CUE" sheets, CloneCD "CCD/IMG/SUB", and cdrdao "TOC" files; though only a very limited
+  subset of the latter's full capabilities is supported.  Mednafen supports raw, simple storage formats supported by
+  <a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a>(MS WAV, AIFF/AIFC, AU/SND, etc.), and <a href="http://xiph.org/vorbis/">Ogg Vorbis</a> and <a href="http://www.musepack.net/">Musepack</a> audio files referenced by CUE sheets.
+  MP3 is not supported, and will not be supported.
+ </p>
+ <p>
+  The cdrdao "TOC" support in Mednafen includes support for "RW_RAW" subchannel data, needed for CD+G.  Note that Mednafen assumes that the Q subchannel
+  is also included in the RW_RAW data area in the disc image(even though the name "RW_RAW" would suggest it isn't present, cdrdao seems to included it).  If
+  the Q subchannel data is missing from the RW_RAW data area in the disc image, Mednafen's CD emulation will not work properly.
+ </p>
+ <p>
+  Since 0.8.4, Mednafen will perform simple data correction on disc images that contain EDC and L-EC data(2352-byte-per-sector "raw").
+  It calculates the real EDC, and if it doesn't match the EDC recorded for that sector, it will evaluate the L-EC data to repair the data.  If the
+  data is unrepairable, an error message will be displayed.
+  <br>
+  <b>This may cause problems with naive patches that don't update the error-correction data(at least the 32-bit EDC, if that's correct, the L-EC data will
+  be ignored)!</b>
+ </p>
+ <p>
+  Enabling the <a href="#cd.image_memcache">cd.image_memcache</a> option is recommended in many situations; read the setting description
+  for more details.<br><b>CAUTION:</b> When using a 32-bit build of Mednafen on Windows or a 32-bit operating system, Mednafen may run out of address
+  space(and error out, possibly in the middle of emulation) if this option is enabled when loading large disc sets(e.g. 3+ discs) via M3U files.
+ </p>
+<hr width="50%">
+<h4><a name="Section_multicd_games">Multiple-CD Games</a></h4><p></p> <p>
+  To play a game that consists of more than one CD, you will need to create an
+  M3U file(plain-text, ".m3u" extension), and enter the filenames of the CUE/TOC/CCD files, one per line.  Load the M3U file
+  with Mednafen instead of the CUE/TOC/CCD files, and use the F6 and F8 keys to switch among the various discs available.
+  <br>
+  <b>Note:</b> Preferably, your M3U file(s) should reference CUE/TOC/CCD files that are in the same directory as the M3U file,
+  otherwise you will likely need to alter the <a href="#filesys.untrusted_fip_check">filesys.untrusted_fip_check</a> setting.
+ </p>
+ <hr width="50%">
+ <h4><a name="Section_cdg">CD+G</a></h4><p></p>  Both the <a href="pce.html">PC Engine (CD)</a> and <a href="pcfx.html">PC-FX</a> emulation modules support CD+G playback; however,
+  the PC-FX BIOS doesn't appear to be as resilient when dealing with scratched discs/damaged data as the PC Engine CD BIOS is.
+  <br><br>
+  <b>Note:</b> CD+G graphics data is stored in the R-W subchannel data of discs.  You must use a disc image format that includes this
+  data(such as in the cdrdao TOC or CloneCD formats; CUE format definitely isn't going to work).
+ <hr width="50%">
+ <h4><a name="Section_photocdportfolio">PhotoCD Portfolio</a></h4><p></p>  The <a href="pcfx.html">PC-FX</a> emulation module supports low-resolution single-session Kodak "PhotoCD Portfolio" disc playback.
+  Hardware features to support multi-session CDs are not fully emulated; they may or may not work.
+ <hr width="50%">
+ <hr width="50%">
+ <hr width="50%">
+ <h2><a name="Section_security">Security Issues</a></h2><p></p>
+ This section discusses various known design flaws/choices, bugs, and limitations in Mednafen that have security implications.
+
+ <h3><a name="Section_security_savestates">Save States</a></h3><p></p> Causing Mednafen to lock-up, abort, or consume large amounts of CPU time via loading a specially-constructed save state is
+ a trivial exercise.  It is hypothetically possible to overflow some buffers on some emulated systems by clever
+ manipulation of saved timekeeping variables.  In combination with custom emulated machine code and state, it may therefore
+ be possible to run arbitrary host code, compromising the host system. <b>Therefore, loading save states from parties
+ you have reason to distrust, or not trust, is advised against.</b>
+ <hr width="75%">
+ <h3><a name="Section_security_includes">CD images and PSF(PSF1, GSF, etc.) Files</a></h3><p></p> <p>
+ CUE and TOC, and PSF(PSF1, GSF, etc.) files can reference arbitrary files for inclusion and parsing.  Inclusion of
+ device files may cause odd system behavior, particularly if you are running Mednafen as root(which you shouldn't be!) on a
+ UN*X system, or cause Mednafen to lockup or abort.  <b>In combination with save states, this file inclusion presents
+ the possibility of leaking of private local information;</b> for example, if an attacker supplies a CD image or PSF rip that
+ you subsequently run, and can convince you to save a state and send it back, or to connect to a network play server(in
+ which save states are automatically utilized), the attacker may then have access to local private data from your
+ system.  The setting <a href="#filesys.untrusted_fip_check">filesys.untrusted_fip_check</a>, when set to 1(the default), will enable
+ checks that mitigate this potential problem.
+ </p>
+ <hr width="75%">
+ <h3><a name="Section_security_netplay">Network Play</a></h3><p></p> <p>
+ Mednafen's network play automatically utilizes save states to synchronize state among newly connected players, and
+ thereafter at connected players' command.  Hence, any security issues relating to save states apply to network play as well.
+ </p>
+
+ <p>
+ Additionally, network problems, or a malicious network play server or player, may cause Mednafen to lock up or consume large
+ amounts of CPU time processing received data.
+ </p>
+ <hr width="75%">
+ <hr width="75%">
+ <h2><a name="Section_using">Using Mednafen</a></h2><p></p> <p>
+ 
+ </p>
+ <h3><a name="Section_key_assignments">Key Assignments</a></h3><p></p> <p>
+  All default key mappings are by scancode, so you'll need to press the keys corresponding to the appropriate positions on the standard U.S keyboard layout.
+ </p>
+ <p>
+ </p>
+ <table border>
+ <tr><th>Key(s):</th><th>Action:</th><th>Configuration String:</th></tr>
+ <tr><td>F1</td><td><a name="command.toggle_help">Toggle in-game quick help screen.</a></td><td>toggle_help</td></tr>
+ <tr><td>F5</td><td><a name="command.save_state">Save state.</a></td><td>save_state</td></tr>
+ <tr><td>F7</td><td><a name="command.load_state">Load state.</a></td><td>load_state</td></tr>
+ <tr><td>0-9</td><td>Select save state slot.</td><td>"0" through "9"</td></tr>
+ <tr><td>-</td><td><a name="command.state_slot_dec">Decrement selected save state slot.</a></td><td>state_slot_dec</td></tr>
+ <tr><td>=</td><td><a name="command.state_slot_inc">Increment selected save state slot.</a></td><td>state_slot_inc</td></tr>
+ <tr><td>ALT&nbsp;+&nbsp;S</td><td>Toggle <a href="#srwframes">600-frame</a> save-state rewinding functionality, disabled by default.</td><td>toggle_state_rewind</td></tr>
+ <tr><td>SHIFT + F5</td><td>Record movie.</td><td>save_movie</td></tr>
+ <tr><td>SHIFT + F7</td><td>Play movie.</td><td>load_movie</td></tr>
+ <tr><td>SHIFT + 0-9</td><td>Select movie slot.</td><td>"m0" through "m9"</td></tr>
+ <tr><td>LALT&nbsp;+&nbsp;C</td><td>Toggle cheat console.<br><b>Note</b>: Will not respond to RALT/AltGr even if remapped.</td><td>togglecheatview</td></tr>
+ <tr><td>ALT&nbsp;+&nbsp;T</td><td>Toggle cheats active.</td><td>togglecheatactive</td></tr>
+ <tr><td>T</td><td>Enable network play console input.</td><td>togglenetview</td></tr>
+ <tr><td>LALT&nbsp;+&nbsp;D</td><td>Toggle debugger.<br><b>Note</b>: Will not respond to RALT/AltGr even if remapped.</td><td>toggle_debugger</td></tr>
+ <tr><th>Key(s):</th><th>Action:</th><th>Configuration String:</th></tr>
+ <tr><td>`</td><td>Fast-forward.</td><td>fast_forward</td></tr>
+ <tr><td>\</td><td>Slow-forward.</td><td>slow_forward</td></tr>
+ <tr><td>ALT&nbsp;+&nbsp;A</td><td><a name="command.advance_frame">Enter frame advance mode, or advance the frame if already in it.</a></td><td>advance_frame</td></tr>
+ <tr><td>ALT&nbsp;+&nbsp;R</td><td><a name="command.run_normal">Exit frame advance mode.</a></td><td>run_normal</td></tr>
+ <tr><td>Pause</td><td><a name="command.pause">Pause/Unpause.</a></td><td>pause</td></tr>
+ <tr><td>SHIFT + F1</td><td>Toggle frames-per-second display(from top to bottom, the display format is: virtual, rendered, blitted).</td><td>toggle_fps_view</td></tr>
+ <tr><td>Backspace</td><td>Rewind emulation, if save-state rewinding functionality is enabled, up to <a href="#srwframes">600 frames</a>.</td><td>state_rewind</td></tr>
+ <tr><td>F9</td><td>Save (rawish) screen snapshot.</td><td>take_snapshot</td></tr>
+ <tr><td>SHIFT + F9</td><td>Save screen snapshot, taken after all scaling and special filters/shaders are applied.</td><td>take_scaled_snapshot</td></tr>
+ <tr><td>ALT&nbsp;+&nbsp;O</td><td>Rotate the screen</td><td>rotate_screen</td></tr>
+ <tr><td>ALT + Enter</td><td>Toggle fullscreen mode.</td><td>toggle_fs</td></tr>
+ <tr><td nowrap>CTRL + 1<br>through<br>Ctrl + 9</td><td>Toggle layer.</td><td>"tl1" through "tl9"</td></tr>
+ <tr><th>Key(s):</th><th>Action:</th><th>Configuration String:</th></tr>
+ <tr><td>F3</td><td><a name="command.input_config_abd"><a href="#Section_analog_detection">Detect analog buttons</a> on physical joysticks/gamepads(for use with the input configuration process).</a></td><td>input_config_abd</td></tr>
+ <tr><td nowrap>ALT + SHIFT + [<i>n</i>]</td><td>Configure buttons for emulated device on input port <i>n</i>(1-8).</td><td>input_config<i>n</i></td></tr>
+ <tr><td nowrap>CTRL + SHIFT + [<i>n</i>]</td><td>Select input device on input port <i>n</i>(1-8).<br /><br /><b>Note:</b> Many games do not expect input devices to change while the game is running, and thus may require a hard reset.</td><td>device_select<i>n</i></td></tr>
+ <tr><td>F2</td><td><a name="command.input_configc">Activate in-game input configuration process for a command key.</a></td><td>input_configc</td></tr>
+ <tr><td>SHIFT + F2</td><td>Like F2, but after configuration completes, to activate the configured command key will require all buttons configured to it to be in a pressed state simultaneously to trigger the action.  Note that keyboard modifier keys(CTRL, ALT, SHIFT) are still treated as modifiers and not discrete keys.<br><br>Especially useful in conjunction with the <a href="#ckdelay">ckdelay</a> setting.</td><td>input_configc_am</td></tr>
+ <tr><td nowrap>CTRL + SHIFT + Menu</td><td><a name="command.toggle_grab">Toggle <a href="#Section_input_grabbing">input grabbing</a>(for emulated mice and keyboards).</a></td><td>toggle_grab</td></tr>
+ <tr><th>Key(s):</th><th>Action:</th><th>Configuration String:</th></tr>
+ <tr><td>F10</td><td>Reset.</td><td>reset</td></tr>
+ <tr><td>F11</td><td>Hard reset(toggle power switch).</td><td>power</td></tr>
+ <tr><td>Escape/F12</td><td>Exit(the emulator, or netplay chat mode).</td><td>exit</td></tr>
+ </table>
+
+ <hr width="75%">
+ <h3><a name="Section_input_grabbing">Input Grabbing</a></h3><p></p> <p>
+ Keyboard and mouse input can be grabbed(from the OS/window manager) by pressing <a href="#command.toggle_grab">CTRL+SHIFT+Menu</a>(default mapping), and disabled by pressing the same again.
+ </p>
+ <p>
+  Emulated keyboards will only function when input grabbing is enabled.  When input grabbing is enabled, and at least one emulated keyboard that has an emulated key mapped
+  to a host keyboard key is enabled, all(except for the input grab toggling mapping) other host keyboard input mappings will see all keyboard keys as being unpressed.  In
+  other words, this disables hotkeys/command keys(unless the user has mapped them to a non-keyboard device), and the keyboard mappings of any non-keyboard emulated devices.
+ </p>
+
+ <p>
+  Emulated mice mapped to the system mouse will only function properly when input grabbing is enabled or when in a fullscreen video mode, the debugger is inactive, and no
+  other emulated input devices that rely on absolute mouse coordinates(e.g. lightguns) are active and mapped to the system mouse.
+ </p>
+ <hr width="75%">
+ <h3><a name="Section_remapping_input">Remapping Buttons and Keys</a></h3><p></p>  <p>
+   You may configure a virtual(emulated) input device by using special command keys in Mednafen while a game is running.
+  </p>
+  <p>
+   <a name="Section_analog_detection"></a>
+   <font color="yellow"><b><u>Caution:</u></b></font>  Users of XBox 360-type/compatible controllers on operating systems other than Microsoft Windows(e.g. Linux), or users of other
+   controllers with analog buttons, should complete the following process before attempting any configuration that will map a physical analog button to a virtual input.
+   Failure to complete this process under the aforementioned conditions which necessitate it will result in the input configuration functionality becoming confused, and the
+   resulting input mappings will be wonky.<br>
+   <blockquote>
+    Twirl all sticks and D-pads, move all throttles to maximum then center(and leave them there), and press all analog buttons on any physical gamepads/joysticks
+    with analog buttons you want to use in the input configuration process, then press <a href="#command.input_config_abd">F3</a>. Then, configure input as
+    normal. The detected analog buttons will be recognized during input configuration until Mednafen exits; if you exit Mednafen and restart, and want to
+    configure input devices again, you'll need to repeat the twirling-pressing-<a href="#command.input_config_abd">F3</a> process again).
+   </blockquote>
+  </p>
+
+  <p>
+   All joystick throttles should be set to their center position before configuring inputs.  To register a "press" with a throttle control during the input
+   configuration process, move it to the maximum or minimum position as appropriate, then back to the center position.
+  </p>
+
+  <p>
+   To configure the virtual device on input port 1, press ALT+SHIFT+1.  For the virtual device on input port 2, press ALT+SHIFT+2.  Etc.
+  </p>
+
+  <p>
+   After pressing the appropriate command key or command key combination, a message will be displayed at the bottom of the screen similar to "GamePad #1: A (1)".  At this time, you would press the physical joystick or keyboard button you want to map to button "A" on the first virtual gamepad.  After you push the button, you should see something like "GamePad #1: A (2)".  If you want to map any other physical buttons to virtual button "A", press them now.  Otherwise, press the physical joystick or keyboard button you pressed before, and you will move on to the configuration of the next virtual button("B").
+  </p>
+
+  <p>
+   To configure a command key, press <a href="#command.input_configc">F2</a>, and then the command key whose mapping you wish to change.  The process is similar to that for a virtual input device.
+  </p>
+ <hr width="75%">
+ <h3><a name="Section_command_line">Command-line</a></h3><p></p> <p>
+  Mednafen supports options passed on the command line.   Options
+  are taken in the form of "-option value".  Some options are valueless.
+ </p>
+ <p>
+  In addition to the options listed in the table below, any setting listed in the "Settings" section of this document and any system emulation module sub-document can be set by prefixing it with
+  a hyphen(-), followed by the value, such as: -nes.slstart 8
+</p>
+  <table border>
+   <tr><th>Option:</th><th>Value Type:</th><th>Description:</th></tr>
+   <tr><td nowrap>-force_module x</td><td>string</td><td>Force usage of specified emulation module.</td></tr>
+   <tr><td nowrap>-which_medium x</td><td>integer</td><td>Start with specified disk/CD(numbered from 0) inserted.  For ejected, pass -1.</td></tr>
+   <tr><td>-connect</td><td><i>(n/a)</i></td><td>Trigger to connect to remote host after the game is loaded.</td></tr>
+   <tr><td nowrap>-soundrecord x</td><td>string</td><td>Record sound output to the specified filename in the MS WAV format.</td></tr>
+   <tr><td nowrap>-qtrecord x</td><td>string</td><td>Record video and audio output to the specified filename in the QuickTime format.</td></tr>
+  </table>
+ <hr width="75%">
+<h3><a name="Section_config_files">Configuration Files</a></h3><p></p> <p>
+  Mednafen loads/saves its settings from/to a primary configuration file, named "<b>mednafen.cfg</b>", under the Mednafen
+  <a href="#Section_base_directory">base directory</a>.  This file is created and written to when Mednafen shuts down.
+ </p>
+ <p>
+  Mednafen loads override settings from optional per-module override configuration files, also located directly under the
+  Mednafen <a href="#Section_base_directory">base directory</a>.  The general pattern for the naming of these user-created
+  files is "&lt;<b>system</b>&gt;<b>.cfg</b>"; e.g. "<b>nes.cfg</b>", "<b>pce.cfg</b>", "<b>gba.cfg</b>", "<b>psx.cfg</b>", etc.  This allows for overriding global settings
+  on a per-module basis.
+ </p>
+
+ <p>
+  Per-game override configuration files are also supported.  They should be placed in the <a href="#filesys.path_pgconfig"><b>pgconfig</b></a> directory
+  under the Mednafen <a href="#Section_base_directory">base directory</a>.  Name these files like &lt;<b>FileBase</b>&gt;.&lt;<b>system</b>&gt;.<b>cfg</b>; e.g.
+  "<b>Lieutenant Spoon's Sing-a-Tune (USA).psx.cfg</b>".
+ </p>
+
+ <p>
+  The aforementioned per-module and per-game configuration override files will <b>NOT</b> be written to by Mednafen, and they will generally not
+  alter the contents of the primary configuration file, unless a user action occurs that causes new setting values to be generated
+  based on the current active setting value(such as toggling full-screen mode inside the emulator, for instance).  Some settings
+  currently cannot be overridden properly:
+  <ul>
+   <li>cd.image_memcache</li>
+   <li>filesys.untrusted_fip_check</li>
+   <li>&lt;system&gt;.enable</li>
+  </ul>
+ </p>
+<hr width="75%">
+
+<h3><a name="Global+Settings+Reference">Global Settings Reference</a></h3><p></p><p>
+<b>Caution:</b> Any settings that change emulation behavior as seen from the emulated game are shown with the setting name bolded in the table. One should be conscious of these settings if one has changed them from the default values when using network play or movies, as they can cause desychronizations if not set the same among hosts(or between the recording emulator and the playing emulator). 
+</p>
+<p></p><table border><tr class="TableHeader"><th>Setting:</th><th>Value Type:</th><th>Possible Values:</th><th>Default Value:</th><th>Description:</th></tr><tr class="RowA"><td class="ColA">autosave</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="autosave">Automatically load/save state on game load/close.</a><p>Automatically save and load save states when a game is closed or loaded, respectively.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">cd.image_memcache</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="cd.image_memcache">Cache entire CD images in memory.</a><p>Reads the entire CD image(s) into memory at startup(which will cause a small delay).  Can help obviate emulation hiccups due to emulated CD access.  May cause more harm than good on low memory systems, systems with swap enabled, and/or when the disc images in question are on a fast SSD.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">cheats</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="cheats">Enable cheats.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">debugger.autostepmode</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="debugger.autostepmode">Automatically go into the debugger's step mode after a game is loaded.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">ffnosound</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="ffnosound">Silence sound output when fast-forwarding.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">ffspeed</td><td class="ColB">real</td><td class="ColC">1 <i>through</i> 15</td><td class="ColD">4</td><td class="ColE"><a name="ffspeed">Fast-forwarding speed multiplier.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">fftoggle</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="fftoggle">Treat the fast-forward button as a toggle.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.fname_movie</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">%f.%M%p.%x</td><td class="ColE"><a name="filesys.fname_movie">Format string for movie filename.</a><p>See <a href="fname_format.txt">fname_format.txt</a> for more information.  Edit at your own risk.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.fname_sav</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">%F.%M%x</td><td class="ColE"><a name="filesys.fname_sav">Format string for save games filename.</a><p>WARNING: %x should always be included, otherwise you run the risk of overwriting save data for games that create multiple save data files.<br>
+<br>
+See <a href="fname_format.txt">fname_format.txt</a> for more information.  Edit at your own risk.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.fname_savbackup</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">%F.%m%z%p.%x</td><td class="ColE"><a name="filesys.fname_savbackup">Format string for save game backups filename.</a><p>WARNING: %x and %p should always be included.<br>
+<br>
+See <a href="fname_format.txt">fname_format.txt</a> for more information.  Edit at your own risk.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.fname_snap</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">%f-%p.%x</td><td class="ColE"><a name="filesys.fname_snap">Format string for screen snapshot filenames.</a><p>WARNING: %x or %p should always be included, otherwise there will be a conflict between the numeric counter text file and the image data file.<br>
+<br>
+See <a href="fname_format.txt">fname_format.txt</a> for more information.  Edit at your own risk.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.fname_state</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">%f.%M%X</td><td class="ColE"><a name="filesys.fname_state">Format string for state filename.</a><p>See <a href="fname_format.txt">fname_format.txt</a> for more information.  Edit at your own risk.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.path_cheat</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">cheats</td><td class="ColE"><a name="filesys.path_cheat">Path to directory for cheats.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.path_firmware</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">firmware</td><td class="ColE"><a name="filesys.path_firmware">Path to directory for firmware.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.path_movie</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">mcm</td><td class="ColE"><a name="filesys.path_movie">Path to directory for movies.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.path_palette</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">palettes</td><td class="ColE"><a name="filesys.path_palette">Path to directory for custom palettes.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.path_pgconfig</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">pgconfig</td><td class="ColE"><a name="filesys.path_pgconfig">Path to directory for per-game configuration override files.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.path_sav</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">sav</td><td class="ColE"><a name="filesys.path_sav">Path to directory for save games and nonvolatile memory.</a><p>WARNING: Do not set this path to a directory that contains Famicom Disk System disk images, or you will corrupt them when you load an FDS game and exit Mednafen.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.path_savbackup</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">b</td><td class="ColE"><a name="filesys.path_savbackup">Path to directory for backups of save games and nonvolatile memory.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.path_snap</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">snaps</td><td class="ColE"><a name="filesys.path_snap">Path to directory for screen snapshots.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.path_state</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">mcs</td><td class="ColE"><a name="filesys.path_state">Path to directory for save states.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">filesys.state_comp_level</td><td class="ColB">integer</td><td class="ColC">-1 <i>through</i> 9</td><td class="ColD">6</td><td class="ColE"><a name="filesys.state_comp_level">Save state file compression level.</a><p>gzip/deflate compression level for save states saved to files.  -1 will disable gzip compression and wrapping entirely.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">filesys.untrusted_fip_check</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="filesys.untrusted_fip_check">Enable untrusted file-inclusion path security check.</a><p>When this setting is set to "1", the default, paths to files referenced from files like CUE sheets and PSF rips are checked for certain characters that can be used in directory traversal, and if found, loading is aborted.  Set it to "0" if you want to allow constructs like absolute paths in CUE sheets, but only if you understand the security implications of doing so(see "Security Issues" section in the documentation).</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">fps.autoenable</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="fps.autoenable">Automatically enable FPS display on startup.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">fps.bgcolor</td><td class="ColB">integer</td><td class="ColC">0x00000000 <i>through</i> 0xFFFFFFFF</td><td class="ColD">0x80000000</td><td class="ColE"><a name="fps.bgcolor">FPS display background color.</a><p>0xAARRGGBB</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">fps.font</td><td class="ColB">enum</td><td class="ColC">5x7<br>6x9<br>6x12<br>6x13<br>9x18</td><td class="ColD">5x7</td><td class="ColE"><a name="fps.font">FPS display font.</a><ul><li><b>5x7</b> - 5x7<br></li><br><li><b>6x9</b> - 6x9<br></li><br><li><b>6x12</b> - 6x12<br></li><br><li><b>6x13</b> - 6x13.  CJK support.<br></li><br><li><b>9x18</b> - 9x18;  CJK support.<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">fps.position</td><td class="ColB">enum</td><td class="ColC"></td><td class="ColD">upper_left</td><td class="ColE"><a name="fps.position">FPS display position.</a><ul></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">fps.scale</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 32</td><td class="ColD">1</td><td class="ColE"><a name="fps.scale">FPS display scale factor.</a><p>A value of 0 enables auto-scaling.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">fps.textcolor</td><td class="ColB">integer</td><td class="ColC">0x00000000 <i>through</i> 0xFFFFFFFF</td><td class="ColD">0xFFFFFFFF</td><td class="ColE"><a name="fps.textcolor">FPS display text color.</a><p>0xAARRGGBB</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">input.autofirefreq</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 1000</td><td class="ColD">3</td><td class="ColE"><a name="input.autofirefreq">Auto-fire frequency.</a><p>Auto-fire frequency = GameSystemFrameRateHz / (value + 1)</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">input.ckdelay</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 99999</td><td class="ColD">0</td><td class="ColE"><a name="input.ckdelay">Dangerous key action delay.</a><p>The length of time, in milliseconds, that a button/key corresponding to a "dangerous" command like power, reset, exit, etc. must be pressed before the command is executed.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">input.joystick.axis_threshold</td><td class="ColB">real</td><td class="ColC">0 <i>through</i> 100</td><td class="ColD">75</td><td class="ColE"><a name="input.joystick.axis_threshold">Analog axis binary press detection threshold.</a><p>Threshold for detecting a digital-like "button" press on analog axis, in percent.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">input.joystick.global_focus</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="input.joystick.global_focus">Update physical joystick(s) internal state in Mednafen even when Mednafen lacks OS focus.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">netplay.console.font</td><td class="ColB">enum</td><td class="ColC">5x7<br>6x9<br>6x12<br>6x13<br>9x18</td><td class="ColD">9x18</td><td class="ColE"><a name="netplay.console.font">Font for netplay chat console.</a><ul><li><b>5x7</b> - 5x7<br></li><br><li><b>6x9</b> - 6x9<br></li><br><li><b>6x12</b> - 6x12<br></li><br><li><b>6x13</b> - 6x13.  CJK support.<br></li><br><li><b>9x18</b> - 9x18;  CJK support.<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">netplay.console.lines</td><td class="ColB">integer</td><td class="ColC">5 <i>through</i> 64</td><td class="ColD">5</td><td class="ColE"><a name="netplay.console.lines">Height of chat console, in lines.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">netplay.console.scale</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 16</td><td class="ColD">1</td><td class="ColE"><a name="netplay.console.scale">Netplay chat console text scale factor.</a><p>A value of 0 enables auto-scaling.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">netplay.gamekey</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD"></td><td class="ColE"><a name="netplay.gamekey">Key to hash with the MD5 hash of the game.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">netplay.host</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">netplay.fobby.net</td><td class="ColE"><a name="netplay.host">Server hostname.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">netplay.localplayers</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 16</td><td class="ColD">1</td><td class="ColE"><a name="netplay.localplayers">Local player count.</a><p>Number of local players for network play.  This number is advisory to the server, and the server may assign fewer players if the number of players requested is higher than the number of controllers currently available.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">netplay.nick</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD"></td><td class="ColE"><a name="netplay.nick">Nickname.</a><p>Nickname to use for network play chat.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">netplay.password</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD"></td><td class="ColE"><a name="netplay.password">Server password.</a><p>Password to connect to the netplay server.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">netplay.port</td><td class="ColB">integer</td><td class="ColC">1 <i>through</i> 65535</td><td class="ColD">4046</td><td class="ColE"><a name="netplay.port">Server port.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">nothrottle</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="nothrottle">Disable speed throttling when sound is disabled.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">osd.alpha_blend</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="osd.alpha_blend">Enable alpha blending for OSD elements.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">osd.message_display_time</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 15000</td><td class="ColD">2500</td><td class="ColE"><a name="osd.message_display_time">Length of time, in milliseconds, to display internal status and error messages</a><p>Time lengths less than 100ms are recommended against unless you understand you may miss important non-fatal error messages, and that the input configuration process may become unusable.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">osd.state_display_time</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 15000</td><td class="ColD">2000</td><td class="ColE"><a name="osd.state_display_time">Length of time, in milliseconds, to display the save state or the movie selector after selecting a state or movie.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">qtrecord.h_double_threshold</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 1073741824</td><td class="ColD">256</td><td class="ColE"><a name="qtrecord.h_double_threshold">Double the raw image's height if it's below this threshold.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">qtrecord.vcodec</td><td class="ColB">enum</td><td class="ColC">raw<br>cscd<br>png</td><td class="ColD">cscd</td><td class="ColE"><a name="qtrecord.vcodec">Video codec to use.</a><ul><li><b>raw</b> - Raw<br>A fast codec, computationally, but will cause enormous file size and may exceed your storage medium's sustained write rate.</li><br><li><b>cscd</b> - CamStudio Screen Codec<br>A good balance between performance and compression ratio.</li><br><li><b>png</b> - PNG<br>Has a better compression ratio than "cscd", but is much more CPU intensive.  Use for compatibility with official QuickTime in cases where you have insufficient disk space for "raw".</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">qtrecord.w_double_threshold</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 1073741824</td><td class="ColD">384</td><td class="ColE"><a name="qtrecord.w_double_threshold">Double the raw image's width if it's below this threshold.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">sfspeed</td><td class="ColB">real</td><td class="ColC">0.25 <i>through</i> 1</td><td class="ColD">0.75</td><td class="ColE"><a name="sfspeed">SLOW-forwarding speed multiplier.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">sftoggle</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="sftoggle">Treat the SLOW-forward button as a toggle.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">sound</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="sound">Enable sound output.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">sound.buffer_time</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 1000</td><td class="ColD">0</td><td class="ColE"><a name="sound.buffer_time">Desired buffer size in milliseconds(ms).</a><p>The default value of 0 enables automatic buffer size selection.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">sound.device</td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD">default</td><td class="ColE"><a name="sound.device">Select sound output device.</a><p>When using ALSA sound output under Linux, the "sound.device" setting "default" is Mednafen's default, IE "hw:0", not ALSA's "default". If you want to use ALSA's "default", use "sexyal-literal-default".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">sound.driver</td><td class="ColB">enum</td><td class="ColC">default<br>alsa<br>openbsd<br>oss<br>wasapish<br>dsound<br>wasapi<br>sdl<br>jack</td><td class="ColD">default</td><td class="ColE"><a name="sound.driver">Select sound driver.</a><p>The following choices are possible, sorted by preference, high to low, when "default" driver is used, but dependent on being compiled in.</p><ul><li><b>default</b> - Default<br>Selects the default sound driver.</li><br><li><b>alsa</b> - ALSA<br>The default for Linux(if available).</li><br><li><b>openbsd</b> - OpenBSD Audio<br>The default for OpenBSD.</li><br><li><b>oss</b> - Open Sound System<br>The default for non-Linux UN*X/POSIX/BSD(other than OpenBSD) systems, or anywhere ALSA is unavailable. If the ALSA driver gives you problems, you can try using this one instead.<br>
+<br>
+If you are using OSSv4 or newer, you should edit "/usr/lib/oss/conf/osscore.conf", uncomment the max_intrate= line, and change the value from 100(default) to 1000(or higher if you know what you're doing), and restart OSS. Otherwise, performance will be poor, and the sound buffer size in Mednafen will be orders of magnitude larger than specified.<br>
+<br>
+If the sound buffer size is still excessively larger than what is specified via the "sound.buffer_time" setting, you can try setting "sound.period_time" to 2666, and as a last resort, 5333, to work around a design flaw/limitation/choice in the OSS API and OSS implementation.</li><br><li><b>wasapish</b> - WASAPI(Shared Mode)<br>The default when it's available(running on Microsoft Windows Vista and newer).</li><br><li><b>dsound</b> - DirectSound<br>The default for Microsoft Windows XP and older.</li><br><li><b>wasapi</b> - WASAPI(Exclusive Mode)<br>Experimental exclusive-mode WASAPI driver, usable on Windows Vista and newer.  Use it for lower-latency sound.  May not work properly on all sound cards.</li><br><li><b>sdl</b> - Simple Directmedia Layer<br>This driver is not recommended, but it serves as a backup driver if the others aren't available. Its performance is generally sub-par, requiring higher latency or faster CPUs/SMP for glitch-free playback, except where the OS provides a sound callback API itself, such as with Mac OS X and BeOS.</li><br><li><b>jack</b> - JACK<br>The latency reported during startup is for the local sound buffer only and does not include server-side latency.  Please note that video card drivers(in the kernel or X), and hardware-accelerated OpenGL, may interfere with jackd's ability to effectively run with realtime response.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">sound.period_time</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 100000</td><td class="ColD">0</td><td class="ColE"><a name="sound.period_time">Desired period size in microseconds(μs).</a><p>Currently only affects OSS, ALSA, WASAPI(exclusive mode), and SDL output.  A value of 0 defers to the default in the driver code in SexyAL.<br>
+<br>
+Note: This is not the "sound buffer size" setting, that would be "sound.buffer_time".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">sound.rate</td><td class="ColB">integer</td><td class="ColC">22050 <i>through</i> 192000</td><td class="ColD">48000</td><td class="ColE"><a name="sound.rate">Specifies the sound playback rate, in sound frames per second("Hz").</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">sound.volume</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 150</td><td class="ColD">100</td><td class="ColE"><a name="sound.volume">Sound volume level, in percent.</a><p>Setting this volume control higher than the default of "100" may severely distort the sound.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">srwframes</td><td class="ColB">integer</td><td class="ColC">10 <i>through</i> 99999</td><td class="ColD">600</td><td class="ColE"><a name="srwframes">Number of frames to keep states for when state rewinding is enabled.</a><p>WARNING: Setting this to a large value may cause excessive RAM usage in some circumstances, such as with games that stream large volumes of data off of CDs.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">video.blit_timesync</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="video.blit_timesync">Enable time synchronization(waiting) for frame blitting.</a><p>Disable to reduce latency, at the cost of potentially increased video "juddering", with the maximum reduction in latency being about 1 video frame's time.<br>
+Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">video.deinterlacer</td><td class="ColB">enum</td><td class="ColC">weave<br>bob<br>bob_offset</td><td class="ColD">weave</td><td class="ColE"><a name="video.deinterlacer">Deinterlacer to use for interlaced video.</a><ul><li><b>weave</b> - Good for low-motion video; can be used in conjunction with negative <system>.scanlines setting values.<br></li><br><li><b>bob</b> - Good for causing a headache.  All glory to Bob.<br></li><br><li><b>bob_offset</b> - Good for high-motion video, but is a bit flickery; reduces the subjective vertical resolution.<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">video.disable_composition</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="video.disable_composition">Attempt to disable desktop composition.</a><p>Currently, this setting only has an effect on Windows Vista and Windows 7(and probably the equivalent server versions as well).</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">video.driver</td><td class="ColB">enum</td><td class="ColC">default<br>opengl<br>softfb</td><td class="ColD">default</td><td class="ColE"><a name="video.driver">Video output driver.</a><ul><li><b>default</b> - Default<br>Selects the default video driver.  Currently, this is OpenGL for all platforms, but may change in the future if better platform-specific drivers are added.</li><br><li><b>opengl</b> - OpenGL<br>All video-related Mednafen features are available with this video driver.</li><br><li><b>softfb</b> - Software Blitting to Framebuffer<br>Slower with lower-quality scaling than OpenGL, but if you don't have hardware-accelerated OpenGL rendering, it will probably be faster than software OpenGL rendering. Bilinear interpolation not available. OpenGL shaders do not work with this output method, of course.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">video.frameskip</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="video.frameskip">Enable frameskip during emulation rendering.</a><p>Disable for rendering code performance testing.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">video.fs</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="video.fs">Enable fullscreen mode.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">video.fs.display</td><td class="ColB">integer</td><td class="ColC">-1 <i>through</i> 32767</td><td class="ColD">-1</td><td class="ColE"><a name="video.fs.display">Display to use with fullscreen mode.</a><p>Specify -1 to use the display on which the center of the window lies in windowed mode.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">video.glvsync</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="video.glvsync">Attempt to synchronize OpenGL page flips to vertical retrace period.</a><p>Note: Additionally, if the environment variable "__GL_SYNC_TO_VBLANK" does not exist, then it will be created and set to the value specified for this setting.  This has the effect of forcibly enabling or disabling vblank synchronization when running under Linux with NVidia's drivers.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+</table><p></p><table border><tr class="TableHeader"><th>Setting:</th><th>Value Type:</th><th>Possible Values:</th><th>Default Value:</th><th>Description:</th></tr><tr class="RowA"><td class="ColA">&lt;system&gt;.enable</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="&lt;system&gt;.enable">Enable (automatic) usage of this module.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.forcemono<br><ul><li>cdplay</li><li>demo</li><li>gb</li><li>gba</li><li>gg</li><li>lynx</li><li>md</li><li>ngp</li><li>pce</li><li>pce_fast</li><li>pcfx</li><li>psx</li><li>sms</li><li>snes</li><li>snes_faust</li><li>ss</li><li>ssfplay</li><li>vb</li><li>wswan</li></ul></td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.forcemono">Force monophonic sound output.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.scanlines</td><td class="ColB">integer</td><td class="ColC">-100 <i>through</i> 100</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.scanlines">Enable scanlines with specified opacity.</a><p>Opacity is specified in %; IE a value of "100" will give entirely black scanlines.<br>
+<br>
+Negative values are the same as positive values for non-interlaced video, but for interlaced video will cause the scanlines to be overlaid over the previous(if the video.deinterlacer setting is set to "weave", the default) field's lines.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.shader</td><td class="ColB">enum</td><td class="ColC">none<br>autoip<br>autoipsharper<br>scale2x<br>sabr<br>ipsharper<br>ipxnoty<br>ipynotx<br>ipxnotysharper<br>ipynotxsharper<br>goat</td><td class="ColD">none</td><td class="ColE"><a name="&lt;system&gt;.shader">Enable specified OpenGL shader.</a><p>Obviously, this will only work with the OpenGL "video.driver" setting, and only on cards and OpenGL implementations that support shaders, otherwise you will get a black screen, or Mednafen may display an error message when starting up. When a shader is enabled, the "<system>.videoip" setting is ignored.</p><ul><li><b>none</b> - None/Disabled<br></li><br><li><b>autoip</b> - Auto Interpolation<br>Will automatically interpolate on each axis if the corresponding effective scaling factor is not an integer.</li><br><li><b>autoipsharper</b> - Sharper Auto Interpolation<br>Same as "autoip", but when interpolation is done, it is done in a manner that will reduce blurriness if possible.</li><br><li><b>scale2x</b> - Scale2x<br></li><br><li><b>sabr</b> - SABR v3.0<br>GPU-intensive.</li><br><li><b>ipsharper</b> - Sharper bilinear interpolation.<br></li><br><li><b>ipxnoty</b> - Linear interpolation on X axis only.<br></li><br><li><b>ipynotx</b> - Linear interpolation on Y axis only.<br></li><br><li><b>ipxnotysharper</b> - Sharper version of "ipxnoty".<br></li><br><li><b>ipynotxsharper</b> - Sharper version of "ipynotx".<br></li><br><li><b>goat</b> - Simple approximation of a color TV CRT look.<br>Intended for fullscreen modes with a vertical resolution of around 1000 to 1500 pixels.  Doesn't simulate halation and electron beam energy distribution nuances.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.shader.goat.fprog</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.fprog">Force interlaced video to be treated as progressive.</a><p>When disabled, the default, the "video.deinterlacer" setting is effectively ignored with respect to what appears on the screen.  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.shader.goat.hdiv</td><td class="ColB">real</td><td class="ColC">-2.00 <i>through</i> 2.00</td><td class="ColD">0.50</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.hdiv">Constant RGB horizontal divergence.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.shader.goat.pat</td><td class="ColB">enum</td><td class="ColC">goatron<br>borg<br>slenderman</td><td class="ColD">goatron</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.pat">Mask pattern.</a><ul><li><b>goatron</b> - Goatron<br>Brightest.</li><br><li><b>borg</b> - Borg<br>Darkest.</li><br><li><b>slenderman</b> - Slenderman<br>Spookiest?</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.shader.goat.slen</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">1</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.slen">Enable scanlines effect.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.shader.goat.tp</td><td class="ColB">real</td><td class="ColC">0.00 <i>through</i> 1.00</td><td class="ColD">0.50</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.tp">Transparency of otherwise-opaque mask areas.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.shader.goat.vdiv</td><td class="ColB">real</td><td class="ColC">-2.00 <i>through</i> 2.00</td><td class="ColD">0.50</td><td class="ColE"><a name="&lt;system&gt;.shader.goat.vdiv">Constant RGB vertical divergence.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.special</td><td class="ColB">enum</td><td class="ColC">none<br>hq2x<br>hq3x<br>hq4x<br>scale2x<br>scale3x<br>scale4x<br>2xsai<br>super2xsai<br>supereagle<br>nn2x<br>nn3x<br>nn4x<br>nny2x<br>nny3x<br>nny4x</td><td class="ColD">none</td><td class="ColE"><a name="&lt;system&gt;.special">Enable specified special video scaler.</a><p>The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to "2", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, at high resolutions(such as 1280x1024; nn2x(or nny2x) + bilinear interpolation + fullscreen stretching at this resolution looks quite nice).</p><ul><li><b>none</b> - None/Disabled<br></li><br><li><b>hq2x</b> - hq2x<br></li><br><li><b>hq3x</b> - hq3x<br></li><br><li><b>hq4x</b> - hq4x<br></li><br><li><b>scale2x</b> - scale2x<br></li><br><li><b>scale3x</b> - scale3x<br></li><br><li><b>scale4x</b> - scale4x<br></li><br><li><b>2xsai</b> - 2xSaI<br></li><br><li><b>super2xsai</b> - Super 2xSaI<br></li><br><li><b>supereagle</b> - Super Eagle<br></li><br><li><b>nn2x</b> - Nearest-neighbor 2x<br></li><br><li><b>nn3x</b> - Nearest-neighbor 3x<br></li><br><li><b>nn4x</b> - Nearest-neighbor 4x<br></li><br><li><b>nny2x</b> - Nearest-neighbor 2x, y axis only<br></li><br><li><b>nny3x</b> - Nearest-neighbor 3x, y axis only<br></li><br><li><b>nny4x</b> - Nearest-neighbor 4x, y axis only<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.stretch</td><td class="ColB">enum</td><td class="ColC">0<br>full<br>aspect<br>aspect_int<br>aspect_mult2</td><td class="ColD">aspect_mult2</td><td class="ColE"><a name="&lt;system&gt;.stretch">Stretch to fill screen.</a><ul><li><b>0</b> - Disabled<br></li><br><li><b>full</b> - Full<br>Full-screen stretch, disregarding aspect ratio.</li><br><li><b>aspect</b> - Aspect Preserve<br>Full-screen stretch as far as the aspect ratio(in this sense, the equivalent xscalefs == yscalefs) can be maintained.</li><br><li><b>aspect_int</b> - Aspect Preserve + Integer Scale<br>Full-screen stretch, same as "aspect" except that the equivalent xscalefs and yscalefs are rounded down to the nearest integer.</li><br><li><b>aspect_mult2</b> - Aspect Preserve + Integer Multiple-of-2 Scale<br>Full-screen stretch, same as "aspect_int", but rounds down to the nearest multiple of 2.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.tblur</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.tblur">Enable video temporal blur(50/50 previous/current frame by default).</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.tblur.accum</td><td class="ColB">boolean</td><td class="ColC">0<br>1</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.tblur.accum">Accumulate color data rather than discarding it.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.tblur.accum.amount</td><td class="ColB">real</td><td class="ColC">0 <i>through</i> 100</td><td class="ColD">50</td><td class="ColE"><a name="&lt;system&gt;.tblur.accum.amount">Blur amount in accumulation mode, specified in percentage of accumulation buffer to mix with the current frame.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.videoip</td><td class="ColB">enum</td><td class="ColC">0<br>1<br>x<br>y</td><td class="ColD"><i>(variable)</i></td><td class="ColE"><a name="&lt;system&gt;.videoip">Enable (bi)linear interpolation.</a><ul><li><b>0</b> - Disabled<br></li><br><li><b>1</b> - Bilinear<br></li><br><li><b>x</b> - Linear (X)<br>Interpolation only on the X axis.</li><br><li><b>y</b> - Linear (Y)<br>Interpolation only on the Y axis.</li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.xres</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 65536</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.xres">Full-screen horizontal resolution.</a><p>A value of "0" will cause the current desktop horizontal resolution to be used.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.xscale</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD"><i>(variable)</i></td><td class="ColE"><a name="&lt;system&gt;.xscale">Scaling factor for the X axis in windowed mode.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.xscalefs</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">1.000000</td><td class="ColE"><a name="&lt;system&gt;.xscalefs">Scaling factor for the X axis in fullscreen mode.</a><p>For this settings to have any effect, the "<system>.stretch" setting must be set to "0".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.yres</td><td class="ColB">integer</td><td class="ColC">0 <i>through</i> 65536</td><td class="ColD">0</td><td class="ColE"><a name="&lt;system&gt;.yres">Full-screen vertical resolution.</a><p>A value of "0" will cause the current desktop vertical resolution to be used.</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.yscale</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD"><i>(variable)</i></td><td class="ColE"><a name="&lt;system&gt;.yscale">Scaling factor for the Y axis in windowed mode.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.yscalefs</td><td class="ColB">real</td><td class="ColC">0.01 <i>through</i> 256</td><td class="ColD">1.000000</td><td class="ColE"><a name="&lt;system&gt;.yscalefs">Scaling factor for the Y axis in fullscreen mode.</a><p>For this settings to have any effect, the "<system>.stretch" setting must be set to "0".</p></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowA"><td class="ColA">&lt;system&gt;.debugger.disfontsize<br><ul><li>md</li><li>nes</li><li>pce</li><li>pcfx</li><li>psx</li><li>ss</li><li>vb</li><li>wswan</li></ul></td><td class="ColB">enum</td><td class="ColC">5x7<br>6x9<br>6x12<br>6x13<br>9x18</td><td class="ColD">5x7</td><td class="ColE"><a name="&lt;system&gt;.debugger.disfontsize">Disassembly font size.</a><p>Note: Setting the font size to larger than the default may cause text overlap in the debugger.</p><ul><li><b>5x7</b> - 5x7<br></li><br><li><b>6x9</b> - 6x9<br></li><br><li><b>6x12</b> - 6x12<br></li><br><li><b>6x13</b> - 6x13.  CJK support.<br></li><br><li><b>9x18</b> - 9x18;  CJK support.<br></li></ul></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+<tr class="RowB"><td class="ColA">&lt;system&gt;.debugger.memcharenc<br><ul><li>md</li><li>nes</li><li>pce</li><li>pcfx</li><li>psx</li><li>ss</li><li>vb</li><li>wswan</li></ul></td><td class="ColB">string</td><td class="ColC">&nbsp;</td><td class="ColD"><i>(variable)</i></td><td class="ColE"><a name="&lt;system&gt;.debugger.memcharenc">Character encoding for the debugger's memory editor.</a></td></tr><tr><td class="RowSpacer" colspan="5">&nbsp</td></tr>
+</table><hr width="75%">
+ <h3><a name="Section_firmware_bios">Firmware/BIOS</a></h3><p></p><p>
+Some emulation modules require firmware/BIOS images to function.  If a firmware path is non-absolute(doesn't begin with
+C:\ or / or similar), Mednafen will try to load the file relative to the "firmware" directory under the Mednafen <a href="#Section_base_directory">base directory</a>.  If it doesn't find it there, it will be loaded relative to the Mednafen <a href="#Section_base_directory">base directory</a> itself.  Of course,
+if the "path_firmware" setting is set to a custom value, the firmware files will be searched relative to that path.
+</p>
+ <hr width="75%">
+ <h3><a name="Section_custom_palettes">Custom Palettes</a></h3><p></p><p>
+Custom palettes for a system should generally(with caveats; refer to the table near the end of this section) be named &lt;system&gt;.pal, IE "snes.pal", "pce.pal", etc., and placed in the
+"palettes" directory beneath the Mednafen <a href="#Section_base_directory">base directory</a>.
+</p>
+<p>
+Per-game custom palettes are also supported, and should be
+named as &lt;FileBase&gt;.pal or &lt;FileBase&gt;.&lt;MD5 Hash&gt;.pal, IE "Mega Man 4.pal" or "Mega Man 4.db45eb9413964295adb8d1da961807cc.pal".
+</p>
+<p>
+Each entry in a custom palette file consists of 3 8-bit color components; Red, Green, Blue, in that order.
+</p>
+<p>
+Not all emulated systems support custom palettes.  Refer to the following list:
+<p></p><table border><tr class="TableHeader"><th>System Module:</th><th>Global Filename:</th><th>Description:</th></tr><tr><td align="center" rowspan="2"><b>gb</b></td><td>gb.pal</td><td>GameBoy(mono)<br><br>4 <i>or</i> 8 <i>or</i> 12 RGB triplets</td></tr><tr><td>gbc.pal</td><td>GameBoy Color 15-bit BGR<br><br>32768 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>gba</b></td><td>gba.pal</td><td>GBA 15-bit BGR<br><br>32768 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>gg</b></td><td>gg.pal</td><td>GG 12-bit BGR<br><br>4096 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>lynx</b></td><td>lynx.pal</td><td>Atari Lynx 12-bit BRG<br><br>4096 RGB triplets</td></tr><tr><td align="center" rowspan="7"><b>nes</b></td><td>nes-pal.pal</td><td>PAL NES<br><br>64 <i>or</i> 512 RGB triplets</td></tr><tr><td>nes.pal</td><td>NTSC NES/Famicom<br><br>64 <i>or</i> 512 RGB triplets</td></tr><tr><td>rp2c04-0001.pal</td><td>Arcade RP2C04-0001<br><br>64 RGB triplets</td></tr><tr><td>rp2c04-0002.pal</td><td>Arcade RP2C04-0002<br><br>64 RGB triplets</td></tr><tr><td>rp2c04-0003.pal</td><td>Arcade RP2C04-0003<br><br>64 RGB triplets</td></tr><tr><td>rp2c04-0004.pal</td><td>Arcade RP2C04-0004<br><br>64 RGB triplets</td></tr><tr><td>rp2c0x.pal</td><td>Arcade RP2C03/RP2C05<br><br>64 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>pce</b></td><td>pce.pal</td><td>PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.<br><br>512 <i>or</i> 1024 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>pce_fast</b></td><td>pce_fast.pal</td><td>PCE/TG16 9-bit GRB.  If only 512 triplets are present, the remaining 512 greyscale colors will be calculated automatically.<br><br>512 <i>or</i> 1024 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>sms</b></td><td>sms.pal</td><td>SMS 6-bit BGR<br><br>64 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>snes</b></td><td>snes.pal</td><td>SNES 15-bit BGR<br><br>32768 RGB triplets</td></tr><tr><td align="center" rowspan="1"><b>vb</b></td><td>vb.pal</td><td>VB LED Active Time; 256 left, 256 right.  If only 256 triplets are present, then they will be used for both left and right views.  When the custom palette's right view colors are the same as the left view colors(either explicitly, or when using a 256-entry custom palette), and anaglyph 3D mode is active, then the custom palette will not be used.<br><br>256 <i>or</i> 512 RGB triplets</td></tr></table></p>
+ <hr width="75%">
+ <h3><a name="Section_ips_patching">Automatic IPS Patching</a></h3><p></p> <p>
+        Place the IPS file in the same directory as the file to load,
+        and name it &lt;FullFileName&gt;.ips.
+        <pre>
+        Examples:       Boat.nes - Boat.nes.ips
+                        Boat.zip - Boat.zip.ips
+                        Boat.nes.gz - Boat.nes.gz.ips
+                        Boat     - Boat.ips
+        </pre>
+ </p>
+ <p>
+  Some operating systems and environments will hide file extensions. Keep this in mind if you are having trouble.
+ </p>
+ <p>
+        Patching is applied in a file format-agnostic way; however, dynamic patching is not done with CD images, nor with
+	firmware.
+ </p>
+ <hr width="75%"> 
+ <hr width="75%">
+ <h2><a name="Section_advanced">Advanced Usage</a></h2><p></p>  <h3><a name="Section_lag">Minimizing video/audio/input Lag</a></h3><p></p>This section is a work-in-progress, tips given may not cover all cases, latency reduction is a black art on modern
+PCs, etc etc.
+<p>
+Miscellaneous relevant external links:
+<ul>
+ <li><a href="http://www.ouma.jp/ootake/delay-solution.html">http://www.ouma.jp/ootake/delay-solution.html</a></li>
+ <li><a href="http://www.ouma.jp/ootake/delay-win7vista.html">http://www.ouma.jp/ootake/delay-win7vista.html</a></li>
+ <li><a href="http://www.tftcentral.co.uk/articles/input_lag.htm">TFT Central - Input Lag Testing</a></li>
+ <li><a href="http://www.prad.de/en/monitore/specials/inputlag/inputlag.html">An investigation of the test process used to date for determining the response time of an LCD monitor, known as input lag</a></li>
+ <li><a href="http://shoryuken.com/forum/index.php?threads/sub-1-frame-hdtv-monitor-input-lag-database.145141/">Sub 1 frame HDTV/Monitor Input Lag Database</a></li>
+ <li><a href="http://www.tomshardware.com/reviews/s242hl-bid-u2412m-t24a550,3016-14.html">http://www.tomshardware.com/reviews/s242hl-bid-u2412m-t24a550,3016-14.html</a></li>
+ <li><a href="http://www.tomshardware.com/reviews/ultrasharp-u2711-ds-277w-multisync-pa271w,2968-14.html">http://www.tomshardware.com/reviews/ultrasharp-u2711-ds-277w-multisync-pa271w,2968-14.html</a></li>
+</ul>
+</p>
+   <h4><a name="Section_lag_hardware">Hardware Selection</a></h4><p></p>    <ul>
+    <li><u><b>Video Card:</b></u><blockquote>Higher-performing discrete video cards are preferable, but anything with similar
+or better OpenGL performance to an NVidia GeForce 9500GT should be fine.</blockquote></li>
+    <li><u><b>Monitor:</b></u><blockquote>Choose a monitor with the lowest input lag(AKA display lag), as well as as a low response time(though response time isn't as an important metric to consider, since it's usually acceptably small on modern end-user PC monitors).
+Unfortunately, monitor input/display lag is not typically specified by the manufacturer, and it can even vary between
+different revisions of the same "model".<br>A monitor capable of 120Hz vertical refresh rate operation, and that also has a low
+average input lag(<16ms), would be ideal.
+<p>
+Keep in mind that sometimes the "game mode" of a modern monitor(or TV) must be selected in order for minimum monitor input lag.
+</p>
+<p>
+For the lowest possible video lag, however, obtain and use an old CRT monitor, and set up a video mode with a vertical
+refresh rate of at least 120Hz.
+</p>
+</blockquote></li>
+    <li><u><b>Sound Card:</b></u>  <i>(To be written)</i></li>
+   </ul>
+   <hr width="50%">
+   <p>
+
+   </p>
+   <h4><a name="Section_minimize_video_lag">Settings to Minimize Video Lag</a></h4><p></p>   <a name="Core+Features%01Advanced+Usage%01Minimizing+video%2Faudio%2Finput+Lag%01Settings+to+Minimize+Video+Lag"></a>
+    <p>
+    Disabling vsync can also help to reduce keyboard and mouse input lag to a degree, due to the design of common GUI environments and SDL.
+    </p>
+    <table border="1">
+     <tr><th>Mednafen setting name:</th><th>Value for maximum lag reduction:</th></tr>
+     <tr><td><a href="#video.driver">video.driver</a></td><td>opengl</td></tr>
+     <tr><td><a href="#video.glvsync">video.glvsync</a></td><td>0</td></tr>
+     <tr><td><a href="#video.blit_timesync">video.blit_timesync</a></td><td>0</td></tr>
+    </table>
+    <p>
+     <u>Operating System:</u> Disable vsync and triple-buffering if enabled via your card driver's setting utility or control panel.
+    </p>
+    <p>
+     <u>Operating System:</u> Set the "max frames to render ahead"(NVidia) or "flip queue size"(AMD/ATI) to "0"(zero) in your video card
+	driver's setting utility or control panel(mostly a Windows-specific tip; TODO: verify that it is relevant for OpenGL).
+    </p>
+    <p>
+     <u>Operating System:</u> Disable window/desktop compositor("Aero" on Windows Vista and newer).
+    </p>
+    <p>
+     <u>Mednafen:</u> Choose full-screen resolutions, via the <a href="#&lt;system&gt;.xres">x-resolution</a> and
+<a href="#&lt;system&gt;.yres">y-resolution</a> settings, that match your monitor's native resolution(assuming it has
+a native resolution).
+    </p>
+    <p>
+     <u>Mednafen:</u> Avoid using special video filters and scalers(hq2x, 2xsai, scale2x, temporal blur, etc.) in Mednafen.  Mednafen's simple pixel shaders are ok, provided you have a decent video card as specified in the
+     hardware selection section above.
+    </p>
+   <hr width="50%">
+   <h4><a name="Section_minimize_audio_lag">Settings to Minimize Audio Lag</a></h4><p></p><p>
+<u>Mednafen:</u> Select a <a href="#sound.driver">sound driver</a> that is closer to the actual hardware, such as "alsa" on Linux, "oss" on other UN*X platforms, and "wasapi" on Windows Vista and newer.  If you choose to use "OSS", heed the advice regarding osscore.conf and max_intrate.
+</p>
+<p>
+<u>Mednafen:</u> Select a <a href="#sound.device">sound device</a> that is closest to the actual hardware; IE "hw:0", "hw:1", "hw:2", etc. on ALSA.<br>
+Avoid selecting a higher-level sound device that is routed through a sound server like PulseAudio!
+</p>
+<p>
+<u>Mednafen:</u> Select a <a href="#sound.buffer_time">sound buffer size</a> that is as small as possible without causing excessive crackling
+or speed issues(20ms should be a fairly safe setting with ALSA on a modern multi-core CPU system).
+</p>
+<p>
+<u>Mednafen:</u> Optionally set the <a href="#sound.period_time">sound period size</a> setting to 500(microseconds).
+<br><b>Note:</b> The system sound card driver may not handle a value this small correctly,
+and may cause sound card or system malfunctions.  Additionally, the system sound card driver may constrain the
+sound buffer size to an unusably small value.
+</p>
+<p>
+<u>Mednafen:</u> Set the <a href="#sound.rate">sound rate</a> setting to your sound card's native playback rate, IE the rate which
+has the minimum amount of processing done to it before being passed to the DAC or digital output.  This tends to be
+"192000" or "96000" on modern sound cards, "48000" on older(late 1990s, early 2000s), and "44100" on older still(early to mid 1990s).  If you don't know, just leave it at the default of "48000".
+</p>
+<p>
+<u>Operating System:</u> Disable 3D spatialization, equalizer, and other special effects via your sound card driver's setting utility or control panel, if applicable.
+</p>
+
+
+   <hr width="50%">
+  <hr width="50%">
+  <h3><a name="Section_input_mapping_format">Input Mapping Settings Format</a></h3><p></p><p>
+The general format of an input mapping is: <b><u>DEVICE_TYPE</u></b> <b><u>DEVICE_ID</u></b> <b><u>DEVICE_INPUT</u></b> [<b><u>SCALE</u></b>] [<b><u>LOGIC</u></b>] [...]
+</p>
+<p><b><u>DEVICE_TYPE</u></b> is one of "<a href="#Section_ims_keyboard">keyboard</a>", "<a href="#Section_ims_mouse">mouse</a>", or "<a href="#Section_ims_joystick">joystick</a>".</p>
+<p><b><u>DEVICE_ID</u></b> is the ID Mednafen uses for the device to differentiate it from other devices of the same type.  Currently, only "0x0" is allowed for the "keyboard" and "mouse" <b><u>DEVICE_TYPE</u></b>.  The IDs Mednafen uses for the "joystick" type are printed to stdout on startup, like so:
+<blockquote>
+<pre>
+ Initializing joysticks...
+  ID: 0x00030428400101000002000a00000000 - Gravis GamePad Pro USB 
+  ID: 0x00030e8f000301100007000c00000000 - GreenAsia Inc.    USB Joystick     
+  ID: 0x0003046dc21e20200008000b00000000 - Generic X-Box pad
+  ID: 0x0003045e003801100006000800000000 - Microsoft SideWinder Precision 2 Joystick
+  ID: 0x00030428400101000002000a00000001 - Gravis GamePad Pro USB 
+  ID: 0x0003046dc21a01100002000a00000000 - Logitech Logitech(R) Precision(TM) Gamepad
+  ID: 0x0003045e020201000008000a00000000 - Microsoft X-Box pad v1 (US)
+  ID: 0x00140007000101000002000a00000000 - Microsoft SideWinder GamePad
+  ID: 0x00140007000101000002000a00000001 - Microsoft SideWinder GamePad
+  ID: 0x00140007000101000002000a00000002 - Microsoft SideWinder GamePad
+</pre>
+</blockquote>
+</p>
+<p><b><u>DEVICE_INPUT</u></b> is a string, without any whitespace inside, specific to the device type being used.</p>
+<p><b><u>SCALE</u></b> is an optional integer between 0-65535, representing a 4.12 fixed-point quantity used to scale analog(e.g. axis) inputs in most usage contexts.  The default is 4096(equivalent to 1.0).</p>
+<p><b><u>LOGIC</u></b> is an optional string, "||" or "&&" or "&!", specifying a boolean operation, OR and AND and AND NOT respectively, used to join multiple physical input specifications together.  Evaluated left to right, with "&&" and "&!" having the same higher precedence over "||".  The exact behavior and semantics when used with a virtual input that expects an analog value is currently unspecified and may be subject to change, but will generally allow control from any of the specified physical inputs when they are manipulated individually.
+
+   <h4><a name="Section_ims_keyboard">Keyboard</a></h4><p></p><b><u>SCANCODE</u></b>[<b><u>MODIFIER</u></b>]...<br>
+<p><b>Modifiers:</b> (only valid with command key mappings)
+<ul>
+ <li>+ctrl</li>
+ <li>+alt</li>
+ <li>+shift</u></b>
+</ul></p>
+   <hr width="50%">
+   <h4><a name="Section_ims_mouse">Mouse</a></h4><p></p><ul>
+ <li>(cursor|rel)_(x|y)(-|+|-+|+-)</li>
+ <li>button_(left|middle|right|x1|x2|0| ... |31)</li>
+</ul>
+   <hr width="50%">
+   <h4><a name="Section_ims_joystick">Joystick</a></h4><p></p>When manually mapping the axes of an emulated lightgun to the axes of a physical lightgun that presents itself as a joystick device, use
+the optional "g" flag with "-+" polarity(e.g. "abs_0-+g").
+<ul>
+ <li>abs_(0| ... |1023)(-|+|-+|+-)[g]</li>
+ <li>button_(0| ... |1023)</li>
+</ul>
+   <hr width="50%">
+  <hr width="50%"> <hr width="50%">
+ <h2><a name="Section_troubleshooting">Troubleshooting and Common Solutions</a></h2><p></p>  <p>
+   When Mednafen encounters a fatal error, it will print details of the error to stdout and/or stderr before exiting.  On the Microsoft Windows builds of Mednafen,
+   when Mednafen is not being run from a console, stdout and stderr are redirected to files "<b>stdout.txt</b>" and "<b>stderr.txt</b>", respectively.
+  </p>
+  <h3><a name="Section_troubleshooting_nosoundlinux">No sound output on Linux.</a></h3><p></p>   <p>
+    Due to historical Linux distribution design decisions and problems with various software audio mixing solutions on Linux, Mednafen's ALSA output code
+    attempts to output to device "<b>hw:0</b>" by default.  This may cause problems if your sound card does not support hardware mixing of streams and your system is
+    running another program that is monopolizing the sound device(like the PulseAudio server), or you have used multiple sound cards.
+   </p>
+   <p>
+    For the case of PulseAudio, you can utilize the <a href="http://linux.die.net/man/1/pasuspender">pasuspender</a> tool, or set the <a href="#sound.device">sound.device</a> setting to
+    "<b>sexyal-literal-default</b>" to try to use PulseAudio through ALSA(assuming your distribution has things configured properly); the use of pasuspender
+    is the recommended option.
+   </p>
+   <p>
+    For the case of multiple sound cards, select a different "<b>hw:?</b>" device, where <b>?</b> is an integer representing the device number/index(check the contents of file "<b>/proc/asound/cards</b>").
+   </p>
+  <hr width="75%">
+  <h3><a name="Section_troubleshooting_configcrlf">Configuration file is a mess in Notepad in Windows.</a></h3><p></p>   <p>
+    Mednafen's settings file currently uses UN*X-style line breaks, which Notepad does not handle very well.  Use
+    <a href="http://notepad-plus-plus.org/">Notepad++</a> instead.
+   </p>
+  <hr width="75%"> <hr width="75%">
+ <hr width="75%">
+   
+ <h2><a name="Section_legal">Licenses, Copyright Notices, and Code Credits</a></h2><p></p> <p>
+  Mednafen makes use of much open-source code from other people, and could not be what it is without their work.  Feel
+  free to give them your thanks, but keep in mind most have nothing to do with the Mednafen project, so don't ask
+  them questions regarding Mednafen unless appropriate in context.
+ </p>
+ <p>
+ In addition to the listing of licenses and copyright notices for code included in Mednafen, the following 
+ "non-system" external libraries are linked to:
+ <ul>
+  <li><a href="http://www.mega-nerd.com/libsndfile/">libsndfile</a></li>
+  <li><a href="http://www.libsdl.org/">SDL</a></li>
+  <li><a href="http://www.zlib.org">zlib</a></li>
+ </ul>
+ </p>
+ <hr>
+
+ <p>
+  <h3><a name="Section_legal_libmpcdec"><a href="http://www.musepack.net/">libmpcdec</a></a></h3><p></p>  <blockquote>
+  <pre>
+  Copyright (c) 2005-2009, The Musepack Development Team
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are
+  met:
+
+  * Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above
+  copyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials provided
+  with the distribution.
+
+  * Neither the name of the The Musepack Development Team nor the
+  names of its contributors may be used to endorse or promote
+  products derived from this software without specific prior
+  written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  </pre>
+  </blockquote>
+  <hr width="75%">
+  <h3><a name="Section_legal_tremor"><a href="http://xiph.org/">Tremor</a></a></h3><p></p>  <blockquote>
+<pre>
+Copyright (c) 2002, Xiph.org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+- Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+- Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+- Neither the name of the Xiph.org Foundation nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+  </blockquote>
+  <hr width="75%">
+ <h3><a name="Section_legal_gb_snd_emu"><a href="http://slack.net/~ant/libs/audio.html">Gb_Snd_Emu</a></a></h3><p></p><blockquote>
+<pre>
+/* Library Copyright (C) 2003-2004 Shay Green. Gb_Snd_Emu is free
+software; you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation;
+either version 2 of the License, or (at your option) any later version.
+Gb_Snd_Emu is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+more details. You should have received a copy of the GNU General Public
+License along with Gb_Snd_Emu; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_blip_buffer"><a href="http://www.slack.net/~ant/libs/">Blip_Buffer</a></a></h3><p></p><blockquote>
+<pre>
+Copyright (C) 2003-2006 Shay Green. This module is free software; you
+can redistribute it and/or modify it under the terms of the GNU Lesser
+General Public License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version. This
+module is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+more details. You should have received a copy of the GNU Lesser General
+Public License along with this module; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+</pre>
+</blockquote>
+ <hr width="75%">
+ <h3><a name="Section_legal_sms_snd_emu"><a href="http://slack.net/~ant/libs/audio.html">Sms_Snd_Emu(base for T6W28_Apu NGP code)</a></a></h3><p></p><blockquote>
+<pre>
+Copyright (C) 2003-2006 Shay Green. This module is free software; you
+can redistribute it and/or modify it under the terms of the GNU Lesser
+General Public License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version. This
+module is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+more details. You should have received a copy of the GNU Lesser General
+Public License along with this module; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_handy"><a href="http://handy.sourceforge.net/">Handy</a></a></h3><p></p><blockquote>
+<pre>
+Copyright (c) 2004 K. Wilkins
+
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from
+the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+
+2. Altered source versions must be plainly marked as such, and must not
+   be misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
+</pre>
+</blockquote>
+ <hr width="75%">
+ <h3><a name="Section_legal_pc2e">PC2e (Used in portions of PC Engine CD emulation)</a></h3><p></p><blockquote>
+<pre>
+        Copyright (C) 2004 Ki
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+</pre>
+</blockquote>
+ <hr width="75%">
+ <h3><a name="Section_legal_scale2x"><a href="http://scale2x.sf.net/">Scale2x</a></a></h3><p></p><blockquote>
+<pre>
+ * Copyright (C) 2001, 2002, 2003, 2004 Andrea Mazzoleni
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_hqnx"><a href="http://www.hiend3d.com/hq2x.html">hq2x, hq3x, hq4x</a></a></h3><p></p><blockquote>
+<pre>
+//Copyright (C) 2003 MaxSt ( maxst@hiend3d.com )
+
+//This program is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this program; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_nes_ntsc"><a href="http://www.slack.net/~ant/libs/ntsc.html#nes_ntsc">nes_ntsc</a></a></h3><p></p><blockquote>
+<pre>
+/* Copyright (C) 2006 Shay Green. This module is free software; you
+can redistribute it and/or modify it under the terms of the GNU Lesser
+General Public License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version. This
+module is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for
+more details. You should have received a copy of the GNU Lesser General
+Public License along with this module; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA */
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_2xsai">2xSaI</a></h3><p></p><blockquote>
+<pre>
+/* 2xSaI
+ * Copyright (c) Derek Liauw Kie Fa, 1999-2002
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+/* http://lists.fedoraproject.org/pipermail/legal/2009-October/000928.html */
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_vba">VisualBoyAdvance GameBoy and GBA code</a></h3><p></p><blockquote>
+<pre>
+// VisualBoyAdvance - Nintendo Gameboy/GameboyAdvance (TM) emulator.
+// Copyright (C) 1999-2003 Forgotten
+// Copyright (C) 2004-2006 Forgotten and the VBA development team
+
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2, or(at your option)
+// any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_trio"><a href="http://daniel.haxx.se/projects/trio/">trio</a></a></h3><p></p><blockquote>
+<pre>
+ * Copyright (C) 1998, 2009 Bjorn Reese and Daniel Stenberg.
+ * Copyright (C) 2001 Bjorn Reese <breese@users.sourceforge.net>
+ * Copyright (C) 2001 Bjorn Reese and Daniel Stenberg.
+ *
+ * Permission to use, copy, modify, and distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+ * MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS AND
+ * CONTRIBUTORS ACCEPT NO RESPONSIBILITY IN ANY CONCEIVABLE MANNER.
+ *
+</pre>
+</blockquote>
+
+<hr width="75%">
+<h3><a name="Section_legal_md5">MD5 Hashing</a></h3><p></p><blockquote>
+<pre>
+/*
+ * RFC 1321 compliant MD5 implementation,
+ * by Christophe Devine <devine@cr0.net>;
+ * this program is licensed under the GPL.
+ */
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_v810">V810 Emulator</a></h3><p></p><blockquote>
+<pre>
+ * Copyright (C) 2006 David Tucker
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_minilzo"><a href="http://www.oberhumer.com/opensource/lzo/">MiniLZO</a></a></h3><p></p><blockquote>
+<pre>
+   Copyright (C) 1996-2015 Markus Franz Xaver Johannes Oberhumer
+   All Rights Reserved.
+
+   The LZO library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2 of
+   the License, or (at your option) any later version.
+
+   The LZO library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with the LZO library; see the file COPYING.
+   If not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+   Markus F.X.J. Oberhumer
+   &lt;markus@oberhumer.com&gt;
+   http://www.oberhumer.com/opensource/lzo/
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_fuse"><a href="http://fuse-emulator.sourceforge.net/">Fuse Z80 emulation code</a></a></h3><p></p><blockquote>
+<pre>
+   Copyright (c) 1999-2005 Philip Kendall, Witold Filipczyk
+   Copyright (c) 1999-2011 Philip Kendall
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation, Inc.,
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+   Author contact information:
+
+   E-mail: philip-fuse@shadowmagic.org.uk
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_neopop">NeoPop Neo Geo Pocket (Color) Code</a></h3><p></p><blockquote>
+<pre>
+//---------------------------------------------------------------------------
+// NEOPOP : Emulator as in Dreamland
+//
+// Copyright (c) 2001-2002 by neopop_uk
+//---------------------------------------------------------------------------
+//      This program is free software; you can redistribute it and/or modify
+//      it under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version. See also the license.txt file for
+//      additional informations.
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_jrevdct">PC-FX MJPEG Decoding</a></h3><p></p><blockquote>
+<pre>
+/*
+ * jrevdct.c
+ *
+ * Copyright (C) 1991, 1992, Thomas G. Lane.
+ * This file is part of the Independent JPEG Group's software.
+ * For conditions of distribution and use, see the accompanying README file.
+ *
+ */
+<i>(The file is included in the Mednafen source distribution as mednafen/Documentation/README.jpeg4a)</i>
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_emu2413">VRC7 Sound Emulation</a></h3><p></p><blockquote>
+<pre>
+/*
+YM2413 emulator written by Mitsutaka Okazaki 2001
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications. To alter this software and redistribute it freely,
+if the origin of this software is not misrepresented.
+*/
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_v30mz">NEC V30MZ Emulator</a></h3><p></p><blockquote>
+<pre>
+/* This NEC V30MZ emulator may be used for purposes both commercial and noncommercial if you give the author, Bryan McPhail,
+   a small credit somewhere(such as in the documentation for an executable package).
+*/
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_v30mzdis">NEC V30MZ disassembler(modified BOCHS x86 disassembler)</a></h3><p></p><blockquote>
+<i>Caution:  Bochs' code is under the LGPL, but it is unclear if "or (at your option) any later version." applies to the x86 disassembler code.</i>
+<pre>
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+ 
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+ 
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_cygne"><a href="http://cygne.emuunlim.com/">Cygne</a></a></h3><p></p><p>
+Cygne is distributed under the terms of the GNU GPL Version 2, 1991.<br>Copyright 2002 Dox, dox@space.pl.
+</p>
+<hr width="75%">
+<h3><a name="Section_legal_fceu">FCE Ultra</a></h3><p></p><blockquote>
+<pre>
+/* FCE Ultra - NES/Famicom Emulator
+ *
+ *  Copyright (C) 1998 BERO
+ *  Copyright (C) 2002 Xodnizel
+ *  Copyright (C) 2003 CaH4e3
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_quicklz"><a href="http://www.quicklz.com/">QuickLZ</a></a></h3><p></p><blockquote>
+<pre>
+// QuickLZ data compression library
+// Copyright (C) 2006-2008 Lasse Mikkel Reinhold
+// lar@quicklz.com
+//
+// QuickLZ can be used for free under the GPL-1 or GPL-2 license (where anything 
+// released into public must be open source) or under a commercial license if such 
+// has been acquired (see http://www.quicklz.com/order.html). The commercial license 
+// does not cover derived or ported versions created by third parties under GPL.
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_cdrdao"><a href="http://cdrdao.sourceforge.net/">Q-Subchannel CRC16 Code</a></a></h3><p></p><blockquote>
+<pre>
+/*  cdrdao - write audio CD-Rs in disc-at-once mode
+ *
+ *  Copyright (C) 1998  Andreas Mueller <mueller@daneb.ping.de>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+</pre>
+</blockquote>
+
+<hr width="75%">
+<h3><a name="Section_legal_sms_plus"><a href="http://www.techno-junk.org/">SMS Plus</a></a></h3><p></p><blockquote>
+<pre>
+    Copyright (C) 1998-2004  Charles MacDonald
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_genesis_plus"><a href="http://www.techno-junk.org/">Genesis Plus</a></a></h3><p></p><blockquote>
+<pre>
+/*
+    Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003  Charles Mac Donald
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_genesis_plus_gx">Genesis Plus GX</a></h3><p></p><blockquote>
+<prE>
+ *
+ *  Copyright (C) 2007, 2008, 2009 EkeEke
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_emu2413_sms">EMU2413(used in SMS emulation)</a></h3><p></p><blockquote>
+<pre>
+  Copyright (C) Mitsutaka Okazaki 2004
+
+  This software is provided 'as-is', without any express or implied warranty.
+  In no event will the authors be held liable for any damages arising from
+  the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not
+     be misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_dvdisaster">CD-ROM data correction code</a></h3><p></p><blockquote>
+<pre>
+/*  dvdisaster: Additional error correction for optical media.
+ *  Copyright (C) 2004-2007 Carsten Gnoerlich.
+ *  Project home page: http://www.dvdisaster.com
+ *  Email: carsten@dvdisaster.com  -or-  cgnoerlich@fsfe.org
+ *
+ *  The Reed-Solomon error correction draws a lot of inspiration - and even code -
+ *  from Phil Karn's excellent Reed-Solomon library: http://www.ka9q.net/code/fec/
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA,
+ *  or direct your browser at http://www.gnu.org.
+ */
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_ym2612">YM2612 Emulator</a></h3><p></p><blockquote>
+<pre>
+/* Copyright (C) 2002 St�phane Dallongeville (gens AT consolemul.com) */
+/* Copyright (C) 2004-2006 Shay Green. This module is free software; you
+can redistribute it and/or modify it under the terms of the GNU Lesser
+General Public License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version. This
+module is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+details. You should have received a copy of the GNU Lesser General Public
+License along with this module; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_svp_ssp16">Sega Genesis SVP/SSP16 Emulator</a></h3><p></p><blockquote>
+<pre>
+/*
+ * basic, incomplete SSP160x (SSP1601?) interpreter
+ * with SVP memory controller emu
+ *
+ * Copyright (c) Gražvydas "notaz" Ignotas, 2008
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the organization nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_speex"><a href="http://speex.org/">Speex Resampler</a></a></h3><p></p><blockquote>
+<pre>
+/* Copyright (C) 2007-2008 Jean-Marc Valin
+   Copyright (C) 2008      Thorvald Natvig
+
+   File: resample.c
+   Arbitrary resampling code
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are
+   met:
+
+   1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+   3. The name of the author may not be used to endorse or promote products
+   derived from this software without specific prior written permission.
+
+   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+   IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+   OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+   DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+   INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+   (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+   SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+   STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   POSSIBILITY OF SUCH DAMAGE.
+*/
+</pre>
+</blockquote>
+ <hr width="75%">
+<h3><a name="Section_legal_sabr">SABR v3.0 Shader</a></h3><p></p><blockquote>
+<pre>
+        SABR v3.0 Shader
+        Joshua Street
+
+        Portions of this algorithm were taken from Hyllian's 5xBR v3.7c
+        shader.
+
+        This program is free software; you can redistribute it and/or
+        modify it under the terms of the GNU General Public License
+        as published by the Free Software Foundation; either version 2
+        of the License, or (at your option) any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program; if not, write to the Free Software
+        Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+</pre>
+</blockquote>
+<hr width="75%">
+<h3><a name="Section_legal_ffmpeg">ffmpeg cputest</a></h3><p></p><blockquote>
+<pre>
+/*
+ * CPU detection code, extracted from mmx.h
+ * (c)1997-99 by H. Dietz and R. Fisher
+ * Converted to C and improved by Fabrice Bellard.
+ *
+ * This file is part of FFmpeg.
+ *
+ * FFmpeg is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * FFmpeg is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with FFmpeg; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+</pre>
+</blockquote>
+<hr width="75%">
+<hr width="75%">
+ </body>
+</html>

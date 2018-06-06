@@ -10,3 +10,6 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4"]
 	path = PVMupen64Plus/Plugins/mupen64plus-rsp-cxd4
 	url = https://JoeMatt@github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+[submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
+	path = PVMupen64Plus/Plugins/mupen64plus-video-rice
+	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git

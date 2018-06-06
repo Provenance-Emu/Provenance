@@ -1,0 +1,33 @@
+# Xcode
+build
+*.pbxuser
+!default.pbxuser
+*.mode?v3
+!default.mode?v3
+*.perspective
+*.perspectivev3
+!default.perspectivev3
+!default.xcworkspace
+!project.xcworkspace
+xcuserdata
+xccheckout
+profile
+*.moved-aside
+
+# osx noise
+.DS_Store
+*.ipa
+*.swp
+*~.nib
+profile
+
+
+# App Code
+**/.idea/
+**/.idea/**
+
+# Infer
+**/infer-out
+
+Generated/
+Products/

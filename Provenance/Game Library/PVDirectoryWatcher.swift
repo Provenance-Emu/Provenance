@@ -26,7 +26,7 @@ public class PVDirectoryWatcher: NSObject {
     private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     var dispatch_source: DispatchSourceFileSystemObject?
-    let serialQueue: DispatchQueue = DispatchQueue(label: "com.jamsoftonline.provenance.serialExtractorQueue")
+    let serialQueue: DispatchQueue = DispatchQueue(label: "com.provenance-emu.provenance.serialExtractorQueue")
 
     var previousContents: [URL]?
     private var reader: LzmaSDKObjCReader?
@@ -144,10 +144,12 @@ public class PVDirectoryWatcher: NSObject {
             let attributes = try FileManager.default.attributesOfItem(atPath: path.path)
 
             let filesize: UInt64 = attributes[FileAttributeKey.size] as? UInt64 ?? 0
+			let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
+			print("immutable \(immutable)")
 
             DispatchQueue.main.async {[weak self] () -> Void in
                 if let weakSelf = self {
-                    Timer.scheduledTimer(timeInterval: 0.5, target: weakSelf, selector: #selector(PVDirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false], repeats: false)
+                    Timer.scheduledTimer(timeInterval: 2.0, target: weakSelf, selector: #selector(PVDirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false], repeats: false)
                 }
             }
         } catch {
@@ -197,7 +199,7 @@ public class PVDirectoryWatcher: NSObject {
             return
         }
 
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(PVDirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
+        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(PVDirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
     }
 
     func extractArchive(at filePath: URL) {

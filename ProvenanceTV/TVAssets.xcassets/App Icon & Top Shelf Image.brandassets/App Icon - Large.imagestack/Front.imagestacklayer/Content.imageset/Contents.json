@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "tv",
-      "filename" : "pad-large.png",
+      "filename" : "Layer 4.png",
       "scale" : "1x"
     },
     {
       "idiom" : "tv",
+      "filename" : "Layer 4@2x.png",
       "scale" : "2x"
     }
   ],

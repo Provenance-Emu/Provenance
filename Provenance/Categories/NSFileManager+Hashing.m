@@ -11,6 +11,9 @@
 
 #define HASH_READ_CHUNK_SIZE (1024 * 32)
 
+# define SWAP(n)							\
+(((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
+
 @implementation NSFileManager (Hashing)
 
 - (NSString *)MD5ForFileAtPath:(NSString *)path fromOffset:(NSUInteger)offset
@@ -33,8 +36,14 @@
             const unsigned char *bytes = [data bytes];
             NSUInteger length = [data length];
             CC_MD5_Update(&md5Context, bytes, (CC_LONG)length);
-            
-            if (data == nil || length < HASH_READ_CHUNK_SIZE)
+
+			// Btye-swapping for things like z64? - joe m
+//			md5Context.A = SWAP(md5Context.A);
+//			md5Context.B = SWAP(md5Context.B);
+//			md5Context.C = SWAP(md5Context.C);
+//			md5Context.D = SWAP(md5Context.D);
+
+			if (data == nil || length < HASH_READ_CHUNK_SIZE)
             {
                 break;
             }

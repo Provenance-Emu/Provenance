@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 @objcMembers public class PVSaveState: Object {
 
@@ -30,20 +30,36 @@ import Foundation
 		self.core = core
 		createdWithCoreVersion = core.projectVersion
     }
-    
-    class func delete(_ state: PVSaveState, onError: ((Error) -> (Void))? = nil ) {
+
+    class func delete(_ state: PVSaveState) throws {
         do {
-            try FileManager.default.removeItem(at: state.file.url)
-            if let image = state.image {
-                try FileManager.default.removeItem(at: image.url)
-            }
-            let realm = try Realm()
-            try realm.write {
-                realm.delete(state)
-            }
-        } catch let error {
-            onError?(error)
-//            self.presentError("Error deleting save state: \(error.localizedDescription)")
-        }
+			// Temp store these URLs
+			let fileURL = state.file.url
+			let imageURl = state.image?.url
+
+			let database = RomDatabase.sharedInstance
+			try database.delete(state)
+
+			try FileManager.default.removeItem(at: fileURL)
+			if let imageURl = imageURl {
+				try FileManager.default.removeItem(at: imageURl)
+			}
+        } catch {
+			ELOG("Failed to delete PVState")
+			throw error
+		}
     }
+
+	@objc dynamic var isNewestAutosave : Bool {
+		guard isAutosave, let game = game, let newestSave = game.autoSaves.first else {
+			return false
+		}
+
+		let isNewest = newestSave == self
+		return isNewest
+	}
+
+	public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
+		return lhs.file.url == rhs.file.url
+	}
 }

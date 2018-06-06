@@ -1,0 +1,3 @@
+github "bitstadium/HockeySDK-iOS"
+github "bitstadium/HockeySDK-tvOS"
+github "realm/realm-cocoa" "tg/xcode-10"

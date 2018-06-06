@@ -1,0 +1,25 @@
+The previous functionality of "dfmd5", filesys.*_samedir, and "snapname" settings can be obtained by manipulating the format
+strings.
+For example, remove the "%M" specifier to simulate setting the "dfmd5" setting to 0.  Available specifiers:
+
+		%%	-	% symbol
+		%z      -       Path separator(usage is optional, but allows for more platform-independent paths)
+
+                %b      -       Mednafen base directory (no trailing slash)
+                %d      -       Loaded file base directory("/games/nintendo/megaman.nes" -> "/games/nintendo")
+                %f      -       File base("/games/nintendo/megaman.nes" -> "megaman")
+                %F      -       Same as %f, but replaced with emulation module's short name with recognized multi-CD CD sets.
+                %m      -       MD5 hash of the currently loaded game.
+                %M      -       Empty for first evaluation per full path construction, then filled with the game's
+                                MD5 hash(or the game set's MD5 hash ID for multi-CD CD sets) followed by a period.
+				(Not available for the filesys.fname_snap string)
+
+                %e      -       Loaded file extension("/games/nintendo/megaman.nes" -> ".nes")
+                %s      -       Current emulation module's short name.
+                %p      -       Special parameter(usually a number/numeric counter).
+                %x      -       Default extension for the file type the path will be used for(extension is WITHOUT the period).
+                %X      -       A merging of %p and %x(replaces the last character of %x with %p).
+
+If the constructed path is relative, it will be prefixed by the Mednafen base directory and value of the
+filesys.*_path settings automatically.  If the constructed path is absolute, this prefixing will not occur.
+

@@ -37,6 +37,9 @@
  F  ON,OFF  =   k,p     k,p     k,p
  G  ON,OFF  =   o,g     o,g     o,g
  H  ON,OFF  =   l,v     l,v     l,v
+ // Mocute Extensions
+ I  ON,OFF  =   [,] Left Trigger
+ J  ON,OFF  =   1,2 Right Trigger
 */
 
 

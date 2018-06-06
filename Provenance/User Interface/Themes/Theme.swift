@@ -218,6 +218,18 @@ public class Theme {
 					$0.textColor = theme.settingsHeaderText
 				}
 			}
+		} else {
+			let a1 = UITableViewCell.my_appearanceWhenContained(in: SettingsTableView.self)
+			a1.backgroundColor = theme.settingsCellBackground
+			a1.textLabel?.backgroundColor = theme.settingsCellBackground
+			a1.textLabel?.textColor = theme.settingsCellText
+			a1.detailTextLabel?.textColor = theme.settingsCellText
+
+			let a2 = UILabel.my_appearanceWhenContained(in: UITableViewCell.self)
+			a2.textColor = theme.settingsCellText
+
+			let a3 = UILabel.my_appearanceWhenContained(in: UITableViewHeaderFooterView.self)
+			a3.textColor = theme.settingsHeaderText
 		}
 
         UITableViewHeaderFooterView.appearance {
@@ -255,7 +267,17 @@ public class Theme {
                     $0.textColor = theme.gameLibraryText
                 }
             }
-        }
+		} else {
+			let a1 = UILabel.my_appearanceWhenContained(in: PVGameLibrarySectionHeaderView.self)
+			a1.backgroundColor = theme.gameLibraryHeaderBackground
+			a1.textColor = theme.gameLibraryHeaderText
+
+			let a2 = UILabel.my_appearanceWhenContained(in: PVGameLibraryCollectionViewCell.self)
+			a2.textColor = theme.gameLibraryText
+
+			let a3 = UITextView.my_appearanceWhenContained(in: PVGameMoreInfoViewController.self)
+			a3.textColor = theme.settingsCellText
+		}
 
 //        UICollectionView.appearance {
 //            $0.backgroundColor = theme.gameLibraryBackground

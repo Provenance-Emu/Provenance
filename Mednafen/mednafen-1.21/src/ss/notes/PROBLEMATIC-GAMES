@@ -1,0 +1,169 @@
+-------------------------------------------------------------------------------
+Rely on instruction fetches enforcing dcache coherency by
+cache line replacement(or something roughly similar) :(
+-------------------------------------------------------------------------------
+Area 51 (USA/Europe)
+Clockwork Knight 2 (USA)
+DeJig - Lassen Art Collection (Japan)
+Father Christmas (Japan)
+Golden Axe The Duel (Japan/Europe/USA)
+Sega Saturn Choice Cuts (USA) - Broken FMV playback(except intro FMV).
+Segakore Sega Bible Mogitate SegaSaturn - Zero Divide demo, especially.
+Spot Goes to Hollywood (USA/Japan)
+Street Fighter Zero (Japan)
+Street Fighter Zero 3 (Japan)
+Super Puzzle Fighter II Turbo (USA)
+Virtual Volleyball (Japan)
+
+
+-------------------------------------------------------------------------------
+Rely on executing directly out of cache
+-------------------------------------------------------------------------------
+Mr. Bones - (0xC0000064)
+
+
+-------------------------------------------------------------------------------
+Rely on (data) cache incoherency
+-------------------------------------------------------------------------------
+Astal
+
+
+-------------------------------------------------------------------------------
+Rely on SH-2 DMA bus hogging
+-------------------------------------------------------------------------------
+Device Reign
+Real Sound
+Resident Evil
+SD Gundam G Century S
+Super Tempo
+Tennis Arena
+Tilk
+Yuukyuu Gensoukyoku
+Yuukyuu Gensoukyoku 2nd Album
+Yuukyuu Gensoukyoku ensemble
+Yuukyuu Gensoukyoku ensemble 2
+Yuukyuu no Kobako Official Collection
+Zero4 Champ
+
+
+-------------------------------------------------------------------------------
+Rely on SH-2 open bus
+-------------------------------------------------------------------------------
+Discworld 2 - Sequential byte-wide writes to VDP2 CRAM.
+
+
+-------------------------------------------------------------------------------
+Rely on SCU DMA to VDP1 VRAM massively slowing/pausing VDP1 command execution
+-------------------------------------------------------------------------------
+Johnny Bazookatone - FMV
+Virtua Cop
+Virtua Cop 2
+
+
+-------------------------------------------------------------------------------
+Rely on VDP1 register writes via SCU DMA being ignored under certain conditions
+-------------------------------------------------------------------------------
+GunBlaze-S - (overly large DMA that exceeds the end of VRAM, would
+	      write garbage to VDP1 registers)
+
+
+-------------------------------------------------------------------------------
+Rely on VDP1 coordinate precision blitting/clipping nuances
+-------------------------------------------------------------------------------
+Christmas Nights - Horribly stretched something or another.
+
+
+-------------------------------------------------------------------------------
+Rely on VDP1 vblank erase time limit restrictions
+-------------------------------------------------------------------------------
+Panzer Dragoon - FMV subtitles.
+
+
+-------------------------------------------------------------------------------
+Rely on illegal VDP2 VRAM cycle pattern settings
+-------------------------------------------------------------------------------
+Akumajou Dracula X
+Capcom Generation 5 - Art gallery.
+Daytona USA CCE
+
+
+-------------------------------------------------------------------------------
+Rely on illegal/questionable VDP2 window settings(likely more than listed)
+-------------------------------------------------------------------------------
+Panzer Dragoon 2
+Panzer Dragoon Saga
+
+
+-------------------------------------------------------------------------------
+Rely on quirks relating to command execution during CDB Initialize sw reset
+-------------------------------------------------------------------------------
+Tenchi Muyou! Ryououki Gokuraku - FMV.
+
+
+-------------------------------------------------------------------------------
+Rely on CDB seeks taking long enough
+-------------------------------------------------------------------------------
+Batman Forever - Intro graphics; may also be a general timing issue.
+Jung Rhythm - When trying to retry a failed stage.
+
+
+-------------------------------------------------------------------------------
+Rely on aggravatingly nuanced behavior of CDB Play and Seek commands
+-------------------------------------------------------------------------------
+Astal
+BIOS CD-DA Player
+Steam-Heart's
+
+
+-------------------------------------------------------------------------------
+Rely on CDB index 2+ seek functionality(probably more than listed)
+-------------------------------------------------------------------------------
+NBA Action
+Taito Chase H.Q.
+
+
+-------------------------------------------------------------------------------
+Rely on instruction timing being accurate enough to mask variable update
+atomicity problems caused by interrupts interrupting other interrupt handlers.
+-------------------------------------------------------------------------------
+Pocket Fighter - (16-bit line counter variable at 0x60443E2).
+Street Fighter Alpha 2 - (16-bit line counter variable at 0x6050C2E)
+
+
+-------------------------------------------------------------------------------
+Rely on dual-issuing of SMPC commands
+-------------------------------------------------------------------------------
+F1 Challenge
+Magic Knight Rayearth
+Primal Rage
+
+
+-------------------------------------------------------------------------------
+Rely on SCSP 18-bit DAC enable
+-------------------------------------------------------------------------------
+Daytona USA
+
+
+-------------------------------------------------------------------------------
+Misc
+-------------------------------------------------------------------------------
+Magical Drop III - Missing intro graphics.  No idea.
+
+Tennis Arena - During startup(at least), doesn't like it when CDB is in Busy
+	state for a while, sometimes...seek timing window thing maybe.
+
+Time Bokan - Freezes just before arena boss near end of first stage.  Maybe
+	seek times too fast, maybe DMA'ing into SCSP RAM too fast, who knows.
+
+Whizz - Seems to not boot properly if seek timing puts some operations
+	within certain time windows(so not just too fast seeking...),
+	seems to rely on undefined VDP1 user clipping state(?!), gameplay
+	graphics updating seems to maybe rely on exactish VDP1 command
+	execution timing or maybe CPU timing or who knows(with poorly-timed
+	SCU DMA into VDP1 VRAM).
+
+
+-------------------------------------------------------------------------------
+Rely on the universe being too kind to sloppy programming
+-------------------------------------------------------------------------------
+*

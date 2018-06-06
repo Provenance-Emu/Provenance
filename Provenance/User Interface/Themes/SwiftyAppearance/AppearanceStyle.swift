@@ -18,21 +18,20 @@ public struct AppearanceStyle {
 }
 
 extension AppearanceStyle: ExpressibleByNilLiteral {
-    
+
     public init(nilLiteral: ()) {
         self.name = ""
     }
 }
 
 extension AppearanceStyle: Equatable {
-
-    public static func ==(lhs: AppearanceStyle, rhs: AppearanceStyle) -> Bool {
+    public static func == (lhs: AppearanceStyle, rhs: AppearanceStyle) -> Bool {
         return lhs.name == rhs.name
     }
 }
 
 extension AppearanceStyle: Hashable {
-    
+
     public var hashValue: Int {
         return name.hashValue
     }

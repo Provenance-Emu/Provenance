@@ -9,14 +9,14 @@
 import UIKit
 
 public extension NSNotification.Name {
-    
+
     public static let SwiftyAppearanceWillRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshWindowNotification")
- 
+
     public static let SwiftyAppearanceDidRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceDidRefreshWindowNotification")
 }
 
 public extension UIWindow {
-    
+
     @nonobjc private func _refreshAppearance() {
         let constraints = self.constraints
         removeConstraints(constraints)

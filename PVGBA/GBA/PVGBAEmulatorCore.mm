@@ -114,7 +114,7 @@ static __weak PVGBAEmulatorCore *_current;
     gameID[3] = rom[0xaf];
     gameID[4] = 0;
 
-    DLog(@"VBA: GameID in ROM is: %s\n", gameID);
+    DLOG(@"VBA: GameID in ROM is: %s\n", gameID);
 
     // Load per-game settings from vba-over.ini
     [self loadOverrides:[NSString stringWithFormat:@"%s", gameID]];
@@ -246,17 +246,45 @@ static __weak PVGBAEmulatorCore *_current;
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return vba.emuWriteState([fileName UTF8String]);
+        BOOL success = vba.emuWriteState([fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotSaveState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
 {
     @synchronized(self) {
-        return vba.emuReadState([fileName UTF8String]);
+        BOOL success = vba.emuReadState([fileName UTF8String]);
+		if (!success) {
+			NSDictionary *userInfo = @{
+									   NSLocalizedDescriptionKey: @"Failed to save state.",
+									   NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
+									   NSLocalizedRecoverySuggestionErrorKey: @""
+									   };
+
+			NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+													code:PVEmulatorCoreErrorCodeCouldNotLoadState
+												userInfo:userInfo];
+
+			*error = newError;
+		}
+		return success;
     }
 }
 
@@ -315,14 +343,14 @@ bool systemReadJoypads()
                 (gamepad.dpad.left.isPressed || gamepad.leftThumbstick.left.isPressed) ? pad[playerIndex] |= KEY_LEFT : pad[playerIndex] &= ~KEY_LEFT;
                 (gamepad.dpad.right.isPressed || gamepad.leftThumbstick.right.isPressed) ? pad[playerIndex] |= KEY_RIGHT : pad[playerIndex] &= ~KEY_RIGHT;
 
-                gamepad.buttonA.isPressed ? pad[playerIndex] |= KEY_BUTTON_B : pad[playerIndex] &= ~KEY_BUTTON_B;
-                gamepad.buttonB.isPressed ? pad[playerIndex] |= KEY_BUTTON_A : pad[playerIndex] &= ~KEY_BUTTON_A;
+                (gamepad.buttonA.isPressed || gamepad.buttonY.isPressed) ? pad[playerIndex] |= KEY_BUTTON_B : pad[playerIndex] &= ~KEY_BUTTON_B;
+                (gamepad.buttonB.isPressed || gamepad.buttonX.isPressed) ? pad[playerIndex] |= KEY_BUTTON_A : pad[playerIndex] &= ~KEY_BUTTON_A;
 
                 gamepad.leftShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_L : pad[playerIndex] &= ~KEY_BUTTON_L;
                 gamepad.rightShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_R : pad[playerIndex] &= ~KEY_BUTTON_R;
 
-                (gamepad.buttonX.isPressed || gamepad.leftTrigger.isPressed) ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
-                (gamepad.buttonY.isPressed || gamepad.rightTrigger.isPressed) ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
+				gamepad.leftTrigger.isPressed ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
+                gamepad.rightTrigger.isPressed ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
             }
             else if ([controller gamepad])
             {
@@ -340,8 +368,8 @@ bool systemReadJoypads()
                 gamepad.leftShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_L : pad[playerIndex] &= ~KEY_BUTTON_L;
                 gamepad.rightShoulder.isPressed ? pad[playerIndex] |= KEY_BUTTON_R : pad[playerIndex] &= ~KEY_BUTTON_R;
 
-                gamepad.buttonX.isPressed ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
-                gamepad.buttonY.isPressed ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
+                gamepad.buttonY.isPressed ? pad[playerIndex] |= KEY_BUTTON_START : pad[playerIndex] &= ~KEY_BUTTON_START;
+                gamepad.buttonX.isPressed ? pad[playerIndex] |= KEY_BUTTON_SELECT : pad[playerIndex] &= ~KEY_BUTTON_SELECT;
             }
 #if TARGET_OS_TV
             else if ([controller microGamepad])
@@ -531,13 +559,13 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     }
 
     if (matchFound)
-        DLog(@"VBA: overrides found: %@", overridesFound);
+        DLOG(@"VBA: overrides found: %@", overridesFound);
 }
 
 - (void)writeSaveFile
 {
     if (vba.emuWriteBattery([[_saveFile path] UTF8String]))
-        DLog(@"VBA: Battery saved");
+        DLOG(@"VBA: Battery saved");
 }
 
 /*
@@ -647,14 +675,14 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
             saveType = 5;
         }
 
-        if (saveType == 0 || saveType == 5) DLog(@"saveType 0 NONE");
-        if (saveType == 3) DLog(@"saveType 3 EEPROM_");
-        if (saveType == 1) DLog(@"saveType 1 SRAM_");
-        if (saveType == 2) DLog(@"saveType 2 FLASH size %d", flashSize);
-        if (_enableRTC) DLog(@"rtcFound");
+        if (saveType == 0 || saveType == 5) DLOG(@"saveType 0 NONE");
+        if (saveType == 3) DLOG(@"saveType 3 EEPROM_");
+        if (saveType == 1) DLOG(@"saveType 1 SRAM_");
+        if (saveType == 2) DLOG(@"saveType 2 FLASH size %d", flashSize);
+        if (_enableRTC) DLOG(@"rtcFound");
     }
 
-    DLog(@"saveType: %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, flashSize, eepromSize);
+    DLOG(@"saveType: %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, flashSize, eepromSize);
 
     // Step 3
     // Migrate save file if needed
@@ -729,7 +757,7 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
     }
     else
     {
-        DLog(@"VBA: Did not migrate save file because unnecessary or not detected.");
+        DLOG(@"VBA: Did not migrate save file because unnecessary or not detected.");
     }
 
     // Step 4
@@ -745,20 +773,20 @@ NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
 
         if (error)
         {
-            DLog(@"VBA: Error writing migrated save file: %@", error);
+            DLOG(@"VBA: Error writing migrated save file: %@", error);
             CPUReset();
             _migratingSave = NO;
             return;
         }
 
-        DLog(@"VBA: Writing new save file: %@", migratedSaveFile);
+        DLOG(@"VBA: Writing new save file: %@", migratedSaveFile);
 
         // Reset because we ran the CPU
         CPUReset();
         _migratingSave = NO;
 
         if (vba.emuReadBattery([[migratedSaveFile path] UTF8String]))
-            DLog(@"VBA: Battery loaded");
+            DLOG(@"VBA: Battery loaded");
     }
     else
     {
@@ -899,7 +927,7 @@ SoundDriver *systemSoundInit()
 // VBA logging
 void systemMessage(int, const char * str, ...)
 {
-    DLog(@"VBA message: %s", str);
+    DLOG(@"VBA message: %s", str);
 }
 
 @end

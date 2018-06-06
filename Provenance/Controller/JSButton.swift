@@ -144,16 +144,14 @@ class JSButton: UIView {
         let touchArea = CGRect(x: point.x - 10, y: point.y - 10, width: 20, height: 20)
 
         var pressed: Bool = self.pressed
-        if !pressed {
-            pressed = true
-            delegate?.buttonPressed(self)
-        }
-
         if !touchArea.intersects(frame) {
             if pressed {
                 pressed = false
                 delegate?.buttonReleased(self)
             }
+        } else if !pressed {
+            pressed = true
+            delegate?.buttonPressed(self)
         }
 
         self.pressed = pressed
