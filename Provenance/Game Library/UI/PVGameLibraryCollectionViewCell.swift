@@ -577,10 +577,11 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 
 		self.missingFileView?.isHidden = !game.file.missing
-
+        
 		self.setupBadges()
-        self.setupDots()
-
+        if !PVSettingsModel.shared.showGameBadges {
+            self.setupDots()
+        }
         setNeedsLayout()
         if #available(iOS 9.0, tvOS 9.0, *) {
             setNeedsFocusUpdate()
@@ -630,13 +631,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         guard let game = game else {
             return
         }
-
-        #if os(iOS)
-        if PVSettingsModel.shared.showGameBadges {
-            return
-        }
-        #endif
-
+        
         let hasPlayed = game.playCount > 0
         let favorite = game.isFavorite
 
@@ -1035,7 +1030,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 					if #available(tvOS 11, *) {
 					} else {
 						// Hide for non os 11 since we don't have the auto contentLayerView
-						let xySlideOffset = CGFloat(42)
+                        self.setupDots()
+                        let xySlideOffset = CGFloat(6)
 						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
 						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset)  }
 						if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
