@@ -115,6 +115,14 @@ extension GameSharingViewController where Self : UIViewController {
 		addImage(game.originalArtworkURL, "-Custom")
 		addImage(game.boxBackArtworkURL, "-Back")
 
+		let df = DateFormatter()
+		df.dateStyle = .short
+		df.timeStyle = .short
+		for (i, screenShot) in game.screenShots.enumerated() {
+			let dateString = df.string(from: screenShot.createdDate)
+			addImage(screenShot.url, "-Screenshot "+dateString)
+		}
+
 		// - Add main game file
 		files.append(game.file.url)
 
