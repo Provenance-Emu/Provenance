@@ -46,6 +46,13 @@ if [ "command -v $PLISTBUDDY" ] ; then
         appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
         echo "appversion=${appversion}"
 
+        BUILT_INFO_PATH="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+        if [ "command -v ${BUILT_INFO_PATH}" ] ; then
+          PLIST_GIT_COMMIT_COUNT=$($PLISTBUDDY -c "Print :CFBundleVersion" "${BUILT_INFO_PATH}")
+          echo "Plist version is $PLIST_GIT_COMMIT_COUNT"
+        else
+          PLIST_GIT_COMMIT_COUNT="0"
+        fi
 #        if [ "$x" = "Debug" ]; then
 #          appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
 #        fi
@@ -58,6 +65,12 @@ function error_exit
 {
     echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
     exit 1
+}
+
+function success_exit
+{
+    echo "${PROGNAME}: ${1:-"Completed"}" 1>&2
+    exit 0
 }
 
 ######## --------------- GIT VERISON -------------------
@@ -73,6 +86,11 @@ if [ "command -v '$GIT'" ] ; then
 else
     error_exit "$LINENO: $GIT not found."
 fi
+
+if [ $GIT_COMMIT_COUNT = $PLIST_GIT_COMMIT_COUNT ]; then
+  success_exit "GIT commit count hasn't changed. No need to update files."
+fi
+
 
 echo "Creating Version.h in" ${PROJECT_DIR}
 
@@ -106,8 +124,8 @@ static const char* gitdate              = "${GIT_DATE}";
 static const char* gitbranch            = "${GIT_BRANCH}";
 static const char* appversion           = "${appversion}";
 static const char* buildconfiguration   = "${CONFIGURATION}";
-static const char* compiletime          = __TIME__;
-static const char* compiledate          = __DATE__;
+// static const char* compiletime          = __TIME__;
+// static const char* compiledate          = __DATE__;
 
 #pragma GCC diagnostic pop
 
