@@ -839,6 +839,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 
 		#endif
 
+		#if os(tvOS)
 		if #available(tvOS 11, *) {
 			topRightCornerBadgeView?.removeFromSuperview()
 			discCountContainerView?.removeFromSuperview()
@@ -853,6 +854,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 			topRightCornerBadgeView?.topAnchor.constraint(equalTo: imageView.overlayContentView.topAnchor).isActive = true
 			topRightCornerBadgeView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
 		}
+		#endif
 //		contentView.layer.borderWidth = 1.0
 //		contentView.layer.borderColor = UIColor.white.cgColor
 //
