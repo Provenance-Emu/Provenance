@@ -135,6 +135,31 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
     var needToShowConflictsAlert = false
 
     @IBOutlet var sortOptionsTableView: UITableView!
+	lazy var sortOptionsTableViewController: UIViewController = {
+		let optionsTableView = sortOptionsTableView
+		let avc = UIViewController()
+		avc.view = optionsTableView
+
+		#if os(iOS)
+		avc.modalPresentationStyle = .popover
+		//        avc.popoverPresentationController?.delegate = self
+		avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
+		avc.popoverPresentationController?.sourceView = collectionView
+		avc.preferredContentSize = CGSize(width: 300, height: 500)
+		avc.title = "Library Options"
+		#else
+		//		providesPresentationContextTransitionStyle = true
+		//		definesPresentationContext = true
+		if #available(tvOS 11.0, *) {
+			avc.modalPresentationStyle = .blurOverFullScreen
+		} else {
+			avc.modalPresentationStyle = .currentContext
+		}
+		avc.modalTransitionStyle = .coverVertical
+		#endif
+		return avc
+	}()
+
     var currentSort: SortOptions = .title {
         didSet {
 			if currentSort != oldValue {
@@ -928,36 +953,20 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 #endif
 
     @IBAction func sortButtonTapped(_ sender: Any) {
-        let optionsTableView = sortOptionsTableView
-        let avc = UIViewController()
-        avc.view = optionsTableView
         #if os(iOS)
-        avc.modalPresentationStyle = .popover
-//        avc.popoverPresentationController?.delegate = self
-        avc.popoverPresentationController?.barButtonItem = sortOptionBarButtonItem
-		avc.popoverPresentationController?.sourceView = collectionView
-		avc.preferredContentSize = CGSize(width: 300, height: 500)
+		// Add done button to iPhone
+		// iPad is a popover do no done button needed
 		if traitCollection.horizontalSizeClass == .compact {
-			// Add done button to iOS
-			let navController = UINavigationController(rootViewController: avc)
-			avc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
-			avc.title = "Library Options"
+			let navController = UINavigationController(rootViewController: sortOptionsTableViewController)
+			sortOptionsTableViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
 			sortOptionsTableView.reloadData()
 			present(navController, animated: true, completion: nil)
 			return
 		}
 		#else
-//		providesPresentationContextTransitionStyle = true
-//		definesPresentationContext = true
-		if #available(tvOS 11.0, *) {
-			avc.modalPresentationStyle = .blurOverFullScreen
-		} else {
-			avc.modalPresentationStyle = .currentContext
-		}
-		avc.modalTransitionStyle = .coverVertical
-        #endif
 		sortOptionsTableView.reloadData()
-        present(avc, animated: true, completion: nil)
+		present(avc, animated: true, completion: nil)
+        #endif
     }
 
 	@objc func dismissVC() {
