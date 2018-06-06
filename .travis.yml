@@ -42,6 +42,8 @@ before_script:
     - carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
     - carthage bootstrap --verbose --no-use-binaries --platform tvOS --cache-builds
     - cd ..
+    - travis_wait carthage bootstrap --verbose --no-use-binaries --platform iOS --cache-builds
+    - travis_wait carthage bootstrap --verbose --no-use-binaries --platform tvOS --cache-builds
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh
