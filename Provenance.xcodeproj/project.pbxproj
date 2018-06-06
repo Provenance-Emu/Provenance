@@ -4157,7 +4157,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4209,7 +4208,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4667,7 +4665,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4745,7 +4742,6 @@
 				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
@@ -4794,7 +4790,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
@@ -4841,7 +4836,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
