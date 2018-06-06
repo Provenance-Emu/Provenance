@@ -310,6 +310,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#if os(tvOS)
 		collectionView.contentInset = UIEdgeInsets(top: 40, left: 80, bottom: 40, right: 80)
 		collectionView.remembersLastFocusedIndexPath = false
+		collectionView.clipsToBounds = false
 		#else
 		collectionView.backgroundColor = Theme.currentTheme.gameLibraryBackground
 		searchField?.keyboardAppearance = Theme.currentTheme.keyboardAppearance
