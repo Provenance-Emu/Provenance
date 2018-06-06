@@ -40,7 +40,8 @@ public final class PVTTYFormatter : NSObject, DDLogFormatter {
                 return warning
             case .error:
                 return error
-            case .off, .all:
+			default:
+			//case .off, .all:
                 return ""
             }
         }
