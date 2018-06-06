@@ -617,7 +617,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
             }
 
         } else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
-            selectFrame = CGRect(x: (view.frame.size.width / 2) - controlSize.width - (spacing / 2), y: (buttonGroup?.frame.maxY)! + spacing, width: controlSize.width, height: controlSize.height)
+			let x: CGFloat = (view.frame.size.width / 2) - controlSize.width - (spacing / 2)
+			let y: CGFloat = (buttonGroup?.frame.maxY ?? 0) + spacing
+            selectFrame = CGRect(x: x, y: y, width: controlSize.width, height: controlSize.height)
         }
 
         if let selectButton = self.selectButton {
