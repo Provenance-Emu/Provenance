@@ -29,7 +29,7 @@ class PVSaveStateCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var timeStampLabel: UILabel!
     @IBOutlet weak var coreLabel: UILabel!
     @IBOutlet weak var labelContainer: UIView!
-    
+
 #if os(tvOS)
 	override var canBecomeFocused: Bool {
 		return true

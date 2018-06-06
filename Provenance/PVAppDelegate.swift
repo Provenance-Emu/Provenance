@@ -10,6 +10,7 @@ import CoreSpotlight
 import PVSupport
 import CocoaLumberjackSwift
 import HockeySDK
+import RealmSwift
 
 @UIApplicationMain
 class PVAppDelegate: UIResponder, UIApplicationDelegate {

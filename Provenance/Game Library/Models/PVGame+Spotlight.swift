@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 import CoreSpotlight
 import MobileCoreServices

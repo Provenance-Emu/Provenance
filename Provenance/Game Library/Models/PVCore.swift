@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 @objcMembers public class PVCore: Object {
     dynamic var identifier: String = ""

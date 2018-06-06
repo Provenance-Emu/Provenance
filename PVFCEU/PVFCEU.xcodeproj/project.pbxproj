@@ -15,8 +15,6 @@
 		B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F44D1DE87823008450F5 /* PVSupport.framework */; };
 		B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
-		B3A9F4511DE87837008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79B01ABF1D41002274A3 /* UIKit.framework */; };
-		B3A9F4531DE8783D008450F5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4521DE8783D008450F5 /* UIKit.framework */; };
 		B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4541DE87840008450F5 /* OpenGLES.framework */; };
 		B3A9F4571DE87846008450F5 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4561DE87846008450F5 /* PVSupport.framework */; };
 		B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F4581DE8784B008450F5 /* Foundation.framework */; };
@@ -858,7 +856,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
-				B3A9F4511DE87837008450F5 /* UIKit.framework in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
 				B3A9F44F1DE87827008450F5 /* OpenGLES.framework in Frameworks */,
 				B3A9F44E1DE87823008450F5 /* PVSupport.framework in Frameworks */,
@@ -873,7 +870,6 @@
 				B3A9F4591DE8784B008450F5 /* Foundation.framework in Frameworks */,
 				B3A9F4571DE87846008450F5 /* PVSupport.framework in Frameworks */,
 				B3A9F4551DE87840008450F5 /* OpenGLES.framework in Frameworks */,
-				B3A9F4531DE8783D008450F5 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

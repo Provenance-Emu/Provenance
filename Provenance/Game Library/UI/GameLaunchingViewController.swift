@@ -7,7 +7,7 @@
 //
 
 import UIKit
-// import RealmSwift
+import RealmSwift
 
 /*
  Protocol with default implimentation.

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 // Should use PVLibrary for all or make a PVRemoteLibrary?
 // realm doesn't support subclasses, but we could use protocols

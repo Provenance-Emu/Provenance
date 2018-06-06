@@ -6,6 +6,19 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3A2876420C76F9C00B4B2E3 /* Cores iOS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */;
+			buildPhases = (
+			);
+			dependencies = (
+			);
+			name = "Cores iOS";
+			productName = Cores;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -592,6 +605,18 @@
 		B3995E53205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
 		B3995E55205840CE001D4985 /* PlistDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3995E51205840CE001D4985 /* PlistDataModels.swift */; };
+		B3A2876B20C77C9500B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
+		B3A2876C20C77C9500B4B2E3 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2876D20C77C9500B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
+		B3A2876E20C77C9500B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2876F20C77D0D00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
+		B3A2877020C77D0D00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
+		B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
+		B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2877520C787B100B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
+		B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2877720C787BF00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
+		B3A2877820C787BF00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -678,93 +703,10 @@
 		B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32F46331D6A8BD70085BA9F /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3D534E220AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
 		B3D534E320AFF21900A83D4E /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
-		B3D534E720AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
-		B3D534E820AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
-		B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
-		B3D534EA20AFF85600A83D4E /* SwiftVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E620AFF85500A83D4E /* SwiftVersion.swift */; };
 		B3D534EC20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3D534ED20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3D534EE20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3D534EF20B001D700A83D4E /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
-		B3D8DC6B206EA6D3008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC66206EA6BD008FAC42 /* Realm.framework */; };
-		B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; };
-		B3D8DC6F206EA6F5008FAC42 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8DC62206EA6BC008FAC42 /* Realm.framework */; };
-		B3D8DCFC206EAA9E008FAC42 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE8206EAA9B008FAC42 /* Schema.swift */; };
-		B3D8DCFD206EAA9E008FAC42 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE8206EAA9B008FAC42 /* Schema.swift */; };
-		B3D8DCFE206EAA9E008FAC42 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE8206EAA9B008FAC42 /* Schema.swift */; };
-		B3D8DCFF206EAA9E008FAC42 /* Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE8206EAA9B008FAC42 /* Schema.swift */; };
-		B3D8DD00206EAA9E008FAC42 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE9206EAA9B008FAC42 /* Util.swift */; };
-		B3D8DD01206EAA9E008FAC42 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE9206EAA9B008FAC42 /* Util.swift */; };
-		B3D8DD02206EAA9E008FAC42 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE9206EAA9B008FAC42 /* Util.swift */; };
-		B3D8DD03206EAA9E008FAC42 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCE9206EAA9B008FAC42 /* Util.swift */; };
-		B3D8DD04206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */; };
-		B3D8DD05206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */; };
-		B3D8DD06206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */; };
-		B3D8DD07206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */; };
-		B3D8DD08206EAA9E008FAC42 /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEB206EAA9B008FAC42 /* Realm.swift */; };
-		B3D8DD09206EAA9E008FAC42 /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEB206EAA9B008FAC42 /* Realm.swift */; };
-		B3D8DD0A206EAA9E008FAC42 /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEB206EAA9B008FAC42 /* Realm.swift */; };
-		B3D8DD0B206EAA9E008FAC42 /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEB206EAA9B008FAC42 /* Realm.swift */; };
-		B3D8DD0C206EAA9E008FAC42 /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEC206EAA9B008FAC42 /* Migration.swift */; };
-		B3D8DD0D206EAA9E008FAC42 /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEC206EAA9B008FAC42 /* Migration.swift */; };
-		B3D8DD0E206EAA9E008FAC42 /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEC206EAA9B008FAC42 /* Migration.swift */; };
-		B3D8DD0F206EAA9E008FAC42 /* Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEC206EAA9B008FAC42 /* Migration.swift */; };
-		B3D8DD10206EAA9E008FAC42 /* RealmCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */; };
-		B3D8DD11206EAA9E008FAC42 /* RealmCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */; };
-		B3D8DD12206EAA9E008FAC42 /* RealmCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */; };
-		B3D8DD13206EAA9E008FAC42 /* RealmCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */; };
-		B3D8DD14206EAA9E008FAC42 /* SortDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */; };
-		B3D8DD15206EAA9E008FAC42 /* SortDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */; };
-		B3D8DD16206EAA9E008FAC42 /* SortDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */; };
-		B3D8DD17206EAA9E008FAC42 /* SortDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */; };
-		B3D8DD18206EAA9E008FAC42 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEF206EAA9C008FAC42 /* Object.swift */; };
-		B3D8DD19206EAA9E008FAC42 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEF206EAA9C008FAC42 /* Object.swift */; };
-		B3D8DD1A206EAA9E008FAC42 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEF206EAA9C008FAC42 /* Object.swift */; };
-		B3D8DD1B206EAA9E008FAC42 /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCEF206EAA9C008FAC42 /* Object.swift */; };
-		B3D8DD1C206EAA9E008FAC42 /* ObjectSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */; };
-		B3D8DD1D206EAA9E008FAC42 /* ObjectSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */; };
-		B3D8DD1E206EAA9E008FAC42 /* ObjectSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */; };
-		B3D8DD1F206EAA9E008FAC42 /* ObjectSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */; };
-		B3D8DD20206EAA9E008FAC42 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF1206EAA9C008FAC42 /* Optional.swift */; };
-		B3D8DD21206EAA9E008FAC42 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF1206EAA9C008FAC42 /* Optional.swift */; };
-		B3D8DD22206EAA9E008FAC42 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF1206EAA9C008FAC42 /* Optional.swift */; };
-		B3D8DD23206EAA9E008FAC42 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF1206EAA9C008FAC42 /* Optional.swift */; };
-		B3D8DD24206EAA9E008FAC42 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF2206EAA9C008FAC42 /* Sync.swift */; };
-		B3D8DD25206EAA9E008FAC42 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF2206EAA9C008FAC42 /* Sync.swift */; };
-		B3D8DD26206EAA9E008FAC42 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF2206EAA9C008FAC42 /* Sync.swift */; };
-		B3D8DD27206EAA9E008FAC42 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF2206EAA9C008FAC42 /* Sync.swift */; };
-		B3D8DD28206EAA9E008FAC42 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF3206EAA9D008FAC42 /* Error.swift */; };
-		B3D8DD29206EAA9E008FAC42 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF3206EAA9D008FAC42 /* Error.swift */; };
-		B3D8DD2A206EAA9E008FAC42 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF3206EAA9D008FAC42 /* Error.swift */; };
-		B3D8DD2B206EAA9E008FAC42 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF3206EAA9D008FAC42 /* Error.swift */; };
-		B3D8DD2C206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
-		B3D8DD2D206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
-		B3D8DD2E206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
-		B3D8DD2F206EAA9E008FAC42 /* Aliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */; };
-		B3D8DD34206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
-		B3D8DD35206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
-		B3D8DD36206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
-		B3D8DD37206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */; };
-		B3D8DD38206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */; };
-		B3D8DD39206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */; };
-		B3D8DD3A206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */; };
-		B3D8DD3B206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */; };
-		B3D8DD3C206EAA9E008FAC42 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF8206EAA9E008FAC42 /* List.swift */; };
-		B3D8DD3D206EAA9E008FAC42 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF8206EAA9E008FAC42 /* List.swift */; };
-		B3D8DD3E206EAA9E008FAC42 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF8206EAA9E008FAC42 /* List.swift */; };
-		B3D8DD3F206EAA9E008FAC42 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF8206EAA9E008FAC42 /* List.swift */; };
-		B3D8DD40206EAA9E008FAC42 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF9206EAA9E008FAC42 /* Results.swift */; };
-		B3D8DD41206EAA9E008FAC42 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF9206EAA9E008FAC42 /* Results.swift */; };
-		B3D8DD42206EAA9E008FAC42 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF9206EAA9E008FAC42 /* Results.swift */; };
-		B3D8DD43206EAA9E008FAC42 /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCF9206EAA9E008FAC42 /* Results.swift */; };
-		B3D8DD44206EAA9E008FAC42 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFA206EAA9E008FAC42 /* Property.swift */; };
-		B3D8DD45206EAA9E008FAC42 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFA206EAA9E008FAC42 /* Property.swift */; };
-		B3D8DD46206EAA9E008FAC42 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFA206EAA9E008FAC42 /* Property.swift */; };
-		B3D8DD47206EAA9E008FAC42 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFA206EAA9E008FAC42 /* Property.swift */; };
-		B3D8DD48206EAA9E008FAC42 /* LinkingObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */; };
-		B3D8DD49206EAA9E008FAC42 /* LinkingObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */; };
-		B3D8DD4A206EAA9E008FAC42 /* LinkingObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */; };
-		B3D8DD4B206EAA9E008FAC42 /* LinkingObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */; };
 		B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
 		B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
 		B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
@@ -906,7 +848,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3661722206EC4FC00A4F306 /* Realm.framework in Embed Frameworks */,
 				B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3CB85C31E9BFB16009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3C9D5E21DEA8A290068D057 /* PVGenesis.framework in Embed Frameworks */,
@@ -919,6 +860,7 @@
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
+				B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -927,6 +869,7 @@
 				B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */,
+				B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -940,7 +883,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3661720206EC4D100A4F306 /* Realm.framework in Embed Frameworks */,
 				B3D2E39C1D6E8BCD0058544D /* PVSupport.framework in Embed Frameworks */,
 				B3CB85C01E9BFB07009155A6 /* PVPokeMini.framework in Embed Frameworks */,
 				B3E708B220B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
@@ -953,6 +895,7 @@
 				B3995E4D2058228E001D4985 /* PVFCEU.framework in Embed Frameworks */,
 				B3E708B620B7EB2B005BAA5A /* NSLogger.framework in Embed Frameworks */,
 				B3B3B8991DECF8C700602746 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				B3A2876C20C77C9500B4B2E3 /* Realm.framework in Embed Frameworks */,
 				B3AD689E1D6EA6450021B949 /* PicoDrive.framework in Embed Frameworks */,
 				B3C9D55E1DEA85C60068D057 /* PVSNES.framework in Embed Frameworks */,
 				B3C9D5E81DEAA7E80068D057 /* PVStella.framework in Embed Frameworks */,
@@ -961,6 +904,7 @@
 				B3C9D5221DEA787D0068D057 /* PVGBA.framework in Embed Frameworks */,
 				DF3751952026B83600EE727E /* PVRSPCXD4.framework in Embed Frameworks */,
 				B30670EB20C2A047002ECE63 /* HockeySDK.framework in Embed Frameworks */,
+				B3A2876E20C77C9500B4B2E3 /* RealmSwift.framework in Embed Frameworks */,
 				B3C9D4341DEA1B340068D057 /* PVGenesis.framework in Embed Frameworks */,
 				B3B3B8961DECF8C200602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3B3B8931DECF8BC00602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -1528,6 +1472,10 @@
 		B3995E4B2058228E001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3995E51205840CE001D4985 /* PlistDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlistDataModels.swift; sourceTree = "<group>"; };
+		B3A2876920C77C9500B4B2E3 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3A2877120C787B000B4B2E3 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
+		B3A2877220C787B100B4B2E3 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVSaveStateCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
@@ -1568,36 +1516,10 @@
 		B3CB85C61E9BFBA1009155A6 /* PVPokeMiniControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPokeMiniControllerViewController.swift; sourceTree = "<group>"; };
 		B3D2E3901D6E8B3C0058544D /* PV32XControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PV32XControllerViewController.swift; sourceTree = "<group>"; };
 		B3D534E120AFF21800A83D4E /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
-		B3D534E620AFF85500A83D4E /* SwiftVersion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftVersion.swift; sourceTree = "<group>"; };
 		B3D534EB20B001D700A83D4E /* PillPageControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillPageControl.swift; sourceTree = "<group>"; };
 		B3D8DC5A206EA681008FAC42 /* PVFCEU.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = "<group>"; };
 		B3D8DC5E206EA682008FAC42 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = "<group>"; };
 		B3D8DC5F206EA682008FAC42 /* PVMednafen.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVMednafen.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-dxxctpxdxguofwbxweirtnyaiucn/Build/Products/Release-iphoneos/PVMednafen.framework"; sourceTree = "<group>"; };
-		B3D8DC61206EA6BC008FAC42 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
-		B3D8DC62206EA6BC008FAC42 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		B3D8DC63206EA6BC008FAC42 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		B3D8DC65206EA6BD008FAC42 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
-		B3D8DC66206EA6BD008FAC42 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		B3D8DC67206EA6BD008FAC42 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
-		B3D8DCE8206EAA9B008FAC42 /* Schema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Schema.swift; sourceTree = "<group>"; };
-		B3D8DCE9206EAA9B008FAC42 /* Util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectiveCSupport.swift; sourceTree = "<group>"; };
-		B3D8DCEB206EAA9B008FAC42 /* Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Realm.swift; sourceTree = "<group>"; };
-		B3D8DCEC206EAA9B008FAC42 /* Migration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Migration.swift; sourceTree = "<group>"; };
-		B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmCollection.swift; sourceTree = "<group>"; };
-		B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortDescriptor.swift; sourceTree = "<group>"; };
-		B3D8DCEF206EAA9C008FAC42 /* Object.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
-		B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObjectSchema.swift; sourceTree = "<group>"; };
-		B3D8DCF1206EAA9C008FAC42 /* Optional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
-		B3D8DCF2206EAA9C008FAC42 /* Sync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
-		B3D8DCF3206EAA9D008FAC42 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
-		B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Aliases.swift; sourceTree = "<group>"; };
-		B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeReference.swift; sourceTree = "<group>"; };
-		B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmConfiguration.swift; sourceTree = "<group>"; };
-		B3D8DCF8206EAA9E008FAC42 /* List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
-		B3D8DCF9206EAA9E008FAC42 /* Results.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
-		B3D8DCFA206EAA9E008FAC42 /* Property.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Property.swift; sourceTree = "<group>"; };
-		B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkingObjects.swift; sourceTree = "<group>"; };
 		B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "UIAlertController+Theming.swift"; path = "Provenance/User Interface/Themes/UIAlertController+Theming.swift"; sourceTree = SOURCE_ROOT; };
 		B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Theming.swift"; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
@@ -1680,7 +1602,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30670E320C29FDE002ECE63 /* HockeySDK.framework in Frameworks */,
-				B3D8DC6D206EA6E9008FAC42 /* Realm.framework in Frameworks */,
 				B3D2E39B1D6E8BCD0058544D /* PVSupport.framework in Frameworks */,
 				B3AD689D1D6EA6450021B949 /* PicoDrive.framework in Frameworks */,
 				B3E708B120B7EB2B005BAA5A /* XCDLumberjackNSLogger.framework in Frameworks */,
@@ -1698,12 +1619,14 @@
 				B354693C1DECDA710018B6F3 /* PVAtari800.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
 				B3CB85BF1E9BFB07009155A6 /* PVPokeMini.framework in Frameworks */,
+				B3A2876B20C77C9500B4B2E3 /* Realm.framework in Frameworks */,
 				423BB97B17DD35B10048F457 /* AssetsLibrary.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				1A4869DE17C8D60C0019F6D2 /* MobileCoreServices.framework in Frameworks */,
 				B3E708B720B7EB2B005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
+				B3A2876D20C77C9500B4B2E3 /* RealmSwift.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,
 				1ADDA5B417B30CD7008A7ADD /* GLKit.framework in Frameworks */,
@@ -1728,7 +1651,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
+				B3A2877520C787B100B4B2E3 /* RealmSwift.framework in Frameworks */,
 				B3E708C620B7EB45005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
@@ -1786,7 +1711,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B31D003520BE511500850C70 /* PVSupport.framework in Frameworks */,
-				B3D8DC6F206EA6F5008FAC42 /* Realm.framework in Frameworks */,
+				B3A2876F20C77D0D00B4B2E3 /* Realm.framework in Frameworks */,
+				B3A2877020C77D0D00B4B2E3 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1795,8 +1721,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */,
-				B3D8DC6B206EA6D3008FAC42 /* Realm.framework in Frameworks */,
 				BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */,
+				B3A2877720C787BF00B4B2E3 /* Realm.framework in Frameworks */,
+				B3A2877820C787BF00B4B2E3 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1871,6 +1798,10 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B3A2876920C77C9500B4B2E3 /* Realm.framework */,
+				B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */,
+				B3A2877120C787B000B4B2E3 /* Realm.framework */,
+				B3A2877220C787B100B4B2E3 /* RealmSwift.framework */,
 				B30670E620C2A03B002ECE63 /* HockeySDK.framework */,
 				B30670E920C2A047002ECE63 /* HockeySDK.framework */,
 				B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */,
@@ -1923,9 +1854,6 @@
 				B3684578206EBF1A0078FEC2 /* Linked */,
 				B3EFD10F1C76D5A1000DD650 /* Cores */,
 				1A4DF9F91C0E411500DDBC20 /* iOS */,
-				B3D8DC60206EA6BC008FAC42 /* Realm-iOS */,
-				B3D8DC64206EA6BD008FAC42 /* Realm-tvOS */,
-				B3D8DC70206EA73E008FAC42 /* RealmSwift */,
 				1A4DF9F81C0E40FE00DDBC20 /* tvOS */,
 			);
 			name = Frameworks;
@@ -2922,56 +2850,6 @@
 			name = 32X;
 			sourceTree = "<group>";
 		};
-		B3D8DC60206EA6BC008FAC42 /* Realm-iOS */ = {
-			isa = PBXGroup;
-			children = (
-				B3D8DC61206EA6BC008FAC42 /* RealmSwift.framework */,
-				B3D8DC62206EA6BC008FAC42 /* Realm.framework */,
-				B3D8DC63206EA6BC008FAC42 /* LICENSE.txt */,
-			);
-			name = "Realm-iOS";
-			path = "Frameworks/Realm-iOS";
-			sourceTree = "<group>";
-		};
-		B3D8DC64206EA6BD008FAC42 /* Realm-tvOS */ = {
-			isa = PBXGroup;
-			children = (
-				B3D8DC65206EA6BD008FAC42 /* RealmSwift.framework */,
-				B3D8DC66206EA6BD008FAC42 /* Realm.framework */,
-				B3D8DC67206EA6BD008FAC42 /* LICENSE.txt */,
-			);
-			name = "Realm-tvOS";
-			path = "Frameworks/Realm-tvOS";
-			sourceTree = "<group>";
-		};
-		B3D8DC70206EA73E008FAC42 /* RealmSwift */ = {
-			isa = PBXGroup;
-			children = (
-				B3D8DCF4206EAA9D008FAC42 /* Aliases.swift */,
-				B3D8DCF3206EAA9D008FAC42 /* Error.swift */,
-				B3D8DCFB206EAA9E008FAC42 /* LinkingObjects.swift */,
-				B3D8DCF8206EAA9E008FAC42 /* List.swift */,
-				B3D8DCEC206EAA9B008FAC42 /* Migration.swift */,
-				B3D8DCEF206EAA9C008FAC42 /* Object.swift */,
-				B3D8DCEA206EAA9B008FAC42 /* ObjectiveCSupport.swift */,
-				B3D8DCF0206EAA9C008FAC42 /* ObjectSchema.swift */,
-				B3D8DCF1206EAA9C008FAC42 /* Optional.swift */,
-				B3D8DCFA206EAA9E008FAC42 /* Property.swift */,
-				B3D8DCEB206EAA9B008FAC42 /* Realm.swift */,
-				B3D8DCED206EAA9C008FAC42 /* RealmCollection.swift */,
-				B3D8DCF7206EAA9D008FAC42 /* RealmConfiguration.swift */,
-				B3D8DCF9206EAA9E008FAC42 /* Results.swift */,
-				B3D8DCE8206EAA9B008FAC42 /* Schema.swift */,
-				B3D8DCEE206EAA9C008FAC42 /* SortDescriptor.swift */,
-				B3D8DCF2206EAA9C008FAC42 /* Sync.swift */,
-				B3D534E620AFF85500A83D4E /* SwiftVersion.swift */,
-				B3D8DCF6206EAA9D008FAC42 /* ThreadSafeReference.swift */,
-				B3D8DCE9206EAA9B008FAC42 /* Util.swift */,
-			);
-			name = RealmSwift;
-			path = Frameworks/RealmSwift;
-			sourceTree = "<group>";
-		};
 		B3DBF13A2094669A005935A8 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
@@ -3241,6 +3119,9 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
+					B3A2876420C76F9C00B4B2E3 = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -3273,6 +3154,7 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
+				B3A2876420C76F9C00B4B2E3 /* Cores iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -3404,7 +3286,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi";
+			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform iOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
 		};
 		B3A95F6B20BCF48E00635F3E /* Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3446,7 +3328,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi";
+			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3527,18 +3409,15 @@
 				B349AE891E9ABCF900ACD416 /* XzCrc64Opt.c in Sources */,
 				B349AEDD1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
-				B3D8DD18206EAA9E008FAC42 /* Object.swift in Sources */,
 				1A3FD78E1AC7744100F8C23C /* MBProgressHUD.m in Sources */,
 				F432119A1BFB6AB300387909 /* PViCadeSteelSeriesController.m in Sources */,
 				B3F64ECC205CD1D600C273C7 /* JSDPad.swift in Sources */,
 				378F4A071B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m in Sources */,
-				B3D8DD0C206EAA9E008FAC42 /* Migration.swift in Sources */,
 				423BB97F17DD46BC0048F457 /* NSData+Hashing.m in Sources */,
 				B349AE811E9ABCF900ACD416 /* Sort.c in Sources */,
 				B35BB7FB202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B349AF3D1E9ABCF900ACD416 /* TextConfig.cpp in Sources */,
 				B349AF571E9ABCF900ACD416 /* LzmaSDKObjCCommon.cpp in Sources */,
-				B3D8DD38206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B3F7BE79204A289B000D0B4D /* PVConflictViewController.swift in Sources */,
 				B375C68D2053E73E00BECC77 /* PVEmulatorConfiguration+Frameworks.swift in Sources */,
 				B349AE5D1E9ABCF900ACD416 /* Bra86.c in Sources */,
@@ -3552,15 +3431,12 @@
 				B349AEE51E9ABCF900ACD416 /* StreamObjects.cpp in Sources */,
 				B349AEE91E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
-				B3D534E720AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				B3FF441B205F9C3F00E5A84B /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				E41448911B34B9600056D80A /* PViCadeController.m in Sources */,
 				B3F64ED5205CD21400C273C7 /* PVControllerManager.swift in Sources */,
-				B3D8DD24206EAA9E008FAC42 /* Sync.swift in Sources */,
 				B3DB11A8205C52B800A6E845 /* UIAlertController+Theming.swift in Sources */,
 				B3FF441F205F9C3F00E5A84B /* PVPokeMiniControllerViewController.swift in Sources */,
 				B349AF0D1E9ABCF900ACD416 /* LzmaRegister.cpp in Sources */,
-				B3D8DD04206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				378F4A081B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B349AE611E9ABCF900ACD416 /* CpuArch.c in Sources */,
@@ -3590,7 +3466,6 @@
 				B349AE431E9ABCF900ACD416 /* 7zBuf.c in Sources */,
 				B3FF441D205F9C3F00E5A84B /* PVPSXControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
-				B3D8DD00206EAA9E008FAC42 /* Util.swift in Sources */,
 				B349AF311E9ABCF900ACD416 /* NewHandler.cpp in Sources */,
 				E414488B1B3125D90056D80A /* iCadeReaderView.m in Sources */,
 				B349AEB11E9ABCF900ACD416 /* DummyOutStream.cpp in Sources */,
@@ -3609,11 +3484,9 @@
 				B349AEDB1E9ABCF900ACD416 /* OffsetStream.cpp in Sources */,
 				B349AF611E9ABCFA00ACD416 /* LzmaSDKObjCFileEncoder.cpp in Sources */,
 				E41448941B34BBAB0056D80A /* PViCadeReader.m in Sources */,
-				B3D8DD40206EAA9E008FAC42 /* Results.swift in Sources */,
 				B349AEE71E9ABCF900ACD416 /* StreamUtils.cpp in Sources */,
 				B349AF011E9ABCF900ACD416 /* DeltaFilter.cpp in Sources */,
 				B349AEF91E9ABCF900ACD416 /* ByteSwap.cpp in Sources */,
-				B3D8DD1C206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B3BE96812055F33500281880 /* PVBIOS.swift in Sources */,
 				B349AF171E9ABCF900ACD416 /* 7zAesRegister.cpp in Sources */,
 				B380EBE620B39830002988F9 /* Utilities.swift in Sources */,
@@ -3640,7 +3513,6 @@
 				B349AE971E9ABCF900ACD416 /* 7zExtract.cpp in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B349AECF1E9ABCF900ACD416 /* InBuffer.cpp in Sources */,
-				B3D8DD3C206EAA9E008FAC42 /* List.swift in Sources */,
 				B349AE531E9ABCF900ACD416 /* AesOpt.c in Sources */,
 				B349AF6F1E9ABCFA00ACD416 /* LzmaSDKObjCUpdateCallback.mm in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
@@ -3662,16 +3534,13 @@
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B349AE6F1E9ABCF900ACD416 /* Lzma86Enc.c in Sources */,
 				B387676C20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
-				B3D8DCFC206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3BE96872055F40000281880 /* PVFile.swift in Sources */,
 				B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */,
 				B349AED51E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
 				B3F64ED2205CD20800C273C7 /* PVButtonGroupOverlayView.swift in Sources */,
-				B3D8DD28206EAA9E008FAC42 /* Error.swift in Sources */,
 				B3DB11AB205C7F7B00A6E845 /* UIView+Theming.swift in Sources */,
 				B3FF4415205F9C3F00E5A84B /* PVAtari5200ControllerViewController.swift in Sources */,
 				B349AF151E9ABCF900ACD416 /* 7zAes.cpp in Sources */,
-				B3D8DD2C206EAA9E008FAC42 /* Aliases.swift in Sources */,
 				378F4A011B63D7CD0065FA39 /* GCDWebServerConnection.m in Sources */,
 				B349AEB51E9ABCF900ACD416 /* InStreamWithCRC.cpp in Sources */,
 				378F4A111B63DCF00065FA39 /* PVWebServer.m in Sources */,
@@ -3689,7 +3558,6 @@
 				B349AF031E9ABCF900ACD416 /* Lzma2Decoder.cpp in Sources */,
 				B349AF631E9ABCFA00ACD416 /* LzmaSDKObjCInFile.cpp in Sources */,
 				B349AEAD1E9ABCF900ACD416 /* ArchiveExports.cpp in Sources */,
-				B3D8DD08206EAA9E008FAC42 /* Realm.swift in Sources */,
 				1A48697417C8C0DE0019F6D2 /* PVDirectoryWatcher.swift in Sources */,
 				1A26EE361AD9FFBF004EA30B /* zip.c in Sources */,
 				B3FF4413205F94EF00E5A84B /* PV32XControllerViewController.swift in Sources */,
@@ -3714,7 +3582,6 @@
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B349AEE31E9ABCF900ACD416 /* StreamBinder.cpp in Sources */,
 				B349AE7D1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
-				B3D8DD14206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
 				B349AE751E9ABCF900ACD416 /* LzmaLib.c in Sources */,
 				E4F936A01B50C95E009403C5 /* kICadeControllerSetting.m in Sources */,
@@ -3733,18 +3600,15 @@
 				B349AEAB1E9ABCF900ACD416 /* 7zUpdate.cpp in Sources */,
 				B349AEBF1E9ABCF900ACD416 /* DllExports2.cpp in Sources */,
 				B349AE8B1E9ABCF900ACD416 /* XzDec.c in Sources */,
-				B3D8DD10206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
 				B349AE411E9ABCF900ACD416 /* 7zArcIn.c in Sources */,
 				B349AE4B1E9ABCF900ACD416 /* 7zDec.c in Sources */,
 				B349AEB91E9ABCF900ACD416 /* MultiStream.cpp in Sources */,
 				B349AED71E9ABCF900ACD416 /* MethodId.cpp in Sources */,
 				B3BE967E2055F2F400281880 /* PVSystem.swift in Sources */,
 				B3D534EC20B001D700A83D4E /* PillPageControl.swift in Sources */,
-				B3D8DD44206EAA9E008FAC42 /* Property.swift in Sources */,
 				B3BE96842055F3D900281880 /* PVCore.swift in Sources */,
 				B349AED31E9ABCF900ACD416 /* LimitedStreams.cpp in Sources */,
 				B349AE911E9ABCF900ACD416 /* 7zCompressionMode.cpp in Sources */,
-				B3D8DD20206EAA9E008FAC42 /* Optional.swift in Sources */,
 				B33468D220AB347300092CA6 /* CenterFlowLayout.swift in Sources */,
 				1A48697817C8C0DE0019F6D2 /* PVMediaCache.swift in Sources */,
 				B35D26FA20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */,
@@ -3762,7 +3626,6 @@
 				B349AEBB1E9ABCF900ACD416 /* OutStreamWithCRC.cpp in Sources */,
 				B349AEC11E9ABCF900ACD416 /* LzmaHandler.cpp in Sources */,
 				B349AE511E9ABCF900ACD416 /* Aes.c in Sources */,
-				B3D8DD34206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				B3995E52205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				C6E8F64D2095CAE4003CC2D9 /* SubtleVolume.swift in Sources */,
@@ -3792,7 +3655,6 @@
 				B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */,
 				B349AF251E9ABCF900ACD416 /* CrcReg.cpp in Sources */,
 				B349AF211E9ABCF900ACD416 /* CommandLineParser.cpp in Sources */,
-				B3D8DD48206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				378F4A0C1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m in Sources */,
 				B349AE771E9ABCF900ACD416 /* MtCoder.c in Sources */,
 				B3890BF420B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */,
@@ -3891,11 +3753,9 @@
 				B35E6C2E207ED7050040709A /* UIWindowExtensions.swift in Sources */,
 				B349AEA81E9ABCF900ACD416 /* 7zRegister.cpp in Sources */,
 				1AACCAEA1BB615FE00DC21AE /* PVSynchronousURLSession.m in Sources */,
-				B3D8DD29206EAA9E008FAC42 /* Error.swift in Sources */,
 				B349AE9A1E9ABCF900ACD416 /* 7zFolderInStream.cpp in Sources */,
 				1AD481FD1BA354B100FDA50A /* PViCadeReader.m in Sources */,
 				B349AE901E9ABCF900ACD416 /* XzIn.c in Sources */,
-				B3D8DD21206EAA9E008FAC42 /* Optional.swift in Sources */,
 				B349AEEA1E9ABCF900ACD416 /* UniqBlocks.cpp in Sources */,
 				B349AE6E1E9ABCF900ACD416 /* Lzma86Dec.c in Sources */,
 				B349AF541E9ABCF900ACD416 /* LzmaSDKObjCBaseCoder.cpp in Sources */,
@@ -3910,10 +3770,7 @@
 				B349AE9C1E9ABCF900ACD416 /* 7zHandler.cpp in Sources */,
 				B349AF601E9ABCFA00ACD416 /* LzmaSDKObjCFileDecoder.cpp in Sources */,
 				1AD481E31BA3545D00FDA50A /* GCDWebServerStreamedResponse.m in Sources */,
-				B3D8DD3D206EAA9E008FAC42 /* List.swift in Sources */,
 				B394C97D20609D0D0014A65D /* PVGBControllerViewController.swift in Sources */,
-				B3D8DD45206EAA9E008FAC42 /* Property.swift in Sources */,
-				B3D534E820AFF85600A83D4E /* SwiftVersion.swift in Sources */,
 				1ACE9A0A1BACBC9E00C72AA5 /* PVTVSettingsViewController.swift in Sources */,
 				1AD481CC1BA353F900FDA50A /* PVDirectoryWatcher.swift in Sources */,
 				1AD481ED1BA3548400FDA50A /* zip.c in Sources */,
@@ -3926,13 +3783,11 @@
 				B349AF261E9ABCF900ACD416 /* CrcReg.cpp in Sources */,
 				B349AEA01E9ABCF900ACD416 /* 7zHeader.cpp in Sources */,
 				B36954E12094391B009D958D /* PVLibrary.swift in Sources */,
-				B3D8DD01206EAA9E008FAC42 /* Util.swift in Sources */,
 				B3BE96912056025B00281880 /* PVSaveState.swift in Sources */,
 				B349AEF21E9ABCF900ACD416 /* BcjCoder.cpp in Sources */,
 				1AD482001BA354B100FDA50A /* PViCadeInputAxis.m in Sources */,
 				B349AF441E9ABCF900ACD416 /* XzCrc64Reg.cpp in Sources */,
 				B349AF721E9ABCFA00ACD416 /* LzmaSDKObjCWriter.mm in Sources */,
-				B3D8DCFD206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B35E6C2C207ED7050040709A /* UITraitCollectionExtensions.swift in Sources */,
 				B349AE7E1E9ABCF900ACD416 /* Ppmd7Enc.c in Sources */,
 				B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */,
@@ -3952,7 +3807,6 @@
 				1AD481F21BA3549400FDA50A /* NSString+Hashing.m in Sources */,
 				B349AE921E9ABCF900ACD416 /* 7zCompressionMode.cpp in Sources */,
 				1AD481E01BA3545400FDA50A /* GCDWebServerDataResponse.m in Sources */,
-				B3D8DD0D206EAA9E008FAC42 /* Migration.swift in Sources */,
 				B349AF121E9ABCF900ACD416 /* PpmdEncoder.cpp in Sources */,
 				B35E6C2A207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
 				B349AE8A1E9ABCF900ACD416 /* XzCrc64Opt.c in Sources */,
@@ -3963,7 +3817,6 @@
 				B394C98220609D0D0014A65D /* PVPSXControllerViewController.swift in Sources */,
 				B349AF521E9ABCF900ACD416 /* LzmaSDKObjC.mm in Sources */,
 				B349AF0E1E9ABCF900ACD416 /* LzmaRegister.cpp in Sources */,
-				B3D8DD1D206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				1AD481E11BA3545800FDA50A /* GCDWebServerErrorResponse.m in Sources */,
 				1AD481F71BA354A200FDA50A /* NSDate+NSDate_SignificantDates.m in Sources */,
 				B349AF001E9ABCF900ACD416 /* CopyRegister.cpp in Sources */,
@@ -3974,16 +3827,13 @@
 				B349AEDA1E9ABCF900ACD416 /* MethodProps.cpp in Sources */,
 				B349AF3E1E9ABCF900ACD416 /* TextConfig.cpp in Sources */,
 				B349AEEE1E9ABCF900ACD416 /* Bcj2Coder.cpp in Sources */,
-				B3D8DD35206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				B349AEF41E9ABCF900ACD416 /* BcjRegister.cpp in Sources */,
 				B349AEB61E9ABCF900ACD416 /* InStreamWithCRC.cpp in Sources */,
 				B349AE941E9ABCF900ACD416 /* 7zDecode.cpp in Sources */,
 				B349AF321E9ABCF900ACD416 /* NewHandler.cpp in Sources */,
 				1AD481EC1BA3548200FDA50A /* unzip.c in Sources */,
-				B3D8DD39206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B380EBE720B39830002988F9 /* Utilities.swift in Sources */,
 				B349AE841E9ABCF900ACD416 /* Threads.c in Sources */,
-				B3D8DD09206EAA9E008FAC42 /* Realm.swift in Sources */,
 				B349AE741E9ABCF900ACD416 /* LzmaEnc.c in Sources */,
 				B349AEC61E9ABCF900ACD416 /* CreateCoder.cpp in Sources */,
 				B394C97C20609D0D0014A65D /* PVLynxControllerViewController.swift in Sources */,
@@ -4004,7 +3854,6 @@
 				B349AE501E9ABCF900ACD416 /* 7zStream.c in Sources */,
 				B349AEC01E9ABCF900ACD416 /* DllExports2.cpp in Sources */,
 				B349AE8E1E9ABCF900ACD416 /* XzEnc.c in Sources */,
-				B3D8DD25206EAA9E008FAC42 /* Sync.swift in Sources */,
 				B349AED81E9ABCF900ACD416 /* MethodId.cpp in Sources */,
 				B349AF1A1E9ABCF900ACD416 /* MyAes.cpp in Sources */,
 				B3CF44CB203B6589005BEB14 /* PViCadeControllerViewController.swift in Sources */,
@@ -4013,7 +3862,6 @@
 				B349AF0A1E9ABCF900ACD416 /* LzmaDecoder.cpp in Sources */,
 				B349AEB21E9ABCF900ACD416 /* DummyOutStream.cpp in Sources */,
 				B394C97F20609D0D0014A65D /* PVGenesisControllerViewController.swift in Sources */,
-				B3D8DD2D206EAA9E008FAC42 /* Aliases.swift in Sources */,
 				B349AED61E9ABCF900ACD416 /* LockedStream.cpp in Sources */,
 				1AD481DE1BA3544A00FDA50A /* GCDWebServerMultiPartFormRequest.m in Sources */,
 				1AD481DA1BA3543E00FDA50A /* GCDWebServerRequest.m in Sources */,
@@ -4029,15 +3877,12 @@
 				B349AEDE1E9ABCF900ACD416 /* OutBuffer.cpp in Sources */,
 				B349AEE01E9ABCF900ACD416 /* ProgressUtils.cpp in Sources */,
 				B3DBF13D2094669A005935A8 /* UTI.swift in Sources */,
-				B3D8DD05206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				B3890BFA20B9E513005BB001 /* UILabel+Theming.swift in Sources */,
 				B394C97720609BEF0014A65D /* PVControllerViewController.swift in Sources */,
 				1AD481E81BA3547200FDA50A /* PVSettingsModel.swift in Sources */,
 				B349AF421E9ABCF900ACD416 /* Wildcard.cpp in Sources */,
 				B394C98820609D0D0014A65D /* PVVBControllerViewController.swift in Sources */,
 				B394C98620609D0D0014A65D /* PVSNESControllerViewController.swift in Sources */,
-				B3D8DD19206EAA9E008FAC42 /* Object.swift in Sources */,
-				B3D8DD49206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				B394C98420609D0D0014A65D /* PVNESControllerViewController.swift in Sources */,
 				B349AEF81E9ABCF900ACD416 /* BranchRegister.cpp in Sources */,
 				1AD481DF1BA3544D00FDA50A /* GCDWebServerURLEncodedFormRequest.m in Sources */,
@@ -4076,9 +3921,7 @@
 				B349AED21E9ABCF900ACD416 /* InOutTempBuffer.cpp in Sources */,
 				B349AE621E9ABCF900ACD416 /* CpuArch.c in Sources */,
 				1AD481DD1BA3544800FDA50A /* GCDWebServerFileRequest.m in Sources */,
-				B3D8DD11206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
-				B3D8DD41206EAA9E008FAC42 /* Results.swift in Sources */,
 				B349AEC41E9ABCF900ACD416 /* SplitHandler.cpp in Sources */,
 				1AD481D31BA3541E00FDA50A /* Reachability.m in Sources */,
 				BE1E266D1C22552800499BA0 /* PVAppConstants.swift in Sources */,
@@ -4108,7 +3951,6 @@
 				B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 				B349AF041E9ABCF900ACD416 /* Lzma2Decoder.cpp in Sources */,
 				B3BE967F2055F2F400281880 /* PVSystem.swift in Sources */,
-				B3D8DD15206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4124,46 +3966,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				B328B3D120B449D800AE4E00 /* OESQLiteDatabase.m in Sources */,
-				B3D8DD47206EAA9E008FAC42 /* Property.swift in Sources */,
-				B3D8DD4B206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				B3BE96932056026800281880 /* PVSaveState.swift in Sources */,
-				B3D8DD13206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
-				B3D8DD2F206EAA9E008FAC42 /* Aliases.swift in Sources */,
-				B3D8DD03206EAA9E008FAC42 /* Util.swift in Sources */,
 				B3DBF13F2094669A005935A8 /* UTI.swift in Sources */,
 				B36954E32094391B009D958D /* PVLibrary.swift in Sources */,
-				B3D8DD23206EAA9E008FAC42 /* Optional.swift in Sources */,
-				B3D8DD1F206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B360F92D2032439900E3E678 /* PVMediaCache.swift in Sources */,
 				B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */,
 				B3E21D7B20321B53009939D3 /* PVGame.swift in Sources */,
-				B3D8DD0F206EAA9E008FAC42 /* Migration.swift in Sources */,
 				B328B3CF20B4485400AE4E00 /* PVGameImporter.swift in Sources */,
-				B3D8DD37206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				B3E21D7820321AA8009939D3 /* RomDatabase.swift in Sources */,
 				B3BE96982056032600281880 /* PVGame+BoxArt.swift in Sources */,
-				B3D8DD2B206EAA9E008FAC42 /* Error.swift in Sources */,
 				B36D9DFA2035AC8600D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3E6DAC920B79C3600454DD4 /* CocoaLumberExtensions.swift in Sources */,
-				B3D8DD27206EAA9E008FAC42 /* Sync.swift in Sources */,
 				B328B3D320B44A1D00AE4E00 /* NSData+Hashing.m in Sources */,
-				B3D8DD3F206EAA9E008FAC42 /* List.swift in Sources */,
 				B36D9DFB2035F6AB00D583C4 /* PVRecentGame.swift in Sources */,
 				B3E21D7D20321BE4009939D3 /* PVAppConstants.swift in Sources */,
 				B3995E55205840CE001D4985 /* PlistDataModels.swift in Sources */,
-				B3D8DD43206EAA9E008FAC42 /* Results.swift in Sources */,
 				B3BE968C2055F41A00281880 /* PVSystem.swift in Sources */,
-				B3D8DD17206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
-				B3D8DCFF206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3BE968B2055F41A00281880 /* PVBIOS.swift in Sources */,
 				B3D534EF20B001D700A83D4E /* PillPageControl.swift in Sources */,
-				B3D8DD0B206EAA9E008FAC42 /* Realm.swift in Sources */,
-				B3D8DD07206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				B3780B402057F1F70018211E /* PVCore.swift in Sources */,
-				B3D8DD3B206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B3BE967C2055F2B400281880 /* PVGame+Spotlight.swift in Sources */,
-				B3D534EA20AFF85600A83D4E /* SwiftVersion.swift in Sources */,
-				B3D8DD1B206EAA9E008FAC42 /* Object.swift in Sources */,
 				B380EBE920B39830002988F9 /* Utilities.swift in Sources */,
 				B3BE968A2055F40000281880 /* PVFile.swift in Sources */,
 			);
@@ -4173,49 +3995,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D8DD46206EAA9E008FAC42 /* Property.swift in Sources */,
-				B3D8DD4A206EAA9E008FAC42 /* LinkingObjects.swift in Sources */,
 				B3BE96922056026700281880 /* PVSaveState.swift in Sources */,
 				B3D534EE20B001D700A83D4E /* PillPageControl.swift in Sources */,
-				B3D8DD12206EAA9E008FAC42 /* RealmCollection.swift in Sources */,
-				B3D8DD2E206EAA9E008FAC42 /* Aliases.swift in Sources */,
-				B3D8DD02206EAA9E008FAC42 /* Util.swift in Sources */,
-				B3D8DD22206EAA9E008FAC42 /* Optional.swift in Sources */,
 				B380EBE820B39830002988F9 /* Utilities.swift in Sources */,
-				B3D534E920AFF85600A83D4E /* SwiftVersion.swift in Sources */,
-				B3D8DD1E206EAA9E008FAC42 /* ObjectSchema.swift in Sources */,
 				B35BB7FD202F3F2200FCB513 /* PVGame.swift in Sources */,
 				B328B3D020B449D700AE4E00 /* OESQLiteDatabase.m in Sources */,
 				B35BB800202F3F2200FCB513 /* PVRecentGame.swift in Sources */,
 				BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */,
-				B3D8DD0E206EAA9E008FAC42 /* Migration.swift in Sources */,
-				B3D8DD36206EAA9E008FAC42 /* ThreadSafeReference.swift in Sources */,
 				BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */,
 				B3BE96972056032600281880 /* PVGame+BoxArt.swift in Sources */,
 				B36954E22094391B009D958D /* PVLibrary.swift in Sources */,
 				B3E3B5C8202E3BE200A11871 /* RomDatabase.swift in Sources */,
-				B3D8DD2A206EAA9E008FAC42 /* Error.swift in Sources */,
 				B3E6DACA20B79C3600454DD4 /* CocoaLumberExtensions.swift in Sources */,
 				B328B3CE20B4485300AE4E00 /* PVGameImporter.swift in Sources */,
-				B3D8DD26206EAA9E008FAC42 /* Sync.swift in Sources */,
-				B3D8DD3E206EAA9E008FAC42 /* List.swift in Sources */,
 				B36D9DF92035AC8300D583C4 /* PVEmulatorConfiguration.swift in Sources */,
 				B3995E54205840CE001D4985 /* PlistDataModels.swift in Sources */,
 				B3BE968E2055F41A00281880 /* PVSystem.swift in Sources */,
-				B3D8DD42206EAA9E008FAC42 /* Results.swift in Sources */,
 				B3BE968D2055F41A00281880 /* PVBIOS.swift in Sources */,
-				B3D8DD16206EAA9E008FAC42 /* SortDescriptor.swift in Sources */,
 				B3AE1F7220734DE800AD06D4 /* PVMediaCache.swift in Sources */,
-				B3D8DCFE206EAA9E008FAC42 /* Schema.swift in Sources */,
 				B3780B3F2057F1F60018211E /* PVCore.swift in Sources */,
-				B3D8DD0A206EAA9E008FAC42 /* Realm.swift in Sources */,
-				B3D8DD06206EAA9E008FAC42 /* ObjectiveCSupport.swift in Sources */,
 				BE1E266E1C22552800499BA0 /* PVAppConstants.swift in Sources */,
-				B3D8DD3A206EAA9E008FAC42 /* RealmConfiguration.swift in Sources */,
 				B328B3D220B44A1C00AE4E00 /* NSData+Hashing.m in Sources */,
 				B3DBF13E2094669A005935A8 /* UTI.swift in Sources */,
 				B3BE96892055F40000281880 /* PVFile.swift in Sources */,
-				B3D8DD1A206EAA9E008FAC42 /* Object.swift in Sources */,
 				B315F0152058E14200138074 /* PVGame+Spotlight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4373,7 +4175,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4425,7 +4226,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4483,7 +4283,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4547,7 +4346,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4609,7 +4407,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4883,7 +4680,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"\"$(PROJECT_DIR)/PVSupport/Carthage/Build/iOS\"",
 				);
@@ -4918,6 +4714,30 @@
 			};
 			name = AdHoc;
 		};
+		B3A2876620C76F9C00B4B2E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3A2876720C76F9C00B4B2E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3A2876820C76F9C00B4B2E3 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4937,8 +4757,8 @@
 				DEVELOPMENT_TEAM = 9DSA2J9CHZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4985,8 +4805,8 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -5031,8 +4851,8 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-iOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/iOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -5073,8 +4893,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -5119,8 +4939,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -5165,8 +4985,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -5231,6 +5051,16 @@
 				1AD9AA3E1ACC988F00EC87A0 /* Debug */,
 				1AD9AA3F1ACC988F00EC87A0 /* Release */,
 				1AD9AA401ACC988F00EC87A0 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A2876620C76F9C00B4B2E3 /* Debug */,
+				B3A2876720C76F9C00B4B2E3 /* Release */,
+				B3A2876820C76F9C00B4B2E3 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -8332,7 +8332,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Provenance;
 				TargetAttributes = {
 					B333502C207AFBA30036A448 = {

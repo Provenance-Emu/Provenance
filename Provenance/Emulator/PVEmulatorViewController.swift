@@ -10,6 +10,7 @@
 import PVSupport
 import QuartzCore
 import UIKit
+import RealmSwift
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -937,7 +938,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 		if core.projectVersion != state.createdWithCoreVersion {
 			let message =
 			"""
-			Save state created with version \(state.createdWithCoreVersion) but current \(core.projectName) core is version \(core.projectVersion).
+			Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
 			Save file may not load. Create a new save state to avoid this warning in the future.
 			"""
 			presentWarning(message, completion: loadSave)

@@ -5,7 +5,7 @@
 //  Copyright (c) 2013 JamSoft. All rights reserved.
 //
 
-// import RealmSwift
+import RealmSwift
 import CoreGraphics
 import AVFoundation
 
@@ -193,8 +193,7 @@ extension UIImageView {
 	}
 }
 
-func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString
-{
+func + (left: NSAttributedString, right: NSAttributedString) -> NSAttributedString {
     let result = NSMutableAttributedString()
     result.append(left)
     result.append(right)
@@ -400,7 +399,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 				titleLabel.adjustsFontForContentSizeCategory = true
 			}
 			titleLabel.adjustsFontSizeToFitWidth = true
-       
+
 			#else // iOS
 
 			if #available(iOS 9.0, tvOS 9.0, *) {
@@ -462,7 +461,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 	@IBOutlet weak var titleLabelHeightConstraint: NSLayoutConstraint?
 	@IBOutlet weak var deleteActionView: UIView?
 //    @IBOutlet weak var artworkContainerViewHeightConstraint: NSLayoutConstraint?
-    
+
 	class func cellSize(forImageSize imageSize: CGSize) -> CGSize {
 		let size : CGSize
 		if #available(iOS 9.0, tvOS 9.0, *) {
@@ -588,8 +587,6 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
     }
 
-
-    
 	private func setupTopRightBadge() {
 		guard let game = game, PVSettingsModel.shared.showGameBadges, let topRightCornerBadgeView = topRightCornerBadgeView else {
 			self.topRightCornerBadgeView?.isHidden = true
@@ -598,7 +595,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		let hasPlayed = game.playCount > 0
 		let favorite = game.isFavorite
 		topRightCornerBadgeView.glyph = favorite ? "♥︎" : ""
-        
+
 		if favorite {
 			topRightCornerBadgeView.fillColor = UIColor.red.withAlphaComponent(0.85)
 		} else if !hasPlayed {
@@ -628,34 +625,34 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		setupTopRightBadge()
 		setupDiscCountBadge()
 	}
-    
+
     private func setupDots() {
         guard let game = game else {
             return
         }
-        
+
         #if os(iOS)
         if PVSettingsModel.shared.showGameBadges {
             return
         }
         #endif
-        
+
         let hasPlayed = game.playCount > 0
         let favorite = game.isFavorite
-        
+
         var bullet = NSAttributedString(string: "")
         let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.red ]
         let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.blue ]
         let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
         let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
         let attributedTitle = NSMutableAttributedString(string: game.title)
-        
+
         if favorite {
             bullet = bulletFavorite
         } else if !hasPlayed {
             bullet = bulletUnplayed
         }
-        
+
         self.titleLabel.attributedText = bullet + attributedTitle
 
     }
@@ -923,7 +920,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 //        }
         // Fixes the box art clipping…
         self.sizeToFit()
-        
+
         contentView.bringSubview(toFront: titleLabel!)
 #else
 		if #available(iOS 9.0, tvOS 9.0, *) {

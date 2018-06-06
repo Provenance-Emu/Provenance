@@ -14,7 +14,7 @@ import SafariServices
 import GameController
 import QuartzCore
 import UIKit
-// import RealmSwift
+import RealmSwift
 import CoreSpotlight
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
