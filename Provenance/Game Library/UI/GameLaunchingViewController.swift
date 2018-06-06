@@ -369,10 +369,11 @@ extension GameLaunchingViewController where Self : UIViewController {
         try biosCheck(system: system)
     }
 
-    private func displayAndLogError(withTitle title: String, message: String) {
+	private func displayAndLogError(withTitle title: String, message: String, customActions: [UIAlertAction]? = nil) {
         ELOG(message)
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+		customActions?.forEach { alertController.addAction($0)  }
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alertController, animated: true)
     }
@@ -507,7 +508,14 @@ extension GameLaunchingViewController where Self : UIViewController {
             let relativeBiosPath = "Documents/BIOS/\(system.identifier)/"
 
             let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
-            displayAndLogError(withTitle: "Missing BIOS files", message: message)
+			#if os(iOS)
+			let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { action in
+				UIApplication.shared.openURL(URL(string: "https://github.com/Provenance-Emu/Provenance/wiki/BIOS-Requirements")!)
+			})
+			displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction])
+			#else
+			displayAndLogError(withTitle: "Missing BIOS files", message: message)
+			#endif
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")
         } catch GameLaunchingError.generic(let message) {
