@@ -609,6 +609,12 @@
 		B3A2876E20C77C9500B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A2876F20C77D0D00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876920C77C9500B4B2E3 /* Realm.framework */; };
 		B3A2877020C77D0D00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */; };
+		B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
+		B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2877520C787B100B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
+		B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3A2877720C787BF00B4B2E3 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877120C787B000B4B2E3 /* Realm.framework */; };
+		B3A2877820C787BF00B4B2E3 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A2877220C787B100B4B2E3 /* RealmSwift.framework */; };
 		B3A9F4251DE86389008450F5 /* ProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD68A21D6EA7070021B949 /* ProSystem.framework */; };
 		B3AD689B1D6EA6180021B949 /* PicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; };
 		B3AD689C1D6EA6180021B949 /* PicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AD689A1D6EA6180021B949 /* PicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -852,6 +858,7 @@
 				B3C9D5E51DEA8AED0068D057 /* PVStella.framework in Embed Frameworks */,
 				B3DEE8EA1E9E9C880004D25E /* PVAtari800.framework in Embed Frameworks */,
 				B3C9D5611DEA85D10068D057 /* PVSNES.framework in Embed Frameworks */,
+				B3A2877420C787B100B4B2E3 /* Realm.framework in Embed Frameworks */,
 				B32F46351D6A8BD70085BA9F /* PVSupport.framework in Embed Frameworks */,
 				B3AD68A41D6EA7070021B949 /* ProSystem.framework in Embed Frameworks */,
 				B3B3B97A1DED14A100602746 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -860,6 +867,7 @@
 				B3E708C520B7EB45005BAA5A /* XCDLumberjackNSLogger.framework in Embed Frameworks */,
 				B3DDB0A920291E8E001C6B64 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B30670E820C2A03C002ECE63 /* HockeySDK.framework in Embed Frameworks */,
+				B3A2877620C787B100B4B2E3 /* RealmSwift.framework in Embed Frameworks */,
 				B3B3B9801DED169100602746 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B36CBFEC20397D9100728482 /* PVMednafen.framework in Embed Frameworks */,
 				B3B3B9771DED14A100602746 /* PVMupen64Plus.framework in Embed Frameworks */,
@@ -1464,6 +1472,8 @@
 		B3995E51205840CE001D4985 /* PlistDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlistDataModels.swift; sourceTree = "<group>"; };
 		B3A2876920C77C9500B4B2E3 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		B3A2877120C787B000B4B2E3 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/tvOS/Realm.framework; sourceTree = "<group>"; };
+		B3A2877220C787B100B4B2E3 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/tvOS/RealmSwift.framework; sourceTree = "<group>"; };
 		B3AD689A1D6EA6180021B949 /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AD68A21D6EA7070021B949 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVSaveStateCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
@@ -1639,7 +1649,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A2877320C787B100B4B2E3 /* Realm.framework in Frameworks */,
 				B3C9D4B11DEA74500068D057 /* PVGB.framework in Frameworks */,
+				B3A2877520C787B100B4B2E3 /* RealmSwift.framework in Frameworks */,
 				B3E708C620B7EB45005BAA5A /* CocoaLumberjack.framework in Frameworks */,
 				B3995E4F2058229F001D4985 /* PVFCEU.framework in Frameworks */,
 				B3AD68A31D6EA7070021B949 /* ProSystem.framework in Frameworks */,
@@ -1708,6 +1720,8 @@
 			files = (
 				B302F89620B73BD000C5E502 /* PVSupport.framework in Frameworks */,
 				BE9FDCB91C210B9E0046DF0E /* TVServices.framework in Frameworks */,
+				B3A2877720C787BF00B4B2E3 /* Realm.framework in Frameworks */,
+				B3A2877820C787BF00B4B2E3 /* RealmSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1784,6 +1798,8 @@
 			children = (
 				B3A2876920C77C9500B4B2E3 /* Realm.framework */,
 				B3A2876A20C77C9500B4B2E3 /* RealmSwift.framework */,
+				B3A2877120C787B000B4B2E3 /* Realm.framework */,
+				B3A2877220C787B100B4B2E3 /* RealmSwift.framework */,
 				B30670E620C2A03B002ECE63 /* HockeySDK.framework */,
 				B30670E920C2A047002ECE63 /* HockeySDK.framework */,
 				B3E708BD20B7EB45005BAA5A /* CocoaLumberjack.framework */,
@@ -4265,7 +4281,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4329,7 +4344,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4391,7 +4405,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"$(PROJECT_DIR)/PVSupport/Carthage/Build/tvOS",
 					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
@@ -4878,8 +4891,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4924,8 +4937,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -4970,8 +4983,8 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks/Realm-tvOS",
 					"\"$(SRCROOT)/PVSupport/Carthage/Build/tvOS\"",
+					"$(PROJECT_DIR)/Carthage/Build/tvOS",
 				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
