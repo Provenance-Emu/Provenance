@@ -97,6 +97,8 @@
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4AB1DEA73150068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4AC1DEA73AA0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
+		B3E4817820C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -252,6 +254,7 @@
 		B3C9D4A61DEA6E390068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3D2E3801D6E7E030058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -313,6 +316,7 @@
 				1AABDFF71ABE373700FF6AEF /* gbcpalettes.h */,
 				1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */,
 				1AABE08D1ABE373800FF6AEF /* PVGBEmulatorCore.mm */,
+				B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */,
 				1AABDFF91ABE373700FF6AEF /* common */,
 				1AABE0341ABE373800FF6AEF /* libgambatte */,
 				1AABE0C81ABE37D800FF6AEF /* Supporting Files */,
@@ -662,9 +666,11 @@
 				TargetAttributes = {
 					B3C9D4391DEA6AFB0068D057 = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0940;
 					};
 					B3C9D4471DEA6B0D0068D057 = {
 						CreatedOnToolsVersion = 8.1;
+						LastSwiftMigration = 0940;
 					};
 				};
 			};
@@ -711,6 +717,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */,
+				B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */,
 				B3C9D4541DEA6DE80068D057 /* video.cpp in Sources */,
 				B3C9D4551DEA6DE80068D057 /* lyc_irq.cpp in Sources */,
 				B3C9D4561DEA6DE80068D057 /* rtc.cpp in Sources */,
@@ -756,6 +763,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C9D4791DEA6DE80068D057 /* interrupter.cpp in Sources */,
+				B3E4817820C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */,
 				B3C9D47A1DEA6DE80068D057 /* video.cpp in Sources */,
 				B3C9D47B1DEA6DE80068D057 /* lyc_irq.cpp in Sources */,
 				B3C9D47C1DEA6DE80068D057 /* rtc.cpp in Sources */,
@@ -951,6 +959,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -981,6 +990,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -991,6 +1002,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1021,6 +1033,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1031,6 +1044,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1061,6 +1075,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1071,6 +1086,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1100,6 +1116,8 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1111,6 +1129,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1140,6 +1159,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1151,6 +1171,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -1180,6 +1201,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";

@@ -34,3 +34,8 @@
 - (void)didReleaseGBButton:(PVGBButton)button forPlayer:(NSInteger)player;
 
 @end
+
+// for Swiwt extensions
+@interface PVGBEmulatorCore()
+-(void)changeDisplayMode;
+@end
