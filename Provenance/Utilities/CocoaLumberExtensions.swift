@@ -81,7 +81,8 @@ public final class PVTTYFormatter : NSObject, DDLogFormatter {
             level = "WARNING "
         case .error:
             level = "ERROR "
-        case .off, .all:
+		default:
+//        case .off, .all:
             level = ""
         }
 
