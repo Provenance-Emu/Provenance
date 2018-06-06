@@ -941,6 +941,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			// Add done button to iOS
 			let navController = UINavigationController(rootViewController: avc)
 			avc.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(PVGameLibraryViewController.dismissVC))
+			avc.title = "Library Options"
 			sortOptionsTableView.reloadData()
 			present(navController, animated: true, completion: nil)
 			return
@@ -1574,7 +1575,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
             actionSheet.addAction(UIAlertAction(title: "Copy MD5 URL", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 let md5URL = "provenance://open?md5=\(game.md5Hash)"
                 UIPasteboard.general.string = md5URL
-				self.present(UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert), animated: true)
+				let alert = UIAlertController(title: nil, message: "URL copied to clipboard", preferredStyle: .alert)
+				self.present(alert, animated: true)
+				DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+					alert.dismiss(animated: true, completion: nil)
+				})
             }))
 
 			actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
