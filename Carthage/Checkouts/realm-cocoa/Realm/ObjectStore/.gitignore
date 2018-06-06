@@ -1,0 +1,32 @@
+# CMake
+.ninja_deps
+.ninja_log
+CMakeCache.txt
+CMakeFiles/
+Makefile
+build.ninja
+cmake_install.cmake
+rules.ninja
+CMakeScripts/
+realm-object-store.xcodeproj/
+
+# Build products
+src/librealm-object-store.a
+tests/tests
+*.build/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
+
+# IntelliJ
+.idea/
+
+# Visual Studio
+/.vs
+
+# Linters
+compile_commands.json
+
+# vim
+*.swp
