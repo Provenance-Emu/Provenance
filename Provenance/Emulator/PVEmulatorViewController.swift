@@ -649,6 +649,22 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
                 })
             }))
         }
+
+		if let actionableCore = core as? CoreActions, let actions = actionableCore.coreActions {
+			actions.forEach { coreAction in
+				actionsheet.addAction(UIAlertAction(title: coreAction.title, style: .default, handler: {(_ action: UIAlertAction) -> Void in
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+						actionableCore.selected(action: coreAction)
+						self.core.setPauseEmulation(false)
+						if coreAction.requiresReset {
+							self.core.resetEmulation()
+						}
+						self.isShowingMenu = false
+						self.enableContorllerInput(false)
+					})
+				}))
+			}
+		}
 #if os(iOS)
         actionsheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)

@@ -60,4 +60,5 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
+-(void)changeDisplayMode;
 @end

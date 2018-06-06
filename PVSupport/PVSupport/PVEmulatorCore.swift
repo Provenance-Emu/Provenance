@@ -15,6 +15,33 @@ import UIKit
     func swapDisc(number: UInt)
 }
 
+public struct CoreActionOption {
+	public let title : String
+	public let selected : Bool
+
+	public init(title: String, selected: Bool = false) {
+		self.title = title
+		self.selected = selected
+	}
+}
+
+public struct CoreAction {
+	public let title : String
+	public let requiresReset : Bool
+	public let options : [CoreActionOption]?
+
+	public init(title: String, requiresReset: Bool = false, options: [CoreActionOption]? = nil) {
+		self.title = title
+		self.requiresReset = requiresReset
+		self.options = options
+	}
+}
+
+public protocol CoreActions {
+	var coreActions : [CoreAction]? { get }
+	func selected(action : CoreAction)
+}
+
 @objc public protocol ResponderClient: class {
 
 }
