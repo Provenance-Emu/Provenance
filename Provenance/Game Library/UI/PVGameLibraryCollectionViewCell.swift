@@ -340,7 +340,7 @@ extension UIImage {
 
 	func imageWithBorder(width: CGFloat, color: UIColor) -> UIImage? {
 		let imageView = UIImageView(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: size))
-		imageView.contentMode = .center
+//		imageView.contentMode = .center
 		imageView.image = self
 		//		imageView.layer.cornerRadius = square.width/2
 		imageView.layer.masksToBounds = true
