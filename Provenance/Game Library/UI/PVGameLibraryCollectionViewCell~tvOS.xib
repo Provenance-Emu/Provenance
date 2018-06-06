@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.XIB" version="3.0" toolsVersion="14113" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder.AppleTV.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="appleTV" orientation="landscape">
         <adaptation id="light"/>
     </device>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -24,9 +23,6 @@
                         <subviews>
                             <imageView opaque="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" adjustsImageWhenAncestorFocused="YES" translatesAutoresizingMaskIntoConstraints="NO" id="grq-R5-nkq">
                                 <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
-                                </userDefinedRuntimeAttributes>
                             </imageView>
                             <view hidden="YES" alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3SN-fo-fqC">
                                 <rect key="frame" x="0.0" y="0.0" width="256" height="199"/>
@@ -87,7 +83,6 @@
                                     <userDefinedRuntimeAttribute type="color" keyPath="strokeColor">
                                         <color key="value" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </userDefinedRuntimeAttribute>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="ignoresInvertColors" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>
@@ -109,7 +104,7 @@
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="bottom" secondItem="grq-R5-nkq" secondAttribute="bottom" id="fPY-Kw-8C8"/>
                             <constraint firstItem="mwp-JA-v4w" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kJ6-P7-xAu"/>
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="centerY" secondItem="RKb-WS-gGA" secondAttribute="centerY" id="kJw-hn-XgC"/>
-                            <constraint firstAttribute="trailing" secondItem="pdf-KX-U3g" secondAttribute="trailing" id="kPq-Ly-e8U"/>
+                            <constraint firstItem="pdf-KX-U3g" firstAttribute="trailing" secondItem="RKb-WS-gGA" secondAttribute="trailing" id="kPq-Ly-e8U"/>
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="height" secondItem="grq-R5-nkq" secondAttribute="height" id="tfB-fr-yJV"/>
                             <constraint firstItem="pdf-KX-U3g" firstAttribute="top" secondItem="RKb-WS-gGA" secondAttribute="top" id="wTB-ZR-buR"/>
                             <constraint firstItem="3SN-fo-fqC" firstAttribute="width" secondItem="grq-R5-nkq" secondAttribute="width" id="wnP-qD-f99"/>
