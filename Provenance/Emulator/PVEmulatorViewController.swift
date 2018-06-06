@@ -650,7 +650,7 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
             }))
         }
 #if os(iOS)
-        actionsheet.addAction(UIAlertAction(title: "Screenshot", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+        actionsheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
         }))
 #endif
