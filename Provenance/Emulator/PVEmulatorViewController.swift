@@ -114,7 +114,9 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				}
 				gameStartTime = Date()
 			} else {
-				updatePlayedDuration()
+				DispatchQueue.main.async { [weak self] in
+					self?.updatePlayedDuration()
+				}
 			}
 		}
 	}
@@ -124,11 +126,14 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
     }
 
     deinit {
+		// These need to be first or mutli-threaded cores can cause crashes on close
+		NotificationCenter.default.removeObserver(self)
+		core.removeObserver(self, forKeyPath: "isRunning")
+
         core.stopEmulation()
         //Leave emulation loop first
         gameAudio?.stop()
         NSSetUncaughtExceptionHandler(nil)
-        NotificationCenter.default.removeObserver(self)
         staticSelf = nil
         controllerViewController?.willMove(toParentViewController: nil)
         controllerViewController?.view?.removeFromSuperview()
@@ -141,7 +146,6 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 #endif
         updatePlayedDuration()
 		destroyAutosaveTimer()
-		core.removeObserver(self, forKeyPath: "isRunning")
     }
 
 	private func initNotifcationObservers() {
