@@ -838,6 +838,21 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		#else
 
 		#endif
+
+		if #available(tvOS 11, *) {
+			topRightCornerBadgeView?.removeFromSuperview()
+			discCountContainerView?.removeFromSuperview()
+			imageView.overlayContentView.addSubview(topRightCornerBadgeView!)
+			imageView.overlayContentView.addSubview(discCountContainerView!)
+
+			discCountContainerView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+			discCountContainerView?.bottomAnchor.constraint(equalTo: imageView.overlayContentView.bottomAnchor).isActive = true
+			discCountContainerView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+
+			topRightCornerBadgeView?.trailingAnchor.constraint(equalTo: imageView.overlayContentView.trailingAnchor).isActive = true
+			topRightCornerBadgeView?.topAnchor.constraint(equalTo: imageView.overlayContentView.topAnchor).isActive = true
+			topRightCornerBadgeView?.widthAnchor.constraint(equalTo: imageView.overlayContentView.widthAnchor, multiplier: 0.25, constant: 0).isActive = true
+		}
 //		contentView.layer.borderWidth = 1.0
 //		contentView.layer.borderColor = UIColor.white.cgColor
 //
@@ -1000,14 +1015,35 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 				let transform = CGAffineTransform(scaleX: 1.25, y: 1.25)
 				self.superview?.bringSubview(toFront: self)
                 if PVSettingsModel.shared.showGameBadges {
-                    let xySlideOffset = CGFloat(42)
-                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
-                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset)  }
-                    if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
-                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 0.0 }
+
+					if #available(tvOS 11, *) {
+					} else {
+						// Hide for non os 11 since we don't have the auto contentLayerView
+						let xySlideOffset = CGFloat(42)
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xySlideOffset, y: -xySlideOffset) }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xySlideOffset, y: xySlideOffset)  }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 0.0 }
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 0.0 }
+
+						/* -- Or here's my scaling code for older tvOS's. Parallex will still be off though
+						let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
+
+						let topConstant = imageContentFrame.origin.y
+						let bottomConstant = imageContentFrame.origin.y * -1.0
+						let trailingConstant = imageContentFrame.origin.x * -1.0
+
+						let xTransform = imageContentFrame.width * 0.07
+						let yTransform = imageContentFrame.height * 0.07
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = transform.translatedBy(x: xTransform, y: yTransform * -1.0) }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = transform.translatedBy(x: xTransform, y: yTransform)  }
+						*/
+					}
                 }
+
                 if PVSettingsModel.shared.showGameTitles {
-                    let yOffset = self.imageView.frame.maxY - self.titleLabel.frame.minY + 48
+					let imageContentFrame = self.imageView.contentClippingRect // .applying(transform)
+
+                    let yOffset = imageContentFrame.maxY - self.titleLabel.frame.minY + 48
                     self.titleLabel.transform = transform.translatedBy(x: 0, y: yOffset)
                     self.titleLabel.alpha = 1.0
 				}
@@ -1017,10 +1053,13 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 				self.titleLabel.transform = .identity
 				self.titleLabel.alpha = 0.0
                 if PVSettingsModel.shared.showGameBadges {
-                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 1.0 }
-                    if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 1.0 }
-                    if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = .identity }
-                    if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = .identity }
+					if #available(tvOS 11, *) {
+					} else {
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.alpha = 1.0 }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.alpha = 1.0 }
+						if (self.topRightCornerBadgeView != nil) { self.topRightCornerBadgeView?.transform = .identity }
+						if (self.discCountContainerView != nil) { self.discCountContainerView?.transform = .identity }
+					}
                 }
 
 			}
