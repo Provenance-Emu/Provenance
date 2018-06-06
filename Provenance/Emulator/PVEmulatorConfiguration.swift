@@ -241,6 +241,10 @@ public class PVEmulatorConfiguration: NSObject {
         return documentsPath.appendingPathComponent("Save States", isDirectory: true)
     }()
 
+	static let screenShotsPath: URL = {
+		return documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
+	}()
+
     static let biosesPath: URL = {
         return documentsPath.appendingPathComponent("BIOS", isDirectory: true)
     }()
@@ -300,6 +304,15 @@ public class PVEmulatorConfiguration: NSObject {
     class func biosEntry(forFilename filename: String) -> PVBIOS? {
         return biosEntries.first { $0.expectedFilename == filename }
     }
+
+	private static let dateFormatter : DateFormatter = {
+		let df = DateFormatter()
+		df.dateFormat = "YYYY-MM-dd HH:mm:ss"
+		return df
+	}()
+	class func string(fromDate date : Date) -> String {
+		return dateFormatter.string(from: date)
+	}
 }
 
 public struct ClassInfo: CustomStringConvertible, Equatable {
@@ -474,6 +487,18 @@ public extension PVEmulatorConfiguration {
 
         return saveSavesPath
     }
+
+	class func screenshotsPath(forGame game: PVGame) -> URL {
+		let screenshotsPath = self.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
+
+		do {
+			try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			ELOG("Error creating screenshots directory: \(screenshotsPath.path) : \(error.localizedDescription)")
+		}
+
+		return screenshotsPath
+	}
 
     class func path(forGame game: PVGame) -> URL {
         return game.file.url

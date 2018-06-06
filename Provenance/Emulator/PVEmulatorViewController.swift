@@ -860,10 +860,10 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 				let imageURL = URL(fileURLWithPath: saveStatePath).appendingPathComponent("\(game.md5Hash)|\(Date().timeIntervalSinceReferenceDate).png")
 				do {
 					try pngData.write(to: imageURL)
-					try RomDatabase.sharedInstance.writeTransaction {
-						let newFile = PVImageFile(withURL: imageURL)
-						game.screenShots.append(newFile)
-					}
+//					try RomDatabase.sharedInstance.writeTransaction {
+//						let newFile = PVImageFile(withURL: imageURL)
+//						game.screenShots.append(newFile)
+//					}
 				} catch let error {
 					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
 				}
@@ -987,6 +987,23 @@ class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelega
 			DispatchQueue.global(qos: .default).async(execute: {() -> Void in
 				UIImageWriteToSavedPhotosAlbum(screenshot, nil, nil, nil)
 			})
+
+			if let pngData = UIImagePNGRepresentation(screenshot) {
+
+				let dateString = PVEmulatorConfiguration.string(fromDate: Date())
+
+				let fileName = game.title  + " - " + dateString + ".png"
+				let imageURL = PVEmulatorConfiguration.screenshotsPath(forGame: game).appendingPathComponent(fileName, isDirectory: false)
+				do {
+					try pngData.write(to: imageURL)
+					try RomDatabase.sharedInstance.writeTransaction {
+						let newFile = PVImageFile(withURL: imageURL)
+						game.screenShots.append(newFile)
+					}
+				} catch let error {
+					presentError("Unable to write image to disk, error: \(error.localizedDescription)")
+				}
+			}
 		}
 		self.core.setPauseEmulation(false)
 		self.isShowingMenu = false

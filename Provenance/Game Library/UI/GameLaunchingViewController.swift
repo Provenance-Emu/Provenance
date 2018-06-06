@@ -85,7 +85,7 @@ extension GameSharingViewController where Self : UIViewController {
 			return arr
 		})
 
-		let addImage : (String?, String) -> Void  = { (imageURL, suffix) in
+		let addImageFromCache : (String?, String) -> Void  = { (imageURL, suffix) in
 			guard let imageURL = imageURL, !imageURL.isEmpty, PVMediaCache.fileExists(forKey: imageURL) else {
 				return
 			}
@@ -110,17 +110,33 @@ extension GameSharingViewController where Self : UIViewController {
 			}
 		}
 
-		ILOG("Adding \(files.count) save states and their images to zip")
-		addImage(game.originalArtworkURL, "")
-		addImage(game.originalArtworkURL, "-Custom")
-		addImage(game.boxBackArtworkURL, "-Back")
+		let addImageFromURL : (URL?, String) -> Void  = { (imageURL, suffix) in
+			guard let imageURL = imageURL, FileManager.default.fileExists(atPath: imageURL.path) else {
+				return
+			}
 
-		let df = DateFormatter()
-		df.dateStyle = .short
-		df.timeStyle = .short
-		for (i, screenShot) in game.screenShots.enumerated() {
-			let dateString = df.string(from: screenShot.createdDate)
-			addImage(screenShot.url, "-Screenshot "+dateString)
+			let originalExtension = imageURL.pathExtension
+
+			let destination = tempDirURL.appendingPathComponent(game.title + suffix + "." + originalExtension, isDirectory: false)
+			try? FileManager.default.removeItem(at: destination)
+			do {
+				try FileManager.default.createSymbolicLink(at: destination, withDestinationURL: imageURL)
+				files.append(destination)
+				ILOG("Added \(suffix) image to zip")
+			} catch {
+				// Add anyway to catch the fact that fileExists doesnt' work for symlinks that already exist
+				ELOG("Failed to make symlink: " + error.localizedDescription)
+			}
+		}
+
+		ILOG("Adding \(files.count) save states and their images to zip")
+		addImageFromCache(game.originalArtworkURL, "")
+		addImageFromCache(game.originalArtworkURL, "-Custom")
+		addImageFromCache(game.boxBackArtworkURL, "-Back")
+
+		for screenShot in game.screenShots {
+			let dateString = PVEmulatorConfiguration.string(fromDate: screenShot.createdDate)
+			addImageFromURL(screenShot.url, "-Screenshot "+dateString)
 		}
 
 		// - Add main game file
