@@ -6,6 +6,19 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3A2876420C76F9C00B4B2E3 /* Cores iOS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */;
+			buildPhases = (
+			);
+			dependencies = (
+			);
+			name = "Cores iOS";
+			productName = Cores;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1A164EB317BC03E800FAC391 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		1A19EE142080EA2000A9147B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
@@ -3241,6 +3254,9 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
+					B3A2876420C76F9C00B4B2E3 = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					B3E21D6A203211BE009939D3 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
@@ -3273,6 +3289,7 @@
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
+				B3A2876420C76F9C00B4B2E3 /* Cores iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -4918,6 +4935,30 @@
 			};
 			name = AdHoc;
 		};
+		B3A2876620C76F9C00B4B2E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3A2876720C76F9C00B4B2E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3A2876820C76F9C00B4B2E3 /* AdHoc */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = AdHoc;
+		};
 		B3E21D74203211BE009939D3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5231,6 +5272,16 @@
 				1AD9AA3E1ACC988F00EC87A0 /* Debug */,
 				1AD9AA3F1ACC988F00EC87A0 /* Release */,
 				1AD9AA401ACC988F00EC87A0 /* AdHoc */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3A2876520C76F9C00B4B2E3 /* Build configuration list for PBXAggregateTarget "Cores iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3A2876620C76F9C00B4B2E3 /* Debug */,
+				B3A2876720C76F9C00B4B2E3 /* Release */,
+				B3A2876820C76F9C00B4B2E3 /* AdHoc */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

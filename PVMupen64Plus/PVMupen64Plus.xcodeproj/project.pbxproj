@@ -402,7 +402,6 @@
 		B3CB4B21206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3CB4B22206E54D20074706B /* Log_ios.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3CB4B20206E54D10074706B /* Log_ios.mm */; };
 		B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; };
-		B3EA4482206E309500E608F6 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA4481206E309500E608F6 /* libbz2.tbd */; };
 		B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B3EA448B206E471200E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
 		B3EA448C206E471300E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
@@ -2037,7 +2036,6 @@
 			files = (
 				B38010152085586900FA03B8 /* libglidenhq.a in Frameworks */,
 				B3EA4483206E309A00E608F6 /* libz.tbd in Frameworks */,
-				B3EA4482206E309500E608F6 /* libbz2.tbd in Frameworks */,
 				B3EA447C206E10C700E608F6 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
