@@ -532,7 +532,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             } else {
                 artworkText = game.title
             }
-			imageView.image = image(withText: artworkText) //?.withRenderingMode(.alwaysTemplate)
+			image = image(withText: artworkText) //?.withRenderingMode(.alwaysTemplate)
 			updateImageConstraints()
 			setNeedsLayout()
         } else {
@@ -554,7 +554,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 							artworkText = game.title
 						}
 						let artwork: UIImage? = image ?? self.image(withText: artworkText)
-						self.imageView.image = artwork //?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
+						self.image = artwork //?.imageWithBorder(width: 1, color: UIColor.red) //?.withRenderingMode(.alwaysTemplate)
 						#if os(tvOS)
 //						let maxAllowedHeight = self.contentView.bounds.height - self.titleLabelHeightConstraint!.constant + 5
 //						let height: CGFloat = min(maxAllowedHeight, self.contentView.bounds.width / game.boxartAspectRatio.rawValue)
@@ -889,9 +889,23 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         return missingArtworkImage
     }
 
+	var image : UIImage? {
+		set {
+			imageView?.image = newValue
+			if newValue == nil {
+				imageView?.layer.shouldRasterize = false
+			} else {
+				imageView?.layer.shouldRasterize = true
+				imageView?.layer.rasterizationScale = UIScreen.main.scale
+			}
+		} get {
+			return imageView?.image
+		}
+	}
+
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        image = nil
 //		imageView.tintColor = nil
         titleLabel.text = nil
 		discCountLabel?.text = nil
