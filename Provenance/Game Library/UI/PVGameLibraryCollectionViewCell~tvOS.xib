@@ -57,7 +57,7 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.75" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="52" id="Y0b-6k-lj0"/>
+                                    <constraint firstAttribute="width" secondItem="mwp-JA-v4w" secondAttribute="height" multiplier="1:1" id="Kz1-E8-NNQ"/>
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="height" secondItem="mwp-JA-v4w" secondAttribute="height" id="efg-Lj-GPj"/>
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="centerX" secondItem="mwp-JA-v4w" secondAttribute="centerX" id="fy3-JN-YGX"/>
                                     <constraint firstItem="fFj-aX-6m6" firstAttribute="width" secondItem="mwp-JA-v4w" secondAttribute="width" id="h3p-eo-2o9"/>
@@ -70,7 +70,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="56" id="W0o-sy-oMz"/>
-                                    <constraint firstAttribute="height" constant="56" id="gJK-W9-GQp"/>
+                                    <constraint firstAttribute="width" secondItem="pdf-KX-U3g" secondAttribute="height" multiplier="1:1" id="u1L-Gc-ctf"/>
                                 </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="color" keyPath="fillColor">
