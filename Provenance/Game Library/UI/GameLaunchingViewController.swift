@@ -131,7 +131,7 @@ extension GameSharingViewController where Self : UIViewController {
 
 		ILOG("Adding \(files.count) save states and their images to zip")
 		addImageFromCache(game.originalArtworkURL, "")
-		addImageFromCache(game.originalArtworkURL, "-Custom")
+		addImageFromCache(game.customArtworkURL, "-Custom")
 		addImageFromCache(game.boxBackArtworkURL, "-Back")
 
 		for screenShot in game.screenShots {
