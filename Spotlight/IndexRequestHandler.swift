@@ -8,7 +8,7 @@
 
 import MobileCoreServices
 import CoreSpotlight
-// import RealmSwift
+import RealmSwift
 
 public enum SpotlightError: Error {
     case appGroupsNotSupported

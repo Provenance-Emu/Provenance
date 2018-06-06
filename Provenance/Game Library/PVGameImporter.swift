@@ -8,7 +8,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 import CoreSpotlight
 
 func + <K, V>(lhs: [K : V], rhs: [K : V]) -> [K : V] {

@@ -8,7 +8,7 @@
 //
 
 import UIKit
-// import RealmSwift
+import RealmSwift
 
 class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
     var mustRefreshDataSource: Bool = false

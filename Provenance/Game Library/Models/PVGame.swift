@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
 protocol PVLibraryEntry where Self: Object {}

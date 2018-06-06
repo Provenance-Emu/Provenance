@@ -5,7 +5,7 @@
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
 import Foundation
-// import RealmSwift
+import RealmSwift
 import TVServices
 
 /** Enabling Top Shelf

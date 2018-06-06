@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 protocol RealmCollectinViewCellDelegate : class {
 	func didSelectObject(_ : Object, indexPath: IndexPath)

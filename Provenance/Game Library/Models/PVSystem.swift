@@ -7,7 +7,7 @@
 //
 
 import Foundation
-// import RealmSwift
+import RealmSwift
 
 public enum ScreenType: String {
     case unknown = ""
