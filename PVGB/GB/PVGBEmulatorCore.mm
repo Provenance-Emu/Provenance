@@ -386,6 +386,9 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
 }
 
 # pragma mark - Display Mode
+- (GBPalette)currentDisplayMode {
+	return displayMode;
+}
 
 - (void)changeDisplayMode:(GBPalette)displayMode
 {

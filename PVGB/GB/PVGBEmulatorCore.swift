@@ -17,7 +17,9 @@ extension PVGBEmulatorCore: CoreActions {
 	public func selected(action : CoreAction) {
 		switch action.title {
 		case "Change Palette":
-			self.changeDisplayMode()
+			let nextI = self.currentDisplayMode() + 1
+			let next = GBPalette(rawValue:nextI) ?? .peaSoupGreen
+			self.changeDisplayMode(next.rawValue)
 		default:
 			print("Unknown action: "+action.title)
 		}
