@@ -597,13 +597,9 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		topRightCornerBadgeView.glyph = favorite ? "♥︎" : ""
 
 		if favorite {
-			topRightCornerBadgeView.fillColor = UIColor.red.withAlphaComponent(0.85)
+			topRightCornerBadgeView.fillColor = UIColor(rgb: 0xf71a32).withAlphaComponent(0.85)
 		} else if !hasPlayed {
-#if os(iOS)
-			topRightCornerBadgeView.fillColor = Theme.currentTheme.barButtonItemTint!.withAlphaComponent(0.85)
-#else
-            topRightCornerBadgeView.fillColor = UIColor.blue.withAlphaComponent(0.85)
-#endif
+            topRightCornerBadgeView.fillColor = UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)
         }
 
 		topRightCornerBadgeView.isHidden = hasPlayed && !favorite
@@ -634,8 +630,8 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 		let favorite = game.isFavorite
 
         var bullet = NSAttributedString(string: "")
-        let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.red ]
-        let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor.blue ]
+        let bulletFavoriteAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0xf71a32).withAlphaComponent(0.85) ]
+        let bulletUnplayedAttribute = [ NSAttributedStringKey.foregroundColor: UIColor(rgb: 0x17aaf7).withAlphaComponent(0.85)]
         let bulletFavorite = NSAttributedString(string: "♥︎ ", attributes: bulletFavoriteAttribute)
         let bulletUnplayed = NSAttributedString(string: "● ", attributes: bulletUnplayedAttribute)
         let attributedTitle = NSMutableAttributedString(string: game.title)

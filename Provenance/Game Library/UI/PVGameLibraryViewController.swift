@@ -1575,7 +1575,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
                 self.moreInfo(for: game)
             }))
 
-            actionSheet.addAction(UIAlertAction(title: "Toggle Favorite", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            var favoriteTitle = "Favorite"
+            if game.isFavorite {
+                favoriteTitle = "Unfavorite"
+            }
+            actionSheet.addAction(UIAlertAction(title: favoriteTitle, style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.toggleFavorite(for: game)
             }))
 
@@ -1594,11 +1598,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				})
             }))
 
-			actionSheet.addAction(UIAlertAction(title: "Choose Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+			actionSheet.addAction(UIAlertAction(title: "Choose Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.chooseCustomArtwork(for: game)
             }))
 
-            actionSheet.addAction(UIAlertAction(title: "Paste Custom Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            actionSheet.addAction(UIAlertAction(title: "Paste Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                 self.pasteCustomArtwork(for: game)
             }))
 
@@ -1629,9 +1633,9 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 				}))
 			}
 
-			// conditinally show Restore Original Artwork
+			// conditionally show Restore Original Artwork
             if !game.originalArtworkURL.isEmpty, !game.customArtworkURL.isEmpty, game.originalArtworkURL != game.customArtworkURL {
-                actionSheet.addAction(UIAlertAction(title: "Restore Original Artwork", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                actionSheet.addAction(UIAlertAction(title: "Restore Cover", style: .default, handler: {(_ action: UIAlertAction) -> Void in
                     try! PVMediaCache.deleteImage(forKey: game.customArtworkURL)
 
                     try! RomDatabase.sharedInstance.writeTransaction {
