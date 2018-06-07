@@ -1,0 +1,620 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		28473B891C109EE200A8105F /* ExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28473B881C109EE200A8105F /* ExampleUITests.swift */; };
+		28650D2C1C0DD21A008C1F27 /* PeriscopeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D251C0DD21A008C1F27 /* PeriscopeCell.xib */; };
+		28650D2D1C0DD21A008C1F27 /* SkypeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D261C0DD21A008C1F27 /* SkypeCell.xib */; };
+		28650D2E1C0DD21A008C1F27 /* SpotifyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D271C0DD21A008C1F27 /* SpotifyCell.xib */; };
+		28650D2F1C0DD21A008C1F27 /* TweetbotCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D281C0DD21A008C1F27 /* TweetbotCell.xib */; };
+		28650D301C0DD21A008C1F27 /* TwitterCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D291C0DD21A008C1F27 /* TwitterCell.xib */; };
+		28650D311C0DD21A008C1F27 /* YoutubeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28650D2A1C0DD21A008C1F27 /* YoutubeCell.xib */; };
+		28A21F1E1C0E7DEE009FC30F /* ActionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A21F1D1C0E7DEE009FC30F /* ActionData.swift */; };
+		28AD9C781C03F34F0044164E /* SkypeExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28AD9C771C03F34F0044164E /* SkypeExampleViewController.swift */; };
+		28AD9C7D1C04C63D0044164E /* XLActionController.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 28B3B8891BFA858D007337A2 /* XLActionController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		28B3B85A1BFA7EEC007337A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B8591BFA7EEC007337A2 /* AppDelegate.swift */; };
+		28B3B85F1BFA7EEC007337A2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28B3B85D1BFA7EEC007337A2 /* Main.storyboard */; };
+		28B3B8611BFA7EEC007337A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 28B3B8601BFA7EEC007337A2 /* Assets.xcassets */; };
+		28B3B8641BFA7EEC007337A2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28B3B8621BFA7EEC007337A2 /* LaunchScreen.storyboard */; };
+		28B3B87D1BFA8566007337A2 /* PeriscopeExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B8791BFA8566007337A2 /* PeriscopeExampleViewController.swift */; };
+		28B3B87E1BFA8566007337A2 /* SpotifyExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B87A1BFA8566007337A2 /* SpotifyExampleViewController.swift */; };
+		28B3B87F1BFA8566007337A2 /* TweetbotExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B87B1BFA8566007337A2 /* TweetbotExampleViewController.swift */; };
+		28B3B8801BFA8566007337A2 /* TwitterExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B87C1BFA8566007337A2 /* TwitterExampleViewController.swift */; };
+		28B3B8821BFA856B007337A2 /* YouTubeExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B3B8811BFA856B007337A2 /* YouTubeExampleViewController.swift */; };
+		28B3B88F1BFA8A09007337A2 /* XLActionController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B3B8891BFA858D007337A2 /* XLActionController.framework */; };
+		B297A9161C0E17AA00AF9559 /* Periscope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A9151C0E17AA00AF9559 /* Periscope.swift */; };
+		B297A91B1C0E191600AF9559 /* Skype.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A91A1C0E191600AF9559 /* Skype.swift */; };
+		B297A9201C0E193B00AF9559 /* Spotify.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A91F1C0E193B00AF9559 /* Spotify.swift */; };
+		B297A9241C0E195F00AF9559 /* Tweetbot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A9231C0E195F00AF9559 /* Tweetbot.swift */; };
+		B297A9271C0E198200AF9559 /* Twitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A9261C0E198200AF9559 /* Twitter.swift */; };
+		B297A92A1C0E19A500AF9559 /* Youtube.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A9291C0E19A500AF9559 /* Youtube.swift */; };
+		B297A9361C0E26E300AF9559 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A9351C0E26E300AF9559 /* MainViewController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		28B3B86B1BFA7EEC007337A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 28B3B84E1BFA7EEC007337A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 28B3B8551BFA7EEC007337A2;
+			remoteInfo = Example;
+		};
+		28B3B8881BFA858D007337A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 28E191671BFA618E00066B1C;
+			remoteInfo = XLActionController;
+		};
+		28B3B88A1BFA858D007337A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 28E191711BFA618F00066B1C;
+			remoteInfo = XLActionControllerTests;
+		};
+		28B3B88D1BFA89F9007337A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 28E191661BFA618E00066B1C;
+			remoteInfo = XLActionController;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		28AD9C7B1C04C6230044164E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				28AD9C7D1C04C63D0044164E /* XLActionController.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		28473B881C109EE200A8105F /* ExampleUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ExampleUITests.swift; path = Example/UITests/ExampleUITests.swift; sourceTree = SOURCE_ROOT; };
+		28650D251C0DD21A008C1F27 /* PeriscopeCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeriscopeCell.xib; sourceTree = "<group>"; };
+		28650D261C0DD21A008C1F27 /* SkypeCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SkypeCell.xib; sourceTree = "<group>"; };
+		28650D271C0DD21A008C1F27 /* SpotifyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SpotifyCell.xib; sourceTree = "<group>"; };
+		28650D281C0DD21A008C1F27 /* TweetbotCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TweetbotCell.xib; sourceTree = "<group>"; };
+		28650D291C0DD21A008C1F27 /* TwitterCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TwitterCell.xib; sourceTree = "<group>"; };
+		28650D2A1C0DD21A008C1F27 /* YoutubeCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = YoutubeCell.xib; sourceTree = "<group>"; };
+		28A21F1D1C0E7DEE009FC30F /* ActionData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionData.swift; sourceTree = "<group>"; };
+		28AD9C771C03F34F0044164E /* SkypeExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkypeExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B8561BFA7EEC007337A2 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		28B3B8591BFA7EEC007337A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		28B3B85E1BFA7EEC007337A2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		28B3B8601BFA7EEC007337A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		28B3B8631BFA7EEC007337A2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		28B3B8651BFA7EEC007337A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		28B3B86A1BFA7EEC007337A2 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		28B3B8701BFA7EEC007337A2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		28B3B8791BFA8566007337A2 /* PeriscopeExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeriscopeExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B87A1BFA8566007337A2 /* SpotifyExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpotifyExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B87B1BFA8566007337A2 /* TweetbotExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetbotExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B87C1BFA8566007337A2 /* TwitterExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B8811BFA856B007337A2 /* YouTubeExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeExampleViewController.swift; sourceTree = "<group>"; };
+		28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = XLActionController.xcodeproj; sourceTree = "<group>"; };
+		B297A9151C0E17AA00AF9559 /* Periscope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Periscope.swift; sourceTree = "<group>"; };
+		B297A91A1C0E191600AF9559 /* Skype.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skype.swift; sourceTree = "<group>"; };
+		B297A91F1C0E193B00AF9559 /* Spotify.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spotify.swift; sourceTree = "<group>"; };
+		B297A9231C0E195F00AF9559 /* Tweetbot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tweetbot.swift; sourceTree = "<group>"; };
+		B297A9261C0E198200AF9559 /* Twitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Twitter.swift; sourceTree = "<group>"; };
+		B297A9291C0E19A500AF9559 /* Youtube.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Youtube.swift; sourceTree = "<group>"; };
+		B297A9351C0E26E300AF9559 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		28B3B8531BFA7EEC007337A2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28B3B88F1BFA8A09007337A2 /* XLActionController.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		28B3B8671BFA7EEC007337A2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		28650D231C0DD21A008C1F27 /* CustomActionControllers */ = {
+			isa = PBXGroup;
+			children = (
+				28A21F1D1C0E7DEE009FC30F /* ActionData.swift */,
+				28650D251C0DD21A008C1F27 /* PeriscopeCell.xib */,
+				B297A9151C0E17AA00AF9559 /* Periscope.swift */,
+				28650D261C0DD21A008C1F27 /* SkypeCell.xib */,
+				B297A91A1C0E191600AF9559 /* Skype.swift */,
+				28650D271C0DD21A008C1F27 /* SpotifyCell.xib */,
+				B297A91F1C0E193B00AF9559 /* Spotify.swift */,
+				28650D281C0DD21A008C1F27 /* TweetbotCell.xib */,
+				B297A9231C0E195F00AF9559 /* Tweetbot.swift */,
+				28650D291C0DD21A008C1F27 /* TwitterCell.xib */,
+				B297A9261C0E198200AF9559 /* Twitter.swift */,
+				28650D2A1C0DD21A008C1F27 /* YoutubeCell.xib */,
+				B297A9291C0E19A500AF9559 /* Youtube.swift */,
+			);
+			path = CustomActionControllers;
+			sourceTree = "<group>";
+		};
+		28B3B84D1BFA7EEC007337A2 = {
+			isa = PBXGroup;
+			children = (
+				28B3B8581BFA7EEC007337A2 /* Example */,
+				28B3B86D1BFA7EEC007337A2 /* UITests */,
+				28B3B8571BFA7EEC007337A2 /* Products */,
+				28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */,
+			);
+			sourceTree = "<group>";
+		};
+		28B3B8571BFA7EEC007337A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				28B3B8561BFA7EEC007337A2 /* Example.app */,
+				28B3B86A1BFA7EEC007337A2 /* ExampleUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		28B3B8581BFA7EEC007337A2 /* Example */ = {
+			isa = PBXGroup;
+			children = (
+				28650D231C0DD21A008C1F27 /* CustomActionControllers */,
+				B297A9351C0E26E300AF9559 /* MainViewController.swift */,
+				28B3B8811BFA856B007337A2 /* YouTubeExampleViewController.swift */,
+				28B3B8791BFA8566007337A2 /* PeriscopeExampleViewController.swift */,
+				28B3B87A1BFA8566007337A2 /* SpotifyExampleViewController.swift */,
+				28B3B87B1BFA8566007337A2 /* TweetbotExampleViewController.swift */,
+				28B3B87C1BFA8566007337A2 /* TwitterExampleViewController.swift */,
+				28AD9C771C03F34F0044164E /* SkypeExampleViewController.swift */,
+				28B3B8591BFA7EEC007337A2 /* AppDelegate.swift */,
+				28B3B85D1BFA7EEC007337A2 /* Main.storyboard */,
+				28B3B8601BFA7EEC007337A2 /* Assets.xcassets */,
+				28B3B8621BFA7EEC007337A2 /* LaunchScreen.storyboard */,
+				28B3B8651BFA7EEC007337A2 /* Info.plist */,
+			);
+			path = Example;
+			sourceTree = "<group>";
+		};
+		28B3B86D1BFA7EEC007337A2 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				28473B881C109EE200A8105F /* ExampleUITests.swift */,
+				28B3B8701BFA7EEC007337A2 /* Info.plist */,
+			);
+			name = UITests;
+			path = Example/UITests;
+			sourceTree = "<group>";
+		};
+		28B3B8841BFA858D007337A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				28B3B8891BFA858D007337A2 /* XLActionController.framework */,
+				28B3B88B1BFA858D007337A2 /* XLActionControllerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		28B3B8551BFA7EEC007337A2 /* Example */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28B3B8731BFA7EEC007337A2 /* Build configuration list for PBXNativeTarget "Example" */;
+			buildPhases = (
+				28B3B8521BFA7EEC007337A2 /* Sources */,
+				28B3B8531BFA7EEC007337A2 /* Frameworks */,
+				28B3B8541BFA7EEC007337A2 /* Resources */,
+				28AD9C7B1C04C6230044164E /* CopyFiles */,
+				285DB7F01C0BA5A9004103D9 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				28B3B88E1BFA89F9007337A2 /* PBXTargetDependency */,
+			);
+			name = Example;
+			productName = Example;
+			productReference = 28B3B8561BFA7EEC007337A2 /* Example.app */;
+			productType = "com.apple.product-type.application";
+		};
+		28B3B8691BFA7EEC007337A2 /* ExampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28B3B8761BFA7EEC007337A2 /* Build configuration list for PBXNativeTarget "ExampleUITests" */;
+			buildPhases = (
+				28B3B8661BFA7EEC007337A2 /* Sources */,
+				28B3B8671BFA7EEC007337A2 /* Frameworks */,
+				28B3B8681BFA7EEC007337A2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				28B3B86C1BFA7EEC007337A2 /* PBXTargetDependency */,
+			);
+			name = ExampleUITests;
+			productName = ExampleUITests;
+			productReference = 28B3B86A1BFA7EEC007337A2 /* ExampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		28B3B84E1BFA7EEC007337A2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0710;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = Xmartlabs;
+				TargetAttributes = {
+					28B3B8551BFA7EEC007337A2 = {
+						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
+					};
+					28B3B8691BFA7EEC007337A2 = {
+						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0800;
+						TestTargetID = 28B3B8551BFA7EEC007337A2;
+					};
+				};
+			};
+			buildConfigurationList = 28B3B8511BFA7EEC007337A2 /* Build configuration list for PBXProject "Example" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 28B3B84D1BFA7EEC007337A2;
+			productRefGroup = 28B3B8571BFA7EEC007337A2 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 28B3B8841BFA858D007337A2 /* Products */;
+					ProjectRef = 28B3B8831BFA858D007337A2 /* XLActionController.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				28B3B8551BFA7EEC007337A2 /* Example */,
+				28B3B8691BFA7EEC007337A2 /* ExampleUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		28B3B8891BFA858D007337A2 /* XLActionController.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = XLActionController.framework;
+			remoteRef = 28B3B8881BFA858D007337A2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		28B3B88B1BFA858D007337A2 /* XLActionControllerTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = XLActionControllerTests.xctest;
+			remoteRef = 28B3B88A1BFA858D007337A2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		28B3B8541BFA7EEC007337A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28650D2C1C0DD21A008C1F27 /* PeriscopeCell.xib in Resources */,
+				28B3B8641BFA7EEC007337A2 /* LaunchScreen.storyboard in Resources */,
+				28650D2E1C0DD21A008C1F27 /* SpotifyCell.xib in Resources */,
+				28650D301C0DD21A008C1F27 /* TwitterCell.xib in Resources */,
+				28650D311C0DD21A008C1F27 /* YoutubeCell.xib in Resources */,
+				28B3B8611BFA7EEC007337A2 /* Assets.xcassets in Resources */,
+				28650D2F1C0DD21A008C1F27 /* TweetbotCell.xib in Resources */,
+				28650D2D1C0DD21A008C1F27 /* SkypeCell.xib in Resources */,
+				28B3B85F1BFA7EEC007337A2 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		28B3B8681BFA7EEC007337A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		285DB7F01C0BA5A9004103D9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"You can enable swiftlint by uncommenting next lines\"\n#if which swiftlint >/dev/null; then\n#swiftlint\n#else\n#echo \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\n#fi";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		28B3B8521BFA7EEC007337A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B297A9161C0E17AA00AF9559 /* Periscope.swift in Sources */,
+				28B3B8801BFA8566007337A2 /* TwitterExampleViewController.swift in Sources */,
+				28B3B87D1BFA8566007337A2 /* PeriscopeExampleViewController.swift in Sources */,
+				28A21F1E1C0E7DEE009FC30F /* ActionData.swift in Sources */,
+				28AD9C781C03F34F0044164E /* SkypeExampleViewController.swift in Sources */,
+				28B3B85A1BFA7EEC007337A2 /* AppDelegate.swift in Sources */,
+				B297A91B1C0E191600AF9559 /* Skype.swift in Sources */,
+				28B3B8821BFA856B007337A2 /* YouTubeExampleViewController.swift in Sources */,
+				B297A9361C0E26E300AF9559 /* MainViewController.swift in Sources */,
+				28B3B87E1BFA8566007337A2 /* SpotifyExampleViewController.swift in Sources */,
+				B297A9271C0E198200AF9559 /* Twitter.swift in Sources */,
+				B297A9201C0E193B00AF9559 /* Spotify.swift in Sources */,
+				B297A92A1C0E19A500AF9559 /* Youtube.swift in Sources */,
+				28B3B87F1BFA8566007337A2 /* TweetbotExampleViewController.swift in Sources */,
+				B297A9241C0E195F00AF9559 /* Tweetbot.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		28B3B8661BFA7EEC007337A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28473B891C109EE200A8105F /* ExampleUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		28B3B86C1BFA7EEC007337A2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 28B3B8551BFA7EEC007337A2 /* Example */;
+			targetProxy = 28B3B86B1BFA7EEC007337A2 /* PBXContainerItemProxy */;
+		};
+		28B3B88E1BFA89F9007337A2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = XLActionController;
+			targetProxy = 28B3B88D1BFA89F9007337A2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		28B3B85D1BFA7EEC007337A2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				28B3B85E1BFA7EEC007337A2 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		28B3B8621BFA7EEC007337A2 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				28B3B8631BFA7EEC007337A2 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		28B3B8711BFA7EEC007337A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		28B3B8721BFA7EEC007337A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		28B3B8741BFA7EEC007337A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Example/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DXLACTIONCONTROLLER_EXAMPLE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.Example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		28B3B8751BFA7EEC007337A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Example/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-DXLACTIONCONTROLLER_EXAMPLE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.Example;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		28B3B8771BFA7EEC007337A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Example/UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.ExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = Example;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		28B3B8781BFA7EEC007337A2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Example/UITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.ExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = Example;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		28B3B8511BFA7EEC007337A2 /* Build configuration list for PBXProject "Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28B3B8711BFA7EEC007337A2 /* Debug */,
+				28B3B8721BFA7EEC007337A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		28B3B8731BFA7EEC007337A2 /* Build configuration list for PBXNativeTarget "Example" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28B3B8741BFA7EEC007337A2 /* Debug */,
+				28B3B8751BFA7EEC007337A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		28B3B8761BFA7EEC007337A2 /* Build configuration list for PBXNativeTarget "ExampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				28B3B8771BFA7EEC007337A2 /* Debug */,
+				28B3B8781BFA7EEC007337A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 28B3B84E1BFA7EEC007337A2 /* Project object */;
+}

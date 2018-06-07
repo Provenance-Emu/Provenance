@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C96EA2ED506E396E70D5A08FD4A6BB18D1CBD22C",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "C96EA2ED506E396E70D5A08FD4A6BB18D1CBD22C" : 0,
+    "0D13C6859F9799479DE910865737C81CE2610D1F" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "BB620EA9-8263-4077-9BB5-9C597D882B60",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "C96EA2ED506E396E70D5A08FD4A6BB18D1CBD22C" : "SwiftyUserDefaults\/",
+    "0D13C6859F9799479DE910865737C81CE2610D1F" : "..\/.."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "SwiftyUserDefaults",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 203,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "SwiftyUserDefaults.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/osel49\/awnwiremac.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0D13C6859F9799479DE910865737C81CE2610D1F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/radex\/SwiftyUserDefaults.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C96EA2ED506E396E70D5A08FD4A6BB18D1CBD22C"
+    }
+  ]
+}
