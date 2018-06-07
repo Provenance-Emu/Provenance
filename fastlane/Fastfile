@@ -127,6 +127,9 @@ platform :ios do
     # Clean the dir for git
     # ensure_git_status_clean
     # ensure_git_in_sync
+
+    git_submodule_update
+
     # certificates # Download the certs?
     setup_certificates_private
 
