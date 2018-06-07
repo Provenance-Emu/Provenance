@@ -3286,7 +3286,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform iOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
+			shellScript = "./Carthage/xcode.sh iOS";
 		};
 		B38D938C20C7A06600ABCB16 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3300,7 +3300,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform iOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform iOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
+			shellScript = "./Carthage/xcode.sh iOS";
 		};
 		B3A95F6B20BCF48E00635F3E /* Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3314,7 +3314,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi";
 		};
 		B3A95F6C20BCF4B500635F3E /* Swift Lint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3328,7 +3328,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi";
+			shellScript = "set -e\n\nif ! which swiftlint > /dev/null; then\n    echo \"warning: SwiftLint is not installed. Vistit http://github.com/realm/SwiftLint to learn more.\"\nelse\n    swiftlint\nfi";
 		};
 		B3E4817320C7B98A0061CF96 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3342,7 +3342,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"  \n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi";
+			shellScript = "./Carthage/xcode.sh tvOS";
 		};
 		B3E708A720B7E465005BAA5A /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3356,7 +3356,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which xcodebuild > /dev/null; then\n    echo \"Has XCode command line tools\"\nelse\n    echo \"error: Missing XCode command line tools. Intall with 'xcode-select --install' from terminal then restart XCode.\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Missing XCode command line tools. Intall with xcode-select --install from terminal then restart XCode.\" buttons {\"OK\"} with icon caution with title \"Missing XCode command line tools\"'\n    exit 1\nfi\n\nif which carthage >/dev/null; then\n    echo \"Setting up Carthage\"\n    /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform tvOS\n    #/usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform tvOS\n    /usr/local/bin/carthage outdated --xcode-warnings\nelse\n    echo \"error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage\"\n    osascript -e 'tell app \"System Events\" to display dialog \"Error. Carthage is not installed, download from \\nhttps://github.com/Carthage/Carthage#installing-carthage\" buttons {\"OK\"} with icon caution with title \"Missing Carthage\"'\n    exit 1\nfi\n";
+			shellScript = "./Carthage/xcode.sh tvOS";
 		};
 		B3F9CDA320315CA8007F808D /* Create Version.h */ = {
 			isa = PBXShellScriptBuildPhase;
