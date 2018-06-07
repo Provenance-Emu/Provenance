@@ -14,7 +14,7 @@ if which carthage >/dev/null; then
     /usr/local/bin/carthage outdated --xcode-warnings
     if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ]
     then
-      /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1
+      /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
     fi
 else
     echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"
