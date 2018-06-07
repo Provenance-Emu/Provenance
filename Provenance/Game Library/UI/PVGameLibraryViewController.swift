@@ -1276,6 +1276,8 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		// Scan each Core direxctory and looks for ROMs in them
 		let allSystems = PVSystem.all
 
+		let importOperation = BlockOperation()
+
 		allSystems.forEach { system in
 			let systemDir = system.romsDirectory
 			//URL(fileURLWithPath: config.documentsPath).appendingPathComponent(systemID).path
@@ -1294,21 +1296,27 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			}
 
 			let systemRef = ThreadSafeReference(to: system)
-
-			gameImporter.serialImportQueue.addOperation {
+			importOperation.addExecutionBlock {
 				let realm = try! Realm()
 				guard let system = realm.resolve(systemRef) else {
 					return // person was deleted
 				}
 
 				self.gameImporter.getRomInfoForFiles(atPaths: contents, userChosenSystem: system)
-				if let completionHandler = self.gameImporter.completionHandler {
-					DispatchQueue.main.async {
-						completionHandler(self.gameImporter.encounteredConflicts)
-					}
+			}
+		}
+
+		let completionOperation = BlockOperation {
+			if let completionHandler = self.gameImporter.completionHandler {
+				DispatchQueue.main.async {
+					completionHandler(self.gameImporter.encounteredConflicts)
 				}
 			}
 		}
+
+		completionOperation.addDependency(importOperation)
+		gameImporter.serialImportQueue.addOperation(importOperation)
+		gameImporter.serialImportQueue.addOperation(completionOperation)
 	}
 
     func fetchGames() {

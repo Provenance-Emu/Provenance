@@ -400,11 +400,13 @@ public extension RomDatabase {
 			}
 		}
 
-		do {
-			try FileManager.default.removeItem(at: romURL)
-		} catch {
-			ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
-			throw error
+		if !game.file.missing {
+			do {
+				try FileManager.default.removeItem(at: romURL)
+			} catch {
+				ELOG("Unable to delete rom at path: \(romURL.path) because: \(error.localizedDescription)")
+				throw error
+			}
 		}
 
 		// Delete from Spotlight search
@@ -414,12 +416,18 @@ public extension RomDatabase {
 		}
 		#endif
 
-		game.saveStates.forEach { try? $0.delete() }
-		game.recentPlays.forEach { try? $0.delete() }
-		game.screenShots.forEach { try? $0.delete() }
+		do {
+			game.saveStates.forEach { try? $0.delete() }
+			game.recentPlays.forEach { try? $0.delete() }
+			game.screenShots.forEach { try? $0.delete() }
 
-		try deleteRelatedFilesGame(game)
-		try game.delete()
+			try deleteRelatedFilesGame(game)
+			try game.delete()
+		} catch {
+			// Delete the DB entry anyway if any of the above files couldn't be removed
+			try game.delete()
+			throw error
+		}
 	}
 
 	func deleteRelatedFilesGame(_ game: PVGame) throws {
