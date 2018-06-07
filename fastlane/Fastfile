@@ -133,21 +133,7 @@ platform :ios do
     # temporarily disable automatic code signing
     codesign_toggle(automatic: false)
 
-    # carthage(
-    #   command: "bootstrap",
-    #   use_binaries: false,
-    #   cache_builds: true,
-    #   platform: "iOS",
-    #   project_directory: "PVSupport"
-    # )
-    #
-    # carthage(
-    #   command: "build",
-    #   use_binaries: false,
-    #   cache_builds: true,
-    #   platform: "iOS",
-    #   project_directory: "PVSupport"
-    # )
+    carthage_update
   end
 
   desc "Push a new beta build to TestFlight"
@@ -469,18 +455,75 @@ platform :ios do
   #   snapshot
   # end
 
-  # Lane to run carthage commands easily
-  # lane :carthage do |options|
-  #   verify_xcode_version
-  #
-  #   carthage(
-  #     command: options[:build] ? "build" : "bootstrap",
-  #     platform: options[:tvOS] ? "tvOS" : "iOS",
-  #     use_binaries: false,
-  #     cache_builds: true,
-  #     project_directory: options[:support] ? "PVSupport" : "./"
-  #   )
-  # end
+  desc "Lane to run bootstrap carthage in new checkout"
+  desc "Option: `platform` tvOS,iOS"
+  lane :carthage_bootstrap do |options|
+    platform = options.fetch(:platform, 'tvOS,iOS')
+
+    carthage_private(
+      command: "bootstrap",
+      platform: platform,
+      project_directory: "PVSupport"
+    )
+
+    carthage_private(
+      command: "bootstrap",
+      platform: platform,
+      project_directory: "./"
+    )
+  end
+
+  desc "Lane to run build all carthage dependencies"
+  desc "Option: `platform` tvOS,iOS"
+  lane :carthage_build do |options|
+    platform = options.fetch(:platform, 'tvOS,iOS')
+
+    carthage_private(
+      command: "build",
+      platform: platform,
+      project_directory: "PVSupport"
+    )
+
+    carthage_private(
+      command: "build",
+      platform: platform,
+      project_directory: "./"
+    )
+  end
+
+  desc "Lane to update all carthage dependencies to latest versions"
+  desc "Option: `platform` tvOS,iOS"
+  lane :carthage_update do |options|
+    platform = options.fetch(:platform, 'tvOS,iOS')
+
+    carthage_private(
+      command: "update",
+      platform: platform,
+      project_directory: "PVSupport"
+    )
+
+    carthage_private(
+      command: "update",
+      platform: platform,
+      project_directory: "./"
+    )
+  end
+
+  private_lane :carthage_private do |options|
+    lane :carthage_bootstrap do |options|
+      command = options.fetch(:command, 'bootstrap')
+      platform = options.fetch(:platform, 'tvOS,iOS')
+      project_directory = options.fetch(:project_directory, './')
+
+      carthage(
+        command: command,
+        platform: platform,
+        use_binaries: false,
+        cache_builds: true,
+        project_directory: project_directory
+      )
+    end
+  end
 
 # See https://docs.fastlane.tools/actions/resign/
 #   lane :resign do
