@@ -127,7 +127,7 @@ class CenterViewFlowLayout: UICollectionViewFlowLayout {
 	}
 
 	override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-		guard let attr = super.layoutAttributesForItem(at: indexPath) else {
+		guard let attr = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes else {
 			return nil
 		}
 		attr.frame = self.frameForItemAtIndexPath(indexPath)
