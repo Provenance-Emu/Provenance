@@ -1,0 +1,11 @@
+git_url("http://bitbucket.org/jmattiello/provenancecerts.git")
+git_branch("Provenance")
+
+type("adhoc") # The default type, can be: appstore, adhoc, enterprise or development
+
+app_identifier(["com.provenance-emu.provenance-jm", "com.provenance-emu.provenance-jm.topshelf", "com.provenance-emu.provenance-jm.Spotlight"])
+username("mail@joemattiello.com") # Your Apple Developer Portal username
+team_name("Joe Mattiello")
+
+# For all available options run `fastlane match --help`
+# Remove the # in the beginning of the line to enable the other options
