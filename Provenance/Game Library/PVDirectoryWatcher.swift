@@ -291,6 +291,12 @@ public class PVDirectoryWatcher: NSObject {
                 return true // Continue to iterate
             })
 
+			// TODO : Support natively using 7zips by matching crcs
+			let crcs = Set(items.filter({ $0.crc32 != 0}).map { return String($0.crc32, radix: 16, uppercase: true) })
+			if let releaseID = PVGameImporter.shared.releaseID(forCRCs: crcs) {
+				ILOG("Found a release ID \(releaseID) inside this 7Zip")
+			}
+
             stopMonitoring()
             reader.extract(items, toPath: watchedDirectory.path, withFullPaths: false)
         } else {

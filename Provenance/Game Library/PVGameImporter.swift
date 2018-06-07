@@ -10,6 +10,7 @@
 import Foundation
 import RealmSwift
 import CoreSpotlight
+import SQLite
 
 func + <K, V>(lhs: [K : V], rhs: [K : V]) -> [K : V] {
 	var combined = lhs
@@ -133,6 +134,12 @@ public final class PVGameImporter {
         let _openVGDB = try! OESQLiteDatabase(url: Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!)
         return _openVGDB
     }()
+
+	lazy var sqldb: Connection = {
+		let sqlFile = Bundle.main.url(forResource: "openvgdb", withExtension: "sqlite")!
+		let sqldb = try! Connection(sqlFile.path, readonly: true)
+		return sqldb
+	}()
 
     public var conflictedFiles: [URL]? {
         return try? FileManager.default.contentsOfDirectory(at: conflictPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
@@ -1062,21 +1069,21 @@ public extension PVGameImporter {
         }
      }
 
-	public func releaseID(forCRCs crcs : Set<UInt>) -> UInt? {
-		let crcString = crcs.map { return String($0) }.joined(separator: ",")
-		let query = "SELECT romID FROM ROMs WHERE romHashCRC IN (\(crcString))"
+	public func releaseID(forCRCs crcs : Set<String>) -> Int? {
+		let roms = Table("ROMs")
+		let romID = Expression<Int>("romID")
+		let romHashCRC = Expression<String>("romHashCRC")
 
-		var results: [Any]? = nil
+		let query = roms.select(romID).filter(crcs.contains(romHashCRC))
 
 		do {
-			results = try openVGDB.executeQuery(query)
+			let result = try sqldb.pluck(query)
+			let foundROMid = try result?.get(romID)
+			return foundROMid
 		} catch {
-			ELOG("Failed to execute query: \(error.localizedDescription)")
+			ELOG("Query error: \(error.localizedDescription)")
 			return nil
 		}
-
-		return nil
-		//return results
 	}
 
     public func searchDatabase(usingKey key: String, value: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
