@@ -38,4 +38,5 @@
 // for Swiwt extensions
 @interface PVGBEmulatorCore()
 -(void)changeDisplayMode;
+-(void)changeDisplayMode:(NSInteger)displayMode;
 @end

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="fOL-sM-c6E" userLabel="Skype Cell" customClass="SkypeCell" customModule="Example" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="500" height="60"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="500" height="60"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Action title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="amS-Rr-sbk">
+                        <rect key="frame" x="26" y="19" width="449" height="22"/>
+                        <animations/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <animations/>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            </view>
+            <animations/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="amS-Rr-sbk" firstAttribute="centerY" secondItem="fOL-sM-c6E" secondAttribute="centerY" id="BZU-IE-KZM"/>
+                <constraint firstAttribute="trailing" secondItem="amS-Rr-sbk" secondAttribute="trailing" constant="25" id="DXs-cP-Qd7"/>
+                <constraint firstItem="amS-Rr-sbk" firstAttribute="leading" secondItem="fOL-sM-c6E" secondAttribute="leading" constant="26" id="TKF-Nj-Ced"/>
+            </constraints>
+            <size key="customSize" width="500" height="131"/>
+            <connections>
+                <outlet property="actionTitleLabel" destination="amS-Rr-sbk" id="3J5-Hp-FP7"/>
+            </connections>
+            <point key="canvasLocation" x="307" y="109"/>
+        </collectionViewCell>
+    </objects>
+</document>

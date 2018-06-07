@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#import <PVSupport/PVLogging.h>
 #import <Foundation/Foundation.h>
 
 void MDFND_Sleep(unsigned int time)
@@ -17,12 +18,12 @@ void MDFND_Sleep(unsigned int time)
 
 void MDFND_DispMessage(char *str)
 {
-    //std::cerr << str;
+	ILOG(@"Mednafen: %s", str);
 }
 
 void MDFND_Message(const char *str)
 {
-    std::cerr << str;
+	ELOG(@"Mednafen: %s", str);
 }
 
 void MDFND_MidSync(const EmulateSpecStruct *)
@@ -30,7 +31,7 @@ void MDFND_MidSync(const EmulateSpecStruct *)
 
 void MDFND_PrintError(const char* err)
 {
-    std::cerr << err;
+	ELOG(@"Mednafen: %s", err);
 }
 
 void MDFND_MediaSetNotification(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx)
@@ -115,26 +116,22 @@ void MDFND_NetworkClose() {}
 int MDFND_NetworkConnect() { return 0; }
 bool MDFND_CheckNeedExit(void){ return false; }
 void MDFND_OutputInfo(const char *s) noexcept {
-	NSLog(@"Mednafen: %s", s);
+	ILOG(@"Mednafen: %s", s);
 }
 void MDFND_OutputNotice(MDFN_NoticeType t, const char* s) noexcept {
-	NSString *status;
-
 	switch(t) {
 		case MDFN_NOTICE_STATUS :
-			status = @"Status";
+			DLOG(@"Mednafen: %s" s);
 			break;
 		case MDFN_NOTICE_WARNING :
-			status = @"Warning";
+			WLOG(@"Mednafen: %s", s);
 			break;
 		case MDFN_NOTICE_ERROR :
-			status = @"Error";
+			ELOG(@"Mednafen: %s", s);
 			break;
 		default:
-			status = @"";
+			VLOG(@"Mednafen: %s", s);
 	}
-
-	NSLog(@"Mednafen %@: %s",status, s);
 }
 
 uint32 MDFND_GetTime()

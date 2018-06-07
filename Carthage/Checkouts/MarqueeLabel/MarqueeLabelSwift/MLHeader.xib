@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="MLHeader" customModule="MarqueeLabelSwiftDemo" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="84"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8MD-La-fvn">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="84"/>
+                    <subviews>
+                        <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xk6-CO-BR2">
+                            <rect key="frame" x="0.0" y="83" width="600" height="1"/>
+                            <color key="backgroundColor" red="0.84851453639999996" green="0.84851453639999996" blue="0.84851453639999996" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="1" id="Nq3-Oi-hSh"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="xk6-CO-BR2" firstAttribute="leading" secondItem="8MD-La-fvn" secondAttribute="leading" id="4JL-XI-XVv"/>
+                        <constraint firstItem="xk6-CO-BR2" firstAttribute="centerX" secondItem="8MD-La-fvn" secondAttribute="centerX" id="Hei-Jr-eOH"/>
+                        <constraint firstAttribute="trailing" secondItem="xk6-CO-BR2" secondAttribute="trailing" id="KZJ-Ne-K38"/>
+                        <constraint firstAttribute="bottom" secondItem="xk6-CO-BR2" secondAttribute="bottom" id="Mc2-Ef-KcH"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MarqueeLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LAL-Mn-m5t">
+                    <rect key="frame" x="232" y="26" width="135" height="26"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="22"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Table View" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xQ3-Kt-beb">
+                    <rect key="frame" x="317" y="48" width="50.5" height="13"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="11"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="LAL-Mn-m5t" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="4ix-Dq-Uez"/>
+                <constraint firstItem="xQ3-Kt-beb" firstAttribute="top" secondItem="LAL-Mn-m5t" secondAttribute="bottom" constant="-4" id="TRv-ft-pyx"/>
+                <constraint firstItem="8MD-La-fvn" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="aZN-YU-ej9"/>
+                <constraint firstItem="8MD-La-fvn" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="bES-KB-tMf"/>
+                <constraint firstItem="LAL-Mn-m5t" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="26" id="gL6-Ai-Pl1"/>
+                <constraint firstAttribute="trailing" secondItem="8MD-La-fvn" secondAttribute="trailing" id="hJX-xe-B9a"/>
+                <constraint firstAttribute="bottom" secondItem="8MD-La-fvn" secondAttribute="bottom" id="k5m-D9-vzM"/>
+                <constraint firstItem="xQ3-Kt-beb" firstAttribute="trailing" secondItem="LAL-Mn-m5t" secondAttribute="trailing" id="rWj-KY-Tqj"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="border" destination="xk6-CO-BR2" id="sYE-I3-tNo"/>
+            </connections>
+            <point key="canvasLocation" x="311.5" y="177"/>
+        </view>
+    </objects>
+</document>

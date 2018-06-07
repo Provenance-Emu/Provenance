@@ -1303,6 +1303,7 @@
 		B35B3194206C8E1C00AEAF88 /* F3DSWRS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = F3DSWRS.h; sourceTree = "<group>"; };
 		B35B3195206C8E1C00AEAF88 /* F3D.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = F3D.cpp; sourceTree = "<group>"; };
 		B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CRC_OPT_NEON.cpp; sourceTree = "<group>"; };
+		B35E6C3B207EE3750040709A /* MupenOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MupenOptions.swift; sourceTree = "<group>"; };
 		B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusVideoRice.h; sourceTree = "<group>"; };
 		B37EFEF41C72E63300857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2097,6 +2098,7 @@
 			children = (
 				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
 				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
+				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -4796,6 +4798,7 @@
 					};
 					B37EFF371C72F43300857158 = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0930;
 					};
 					B3800FF4208522DC00FA03B8 = {
 						CreatedOnToolsVersion = 9.3;
@@ -4803,6 +4806,9 @@
 					};
 					B3B3B85F1DECEA9100602746 = {
 						CreatedOnToolsVersion = 8.1;
+					};
+					B3B3B8A11DED130B00602746 = {
+						LastSwiftMigration = 0930;
 					};
 					DFB6017F2038AD13001E70F1 = {
 						CreatedOnToolsVersion = 9.3;
@@ -6076,6 +6082,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mupen64plus-core/src\"",
@@ -6158,6 +6166,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/mupen64plus-core/src\"",
@@ -6472,6 +6481,8 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = (
@@ -6557,6 +6568,7 @@
 				PRODUCT_NAME = PVMupen64Plus;
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.0;
 				USER_HEADER_SEARCH_PATHS = (

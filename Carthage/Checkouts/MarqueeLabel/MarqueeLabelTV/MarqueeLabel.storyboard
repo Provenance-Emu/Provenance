@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <dependencies>
+        <deployment identifier="tvOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="MarqueeLabelTVDemo" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1920" height="1080"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="300" translatesAutoresizingMaskIntoConstraints="NO" id="f1z-w5-BYf">
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3ct-pB-n0y" userLabel="Marquee Container">
+                                        <subviews>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" translatesAutoresizingMaskIntoConstraints="NO" id="vFh-7H-vrQ">
+                                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <prototypes>
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="eKO-l2-ZzA" customClass="MarqueeCell" customModule="MarqueeLabelTVDemo" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="40" width="515" height="66"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="eKO-l2-ZzA" id="NjZ-hn-HBb">
+                                                            <frame key="frameInset" width="499" height="66"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <subviews>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lorem ipsum dolor sit amet." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DBL-yl-WdT" customClass="MarqueeLabel" customModule="MarqueeLabelTVDemo" customModuleProvider="target">
+                                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="DBL-yl-WdT" firstAttribute="top" secondItem="NjZ-hn-HBb" secondAttribute="topMargin" id="IGC-l0-hhr"/>
+                                                                <constraint firstAttribute="trailingMargin" secondItem="DBL-yl-WdT" secondAttribute="trailing" id="ezA-Rd-gSi"/>
+                                                                <constraint firstItem="DBL-yl-WdT" firstAttribute="leading" secondItem="NjZ-hn-HBb" secondAttribute="leadingMargin" id="jb6-VK-IG8"/>
+                                                            </constraints>
+                                                        </tableViewCellContentView>
+                                                        <connections>
+                                                            <outlet property="marquee" destination="DBL-yl-WdT" id="8T3-wm-8b1"/>
+                                                        </connections>
+                                                    </tableViewCell>
+                                                </prototypes>
+                                            </tableView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MarqueeLabel" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9SY-Jy-DKX">
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="96" id="eeA-pS-atP"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="9SY-Jy-DKX" secondAttribute="trailing" id="2fH-7w-JR1"/>
+                                            <constraint firstItem="9SY-Jy-DKX" firstAttribute="leading" secondItem="3ct-pB-n0y" secondAttribute="leading" id="EfM-14-GWt"/>
+                                            <constraint firstAttribute="bottom" secondItem="vFh-7H-vrQ" secondAttribute="bottom" id="FDL-Rb-VEb"/>
+                                            <constraint firstAttribute="trailing" secondItem="vFh-7H-vrQ" secondAttribute="trailing" id="M1m-yI-Nq6"/>
+                                            <constraint firstItem="vFh-7H-vrQ" firstAttribute="leading" secondItem="3ct-pB-n0y" secondAttribute="leading" id="Ppa-aN-tah"/>
+                                            <constraint firstItem="vFh-7H-vrQ" firstAttribute="top" secondItem="9SY-Jy-DKX" secondAttribute="bottom" id="Z5b-Sf-PiN"/>
+                                            <constraint firstItem="9SY-Jy-DKX" firstAttribute="top" secondItem="3ct-pB-n0y" secondAttribute="top" id="bO8-QJ-NIY"/>
+                                            <constraint firstAttribute="width" constant="515" id="d7t-NN-ZFn"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gB7-Ew-PKw" userLabel="Basic Container">
+                                        <subviews>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="40" sectionFooterHeight="40" translatesAutoresizingMaskIntoConstraints="NO" id="60X-zb-Jho">
+                                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <prototypes>
+                                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" id="Tz7-EY-Vy7">
+                                                        <rect key="frame" x="0.0" y="40" width="515" height="66"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Tz7-EY-Vy7" id="pK8-3Y-8RC">
+                                                            <frame key="frameInset" width="499" height="66"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                        </tableViewCellContentView>
+                                                    </tableViewCell>
+                                                </prototypes>
+                                            </tableView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Basic UILabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bt4-3v-lLY">
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="96" id="KF1-AS-Dda"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="60X-zb-Jho" secondAttribute="trailing" id="06D-xU-wdy"/>
+                                            <constraint firstItem="Bt4-3v-lLY" firstAttribute="leading" secondItem="gB7-Ew-PKw" secondAttribute="leading" id="HG0-ay-aoy"/>
+                                            <constraint firstAttribute="trailing" secondItem="Bt4-3v-lLY" secondAttribute="trailing" id="HOJ-nk-7qI"/>
+                                            <constraint firstAttribute="bottom" secondItem="60X-zb-Jho" secondAttribute="bottom" id="YAQ-Tv-061"/>
+                                            <constraint firstItem="Bt4-3v-lLY" firstAttribute="top" secondItem="gB7-Ew-PKw" secondAttribute="top" id="YhY-l4-va6"/>
+                                            <constraint firstItem="60X-zb-Jho" firstAttribute="top" secondItem="Bt4-3v-lLY" secondAttribute="bottom" id="gN0-ig-uTc"/>
+                                            <constraint firstItem="60X-zb-Jho" firstAttribute="leading" secondItem="gB7-Ew-PKw" secondAttribute="leading" id="iZW-5r-51G"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="gB7-Ew-PKw" firstAttribute="width" secondItem="3ct-pB-n0y" secondAttribute="width" id="cg4-Hp-3Gc"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="f1z-w5-BYf" secondAttribute="bottom" constant="20" id="Fwp-wB-wcf"/>
+                            <constraint firstItem="f1z-w5-BYf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="Psp-mN-Jnz"/>
+                            <constraint firstItem="f1z-w5-BYf" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="m0N-yc-7g2"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="labelTableView" destination="60X-zb-Jho" id="9po-k1-vdD"/>
+                        <outlet property="marqueeTableView" destination="vFh-7H-vrQ" id="MDn-XT-dA3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="410" y="327"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <nil key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation" orientation="landscapeRight"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>
