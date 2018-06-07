@@ -577,7 +577,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
 
 		self.missingFileView?.isHidden = !game.file.missing
-        
+
 		self.setupBadges()
         if !PVSettingsModel.shared.showGameBadges {
             self.setupDots()
@@ -631,7 +631,7 @@ class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         guard let game = game else {
             return
         }
-        
+
         let hasPlayed = game.playCount > 0
         let favorite = game.isFavorite
 
