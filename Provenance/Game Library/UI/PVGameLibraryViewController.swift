@@ -991,11 +991,11 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 			//        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
 			//        documentMenu.delegate = self
 			//        present(documentMenu, animated: true, completion: nil)
-			if #available(iOS 9.0, *) {
+			if #available(iOS 11.0, *) {
 				// iOS 8 need iCloud entitlements, check
 			} else {
 				if FileManager.default.ubiquityIdentityToken == nil {
-					self.presentMessage("iOS 8 reqires iCloud entitlements to use this feature.", title: "iCloud Error")
+					self.presentMessage("Your version reqires iCloud entitlements to use this feature. Please rebuild with iCloud entitlements enabled.", title: "iCloud Error")
 					return
 				}
 			}
