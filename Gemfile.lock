@@ -7,18 +7,12 @@ GEM
     atomos (0.1.2)
     babosa (1.0.2)
     backports (3.11.3)
-    badge (0.9.1)
-      curb (~> 0.9)
-      fastimage (>= 1.6)
-      fastlane (>= 2.0)
-      mini_magick (>= 4.5)
     claide (1.0.2)
     colored (1.2)
     colored2 (3.1.2)
     commander-fastlane (4.4.6)
       highline (~> 1.7.2)
     connection_pool (2.2.2)
-    curb (0.9.6)
     declarative (0.0.10)
     declarative-option (0.1.0)
     domain_name (0.5.20180417)
@@ -72,8 +66,6 @@ GEM
       xcodeproj (>= 1.5.7, < 2.0.0)
       xcpretty (>= 0.2.4, < 1.0.0)
       xcpretty-travis-formatter (>= 0.0.3)
-    fastlane-plugin-badge (1.1.0)
-      badge (~> 0.9.0)
     ffi (1.9.23)
     gh (0.14.0)
       addressable
@@ -123,6 +115,8 @@ GEM
     net-http-persistent (3.0.0)
       connection_pool (~> 2.2)
     net-http-pipeline (1.0.1)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
     net-ssh (4.2.0)
     os (0.9.6)
     plist (3.4.0)
@@ -188,8 +182,7 @@ PLATFORMS
 
 DEPENDENCIES
   fastlane
-  fastlane-plugin-badge
-  multipart-post
+  net-scp
   net-ssh
   travis
 

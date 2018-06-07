@@ -61,6 +61,27 @@ Update device list
 fastlane ios derived_data
 ```
 Clear your DerivedData
+### ios carthage_bootstrap
+```
+fastlane ios carthage_bootstrap
+```
+Lane to run bootstrap carthage in new checkout
+
+Option: `platform` tvOS,iOS
+### ios carthage_build
+```
+fastlane ios carthage_build
+```
+Lane to run build all carthage dependencies
+
+Option: `platform` tvOS,iOS
+### ios carthage_update
+```
+fastlane ios carthage_update
+```
+Lane to update all carthage dependencies to latest versions
+
+Option: `platform` tvOS,iOS
 
 ----
 
