@@ -1072,7 +1072,8 @@ public extension PVGameImporter {
 			return nil
 		}
 
-		return res
+		return nil
+		//return results
 	}
 
     public func searchDatabase(usingKey key: String, value: String, systemID: String? = nil) throws -> [[String: NSObject]]? {
