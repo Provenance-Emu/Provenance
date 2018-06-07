@@ -534,12 +534,14 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 					//                    collectionView.insertSections(indexSet)
 					//                }
 					// Query results have changed, so apply them to the UICollectionView
-					guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
-						WLOG("Index of system changed.")
-						return
-					}
-					let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
-					self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+						guard let indexOfSystem = self.gameLibraryGameController.systems?.index(of: self.system) else {
+							WLOG("Index of system changed.")
+							return
+						}
+						let section = indexOfSystem + self.gameLibraryGameController.systemsSectionOffset
+						self.gameLibraryGameController.collectionView?.reloadSections(IndexSet(integer: section))
+					})
 				case .update(_, let deletions, let insertions, let modifications):
 					if self.gameLibraryGameController.isInSearch {
 						return
