@@ -35,8 +35,7 @@ extension CoreOptional where Self:PVEmulatorCore {
 						default:
 							break
 						}
-					}
-					else {
+					} else {
 						break
 					}
 				}
@@ -78,8 +77,7 @@ public struct CoreOptionMultiValue : Codable {
 		return a.flatMap {
 			if $0.count == 1 {
 				return CoreOptionMultiValue(title: $0[0], description: nil)
-			}
-			else if $0.count >= 2 {
+			} else if $0.count >= 2 {
 				return CoreOptionMultiValue(title: $0[0], description: $0[1])
 			} else {
 				return nil
@@ -115,7 +113,7 @@ public enum CoreOption {
 		switch self {
 		case .bool(_, let defaultValue):
 			return defaultValue
-		case .range(_,_,let defaultValue):
+		case .range(_, _, let defaultValue):
 			return defaultValue
 		case .multi(_, let values):
 			return values.first?.title
@@ -144,14 +142,14 @@ public enum CoreOption {
 	func subOptionForKey(_ key : String) -> CoreOption? {
 		switch self {
 		case .group(_, let subOptions):
-			return subOptions.first{ $0.key == key }
+			return subOptions.first { $0.key == key }
 		default:
 			return nil
 		}
 	}
 }
 
-extension CoreOption : Codable  {
+extension CoreOption : Codable {
 	public enum CodingError: Error { case decoding(String) }
 	enum CodableKeys: String, CodingKey { case display, defaultValue, range, values, subOptions }
 
@@ -261,5 +259,3 @@ extension CoreOptionMultiValue {
 ////		let
 ////	}
 //}
-
-

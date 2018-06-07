@@ -1308,7 +1308,7 @@ class CoreOptionsViewController : UITableViewController {
 	lazy var groups : [TableGroup] = {
 		var rootOptions = [CoreOption]()
 
-		var groups = core.options.flatMap({ (option) -> TableGroup? in
+		var groups = core.options.compactMap({ (option) -> TableGroup? in
 			switch option {
 			case .group(let display, let subOptions):
 				return TableGroup(title: display.title, options: subOptions)

@@ -54,12 +54,11 @@ extension PVGBEmulatorCore : CoreOptional {
 			"GameBoy Color - Pastel Mix",
 			"GameBoy Color - Inverted",
 			"GameBoy Color - Rom Title",
-			"GameBoy Color - Grayscale",
+			"GameBoy Color - Grayscale"
 			]
 	)
 
 	static var paletteOption : CoreOption = {
-
 
 		let palletteOption = CoreOption.multi(display: CoreOptionValueDisplay(title: "GameBoy (non color) Palette", description: "The drawing palette to use"), values: paletteValues)
 		return palletteOption
