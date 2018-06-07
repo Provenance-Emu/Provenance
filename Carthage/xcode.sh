@@ -9,7 +9,7 @@ else
 fi
 
 if which carthage >/dev/null; then
-    echo "Setting up Carthage"
+    echo "Setting up Carthage for platform $1"
     /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
     /usr/local/bin/carthage outdated --xcode-warnings
     if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ]
