@@ -39,9 +39,14 @@ before_install:
 before_script:
   # bootstrap the dependencies for the project
     - cd PVSupport
-    - carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds
+    - carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./"
     - cd ..
-    - travis_wait carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds
+        # Output something every 10 minutes or Travis kills the job
+    - while sleep 9m; do echo "=====[ $SECONDS seconds still running ]====="; done &
+      # This can take a while so using the above to not make travis abort
+    - carthage bootstrap --verbose --no-use-binaries --platform iOS,tvOS --cache-builds --project-directory "./"
+        # Killing background sleep loop
+    - kill %1
 after_success:
   - wget https://raw.githubusercontent.com/k3rn31p4nic/travis-ci-discord-webhook/master/send.sh
   - chmod +x send.sh

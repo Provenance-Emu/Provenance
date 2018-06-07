@@ -9,12 +9,12 @@ else
 fi
 
 if which carthage >/dev/null; then
-    echo "Setting up Carthage"
+    echo "Setting up Carthage for platform $1"
     /usr/local/bin/carthage bootstrap --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
     /usr/local/bin/carthage outdated --xcode-warnings
     if [ "${BUILD_STYLE}" == "Ad Hoc Distribution" ]
     then
-      /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1
+      /usr/local/bin/carthage build --verbose --no-use-binaries --cache-builds --platform $1 --project-directory "$SRCROOT"
     fi
 else
     echo "error: Carthage is not installed, download from https://github.com/Carthage/Carthage#installing-carthage"

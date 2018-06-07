@@ -6083,11 +6083,6 @@
 					"-DPIC=1",
 					"-DUSE_GLES=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-read_only_relocs",
-					suppress,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -6171,11 +6166,6 @@
 					"-fno-strict-aliasing",
 					"-fomit-frame-pointer",
 					"-DUSE_GLES=1",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-read_only_relocs",
-					suppress,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.provenance-emu.PVMupen64plus";
 				PRODUCT_NAME = "$(TARGET_NAME)";

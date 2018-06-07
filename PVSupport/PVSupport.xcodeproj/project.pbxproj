@@ -517,7 +517,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "../Carthage/xcode.sh iOS";
+			shellScript = "../Carthage/xcode.sh tvOS";
 		};
 /* End PBXShellScriptBuildPhase section */
 
