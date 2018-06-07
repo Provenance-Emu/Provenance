@@ -396,7 +396,7 @@ NSMutableDictionary *gb_cheatlist = [[NSMutableDictionary alloc] init];
         return;
 
     unsigned short *gbc_bios_palette = NULL;
-
+	self->displayMode = displayMode;
     switch (displayMode)
     {
         case GBPalettePeaSoupGreen:
