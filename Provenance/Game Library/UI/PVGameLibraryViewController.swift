@@ -266,15 +266,15 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#if os(iOS)
 		if #available(iOS 11.0, *), USE_IOS_11_SEARCHBAR {
 
-			// Hide the pre iOS 11 search bar
+			// Hide the pre-iOS 11 search bar
 			searchField?.removeFromSuperview()
 			navigationItem.titleView = nil
 
 			// Navigation bar large titles
 			navigationController?.navigationBar.prefersLargeTitles = false
-			navigationItem.title = "Library"
+			navigationItem.title = nil
 
-			// Create a search contorller
+			// Create a search controller
 			let searchController = UISearchController(searchResultsController: nil)
 			searchController.searchBar.placeholder = "Search"
 			searchController.searchResultsUpdater = self
@@ -290,7 +290,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		#endif
 
         //load the config file
-        title = "Library"
+        title = nil
 
         let layout = PVGameLibraryCollectionFlowLayout()
 		layout.scrollDirection = .vertical
