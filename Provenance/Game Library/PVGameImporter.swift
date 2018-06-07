@@ -309,6 +309,8 @@ public final class PVGameImporter {
 	}
 
     func startImport(forPaths paths: [URL]) {
+		// Pre-sort
+		let paths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
 		let scanOperation = BlockOperation {
 			let newPaths = self.importFiles(atPaths: paths)
 			self.getRomInfoForFiles(atPaths: newPaths, userChosenSystem: nil)
@@ -700,7 +702,8 @@ public extension PVGameImporter {
 			}
 		}.joined().map { $0 }
 
-        paths.forEach { (path) in
+		let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
+        sortedPaths.forEach { (path) in
 			// Needs to be in loop, can't double resolve a ref
 			let systemRef : ThreadSafeReference<PVSystem>?
 			if let chosenSystem = chosenSystem {
