@@ -29,7 +29,7 @@
 
 - (NSString *) directoryForLogs {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES); // cache area (not backed up)
-    NSString *logPath = [paths[0] stringByAppendingPathComponent:@"logs"];
+    NSString *logPath = [paths[0] stringByAppendingPathComponent:@"/Logs"];
     return logPath;
 }
 
@@ -118,8 +118,7 @@
 }
 
 -(void) validateLogDirectoryExists {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES); // cache area (not backed up)
-    NSString *logPath = [paths[0] stringByAppendingPathComponent:@"logs"];
+	NSString *logPath = [self directoryForLogs];
 
         // check for existence of cache directory.
 	if ([[NSFileManager defaultManager] fileExistsAtPath:logPath]) {
@@ -130,7 +129,7 @@
 	NSError* error = nil;
         // create a new cache directory
 	BOOL result = [[NSFileManager defaultManager] createDirectoryAtPath:logPath
-											withIntermediateDirectories:NO
+											withIntermediateDirectories:YES
 															 attributes:nil
 																  error:&error];
 	if (!result) {
