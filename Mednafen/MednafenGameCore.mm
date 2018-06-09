@@ -278,24 +278,28 @@ static void mednafen_init(MednafenGameCore* current)
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
         }
 
-		GBAMap[PVGBAButtonUp] 		= 6;
-		GBAMap[PVGBAButtonDown] 	= 7;
-		GBAMap[PVGBAButtonLeft] 	= 5;
 		GBAMap[PVGBAButtonRight] 	= 4;
+        GBAMap[PVGBAButtonLeft]     = 5;
+        GBAMap[PVGBAButtonUp]       = 6;
+        GBAMap[PVGBAButtonDown]     = 7;
+        
+        GBAMap[PVGBAButtonA]        = 0;
 		GBAMap[PVGBAButtonB] 		= 1;
-		GBAMap[PVGBAButtonA]		= 0;
+        
 		GBAMap[PVGBAButtonSelect]	= 2;
 		GBAMap[PVGBAButtonStart] 	= 3;
+        
+        GBAMap[PVGBAButtonR]        = 8;
 		GBAMap[PVGBAButtonL] 		= 9;
-		GBAMap[PVGBAButtonR] 		= 8;
 
 		// Gameboy + Color Map
-		GBMap[PVGBButtonUp] 	= 6;
-		GBMap[PVGBButtonDown] 	= 7;
-		GBMap[PVGBButtonLeft] 	= 5;
 		GBMap[PVGBButtonRight] 	= 4;
+        GBMap[PVGBButtonLeft]   = 5;
+        GBMap[PVGBButtonUp]     = 6;
+        GBMap[PVGBButtonDown]   = 7;
+        
+        GBMap[PVGBButtonA]      = 0;
 		GBMap[PVGBButtonB] 		= 1;
-		GBMap[PVGBButtonA]		= 0;
 		GBMap[PVGBButtonSelect]	= 2;
 		GBMap[PVGBButtonStart] 	= 3;
 
@@ -304,20 +308,23 @@ static void mednafen_init(MednafenGameCore* current)
         SNESMap[PVSNESButtonDown]         = 5;
         SNESMap[PVSNESButtonLeft]         = 6;
         SNESMap[PVSNESButtonRight]        = 7;
+        
         SNESMap[PVSNESButtonA]            = 8;
         SNESMap[PVSNESButtonB]            = 0;
         SNESMap[PVSNESButtonX]            = 9;
         SNESMap[PVSNESButtonY]            = 1;
+        
         SNESMap[PVSNESButtonTriggerLeft]  = 10;
         SNESMap[PVSNESButtonTriggerRight] = 11;
-        SNESMap[PVSNESButtonStart]        = 3;
+        
         SNESMap[PVSNESButtonSelect]       = 2;
+        SNESMap[PVSNESButtonStart]        = 3;
 
 		// PCE Map
 		PCEMap[PVPCEButtonUp]		= 4;
+        PCEMap[PVPCEButtonRight]    = 5;
 		PCEMap[PVPCEButtonDown] 	= 6;
 		PCEMap[PVPCEButtonLeft] 	= 7;
-		PCEMap[PVPCEButtonRight] 	= 5;
 
 		PCEMap[PVPCEButtonButton1] 	= 0;
 		PCEMap[PVPCEButtonButton2] 	= 1;
@@ -326,25 +333,25 @@ static void mednafen_init(MednafenGameCore* current)
 		PCEMap[PVPCEButtonButton5] 	= 10;
 		PCEMap[PVPCEButtonButton6] 	= 11;
 
+        PCEMap[PVPCEButtonSelect]   = 2;
 		PCEMap[PVPCEButtonRun]		= 3;
-		PCEMap[PVPCEButtonSelect] 	= 2;
         PCEMap[PVPCEButtonMode]     = 12;
 
 		// PCFX Map
-        PCFXMap[PVPCEButtonUp]      = 4;
-        PCFXMap[PVPCEButtonDown]    = 6;
-        PCFXMap[PVPCEButtonLeft]    = 7;
-        PCFXMap[PVPCEButtonRight]   = 5;
+        PCFXMap[PVPCEButtonUp]      = 8;
+        PCFXMap[PVPCEButtonRight]   = 9;
+        PCFXMap[PVPCEButtonDown]    = 10;
+        PCFXMap[PVPCEButtonLeft]    = 11;
 
         PCFXMap[PVPCEButtonButton1] = 0;
         PCFXMap[PVPCEButtonButton2] = 1;
-        PCFXMap[PVPCEButtonButton3] = 8;
-        PCFXMap[PVPCEButtonButton4] = 9;
-        PCFXMap[PVPCEButtonButton5] = 10;
-        PCFXMap[PVPCEButtonButton6] = 11;
+        PCFXMap[PVPCEButtonButton3] = 2;
+        PCFXMap[PVPCEButtonButton4] = 3;
+        PCFXMap[PVPCEButtonButton5] = 4;
+        PCFXMap[PVPCEButtonButton6] = 5;
 
-        PCFXMap[PVPCEButtonRun]     = 3;
-        PCFXMap[PVPCEButtonSelect]  = 2;
+        PCFXMap[PVPCEButtonSelect]  = 6;
+        PCFXMap[PVPCEButtonRun]     = 7;
 		PCFXMap[PVPCEButtonMode] 	= 12;
     }
 
