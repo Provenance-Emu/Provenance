@@ -339,24 +339,27 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
 		} else {
 			collectionView.register(PVGameLibraryCollectionViewCell.self, forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
 		}
-
+        
         // Adjust collection view layout for iPhone X Safe areas
         // Can remove this when we go iOS 9+ and just use safe areas
         // in the story board directly - jm
-        if #available(tvOS 11.0, iOS 11.0, *) {
+        #if os(iOS)
+        if #available(iOS 11.0, *) {
             collectionView.translatesAutoresizingMaskIntoConstraints = false
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
                 collectionView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
                 collectionView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
                 collectionView.topAnchor.constraint(equalTo: view.topAnchor),
-                collectionView.bottomAnchor.constraintEqualToSystemSpacingBelow(guide.bottomAnchor, multiplier: 1.0)
+                collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
                 ])
             layout.sectionInsetReference = .fromSafeArea
         } else {
-            layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
+            layout.sectionInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
         }
-
+ 
+        #endif
+        
         // Force touch
         #if os(iOS)
         if #available(iOS 9.0, *) {
@@ -367,7 +370,7 @@ class PVGameLibraryViewController: UIViewController, UITextFieldDelegate, UINavi
         loadGameFromShortcut()
         becomeFirstResponder()
     }
-
+    
     var systems: Results<PVSystem>?
 	var saveStates: Results<PVSaveState>?
     var favoriteGames: Results<PVGame>?
